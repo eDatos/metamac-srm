@@ -31,6 +31,7 @@ import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
 import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -243,8 +244,8 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void notifyPublication(Object message) {
-            streamMessagingService.sendMessage((DataStructureDefinitionVersionMetamac) message, dsdSchemeStreamMessagingCallback);
+        public SendStreamMessageResult notifyPublication(Object message) {
+            return streamMessagingService.sendMessage((DataStructureDefinitionVersionMetamac) message, dsdSchemeStreamMessagingCallback);
         }
 
         /**********************************************************************

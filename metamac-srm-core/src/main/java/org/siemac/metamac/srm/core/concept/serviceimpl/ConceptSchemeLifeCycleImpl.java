@@ -27,6 +27,7 @@ import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -266,8 +267,8 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void notifyPublication(Object message) {
-            streamMessagingService.sendMessage((ConceptSchemeVersionMetamac) message, conceptSchemeStreamMessagingCallback);
+        public SendStreamMessageResult notifyPublication(Object message) {
+            return streamMessagingService.sendMessage((ConceptSchemeVersionMetamac) message, conceptSchemeStreamMessagingCallback);
         }
 
         private ConceptSchemeVersionMetamac getConceptSchemeVersionMetamac(Object srmResource) {

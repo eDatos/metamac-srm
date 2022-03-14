@@ -7,6 +7,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.web.server.rest.NoticesRestInternalFacade;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodelistProcStatusAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodelistProcStatusResult;
@@ -68,12 +69,28 @@ public class UpdateCodelistProcStatusActionHandler extends SecurityActionHandler
                 }
 
             } else if (ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
-                codelistMetamacDto = srmCoreServiceFacade.publishCodelistExternally(serviceContext, action.getUrn());
+                ResourceVersionPublicationResult<CodelistMetamacDto> resourceVersionPublicationResult = srmCoreServiceFacade.publishCodelistExternally(serviceContext, action.getUrn());
+                codelistMetamacDto = resourceVersionPublicationResult.getResourceVersion();
 
-                try {
-                    noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, codelistMetamacDto, TypeExternalArtefactsEnum.CODELIST);
-                } catch (MetamacWebException e) {
-                    return new UpdateCodelistProcStatusResult.Builder(codelistMetamacDto).notificationException(e).build();
+                if (!resourceVersionPublicationResult.isOk()) {
+                    MetamacWebException codelistStreamMessageException = WebExceptionUtils.createMetamacWebException(resourceVersionPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, codelistMetamacDto, TypeExternalArtefactsEnum.CODELIST);
+                    } catch (MetamacWebException noticeException) {
+                        codelistStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, codelistMetamacDto, TypeExternalArtefactsEnum.CODELIST);
+                    } catch (MetamacWebException noticeException) {
+                        codelistStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateCodelistProcStatusResult.Builder(codelistMetamacDto).notificationException(codelistStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, codelistMetamacDto, TypeExternalArtefactsEnum.CODELIST);
+                    } catch (MetamacWebException e) {
+                        return new UpdateCodelistProcStatusResult.Builder(codelistMetamacDto).notificationException(e).build();
+                    }
                 }
             }
             return new UpdateCodelistProcStatusResult(codelistMetamacDto);

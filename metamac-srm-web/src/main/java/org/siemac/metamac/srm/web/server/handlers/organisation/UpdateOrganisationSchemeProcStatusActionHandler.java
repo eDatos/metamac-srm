@@ -6,6 +6,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.web.server.rest.NoticesRestInternalFacade;
 import org.siemac.metamac.srm.web.server.utils.ExternalItemUtils;
 import org.siemac.metamac.srm.web.shared.organisation.UpdateOrganisationSchemeProcStatusAction;
@@ -51,21 +52,53 @@ public class UpdateOrganisationSchemeProcStatusActionHandler extends SecurityAct
                     scheme = srmCoreServiceFacade.rejectOrganisationSchemeDiffusionValidation(serviceContext, action.getUrn());
                 }
             } else if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
+                ResourceVersionPublicationResult<OrganisationSchemeMetamacDto> organisationPublicationResult = srmCoreServiceFacade.publishOrganisationSchemeInternally(serviceContext, action.getUrn(),
+                        action.getForceLastestFinal());
+                scheme = organisationPublicationResult.getResourceVersion();
 
-                scheme = srmCoreServiceFacade.publishOrganisationSchemeInternally(serviceContext, action.getUrn(), action.getForceLastestFinal());
-                try {
-                    noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, scheme, organisationSchemeType);
-                } catch (MetamacWebException e) {
-                    return new UpdateOrganisationSchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                if (!organisationPublicationResult.isOk()) {
+                    MetamacWebException organisationStreamMessageException = WebExceptionUtils.createMetamacWebException(organisationPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, scheme, organisationSchemeType);
+                    } catch (MetamacWebException noticeException) {
+                        organisationStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, scheme, organisationSchemeType);
+                    } catch (MetamacWebException noticeException) {
+                        organisationStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateOrganisationSchemeProcStatusResult.Builder(scheme).notificationException(organisationStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, scheme, organisationSchemeType);
+                    } catch (MetamacWebException e) {
+                        return new UpdateOrganisationSchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                    }
                 }
-
             } else if (ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
+                ResourceVersionPublicationResult<OrganisationSchemeMetamacDto> organisationPublicationResult = srmCoreServiceFacade.publishOrganisationSchemeExternally(serviceContext, action.getUrn());
+                scheme = organisationPublicationResult.getResourceVersion();
 
-                scheme = srmCoreServiceFacade.publishOrganisationSchemeExternally(serviceContext, action.getUrn());
-                try {
-                    noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, scheme, organisationSchemeType);
-                } catch (MetamacWebException e) {
-                    return new UpdateOrganisationSchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                if (!organisationPublicationResult.isOk()) {
+                    MetamacWebException organisationStreamMessageException = WebExceptionUtils.createMetamacWebException(organisationPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, scheme, organisationSchemeType);
+                    } catch (MetamacWebException noticeException) {
+                        organisationStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, scheme, organisationSchemeType);
+                    } catch (MetamacWebException noticeException) {
+                        organisationStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateOrganisationSchemeProcStatusResult.Builder(scheme).notificationException(organisationStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, scheme, organisationSchemeType);
+                    } catch (MetamacWebException e) {
+                        return new UpdateOrganisationSchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                    }
                 }
             }
             return new UpdateOrganisationSchemeProcStatusResult(scheme);

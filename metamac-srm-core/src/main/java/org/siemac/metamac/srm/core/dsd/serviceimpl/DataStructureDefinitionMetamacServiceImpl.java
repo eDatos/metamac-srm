@@ -68,6 +68,7 @@ import org.siemac.metamac.srm.core.dsd.serviceimpl.utils.DsdsMetamacInvocationVa
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -573,13 +574,15 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     }
 
     @Override
-    public DataStructureDefinitionVersionMetamac publishInternallyDataStructureDefinition(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
-        return (DataStructureDefinitionVersionMetamac) dsdLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> publishInternallyDataStructureDefinition(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+        return (ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac>) dsdLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
     }
 
     @Override
-    public DataStructureDefinitionVersionMetamac publishExternallyDataStructureDefinition(ServiceContext ctx, String urn) throws MetamacException {
-        return (DataStructureDefinitionVersionMetamac) dsdLifeCycle.publishExternally(ctx, urn);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> publishExternallyDataStructureDefinition(ServiceContext ctx, String urn) throws MetamacException {
+        return (ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac>) dsdLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override
@@ -1675,7 +1678,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         }
 
         // Prepare conditions
-        Class entitySearchedClass = ConceptSchemeVersionMetamac.class;
+        Class<ConceptSchemeVersionMetamac> entitySearchedClass = ConceptSchemeVersionMetamac.class;
         if (conditions == null) {
             conditions = new ArrayList<ConditionalCriteria>();
         }
@@ -1684,12 +1687,12 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
                 .buildSingle());
         // ConceptScheme Transversal u operation (of DSD)
         Property<ConceptSchemeVersionMetamac> conceptSchemeTypeProperty = ConceptSchemeVersionMetamacProperties.type();
-        Property conceptSchemeRelatedOperationUrnProperty = ConceptSchemeVersionMetamacProperties.relatedOperation().urn();
+        Property<ConceptSchemeVersionMetamac> conceptSchemeRelatedOperationUrnProperty = ConceptSchemeVersionMetamacProperties.relatedOperation().urn();
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).withProperty(conceptSchemeTypeProperty).eq(ConceptSchemeTypeEnum.TRANSVERSAL).or().lbrace()
                 .withProperty(conceptSchemeTypeProperty).eq(ConceptSchemeTypeEnum.OPERATION).and().withProperty(conceptSchemeRelatedOperationUrnProperty)
                 .eq(dataStructureDefinitionVersionMetamac.getStatisticalOperation().getUrn()).rbrace().buildSingle());
         // Concept primary_measure
-        Property conceptRoleEnumProperty = new LeafProperty<ConceptSchemeVersionMetamac>(ConceptSchemeVersionMetamacProperties.items().getName(), ConceptMetamacProperties.sdmxRelatedArtefact()
+        Property<ConceptSchemeVersionMetamac> conceptRoleEnumProperty = new LeafProperty<ConceptSchemeVersionMetamac>(ConceptSchemeVersionMetamacProperties.items().getName(), ConceptMetamacProperties.sdmxRelatedArtefact()
                 .getName(), false, ConceptSchemeVersionMetamac.class);
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).withProperty(conceptRoleEnumProperty).in((Object[]) conceptRolesEnum).buildSingle());
 
@@ -1721,7 +1724,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     private PagedResult<ConceptMetamac> executeFindConceptsCanBeDsdSpecificDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String statisticalOperationUrn,
             ConceptRoleEnum... conceptRolesEnum) {
         // Prepare conditions
-        Class entitySearchedClass = ConceptMetamac.class;
+        Class<ConceptMetamac> entitySearchedClass = ConceptMetamac.class;
         if (conditions == null) {
             conditions = new ArrayList<ConditionalCriteria>();
         }
@@ -1729,14 +1732,14 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient())
                 .eq(Boolean.TRUE).buildSingle());
         // ConceptScheme Transversal u operation (of DSD)
-        Property conceptSchemeTypeProperty = buildConceptPropertyToConceptSchemeType();
-        Property conceptSchemeRelatedOperationUrnProperty = new LeafProperty<ConceptMetamac>(ConceptMetamacProperties.itemSchemeVersion().getName(), ConceptSchemeVersionMetamacProperties
+        Property<ConceptMetamac> conceptSchemeTypeProperty = buildConceptPropertyToConceptSchemeType();
+        Property<ConceptMetamac> conceptSchemeRelatedOperationUrnProperty = new LeafProperty<ConceptMetamac>(ConceptMetamacProperties.itemSchemeVersion().getName(), ConceptSchemeVersionMetamacProperties
                 .relatedOperation().urn().getName(), false, entitySearchedClass);
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).withProperty(conceptSchemeTypeProperty).eq(ConceptSchemeTypeEnum.TRANSVERSAL).or().lbrace()
                 .withProperty(conceptSchemeTypeProperty).eq(ConceptSchemeTypeEnum.OPERATION).and().withProperty(conceptSchemeRelatedOperationUrnProperty).eq(statisticalOperationUrn).rbrace()
                 .buildSingle());
         // Concept related artefact
-        Property conceptRoleEnumProperty = ConceptMetamacProperties.sdmxRelatedArtefact();
+        Property<ConceptMetamac> conceptRoleEnumProperty = ConceptMetamacProperties.sdmxRelatedArtefact();
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).withProperty(conceptRoleEnumProperty).in((Object[]) conceptRolesEnum).buildSingle());
         // Do not repeat results
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).distinctRoot().buildSingle());
@@ -1753,7 +1756,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
             ConceptSchemeTypeEnum conceptSchemeTypeEnum) throws MetamacException {
 
         // Prepare conditions
-        Class entitySearchedClass = ConceptSchemeVersionMetamac.class;
+        Class<ConceptSchemeVersionMetamac> entitySearchedClass = ConceptSchemeVersionMetamac.class;
         if (conditions == null) {
             conditions = new ArrayList<ConditionalCriteria>();
         }
@@ -1790,7 +1793,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
             throws MetamacException {
 
         // Prepare conditions
-        Class entitySearchedClass = CodelistVersionMetamac.class;
+        Class<CodelistVersionMetamac> entitySearchedClass = CodelistVersionMetamac.class;
         if (conditions == null) {
             conditions = new ArrayList<ConditionalCriteria>();
         }
@@ -1817,7 +1820,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
             Long codelistId) throws MetamacException {
 
         // Prepare conditions
-        Class entitySearchedClass = CodelistOrderVisualisation.class;
+        Class<CodelistOrderVisualisation> entitySearchedClass = CodelistOrderVisualisation.class;
         if (conditions == null) {
             conditions = new ArrayList<ConditionalCriteria>();
         }
@@ -1837,7 +1840,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         // CodelistOrderVisualisationProperties
 
         // Prepare conditions
-        Class entitySearchedClass = CodelistOrderVisualisation.class;
+        Class<CodelistOrderVisualisation> entitySearchedClass = CodelistOrderVisualisation.class;
         if (conditions == null) {
             conditions = new ArrayList<ConditionalCriteria>();
         }
@@ -1869,8 +1872,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
             conditions = new ArrayList<ConditionalCriteria>();
         }
         // Condition Spatial
-        @SuppressWarnings("rawtypes")
-        Property conceptSpatialVariableProperty = new LeafProperty<ConceptSchemeVersionMetamac>(ConceptSchemeVersionMetamacProperties.items().getName(), ConceptMetamacProperties.variable().type()
+        @SuppressWarnings("rawtypes") Property<ConceptSchemeVersionMetamac> conceptSpatialVariableProperty = new LeafProperty<ConceptSchemeVersionMetamac>(ConceptSchemeVersionMetamacProperties.items().getName(), ConceptMetamacProperties.variable().type()
                 .getName(), false, ConceptSchemeVersionMetamac.class);
 
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).withProperty(conceptSpatialVariableProperty).eq(VariableTypeEnum.GEOGRAPHICAL).buildSingle());

@@ -59,6 +59,7 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
@@ -262,13 +263,15 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     }
 
     @Override
-    public CategorySchemeVersionMetamac publishInternallyCategoryScheme(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
-        return (CategorySchemeVersionMetamac) categorySchemeLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<CategorySchemeVersionMetamac> publishInternallyCategoryScheme(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+        return (ResourceVersionPublicationResult<CategorySchemeVersionMetamac>) categorySchemeLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
     }
 
     @Override
-    public CategorySchemeVersionMetamac publishExternallyCategoryScheme(ServiceContext ctx, String urn) throws MetamacException {
-        return (CategorySchemeVersionMetamac) categorySchemeLifeCycle.publishExternally(ctx, urn);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<CategorySchemeVersionMetamac> publishExternallyCategoryScheme(ServiceContext ctx, String urn) throws MetamacException {
+        return (ResourceVersionPublicationResult<CategorySchemeVersionMetamac>) categorySchemeLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override

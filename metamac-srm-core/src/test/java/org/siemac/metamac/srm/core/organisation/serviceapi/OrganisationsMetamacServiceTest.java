@@ -885,7 +885,7 @@ public class OrganisationsMetamacServiceTest extends SrmBaseTest implements Orga
         }
 
         // Publish internally
-        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishInternallyOrganisationScheme(ctx, urn, Boolean.FALSE);
+        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishInternallyOrganisationScheme(ctx, urn, Boolean.FALSE).getResourceVersion();
 
         // Validate response
         {
@@ -946,7 +946,7 @@ public class OrganisationsMetamacServiceTest extends SrmBaseTest implements Orga
         }
 
         // Publish internally
-        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishInternallyOrganisationScheme(ctx, urn, Boolean.FALSE);
+        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishInternallyOrganisationScheme(ctx, urn, Boolean.FALSE).getResourceVersion();
 
         // Validate response
         {
@@ -1105,7 +1105,7 @@ public class OrganisationsMetamacServiceTest extends SrmBaseTest implements Orga
         }
 
         // Publish externally
-        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishExternallyOrganisationScheme(ctx, urn);
+        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishExternallyOrganisationScheme(ctx, urn).getResourceVersion();
 
         // Validate response
         {
@@ -1164,7 +1164,7 @@ public class OrganisationsMetamacServiceTest extends SrmBaseTest implements Orga
         }
 
         // Publish externally
-        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishExternallyOrganisationScheme(ctx, urn);
+        OrganisationSchemeVersionMetamac organisationSchemeVersion = organisationsService.publishExternallyOrganisationScheme(ctx, urn).getResourceVersion();
 
         // Validate response. validFrom is not filled
         {

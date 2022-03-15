@@ -978,7 +978,7 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
         }
 
         // Publish internally
-        ConceptSchemeMetamacDto conceptSchemeDto = srmCoreServiceFacade.publishConceptSchemeInternally(ctx, urn, Boolean.FALSE);
+        ConceptSchemeMetamacDto conceptSchemeDto = srmCoreServiceFacade.publishConceptSchemeInternally(ctx, urn, Boolean.FALSE).getResourceVersion();
 
         // Validate response
         {
@@ -1024,7 +1024,7 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
         }
 
         // Publish externally
-        ConceptSchemeMetamacDto conceptSchemeDto = srmCoreServiceFacade.publishConceptSchemeExternally(ctx, urn);
+        ConceptSchemeMetamacDto conceptSchemeDto = srmCoreServiceFacade.publishConceptSchemeExternally(ctx, urn).getResourceVersion();
 
         // Validate response
         {

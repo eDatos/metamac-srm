@@ -1304,7 +1304,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         }
 
         // Publish internally
-        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishInternallyConceptScheme(ctx, urn, Boolean.FALSE);
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishInternallyConceptScheme(ctx, urn, Boolean.FALSE).getResourceVersion();
 
         // Validate response
         {
@@ -1497,7 +1497,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         }
 
         // Publish externally
-        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishExternallyConceptScheme(ctx, urn);
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishExternallyConceptScheme(ctx, urn).getResourceVersion();
 
         // Validate response
         {

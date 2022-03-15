@@ -1766,7 +1766,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
 
         // Publish externally
-        CodelistVersionMetamac codelistVersion = codesService.publishExternallyCodelist(ctx, urn);
+        CodelistVersionMetamac codelistVersion = codesService.publishExternallyCodelist(ctx, urn).getResourceVersion();
 
         // Validate response
         {
@@ -1825,7 +1825,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         itemSchemeRepository.save(codelistVersion);
 
         // Publish externally
-        codelistVersion = codesService.publishExternallyCodelist(ctx, urn);
+        codelistVersion = codesService.publishExternallyCodelist(ctx, urn).getResourceVersion();
         assertEquals(ProcStatusEnum.EXTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
         assertFalse(codelistVersion.getMaintainableArtefact().getPublicLogic());
         assertFalse(codelistVersion.getMaintainableArtefact().getLatestPublic());

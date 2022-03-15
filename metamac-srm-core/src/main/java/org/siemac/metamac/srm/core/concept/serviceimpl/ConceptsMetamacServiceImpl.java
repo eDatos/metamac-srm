@@ -74,6 +74,7 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationConceptsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
@@ -422,13 +423,15 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
     }
 
     @Override
-    public ConceptSchemeVersionMetamac publishInternallyConceptScheme(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
-        return (ConceptSchemeVersionMetamac) conceptSchemeLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<ConceptSchemeVersionMetamac> publishInternallyConceptScheme(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+        return (ResourceVersionPublicationResult<ConceptSchemeVersionMetamac>) conceptSchemeLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
     }
 
     @Override
-    public ConceptSchemeVersionMetamac publishExternallyConceptScheme(ServiceContext ctx, String urn) throws MetamacException {
-        return (ConceptSchemeVersionMetamac) conceptSchemeLifeCycle.publishExternally(ctx, urn);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<ConceptSchemeVersionMetamac> publishExternallyConceptScheme(ServiceContext ctx, String urn) throws MetamacException {
+        return (ResourceVersionPublicationResult<ConceptSchemeVersionMetamac>) conceptSchemeLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override

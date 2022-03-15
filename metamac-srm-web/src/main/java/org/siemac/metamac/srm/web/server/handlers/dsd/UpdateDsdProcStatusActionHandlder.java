@@ -11,6 +11,7 @@ import org.siemac.metamac.rest.statistical_operations_internal.v1_0.domain.ProcS
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.web.server.rest.NoticesRestInternalFacade;
 import org.siemac.metamac.srm.web.server.rest.StatisticalOperationsRestInternalFacade;
 import org.siemac.metamac.srm.web.shared.WebMessageExceptionsConstants;
@@ -67,13 +68,29 @@ public class UpdateDsdProcStatusActionHandlder extends SecurityActionHandler<Upd
                             dsdToUpdateStatus.getUrn());
                 }
             } else if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
-                dataStructureDefinitionMetamacDto = srmCoreServiceFacade.publishDataStructureDefinitionInternally(ServiceContextHolder.getCurrentServiceContext(), dsdToUpdateStatus.getUrn(),
-                        action.getForceLatestFinal());
+                ResourceVersionPublicationResult<DataStructureDefinitionMetamacDto> resourceVersionPublicationResult = srmCoreServiceFacade.publishDataStructureDefinitionInternally(ServiceContextHolder.getCurrentServiceContext(),
+                        dsdToUpdateStatus.getUrn(), action.getForceLatestFinal());
+                dataStructureDefinitionMetamacDto = resourceVersionPublicationResult.getResourceVersion();
 
-                try {
-                    noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
-                } catch (MetamacWebException e) {
-                    return new UpdateDsdProcStatusResult.Builder(dataStructureDefinitionMetamacDto).notificationException(e).build();
+                if (!resourceVersionPublicationResult.isOk()) {
+                    MetamacWebException dsdStreamMessageException = WebExceptionUtils.createMetamacWebException(resourceVersionPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
+                    } catch (MetamacWebException noticeException) {
+                        dsdStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
+                    } catch (MetamacWebException noticeException) {
+                        dsdStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateDsdProcStatusResult.Builder(dataStructureDefinitionMetamacDto).notificationException(dsdStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
+                    } catch (MetamacWebException e) {
+                        return new UpdateDsdProcStatusResult.Builder(dataStructureDefinitionMetamacDto).notificationException(e).build();
+                    }
                 }
 
             } else if (ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
@@ -84,13 +101,30 @@ public class UpdateDsdProcStatusActionHandlder extends SecurityActionHandler<Upd
                         throwStatisticalOperationNotExternallyPublishedException(serviceContext);
                     }
                 }
-                dataStructureDefinitionMetamacDto = srmCoreServiceFacade.publishDataStructureDefinitionExternally(ServiceContextHolder.getCurrentServiceContext(), dsdToUpdateStatus.getUrn());
-                try {
-                    noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
-                } catch (MetamacWebException e) {
-                    return new UpdateDsdProcStatusResult.Builder(dataStructureDefinitionMetamacDto).notificationException(e).build();
-                }
+                ResourceVersionPublicationResult<DataStructureDefinitionMetamacDto> resourceVersionPublicationResult = srmCoreServiceFacade.publishDataStructureDefinitionExternally(ServiceContextHolder.getCurrentServiceContext(),
+                        dsdToUpdateStatus.getUrn());
+                dataStructureDefinitionMetamacDto = resourceVersionPublicationResult.getResourceVersion();
 
+                if (!resourceVersionPublicationResult.isOk()) {
+                    MetamacWebException dsdStreamMessageException = WebExceptionUtils.createMetamacWebException(resourceVersionPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
+                    } catch (MetamacWebException noticeException) {
+                        dsdStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
+                    } catch (MetamacWebException noticeException) {
+                        dsdStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateDsdProcStatusResult.Builder(dataStructureDefinitionMetamacDto).notificationException(dsdStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, dataStructureDefinitionMetamacDto, TypeExternalArtefactsEnum.DATASTRUCTURE);
+                    } catch (MetamacWebException e) {
+                        return new UpdateDsdProcStatusResult.Builder(dataStructureDefinitionMetamacDto).notificationException(e).build();
+                    }
+                }
             }
             return new UpdateDsdProcStatusResult(dataStructureDefinitionMetamacDto);
         } catch (MetamacException e) {

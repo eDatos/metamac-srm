@@ -55,6 +55,7 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.domain.shared.OrganisationMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.organisation.serviceimpl.utils.OrganisationsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationOrganisationsTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
@@ -237,13 +238,15 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
     }
 
     @Override
-    public OrganisationSchemeVersionMetamac publishInternallyOrganisationScheme(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
-        return (OrganisationSchemeVersionMetamac) organisationSchemeLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> publishInternallyOrganisationScheme(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+        return (ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac>) organisationSchemeLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
     }
 
     @Override
-    public OrganisationSchemeVersionMetamac publishExternallyOrganisationScheme(ServiceContext ctx, String urn) throws MetamacException {
-        return (OrganisationSchemeVersionMetamac) organisationSchemeLifeCycle.publishExternally(ctx, urn);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> publishExternallyOrganisationScheme(ServiceContext ctx, String urn) throws MetamacException {
+        return (ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac>) organisationSchemeLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override

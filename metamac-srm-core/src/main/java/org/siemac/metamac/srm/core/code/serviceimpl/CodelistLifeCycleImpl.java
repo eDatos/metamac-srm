@@ -15,13 +15,12 @@ import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.code.domain.*;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
-import org.siemac.metamac.srm.core.code.mapper.CodesDo2DtoMapper;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.LifeCycleImpl;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.srm.core.stream.mappers.impl.CodelistDo2AvroMapper;
+import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +31,6 @@ import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.ValidationUtils;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodeRepository;
 import com.arte.statistic.sdmx.srm.core.code.serviceapi.CodesService;
-
-import javax.annotation.PostConstruct;
 
 @Service("codelistLifeCycle")
 public class CodelistLifeCycleImpl extends LifeCycleImpl {
@@ -258,8 +255,8 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void notifyPublication(Object message) {
-            streamMessagingService.sendMessage((CodelistVersionMetamac) message, codelistStreamMessagingCallback);
+        public SendStreamMessageResult notifyPublication(Object message) {
+            return streamMessagingService.sendMessage((CodelistVersionMetamac) message, codelistStreamMessagingCallback);
         }
 
         private CodelistVersionMetamac getCodelistVersionMetamac(Object srmResource) {

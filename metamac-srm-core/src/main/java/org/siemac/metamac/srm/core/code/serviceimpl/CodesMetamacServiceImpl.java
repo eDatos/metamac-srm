@@ -107,6 +107,7 @@ import org.siemac.metamac.srm.core.normalisation.DiceLuceneRamAproxStringMatch;
 import org.siemac.metamac.srm.core.normalisation.MatchResult;
 import org.siemac.metamac.srm.core.notices.serviceimpl.utils.NoticesCallbackMetamacImpl;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodesTsvHeader;
@@ -418,7 +419,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             versioningResult.setJobKey(jobKey);
         } else {
             // The publication is now
-            CodelistVersion codelist = (CodelistVersionMetamac) codelistLifeCycle.publishInternally(ctx, urn, forceLatestFinal);
+            CodelistVersion codelist = (CodelistVersion) codelistLifeCycle.publishInternally(ctx, urn, forceLatestFinal).getResourceVersion();
             ItemScheme itemScheme = codelist.getItemScheme();
             itemScheme.setIsTaskInBackground(Boolean.FALSE);
             itemScheme = itemSchemeRepository.save(itemScheme);
@@ -429,8 +430,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
-    public CodelistVersionMetamac publishExternallyCodelist(ServiceContext ctx, String urn) throws MetamacException {
-        return (CodelistVersionMetamac) codelistLifeCycle.publishExternally(ctx, urn);
+    @SuppressWarnings("unchecked")
+    public ResourceVersionPublicationResult<CodelistVersionMetamac> publishExternallyCodelist(ServiceContext ctx, String urn) throws MetamacException {
+        return (ResourceVersionPublicationResult<CodelistVersionMetamac>) codelistLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override

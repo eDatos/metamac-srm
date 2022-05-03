@@ -50,7 +50,6 @@ import com.arte.statistic.sdmx.srm.core.code.domain.CodeRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalStringRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
-import com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.DatabaseProvider;
 
 /**
  * Repository implementation for CodeMetamac
@@ -516,55 +515,21 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT); // get column name. any if no order or openness is selected
         StringBuilder sb = new StringBuilder();
         int resultOrderIndex = -1;
-        if (srmConfiguration.isDatabaseOracle()) {
-            resultOrderIndex = 1;
-            sb.append("SELECT ITEM_ID, SYS_CONNECT_BY_PATH(lpad(COD_ORDER, " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0'), '.') ORDER_PATH ");
-            sb.append("FROM ");
-            sb.append("(");
-            sb.append("SELECT c." + orderColumn + " AS COD_ORDER, c.TB_CODES AS ITEM_ID, cb.PARENT_FK AS ITEM_PARENT_FK ");
-            sb.append("FROM TB_M_CODES c ");
-            sb.append("JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
-            sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
-            sb.append(")");
-            sb.append("START WITH ITEM_PARENT_FK is null ");
-            sb.append("CONNECT BY PRIOR ITEM_ID = ITEM_PARENT_FK ");
-            sb.append("ORDER BY ORDER_PATH asc");
-        } else if (srmConfiguration.isDatabaseSqlServer()) {
-            resultOrderIndex = 3;
-            sb.append("WITH Parents(R_ID, R_SORT, R_ITEM_SCHEME_VERSION_FK, R_SORT_STRING) AS ");
-            sb.append("( ");
-            sb.append("SELECT c1.TB_CODES AS R_ID, c1." + orderColumn + " AS R_SORT, cb1.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
-            sb.append("'/' + REPLICATE(0, " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + " - LEN(c1." + orderColumn + ")) + CAST(c1." + orderColumn + " AS varchar(4000)) AS R_SORT_STRING ");
-            sb.append("FROM TB_M_CODES AS c1 ");
-            sb.append("INNER JOIN TB_CODES AS cb1 ON cb1.ID = c1.TB_CODES ");
-            sb.append("WHERE cb1.PARENT_FK IS NULL and cb1.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
-            sb.append("UNION ALL ");
-            sb.append("SELECT c2.TB_CODES, c2." + orderColumn + ", cb2.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
-            sb.append("p.R_SORT_STRING + '/' + REPLICATE(0, " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + " - LEN(c2." + orderColumn + ")) + CAST(c2." + orderColumn
-                    + " AS varchar(4000)) AS R_SORT_STRING ");
-            sb.append("FROM TB_M_CODES AS c2 ");
-            sb.append("INNER JOIN TB_CODES AS cb2 ON cb2.ID = c2.TB_CODES ");
-            sb.append("INNER JOIN Parents AS p ON p.R_ID = cb2.PARENT_FK ) ");
-            sb.append("SELECT * FROM Parents ORDER BY R_SORT_STRING");
-        } else if (srmConfiguration.isDatabasePostgreSQL()) {
-            resultOrderIndex = 3;
-            sb.append("WITH RECURSIVE Parents(R_ID, R_SORT, R_ITEM_SCHEME_VERSION_FK, R_SORT_STRING) AS ");
-            sb.append("( ");
-            sb.append("SELECT c1.TB_CODES AS R_ID, c1." + orderColumn + " AS R_SORT, cb1.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
-            sb.append("concat('/', lpad(cast(c1." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
-            sb.append("FROM TB_M_CODES AS c1 ");
-            sb.append("INNER JOIN TB_CODES AS cb1 ON cb1.ID = c1.TB_CODES ");
-            sb.append("WHERE cb1.PARENT_FK IS NULL and cb1.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
-            sb.append("UNION ALL ");
-            sb.append("SELECT c2.TB_CODES, c2." + orderColumn + ", cb2.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
-            sb.append("concat(p.R_SORT_STRING, '/', lpad(cast(c2." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
-            sb.append("FROM TB_M_CODES AS c2 ");
-            sb.append("INNER JOIN TB_CODES AS cb2 ON cb2.ID = c2.TB_CODES ");
-            sb.append("INNER JOIN Parents AS p ON p.R_ID = cb2.PARENT_FK ) ");
-            sb.append("SELECT * FROM Parents ORDER BY R_SORT_STRING");
-        } else {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UNKNOWN).withMessageParameters("Database unsupported").build();
-        }
+        resultOrderIndex = 3;
+        sb.append("WITH RECURSIVE Parents(R_ID, R_SORT, R_ITEM_SCHEME_VERSION_FK, R_SORT_STRING) AS ");
+        sb.append("( ");
+        sb.append("SELECT c1.TB_CODES AS R_ID, c1." + orderColumn + " AS R_SORT, cb1.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
+        sb.append("concat('/', lpad(cast(c1." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
+        sb.append("FROM TB_M_CODES AS c1 ");
+        sb.append("INNER JOIN TB_CODES AS cb1 ON cb1.ID = c1.TB_CODES ");
+        sb.append("WHERE cb1.PARENT_FK IS NULL and cb1.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
+        sb.append("UNION ALL ");
+        sb.append("SELECT c2.TB_CODES, c2." + orderColumn + ", cb2.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
+        sb.append("concat(p.R_SORT_STRING, '/', lpad(cast(c2." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
+        sb.append("FROM TB_M_CODES AS c2 ");
+        sb.append("INNER JOIN TB_CODES AS cb2 ON cb2.ID = c2.TB_CODES ");
+        sb.append("INNER JOIN Parents AS p ON p.R_ID = cb2.PARENT_FK ) ");
+        sb.append("SELECT * FROM Parents ORDER BY R_SORT_STRING");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("codelistVersion", idCodelist);
         List resultsOrder = queryOrder.getResultList();
@@ -802,8 +767,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     }
 
     private String getOpennessColumnValue(Boolean expanded) throws MetamacException {
-        DatabaseProvider databaseProvider = srmConfiguration.getDataBaseProvider();
-        return booleanToBooleanDatabase(databaseProvider, expanded);
+        return booleanToBooleanDatabase(expanded);
     }
 
     /**

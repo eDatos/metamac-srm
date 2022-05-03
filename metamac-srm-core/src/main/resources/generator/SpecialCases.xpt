@@ -22,16 +22,6 @@
     «ENDIF»
 «ENDAROUND»
 
-«AROUND templates::db::OracleDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
-  «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR2(50 CHAR)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
-  «ENDIF-»
-  «getDatabaseName(prefix, this)» «useCharactersInsteadBytes(getDatabaseType())»«parentIsNullable ? "" : getDatabaseTypeNullability()-»
-«ENDAROUND»
-
-«AROUND templates::db::OracleDDL::enumColumn(String prefix, boolean parentIsNullable) FOR Reference-»
-  «getDatabaseName(prefix, this)» «useCharactersInsteadBytes(getEnumDatabaseType())»«parentIsNullable ? "" : getDatabaseTypeNullability()-»
-«ENDAROUND»
-
 «AROUND templates::db::CustomDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
   «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR(50)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
   «ENDIF-»
@@ -73,21 +63,6 @@
     «ENDIF»
 «ENDAROUND»
 
-
-«REM»Skip unique constraint in InternationalString and LocalisedString this will be for "id", and primary key restriction already exists for this attribute «ENDREM»
-«AROUND templates::db::OracleDDL::uniqueConstraint FOR DomainObject»
-	«IF name != "InternationalString" && name != "LocalisedString" && name != "ExternalItem" && name != "ConceptType"-»
-		«targetDef.proceed() -»
-	«ENDIF -»
-«ENDAROUND»
-
-«REM»HibernateSequence is not needed in this project «ENDREM»
-«AROUND templates::db::OracleDDL::dropSequence FOR Application»
-«ENDAROUND»
-
-«REM»HibernateSequence is not needed in this project «ENDREM»
-«AROUND templates::db::OracleDDL::createSequence FOR Application»
-«ENDAROUND»
 
 «REM»Inclusion of a BasicType in an Entity«ENDREM»
 «AROUND templates::domain::DomainObjectReferenceAnnotation::basicTypeJpaAnnotation FOR Reference»

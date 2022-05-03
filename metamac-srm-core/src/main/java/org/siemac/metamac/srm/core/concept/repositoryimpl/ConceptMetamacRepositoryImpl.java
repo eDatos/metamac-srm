@@ -39,7 +39,6 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ItemRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.RelatedResourceVisualisationResult;
-import com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.DatabaseProvider;
 import com.arte.statistic.sdmx.srm.core.concept.domain.Concept;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptRepository;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.FacetValueTypeEnum;
@@ -180,39 +179,16 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         }
 
         StringBuilder sb = new StringBuilder();
-        if (srmConfiguration.isDatabaseOracle()) {
-            sb.append("SELECT c1.ID ");
-            sb.append("FROM TB_CONCEPTS c1, TB_M_CONCEPTS mc1 ");
-            sb.append("WHERE c1.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion ");
-            sb.append("AND mc1.TB_CONCEPTS = c1.ID ");
-            sb.append("START WITH c1.PARENT_FK is null ");
-            sb.append("CONNECT BY PRIOR c1.ID = c1.PARENT_FK ");
-            sb.append("ORDER SIBLINGS BY mc1.ORDER_VALUE ASC ");
-        } else if (srmConfiguration.isDatabaseSqlServer()) {
-            sb.append("WITH parents(ID, OV) AS ");
-            sb.append("   (SELECT c1.ID, format(mc1.ORDER_VALUE , '" + ORDER_VALUE_FORMAT_PATTERN + "') OV ");
-            sb.append("    FROM TB_CONCEPTS as c1, TB_M_CONCEPTS mc1  ");
-            sb.append("    WHERE mc1.TB_CONCEPTS = c1.ID and c1.PARENT_FK is null and c1.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion ");
-            sb.append("        UNION ALL ");
-            sb.append("    SELECT c2.ID, p.OV + '-' + format(mc2.ORDER_VALUE , '" + ORDER_VALUE_FORMAT_PATTERN + "') OV ");
-            sb.append("    FROM TB_CONCEPTS as c2, TB_M_CONCEPTS mc2, parents p");
-            sb.append("    WHERE mc2.TB_CONCEPTS = c2.ID and p.ID = c2.PARENT_FK) ");
-            sb.append("SELECT ID FROM parents ");
-            sb.append("ORDER BY OV ASC ");
-        } else if (srmConfiguration.isDatabasePostgreSQL()) {
-            sb.append("WITH RECURSIVE parents(ID, OV) AS ");
-            sb.append("   (SELECT c1.ID, lpad(cast(mc1.ORDER_VALUE as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0') OV ");
-            sb.append("    FROM TB_CONCEPTS as c1, TB_M_CONCEPTS mc1  ");
-            sb.append("    WHERE mc1.TB_CONCEPTS = c1.ID and c1.PARENT_FK is null and c1.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion ");
-            sb.append("        UNION ALL ");
-            sb.append("    SELECT c2.ID, concat(p.OV, '-', lpad(cast(mc2.ORDER_VALUE as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) OV ");
-            sb.append("    FROM TB_CONCEPTS as c2, TB_M_CONCEPTS mc2, parents p");
-            sb.append("    WHERE mc2.TB_CONCEPTS = c2.ID and p.ID = c2.PARENT_FK) ");
-            sb.append("SELECT ID FROM parents ");
-            sb.append("ORDER BY OV ASC ");
-        } else {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UNKNOWN).withMessageParameters("Database unsupported").build();
-        }
+        sb.append("WITH RECURSIVE parents(ID, OV) AS ");
+        sb.append("   (SELECT c1.ID, lpad(cast(mc1.ORDER_VALUE as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0') OV ");
+        sb.append("    FROM TB_CONCEPTS as c1, TB_M_CONCEPTS mc1  ");
+        sb.append("    WHERE mc1.TB_CONCEPTS = c1.ID and c1.PARENT_FK is null and c1.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion ");
+        sb.append("        UNION ALL ");
+        sb.append("    SELECT c2.ID, concat(p.OV, '-', lpad(cast(mc2.ORDER_VALUE as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) OV ");
+        sb.append("    FROM TB_CONCEPTS as c2, TB_M_CONCEPTS mc2, parents p");
+        sb.append("    WHERE mc2.TB_CONCEPTS = c2.ID and p.ID = c2.PARENT_FK) ");
+        sb.append("SELECT ID FROM parents ");
+        sb.append("ORDER BY OV ASC ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("conceptSchemeVersion", conceptSchemeVersionId);
         @SuppressWarnings("rawtypes")
@@ -281,7 +257,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aisv2 ON aisv2.ID = isv2.MAINTAINABLE_ARTEFACT_FK ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb2 ON acb2.ID = cb2.NAMEABLE_ARTEFACT_FK ");
         sb.append("WHERE cb1.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
-        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(getDatabaseProvider(), true));
+        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);
@@ -304,7 +280,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aisv2 ON aisv2.ID = isv2.MAINTAINABLE_ARTEFACT_FK ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb2 ON acb2.ID = cb2.NAMEABLE_ARTEFACT_FK ");
         sb.append("WHERE cb1.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
-        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(getDatabaseProvider(), true));
+        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);
@@ -423,7 +399,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aisv2 ON aisv2.ID = isv2.MAINTAINABLE_ARTEFACT_FK ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb2 ON acb2.ID = cb2.NAMEABLE_ARTEFACT_FK ");
         sb.append("WHERE cb1.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
-        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(getDatabaseProvider(), true));
+        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);
@@ -446,7 +422,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aisv2 ON aisv2.ID = isv2.MAINTAINABLE_ARTEFACT_FK ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb2 ON acb2.ID = cb2.NAMEABLE_ARTEFACT_FK ");
         sb.append("WHERE cb1.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
-        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(getDatabaseProvider(), true));
+        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase( true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);
@@ -469,7 +445,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append("WHERE cb1.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
         sb.append("AND r1.REPRESENTATION_TYPE = :representationType ");
         sb.append("AND r1." + columnName + " IS NOT NULL ");
-        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(getDatabaseProvider(), true));
+        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);
@@ -855,9 +831,5 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         target.setCode(getString(source[i++]));
         target.setTitle(getString(source[i++]));
         return target;
-    }
-
-    private DatabaseProvider getDatabaseProvider() throws MetamacException {
-        return srmConfiguration.getDataBaseProvider();
     }
 }

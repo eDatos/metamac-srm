@@ -533,8 +533,10 @@
                     <argLine>-Xms512m -Xmx1256m -XX:PermSize=64m</argLine>
                 </configuration>
                 <executions>
+                    <!-- POSTGRESQL -->
+                    <!-- The execution is called default-test because this is the name of the default execution of this plugin -->
                     <execution>
-						<id>postgresql</id>
+						<id>default-test</id>
 						<phase>test</phase>
 						<goals>
 							<goal>test</goal>

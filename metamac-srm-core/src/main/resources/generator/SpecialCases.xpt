@@ -63,6 +63,20 @@
     «ENDIF»
 «ENDAROUND»
 
+«REM»Skip unique constraint in InternationalString and LocalisedString this will be for "id", and primary key restriction already exists for this attribute «ENDREM»
+«AROUND templates::db::OracleDDL::uniqueConstraint FOR DomainObject»
+	«IF name != "InternationalString" && name != "LocalisedString" && name != "ExternalItem" && name != "ConceptType"-»
+		«targetDef.proceed() -»
+	«ENDIF -»
+«ENDAROUND»
+
+«REM»HibernateSequence is not needed in this project «ENDREM»
+«AROUND templates::db::OracleDDL::dropSequence FOR Application»
+«ENDAROUND»
+
+«REM»HibernateSequence is not needed in this project «ENDREM»
+«AROUND templates::db::OracleDDL::createSequence FOR Application»
+«ENDAROUND»
 
 «REM»Inclusion of a BasicType in an Entity«ENDREM»
 «AROUND templates::domain::DomainObjectReferenceAnnotation::basicTypeJpaAnnotation FOR Reference»

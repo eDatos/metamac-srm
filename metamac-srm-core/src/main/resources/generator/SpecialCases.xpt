@@ -22,6 +22,14 @@
     «ENDIF»
 «ENDAROUND»
 
+«REM» The previous version of this method overrode the generated SQL code so that VARCHAR2 and CHAR  were stored in ORACLE as CHAR instead bytes«ENDREM»
+«REM» POSTGRESQL does not support this feature so it is not necessary to override the data type«ENDREM»
+«AROUND templates::db::OracleDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
+  «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR(50)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
+  «ENDIF-»
+  «targetDef.proceed()-»
+«ENDAROUND»
+
 «AROUND templates::db::CustomDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
   «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR(50)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
   «ENDIF-»

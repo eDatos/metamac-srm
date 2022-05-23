@@ -2,7 +2,6 @@ package org.siemac.metamac.srm.core.code.repositoryimpl;
 
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getDouble;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getLong;
-import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getStringFromClob;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +32,13 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 @Repository("variableElementRepository")
 public class VariableElementRepositoryImpl extends VariableElementRepositoryBase {
 
-    @Autowired
-    private SrmConfiguration srmConfiguration;
-
     public VariableElementRepositoryImpl() {
+        //no impl
     }
 
     @Override
     public VariableElement findByUrn(String urn) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("urn", urn);
         List<VariableElement> result = findByQuery("from VariableElement where identifiableArtefact.urn = :urn", parameters, 1);
         if (result == null || result.isEmpty()) {
@@ -199,14 +196,13 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
                         sbGeo.append("AND ac.URN IN (" + geographicalGranularityUrnsParameter.toString() + ") ");
                     }
 
-                    // METAMAC-1653: addScalar is needed due to mssql can be determine that SHAPE_GEOJSON and SHAPE_WKT columns are 'Text' types
                     SQLQuery queryGeo = ((Session) getEntityManager().getDelegate()).createSQLQuery(sbGeo.toString());
                     queryGeo = queryGeo.addScalar("VARIABLE_ELEMENT_ID", org.hibernate.Hibernate.LONG);
                     if (selection.isShapeWkt()) {
-                        queryGeo = queryGeo.addScalar("SHAPE_WKT", isDatabasePostgreSQL() ? org.hibernate.Hibernate.TEXT : org.hibernate.Hibernate.CLOB);
+                        queryGeo = queryGeo.addScalar("SHAPE_WKT", org.hibernate.Hibernate.TEXT);
                     }
                     if (selection.isShapeGeojson()) {
-                        queryGeo = queryGeo.addScalar("SHAPE_GEOJSON", isDatabasePostgreSQL() ? org.hibernate.Hibernate.TEXT : org.hibernate.Hibernate.CLOB);
+                        queryGeo = queryGeo.addScalar("SHAPE_GEOJSON", org.hibernate.Hibernate.TEXT);
                     }
                     if (selection.isLongitudeLatitude()) {
                         queryGeo = queryGeo.addScalar("LATITUDE", org.hibernate.Hibernate.FLOAT).addScalar("LONGITUDE", org.hibernate.Hibernate.FLOAT);
@@ -313,11 +309,11 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
     private void variableElementGeoResultSqlToVariableElementResult(Object[] source, VariableElementResult target, VariableElementResultSelection selection) throws MetamacException {
         int i = 1; // skip id
         if (selection.isShapeWkt()) {
-            String shapeWkt = isDatabasePostgreSQL() ? getString(source[i++]) : getStringFromClob(source[i++]);
+            String shapeWkt = getString(source[i++]);
             target.setShapeWkt(shapeWkt);
         }
         if (selection.isShapeGeojson()) {
-            String shapeGeoJson = isDatabasePostgreSQL() ? getString(source[i++]) : getStringFromClob(source[i++]);
+            String shapeGeoJson = getString(source[i++]);
             target.setShapeGeojson(shapeGeoJson);
         }
         if (selection.isLongitudeLatitude()) {
@@ -345,10 +341,6 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
             String label = getString(source[i++]);
             geographicalGranularity.getName().put(locale, label);
         }
-    }
-
-    private boolean isDatabasePostgreSQL() throws MetamacException {
-        return srmConfiguration.isDatabasePostgreSQL();
     }
 
     private String getString(Object source) {

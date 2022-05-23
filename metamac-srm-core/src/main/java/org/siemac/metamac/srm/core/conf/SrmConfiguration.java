@@ -2,7 +2,6 @@ package org.siemac.metamac.srm.core.conf;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 
-import com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.DatabaseProvider;
 import com.arte.statistic.sdmx.srm.core.conf.SdmxSrmConfiguration;
 
 public interface SrmConfiguration extends SdmxSrmConfiguration {
@@ -35,23 +34,6 @@ public interface SrmConfiguration extends SdmxSrmConfiguration {
      * Retrieves the Cron expression to perform a cleanup of deleted entities
      */
     public String findJobDeleteDeprecatedEntitiesCronExpression() throws MetamacException;
-
-    /**
-     * Checks if Database is Oracle
-     */
-    public Boolean isDatabaseOracle() throws MetamacException;
-
-    /**
-     * Checks if Database is SQL Server
-     */
-    public Boolean isDatabaseSqlServer() throws MetamacException;
-    
-    /**
-     * Checks if Database is PostgreSQL
-     */
-    public Boolean isDatabasePostgreSQL() throws MetamacException;
-    
-    public DatabaseProvider getDataBaseProvider() throws MetamacException;
 
     public String retrieveDsdPrimaryMeasureDefaultConceptIdUrn() throws MetamacException;
     public String retrieveDsdTimeDimensionOrAttributeDefaultConceptIdUrn() throws MetamacException;

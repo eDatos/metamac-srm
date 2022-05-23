@@ -25,9 +25,7 @@ public class EntityToDeleteRepositoryImpl extends EntityToDeleteRepositoryBase {
 
     @Override
     public void deleteEntitiesMarkedToDelete() throws MetamacException {
-        
-        boolean isDatabasePostgreSQL = srmConfiguration.isDatabasePostgreSQL();
-        
+                
         Session session = (Session) getEntityManager().getDelegate();
 
         try {
@@ -39,7 +37,7 @@ public class EntityToDeleteRepositoryImpl extends EntityToDeleteRepositoryBase {
                     // Delete rows
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.append("DELETE " + (isDatabasePostgreSQL ? "FROM " : StringUtils.EMPTY));
+                        sb.append("DELETE FROM ");
                         sb.append("TB_INTERNATIONAL_STRINGS  ");
                         sb.append("WHERE ID IN ");
                         sb.append(" (SELECT ID_TO_DELETE ");
@@ -50,7 +48,7 @@ public class EntityToDeleteRepositoryImpl extends EntityToDeleteRepositoryBase {
                     // Unmark rows to delete, clearing rows
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.append("DELETE " + (isDatabasePostgreSQL ? "FROM " : StringUtils.EMPTY));
+                        sb.append("DELETE FROM ");
                         sb.append("TB_ENTITIES_TO_DELETE  ");
                         sb.append("WHERE TABLE_NAME = '" + SrmConstants.TABLE_INTERNATIONAL_STRINGS + "'");
                         executeSqlStatement(connection, sb);

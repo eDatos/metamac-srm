@@ -10,11 +10,9 @@ import java.util.Map;
 import javax.persistence.Query;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
-import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -75,35 +73,15 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         }
 
         StringBuilder sb = new StringBuilder();
-        if (srmConfiguration.isDatabaseOracle()) {
-            sb.append("SELECT c1.ID ");
-            sb.append("FROM TB_CATEGORIES c1 ");
-            sb.append("WHERE c1.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
-            sb.append("START WITH c1.PARENT_FK is null ");
-            sb.append("CONNECT BY PRIOR c1.ID = c1.PARENT_FK ");
-        } else if (srmConfiguration.isDatabaseSqlServer()) {
-            sb.append("WITH parents(ID) AS ");
-            sb.append("   (SELECT ID ");
-            sb.append("    FROM TB_CATEGORIES ");
-            sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
-            sb.append("        UNION ALL ");
-            sb.append("    SELECT c2.ID ");
-            sb.append("    FROM TB_CATEGORIES as c2, parents ");
-            sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
-            sb.append("SELECT ID FROM parents ");
-        } else if (srmConfiguration.isDatabasePostgreSQL()) {
-            sb.append("WITH RECURSIVE parents(ID) AS ");
-            sb.append("   (SELECT ID ");
-            sb.append("    FROM TB_CATEGORIES ");
-            sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
-            sb.append("        UNION ALL ");
-            sb.append("    SELECT c2.ID ");
-            sb.append("    FROM TB_CATEGORIES as c2, parents ");
-            sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
-            sb.append("SELECT ID FROM parents ");
-        } else {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UNKNOWN).withMessageParameters("Database unsupported").build();
-        }
+        sb.append("WITH RECURSIVE parents(ID) AS ");
+        sb.append("   (SELECT ID ");
+        sb.append("    FROM TB_CATEGORIES ");
+        sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
+        sb.append("        UNION ALL ");
+        sb.append("    SELECT c2.ID ");
+        sb.append("    FROM TB_CATEGORIES as c2, parents ");
+        sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
+        sb.append("SELECT ID FROM parents ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("categorySchemeVersion", itemSchemeVersionId);
         @SuppressWarnings("rawtypes")

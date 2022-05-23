@@ -10,6 +10,7 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.category.enums.CategoriesToolStripButtonEnum;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryUiHandlers;
@@ -34,6 +35,8 @@ import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryResult;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
+import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -84,6 +87,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         void setCategory(CategoryMetamacDto categoryDto);
         void setCategory(CategoryMetamacDto categoryDto, CategorySchemeMetamacDto categorySchemeMetamacDto);
         void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<ItemVisualisationResult> itemVisualisationResults);
+        void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto);
     }
 
     @ContentSlot
@@ -126,6 +130,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
             this.categorySchemeUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORYSCHEME_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORY_PREFIX, schemeParam, categoryIdentifier);
             retrieveCategory(urn);
+            retrieveEniSchemaCatalogs();
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -193,6 +198,16 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         });
     }
 
+    public void retrieveEniSchemaCatalogs() {
+        dispatcher.execute(new GetEniSchemaCatalogsAction(), new WaitingAsyncCallbackHandlingError<GetEniSchemaCatalogsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetEniSchemaCatalogsResult result) {
+                getView().setEniSchemaCatalogList(result.getEniSchemaCatalogs());
+            }
+        });
+    }
+    
     @Override
     public void retrieveCategoryListByScheme(String categorySchemeUrn) {
         dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
@@ -247,7 +262,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
     public void retrieveCategoriesForCategorisations(int firstResult, int maxResults, CategoryWebCriteria categoryWebCriteria) {
         throw new UnsupportedOperationException();
     }
-
+       
     //
     // NAVIGATION
     //

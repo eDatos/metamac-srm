@@ -1,0 +1,15 @@
+import "classpath:/btdesign/metamac-core-common-dtos.btdesign"
+import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-common.btdesign"
+
+Application SrmDtosMasterTableDomain {
+    basePackage=unused
+    
+    Module domain_metamac_master_dto {
+    	basePackage=org.siemac.metamac.srm.core.master.dto  		
+		
+		"Dto for eni schemas"
+        DataTransferObject EniSchemaCatalogDto extends @IdentityDto {
+            - @InternationalStringDto description required;
+        }   	
+	}
+}

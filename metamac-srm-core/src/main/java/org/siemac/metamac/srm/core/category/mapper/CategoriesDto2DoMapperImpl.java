@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacR
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDto2DMapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("categoriesDto2DoMapper")
@@ -20,6 +21,9 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
     @Autowired
     private com.arte.statistic.sdmx.srm.core.category.mapper.CategoriesDto2DoMapper dto2DoMapperSdmxSrm;
 
+    @Autowired
+    private  MasterTablesDto2DMapperImpl masterTablesDto2DoMapper;
+    
     @Autowired
     private CategorySchemeVersionMetamacRepository                                  categorySchemeVersionMetamacRepository;
 
@@ -77,8 +81,9 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
             OptimisticLockingUtils.checkVersion(target.getVersion(), source.getVersionOptimisticLocking());
         }
 
-        // Modifiable attributes: nothing
-
+         //Modifiable attributes
+         target.setEniSchema(source.getEniSchema() != null ? masterTablesDto2DoMapper.eniSchemaCatalogDtoToEntity(source.getEniSchema().getId(), null) : null);
+        
         // Sdmx
         dto2DoMapperSdmxSrm.categoryDtoToDo(source, target);
 

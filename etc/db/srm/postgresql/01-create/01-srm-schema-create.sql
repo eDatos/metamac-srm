@@ -1,4 +1,82 @@
+
+	
+											  
+		 
 -- ###########################################
+			 
+  
+  
+  
+  
+  
+
+
+							  
+	
+																 
+
+															  
+
+															  
+
+														
+
+														  
+
+					   
+	
+															   
+
+														
+
+																 
+
+													   
+
+														   
+
+																 
+
+																   
+
+												   
+
+													 
+
+															
+
+															
+
+															  
+
+																
+
+															 
+
+															 
+
+															
+
+												
+
+															
+
+													
+
+															   
+
+													 
+
+																
+
+													
+
+
+				   
+	
+
+
+											  
 -- # Create
 -- ###########################################
 -- Create pk sequence
@@ -21,10 +99,25 @@ CREATE TABLE TB_MISC_VALUES (
   LAST_UPDATED TIMESTAMP,
   LAST_UPDATED_BY VARCHAR(50),
   VERSION BIGINT NOT NULL
+  
+
+
+										 
+						 
+								  
+							  
+								 
 );
 
+CREATE TABLE TB_LIS_ENI_SCHEMA_CATALOGS (
+  ID NUMBER(19) NOT NULL,
+  UUID VARCHAR2(36 CHAR) NOT NULL,
+  VERSION NUMBER(19) NOT NULL,
+  DESCRIPTION NUMBER(19) NOT NULL
+);
 
 CREATE TABLE TB_M_CATEGORIES (
+  ENI_SCHEMA_FK NUMBER(19),						   
   TB_CATEGORIES BIGINT NOT NULL
 
 );
@@ -79,6 +172,7 @@ CREATE TABLE TB_M_VARIABLE_ELEMENTS (
   VALID_FROM TIMESTAMP,
   VALID_TO_TZ VARCHAR(50),
   VALID_TO TIMESTAMP,
+									 
   LATITUDE FLOAT8,
   LONGITUDE FLOAT8,  
   SHAPE_WKT TEXT,
@@ -462,6 +556,10 @@ ALTER TABLE TB_MISC_VALUES ADD CONSTRAINT PK_TB_MISC_VALUES
 	PRIMARY KEY (ID)
 ;
 
+ALTER TABLE TB_LIS_ENI_SCHEMA_CATALOGS ADD CONSTRAINT PK_TB_LIS_ENI_SCHEMA_CATALOGS
+	PRIMARY KEY (ID)
+;																				   
+	 
 ALTER TABLE TB_M_VARIABLES ADD CONSTRAINT PK_TB_M_VARIABLES
 	PRIMARY KEY (ID)
 ;
@@ -539,12 +637,10 @@ ALTER TABLE TB_MISC_VALUES
     ADD CONSTRAINT UQ_TB_MISC_VALUES UNIQUE (UUID)
 ;
 
-
-
-
-
-
-
+ALTER TABLE TB_LIS_ENI_SCHEMA_CATALOGS
+    ADD CONSTRAINT UQ_TB_LIS_ENI_SCHEMA_CATALOGS UNIQUE (UUID)
+;
+				  
 ALTER TABLE TB_M_VARIABLES
     ADD CONSTRAINT UQ_TB_M_VARIABLES UNIQUE (UUID)
 ;
@@ -655,13 +751,15 @@ ALTER TABLE TB_M_ORG_SCHEMES_VERSIONS ADD CONSTRAINT FK_TB_M_ORG_SCHEMES_VERSION
 	FOREIGN KEY (TB_ORG_SCHEMES_VERSIONS) REFERENCES TB_ITEM_SCHEMES_VERSIONS (ID)
 ;
 
+ALTER TABLE TB_LIS_ENI_SCHEMA_CATALOGS ADD CONSTRAINT FK_TB_LIS_ENI_SCHEMA_CATALOG08
+	FOREIGN KEY (DESCRIPTION) REFERENCES TB_INTERNATIONAL_STRINGS (ID)
+;
 
   
-  
-  
-  
-  
-  
+ALTER TABLE TB_M_CATEGORIES ADD CONSTRAINT FK_TB_M_CATEGORIES_ENI_SCHEM36
+	FOREIGN KEY (ENI_SCHEMA_FK) REFERENCES TB_LIS_ENI_SCHEMA_CATALOGS (ID)
+;
+ 																			 
 ALTER TABLE TB_M_VARIABLES ADD CONSTRAINT FK_TB_M_VARIABLES_NAMEABLE_ARTEFACT_FK
 	FOREIGN KEY (NAMEABLE_ARTEFACT_FK) REFERENCES TB_ANNOTABLE_ARTEFACTS (ID)
 ;

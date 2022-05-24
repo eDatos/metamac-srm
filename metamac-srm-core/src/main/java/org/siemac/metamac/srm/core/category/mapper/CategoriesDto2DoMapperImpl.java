@@ -12,7 +12,7 @@ import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacR
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
-import org.siemac.metamac.srm.core.master.mapper.MasterTablesDto2DMapperImpl;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDto2DoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("categoriesDto2DoMapper")
@@ -22,7 +22,7 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
     private com.arte.statistic.sdmx.srm.core.category.mapper.CategoriesDto2DoMapper dto2DoMapperSdmxSrm;
 
     @Autowired
-    private  MasterTablesDto2DMapperImpl masterTablesDto2DoMapper;
+    private  MasterTablesDto2DoMapper masterTablesDto2DoMapper;
     
     @Autowired
     private CategorySchemeVersionMetamacRepository                                  categorySchemeVersionMetamacRepository;

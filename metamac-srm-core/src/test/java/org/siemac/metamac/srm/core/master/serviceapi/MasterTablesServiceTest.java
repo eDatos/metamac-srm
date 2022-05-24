@@ -1,12 +1,13 @@
 package org.siemac.metamac.srm.core.master.serviceapi;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
@@ -26,30 +27,33 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager = "txManagerCore", defaultRollback = true)
 @Transactional
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-public class MasterTablesServiceTest extends SrmBaseTest
+public class MasterTablesServiceTest extends SrmBaseTest 
     implements MasterTablesServiceTestBase {
+
     @Autowired
-    protected MasterTablesService masterTablesService;
+    protected MasterTablesService masterTableService;
 
-    
+    @Override
     @Test
-    public void testFindAllEniSchemaCatalogs() throws Exception {
-        List<EniSchemaCatalogDto> eniSchemas = masterTablesService.findAllEniSchemaCatalogs(getServiceContextAdministrador());
-        assertTrue("Must be, at least, one value for eni_schema_catalogs", (eniSchemas != null ? eniSchemas.size() : 0L) > 0L);
-
-        
+    @Transactional
+    public void testFindAllEniSchemaCatalogs() throws MetamacException {
+        List<EniSchemaCatalogDto> eniSchemas = masterTableService.findAllEniSchemaCatalogs(getServiceContextAdministrador());
+        assertTrue(!eniSchemas.isEmpty());
     }
 
+    @Override
     @Test
+    @Transactional
     public void testFindEniSchemaCatalogById() throws Exception {
         final Long ENI_SCHEMA_CATALOG_VALUE = 2L;
-        EniSchemaCatalog eniSchema = masterTablesService.findEniSchemaCatalogById(getServiceContextAdministrador(), ENI_SCHEMA_CATALOG_VALUE);
-        assertEquals(2L, eniSchema != null ? eniSchema.getId() : 0L);
-        
+        EniSchemaCatalog eniSchema = masterTableService.findEniSchemaCatalogById(getServiceContextAdministrador(), ENI_SCHEMA_CATALOG_VALUE);
+        assertNotNull(eniSchema);
+
     }
     
     @Override
     protected String getDataSetFile() {
-        return "";
+        return "dbunit/SrmMasterTablesTest.xml";
     }
+    
 }

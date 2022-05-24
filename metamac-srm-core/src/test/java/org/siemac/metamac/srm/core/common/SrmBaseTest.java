@@ -487,6 +487,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tables.add("TB_M_DIM_VIS_INFO");
         tables.add("TB_MISC_VALUES");
         tables.add("TB_ENTITIES_TO_DELETE");
+        tables.add("TB_LIS_ENI_SCHEMA_CATALOGS");
         return tables;
     }
 

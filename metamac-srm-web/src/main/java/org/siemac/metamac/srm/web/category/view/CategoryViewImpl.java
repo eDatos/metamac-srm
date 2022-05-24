@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.category.view;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
@@ -128,7 +129,8 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
     @Override
     public void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto) {
-        this.eniSchemaCatalogDto = eniSchemaCatalogDto; 
+        this.eniSchemaCatalogDto = eniSchemaCatalogDto;
+        eniSchemaCatalog.setSortField(CategoryDS.ENI_SCHEMA);
         eniSchemaCatalog.setValueMap(MasterTablesUtils.getEniSchemaCatalogHashMap(this.eniSchemaCatalogDto));
     }
     

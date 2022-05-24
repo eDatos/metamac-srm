@@ -2,8 +2,6 @@ package org.siemac.metamac.srm.core.conf;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.constants.SrmConfigurationConstants;
-
-import com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.DatabaseProvider;
 import com.arte.statistic.sdmx.srm.core.conf.SdmxSrmConfigurationImpl;
 
 public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements SrmConfiguration {
@@ -41,36 +39,6 @@ public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements Sr
     @Override
     public String findJobDeleteDeprecatedEntitiesCronExpression() throws MetamacException {
         return findProperty(SrmConfigurationConstants.JOB_DELETE_DEPRECATED_ENTITIES_CRON_EXPRESSION);
-    }
-
-    @Override
-    public Boolean isDatabaseOracle() throws MetamacException {
-        String database = retrieveProperty(SrmConfigurationConstants.DB_DRIVER_NAME);
-        return SrmConfigurationConstants.DB_DRIVER_NAME_ORACLE.equals(database);
-    }
-
-    @Override
-    public Boolean isDatabaseSqlServer() throws MetamacException {
-        String database = retrieveProperty(SrmConfigurationConstants.DB_DRIVER_NAME);
-        return SrmConfigurationConstants.DB_DRIVER_NAME_MSSQL.equals(database);
-    }
-
-    @Override
-    public Boolean isDatabasePostgreSQL() throws MetamacException {
-        String database = retrieveProperty(SrmConfigurationConstants.DB_DRIVER_NAME);
-        return SrmConfigurationConstants.DB_DRIVER_NAME_POSTGRESQL.equals(database);
-    }
-
-    @Override
-    public DatabaseProvider getDataBaseProvider() throws MetamacException {
-        if (isDatabaseOracle()) {
-            return DatabaseProvider.ORACLE;
-        } else if (isDatabaseSqlServer()) {
-            return DatabaseProvider.MSSQL;
-        } else if (isDatabasePostgreSQL()) {
-            return DatabaseProvider.POSTGRESQL;
-        }
-        return null;
     }
 
     @Override

@@ -82,35 +82,15 @@ public class OrganisationMetamacRepositoryImpl extends OrganisationMetamacReposi
         }
 
         StringBuilder sb = new StringBuilder();
-        if (srmConfiguration.isDatabaseOracle()) {
-            sb.append("SELECT c1.ID ");
-            sb.append("FROM TB_ORGANISATIONS c1 ");
-            sb.append("WHERE c1.ITEM_SCHEME_VERSION_FK = :organisationSchemeVersion ");
-            sb.append("START WITH c1.PARENT_FK is null ");
-            sb.append("CONNECT BY PRIOR c1.ID = c1.PARENT_FK ");
-        } else if (srmConfiguration.isDatabaseSqlServer()) {
-            sb.append("WITH parents(ID) AS ");
-            sb.append("   (SELECT ID ");
-            sb.append("    FROM TB_ORGANISATIONS ");
-            sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :organisationSchemeVersion ");
-            sb.append("        UNION ALL ");
-            sb.append("    SELECT c2.ID ");
-            sb.append("    FROM TB_ORGANISATIONS as c2, parents ");
-            sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
-            sb.append("SELECT ID FROM parents ");
-        } else if (srmConfiguration.isDatabasePostgreSQL()) {
-            sb.append("WITH RECURSIVE parents(ID) AS ");
-            sb.append("   (SELECT ID ");
-            sb.append("    FROM TB_ORGANISATIONS ");
-            sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :organisationSchemeVersion ");
-            sb.append("        UNION ALL ");
-            sb.append("    SELECT c2.ID ");
-            sb.append("    FROM TB_ORGANISATIONS as c2, parents ");
-            sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
-            sb.append("SELECT ID FROM parents ");
-        } else {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UNKNOWN).withMessageParameters("Database unsupported").build();
-        }
+        sb.append("WITH RECURSIVE parents(ID) AS ");
+        sb.append("   (SELECT ID ");
+        sb.append("    FROM TB_ORGANISATIONS ");
+        sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :organisationSchemeVersion ");
+        sb.append("        UNION ALL ");
+        sb.append("    SELECT c2.ID ");
+        sb.append("    FROM TB_ORGANISATIONS as c2, parents ");
+        sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
+        sb.append("SELECT ID FROM parents ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("organisationSchemeVersion", itemSchemeVersionId);
         @SuppressWarnings("rawtypes")

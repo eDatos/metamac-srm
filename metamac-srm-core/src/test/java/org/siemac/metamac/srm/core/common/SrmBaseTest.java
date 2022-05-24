@@ -348,9 +348,6 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     // Other
     protected static final String NOT_EXISTS                                            = "not-exists";
 
-    @Value("${metamac.srm.db.provider}")
-    private String                databaseProvider;
-
     @Value("${metamac.srm.db.default_schema}")
     private String                defaultSchema;
 
@@ -517,11 +514,6 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         }
         tablePrimaryKeys.putAll(primaryKeysInLowerCase);
         return tablePrimaryKeys;
-    }
-
-    @Override
-    protected DataBaseProvider getDatabaseProvider() {
-        return DataBaseProvider.valueOf(databaseProvider);
     }
 
     @Override

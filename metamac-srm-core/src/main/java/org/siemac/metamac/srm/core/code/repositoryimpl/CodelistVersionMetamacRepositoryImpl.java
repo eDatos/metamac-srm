@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersionRepository;
-import com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.DatabaseProvider;
 
 /**
  * Repository implementation for CodelistVersionMetamac
@@ -100,15 +99,13 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
     @SuppressWarnings("rawtypes")
     public void checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException {
         
-        DatabaseProvider databaseProvider = srmConfiguration.getDataBaseProvider();
-        
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT DISTINCT(aisv.URN) ");
         sb.append("FROM TB_M_CODELISTS_VERSIONS c ");
         sb.append("INNER JOIN TB_ITEM_SCHEMES_VERSIONS isvb ON isvb.ID = c.TB_CODELISTS_VERSIONS ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aisv ON aisv.ID = isvb.MAINTAINABLE_ARTEFACT_FK ");
         sb.append("WHERE c.REPLACED_BY_CODELIST_FK = :itemSchemeVersionId ");
-        sb.append("AND aisv.PUBLIC_LOGIC != " + booleanToBooleanDatabase(databaseProvider, true));
+        sb.append("AND aisv.PUBLIC_LOGIC != " + booleanToBooleanDatabase(true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);

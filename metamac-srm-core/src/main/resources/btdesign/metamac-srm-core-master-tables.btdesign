@@ -28,6 +28,7 @@ Application MasterTablesMetamac {
     		hint="idSequence=ENI_SCHEMA_CATALOGS"
     		
     		not auditable
+    		String identifier;
       		- @InternationalString description required;
     		
     		Repository EniSchemaCatalogRepository {

@@ -9,6 +9,7 @@ Application SrmDtosMasterTableDomain {
 		
 		"Dto for eni schemas"
         DataTransferObject EniSchemaCatalogDto extends @IdentityDto {
+        	String identifier;
             - @InternationalStringDto description required;
         }   	
 	}

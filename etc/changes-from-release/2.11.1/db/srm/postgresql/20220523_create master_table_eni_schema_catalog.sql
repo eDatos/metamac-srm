@@ -1,5 +1,12 @@
+-- --------------------------------------------------------------------------------------------------
+-- EDATOS-3626 - [srm] Añadir mapeo de los temas con los propuestos por ENI-NT
+-- Se crea tabla maestra con los valores indicados en el boe para la taxonomía de sectores primarios.
+-- Se añade a la tabla existente TB_M_CATEGORIES la nueva columna ENI_SCHEMA_FK
+-- --------------------------------------------------------------------------------------------------
+
 CREATE TABLE TB_LIS_ENI_SCHEMA_CATALOGS (
   ID BIGINT NOT NULL,
+  IDENTIFIER VARCHAR(255) NOT NULL,
   UUID VARCHAR(36) NOT NULL,
   VERSION BIGINT NOT NULL,
   DESCRIPTION BIGINT NOT NULL
@@ -17,4 +24,4 @@ ALTER TABLE TB_LIS_ENI_SCHEMA_CATALOGS ADD CONSTRAINT FK_TB_LIS_ENI_SCHEMA_CATAL
 	FOREIGN KEY (DESCRIPTION) REFERENCES TB_INTERNATIONAL_STRINGS (ID)
 ;
 
-ALTER TABLE tb_m_categories add column ENI_SCHEMA_FK BIGINT;
+ALTER TABLE TB_M_CATEGORIES add column ENI_SCHEMA_FK BIGINT;

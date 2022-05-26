@@ -665,7 +665,7 @@ public class TsvImportationUtils {
         if (headerColumns == null || headerColumns.length < 4) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT, 4));
         }
-        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION,
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_ENI_SCHEME, SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION,
                 SrmConstants.TSV_HEADER_COMMENT);
         int headerExpectedIndex = 0;
         header.setColumnsSize(headerColumns.length);
@@ -681,6 +681,9 @@ public class TsvImportationUtils {
             }
             if (SrmConstants.TSV_HEADER_CODE.equals(columnName)) {
                 header.setCodePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_PARENT.equals(columnName)) {
+                header.setParentPosition(i);
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_PARENT.equals(columnName)) {
                 header.setParentPosition(i);

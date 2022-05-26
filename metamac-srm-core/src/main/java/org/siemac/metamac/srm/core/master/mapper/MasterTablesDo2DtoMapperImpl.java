@@ -24,7 +24,8 @@ public class MasterTablesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         target.setUuid(source.getUuid());
         target.setVersion(source.getVersion());
         
-       // DESCRIPTION
+        //not sdmx fields
+        target.setIdentifier(source.getIdentifier());
         target.setDescription(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getDescription()));
 
         return target;

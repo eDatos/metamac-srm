@@ -12,6 +12,7 @@ import javax.persistence.Query;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,17 +72,21 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         for (ItemResult itemResult : categories) {
             mapCategoriesByItemId.put(itemResult.getItemIdDatabase(), itemResult);
         }
-
+        
         StringBuilder sb = new StringBuilder();
-        sb.append("WITH RECURSIVE parents(ID) AS ");
-        sb.append("   (SELECT ID ");
-        sb.append("    FROM TB_CATEGORIES ");
+        sb.append("WITH RECURSIVE parents(ID, ENI_SCHEME_IDENTIFIER) AS ");
+        sb.append("   (SELECT c.ID, eni.IDENTIFIER as ENI_SCHEME_IDENTIFIER");
+        sb.append("    FROM TB_CATEGORIES AS c");
+        sb.append("    INNER JOIN TB_M_CATEGORIES AS mc ON mc.TB_CATEGORIES = c.ID ");
+        sb.append("    LEFT OUTER JOIN TB_LIS_ENI_SCHEMA_CATALOGS AS eni ON mc.ENI_SCHEMA_FK = eni.ID ");
         sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
         sb.append("        UNION ALL ");
-        sb.append("    SELECT c2.ID ");
-        sb.append("    FROM TB_CATEGORIES as c2, parents ");
-        sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
-        sb.append("SELECT ID FROM parents ");
+        sb.append("    SELECT c2.ID, eni2.IDENTIFIER as ENI_SCHEME_IDENTIFIER");
+        sb.append("    FROM TB_CATEGORIES AS c2");
+        sb.append("    INNER JOIN PARENTS AS p ON p.ID = c2.PARENT_FK ");
+        sb.append("    INNER JOIN TB_M_CATEGORIES AS mc2 ON mc2.TB_CATEGORIES = c2.ID ");
+        sb.append("    LEFT OUTER JOIN TB_LIS_ENI_SCHEMA_CATALOGS AS eni2 ON mc2.ENI_SCHEMA_FK = eni2.ID) ");
+        sb.append("SELECT ID, ENI_SCHEME_IDENTIFIER FROM parents ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("categorySchemeVersion", itemSchemeVersionId);
         @SuppressWarnings("rawtypes")
@@ -90,8 +95,12 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         // Order previous result list thanks to ordered list of items id
         List<ItemResult> ordered = new ArrayList<ItemResult>(categories.size());
         for (Object resultOrder : resultsOrder) {
-            Long categoryId = getLong(resultOrder);
+            Object[] resultOrderArray = (Object[]) resultOrder;
+            Long categoryId = getLong(resultOrderArray[0]);
             ItemResult category = mapCategoriesByItemId.get(categoryId);
+            String eniScheme = (String)resultOrderArray[1];
+            category.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
+            ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniScheme(eniScheme);
             ordered.add(category);
         }
         return ordered;
@@ -107,5 +116,4 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         categoryRepository.checkCategoryTranslations(itemSchemeVersionId, locale, exceptionItemsByUrn);
         // no metadata specific in metamac
     }
-
 }

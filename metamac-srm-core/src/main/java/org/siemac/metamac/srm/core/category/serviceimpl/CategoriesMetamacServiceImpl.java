@@ -65,6 +65,7 @@ import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublication
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
+import org.siemac.metamac.srm.core.util.UtilsMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -544,11 +545,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     categoriesPreviousInCategorySchemeByCode.put(item.getNameableArtefact().getCodeFull(), item);
                 }
 
-                List<EniSchemaCatalog> eniSchemeCatalogs = eniSchemaCatalogRepository.findAll();
-                LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = new LinkedHashMap<String, EniSchemaCatalog>();
-                for (EniSchemaCatalog eniItem : eniSchemeCatalogs) {
-                    eniSchemeMap.put(eniItem.getIdentifier(), eniItem);
-                }
+                LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
                                 
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {

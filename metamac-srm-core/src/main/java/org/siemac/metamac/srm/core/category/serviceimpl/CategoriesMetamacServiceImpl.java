@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,7 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -93,7 +95,7 @@ import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
-
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 /**
  * Implementation of CategoriesMetamacService.
  */
@@ -159,6 +161,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
     @Autowired
     private ItemSchemeRepository                      itemSchemeRepository;
+
+    @Autowired
+    private EniSchemaCatalogRepository                eniSchemaCatalogRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                           entityManager;
@@ -539,6 +544,12 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     categoriesPreviousInCategorySchemeByCode.put(item.getNameableArtefact().getCodeFull(), item);
                 }
 
+                List<EniSchemaCatalog> eniSchemeCatalogs = eniSchemaCatalogRepository.findAll();
+                LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = new LinkedHashMap<String, EniSchemaCatalog>();
+                for (EniSchemaCatalog eniItem : eniSchemeCatalogs) {
+                    eniSchemeMap.put(eniItem.getIdentifier(), eniItem);
+                }
+                                
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -552,6 +563,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     // Transform category and add to list to persist
                     CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
+                    TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                     if (category != null) {
                         categtoriesToPersist.add(category);
                         categoriesToPersistByCode.put(category.getNameableArtefact().getCodeFull(), category);

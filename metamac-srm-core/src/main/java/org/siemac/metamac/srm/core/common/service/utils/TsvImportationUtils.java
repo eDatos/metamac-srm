@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.core.common.service.utils;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +52,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
-
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 public class TsvImportationUtils {
 
     private static Logger logger = LoggerFactory.getLogger(TsvImportationUtils.class);
@@ -111,7 +112,9 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static ImportationOrganisationsTsvHeader parseTsvHeaderToImportOrganisations(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        return (ImportationOrganisationsTsvHeader) parseTsvHeaderToImportItems(line, exceptions, new ImportationOrganisationsTsvHeader());
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION,
+                SrmConstants.TSV_HEADER_COMMENT);
+        return (ImportationOrganisationsTsvHeader) parseTsvHeaderToImportItems(line, exceptions, new ImportationOrganisationsTsvHeader(), headersExpected);
     }
 
     /**
@@ -310,7 +313,9 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static ImportationCategoriesTsvHeader parseTsvHeaderToImportCategories(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        return (ImportationCategoriesTsvHeader) parseTsvHeaderToImportItems(line, exceptions, new ImportationCategoriesTsvHeader());
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_ENI_SCHEME, SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION,
+                SrmConstants.TSV_HEADER_COMMENT);
+        return (ImportationCategoriesTsvHeader) parseTsvHeaderToImportItems(line, exceptions, new ImportationCategoriesTsvHeader(), headersExpected);
     }
 
     /**
@@ -321,8 +326,19 @@ public class TsvImportationUtils {
             throws MetamacException {
         return (CategoryMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
                 TypeExternalArtefactsEnum.CATEGORY);
-    }
 
+    }
+    
+    public static void tsvLineToItemCategoryOwnFields(CategoryMetamac category,  LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap, ImportationCategoriesTsvHeader header, String[] columns) {
+
+        // eni scheme field
+        String itemIdentifierEniScheme = columns[header.getEniSchemePosition()];
+        if (!StringUtils.isBlank(itemIdentifierEniScheme)) {
+            EniSchemaCatalog eniScheme = eniSchemeMap.get(itemIdentifierEniScheme);
+            category.setEniSchema(eniScheme);
+        }
+    }
+        
     // ---------------------------------------------------------------------------------------------------------------
     // CODES
     // ---------------------------------------------------------------------------------------------------------------
@@ -660,13 +676,12 @@ public class TsvImportationUtils {
     // ITEMS
     // ---------------------------------------------------------------------------------------------------------------
 
-    private static ImportationItemsTsvHeader parseTsvHeaderToImportItems(String line, List<MetamacExceptionItem> exceptions, ImportationItemsTsvHeader header) throws MetamacException {
+    private static ImportationItemsTsvHeader parseTsvHeaderToImportItems(String line, List<MetamacExceptionItem> exceptions, ImportationItemsTsvHeader header, List<String> headersExpected) throws MetamacException {
         String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
         if (headerColumns == null || headerColumns.length < 4) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT, 4));
         }
-        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_ENI_SCHEME, SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION,
-                SrmConstants.TSV_HEADER_COMMENT);
+
         int headerExpectedIndex = 0;
         header.setColumnsSize(headerColumns.length);
         for (int i = 0; i < headerColumns.length; i++) {
@@ -685,8 +700,8 @@ public class TsvImportationUtils {
             } else if (SrmConstants.TSV_HEADER_PARENT.equals(columnName)) {
                 header.setParentPosition(i);
                 headerExpectedIndex++;
-            } else if (SrmConstants.TSV_HEADER_PARENT.equals(columnName)) {
-                header.setParentPosition(i);
+            } else if (SrmConstants.TSV_HEADER_ENI_SCHEME.equals(columnName)) {
+                ((ImportationCategoriesTsvHeader)header).setEniSchemePosition(i);
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_NAME.equals(columnName)) {
                 header.setName(columnHeaderToInternationalStringTsv(headerColumns, i, columnSplited, headerExpected, header.getName(), exceptions));

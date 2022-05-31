@@ -24,6 +24,8 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
+import org.siemac.metamac.rest.common.v1_0.domain.Item;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 
 @Component
 public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements CategoriesDo2RestMapperV10 {
@@ -116,9 +118,23 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
         target.setNestedId(source.getNameableArtefact().getCodeFull());
 
+        if (source.getEniSchema() != null) {
+            target.setEniSchemeType(toItem(source.getEniSchema()));
+        }
+        
         return target;
     }
 
+    private Item toItem(EniSchemaCatalog source) {
+        if (source == null) {
+            return null;
+        }
+        Item target = new Item();
+        target.setId(source.getIdentifier());
+        target.setName(toInternationalString(source.getDescription()));
+        return target;
+    }
+    
     @Override
     public Categorisations toCategorisations(PagedResult<Categorisation> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 

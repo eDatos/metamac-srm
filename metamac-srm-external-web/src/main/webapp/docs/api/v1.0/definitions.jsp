@@ -1225,7 +1225,14 @@
                      },
                      "description":"",
                      "type":"string"
-                  }
+                  },
+                   "eniSchemeType":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Item"
+                  },
                }
             }
          ],

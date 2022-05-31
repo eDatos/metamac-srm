@@ -13,8 +13,13 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
+import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
+import org.siemac.metamac.srm.core.master.exception.EniSchemaCatalogNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +43,9 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
 
     @Autowired
     private SrmConfiguration   srmConfiguration;
+    
+    @Autowired
+    private EniSchemaCatalogRepository eniSchemeCatalogMetamacRepository;
 
     public CategoryMetamacRepositoryImpl() {
     }
@@ -57,11 +65,52 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
     @Override
     public List<ItemResult> findCategoriesByCategorySchemeUnordered(Long categorySchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException {
         // Find items
-        List<ItemResult> items = categoryRepository.findCategoriesByCategorySchemeUnordered(categorySchemeVersionId, resultSelection);
-        // no extension point
-        return items;
+        List<ItemResult> categories = categoryRepository.findCategoriesByCategorySchemeUnordered(categorySchemeVersionId, resultSelection);
+
+        // eniScheme extension point
+        executeQueryCategoryEniSchemeAndUpdateCodeMetamacResult(categorySchemeVersionId, categories);
+
+        return categories;
     }
 
+    private void executeQueryCategoryEniSchemeAndUpdateCodeMetamacResult(Long categorySchemeVersionId, List<ItemResult> categories) throws MetamacException {
+        Map<Long, ItemResult> mapCategoriesByItemId = new HashMap<Long, ItemResult>(categories.size());
+
+        for (ItemResult itemResult : categories) {
+            itemResult.setExtensionPoint(new CodeMetamacResultExtensionPoint());
+            mapCategoriesByItemId.put(itemResult.getItemIdDatabase(), itemResult);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("   SELECT c.ID, eni.ID as ID_ENI_SCHEME");
+        sb.append("    FROM TB_CATEGORIES AS c");
+        sb.append("    INNER JOIN TB_M_CATEGORIES AS mc ON mc.TB_CATEGORIES = c.ID ");
+        sb.append("    LEFT OUTER JOIN TB_LIS_ENI_SCHEMA_CATALOGS AS eni ON mc.ENI_SCHEMA_FK = eni.ID ");
+        sb.append("    WHERE ITEM_SCHEME_VERSION_FK = :categorySchemeVersion and mc.ENI_SCHEMA_FK is not null ");
+
+        Query query = getEntityManager().createNativeQuery(sb.toString());
+        query.setParameter("categorySchemeVersion", categorySchemeVersionId);
+        List eniSchemeResultsSql = query.getResultList();
+        for (Object eniSchemeResultSql : eniSchemeResultsSql) {
+            Long eniSchemeId = 0L;
+            try {
+                Object[] eniSchemeResultSqlArray = (Object[]) eniSchemeResultSql;
+                Long categoryId = getLong(eniSchemeResultSqlArray[0]);
+                ItemResult category = mapCategoriesByItemId.get(categoryId);
+                eniSchemeId = getLong(eniSchemeResultSqlArray[1]);
+                EniSchemaCatalog eniSchemeCatalog = null;
+                if (eniSchemeId != null && eniSchemeId > 0) {
+                    eniSchemeCatalog = eniSchemeCatalogMetamacRepository.findById(eniSchemeId);
+                }
+                category.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
+                ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeCatalog(eniSchemeCatalog);
+            } catch (EniSchemaCatalogNotFoundException e) {
+                throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOGNOT_FOUND, eniSchemeId);
+            }
+        }
+
+    }
+    
     @Override
     public List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException {
         // Find categories

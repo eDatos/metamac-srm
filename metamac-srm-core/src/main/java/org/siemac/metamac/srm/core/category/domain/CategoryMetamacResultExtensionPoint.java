@@ -4,15 +4,15 @@ import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 
 public class CategoryMetamacResultExtensionPoint {
 
-    private String eniScheme;
+    private String eniSchemeIdentifier;
     private EniSchemaCatalog eniSchemeCatalog;
     
-    public String getEniScheme() {
-        return eniScheme;
+    public String getEniSchemeIdentifier() {
+        return eniSchemeIdentifier;
     }
 
-    public void setEniScheme(String eniScheme) {
-        this.eniScheme = eniScheme;
+    public void setEniSchemeIdentifier(String eniSchemeIdentifier) {
+        this.eniSchemeIdentifier = eniSchemeIdentifier;
     }
 
     public EniSchemaCatalog getEniSchemeCatalog() {

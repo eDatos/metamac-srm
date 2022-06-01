@@ -98,12 +98,13 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
                 Long categoryId = getLong(eniSchemeResultSqlArray[0]);
                 ItemResult category = mapCategoriesByItemId.get(categoryId);
                 eniSchemeId = getLong(eniSchemeResultSqlArray[1]);
+                
                 EniSchemaCatalog eniSchemeCatalog = null;
-                if (eniSchemeId != null && eniSchemeId > 0) {
-                    eniSchemeCatalog = eniSchemeCatalogMetamacRepository.findById(eniSchemeId);
-                }
+                eniSchemeCatalog = eniSchemeCatalogMetamacRepository.findById(eniSchemeId);
                 category.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
                 ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeCatalog(eniSchemeCatalog);
+                ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeIdentifier(eniSchemeCatalog.getIdentifier());
+                
             } catch (EniSchemaCatalogNotFoundException e) {
                 throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOGNOT_FOUND, eniSchemeId);
             }
@@ -149,7 +150,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
             ItemResult category = mapCategoriesByItemId.get(categoryId);
             String eniScheme = (String)resultOrderArray[1];
             category.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
-            ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniScheme(eniScheme);
+            ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeIdentifier(eniScheme);
             ordered.add(category);
         }
         return ordered;

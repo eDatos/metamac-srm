@@ -623,7 +623,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             itemResultSelection = ItemResultSelection.RETRIEVE; // default
         }
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
-        return categoryRepository.findCategoriesByCategorySchemeUnordered(categorySchemeVersion.getId(), itemResultSelection);
+        return getCategoryMetamacRepository().findCategoriesByCategorySchemeUnordered(categorySchemeVersion.getId(), (ItemMetamacResultSelection)itemResultSelection);
     }
 
     @Override

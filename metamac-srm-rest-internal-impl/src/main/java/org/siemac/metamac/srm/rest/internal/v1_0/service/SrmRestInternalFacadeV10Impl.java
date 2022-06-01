@@ -347,15 +347,20 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     }
 
     @Override
-    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            
+            Set<String> validFields = new HashSet<>();
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
+            
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
                 SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
                 PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return categoriesDo2RestMapper.toCategories(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return categoriesDo2RestMapper.toCategories(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all categories of categoryScheme, without pagination
                 CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
@@ -363,7 +368,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
                         ItemMetamacResultSelection.API);
 
                 // Transform
-                return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion);
+                return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -1441,7 +1446,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
     private PagedResult<CategoryMetamac> findCategoriesCore(String agencyID, String resourceID, String version, String categoryID, List<ConditionalCriteria> conditionalCriteriaQuery,
             PagingParameter pagingParameter) throws MetamacException {
-
+       
         // Criteria to find items by criteria
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItems(agencyID, resourceID, version, categoryID,
                 CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact(), CategoryMetamacProperties.nameableArtefact(), conditionalCriteriaQuery, CategoryMetamac.class);

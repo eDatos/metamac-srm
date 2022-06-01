@@ -13,7 +13,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
-import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
@@ -77,7 +76,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         Map<Long, ItemResult> mapCategoriesByItemId = new HashMap<Long, ItemResult>(categories.size());
 
         for (ItemResult itemResult : categories) {
-            itemResult.setExtensionPoint(new CodeMetamacResultExtensionPoint());
+            itemResult.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
             mapCategoriesByItemId.put(itemResult.getItemIdDatabase(), itemResult);
         }
 

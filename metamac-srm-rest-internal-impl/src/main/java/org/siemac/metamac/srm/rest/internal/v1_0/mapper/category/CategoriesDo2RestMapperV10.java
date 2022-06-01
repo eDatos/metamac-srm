@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.mapper.category;
 
 import java.util.List;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -18,8 +19,8 @@ public interface CategoriesDo2RestMapperV10 {
             String query, String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source);
 
-    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit);
-    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion);
+    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
+    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields);
     public Category toCategory(CategoryMetamac source);
 
     public org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categorisations toCategorisations(PagedResult<Categorisation> sources, String agencyID, String resourceID, String query,

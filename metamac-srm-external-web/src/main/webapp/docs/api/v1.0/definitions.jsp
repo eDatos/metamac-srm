@@ -1124,7 +1124,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/ItemResource"
+                     "$ref":"#/definitions/CategoryResource"
                   }
                }
             }
@@ -1366,6 +1366,30 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/Resource"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
+        "CategoryResource":{
+         "type":"object",
+         "title":"CategoryResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "$ref":"#/definitions/ItemResource"
+            },
+            {
+               "properties":{
+                  "eniSchemeType":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Item"
                   }
                }
             }

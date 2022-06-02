@@ -634,6 +634,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryQueryParam"},
                 {"$ref":"#/components/parameters/categoryOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li></ul> Ejemplo: fields=\"+eniSchemeType\""
+               }
             ],
             "responses":{
                "200":{

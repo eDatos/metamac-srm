@@ -10,6 +10,8 @@ import static org.siemac.metamac.srm.rest.internal.v1_0.category.utils.Categorie
 import static org.siemac.metamac.srm.rest.internal.v1_0.category.utils.CategoriesDoMocks.mockCategoryItemResult;
 import static org.siemac.metamac.srm.rest.internal.v1_0.category.utils.CategoriesDoMocks.mockCategoryScheme;
 import static org.siemac.metamac.srm.rest.internal.v1_0.category.utils.CategoriesDoMocks.mockCategorySchemeWithCategories;
+import static org.siemac.metamac.srm.rest.internal.v1_0.category.utils.CategoriesDoMocks.mockCategoryWithEniScheme;
+import static org.siemac.metamac.srm.rest.internal.v1_0.category.utils.CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields;
 import static org.siemac.metamac.srm.rest.internal.v1_0.utils.Asserts.assertEqualsInternationalString;
 import static org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants.AGENCY_1;
 import static org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants.AGENCY_2;
@@ -26,7 +28,10 @@ import static org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants.
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
@@ -40,7 +45,9 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ProcStatus;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.category.CategoriesDo2RestMapperV10;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,6 +173,7 @@ public class CategoriesDo2RestMapperTest {
         String orderBy = ORDER_BY_ID_DESC;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
+        Set<String> fields = null;
 
         CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
         List<CategoryMetamac> source = new ArrayList<CategoryMetamac>();
@@ -182,7 +190,7 @@ public class CategoriesDo2RestMapperTest {
         PagedResult<CategoryMetamac> sources = new PagedResult<CategoryMetamac>(source, offset, source.size(), limit, totalRows, 0);
 
         // Transform
-        Categories target = do2RestInternalMapper.toCategories(sources, agencyID, categorySchemeID, version, query, orderBy, limit);
+        Categories target = do2RestInternalMapper.toCategories(sources, agencyID, categorySchemeID, version, query, orderBy, limit, fields);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());
@@ -204,6 +212,54 @@ public class CategoriesDo2RestMapperTest {
             assertEqualsResource(source.get(i).getItemSchemeVersion(), source.get(i), null, target.getCategories().get(i));
         }
     }
+    
+    @Test
+    public void testToCategoriesWithFields() {
+
+        String agencyID = WILDCARD_ALL;
+        String categorySchemeID = WILDCARD_ALL;
+        String version = WILDCARD_ALL;
+        Integer limit = Integer.valueOf(4);
+        Integer offset = Integer.valueOf(4);
+        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemeType"));
+                
+        CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
+        List<CategoryMetamac> source = new ArrayList<CategoryMetamac>();
+        CategoryMetamac category1 = mockCategoryWithEniScheme("category1", categoryScheme1, null);
+        source.add(category1);
+        CategoryMetamac category2 = mockCategoryWithEniScheme("category2", categoryScheme1, null);
+        source.add(category2);
+        CategoryMetamac category2A = mockCategoryWithEniScheme("category2A", categoryScheme1, category2);
+        source.add(category2A);
+        CategoryMetamac category2B = mockCategoryWithEniScheme("category2B", categoryScheme1, category2);
+        source.add(category2B);
+
+        Integer totalRows = source.size() * 5;
+        PagedResult<CategoryMetamac> sources = new PagedResult<CategoryMetamac>(source, offset, source.size(), limit, totalRows, 0);
+
+        // Transform
+        Categories target = do2RestInternalMapper.toCategories(sources, agencyID, categorySchemeID, version, null, null, limit, fields);
+
+        // Validate
+        assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());
+
+        String baseLink = "http://data.istac.es/apis/structural-resources-internal/v1.0/categoryschemes" + "/" + agencyID + "/" + categorySchemeID + "/" + version + "/categories?";
+        assertEquals(baseLink + "limit=" + limit + "&offset=" + offset, target.getSelfLink());
+        assertEquals(baseLink + "limit=" + limit + "&offset=0", target.getFirstLink());
+        assertEquals(baseLink + "limit=" + limit + "&offset=0", target.getPreviousLink());
+        assertEquals(baseLink + "limit=" + limit + "&offset=8", target.getNextLink());
+        assertEquals(baseLink + "limit=" + limit + "&offset=16", target.getLastLink());
+
+        assertEquals(limit.intValue(), target.getLimit().intValue());
+        assertEquals(offset.intValue(), target.getOffset().intValue());
+        assertEquals(totalRows.intValue(), target.getTotal().intValue());
+
+        assertEquals(source.size(), target.getCategories().size());
+        for (int i = 0; i < source.size(); i++) {
+            assertEquals(source.get(i).getEniSchema().getIdentifier(), target.getCategories().get(i).getEniSchemeType().getId());
+        }
+    }
+  
 
     @Test
     public void testToCategoriesItemResult() {
@@ -217,9 +273,11 @@ public class CategoriesDo2RestMapperTest {
         sources.add(mockCategoryItemResult(ITEM_1_CODE, null));
         sources.add(mockCategoryItemResult(ITEM_2_CODE, null));
         sources.add(mockCategoryItemResult(ITEM_3_CODE, null));
-
+        Set<String> fields = null;
+        
+        
         // Transform
-        Categories target = do2RestInternalMapper.toCategories(sources, categoryScheme1);
+        Categories target = do2RestInternalMapper.toCategories(sources, categoryScheme1, fields);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());
@@ -240,6 +298,44 @@ public class CategoriesDo2RestMapperTest {
         }
     }
 
+    @Test
+    public void testToCategoriesItemResultWithFields() {
+
+        String agencyID = AGENCY_1;
+        String categorySchemeID = ITEM_SCHEME_1_CODE;
+        String version = VERSION_1;
+        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemeType"));
+        
+        CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(agencyID, categorySchemeID, version);
+        List<ItemResult> sources = new ArrayList<ItemResult>();
+        sources.add(mockCategoryResultFixedValuesWithExtraFields(ITEM_1_CODE, null));
+        sources.add(mockCategoryResultFixedValuesWithExtraFields(ITEM_2_CODE, null));
+        sources.add(mockCategoryResultFixedValuesWithExtraFields(ITEM_3_CODE, null));
+
+        // Transform
+        Categories target = do2RestInternalMapper.toCategories(sources, categoryScheme1, fields);
+
+        // Validate
+        assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());
+
+        assertEquals("http://data.istac.es/apis/structural-resources-internal/v1.0/categoryschemes" + "/" + agencyID + "/" + categorySchemeID + "/" + version + "/categories", target.getSelfLink());
+        assertEquals(null, target.getFirstLink());
+        assertEquals(null, target.getPreviousLink());
+        assertEquals(null, target.getNextLink());
+        assertEquals(null, target.getLastLink());
+
+        assertEquals(null, target.getLimit());
+        assertEquals(null, target.getOffset());
+        assertEquals(sources.size(), target.getTotal().intValue());
+
+        assertEquals(sources.size(), target.getCategories().size());
+        for (int i = 0; i < sources.size(); i++) {
+            EniSchemaCatalog eniSchemeType = ((CategoryMetamacResultExtensionPoint) sources.get(i).getExtensionPoint()).getEniSchemeCatalog();
+            assertEquals(eniSchemeType.getIdentifier(), target.getCategories().get(i).getEniSchemeType().getId());
+        }
+    }
+
+    
     @Test
     public void testToCategory() {
         CategorySchemeVersionMetamac categoryScheme = mockCategoryScheme("agencyID1", "resourceID1", "01.123");
@@ -296,7 +392,7 @@ public class CategoriesDo2RestMapperTest {
         String orderBy = ORDER_BY_ID_DESC;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
-
+        
         List<com.arte.statistic.sdmx.srm.core.category.domain.Categorisation> source = new ArrayList<com.arte.statistic.sdmx.srm.core.category.domain.Categorisation>();
         source.add(mockCategorisation(AGENCY_1, "categorisation1", "01.000"));
         source.add(mockCategorisation(AGENCY_1, "categorisation2", "01.000"));

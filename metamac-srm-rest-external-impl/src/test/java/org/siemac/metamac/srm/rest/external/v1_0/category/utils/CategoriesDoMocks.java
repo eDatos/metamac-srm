@@ -24,6 +24,12 @@ public class CategoriesDoMocks {
         return target;
     }
 
+    public static CategoryMetamac mockCategoryWithEniScheme(String resourceID, CategorySchemeVersionMetamac categoryScheme, CategoryMetamac parent) {
+        CategoryMetamac target = mockCategory(resourceID, categoryScheme, parent);
+        target.setEniSchema(CategoriesMetamacDoMocks.mockEniSchemeFixedValues(resourceID));
+        return target;
+    }
+    
     public static CategorySchemeVersionMetamac mockCategorySchemeWithCategories(String agencyID, String resourceID, String version) {
 
         CategorySchemeVersionMetamac categorySchemeVersion = mockCategoryScheme(agencyID, resourceID, version);
@@ -52,9 +58,20 @@ public class CategoriesDoMocks {
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000)."));
         itemResult.setUrnProvider(itemResult.getUrn());
+        
+        itemResult.setExtensionPoint(CategoriesMetamacDoMocks.mockCategoryMetamacResultFixedValues());
+        
         return itemResult;
     }
 
+    public static ItemResult mockCategoryResultFixedValuesWithExtraFields(String resourceID, ItemResult parent) {
+        ItemResult itemResult = CategoriesMetamacDoMocks.mockCategoryResultFixedValuesWithExtraFields(resourceID, parent);
+        itemResult.setUriProvider(null);
+        itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000)."));
+        itemResult.setUrnProvider(itemResult.getUrn());
+        return itemResult;
+    }
+    
     public static Categorisation mockCategorisation(String agencyID, String resourceID, String version) {
         Categorisation target = new Categorisation();
         target.setMaintainableArtefact(new MaintainableArtefact());

@@ -51,24 +51,7 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         target.setEniSchemeIdentifier(target.getEniSchemeCatalog().getIdentifier());
         return target;
     }
-    
-    public static InternationalString mockInternationalString(String base) {
-        InternationalString internationalString = new InternationalString();
-        LocalisedString es = new LocalisedString();
-        es.setLabel(base + "-" + mockString(10) + " en Español");
-        es.setLocale("es");
-        LocalisedString en = new LocalisedString();
-        en.setLabel(base + "-" + mockString(10) + " in English");
-        en.setLocale("en");
-        LocalisedString ca = new LocalisedString();
-        en.setLabel(base + "-" + mockString(10) + " en catalá");
-        en.setLocale("ca");
-        internationalString.addText(es);
-        internationalString.addText(en);
-        internationalString.addText(ca);
-        return internationalString;
-    }
-    
+
     public static EniSchemaCatalog mockEniSchemeFixedValues(String baseEniSchemeType) {
         EniSchemaCatalog eniSchemeType = new EniSchemaCatalog(mockInternationalString("desc-" + baseEniSchemeType));
         eniSchemeType.setIdentifier(BASE_ENI_SCHEME_IDENTIFIER + baseEniSchemeType);

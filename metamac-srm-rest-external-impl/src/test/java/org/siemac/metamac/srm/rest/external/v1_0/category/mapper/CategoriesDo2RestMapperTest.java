@@ -246,7 +246,7 @@ public class CategoriesDo2RestMapperTest {
 
         assertEquals(source.size(), target.getCategories().size());
         for (int i = 0; i < source.size(); i++) {
-            assertEquals(BASE_ENI_SCHEME_IDENTIFIER + source.get(i).getNameableArtefact().getCodeFull(), target.getCategories().get(i).getEniSchemeType().getId());
+            assertEquals(source.get(i).getEniSchema().getIdentifier(), target.getCategories().get(i).getEniSchemeType().getId());
         }
     }
     

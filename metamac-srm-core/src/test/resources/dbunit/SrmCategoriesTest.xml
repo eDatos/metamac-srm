@@ -3588,21 +3588,8 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="59"
     />          
-    
-    <TB_INTERNATIONAL_STRINGS
-        ID="59"
-        VERSION="1"
-    />
-    
-    <TB_LOCALISED_STRINGS
-        ID="591"
-        LABEL="Nombre categorisation3"
-        LOCALE="es"
-        VERSION="1"
-        INTERNATIONAL_STRING_FK="59"
-    />          
-    
-    <!--FOR ENI SCHEME !-->
+ 
+    <!--FOR ENI SCHEME -->
     <TB_INTERNATIONAL_STRINGS
         ID="100"
         VERSION="1"
@@ -3615,15 +3602,7 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="100"
     />          
-      
-    <TB_LOCALISED_STRINGS
-        ID="593"
-        LABEL="SRM-DESC-ENGHLISH-1-ENI-SCHEME"
-        LOCALE="en"
-        VERSION="1"
-        INTERNATIONAL_STRING_FK="100"
-    />                              
-    
+                                   
     <TB_INTERNATIONAL_STRINGS
         ID="101"
         VERSION="1"
@@ -3636,15 +3615,7 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="101"
     />          
-      
-    <TB_LOCALISED_STRINGS
-        ID="595"
-        LABEL="SRM-DESC-ENGHLISH-2-ENI-SCHEME"
-        LOCALE="en"
-        VERSION="1"
-        INTERNATIONAL_STRING_FK="101"
-    />     
-    
+        
     <TB_INTERNATIONAL_STRINGS
         ID="102"
         VERSION="1"
@@ -3657,13 +3628,5 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="102"
     />          
-      
-    <TB_LOCALISED_STRINGS
-        ID="597"
-        LABEL="SRM-DESC-ENGHLISH-3-ENI-SCHEME"
-        LOCALE="en"
-        VERSION="1"
-        INTERNATIONAL_STRING_FK="102"
-    />                 
-                              
+                                           
 </dataset>

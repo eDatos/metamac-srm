@@ -53,7 +53,7 @@ public class MasterTablesServiceTest extends SrmBaseTest
     
     @Override
     protected String getDataSetFile() {
-        return "dbunit/SrmMasterTablesTest.xml";
+        return "dbunit/SrmCategoriesTest.xml";
     }
     
 }

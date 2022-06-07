@@ -19,6 +19,7 @@ import org.siemac.metamac.rest.notices.v1_0.domain.Message;
 import org.siemac.metamac.rest.notices.v1_0.domain.Notice;
 import org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacApplicationsEnum;
+import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.MessageBuilder;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.NoticeBuilder;
 import org.siemac.metamac.srm.core.invocation.MetamacApisLocator;
@@ -66,33 +67,45 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
     @Override
     public void createInternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
             throws MetamacWebException {
-        createNotification(serviceContext, ServiceNoticeAction.RESOURCE_INTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_INTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType);
+        
+        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
+        
+        createNotification(serviceContext, ServiceNoticeAction.RESOURCE_INTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_INTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType, roles);
     }
-
+    
     @Override
     public void createExternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
             throws MetamacWebException {
-        createNotification(serviceContext, ServiceNoticeAction.RESOURCE_EXTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_EXTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType);
+        
+        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
+                
+        createNotification(serviceContext, ServiceNoticeAction.RESOURCE_EXTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_EXTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType, roles);
     }
 
     @Override
     public void createStreamMessageErrorNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException {
-        createNotification(serviceContext, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR, maintainableArtefactDto, resourceType);
+        createNotification(serviceContext, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR, maintainableArtefactDto, resourceType, null);
     }
 
-    private void createNotification(ServiceContext ctx, String actionCode, String messageCode, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
-            throws MetamacWebException {
+    private void createNotification(ServiceContext ctx, String actionCode, String messageCode, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType,
+            MetamacRolesEnum[] roles) throws MetamacWebException {
 
         ResourceInternal resource = this.maintainableResourceToResourceInternal(ctx, maintainableArtefactDto, resourceType);
         ResourceInternal[] resources = {resource};
-
+        MetamacApplicationsEnum[] applications = {MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES};
+        
         String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES.getName();
         String subject = buildSubject(ctx, actionCode, resourceType);
         String messageText = buildMessage(ctx, messageCode, maintainableArtefactDto, resourceType);
 
         Message message = MessageBuilder.message().withText(messageText).withResources(resources).build();
 
-        Notice notification = NoticeBuilder.notification().withMessages(message).withSendingApplication(sendingApp).withSendingUser(ctx.getUserId()).withSubject(subject).build();
+        Notice notification = null;
+        if (roles != null) {
+            notification = NoticeBuilder.notification().withMessages(message).withSendingApplication(sendingApp).withSendingUser(ctx.getUserId()).withSubject(subject).withApplications(applications).withRoles(roles).build();
+        } else {
+            notification = NoticeBuilder.notification().withMessages(message).withSendingApplication(sendingApp).withSendingUser(ctx.getUserId()).withSubject(subject).withApplications(applications).build();
+        }
 
         try {
             Response response = metamacApisLocator.getNoticesRestInternalFacadeV10().createNotice(notification);

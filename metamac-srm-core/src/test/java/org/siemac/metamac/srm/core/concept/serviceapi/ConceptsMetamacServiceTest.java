@@ -4215,7 +4215,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     @Test
     public void testImportConceptsTsvCodelistNotFound() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
-        String fileName = "importation-concept-01-error_01.tsv";
+        String fileName = "importation-concept-01-error_02.tsv";
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 

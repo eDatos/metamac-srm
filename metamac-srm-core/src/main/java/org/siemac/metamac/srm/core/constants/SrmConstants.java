@@ -20,7 +20,11 @@ public class SrmConstants {
     public static final String             CODELIST_OPENNESS_VISUALISATION_ALL_EXPANDED_CODE                      = "ALL_EXPANDED";
     public static final Integer            CODELIST_OPENNESS_VISUALISATION_ALL_EXPANDED_COLUMN_INDEX              = Integer.valueOf(1);
     public static final Boolean            CODELIST_OPENNESS_VISUALISATION_DEFAULT_VALUE                          = Boolean.TRUE;
-
+    public static final int                CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_NUMBER                         = 20;
+    public static final String             CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_CODE                      = "ALL_EXPANDED";
+    public static final Integer            CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_COLUMN_INDEX              = Integer.valueOf(1);
+    public static final Boolean            CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE                          = Boolean.TRUE;
+    
     // Importation and exportation
     public static final String             TSV_SEPARATOR                                                          = "\t";
     public static final String             TSV_LINE_SEPARATOR                                                     = "\n";

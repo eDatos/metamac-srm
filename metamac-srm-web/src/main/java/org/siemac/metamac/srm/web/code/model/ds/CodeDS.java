@@ -19,4 +19,7 @@ public class CodeDS extends ItemDS {
     public static final String OPENNESS_LEVEL_ICON          = "code-openness-level-icon"; // Stores the URL of the node icon
     public static final String OPENNESS_LEVEL_INITIAL       = "code-openness-level-ini"; // Stores the value of the openness level. It is not modified when the user modifies the openness Level of a
                                                                                           // node.
+    public static final String RESTRICTION               = "code-restriction";
+    public static final String RESTRICTION_CHECK         = "code-restriction-check";
+    public static final String RESTRICTION_ICON          = "code-restriction-icon"; // Stores the URL of the node icon
 }

@@ -186,6 +186,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         void setCodesWithOpennessLevel(List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistOpennessVisualisationDto);
         void setCodelistOpennessLevels(List<CodelistVisualisationDto> opennessLevels);
 
+        // Restrictions
+        void setCodesWithRestrictions(List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistRestrictionVisualisationDto);
+        void setCodelistRestrictions(List<CodelistVisualisationDto> restrictions);
+        
         // Complex codelists
         void setCodelistsToCreateComplexCodelist(GetCodelistsResult result);
         void setCodesToCreateComplexCodelist(CodelistMetamacDto codelistDto, List<CodeMetamacVisualisationResult> codes);
@@ -290,6 +294,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 retrieveCodelistVersions(result.getCodelistMetamacDto().getUrn());
                 retrieveCodelistOrders(result.getCodelistMetamacDto().getUrn());
                 retrieveCodelistOpennessLevels(result.getCodelistMetamacDto().getUrn());
+                retrieveCodelistRestrictions(result.getCodelistMetamacDto().getUrn());
             }
         });
     }
@@ -331,6 +336,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
                 retrieveCodelistOpennessLevels(codelistMetamacDto.getUrn());
                 retrieveCodelistOrders(codelistMetamacDto.getUrn());
+                // TODO falta para restriction
 
                 updateUrl();
                 retrieveCodelistVersions(result.getSavedCodelistDto().getUrn());
@@ -824,6 +830,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 });
     }
 
+    
     @Override
     public void retrieveCodelistOpennessLevels(String codelistUrn) {
         dispatcher.execute(new GetCodelistOpennessLevelsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<GetCodelistOpennessLevelsResult>(this) {
@@ -856,7 +863,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             }
         });
     }
-
+    
     @Override
     public void deleteCodelistOpennessLevel(List<String> levelsUrns) {
         dispatcher.execute(new DeleteCodelistOpennessLevelsAction(levelsUrns), new WaitingAsyncCallbackHandlingError<DeleteCodelistOpennessLevelsResult>(this) {
@@ -888,6 +895,95 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
+    
+   //
+   // CODES RESTRICTIONS
+   //
+    
+    @Override
+    public void retrieveCodesWithRestrictions(String opennessLevelUrn) {
+        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, opennessLevelUrn, ApplicationEditionLanguages.getCurrentLocale()),
+                new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetCodesByCodelistResult result) {
+                        getView().setCodesWithRestrictions(result.getCodes(), result.getCodelistOpennessVisualisationDto());
+                    }
+                });
+    }
+    
+    // TODO FALTA obtener back de las restricciones
+    @Override
+    public void retrieveCodelistRestrictions(String codelistUrn) {
+        dispatcher.execute(new GetCodelistOpennessLevelsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<GetCodelistOpennessLevelsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(GetCodelistOpennessLevelsResult result) {
+                getView().setCodelistRestrictions(result.getCodelistOpennessVisualisationDtos());
+            }
+        });
+    }
+    
+    // TODO FALTA save
+    @Override
+    public void saveCodelistRestrictions(CodelistVisualisationDto codelistOpennessVisualisationDto) {
+        dispatcher.execute(new SaveCodelistOpennessLevelAction(codelistMetamacDto.getUrn(), codelistOpennessVisualisationDto), new WaitingAsyncCallbackHandlingError<SaveCodelistOpennessLevelResult>(
+                this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(SaveCodelistOpennessLevelResult result) {
+                //TODO cambiar
+                fireSuccessMessage(getMessages().codelistOpennessLevelSaved());
+                retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
+                retrieveCodesWithRestrictions(result.getCodelistOpennessVisualisationSaved().getUrn());
+            }
+        });
+    }
+
+    @Override
+    public void deleteCodelistRestrictions(List<String> levelsUrns) {
+        dispatcher.execute(new DeleteCodelistOpennessLevelsAction(levelsUrns), new WaitingAsyncCallbackHandlingError<DeleteCodelistOpennessLevelsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(DeleteCodelistOpennessLevelsResult result) {
+                fireSuccessMessage(getMessages().codelistOpennessLevelDeleted());
+                retrieveCodelistOpennessLevels(codelistMetamacDto.getUrn());
+            }
+        });
+    }
+
+    @Override
+    public void updateCodesRestrictions(String opennessLevelUrn, Map<String, Boolean> opennessLevels) {
+        dispatcher.execute(new UpdateCodesInOpennessVisualisationAction(opennessLevelUrn, opennessLevels), new WaitingAsyncCallbackHandlingError<UpdateCodesInOpennessVisualisationResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(UpdateCodesInOpennessVisualisationResult result) {
+                retrieveCodesWithRestrictions(result.getCodelistVisualisationDto().getUrn());
+            }
+        });
+    }
+
+   
     //
     // COMPLEX CODELISTS
     //
@@ -1220,6 +1316,22 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
+    //TODO falta implementar    
+    @Override
+    public void exportCodesRestrictions(String codelistUrn) {
+        dispatcher.execute(new ExportCodesOrderAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesOrderResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportCodesOrderResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+    }
+    
     //
     // NAVIGATION
     //

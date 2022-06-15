@@ -21,5 +21,6 @@ public class CodeDS extends ItemDS {
                                                                                           // node.
     public static final String RESTRICTION               = "code-restriction";
     public static final String RESTRICTION_CHECK         = "code-restriction-check";
+    public static final String RESTRICTION_CHECK_INITIAL = "code-restriction-check-ini";
     public static final String RESTRICTION_ICON          = "code-restriction-icon"; // Stores the URL of the node icon
 }

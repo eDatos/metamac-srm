@@ -44,7 +44,8 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         
         TreeGridField restrictionField = new TreeGridField(CodeDS.RESTRICTION_CHECK, getConstants().codelistRestriction());
         restrictionField.setType(ListGridFieldType.BOOLEAN);
-        restrictionField.setCanEdit(true);
+        restrictionField.setCanEdit(false);
+        restrictionField.setCanToggle(false);
         restrictionField.setCanFilter(false);
         restrictionField.setShowHover(false);
         
@@ -66,6 +67,14 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         setItems(codelistMetamacDto, codes);
     }
 
+    public void setEditCheckCodes(boolean isEditable) {
+        ListGridField[] fields = this.getAllFields();
+        if (fields != null && fields[0] != null) {
+            fields[0].setCanEdit(isEditable);
+            fields[0].setCanToggle(isEditable);
+        }
+    }
+    
     @Override
     public void addTreeNodesToTreeGrid(TreeNode[] treeNodes) {
         // The root node (codelist) should be always open

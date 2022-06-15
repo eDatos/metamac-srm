@@ -48,15 +48,15 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
 
             @Override
             public void onClick(ClickEvent event) {
-                CodelistVisualisationDto selectedOpennessLevel = getSelectedCodelistVisualisation();
+                CodelistVisualisationDto selectedRestrictions = getSelectedCodelistVisualisation();
                 final EditCodelistRestrictionVisualisationWindow editCodelistRestrictionWindow = new EditCodelistRestrictionVisualisationWindow(getConstants().codelistRestrictionEdit());
-                editCodelistRestrictionWindow.setCodelistVisualisation(selectedOpennessLevel);
+                editCodelistRestrictionWindow.setCodelistVisualisation(selectedRestrictions);
                 editCodelistRestrictionWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
                     @Override
                     public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                         if (editCodelistRestrictionWindow.validateForm()) {
-                            uiHandlers.saveCodelistOpennessLevel(editCodelistRestrictionWindow.getCodelistVisualisationDto());
+                            uiHandlers.saveCodelistRestrictions(editCodelistRestrictionWindow.getCodelistVisualisationDto());
                             editCodelistRestrictionWindow.destroy();
                         }
                     }
@@ -95,7 +95,7 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
             public void onRecordClick(RecordClickEvent event) {
                 if (event.getFieldNum() != 0) { // Clicking checkBox will be ignored
                     String opennessLevelUrn = ((CodelistVisualisationRecord) event.getRecord()).getAttribute(CodelistVisualisationDS.URN);
-                    uiHandlers.retrieveCodesWithOpennessLevel(opennessLevelUrn);
+                    uiHandlers.retrieveCodesWithRestrictions(opennessLevelUrn);
                 }
             }
         });

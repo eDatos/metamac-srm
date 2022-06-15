@@ -6,6 +6,8 @@ import static org.siemac.metamac.web.common.client.resources.GlobalResources.RES
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
@@ -26,7 +28,8 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class CodelistRestrictionTreePanel extends VLayout {
-
+    protected static Logger logger = java.util.logging.Logger.getLogger("CodelistRestrictionTreePanel.class");
+    
     private CodelistMetamacDto                      codelistMetamacDto;
     private List<CodeMetamacVisualisationResult>    codes;
     private CodelistVisualisationDto                codelistVisualisationDto;
@@ -39,6 +42,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
     private CodesRestrictionVisualisationTreeGrid codesRestrictionVisualisationTreeGrid;
 
     public CodelistRestrictionTreePanel() {
+        
         // TITLE
 
         rstrictionTitle = new TitleLabel();
@@ -81,6 +85,8 @@ public class CodelistRestrictionTreePanel extends VLayout {
             public void onClick(ClickEvent event) {
                 editButton.setVisible(true);
                 saveButton.setVisible(false);
+                codesRestrictionVisualisationTreeGrid.setEditCheckCodes(false);
+                saveRestrictions();
             }
         });
 
@@ -88,6 +94,24 @@ public class CodelistRestrictionTreePanel extends VLayout {
         return saveButton;
     }
 
+    private void saveRestrictions() {
+        Map<String, Boolean> modifiedOpennessLevels = new HashMap<String, Boolean>();
+
+        ListGridRecord[] records = codesRestrictionVisualisationTreeGrid.getRecords();
+        for (ListGridRecord record : records) {
+            // TODO VER SI NECESARIO ESTA LÓGICA O ACTUALIZAMOS CON LO QUE HAYA
+            
+            //TODO realizar comprobaciones previas, por eje. que haya al menos uno seleccionado.
+            
+            //Boolean valueBeforeEdition = record.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK);
+            Boolean valueAfterEdition = record.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK);
+            logger.log(Level.INFO, record.getAttributeAsString(CodeDS.URN) + " -> chequeado: " + (valueAfterEdition ? "Sí" : "No"));
+            //if (valueBeforeEdition != valueAfterEdition) {
+            //    modifiedOpennessLevels.put(record.getAttributeAsString(CodeDS.URN), valueAfterEdition);
+           // }
+        }
+    }
+    
     private ToolStripButton createEditButton() {
         editButton = new ToolStripButton(getConstants().actionEdit(), RESOURCE.editListGrid().getURL());
         editButton.addClickHandler(new ClickHandler() {
@@ -96,6 +120,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
             public void onClick(ClickEvent event) {
                 editButton.setVisible(false);
                 saveButton.setVisible(true);
+                codesRestrictionVisualisationTreeGrid.setEditCheckCodes(true);
             }
         });
         return editButton;

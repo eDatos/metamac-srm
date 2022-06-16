@@ -93,22 +93,21 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
         ResourceInternal resource = this.maintainableResourceToResourceInternal(ctx, maintainableArtefactDto, resourceType);
         ResourceInternal[] resources = {resource};
         MetamacApplicationsEnum[] applications = {MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES};
-        
+
         String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES.getName();
         String subject = buildSubject(ctx, actionCode, resourceType);
         String messageText = buildMessage(ctx, messageCode, maintainableArtefactDto, resourceType);
 
         Message message = MessageBuilder.message().withText(messageText).withResources(resources).build();
 
-        Notice notification = null;
+        NoticeBuilder notification = NoticeBuilder.notification().withMessages(message).withSendingApplication(sendingApp).withSendingUser(ctx.getUserId()).withSubject(subject)
+                .withApplications(applications);
         if (roles != null) {
-            notification = NoticeBuilder.notification().withMessages(message).withSendingApplication(sendingApp).withSendingUser(ctx.getUserId()).withSubject(subject).withApplications(applications).withRoles(roles).build();
-        } else {
-            notification = NoticeBuilder.notification().withMessages(message).withSendingApplication(sendingApp).withSendingUser(ctx.getUserId()).withSubject(subject).withApplications(applications).build();
+            notification.withRoles(roles);
         }
 
         try {
-            Response response = metamacApisLocator.getNoticesRestInternalFacadeV10().createNotice(notification);
+            Response response = metamacApisLocator.getNoticesRestInternalFacadeV10().createNotice(notification.build());
             restExceptionUtils.checkSendNotificationRestResponseAndThrowErrorIfApplicable(ctx, response);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);

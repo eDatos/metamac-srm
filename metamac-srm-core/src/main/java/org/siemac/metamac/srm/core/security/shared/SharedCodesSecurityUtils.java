@@ -129,6 +129,10 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
         return canRetrieveOrFindResource(metamacPrincipal);
     }
 
+    public static boolean canRetrieveOrFindCodelistRestrictionVisualisation(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+    
     public static boolean canCreateCode(MetamacPrincipal metamacPrincipal, ProcStatusEnum codelistProcStatus) {
         return canModifyItemFromItemScheme(metamacPrincipal, codelistProcStatus);
     }
@@ -141,6 +145,10 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
         return canUpdateItemScheme(metamacPrincipal, codelistProcStatus);
     }
 
+    public static boolean canCrudCodelistRestrictionVisualisation(MetamacPrincipal metamacPrincipal, ProcStatusEnum codelistProcStatus) {
+        return canUpdateItemScheme(metamacPrincipal, codelistProcStatus);
+    }
+    
     public static boolean canRetrieveOrFindCodelistFamily(MetamacPrincipal metamacPrincipal) {
         return canRetrieveOrFindResource(metamacPrincipal);
     }

@@ -18,6 +18,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -160,6 +161,17 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ExceptionUtils.throwIfException(exceptions);
     }
 
+    public static void checkRetrieveCodelistRestrictionVisualisationByCode(String codelistUrn, String code, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(codelistUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(code, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+    
     public static void checkUpdateCodeInOpennessVisualisation(String codelistOpennessVisualisationUrn, Map<String, Boolean> openness, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
@@ -171,8 +183,19 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkRetrieveCodesByCodelistUrn(String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn, List<MetamacExceptionItem> exceptions)
-            throws MetamacException {
+    public static void checkUpdateCodeInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(codelistRestrictionVisualisationUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(restriction, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION_EXPANDED, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+    
+    public static void checkRetrieveCodesByCodelistUrn(String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn, String restrictionVisualisationCode,
+            List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
@@ -186,7 +209,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
     }
 
     public static void checkRetrieveCodesByCodelistUrnOrderedInDepth(String codelistUrn, ItemResultSelection itemResultSelection, String orderVisualisationCode, String opennessVisualisationCode,
-            List<MetamacExceptionItem> exceptions) throws MetamacException {
+            String restrictionVisualisationCode, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
@@ -194,6 +217,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ValidationUtils.checkParameterRequired(codelistUrn, ServiceExceptionParameters.URN, exceptions);
         ValidationUtils.checkParameterRequired(orderVisualisationCode, ServiceExceptionParameters.CODELIST_ORDER_VISUALISATION, exceptions);
         ValidationUtils.checkParameterRequired(opennessVisualisationCode, ServiceExceptionParameters.CODELIST_OPENNESS_VISUALISATION, exceptions);
+        ValidationUtils.checkParameterRequired(opennessVisualisationCode, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
         ValidationUtils.checkParameterRequired(itemResultSelection, ServiceExceptionParameters.QUERY_SELECTION, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
@@ -307,7 +331,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         }
         checkNameableArtefact(codelistOrderVisualisation.getNameableArtefact(), exceptions);
         if (codelistOrderVisualisation.getNameableArtefact() != null) {
-            SemanticIdentifierValidationUtils.checkCodelistOrderVisualisationSemanticIdentifier(codelistOrderVisualisation, exceptions);
+            SemanticIdentifierValidationUtils.checkCodelistVisualisationSemanticIdentifier(codelistOrderVisualisation.getNameableArtefact().getCode(), exceptions);
         }
     }
 
@@ -346,10 +370,49 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         }
         checkNameableArtefact(codelistOpennessVisualisation.getNameableArtefact(), exceptions);
         if (codelistOpennessVisualisation.getNameableArtefact() != null) {
-            SemanticIdentifierValidationUtils.checkCodelistOpennessVisualisationSemanticIdentifier(codelistOpennessVisualisation, exceptions);
+            SemanticIdentifierValidationUtils.checkCodelistVisualisationSemanticIdentifier(codelistOpennessVisualisation.getNameableArtefact().getCode(), exceptions);
         }
     }
 
+    // ---------------------------------------------------------------------------
+    // CODELIST RESTRICTIONS VISUALISATIONS
+    // ---------------------------------------------------------------------------
+
+    public static void checkCreateCodelistRestrictionVisualisation(String codelistUrn, CodelistRestrictionVisualisation codelistRestrictionVisualisation, List<MetamacExceptionItem> exceptions)
+            throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+        ValidationUtils.checkParameterRequired(codelistUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(codelistRestrictionVisualisation, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
+        if (codelistRestrictionVisualisation != null) {
+            checkCodelistRestrictionVisualisation(codelistRestrictionVisualisation, exceptions);
+        }
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkUpdateCodelistRestrictionVisualisation(CodelistRestrictionVisualisation codelistRestrictionVisualisation, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+        checkCodelistRestrictionVisualisation(codelistRestrictionVisualisation, exceptions);
+        ValidationUtils.checkParameterRequired(codelistRestrictionVisualisation.getCodelistVersion(), ServiceExceptionParameters.CODELIST, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    private static void checkCodelistRestrictionVisualisation(CodelistRestrictionVisualisation codelistRestrictionVisualisation, List<MetamacExceptionItem> exceptions) {
+        ValidationUtils.checkParameterRequired(codelistRestrictionVisualisation, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
+        if (codelistRestrictionVisualisation == null) {
+            return;
+        }
+        checkNameableArtefact(codelistRestrictionVisualisation.getNameableArtefact(), exceptions);
+        if (codelistRestrictionVisualisation.getNameableArtefact() != null) {
+            SemanticIdentifierValidationUtils.checkCodelistVisualisationSemanticIdentifier(codelistRestrictionVisualisation.getNameableArtefact().getCode(), exceptions);
+        }
+    }
+    
     // ---------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ---------------------------------------------------------------------------

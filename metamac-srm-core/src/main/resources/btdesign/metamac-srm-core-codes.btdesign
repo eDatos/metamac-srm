@@ -107,8 +107,8 @@ Application CodesMetamac {
 			updateCodeInOrderVisualisation(String codeUrn, String codelistOrderVisualisationUrn, Integer newCodeIndex) throws MetamacException;
 			"Updates openness of code to visualisation requested"
 			updateCodesInOpennessVisualisation(String codelistOpennessVisualisationUrn, Map<String, Boolean> openness) throws MetamacException;
-		//	"Updates restriction of code to visualisation requested"
-		//	updateCodesInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction) throws MetamacException;
+			"Updates restriction of code to visualisation requested"
+			updateCodesInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction) throws MetamacException;
     		"Retrieves code by urn"
     		@CodeMetamac retrieveCodeByUrn(String urn) throws MetamacException;
     		"Finds codes by criteria"
@@ -168,11 +168,9 @@ Application CodesMetamac {
 			"Deletes openness visualisation"
     		deleteCodelistOpennessVisualisation(String urn) throws MetamacException;
     		@CodelistVersionMetamac versioningCodelistOpennessVisualisations(@CodelistVersionMetamac source, @CodelistVersionMetamac target) throws MetamacException;
-/*
+
 			"Creates restrictions visualisation"
     		@CodelistRestrictionVisualisation createCodelistRestrictionVisualisation(String codelistUrn, @CodelistRestrictionVisualisation codelistRestrictionVisualisation) throws MetamacException;
-    		"Creates restriction visualisation with all levels opened"
-    		@CodelistVersionMetamac createCodelistRestrictionVisualisationAllOpened(@CodelistVersionMetamac codelistVersion) throws MetamacException;
 			"Updates restriction visualisation"
 			@CodelistRestrictionVisualisation updateCodelistRestrictionVisualisation(@CodelistRestrictionVisualisation codelistRestrictionVisualisation) throws MetamacException;
     		"Retrieves restriction visualisation by identifier"
@@ -184,7 +182,7 @@ Application CodesMetamac {
 			"Deletes restriction visualisation"
     		deleteCodelistRestrictionVisualisation(String urn) throws MetamacException;
     		@CodelistVersionMetamac versioningCodelistRestrictionVisualisations(@CodelistVersionMetamac source, @CodelistVersionMetamac target) throws MetamacException;
-*/
+
 
 			"Recalculates all visualisations: order, openness and restrictions, when new codes are added in codelist"
     		recalculateCodesVisualisations(List<@Code> items, List<@CodelistOrderVisualisation> orderVisualisations, List<@CodelistOpennessVisualisation> opennessVisualisations, List<@CodelistRestrictionVisualisation> restrictionVisualisations, boolean executeSave);
@@ -440,13 +438,13 @@ Application CodesMetamac {
 				updateCodesOpennessColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeOpennessColumn(@CodelistVersionMetamac codelistVersion, String codeUrn, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeOpennessColumnToLeafCodes(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
-				/*
+				
 				clearCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex);
 				copyCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget);
 				updateCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeRestrictionColumn(@CodelistVersionMetamac codelistVersion, String codeUrn, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeRestrictionColumnToLeafCodes(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException;
-				*/
+				
 			}
 		}
 		

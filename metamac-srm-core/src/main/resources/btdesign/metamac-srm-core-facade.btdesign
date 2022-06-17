@@ -310,6 +310,7 @@ Application SrmFacadeCore {
     		MetamacCriteriaResult<@RelatedResourceDto> findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(MetamacCriteria criteria, String dimensionUrn) throws MetamacException;
     		"Find openessVisualisation belong to same codelist representation of dimension"
     		MetamacCriteriaResult<@RelatedResourceDto> findOpennessVisualisationCanBeHierarchylevelopenForDsdDimensionByCondition(MetamacCriteria criteria, String dimensionUrn) throws MetamacException;
+    	    	
     	
 	    	/**************************************************************************
 		     * ORGANISATIONS
@@ -617,6 +618,8 @@ Application SrmFacadeCore {
 			updateCodeInOrderVisualisation(String codeUrn, String codelistOrderVisualisationUrn, Integer newCodeIndex) throws MetamacException;
 			"Updates openness of code to visualisation requested"
 			updateCodesInOpennessVisualisation(String codelistOpennessVisualisationUrn, Map<String, Boolean> openness) throws MetamacException;
+			"Updates restriction of code to visualisation requested"
+			updateCodesInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction) throws MetamacException;
 	   		"Retrieves a code by URN"
             @CodeMetamacDto retrieveCodeByUrn(String urn) throws MetamacException;
             "Finds codes by criteria"
@@ -626,7 +629,7 @@ Application SrmFacadeCore {
 			"Deletes code"
             deleteCode(String urn) throws MetamacException;
     		"Retrieves codes by code scheme in locale and visualisation requested. If visualisation is not provided, tries retrieve codes in default visualisations"
-    		List<CodeMetamacVisualisationResult> retrieveCodesByCodelistUrn(String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn) throws MetamacException;
+    		List<CodeMetamacVisualisationResult> retrieveCodesByCodelistUrn(String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn, String restrictionVisualisationUrn) throws MetamacException;
     		"Imports codes in tsv format"
     		TaskImportationInfo importCodesTsv(String codelistUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
@@ -660,6 +663,17 @@ Application SrmFacadeCore {
     		List<@CodelistVisualisationDto> retrieveCodelistOpennessVisualisationsByCodelist(String codelistUrn)  throws MetamacException;
 			"Deletes openness visualisation"
     		deleteCodelistOpennessVisualisation(String urn) throws MetamacException;
+    		    		
+    		"Creates restriction visualisation"
+    		@CodelistVisualisationDto createCodelistRestrictionVisualisation(@CodelistVisualisationDto codelistRestrictionVisualisationDto) throws MetamacException;
+			"Updates restriction visualisation"
+			@CodelistVisualisationDto updateCodelistRestrictionVisualisation(@CodelistVisualisationDto codelistRestrictionVisualisationDto) throws MetamacException;
+    		"Retrieves restriction visualisation by identifier"
+    		@CodelistVisualisationDto retrieveCodelistRestrictionVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieve restriction visualisations by codelist"
+    		List<@CodelistVisualisationDto> retrieveCodelistRestrictionVisualisationsByCodelist(String codelistUrn)  throws MetamacException;
+			"Deletes restriction visualisation"
+    		deleteCodelistRestrictionVisualisation(String urn) throws MetamacException;
     		    		
 			"Creates codelist family"
 			@CodelistFamilyDto createCodelistFamily(@CodelistFamilyDto codelistFamilyDto) throws MetamacException;

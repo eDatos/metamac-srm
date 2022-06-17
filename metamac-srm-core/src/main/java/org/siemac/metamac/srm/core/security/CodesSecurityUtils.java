@@ -183,6 +183,19 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    // RESTRICTION OF CODELIST
+    public static void canRetrieveOrFindCodelistRestrictionVisualisation(ServiceContext ctx) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canRetrieveOrFindCodelistRestrictionVisualisation(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canCrudCodelistRestrictionVisualisation(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(getMetamacPrincipal(ctx), codelistProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     // VARIABLES, FAMILIES...
 
     public static void canRetrieveOrFindCodelistFamily(ServiceContext ctx) throws MetamacException {

@@ -9,6 +9,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -31,6 +32,7 @@ import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
 import org.siemac.metamac.srm.core.code.dto.VariableRelatedResourceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
@@ -59,6 +61,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setFamily(codelistFamilyDoToRelatedResourceDto(source.getFamily()));
         target.setVariable(variableDoToRelatedResourceDto(source.getVariable()));
         target.setLifeCycle(lifeCycleDoToDto(source.getLifeCycleMetadata()));
+        //TODO edatos-3647 en principio no necesario default
         target.setDefaultOrderVisualisation(codelistOrderVisualisationDoToRelatedResourceDto(source.getDefaultOrderVisualisation()));
         target.setDefaultOpennessVisualisation(codelistOpennessVisualisationDoToRelatedResourceDto(source.getDefaultOpennessVisualisation()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
@@ -415,24 +418,12 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
 
     @Override
     public RelatedResourceDto codelistOrderVisualisationDoToRelatedResourceDto(CodelistOrderVisualisation source) {
-        if (source == null) {
-            return null;
-        }
-        RelatedResourceDto target = new RelatedResourceDto();
-        do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(source.getNameableArtefact(), target);
-        target.setType(null);
-        return target;
+        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
     }
 
     @Override
     public RelatedResourceDto codelistOpennessVisualisationDoToRelatedResourceDto(CodelistOpennessVisualisation source) {
-        if (source == null) {
-            return null;
-        }
-        RelatedResourceDto target = new RelatedResourceDto();
-        do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(source.getNameableArtefact(), target);
-        target.setType(null);
-        return target;
+        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
     }
 
     private RelatedResourceDto codelistDoToRelatedResourceDto(CodelistVersionMetamac source) {
@@ -493,4 +484,51 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         }
         return targets;
     }
+    
+    @Override
+    public CodelistVisualisationDto codelistRestrictionVisualisationDoToDto(CodelistRestrictionVisualisation source) {
+        if (source == null) {
+            return null;
+        }
+        CodelistVisualisationDto target = new CodelistVisualisationDto();
+        do2DtoMapperSdmxSrm.nameableArtefactToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getNameableArtefact(), target);
+        target.setCodelist(codelistDoToRelatedResourceDto(source.getCodelistVersion()));
+
+        // Overwrite these values in the final DTO (if not, these values are taken from the AnnotableArtefact entity)
+        target.setId(source.getId());
+        target.setUuid(source.getUuid());
+        target.setVersion(source.getVersion());
+        target.setCreatedDate(CoreCommonUtil.transformDateTimeToDate(source.getCreatedDate()));
+        target.setCreatedBy(source.getCreatedBy());
+        target.setLastUpdated(CoreCommonUtil.transformDateTimeToDate(source.getLastUpdated()));
+        target.setLastUpdatedBy(source.getLastUpdatedBy());
+        target.setVersionOptimisticLocking(source.getVersion());
+        return target;
+    }
+
+    @Override
+    public List<CodelistVisualisationDto> codelistRestrictionVisualisationsDoToDto(List<CodelistRestrictionVisualisation> sources) {
+        if (sources == null) {
+            return null;
+        }
+        List<CodelistVisualisationDto> targets = new ArrayList<CodelistVisualisationDto>(sources.size());
+        for (CodelistRestrictionVisualisation source : sources) {
+            CodelistVisualisationDto target = codelistRestrictionVisualisationDoToDto(source);
+            targets.add(target);
+        }
+        return targets;
+    }
+    
+    @Override
+    public RelatedResourceDto codelistRestrictionVisualisationDoToRelatedResourceDto(CodelistRestrictionVisualisation source) {
+        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+    }
+
+    private RelatedResourceDto getRelatedResourceDto(NameableArtefact identifier) {
+        RelatedResourceDto target = new RelatedResourceDto();
+        do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(identifier, target);
+        target.setType(null);
+        return target;
+    }
+    
 }

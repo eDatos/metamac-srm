@@ -37,6 +37,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.code.domain.Variable;
@@ -1626,13 +1627,13 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public List<CodeMetamacVisualisationResult> retrieveCodesByCodelistUrn(ServiceContext ctx, String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn)
-            throws MetamacException {
+    public List<CodeMetamacVisualisationResult> retrieveCodesByCodelistUrn(ServiceContext ctx, String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn,
+            String restrictionVisualisationUrn) throws MetamacException {
         // Security
         CodesSecurityUtils.canRetrieveCodesByCodelistUrn(ctx);
 
         // Retrieve
-        return getCodesMetamacService().retrieveCodesByCodelistUrn(ctx, codelistUrn, locale, orderVisualisationUrn, opennessVisualisationUrn);
+        return getCodesMetamacService().retrieveCodesByCodelistUrn(ctx, codelistUrn, locale, orderVisualisationUrn, opennessVisualisationUrn, restrictionVisualisationUrn);
     }
 
     @Override
@@ -1791,10 +1792,92 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         List<CodelistOpennessVisualisation> codelistOpennessVisualisations = getCodesMetamacService().retrieveCodelistOpennessVisualisationsByCodelist(ctx, codelistUrn);
 
         // Transform
-        List<CodelistVisualisationDto> codelistOpennessVisualisationsDto = codesDo2DtoMapper.codelistOpennessVisualisationsDoToDto(codelistOpennessVisualisations);
-        return codelistOpennessVisualisationsDto;
+        return codesDo2DtoMapper.codelistOpennessVisualisationsDoToDto(codelistOpennessVisualisations);
     }
 
+    // ------------------------------------------------------------------------
+    // RESTRICTION VISUALISATIONS
+    // ------------------------------------------------------------------------
+
+    @Override
+    public CodelistVisualisationDto retrieveCodelistRestrictionVisualisationByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canRetrieveOrFindCodelistRestrictionVisualisation(ctx);
+
+        // Retrieve
+        CodelistRestrictionVisualisation codelistRestrictionVisualisation = getCodesMetamacService().retrieveCodelistRestrictionVisualisationByUrn(ctx, urn);
+
+        // Transform
+        return codesDo2DtoMapper.codelistRestrictionVisualisationDoToDto(codelistRestrictionVisualisation);
+    }
+
+    @Override
+    public CodelistVisualisationDto createCodelistRestrictionVisualisation(ServiceContext ctx, CodelistVisualisationDto codelistRestrictionVisualisationDto) throws MetamacException {
+        // Security
+        CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistRestrictionVisualisationDto.getCodelist().getUrn());
+        CodesSecurityUtils.canCrudCodelistOpennessVisualisation(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Transform
+        CodelistRestrictionVisualisation codelistRestrictionVisualisation = codesDto2DoMapper.codelistRestrictionVisualisationDtoToDo(codelistRestrictionVisualisationDto);
+
+        // Create
+        CodelistRestrictionVisualisation codelistRestrictionVisualisationCreated = getCodesMetamacService().createCodelistRestrictionVisualisation(ctx, codelistRestrictionVisualisationDto.getCodelist().getUrn(),
+                codelistRestrictionVisualisation);
+
+        // Transform to DTO
+        codelistRestrictionVisualisationDto = codesDo2DtoMapper.codelistRestrictionVisualisationDoToDto(codelistRestrictionVisualisationCreated);
+        return codelistRestrictionVisualisationDto;
+    }
+
+    @Override
+    public CodelistVisualisationDto updateCodelistRestrictionVisualisation(ServiceContext ctx, CodelistVisualisationDto codelistRestrictionVisualisationDto) throws MetamacException {
+        // Security
+        CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistRestrictionVisualisationDto.getCodelist().getUrn());
+        CodesSecurityUtils.canCrudCodelistRestrictionVisualisation(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Transform
+        CodelistRestrictionVisualisation codelistRestrictionVisualisationToUpdate = codesDto2DoMapper.codelistRestrictionVisualisationDtoToDo(codelistRestrictionVisualisationDto);
+
+        // Update
+        CodelistRestrictionVisualisation codelistRestrictionVisualisationUpdated = getCodesMetamacService().updateCodelistRestrictionVisualisation(ctx, codelistRestrictionVisualisationToUpdate);
+
+        // Transform to DTO
+        codelistRestrictionVisualisationDto = codesDo2DtoMapper.codelistRestrictionVisualisationDoToDto(codelistRestrictionVisualisationUpdated);
+        return codelistRestrictionVisualisationDto;
+    }
+
+    @Override
+    public void deleteCodelistRestrictionVisualisation(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CodelistRestrictionVisualisation codelistRestrictionVisualisation = getCodesMetamacService().retrieveCodelistRestrictionVisualisationByUrn(ctx, urn);
+        CodesSecurityUtils.canCrudCodelistRestrictionVisualisation(ctx, codelistRestrictionVisualisation.getCodelistVersion().getLifeCycleMetadata().getProcStatus());
+
+        // Delete
+        getCodesMetamacService().deleteCodelistRestrictionVisualisation(ctx, urn);
+    }
+
+    @Override
+    public List<CodelistVisualisationDto> retrieveCodelistRestrictionVisualisationsByCodelist(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canRetrieveOrFindCodelistRestrictionVisualisation(ctx);
+
+        // Retrieve
+        List<CodelistRestrictionVisualisation> codelistRestrictionVisualisation = getCodesMetamacService().retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistUrn);
+
+        // Transform
+        return codesDo2DtoMapper.codelistRestrictionVisualisationsDoToDto(codelistRestrictionVisualisation);
+    }
+    
+    @Override
+    public void updateCodesInRestrictionVisualisation(ServiceContext ctx, String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction) throws MetamacException {
+        // Security
+        CodelistRestrictionVisualisation codelistRestrictionVisualisation = getCodesMetamacService().retrieveCodelistRestrictionVisualisationByUrn(ctx, codelistRestrictionVisualisationUrn);
+        CodesSecurityUtils.canUpdateCode(ctx, codelistRestrictionVisualisation.getCodelistVersion().getLifeCycleMetadata().getProcStatus());
+
+        // Update order
+        getCodesMetamacService().updateCodesInRestrictionVisualisation(ctx, codelistRestrictionVisualisationUrn, restriction);
+    }
+        
     // ------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ------------------------------------------------------------------------

@@ -95,9 +95,11 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
             targetMetamac = codesMetamacService.versioningCodelistOpennessVisualisations(ctx, previousMetamac, targetMetamac);
             // OrderVisualisation: Copy all OpennessVisualisation and set the OpennessVisualisation by default . Not update the codes index.
             targetMetamac = codesMetamacService.versioningCodelistOrderVisualisations(ctx, previousMetamac, targetMetamac);
-
+            // RestrictionVisualisation: Copy all RestrictionVisualisation and set the RestrictionVisualisation by default . Not update the codes index.
+            targetMetamac = codesMetamacService.versioningCodelistRestrictionVisualisations(ctx, previousMetamac, targetMetamac);
+            
             // Update all order codes and openness visualisations
-            codesMetamacService.recalculateCodesVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), targetMetamac.getOpennessVisualisations(), true);
+            codesMetamacService.recalculateCodesVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), targetMetamac.getOpennessVisualisations(), targetMetamac.getRestrictionVisualisations(), true);
         } else {
             targetMetamac = codesMetamacService.createCodelistOrderVisualisationAlphabetical(ctx, targetMetamac); // Add alphabetical order
             targetMetamac = codesMetamacService.createCodelistOpennessVisualisationAllOpened(ctx, targetMetamac); // Add all opened visualization

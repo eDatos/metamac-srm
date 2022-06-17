@@ -11,6 +11,10 @@
 ## 2.11.0 a X.Y.Z
 
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/2.11.1/db](etc/changes-from-release/2.11.1/db)
+  ```shell
+  etc/changes-from-release/2.11.1/db/srm/postgresql/20220616_add_restriction_objects.sql
+  ```
 
 ## 2.10.0 a 2.11.0
 

@@ -71,7 +71,9 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  CODELIST_ORDER_VISUALISATION_INDEX                         = createCode(CODELIST_PREFIX, "codelist_order_visualisation.index");
     public static final String  CODELIST_OPENNESS_VISUALISATION                            = createCode(CODELIST_PREFIX, "codelist_openness_visualisation");
     public static final String  CODELIST_OPENNESS_VISUALISATION_EXPANDED                   = createCode(CODELIST_PREFIX, "codelist_openness_visualisation.expanded");
-
+    public static final String  CODELIST_RESTRICTION_VISUALISATION                         = createCode(CODELIST_PREFIX, "codelist_restriction_visualisation");
+    public static final String  CODELIST_RESTRICTION_VISUALISATION_EXPANDED                = createCode(CODELIST_PREFIX, "codelist_restriction_visualisation.expanded");
+    
     // CODELIST FAMILY
     public static final String  CODELIST_FAMILY                                            = createCode("codelist_family");
 

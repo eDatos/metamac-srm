@@ -91,6 +91,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultSelection;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamilyProperties;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableElementProperties;
@@ -833,7 +834,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String fields) {
+    public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
@@ -858,11 +860,12 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
                 String orderToUse = getOrderToUseToRetrieveCodelist(agencyID, resourceID, version, order, codelistVersion);
                 String opennessToUse = getOpennessToUseToRetrieveCodelist(agencyID, resourceID, version, openness, codelistVersion);
+                String restrictionToUse = getRestrictionToUseToRetrieveCodelist(agencyID, resourceID, version, restriction, codelistVersion);
 
                 ItemMetamacResultSelection codeMetamacResultSelection = CodeMetamacResultSelection.API;
                 codeMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
                 List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
-                        opennessToUse);
+                        opennessToUse, restrictionToUse);
 
                 return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow);
             }
@@ -881,6 +884,16 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             opennessToUse = openness;
         }
         return opennessToUse;
+    }
+    
+    private String getRestrictionToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String restriction, CodelistVersionMetamac codelistVersion) throws MetamacException {
+        String restrictionToUse = null;
+        if (restriction != null) {
+            // check exist
+            retrieveCodelistRestrictionVisualisation(agencyID, resourceID, version, codelistVersion.getMaintainableArtefact().getUrn(), restriction);
+            restrictionToUse = restriction;
+        }
+        return restrictionToUse;
     }
 
     private String getOrderToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String order, CodelistVersionMetamac codelistVersion) throws MetamacException {
@@ -1491,6 +1504,20 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         } catch (MetamacException e) {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_OPENNESS_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_OPENNESS_CONFIGURATION_NOT_FOUND, openness,
+                        resourceID, version, agencyID);
+                throw new RestException(exception, Status.NOT_FOUND);
+            } else {
+                throw e;
+            }
+        }
+    }
+    
+    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction) throws MetamacException {
+        try {
+            return codesService.retrieveCodelistRestrictionVisualisationByCode(ctx, codelistUrn, restriction);
+        } catch (MetamacException e) {
+            if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_RESTRICTION_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_RESTRICTION_CONFIGURATION_NOT_FOUND, restriction,
                         resourceID, version, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             } else {

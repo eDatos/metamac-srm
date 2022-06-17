@@ -174,7 +174,7 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
             public void onWaitSuccess(GetCodelistResult result) {
                 final CodelistMetamacDto codelistMetamacDto = result.getCodelistMetamacDto();
                 String defaultOrderUrn = org.siemac.metamac.srm.web.code.utils.CommonUtils.getDefaultCodelistOrderUrn(codelistMetamacDto);
-                dispatcher.execute(new GetCodesByCodelistAction(codelistUrn, defaultOrderUrn, null, ApplicationEditionLanguages.getCurrentLocale()),
+                dispatcher.execute(new GetCodesByCodelistAction(codelistUrn, defaultOrderUrn, null, null, ApplicationEditionLanguages.getCurrentLocale()),
                         new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(CodePresenter.this) {
 
                             @Override
@@ -348,7 +348,7 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
             public void onWaitSuccess(GetCodelistResult result) {
                 final CodelistMetamacDto codelistMetamacDto = result.getCodelistMetamacDto();
                 String defaultOrderUrn = org.siemac.metamac.srm.web.code.utils.CommonUtils.getDefaultCodelistOrderUrn(codelistMetamacDto);
-                dispatcher.execute(new GetCodesByCodelistAction(codelistUrn, defaultOrderUrn, null, ApplicationEditionLanguages.getCurrentLocale()),
+                dispatcher.execute(new GetCodesByCodelistAction(codelistUrn, defaultOrderUrn, null, null, ApplicationEditionLanguages.getCurrentLocale()),
                         new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(CodePresenter.this) {
 
                             @Override

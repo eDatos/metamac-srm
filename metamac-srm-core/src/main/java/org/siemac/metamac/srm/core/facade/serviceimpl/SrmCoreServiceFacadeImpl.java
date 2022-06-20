@@ -1815,7 +1815,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     public CodelistVisualisationDto createCodelistRestrictionVisualisation(ServiceContext ctx, CodelistVisualisationDto codelistRestrictionVisualisationDto) throws MetamacException {
         // Security
         CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistRestrictionVisualisationDto.getCodelist().getUrn());
-        CodesSecurityUtils.canCrudCodelistOpennessVisualisation(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+        CodesSecurityUtils.canCrudCodelistRestrictionVisualisation(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
 
         // Transform
         CodelistRestrictionVisualisation codelistRestrictionVisualisation = codesDto2DoMapper.codelistRestrictionVisualisationDtoToDo(codelistRestrictionVisualisationDto);

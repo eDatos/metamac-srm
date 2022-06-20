@@ -46,7 +46,8 @@ public class CodesTreeGridUtils extends ItemsTreeGridUtils {
         node.setAttribute(CodeDS.OPENNESS_LEVEL_ICON, iconUrl);
 
         //restriction
-        node.setAttribute(CodeDS.RESTRICTION_CHECK, code.getRestriction());
+        node.setAttribute(CodeDS.RESTRICTION, Boolean.TRUE); // folder always open in restriction by default.
+        node.setAttribute(CodeDS.RESTRICTION_CHECK, code.getRestriction()); 
         node.setAttribute(CodeDS.RESTRICTION_CHECK_INITIAL, code.getRestriction()); // The value is unmodifiable by the user       
         
         // Only for variable elements tree grid

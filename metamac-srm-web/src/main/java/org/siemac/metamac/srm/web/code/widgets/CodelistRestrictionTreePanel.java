@@ -15,6 +15,8 @@ import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.code.model.ds.CodeDS;
+import org.siemac.metamac.srm.web.code.model.ds.CodelistVisualisationDS;
+import org.siemac.metamac.srm.web.code.model.record.CodelistVisualisationRecord;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
@@ -39,6 +41,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
     private TitleLabel                              rstrictionTitle;
     private ToolStripButton                         editButton;
     private ToolStripButton                         saveButton;
+    private ToolStripButton                         cancelButton;
     private CodesRestrictionVisualisationTreeGrid codesRestrictionVisualisationTreeGrid;
 
     public CodelistRestrictionTreePanel() {
@@ -56,6 +59,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
        
         toolStrip.addButton(createEditButton());
         toolStrip.addButton(createSaveButton());
+        toolStrip.addButton(createCancelButton());
         addMember(toolStrip);
         // TREE
 
@@ -85,6 +89,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
             public void onClick(ClickEvent event) {
                 editButton.setVisible(true);
                 saveButton.setVisible(false);
+                cancelButton.setVisible(false);
                 codesRestrictionVisualisationTreeGrid.setEditCheckCodes(false);
                 saveRestrictions();
             }
@@ -94,6 +99,23 @@ public class CodelistRestrictionTreePanel extends VLayout {
         return saveButton;
     }
 
+    private ToolStripButton createCancelButton() {
+        cancelButton = new ToolStripButton(getConstants().actionCancel(), RESOURCE.cancelListGrid().getURL());
+        cancelButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                editButton.setVisible(true);
+                saveButton.setVisible(false);
+                cancelButton.setVisible(false);
+                codesRestrictionVisualisationTreeGrid.setEditCheckCodes(false);
+                uiHandlers.retrieveCodesWithRestrictions(codelistVisualisationDto.getUrn());
+            }
+        });
+        cancelButton.setVisible(false);
+        return cancelButton;
+    }
+    
     private void saveRestrictions() {
         Map<String, Boolean> modifiedRestrictions = new HashMap<String, Boolean>();
 
@@ -119,6 +141,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
             public void onClick(ClickEvent event) {
                 editButton.setVisible(false);
                 saveButton.setVisible(true);
+                cancelButton.setVisible(true);
                 codesRestrictionVisualisationTreeGrid.setEditCheckCodes(true);
             }
         });

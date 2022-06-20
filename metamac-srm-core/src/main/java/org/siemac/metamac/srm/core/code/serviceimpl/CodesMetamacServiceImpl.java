@@ -1373,7 +1373,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         
         Integer restrictionColumnIndex = null;
-        if (opennessVisualisationUrn != null) {
+        if (restrictionVisualisationUrn != null) {
             CodelistRestrictionVisualisation codelistRestrictionVisualisation = retrieveCodelistRestrictionVisualisationByUrn(ctx, restrictionVisualisationUrn);
             restrictionColumnIndex = codelistRestrictionVisualisation.getColumnIndex();
         } 

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.gwtplatform.dispatch.shared.ActionException;
 
-@Component
+@Component   
 public class GetCodelistRestrictionActionHandler extends SecurityActionHandler<GetCodelistRestrictionAction, GetCodelistRestrictionResult> {
 
     @Autowired
@@ -28,7 +28,7 @@ public class GetCodelistRestrictionActionHandler extends SecurityActionHandler<G
     @Override
     public GetCodelistRestrictionResult executeSecurityAction(GetCodelistRestrictionAction action) throws ActionException {
         try {
-            List<CodelistVisualisationDto> restrictions = srmCoreServiceFacade.retrieveCodelistOpennessVisualisationsByCodelist(ServiceContextHolder.getCurrentServiceContext(),
+            List<CodelistVisualisationDto> restrictions = srmCoreServiceFacade.retrieveCodelistRestrictionVisualisationsByCodelist(ServiceContextHolder.getCurrentServiceContext(),
                     action.getCodelistUrn());
             return new GetCodelistRestrictionResult(restrictions);
         } catch (MetamacException e) {

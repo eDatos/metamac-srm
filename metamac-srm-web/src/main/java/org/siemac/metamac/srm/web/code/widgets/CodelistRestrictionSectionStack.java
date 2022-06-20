@@ -70,7 +70,7 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
             public void onClick(ClickEvent event) {
                 if (isAllExpandedRestrictionSelected()) {
                     // All expanded openness level can not be deleted
-                    // TODO cambiar las dos constantes
+                    // TODO EDATOS-3647 cambiar las dos constantes
                     InformationWindow informationWindow = new InformationWindow(getMessages().codelistOpennessLevelAllExpandedInfoDeleteTitle(), getMessages()
                             .codelistOpennessLevelAllExpandedInfoDeleteMessage());
                     informationWindow.show();
@@ -84,7 +84,7 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
 
             @Override
             public void onClick(ClickEvent event) {
-                uiHandlers.deleteCodelistOpennessLevel(CommonUtils.getUrnsFromSelectedCodelistVisualisations(listGrid.getSelectedRecords()));
+                uiHandlers.deleteCodelistRestrictions(CommonUtils.getUrnsFromSelectedCodelistVisualisations(listGrid.getSelectedRecords()));
                 deleteConfirmationWindow.hide();
             }
         });
@@ -94,8 +94,8 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
             @Override
             public void onRecordClick(RecordClickEvent event) {
                 if (event.getFieldNum() != 0) { // Clicking checkBox will be ignored
-                    String opennessLevelUrn = ((CodelistVisualisationRecord) event.getRecord()).getAttribute(CodelistVisualisationDS.URN);
-                    uiHandlers.retrieveCodesWithRestrictions(opennessLevelUrn);
+                    String restrictionUrn = ((CodelistVisualisationRecord) event.getRecord()).getAttribute(CodelistVisualisationDS.URN);
+                    uiHandlers.retrieveCodesWithRestrictions(restrictionUrn);
                 }
             }
         });
@@ -103,7 +103,7 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
 
     @Override
     protected void updateListGridNewButtonVisibility() {
-        if (CodesClientSecurityUtils.canCreateCodelistOpennessVisualisation(codelistMetamacDto)) {
+        if (CodesClientSecurityUtils.canCreateCodelistRestrictionVisualisation(codelistMetamacDto)) {
             newCodelistVisualisationButton.show();
         } else {
             newCodelistVisualisationButton.hide();
@@ -112,26 +112,26 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
 
     @Override
     protected void updateListGridImportButtonVisibility() {
-        // Openness levels cannot be imported
+     // TODO EDATOS-3647 ver si restriction cannot be imported
         importCodelistVisualisationButton.hide();
     }
 
     @Override
     protected void updateListGridExportButtonVisibility() {
-        // Openness levels cannot be exported
+        // TODO EDATOS-3647 restriction cannot be exported
         exportCodelistVisualisationButton.hide();
     }
 
     @Override
     protected void showListGridEditButton() {
-        if (CodesClientSecurityUtils.canUpdateCodelistOpennessVisualisation(codelistMetamacDto)) {
+        if (CodesClientSecurityUtils.canUpdateCodelistRestrictionVisualisation(codelistMetamacDto)) {
             editCodelistVisualisationButton.show();
         }
     }
 
     @Override
     protected void showListGridDeleteButton() {
-        if (CodesClientSecurityUtils.canDeleteCodelistOpennessVisualisation(codelistMetamacDto)) {
+        if (CodesClientSecurityUtils.canDeleteCodelistRestrictionVisualisation(codelistMetamacDto)) {
             deleteCodelistVisualisationButton.show();
         }
     }

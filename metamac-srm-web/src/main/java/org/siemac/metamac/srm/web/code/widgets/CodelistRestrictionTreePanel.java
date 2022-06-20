@@ -95,21 +95,20 @@ public class CodelistRestrictionTreePanel extends VLayout {
     }
 
     private void saveRestrictions() {
-        Map<String, Boolean> modifiedOpennessLevels = new HashMap<String, Boolean>();
+        Map<String, Boolean> modifiedRestrictions = new HashMap<String, Boolean>();
 
         ListGridRecord[] records = codesRestrictionVisualisationTreeGrid.getRecords();
-        for (ListGridRecord record : records) {
-            // TODO VER SI NECESARIO ESTA LÓGICA O ACTUALIZAMOS CON LO QUE HAYA
-            
-            //TODO realizar comprobaciones previas, por eje. que haya al menos uno seleccionado.
-            
-            //Boolean valueBeforeEdition = record.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK);
-            Boolean valueAfterEdition = record.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK);
-            logger.log(Level.INFO, record.getAttributeAsString(CodeDS.URN) + " -> chequeado: " + (valueAfterEdition ? "Sí" : "No"));
-            //if (valueBeforeEdition != valueAfterEdition) {
-            //    modifiedOpennessLevels.put(record.getAttributeAsString(CodeDS.URN), valueAfterEdition);
-           // }
+        for (ListGridRecord code : records) {
+                       
+            Boolean valueBeforeEdition = code.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK_INITIAL);
+            Boolean valueAfterEdition = code.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK);
+            logger.log(Level.INFO, code.getAttributeAsString(CodeDS.URN) + " -> chequeado: " + (valueAfterEdition ? "Sí" : "No"));
+            if (!valueBeforeEdition.equals(valueAfterEdition)) {
+                modifiedRestrictions.put(code.getAttributeAsString(CodeDS.URN), valueAfterEdition);
+           }
         }
+        uiHandlers.updateCodesRestrictions(codelistVisualisationDto.getUrn(), modifiedRestrictions);
+        
     }
     
     private ToolStripButton createEditButton() {

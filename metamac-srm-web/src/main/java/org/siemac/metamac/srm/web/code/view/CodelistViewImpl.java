@@ -536,6 +536,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         // Every time new codes are set, the visualization of codes order or openness levels should be reset (maybe there are new codes, or its structure has changed)
         codelistOrdersPanel.hideCodes();
         codelistOpennesssLevelsPanel.hideCodes();
+        codelistRestrictionsPanel.hideCodes();
     }
 
     //
@@ -587,7 +588,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
     }
 
     //
-    // OPENNESS LEVELS
+    // RESTRICTION 
     //
 
     @Override

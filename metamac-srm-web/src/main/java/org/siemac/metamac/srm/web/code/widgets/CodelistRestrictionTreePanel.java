@@ -42,6 +42,8 @@ public class CodelistRestrictionTreePanel extends VLayout {
     private ToolStripButton                         editButton;
     private ToolStripButton                         saveButton;
     private ToolStripButton                         cancelButton;
+    private ToolStripButton                         checkAllButton;
+    private ToolStripButton                         uncheckAllButton;
     private CodesRestrictionVisualisationTreeGrid codesRestrictionVisualisationTreeGrid;
 
     public CodelistRestrictionTreePanel() {
@@ -60,6 +62,8 @@ public class CodelistRestrictionTreePanel extends VLayout {
         toolStrip.addButton(createEditButton());
         toolStrip.addButton(createSaveButton());
         toolStrip.addButton(createCancelButton());
+        toolStrip.addButton(createCheckAllButton());
+        toolStrip.addButton(createUncheckAllButton());
         addMember(toolStrip);
         // TREE
 
@@ -90,6 +94,8 @@ public class CodelistRestrictionTreePanel extends VLayout {
                 editButton.setVisible(true);
                 saveButton.setVisible(false);
                 cancelButton.setVisible(false);
+                checkAllButton.setVisible(false);
+                uncheckAllButton.setVisible(false);
                 codesRestrictionVisualisationTreeGrid.setEditCheckCodes(false);
                 saveRestrictions();
             }
@@ -108,12 +114,42 @@ public class CodelistRestrictionTreePanel extends VLayout {
                 editButton.setVisible(true);
                 saveButton.setVisible(false);
                 cancelButton.setVisible(false);
+                checkAllButton.setVisible(false);
+                uncheckAllButton.setVisible(false);
                 codesRestrictionVisualisationTreeGrid.setEditCheckCodes(false);
                 uiHandlers.retrieveCodesWithRestrictions(codelistVisualisationDto.getUrn());
             }
         });
         cancelButton.setVisible(false);
         return cancelButton;
+    }
+    
+    private ToolStripButton createCheckAllButton() {
+        //TODO poner constante para tres idiomas
+        checkAllButton = new ToolStripButton("Marcar todo", null);
+        checkAllButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                codesRestrictionVisualisationTreeGrid.setCheckCodes(true);
+            }
+        });
+        checkAllButton.setVisible(false);
+        return checkAllButton;
+    }
+    
+    private ToolStripButton createUncheckAllButton() {
+      //TODO poner constante para tres idiomas
+        uncheckAllButton = new ToolStripButton("Desmarcar todo", null);
+        uncheckAllButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                codesRestrictionVisualisationTreeGrid.setCheckCodes(false);
+            }
+        });
+        uncheckAllButton.setVisible(false);
+        return uncheckAllButton;
     }
     
     private void saveRestrictions() {
@@ -142,6 +178,8 @@ public class CodelistRestrictionTreePanel extends VLayout {
                 editButton.setVisible(false);
                 saveButton.setVisible(true);
                 cancelButton.setVisible(true);
+                checkAllButton.setVisible(true);
+                uncheckAllButton.setVisible(true);
                 codesRestrictionVisualisationTreeGrid.setEditCheckCodes(true);
             }
         });

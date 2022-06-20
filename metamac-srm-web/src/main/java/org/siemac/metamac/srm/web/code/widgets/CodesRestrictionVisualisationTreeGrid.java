@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.web.code.widgets;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
@@ -12,9 +13,12 @@ import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ItemSchemeDto;
 import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
+
+import ch.qos.logback.core.pattern.parser.Node;
 
 /**
  * This tree is used to configure the restriction of the codes of a codelist. All the nodes are shown opened. An editable column lets the user to change the state of a node (opened or closed).
@@ -73,6 +77,14 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
             fields[0].setCanEdit(isEditable);
             fields[0].setCanToggle(isEditable);
         }
+    }
+
+    public void setCheckCodes(boolean checked) {       
+        ListGridRecord[] records = getRecords();
+        for (ListGridRecord code : records) {
+            code.setAttribute(CodeDS.RESTRICTION_CHECK, checked);
+        }
+        this.refreshFields();
     }
     
     @Override

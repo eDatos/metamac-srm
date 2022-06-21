@@ -6,8 +6,6 @@ import static org.siemac.metamac.web.common.client.resources.GlobalResources.RES
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
@@ -15,8 +13,6 @@ import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.code.model.ds.CodeDS;
-import org.siemac.metamac.srm.web.code.model.ds.CodelistVisualisationDS;
-import org.siemac.metamac.srm.web.code.model.record.CodelistVisualisationRecord;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
@@ -30,12 +26,8 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class CodelistRestrictionTreePanel extends VLayout {
-    protected static Logger logger = java.util.logging.Logger.getLogger("CodelistRestrictionTreePanel.class");
     
-    private CodelistMetamacDto                      codelistMetamacDto;
-    private List<CodeMetamacVisualisationResult>    codes;
     private CodelistVisualisationDto                codelistVisualisationDto;
-
     private CodelistUiHandlers                      uiHandlers;
 
     private TitleLabel                              rstrictionTitle;
@@ -72,8 +64,6 @@ public class CodelistRestrictionTreePanel extends VLayout {
     }
 
     public void setCodes(CodelistMetamacDto codelistMetamacDto, List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistVisualisationDto) {
-        this.codelistMetamacDto = codelistMetamacDto;
-        this.codes = codes;
         this.codelistVisualisationDto = codelistVisualisationDto;
 
         rstrictionTitle.setContents(CommonWebUtils.getElementName(codelistVisualisationDto.getCode(), codelistVisualisationDto.getName()));
@@ -82,8 +72,16 @@ public class CodelistRestrictionTreePanel extends VLayout {
 
         // Security
         editButton.setVisible(canCodeRestrictionBeModified(codelistMetamacDto, codelistVisualisationDto));
+        disabledEdit();
     }
 
+    private void disabledEdit() {
+        saveButton.setVisible(false);
+        cancelButton.setVisible(false);
+        checkAllButton.setVisible(false);
+        uncheckAllButton.setVisible(false);
+        codesRestrictionVisualisationTreeGrid.setEditCheckCodes(false);
+    }
     
     private ToolStripButton createSaveButton() {
         saveButton = new ToolStripButton(getConstants().actionSave(), RESOURCE.saveListGrid().getURL());
@@ -125,8 +123,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
     }
     
     private ToolStripButton createCheckAllButton() {
-        //TODO poner constante para tres idiomas
-        checkAllButton = new ToolStripButton("Marcar todo", null);
+        checkAllButton = new ToolStripButton(getConstants().actionCheckAll(), null);
         checkAllButton.addClickHandler(new ClickHandler() {
 
             @Override
@@ -139,8 +136,7 @@ public class CodelistRestrictionTreePanel extends VLayout {
     }
     
     private ToolStripButton createUncheckAllButton() {
-      //TODO poner constante para tres idiomas
-        uncheckAllButton = new ToolStripButton("Desmarcar todo", null);
+        uncheckAllButton = new ToolStripButton(getConstants().actionUncheckAll(), null);
         uncheckAllButton.addClickHandler(new ClickHandler() {
 
             @Override
@@ -160,7 +156,6 @@ public class CodelistRestrictionTreePanel extends VLayout {
                        
             Boolean valueBeforeEdition = code.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK_INITIAL);
             Boolean valueAfterEdition = code.getAttributeAsBoolean(CodeDS.RESTRICTION_CHECK);
-            logger.log(Level.INFO, code.getAttributeAsString(CodeDS.URN) + " -> chequeado: " + (valueAfterEdition ? "Sí" : "No"));
             if (!valueBeforeEdition.equals(valueAfterEdition)) {
                 modifiedRestrictions.put(code.getAttributeAsString(CodeDS.URN), valueAfterEdition);
            }

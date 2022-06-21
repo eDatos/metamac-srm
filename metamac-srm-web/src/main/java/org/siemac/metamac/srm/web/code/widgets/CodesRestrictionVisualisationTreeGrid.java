@@ -3,7 +3,6 @@ package org.siemac.metamac.srm.web.code.widgets;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
@@ -17,8 +16,6 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
-
-import ch.qos.logback.core.pattern.parser.Node;
 
 /**
  * This tree is used to configure the restriction of the codes of a codelist. All the nodes are shown opened. An editable column lets the user to change the state of a node (opened or closed).

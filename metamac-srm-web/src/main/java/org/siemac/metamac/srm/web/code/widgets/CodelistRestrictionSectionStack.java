@@ -1,19 +1,14 @@
 package org.siemac.metamac.srm.web.code.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
-import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
-
-import java.util.List;
 
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
-import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.widgets.BaseCodelistVisualisationSectionStack;
 import org.siemac.metamac.srm.web.code.model.ds.CodelistVisualisationDS;
 import org.siemac.metamac.srm.web.code.model.record.CodelistVisualisationRecord;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomListGrid;
-import org.siemac.metamac.web.common.client.widgets.InformationWindow;
 
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -68,15 +63,7 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
 
             @Override
             public void onClick(ClickEvent event) {
-                if (isAllExpandedRestrictionSelected()) {
-                    // All expanded openness level can not be deleted
-                    // TODO EDATOS-3647 cambiar las dos constantes
-                    InformationWindow informationWindow = new InformationWindow(getMessages().codelistOpennessLevelAllExpandedInfoDeleteTitle(), getMessages()
-                            .codelistOpennessLevelAllExpandedInfoDeleteMessage());
-                    informationWindow.show();
-                } else {
-                    deleteConfirmationWindow.show();
-                }
+                deleteConfirmationWindow.show();
             }
         });
 
@@ -134,15 +121,5 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
         if (CodesClientSecurityUtils.canDeleteCodelistRestrictionVisualisation(codelistMetamacDto)) {
             deleteCodelistVisualisationButton.show();
         }
-    }
-
-    private boolean isAllExpandedRestrictionSelected() {
-        List<String> restrictionCodes = CommonUtils.getVisualisationCodesFromSelectedCodelistVisualisations(listGrid.getSelectedRecords());
-        for (String code : restrictionCodes) {
-            if (SrmConstants.CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_CODE.equals(code)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -1395,9 +1395,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         CodelistOpennessVisualisation codelistOpennessVisualisation = retrieveCodelistOpennessVisualisationByCode(codelistVersion, opennessVisualisationCode);
         Integer opennessColumnIndex = codelistOpennessVisualisation.getColumnIndex();
-        
-        CodelistRestrictionVisualisation codelistRestrictionVisualisation = retrieveCodelistRestrictionVisualisationByCode(codelistVersion, restrictionVisualisationCode);
-        Integer restrictionColumnIndex = codelistRestrictionVisualisation.getColumnIndex();
+
+        Integer restrictionColumnIndex = null;
+        if (restrictionVisualisationCode != null) {
+            CodelistRestrictionVisualisation codelistRestrictionVisualisation = retrieveCodelistRestrictionVisualisationByCode(codelistVersion, restrictionVisualisationCode);
+            restrictionColumnIndex = codelistRestrictionVisualisation.getColumnIndex();
+        }
 
         // Retrieve
         return getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), orderColumnIndex, opennessColumnIndex, restrictionColumnIndex, itemResultSelection);

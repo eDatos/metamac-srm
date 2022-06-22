@@ -990,6 +990,12 @@
                   "type":"string",
                   "description":"Orden establecido para la visualización"
                },
+                {
+                  "name":"restriction",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Restricción establecida para la visualización. Sólo se mostrarán los códigos de esta restricción"
+               },
               {
                   "name":"fields",
                   "in":"query",

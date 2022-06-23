@@ -37,6 +37,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamilies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
@@ -61,6 +62,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
@@ -198,6 +200,31 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
+    @Override
+    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version) {
+
+
+        CodelistRestrictions targets = new CodelistRestrictions();
+        targets.setKind(SrmRestConstants.KIND_CODELIST_RESTRICTIONS);
+      
+        // Values
+        for (CodelistRestrictionVisualisation source : sources) {
+            ItemResource target = toResourceRestriction(source);
+            targets.getRestrictions().add(target);
+        }
+        return targets;
+    }
+
+    private ItemResource toResourceRestriction(CodelistRestrictionVisualisation source) {
+        if (source == null) {
+            return null;
+        }
+        ItemResource target = new ItemResource();
+        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode()), target,
+                false, null);
+        return target;
+    }
+    
     @Override
     public ItemResource toResource(CodeMetamac source) {
         if (source == null) {
@@ -552,6 +579,22 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return toResourceLink(SrmRestConstants.KIND_CODES, toCodesLink(source.getItemSchemeVersion()));
     }
 
+    private ResourceLink toCodelistRestrictionSelfLink(CodelistVersion source, String restrictionName) {
+        return toResourceLink(SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionLink(source, restrictionName));
+        
+    }
+    
+    private String toCodelistRestrictionLink(CodelistVersion source, String restriction) {
+        String link =  toCodelistLink(source);
+        link = RestUtils.createLink(link, toSubpathItemsRestriction());
+        link = RestUtils.createLink(link, restriction);
+        return link;
+    }
+    
+    private String toSubpathItemsRestriction() {
+        return SrmRestConstants.LINK_SUBPATH_RESTRICTIONS;
+    }
+    
     private ChildLinks toCodeChildLinks(com.arte.statistic.sdmx.srm.core.code.domain.Code source) {
         // nothing
         return null;

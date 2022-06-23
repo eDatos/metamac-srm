@@ -189,6 +189,11 @@ public class InternalWebApplicationNavigation {
         return buildCodelistUrl(codelist.getMaintainableArtefact().getUrn());
     }
 
+    
+    public String buildRestrictionUrl(String urnRestriction) {
+        return buildCodelistUrl(urnRestriction);
+    }
+    
     public String buildCodelistUrl(String urn) {
         Map<String, String> parameters = new HashMap<>(1);
         String codelistUrlPart = UrnUtils.removePrefix(urn);

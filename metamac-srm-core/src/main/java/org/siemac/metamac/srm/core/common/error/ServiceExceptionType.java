@@ -168,6 +168,10 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.incorrect_number_codes");
     public static final CommonServiceExceptionType IMPORTATION_SHAPE_ERROR                                                            = create("exception.srm.importation.shape.error");
     public static final CommonServiceExceptionType IMPORTATION_SHAPE_ERROR_FILE_PARSING                                               = create("exception.srm.importation.shape.error.file_parse");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND                                           = create(
+            "exception.srm.importation.tsv.error.codelist.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND                                     = create(
+            "exception.srm.importation.tsv.error.concept_scheme.not_found");
     public static final CommonServiceExceptionType EXPORTATION_TSV_ERROR                                                              = create("exception.srm.exportation.tsv.error");
 
     // Notices

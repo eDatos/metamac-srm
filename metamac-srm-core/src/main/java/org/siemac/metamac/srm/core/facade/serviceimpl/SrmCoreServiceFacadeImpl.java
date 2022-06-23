@@ -100,6 +100,7 @@ import org.siemac.metamac.srm.core.security.ConceptsSecurityUtils;
 import org.siemac.metamac.srm.core.security.DataStructureDefinitionSecurityUtils;
 import org.siemac.metamac.srm.core.security.OrganisationsSecurityUtils;
 import org.siemac.metamac.srm.core.security.TasksSecurityUtils;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -361,29 +362,29 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public DataStructureDefinitionMetamacDto publishDataStructureDefinitionInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+    public ResourceVersionPublicationResult<DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
         // Security
         DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacOld = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, urn);
         DataStructureDefinitionSecurityUtils.canPublishDataStructureDefinitionInternally(ctx, dataStructureDefinitionVersionMetamacOld);
 
-        DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac = getDataStructureDefinitionMetamacService().publishInternallyDataStructureDefinition(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> dsdVersionPublicationResult = getDataStructureDefinitionMetamacService().publishInternallyDataStructureDefinition(ctx, urn, forceLatestFinal);
 
         // Transform to Dto
-        DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dataStructureDefinitionVersionMetamac);
-        return dataStructureDefinitionMetamacDto;
+        DataStructureDefinitionMetamacDto dsdVersionMetamac = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dsdVersionPublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(dsdVersionPublicationResult.getContent(), dsdVersionPublicationResult.getExceptions(), dsdVersionMetamac);
     }
 
     @Override
-    public DataStructureDefinitionMetamacDto publishDataStructureDefinitionExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<DataStructureDefinitionMetamacDto> publishDataStructureDefinitionExternally(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacOld = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, urn);
         DataStructureDefinitionSecurityUtils.canPublishDataStructureDefinitionExternally(ctx, dataStructureDefinitionVersionMetamacOld);
 
-        DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac = getDataStructureDefinitionMetamacService().publishExternallyDataStructureDefinition(ctx, urn);
+        ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> dsdVersionPublicationResult = getDataStructureDefinitionMetamacService().publishExternallyDataStructureDefinition(ctx, urn);
 
         // Transform to Dto
-        DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dataStructureDefinitionVersionMetamac);
-        return dataStructureDefinitionMetamacDto;
+        DataStructureDefinitionMetamacDto dsdVersionMetamac = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dsdVersionPublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(dsdVersionPublicationResult.getContent(), dsdVersionPublicationResult.getExceptions(), dsdVersionMetamac);
     }
 
     @Override
@@ -1355,15 +1356,15 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public CodelistMetamacDto publishCodelistExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<CodelistMetamacDto> publishCodelistExternally(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         CodesSecurityUtils.canPublishCodelistExternally(ctx);
 
-        CodelistVersionMetamac codelistVersionPublished = getCodesMetamacService().publishExternallyCodelist(ctx, urn);
+        ResourceVersionPublicationResult<CodelistVersionMetamac> codelistVersionPublicationResult = getCodesMetamacService().publishExternallyCodelist(ctx, urn);
 
-        // Transform to DTO
-        CodelistMetamacDto codelistDto = codesDo2DtoMapper.codelistMetamacDoToDto(codelistVersionPublished);
-        return codelistDto;
+        // Transform to Dto
+        CodelistMetamacDto codelistMetamacDto = codesDo2DtoMapper.codelistMetamacDoToDto(codelistVersionPublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(codelistVersionPublicationResult.getContent(), codelistVersionPublicationResult.getExceptions(), codelistMetamacDto);
     }
 
     @Override
@@ -2431,28 +2432,28 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public OrganisationSchemeMetamacDto publishOrganisationSchemeInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+    public ResourceVersionPublicationResult<OrganisationSchemeMetamacDto> publishOrganisationSchemeInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
         // Security
         OrganisationsSecurityUtils.canPublishOrganisationSchemeInternally(ctx);
 
         // Publish
-        OrganisationSchemeVersionMetamac organisationSchemeVersionPublished = getOrganisationsMetamacService().publishInternallyOrganisationScheme(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> organisationSchemePublicationResult = getOrganisationsMetamacService().publishInternallyOrganisationScheme(ctx, urn, forceLatestFinal);
 
-        // Transform to DTO
-        OrganisationSchemeMetamacDto organisationSchemeDto = organisationsDo2DtoMapper.organisationSchemeMetamacDoToDto(organisationSchemeVersionPublished);
-        return organisationSchemeDto;
+        // Transform to Dto
+        OrganisationSchemeMetamacDto organisationSchemeVersionMetamac = organisationsDo2DtoMapper.organisationSchemeMetamacDoToDto(organisationSchemePublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(organisationSchemePublicationResult.getContent(), organisationSchemePublicationResult.getExceptions(), organisationSchemeVersionMetamac);
     }
 
     @Override
-    public OrganisationSchemeMetamacDto publishOrganisationSchemeExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<OrganisationSchemeMetamacDto> publishOrganisationSchemeExternally(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         OrganisationsSecurityUtils.canPublishOrganisationSchemeExternally(ctx);
 
-        OrganisationSchemeVersionMetamac organisationSchemeVersionPublished = getOrganisationsMetamacService().publishExternallyOrganisationScheme(ctx, urn);
+        ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> organisationSchemePublicationResult = getOrganisationsMetamacService().publishExternallyOrganisationScheme(ctx, urn);
 
-        // Transform to DTO
-        OrganisationSchemeMetamacDto organisationSchemeDto = organisationsDo2DtoMapper.organisationSchemeMetamacDoToDto(organisationSchemeVersionPublished);
-        return organisationSchemeDto;
+        // Transform to Dto
+        OrganisationSchemeMetamacDto organisationSchemeVersionMetamac = organisationsDo2DtoMapper.organisationSchemeMetamacDoToDto(organisationSchemePublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(organisationSchemePublicationResult.getContent(), organisationSchemePublicationResult.getExceptions(), organisationSchemeVersionMetamac);
     }
 
     @Override
@@ -2962,30 +2963,30 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public ConceptSchemeMetamacDto publishConceptSchemeInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+    public ResourceVersionPublicationResult<ConceptSchemeMetamacDto> publishConceptSchemeInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
         // Security
         ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptsMetamacService().retrieveConceptSchemeByUrn(ctx, urn);
         ConceptsSecurityUtils.canPublishConceptSchemeInternally(ctx, conceptSchemeVersion);
 
         // Publish
-        ConceptSchemeVersionMetamac conceptSchemeVersionPublished = getConceptsMetamacService().publishInternallyConceptScheme(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<ConceptSchemeVersionMetamac> conceptSchemePublicationResult = getConceptsMetamacService().publishInternallyConceptScheme(ctx, urn, forceLatestFinal);
 
         // Transform to Dto
-        ConceptSchemeMetamacDto conceptSchemeDto = conceptsDo2DtoMapper.conceptSchemeMetamacDoToDto(conceptSchemeVersionPublished);
-        return conceptSchemeDto;
+        ConceptSchemeMetamacDto conceptSchemeMetamac = conceptsDo2DtoMapper.conceptSchemeMetamacDoToDto(conceptSchemePublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(conceptSchemePublicationResult.getContent(), conceptSchemePublicationResult.getExceptions(), conceptSchemeMetamac);
     }
 
     @Override
-    public ConceptSchemeMetamacDto publishConceptSchemeExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<ConceptSchemeMetamacDto> publishConceptSchemeExternally(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptsMetamacService().retrieveConceptSchemeByUrn(ctx, urn);
         ConceptsSecurityUtils.canPublishConceptSchemeExternally(ctx, conceptSchemeVersion);
 
-        ConceptSchemeVersionMetamac conceptSchemeVersionPublished = getConceptsMetamacService().publishExternallyConceptScheme(ctx, urn);
+        ResourceVersionPublicationResult<ConceptSchemeVersionMetamac> conceptSchemePublicationResult = getConceptsMetamacService().publishExternallyConceptScheme(ctx, urn);
 
         // Transform to Dto
-        ConceptSchemeMetamacDto conceptSchemeDto = conceptsDo2DtoMapper.conceptSchemeMetamacDoToDto(conceptSchemeVersionPublished);
-        return conceptSchemeDto;
+        ConceptSchemeMetamacDto conceptSchemeMetamac = conceptsDo2DtoMapper.conceptSchemeMetamacDoToDto(conceptSchemePublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(conceptSchemePublicationResult.getContent(), conceptSchemePublicationResult.getExceptions(), conceptSchemeMetamac);
     }
 
     @Override
@@ -3576,28 +3577,28 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public CategorySchemeMetamacDto publishCategorySchemeInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+    public ResourceVersionPublicationResult<CategorySchemeMetamacDto> publishCategorySchemeInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
         // Security
         CategoriesSecurityUtils.canPublishCategorySchemeInternally(ctx);
 
         // Publish
-        CategorySchemeVersionMetamac categorySchemeVersionPublished = getCategoriesMetamacService().publishInternallyCategoryScheme(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<CategorySchemeVersionMetamac> categorySchemeVersionPublicationResult = getCategoriesMetamacService().publishInternallyCategoryScheme(ctx, urn, forceLatestFinal);
 
         // Transform to DTO
-        CategorySchemeMetamacDto categorySchemeDto = categoriesDo2DtoMapper.categorySchemeMetamacDoToDto(categorySchemeVersionPublished);
-        return categorySchemeDto;
+        CategorySchemeMetamacDto categorySchemeVersionMetamac = categoriesDo2DtoMapper.categorySchemeMetamacDoToDto(categorySchemeVersionPublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(categorySchemeVersionPublicationResult.getContent(), categorySchemeVersionPublicationResult.getExceptions(), categorySchemeVersionMetamac);
     }
 
     @Override
-    public CategorySchemeMetamacDto publishCategorySchemeExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<CategorySchemeMetamacDto> publishCategorySchemeExternally(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         CategoriesSecurityUtils.canPublishCategorySchemeExternally(ctx);
 
-        CategorySchemeVersionMetamac categorySchemeVersionPublished = getCategoriesMetamacService().publishExternallyCategoryScheme(ctx, urn);
+        ResourceVersionPublicationResult<CategorySchemeVersionMetamac> categorySchemeVersionPublicationResult = getCategoriesMetamacService().publishExternallyCategoryScheme(ctx, urn);
 
         // Transform to DTO
-        CategorySchemeMetamacDto categorySchemeDto = categoriesDo2DtoMapper.categorySchemeMetamacDoToDto(categorySchemeVersionPublished);
-        return categorySchemeDto;
+        CategorySchemeMetamacDto categorySchemeVersionMetamac = categoriesDo2DtoMapper.categorySchemeMetamacDoToDto(categorySchemeVersionPublicationResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(categorySchemeVersionPublicationResult.getContent(), categorySchemeVersionPublicationResult.getExceptions(), categorySchemeVersionMetamac);
     }
 
     @Override

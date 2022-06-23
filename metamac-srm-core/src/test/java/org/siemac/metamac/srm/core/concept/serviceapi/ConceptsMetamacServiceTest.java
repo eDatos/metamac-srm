@@ -1304,7 +1304,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         }
 
         // Publish internally
-        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishInternallyConceptScheme(ctx, urn, Boolean.FALSE);
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishInternallyConceptScheme(ctx, urn, Boolean.FALSE).getResourceVersion();
 
         // Validate response
         {
@@ -1497,7 +1497,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         }
 
         // Publish externally
-        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishExternallyConceptScheme(ctx, urn);
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.publishExternallyConceptScheme(ctx, urn).getResourceVersion();
 
         // Validate response
         {
@@ -4209,6 +4209,42 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         } catch (MetamacException e) {
             assertEquals(1, e.getExceptionItems().size());
             assertEquals(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+
+    @Test
+    public void testImportConceptsTsvCodelistNotFound() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
+        String fileName = "importation-concept-01-error_02.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = false;
+
+        try {
+            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+            fail("expected tsv import error");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND.getCode(), e.getExceptionItems().get(0).getCode());
+            assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
+            assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Codelist=ABCD01:WXYZ(01.000)", e.getExceptionItems().get(0).getMessageParameters()[0]);
+        }
+    }
+
+    @Test
+    public void testImportConceptsTsvConceptSchemeNotFound() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
+        String fileName = "importation-concept-01-error_01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = false;
+
+        try {
+            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+            fail("expected tsv import error");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND.getCode(), e.getExceptionItems().get(0).getCode());
+            assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
+            assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=ZYXW1:DCBA(01.000)", e.getExceptionItems().get(0).getMessageParameters()[0]);
         }
     }
 

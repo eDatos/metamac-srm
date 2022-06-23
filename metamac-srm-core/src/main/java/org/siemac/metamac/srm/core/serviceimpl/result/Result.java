@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.core.serviceimpl.result;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,16 @@ public abstract class Result<T> {
 
     public List<MetamacException> getSecondaryExceptions() {
         return exceptions.isEmpty() ? new ArrayList<>() : exceptions.subList(1, exceptions.size());
+    }
+
+    public MetamacException groupExceptions() {
+        MetamacException e = getMainException();
+        List<MetamacExceptionItem> list = new ArrayList<>();
+        for (MetamacException exception : getSecondaryExceptions()) {
+            list.addAll(exception.getExceptionItems());
+        }
+        e.getExceptionItems().addAll(list);
+        return e;
     }
 
     public void addException(MetamacException exception) {

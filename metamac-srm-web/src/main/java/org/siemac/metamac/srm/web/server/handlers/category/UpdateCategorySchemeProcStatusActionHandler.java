@@ -6,6 +6,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.web.server.rest.NoticesRestInternalFacade;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusAction;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusResult;
@@ -50,23 +51,54 @@ public class UpdateCategorySchemeProcStatusActionHandler extends SecurityActionH
                     scheme = srmCoreServiceFacade.rejectCategorySchemeDiffusionValidation(serviceContext, action.getUrn());
                 }
             } else if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
-                scheme = srmCoreServiceFacade.publishCategorySchemeInternally(serviceContext, action.getUrn(), action.getForceLatestFinal());
+                ResourceVersionPublicationResult<CategorySchemeMetamacDto> resourceVersionPublicationResult = srmCoreServiceFacade.publishCategorySchemeInternally(serviceContext, action.getUrn(), action.getForceLatestFinal());
+                scheme = resourceVersionPublicationResult.getResourceVersion();
 
-                try {
-                    noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, scheme, resourceType);
-                } catch (MetamacWebException e) {
-                    return new UpdateCategorySchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                if (!resourceVersionPublicationResult.isOk()) {
+                    MetamacWebException categorySchemeStreamMessageException = WebExceptionUtils.createMetamacWebException(resourceVersionPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, scheme, resourceType);
+                    } catch (MetamacWebException noticeException) {
+                        categorySchemeStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, scheme, resourceType);
+                    } catch (MetamacWebException noticeException) {
+                        categorySchemeStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateCategorySchemeProcStatusResult.Builder(scheme).notificationException(categorySchemeStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createInternalPublicationNotification(serviceContext, scheme, resourceType);
+                    } catch (MetamacWebException e) {
+                        return new UpdateCategorySchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                    }
                 }
 
             } else if (ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(action.getNextProcStatus())) {
-                scheme = srmCoreServiceFacade.publishCategorySchemeExternally(serviceContext, action.getUrn());
+                ResourceVersionPublicationResult<CategorySchemeMetamacDto> resourceVersionPublicationResult = srmCoreServiceFacade.publishCategorySchemeExternally(serviceContext, action.getUrn());
+                scheme = resourceVersionPublicationResult.getResourceVersion();
 
-                try {
-                    noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, scheme, resourceType);
-                } catch (MetamacWebException e) {
-                    return new UpdateCategorySchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                if (!resourceVersionPublicationResult.isOk()) {
+                    MetamacWebException categorySchemeStreamMessageException = WebExceptionUtils.createMetamacWebException(resourceVersionPublicationResult.groupExceptions());
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, scheme, resourceType);
+                    } catch (MetamacWebException noticeException) {
+                        categorySchemeStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    try {
+                        noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, scheme, resourceType);
+                    } catch (MetamacWebException noticeException) {
+                        categorySchemeStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
+                    }
+                    return new UpdateCategorySchemeProcStatusResult.Builder(scheme).notificationException(categorySchemeStreamMessageException).build();
+                } else {
+                    try {
+                        noticesRestInternalFacade.createExternalPublicationNotification(serviceContext, scheme, resourceType);
+                    } catch (MetamacWebException e) {
+                        return new UpdateCategorySchemeProcStatusResult.Builder(scheme).notificationException(e).build();
+                    }
                 }
-
             }
             return new UpdateCategorySchemeProcStatusResult(scheme);
         } catch (MetamacException e) {

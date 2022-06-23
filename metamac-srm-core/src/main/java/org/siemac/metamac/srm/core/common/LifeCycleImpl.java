@@ -22,6 +22,8 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
+import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -160,7 +162,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
     }
 
     @Override
-    public Object publishInternally(ServiceContext ctx, String urn, Boolean forceLastestFinal) throws MetamacException {
+    public ResourceVersionPublicationResult<?> publishInternally(ServiceContext ctx, String urn, Boolean forceLastestFinal) throws MetamacException {
         // Validation
         checkInvocation(urn);
 
@@ -193,16 +195,17 @@ public abstract class LifeCycleImpl implements LifeCycle {
             }
         }
 
+        SendStreamMessageResult sendStreamMessageResult;
         // If the artefact to publishInternally is a temporal version (a merge was performed) and if the Proc Status of original version is PublishExternally, then merge changes to publish externally
         // version
         // if (callback.isTemporalToPublishExternally(ctx, srmResourceVersion)) {
         if (isTemporalVersionWithExternalPublished) {
-            publishExternally(ctx, maintainableArtefact.getUrn());
+            sendStreamMessageResult = publishExternally(ctx, maintainableArtefact.getUrn());
         } else {
-            callback.notifyPublication(srmResourceVersion);
+            sendStreamMessageResult = callback.notifyPublication(srmResourceVersion);
         }
 
-        return srmResourceVersion;
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
 
     @Override
@@ -217,7 +220,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
     }
 
     @Override
-    public Object publishExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<?> publishExternally(ServiceContext ctx, String urn) throws MetamacException {
 
         // Validation
         checkInvocation(urn);
@@ -267,9 +270,8 @@ public abstract class LifeCycleImpl implements LifeCycle {
             }
         }
 
-        callback.notifyPublication(srmResourceVersion);
-
-        return srmResourceVersion;
+        SendStreamMessageResult sendStreamMessageResult = callback.notifyPublication(srmResourceVersion);
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
 
     protected void addOrUpdateExceptionItemByResourceUrnWhenExceptionsNonZero(Map<String, MetamacExceptionItem> exceptionsByResourceUrn, String resourceUrn, List<MetamacExceptionItem> exceptionItems) {
@@ -468,6 +470,6 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Boolean canHaveCategorisations();
         public Object mergeTemporal(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
-        public void notifyPublication(Object message);
+        public SendStreamMessageResult notifyPublication(Object message);
     }
 }

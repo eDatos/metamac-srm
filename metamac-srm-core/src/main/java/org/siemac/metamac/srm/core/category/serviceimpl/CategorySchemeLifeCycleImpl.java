@@ -24,6 +24,7 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -222,8 +223,8 @@ public class CategorySchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void notifyPublication(Object message) {
-            streamMessagingService.sendMessage((CategorySchemeVersionMetamac) message, categorySchemeStreamMessagingCallback);
+        public SendStreamMessageResult notifyPublication(Object message) {
+            return streamMessagingService.sendMessage((CategorySchemeVersionMetamac) message, categorySchemeStreamMessagingCallback);
         }
 
         private CategorySchemeVersionMetamac getCategorySchemeVersionMetamac(Object srmResource) {

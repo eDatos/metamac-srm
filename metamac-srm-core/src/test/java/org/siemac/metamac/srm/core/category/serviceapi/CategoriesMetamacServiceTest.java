@@ -842,7 +842,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         }
 
         // Publish internally
-        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.publishInternallyCategoryScheme(ctx, urn, Boolean.FALSE);
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.publishInternallyCategoryScheme(ctx, urn, Boolean.FALSE).getResourceVersion();
 
         // Validate response
         {
@@ -1021,7 +1021,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         }
 
         // Publish externally
-        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.publishExternallyCategoryScheme(ctx, urn);
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.publishExternallyCategoryScheme(ctx, urn).getResourceVersion();
 
         // Validate response
         {

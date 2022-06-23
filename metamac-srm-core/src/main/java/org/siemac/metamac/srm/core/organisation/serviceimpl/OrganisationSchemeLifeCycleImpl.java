@@ -25,6 +25,7 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamacRepository;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
+import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -246,8 +247,8 @@ public class OrganisationSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void notifyPublication(Object message) {
-            streamMessagingService.sendMessage((OrganisationSchemeVersionMetamac) message, organisationSchemeStreamMessagingCallback);
+        public SendStreamMessageResult notifyPublication(Object message) {
+            return streamMessagingService.sendMessage((OrganisationSchemeVersionMetamac) message, organisationSchemeStreamMessagingCallback);
         }
 
         private OrganisationSchemeVersionMetamac getOrganisationSchemeVersionMetamac(Object srmResource) {

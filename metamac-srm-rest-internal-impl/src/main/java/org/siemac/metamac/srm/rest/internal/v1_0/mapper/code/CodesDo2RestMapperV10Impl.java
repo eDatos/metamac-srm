@@ -213,7 +213,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
 
 
         CodelistRestrictions targets = new CodelistRestrictions();
-        targets.setKind(SrmRestConstants.KIND_CODES);  //TODO EDATOS-3647 CAMBIAR.
+        targets.setKind(SrmRestConstants.KIND_CODELIST_RESTRICTIONS);
       
         // Values
         for (CodelistRestrictionVisualisation source : sources) {
@@ -229,9 +229,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
             return null;
         }
         ItemResourceInternal target = new ItemResourceInternal();
-        //TODO EDATOS-3647 PONER CONSTANTE
-        //toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getUrn()), target, false, null);
-        toResource(source.getNameableArtefact(), "structuralResources#restriction", toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getUrn()), target, false, null);
+          toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
         return target;
     }
 
@@ -565,9 +563,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     private ResourceLink toCodelistRestrictionSelfLink(CodelistVersion source, String restrictionName) {
-        //TODO EDATOS-3647 poner constante.
-        //return toResourceLink(SrmRestConstants.KIND_CODELIST, toCodelistRestrictionLink(source, restrictionName)); 
-        return toResourceLink("structuralResources#restrictions", toCodelistRestrictionLink(source, restrictionName));
+        return toResourceLink(SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionLink(source, restrictionName));
         
     }
     
@@ -683,9 +679,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
     
     private String toSubpathItemsRestriction() {
-        //TODO EDATOS-3647  crear constante.
-        //return SrmRestConstants.LINK_SUBPATH_RESTRICTIONS;
-        return "restrictions";
+        return SrmRestConstants.LINK_SUBPATH_RESTRICTIONS;
     }
     
     private String toCodelistsLink(String agencyID, String resourceID, String version) {
@@ -909,8 +903,8 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return getInternalWebApplicationNavigation().buildCodelistUrl(source);
     }
 
-    private String toCodelistRestrictionManagementApplicationLink(String urnRestriction) {
-        return getInternalWebApplicationNavigation().buildCodelistUrl(urnRestriction);
+    private String toCodelistRestrictionManagementApplicationLink(String code, String urnRestriction) {
+        return getInternalWebApplicationNavigation().buildRestrictionUrl(code, urnRestriction);
     }
     
     @Override
@@ -924,7 +918,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private String toCodeManagementApplicationLink(CodelistVersion codelistVersion, ItemResult source) {
         return getInternalWebApplicationNavigation().buildCodeUrl(codelistVersion.getMaintainableArtefact().getUrn(), source.getCode());
     }
-
+    
     private String toCodeManagementApplicationLink(String codeUrn) {
         String[] codeUrnSplited = UrnUtils.splitUrnItem(codeUrn);
         String[] agency = StringUtils.splitPreserveAllTokens(codeUrnSplited[0], UrnConstants.DOT);

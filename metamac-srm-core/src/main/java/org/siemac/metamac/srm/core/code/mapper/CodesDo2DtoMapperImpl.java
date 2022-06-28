@@ -61,7 +61,6 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setFamily(codelistFamilyDoToRelatedResourceDto(source.getFamily()));
         target.setVariable(variableDoToRelatedResourceDto(source.getVariable()));
         target.setLifeCycle(lifeCycleDoToDto(source.getLifeCycleMetadata()));
-        //TODO edatos-3647 en principio no necesario default
         target.setDefaultOrderVisualisation(codelistOrderVisualisationDoToRelatedResourceDto(source.getDefaultOrderVisualisation()));
         target.setDefaultOpennessVisualisation(codelistOpennessVisualisationDoToRelatedResourceDto(source.getDefaultOpennessVisualisation()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());

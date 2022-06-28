@@ -90,12 +90,6 @@ public class SrmValidationUtils extends SdmxSrmValidationUtils {
             throw new MetamacException(ServiceExceptionType.CODELIST_ALL_EXPANDED_OPENNESS_VISUALISATION_OPERATION_NOT_SUPPORTED, opennessVisualisation.getNameableArtefact().getUrn());
         }
     }
-
-    public static void checkNotOpenedRestrictionVisualisation(CodelistRestrictionVisualisation restrictionVisualisation) throws MetamacException {
-        if (SrmServiceUtils.isAllExpandedRestrictionVisualisation(restrictionVisualisation)) {
-            throw new MetamacException(ServiceExceptionType.CODELIST_ALL_EXPANDED_RESTRICTION_VISUALISATION_OPERATION_NOT_SUPPORTED, restrictionVisualisation.getNameableArtefact().getUrn());
-        }
-    }
     
     public static void checkVariableIsGeographical(Variable variable) throws MetamacException {
         if (!VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType())) {

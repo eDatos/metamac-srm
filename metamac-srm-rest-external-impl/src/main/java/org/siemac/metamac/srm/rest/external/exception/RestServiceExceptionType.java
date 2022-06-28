@@ -28,7 +28,6 @@ public class RestServiceExceptionType extends RestCommonServiceExceptionType {
 
     public static final RestCommonServiceExceptionType CODELIST_NOT_FOUND                        = create("exception.structural_resources.codelist.not_found");
     public static final RestCommonServiceExceptionType CODELIST_ORDER_CONFIGURATION_NOT_FOUND    = create("exception.structural_resources.codelist_order_configuration.not_found");
-    //TODO edatos-3647 poner excepción en mensages
     public static final RestCommonServiceExceptionType CODELIST_RESTRICTION_CONFIGURATION_NOT_FOUND = create("exception.structural_resources.codelist_openness_configuration.not_found");
     public static final RestCommonServiceExceptionType CODELIST_OPENNESS_CONFIGURATION_NOT_FOUND = create("exception.structural_resources.codelist_openness_configuration.not_found");
     public static final RestCommonServiceExceptionType CODE_NOT_FOUND                            = create("exception.structural_resources.code.not_found");

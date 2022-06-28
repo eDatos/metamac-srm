@@ -513,7 +513,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Convert order and openness visualisations in no temporal
         createOrderVisualisationVersionFromTemporalOrderVisualisation(ctx, codelistVersionTemporal);
         createOpennessVisualisationVersionFromTemporalOpennessVisualisation(ctx, codelistVersionTemporal);
-
+        createRestrictionVisualisationVersionFromTemporalRestrictionVisualisation(ctx, codelistVersionTemporal);
         // Delete all codes if user decided not included them in the versioned codelist
         deleteAllCodesIfProceed(codelistVersionTemporal, versioningCodes);
 
@@ -585,10 +585,16 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
             // Openness Visualisation
             for (int i = 1; i <= SrmConstants.CODELIST_OPENNESS_VISUALISATION_MAXIMUM_NUMBER; i++) {
-                Boolean openness = SrmServiceUtils.getCodeRestriction(codeTemp, i);
+                Boolean openness = SrmServiceUtils.getCodeOpenness(codeTemp, i);
                 SrmServiceUtils.setCodeOpenness(code, i, openness);
             }
 
+            // restriction Visualisation
+            for (int i = 1; i <= SrmConstants.CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_NUMBER; i++) {
+                Boolean restriction = SrmServiceUtils.getCodeRestriction(codeTemp, i);
+                SrmServiceUtils.setCodeRestriction(code, i, restriction);
+            }
+            
         }
 
         // ===============================================================
@@ -596,6 +602,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // context to avoid delete the temporary scheme with the previous temporary item when delete the temporary item scheme.
         CodesUtils.addCodelistOpennessVisualisationTemporalToItemScheme(codelistTemporalVersion, codelistVersion, internationalStringRepository);
         CodesUtils.addCodelistOrderVisualisationTemporalToItemScheme(codelistTemporalVersion, codelistVersion, internationalStringRepository);
+        CodesUtils.addCodelistRestrictionVisualisationTemporalToItemScheme(codelistTemporalVersion, codelistVersion, internationalStringRepository);
         CategorisationsUtils.addCategorisationsTemporalToItemScheme(codelistTemporalVersion, codelistVersion);
         // FLUSH AND CLEAR NEEDED, see the next lines
         // ===============================================================
@@ -1282,7 +1289,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         CodelistRestrictionVisualisation codelistRestrictionVisualisation = retrieveCodelistRestrictionVisualisationByUrn(restrictionVisualisation);
         CodelistVersionMetamac codelistVersion = codelistRestrictionVisualisation.getCodelistVersion();
         checkCodelistCanBeModified(codelistVersion);
-        SrmValidationUtils.checkNotOpenedRestrictionVisualisation(codelistRestrictionVisualisation);
 
         // Update codes
         Integer columnIndex = codelistRestrictionVisualisation.getColumnIndex();
@@ -2416,7 +2422,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Validation
         CodesMetamacInvocationValidator.checkDeleteArtefact(urn);
         CodelistRestrictionVisualisation codelistRestrictionVisualisationToDelete = retrieveCodelistRestrictionVisualisationByUrn(urn);
-        SrmValidationUtils.checkNotOpenedRestrictionVisualisation(codelistRestrictionVisualisationToDelete);
 
         // Check codelist
         CodelistVersionMetamac codelistVersion = codelistRestrictionVisualisationToDelete.getCodelistVersion();
@@ -3347,26 +3352,14 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         for (CodelistRestrictionVisualisation codelistRestrictionVisualisationSource : source.getRestrictionVisualisations()) {
             versioningCodelistRestrictionVisualisation(codelistRestrictionVisualisationSource, target);
         }
-        target = getCodelistVersionMetamacRepository().save(target);
         
-        //TODO edatos-3647 En principio no se indica necesidad de restricción por defecto. Ver al final del desarrollo y quitar este código en caso afirmativo.
-        /*
-        for (CodelistRestrictionVisualisation codelistRestrictionVisualisationTarget : target.getRestrictionVisualisations()) {
-            if (source.getDefaultRestrictionVisualisation() != null
-                    && source.getDefaultOpennessVisualisation().getNameableArtefact().getCode().equals(codelistRestrictionVisualisationTarget.getNameableArtefact().getCode())) {
-                target.setDefaultRestrictionVisualisation(codelistRestrictionVisualisationTarget);
-                break;
-            }
-        }
-        */
-        target = getCodelistVersionMetamacRepository().save(target);
-        return target;
+        return getCodelistVersionMetamacRepository().save(target);
     }
     
     private CodelistRestrictionVisualisation versioningCodelistRestrictionVisualisation(CodelistRestrictionVisualisation source, CodelistVersionMetamac codelistTarget) throws MetamacException {
         CodelistRestrictionVisualisation target = new CodelistRestrictionVisualisation();
         target.setColumnIndex(source.getColumnIndex());
-        target.setNameableArtefact(versioningCodelistVisualisationNameableArtefact(source.getNameableArtefact()));;
+        target.setNameableArtefact(versioningCodelistVisualisationNameableArtefact(source.getNameableArtefact()));
         setCodelistRestrictionVisualisationUrnUnique(codelistTarget, target, false);
         codelistTarget.addRestrictionVisualisation(target);
         return target;
@@ -3380,6 +3373,14 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         getCodelistVersionMetamacRepository().save(codelistVersionTemporal);
     }
 
+    private void createRestrictionVisualisationVersionFromTemporalRestrictionVisualisation(ServiceContext ctx, CodelistVersionMetamac codelistVersionTemporal) throws MetamacException {
+        for (CodelistRestrictionVisualisation codelistRestrictionVisualisation : codelistVersionTemporal.getRestrictionVisualisations()) {
+            setCodelistRestrictionVisualisationUrnUnique(codelistVersionTemporal, codelistRestrictionVisualisation, true);
+        }
+
+        getCodelistVersionMetamacRepository().save(codelistVersionTemporal);
+    }
+    
     private void deleteAllCodesIfProceed(CodelistVersionMetamac codelistVersionTemporal, Boolean versioningCodes) throws MetamacException {
         if (Boolean.FALSE.equals(versioningCodes)) {
             getCodeMetamacRepository().deleteAllCodesEfficiently(codelistVersionTemporal.getId());

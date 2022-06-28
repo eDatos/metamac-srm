@@ -76,15 +76,12 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.codelists.openness_visualisation.not_found");
     public static final CommonServiceExceptionType CODELIST_OPENNESS_VISUALISATION_DELETING_NOT_SUPPORTED_CODELIST_WAS_EVER_PUBLISHED = create(
             "exception.srm.codelists.openness_visualisation.delete_not_supported.belonged_to_codelist_was_published");
-    //TODO EDATOS-3647 falta añadir mensajes
-    public static final CommonServiceExceptionType CODELIST_ALL_EXPANDED_RESTRICTION_VISUALISATION_OPERATION_NOT_SUPPORTED               = create(
-            "exception.srm.codelists.openness_visualisation.all_expanded.operation_not_supported");
     public static final CommonServiceExceptionType CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_REACHED                                    = create(
-            "exception.srm.codelists.openness_visualisation.maximum_reached");
+            "exception.srm.codelists.restriction_visualisation.maximum_reached");
     public static final CommonServiceExceptionType CODELIST_RESTRICTION_VISUALISATION_NOT_FOUND                                          = create(
-            "exception.srm.codelists.openness_visualisation.not_found");
+            "exception.srm.codelists.restriction_visualisation.not_found");
     public static final CommonServiceExceptionType CODELIST_RESTRICTION_VISUALISATION_DELETING_NOT_SUPPORTED_CODELIST_WAS_EVER_PUBLISHED = create(
-            "exception.srm.codelists.openness_visualisation.delete_not_supported.belonged_to_codelist_was_published");
+            "exception.srm.codelists.restriction_visualisation.delete_not_supported.belonged_to_codelist_was_published");
     public static final CommonServiceExceptionType CODE_NOT_EXTERNALLY_PUBLISHED                                                      = create("exception.srm.codelists.code_not_externally_published");
     public static final CommonServiceExceptionType CODELIST_NOT_EXTERNALLY_PUBLISHED                                                  = create(
             "exception.srm.codelists.codelist_not_externally_published");

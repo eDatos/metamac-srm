@@ -72,7 +72,6 @@ public class GeneratorUrnUtils extends com.arte.statistic.sdmx.srm.core.common.s
         String[] maintainerCode = generateSdmxUrnMaintainerIdFragment(codelistVersion.getMaintainableArtefact().getMaintainer());
         String codelistCode = codelistVersion.getMaintainableArtefact().getCode();
         String codelistVersionNumber = codelistVersion.getMaintainableArtefact().getVersionLogic();
-        //TODO edatos-3647 Cambiar al generar función en common-utils
         return generateSiemacStructuralResourcesCodelistRestrictionUrn(maintainerCode, codelistCode, codelistVersionNumber, codelistRestrictionVisualisation.getNameableArtefact().getCode());
     }
 }

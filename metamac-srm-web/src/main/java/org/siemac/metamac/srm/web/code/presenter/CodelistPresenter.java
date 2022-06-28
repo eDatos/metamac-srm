@@ -344,7 +344,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
                 retrieveCodelistOpennessLevels(codelistMetamacDto.getUrn());
                 retrieveCodelistOrders(codelistMetamacDto.getUrn());
-                // TODO falta para restriction
+                retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
 
                 updateUrl();
                 retrieveCodelistVersions(result.getSavedCodelistDto().getUrn());
@@ -1321,7 +1321,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
-    //TODO falta implementar    
+    //TODO EDATOS-3647 falta implementar    
     @Override
     public void exportCodesRestrictions(String codelistUrn) {
         dispatcher.execute(new ExportCodesOrderAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesOrderResult>(this) {

@@ -876,20 +876,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version,String query, String orderBy, String limit, String offset) {
+    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
-            // TODO EDATOS-3647 VER SI NECESARIO ALGÚN PARÁMETRO.
-            /*
-            SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodelistCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-
-            // Find
-            PagedResult<CodelistVersionMetamac> entitiesPagedResult = findCodelistsCore(agencyID, resourceID, version, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
-
-            
-            
-            // Transform
-            return codesDo2RestMapper.toCodelists(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit());
-            */
 
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 

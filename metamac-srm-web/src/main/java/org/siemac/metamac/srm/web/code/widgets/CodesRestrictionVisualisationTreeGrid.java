@@ -31,10 +31,11 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         setCanDragRecordsOut(false);
         setShowOpenIcons(true);
         setShowDropIcons(false);
+        setCanSort(false);
         setCustomIconProperty(CodeDS.RESTRICTION_ICON);
-
-        // Add a field with the node restriction state
- 
+        setAutoFitMaxRecords(10);
+        
+        
         setFields(getCodeFieldsRequired());
 
         // Do not show context menu
@@ -51,6 +52,12 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         restrictionField.setShowHover(false);
         
         ListGridField[] itemFields = getAllFields();      
+        
+        // Set all fields non editable (except the openness level field)
+        for (ListGridField field : itemFields) {
+            field.setCanEdit(false);
+        }
+        
         ListGridField[] codeFields = new ListGridField[itemFields.length + 1];
         codeFields[0] = restrictionField;             
         System.arraycopy(itemFields, 0, codeFields, 1, itemFields.length);
@@ -66,6 +73,9 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
     public void setItems(ItemSchemeDto codelistMetamacDto, List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistOrderVisualisationDto) {
         this.codelistVisualisationDto = codelistOrderVisualisationDto;
         setItems(codelistMetamacDto, codes);
+        
+        // Disable item scheme node
+        disableItemSchemeNode();
     }
 
     public void setEditCheckCodes(boolean isEditable) {
@@ -90,7 +100,7 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         treeNodes[0].setAttribute(CodeDS.RESTRICTION, true);
 
         tree = new Tree();
-        tree.setOpenProperty(CodeDS.RESTRICTION); // Take into account the openness state of the nodes
+        tree.setOpenProperty(CodeDS.RESTRICTION); // Take into account the restriction state of the nodes
         tree.setModelType(TreeModelType.PARENT);
         tree.linkNodes(treeNodes);
         setData(tree);

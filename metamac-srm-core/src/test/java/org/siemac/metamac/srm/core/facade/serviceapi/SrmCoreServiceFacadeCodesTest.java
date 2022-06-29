@@ -12,6 +12,7 @@ import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsse
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistMetamacDto;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistOpennessVisualisationDto;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistOrderVisualisationDto;
+import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistRestrictionVisualisationDto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2642,7 +2643,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
         // Before
         {
-            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", visualisationUrn, null);
+            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", visualisationUrn, null, null);
             assertEquals(9, codes.size());
             assertEquals(Integer.valueOf(0), getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_1).getOrder());
             assertEquals(Integer.valueOf(1), getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2).getOrder());
@@ -2653,7 +2654,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         srmCoreServiceFacade.updateCodeInOrderVisualisation(getServiceContextAdministrador(), codeUrn, visualisationUrn, Integer.valueOf(2));
         // After
         {
-            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", visualisationUrn, null);
+            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", visualisationUrn, null, null);
             assertEquals(9, codes.size());
             assertEquals(Integer.valueOf(0), getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2).getOrder());
             assertEquals(Integer.valueOf(1), getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_3).getOrder());
@@ -2741,7 +2742,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
         // Before
         {
-            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, visualisationUrn);
+            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, visualisationUrn, null);
             assertEquals(9, codes.size());
             assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeUrn).getOpenness());
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2).getOpenness());
@@ -2754,7 +2755,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         srmCoreServiceFacade.updateCodesInOpennessVisualisation(getServiceContextAdministrador(), visualisationUrn, values);
         // After
         {
-            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, visualisationUrn);
+            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, visualisationUrn, null);
             assertEquals(9, codes.size());
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeUrn).getOpenness());
             // other inmmutable
@@ -2781,6 +2782,15 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         }
         fail("openness visualisation not found");
     }
+    
+    private void assertContainsCodelistRestrictionVisualisation(String codelistRestrictionVisualisationUrnExpected, List<CodelistVisualisationDto> actuals) {
+        for (CodelistVisualisationDto actual : actuals) {
+            if (actual.getUrn().equals(codelistRestrictionVisualisationUrnExpected)) {
+                return;
+            }
+        }
+        fail("restriction visualisation not found");
+    }
 
     private VariableElementOperationDto getVariableElementOperationByCode(List<VariableElementOperationDto> operations, String code) {
         for (VariableElementOperationDto variableElementOperation : operations) {
@@ -2795,5 +2805,107 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
     protected String getDataSetFile() {
         return "dbunit/SrmCodesTest.xml";
     }
+    
+    // ------------------------------------------------------------------------------------
+    // CODELIST RESTRICTION VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    @Test
+    public void testRetrieveCodelistRestrictionVisualisationByUrn() throws Exception {
+        // Retrieve
+        String urn = CODELIST_1_V2_RESTRICTION_VISUALISATION_01;
+        CodelistVisualisationDto codelistRestrictionVisualisation = srmCoreServiceFacade.retrieveCodelistRestrictionVisualisationByUrn(getServiceContextAdministrador(), urn);
+
+        // Validate
+        assertNotNull(codelistRestrictionVisualisation);
+        assertEquals(CODELIST_1_V2_RESTRICTION_VISUALISATION_01, codelistRestrictionVisualisation.getUrn());
+        assertEqualsInternationalStringDto(codelistRestrictionVisualisation.getName(), "es", "visualización - restricciones 1-2", null, null);
+    }
+
+    @Test
+    public void testCreateCodelistRestrictionVisualisation() throws Exception {
+
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CodelistVisualisationDto codelistRestrictionVisualisation = CodesMetamacDtoMocks.mockCodelistRestrictionVisualisationDto();
+        codelistRestrictionVisualisation.setCodelist(CodesMetamacDtoMocks.mockCodelistRelatedResourceDto("CODELIST01", CODELIST_1_V2));
+
+        // Create
+        CodelistVisualisationDto codelistRestrictionVisualisationCreated = srmCoreServiceFacade.createCodelistOpennessVisualisation(ctx, codelistRestrictionVisualisation);
+        assertNotNull(codelistRestrictionVisualisationCreated.getUrn());
+    }
+
+    @Test
+    public void testUpdateCodelistRestrictionVisualisation() throws Exception {
+        CodelistVisualisationDto codelistRestrictionVisualisation = srmCoreServiceFacade.retrieveCodelistRestrictionVisualisationByUrn(getServiceContextAdministrador(),
+                CODELIST_1_V2_RESTRICTION_VISUALISATION_02);
+        codelistRestrictionVisualisation.setName(MetamacMocks.mockInternationalStringDto());
+
+        // Update
+        CodelistVisualisationDto codelistRestrictionVisualisationUpdated = srmCoreServiceFacade.updateCodelistRestrictionVisualisation(getServiceContextAdministrador(), codelistRestrictionVisualisation);
+
+        // Validate
+        assertEqualsCodelistRestrictionVisualisationDto(codelistRestrictionVisualisation, codelistRestrictionVisualisationUpdated);
+    }
+
+    @Test
+    public void testDeleteCodelistRestrictionVisualisation() throws Exception {
+
+        String urn = CODELIST_1_V2_RESTRICTION_VISUALISATION_02;
+
+        srmCoreServiceFacade.deleteCodelistRestrictionVisualisation(getServiceContextAdministrador(), urn);
+
+        // Retrieve deleted visualisation
+        try {
+            srmCoreServiceFacade.retrieveCodelistRestrictionVisualisationByUrn(getServiceContextAdministrador(), urn);
+            fail("restriction visualisation deleted");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND, 1, new String[]{urn}, e.getExceptionItems().get(0));
+        }
+    }
+
+    @Test
+    public void testRetrieveCodelistRestrictionVisualisationsByCodelist() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+
+        List<CodelistVisualisationDto> visualisations = srmCoreServiceFacade.retrieveCodelistRestrictionVisualisationsByCodelist(getServiceContextAdministrador(), codelistUrn);
+
+        assertEquals(2, visualisations.size());
+        assertContainsCodelistRestrictionVisualisation(CODELIST_1_V2_RESTRICTION_VISUALISATION_01, visualisations);
+        assertContainsCodelistOpennessVisualisation(CODELIST_1_V2_RESTRICTION_VISUALISATION_02, visualisations);
+    }
+
+    @Test
+    public void testUpdateCodeInRestrictionVisualisation() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+        String codeUrn = CODELIST_1_V2_CODE_1;
+        String visualisationUrn = CODELIST_1_V2_RESTRICTION_VISUALISATION_02;
+
+        // Before
+        {
+            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, null, visualisationUrn);
+            assertEquals(9, codes.size());
+            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeUrn).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_3).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_4).getRestriction());
+        }
+        // Update
+        Map<String, Boolean> values = new HashMap<String, Boolean>();
+        values.put(codeUrn, Boolean.FALSE);
+        srmCoreServiceFacade.updateCodesInRestrictionVisualisation(getServiceContextAdministrador(), visualisationUrn, values);
+        // After
+        {
+            List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, null, visualisationUrn);
+            assertEquals(9, codes.size());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeUrn).getRestriction());
+            // other inmmutable
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_3).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_4).getRestriction());
+        }
+    }
+
 
 }

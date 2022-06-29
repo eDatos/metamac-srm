@@ -567,26 +567,26 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             executeQueryCodeVisualisationAndUpdateCodeMetamacResult(idCodelist, orderColumnIndex, opennessColumnIndex, restrictionColumnIndex, mapCodeByItemId);
         }
 
+        
         // Retrieve items id ordered
         String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT); // get column name. any if no order or openness is selected
-        String restrictionColumn = getRestrictionColumnName(restrictionColumnIndex != null ? restrictionColumnIndex : RESTRICTION_DEFAULT);
         StringBuilder sb = new StringBuilder();
         int resultOrderIndex = -1;
         resultOrderIndex = 3;
-        sb.append("WITH RECURSIVE Parents(R_ID, R_SORT, R_ITEM_SCHEME_VERSION_FK, R_SORT_STRING" + getSelectParentRestriction(restrictionColumnIndex) + ") AS ");
+        sb.append("WITH RECURSIVE Parents(R_ID, R_SORT, R_ITEM_SCHEME_VERSION_FK, R_SORT_STRING) AS ");
         sb.append("( ");
         sb.append("SELECT c1.TB_CODES AS R_ID, c1." + orderColumn + " AS R_SORT, cb1.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
-        sb.append("concat('/', lpad(cast(c1." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING" + getSelectRestriction(restrictionColumnIndex, ", c1." + restrictionColumn));
-        sb.append(" FROM TB_M_CODES AS c1 ");
+        sb.append("concat('/', lpad(cast(c1." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
+        sb.append("FROM TB_M_CODES AS c1 ");
         sb.append("INNER JOIN TB_CODES AS cb1 ON cb1.ID = c1.TB_CODES ");
         sb.append("WHERE cb1.PARENT_FK IS NULL and cb1.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
         sb.append("UNION ALL ");
         sb.append("SELECT c2.TB_CODES, c2." + orderColumn + ", cb2.ITEM_SCHEME_VERSION_FK AS R_ITEM_SCHEME_VERSION_FK, ");
-        sb.append("concat(p.R_SORT_STRING, '/', lpad(cast(c2." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING" + getSelectRestriction(restrictionColumnIndex, ", c2." + restrictionColumn));
-        sb.append(" FROM TB_M_CODES AS c2 ");
+        sb.append("concat(p.R_SORT_STRING, '/', lpad(cast(c2." + orderColumn + " as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
+        sb.append("FROM TB_M_CODES AS c2 ");
         sb.append("INNER JOIN TB_CODES AS cb2 ON cb2.ID = c2.TB_CODES ");
-        sb.append("INNER JOIN Parents AS p ON p.R_ID = cb2.PARENT_FK)");
-        sb.append("SELECT * FROM Parents" + getWhereRestriction(restrictionColumnIndex) + " ORDER BY R_SORT_STRING");
+        sb.append("INNER JOIN Parents AS p ON p.R_ID = cb2.PARENT_FK ) ");
+        sb.append("SELECT * FROM Parents ORDER BY R_SORT_STRING");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("codelistVersion", idCodelist);
         List resultsOrder = queryOrder.getResultList();

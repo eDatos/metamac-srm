@@ -145,7 +145,7 @@ public class SrmCoreServiceFacadeImportationCodesTest extends SrmBaseTest {
         {
             CodelistOrderVisualisation visualisation = codesMetamacService.retrieveCodelistOrderVisualisationByUrn(getServiceContextAdministrador(), CODELIST_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
             List<CodeMetamacVisualisationResult> codes = codesMetamacService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistVersion.getMaintainableArtefact().getUrn(), "es",
-                    visualisation.getNameableArtefact().getUrn(), null);
+                    visualisation.getNameableArtefact().getUrn(), null, null);
             assertEquals(Integer.valueOf(0), getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_1).getOrder());
             assertEquals(Integer.valueOf(1), getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_1a).getOrder());
             assertEquals(Integer.valueOf(2), getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_2).getOrder());
@@ -157,7 +157,7 @@ public class SrmCoreServiceFacadeImportationCodesTest extends SrmBaseTest {
         {
             CodelistOrderVisualisation visualisation = codesMetamacService.retrieveCodelistOrderVisualisationByUrn(getServiceContextAdministrador(), CODELIST_1_V2_ORDER_VISUALISATION_02);
             List<CodeMetamacVisualisationResult> codes = codesMetamacService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistVersion.getMaintainableArtefact().getUrn(), "es",
-                    visualisation.getNameableArtefact().getUrn(), null);
+                    visualisation.getNameableArtefact().getUrn(), null, null);
             assertEquals(Integer.valueOf(1), getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_1).getOrder());
             assertEquals(Integer.valueOf(0), getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_2).getOrder());
             assertEquals(Integer.valueOf(0), getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_2_1).getOrder());
@@ -166,7 +166,7 @@ public class SrmCoreServiceFacadeImportationCodesTest extends SrmBaseTest {
         {
             String locale = "es";
             List<CodeMetamacVisualisationResult> codes = codesMetamacService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), CODELIST_SDMX01_CL_CODELIST03_V2, locale, null,
-                    CODELIST_1_V2_OPENNESS_VISUALISATION_01_ALL_EXPANDED);
+                    CODELIST_1_V2_OPENNESS_VISUALISATION_01_ALL_EXPANDED, null);
 
             // Validate
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, CODELIST_3_V2_CODE_1).getOpenness());

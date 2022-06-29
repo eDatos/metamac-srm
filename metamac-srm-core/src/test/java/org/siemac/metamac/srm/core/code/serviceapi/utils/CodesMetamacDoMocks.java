@@ -7,6 +7,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -301,6 +302,30 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
 
     public static CodelistOpennessVisualisation mockCodelistOpennessVisualisationFixedValues(String resourceID) {
         CodelistOpennessVisualisation target = new CodelistOpennessVisualisation();
+        target.getUuid(); // generate uuid
+        target.setVersion(Long.valueOf(1));
+        target.setCreatedBy("userCreatedBy");
+        target.setCreatedDate(new DateTime(2012, 10, 1, 10, 12, 13, 14));
+        target.setLastUpdatedBy("userLastUpdated");
+        target.setLastUpdated(new DateTime(2012, 11, 5, 10, 12, 13, 14));
+        target.setUpdateDate(new DateTime(2012, 11, 5, 10, 12, 13, 14));
+        target.setNameableArtefact(new NameableArtefact());
+        mockNameableArtefactFixedValues(target.getNameableArtefact(), resourceID, null);
+        return target;
+    }
+    
+ // ------------------------------------------------------------------------------------
+    // CODELIST RESTRICTION VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation() {
+        CodelistRestrictionVisualisation codelistRestrictionVisualisation = new CodelistRestrictionVisualisation();
+        codelistRestrictionVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        return codelistRestrictionVisualisation;
+    }
+
+    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisationFixedValues(String resourceID) {
+        CodelistRestrictionVisualisation target = new CodelistRestrictionVisualisation();
         target.getUuid(); // generate uuid
         target.setVersion(Long.valueOf(1));
         target.setCreatedBy("userCreatedBy");

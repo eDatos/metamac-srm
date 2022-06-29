@@ -414,7 +414,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     @Test
     public void testFindCodesWithDescriptionExplicit() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, "+description");
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, "+description");
         assertTrue(!codes.getCodes().get(0).getDescription().getTexts().isEmpty());
     }
 
@@ -433,7 +433,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         resetMocks();
         String order = "ORDER1";
         String openness = "OPENNESS1";
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, openness, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, openness, null, null);
 
         assertNotNull(codes);
         assertEquals(SrmRestConstants.KIND_CODES, codes.getKind());
@@ -444,8 +444,9 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         ArgumentCaptor<ItemMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemMetamacResultSelection.class);
         ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> opennessArgument = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> restrctionArgument = ArgumentCaptor.forClass(String.class);
         verify(codesService).retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), codeSchemeUrnArgument.capture(), itemResultSelectionArgument.capture(), orderArgument.capture(),
-                opennessArgument.capture());
+                opennessArgument.capture(), restrctionArgument.capture());
         assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Codelist=agency1:itemScheme1(01.000)", codeSchemeUrnArgument.getValue());
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
         assertEquals(false, itemResultSelectionArgument.getValue().isDescriptions());
@@ -1037,7 +1038,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
     private void testFindCodes(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(agencyID, resourceID, version, query, orderBy, limit, offset, null, null, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(agencyID, resourceID, version, query, orderBy, limit, offset, null, null, null, null);
 
         assertNotNull(codes);
         assertEquals(SrmRestConstants.KIND_CODES, codes.getKind());
@@ -1142,7 +1143,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     }
 
     private void mockRetrieveCodesByCodelistUrnOrderedInDepth() throws MetamacException {
-        when(codesService.retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemMetamacResultSelection.class), any(String.class), any(String.class)))
+        when(codesService.retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemMetamacResultSelection.class), any(String.class), any(String.class), any(String.class)))
                 .thenAnswer(new Answer<List<ItemResult>>() {
 
                     @Override

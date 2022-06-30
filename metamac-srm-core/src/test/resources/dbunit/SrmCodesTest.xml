@@ -1573,7 +1573,7 @@
                     NAMEABLE_ARTEFACT_FK="9998162"
                     COLUMN_INDEX="2"
                     
-                    UUID="codelist-restriction-visualisation-122"
+                    UUID="codelist-restric-visualisation-122"
                     VERSION="1"
                     CREATED_BY="user1"
                     CREATED_DATE="2011-01-01 01:02:03"
@@ -1616,7 +1616,7 @@
                     NAMEABLE_ARTEFACT_FK="9998163"
                     COLUMN_INDEX="3"
                     
-                    UUID="codelist-restriction-visualisation-123"
+                    UUID="codelist-restric-visualisation-123"
                     VERSION="1"
                     CREATED_BY="user1"
                     CREATED_DATE="2011-01-01 01:02:03"
@@ -2652,7 +2652,7 @@
                     NAMEABLE_ARTEFACT_FK="9998313"
                     COLUMN_INDEX="2"
                     
-                    UUID="codelist-restriction-visualisation-313"
+                    UUID="codelist-restric-visualisation-313"
                     VERSION="1"
                     CREATED_BY="user1"
                     CREATED_DATE="2011-01-01 01:02:03"
@@ -2693,7 +2693,7 @@
                     NAMEABLE_ARTEFACT_FK="9998314"
                     COLUMN_INDEX="3"
                     
-                    UUID="codelist-restriction-visualisation-314"
+                    UUID="codelist-restric-visualisation-314"
                     VERSION="1"
                     CREATED_BY="user1"
                     CREATED_DATE="2011-01-01 01:02:03"

@@ -189,7 +189,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         }
 
         ValidationUtils.checkParameterRequired(codelistRestrictionVisualisationUrn, ServiceExceptionParameters.URN, exceptions);
-        ValidationUtils.checkParameterRequired(restriction, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION_EXPANDED, exceptions);
+        ValidationUtils.checkParameterRequired(restriction, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
     }

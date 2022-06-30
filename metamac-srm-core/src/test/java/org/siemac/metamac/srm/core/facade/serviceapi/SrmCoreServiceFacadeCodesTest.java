@@ -2819,7 +2819,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         // Validate
         assertNotNull(codelistRestrictionVisualisation);
         assertEquals(CODELIST_1_V2_RESTRICTION_VISUALISATION_01, codelistRestrictionVisualisation.getUrn());
-        assertEqualsInternationalStringDto(codelistRestrictionVisualisation.getName(), "es", "visualización - restricciones 1-2", null, null);
+        assertEqualsInternationalStringDto(codelistRestrictionVisualisation.getName(), "es", "visualización - restricciones 1-2", "en", "restriction - visualisation 1-2");
     }
 
     @Test

@@ -2795,11 +2795,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness1());
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
-            assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
+            
             
 
             assertEquals(0, code.getChildren().size());
@@ -2827,10 +2826,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
 
             assertEquals(0, code.getChildren().size());
         }
@@ -2854,11 +2852,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
-
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
             assertEquals(1, code.getChildren().size());
             assertEquals(code040101TargetUrn, code.getChildren().get(0).getNameableArtefact().getUrn());
         }
@@ -2884,11 +2880,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
-
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
             assertEquals(0, code.getChildren().size());
         }
     }
@@ -2970,11 +2964,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
-
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
+            
             assertEquals(0, code.getChildren().size());
         }
         {
@@ -2989,10 +2982,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
 
             assertEquals(0, code.getChildren().size());
         }
@@ -3008,10 +3000,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
 
             assertEquals(1, code.getChildren().size());
             assertEquals(code040101TargetUrn, code.getChildren().get(0).getNameableArtefact().getUrn());
@@ -3026,10 +3017,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertNull(code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getRestriction1());
-            assertEquals(Boolean.TRUE, code.getRestriction2());
-            assertEquals(Boolean.TRUE, code.getRestriction3());
-            assertNull(code.getRestriction4());
+            assertNull(code.getRestriction1());
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
+            
 
             assertEquals(0, code.getChildren().size());
         }
@@ -8451,7 +8442,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         List<CodelistRestrictionVisualisation> visualisations = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(getServiceContextAdministrador(), codelistUrn);
 
-        assertEquals(3, visualisations.size());
+        assertEquals(2, visualisations.size());
         assertContainsCodelistRestrictionVisualisation(CODELIST_1_V2_RESTRICTION_VISUALISATION_01, visualisations);
         assertContainsCodelistRestrictionVisualisation(CODELIST_1_V2_RESTRICTION_VISUALISATION_02, visualisations);
     }
@@ -8558,7 +8549,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             // Validate codes
             List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(ctx, codelistUrn, "es", null, null, codelistRestrictionVisualisation.getNameableArtefact().getUrn());
             assertEquals(10, codes.size());
-            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
         }
         // Visualisation 02
         {
@@ -8568,7 +8559,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             // Validate codes
             List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(ctx, codelistUrn, "es", null, null, codelistRestrictionVisualisation.getNameableArtefact().getUrn());
             assertEquals(10, codes.size());
-            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
         }
     }
 
@@ -8595,7 +8586,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             // Validate codes
             List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(ctx, codelistUrn, "es", null, null, codelistRestrictionVisualisation.getNameableArtefact().getUrn());
             assertEquals(10, codes.size());
-            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
         }
         // Visualisation 02
         {
@@ -8605,7 +8596,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             // Validate codes
             List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(ctx, codelistUrn, "es", null, null, codelistRestrictionVisualisation.getNameableArtefact().getUrn());
             assertEquals(10, codes.size());
-            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getRestriction());
         }
     }
 
@@ -8689,14 +8680,14 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             CodelistRestrictionVisualisation visualisation = codesService.retrieveCodelistRestrictionVisualisationByUrn(getServiceContextAdministrador(), visualisationUrn);
             List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, null,
                     visualisation.getNameableArtefact().getUrn());
-            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeUrn1).getRestriction());
-            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeUrn2).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeUrn1).getRestriction());
+            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeUrn2).getRestriction());
         }
 
         // Update
         Map<String, Boolean> values = new HashMap<String, Boolean>();
-        values.put(codeUrn1, Boolean.FALSE);
-        values.put(codeUrn2, Boolean.TRUE);
+        values.put(codeUrn1, Boolean.TRUE);
+        values.put(codeUrn2, Boolean.FALSE);
         codesService.updateCodesInRestrictionVisualisation(getServiceContextAdministrador(), visualisationUrn, values);
 
         // Validate visualisation
@@ -8705,11 +8696,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, "es", null, null,
                     visualisation.getNameableArtefact().getUrn());
             assertEquals(9, codes.size());
-            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeUrn1).getRestriction());
+            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeUrn1).getRestriction());
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2).getRestriction());
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2_1).getRestriction());
             assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_2_1_1).getRestriction());
-            assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeUrn2).getRestriction());
+            assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, codeUrn2).getRestriction());
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_3).getRestriction());
             assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_4).getRestriction());
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_4_1).getRestriction());
@@ -8838,8 +8829,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals("VISUALISATION01", codelistRestrictionVisualisation.getNameableArtefact().getCode());
         assertEquals(restrictionVisualisationUrn, codelistRestrictionVisualisation.getNameableArtefact().getUrn());
         assertEquals(codelistUrn, codelistRestrictionVisualisation.getCodelistVersion().getMaintainableArtefact().getUrn());
-        assertEqualsInternationalString(codelistRestrictionVisualisation.getNameableArtefact().getName(), "es", "visualización - restricciones 1-2", null, null);
-        assertEquals(Integer.valueOf(1), codelistRestrictionVisualisation.getColumnIndex());
+        assertEqualsInternationalString(codelistRestrictionVisualisation.getNameableArtefact().getName(), "es", "visualización - restricciones 1-2", "en", "restriction - visualisation 1-2");
+        assertEquals(Integer.valueOf(2), codelistRestrictionVisualisation.getColumnIndex());
 
         assertEquals("user1", codelistRestrictionVisualisation.getCreatedBy());
         assertEqualsDate("2011-01-01 01:02:03", codelistRestrictionVisualisation.getCreatedDate());
@@ -9053,7 +9044,14 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             }
 
             // Restriction visualisations without default in codelist
-            assertEquals(0, codelistVersionNewVersion.getRestrictionVisualisations().size());
+            assertEquals(2, codelistVersionNewVersion.getRestrictionVisualisations().size());
+            {
+                CodelistRestrictionVisualisation codelistRestrictionVisualisation = assertContainsCodelistRestrictionVisualisation(urnExpectedRestrictionVisualisation02,
+                        codelistVersionNewVersion.getRestrictionVisualisations());
+                assertEquals("VISUALISATION02", codelistRestrictionVisualisation.getNameableArtefact().getCode());
+                assertEquals(Integer.valueOf(3), codelistRestrictionVisualisation.getColumnIndex());
+                assertEqualsInternationalString(codelistRestrictionVisualisation.getNameableArtefact().getName(), "es", "Visualización restrictión 2 3-1", null, null);
+            }
         }
 
         // Copied version

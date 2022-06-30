@@ -1107,17 +1107,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     public void recalculateCodesRestrictionVisualisations(List<Code> items, List<CodelistRestrictionVisualisation> restrictionVisualisations) {
-        Boolean defaultValue = SrmConstants.CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE;
-        Boolean allExpandedAlreadyUpdated = Boolean.FALSE; // to avoid select to compare code of nameable
         for (CodelistRestrictionVisualisation restrictionVisualisation : restrictionVisualisations) {
-            Boolean value = null;
-            if (!allExpandedAlreadyUpdated && SrmServiceUtils.isAllExpandedRestrictionVisualisation(restrictionVisualisation)) {
-                value = Boolean.TRUE;
-                allExpandedAlreadyUpdated = Boolean.TRUE;
-            } else {
-                value = defaultValue;
-            }
-            fillCodelistRestrictionVisualisationToCodesWithEmptyRestriction(items, restrictionVisualisation, value);
+            fillCodelistRestrictionVisualisationToCodesWithEmptyRestriction(items, restrictionVisualisation, SrmConstants.CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE);
         }
     }
     
@@ -3424,6 +3415,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 value = defaultOpennessValue;
             }
             SrmServiceUtils.setCodeOpenness(code, codelistOpennessVisualisation.getColumnIndex(), value);
+        }
+
+        for (CodelistRestrictionVisualisation codelistRestrictionVisualisation : codelistVersion.getRestrictionVisualisations()) {
+            SrmServiceUtils.setCodeRestriction(code, codelistRestrictionVisualisation.getColumnIndex(), SrmConstants.CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE);
         }
 
         code = getCodeMetamacRepository().save(code);

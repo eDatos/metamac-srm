@@ -463,6 +463,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tables.add("TB_M_CAT_SCHEMES_VERSIONS");
         tables.add("TB_M_CODELIST_FAMILIES");
         tables.add("TB_M_VARIABLES");
+        tables.add("TB_M_CODELIST_RESTRICTION_VIS");
         tables.add("TB_M_CODELIST_ORDER_VIS");
         tables.add("TB_M_CODELIST_OPENNESS_VIS");
         tables.add("TB_M_CODELISTS_VERSIONS");

@@ -854,6 +854,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
+                checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
                 return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
             } else {
                 // Retrieve all codes of codelist
@@ -868,7 +869,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                 List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
                         opennessToUse, restrictionToUse);
 
-                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow);
+                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction);
             }
         } catch (Exception e) {
             throw manageException(e);

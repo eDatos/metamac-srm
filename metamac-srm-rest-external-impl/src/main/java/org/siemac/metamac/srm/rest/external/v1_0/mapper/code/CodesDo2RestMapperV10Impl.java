@@ -14,6 +14,7 @@ import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalCons
 import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants.VARIABLE_ELEMENT_URN;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -159,7 +160,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields) {
+    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
@@ -168,6 +169,10 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         targets.setSelfLink(toCodesLink(codelistVersion));
         targets.setTotal(BigInteger.valueOf(sources.size()));
 
+        if (restriction != null) {
+            sources = getCodesInRestriction(sources);
+        }
+        
         // Values
         String variableID = codelistVersion.getVariable() != null ? codelistVersion.getVariable().getNameableArtefact().getCode() : null;
         for (ItemResult source : sources) {
@@ -177,6 +182,16 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return targets;
     }
 
+    private List<ItemResult> getCodesInRestriction(List<ItemResult> sources) {
+        List<ItemResult> codesInRestriction = new ArrayList<ItemResult>();
+        for (ItemResult source : sources) {
+            if (SrmServiceUtils.getCodeItemResultRestriction(source)) {
+                codesInRestriction.add(source);
+            }
+        }
+        return codesInRestriction;
+    }
+    
     @Override
     public Code toCode(CodeMetamac source) {
         if (source == null) {

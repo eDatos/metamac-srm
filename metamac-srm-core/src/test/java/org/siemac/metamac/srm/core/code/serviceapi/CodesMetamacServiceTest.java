@@ -8516,14 +8516,14 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testUpdateCodelistRestrictionVisualisationErrorDuplicatedCode() throws Exception {
         CodelistRestrictionVisualisation codelistRestrictionVisualisation = codesService.retrieveCodelistRestrictionVisualisationByUrn(getServiceContextAdministrador(),
                 CODELIST_1_V2_RESTRICTION_VISUALISATION_02);
-        codelistRestrictionVisualisation.getNameableArtefact().setCode("VISUALISATION02");
+        codelistRestrictionVisualisation.getNameableArtefact().setCode("VISUALISATION01");
         codelistRestrictionVisualisation.getNameableArtefact().setIsCodeUpdated(Boolean.TRUE);
         try {
             codesService.updateCodelistRestrictionVisualisation(getServiceContextAdministrador(), codelistRestrictionVisualisation);
             fail("restriction - duplicated code");
         } catch (MetamacException e) {
             assertEquals(1, e.getExceptionItems().size());
-            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_URN_DUPLICATED, 1, new String[]{CODELIST_1_V2_RESTRICTION_VISUALISATION_02}, e.getExceptionItems().get(0));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_URN_DUPLICATED, 1, new String[]{CODELIST_1_V2_RESTRICTION_VISUALISATION_01}, e.getExceptionItems().get(0));
         }
     }
 

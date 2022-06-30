@@ -2396,9 +2396,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         // If code has been changed, update URN
         if (codelistRestrictionVisualisation.getNameableArtefact().getIsCodeUpdated()) {
-            if (codelistRestrictionVisualisation.getNameableArtefact().getUrn().endsWith("." + SrmConstants.CODELIST_OPENNESS_VISUALISATION_ALL_EXPANDED_CODE)) {
-                throw new MetamacException(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE);
-            }
             setCodelistRestrictionVisualisationUrnUnique(codelistRestrictionVisualisation.getCodelistVersion(), codelistRestrictionVisualisation, true);
         }
         codelistRestrictionVisualisation.setUpdateDate(new DateTime()); // Optimistic locking: Update "update date" attribute to force update to root entity, to increase attribute "version"

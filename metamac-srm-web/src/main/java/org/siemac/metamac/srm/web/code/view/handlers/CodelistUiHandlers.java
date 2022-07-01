@@ -43,7 +43,7 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
     void saveCodelistOrder(CodelistVisualisationDto codelistOrderVisualisationDto);
     void deleteCodelistOrders(List<String> orderIdentifiers);
     void exportCodesOrder(String codelistUrn);
-
+       
     void retrieveCodesWithOpennessLevel(String opennessLevelUrn);
     void retrieveCodelistOpennessLevels(String codelistUrn);
     void saveCodelistOpennessLevel(CodelistVisualisationDto codelistOpennessVisualisationDto);

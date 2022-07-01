@@ -56,6 +56,12 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     }
 
     @Override
+    public void processImportCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, String jobKey) throws MetamacException {
+        TaskImportationInfo taskImportationInfo = getCodesMetamacService().importCodeRestrictionsTsv(ctx, codelistUrn, file, fileName, CAN_NOT_BE_BACKGROUND);
+        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
+    }
+    
+    @Override
     public void processImportVariableElementsTsv(ServiceContext ctx, String variableUrn, File file, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importVariableElementsTsv(ctx, variableUrn, file, fileName, updateAlreadyExisting, CAN_NOT_BE_BACKGROUND);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());

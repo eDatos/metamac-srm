@@ -634,10 +634,14 @@ Application SrmFacadeCore {
     		TaskImportationInfo importCodesTsv(String codelistUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
+    		"Imports code restrictions in tsv format"
+    		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
+    		"Exports code restrictions in tsv format"
+    		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
     		
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOnlyWithoutVariableElement) throws MetamacException;
@@ -802,6 +806,8 @@ Application SrmFacadeCore {
     		processImportCodesTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		processImportCodeOrdersTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
+    		"Imports code restrictions in tsv format"
+    		processImportCodeRestrictionsTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
     		"Imports variable elements in tsv format"
     		processImportVariableElementsTsv(String variableUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports geographical information (shape) of variable elements"

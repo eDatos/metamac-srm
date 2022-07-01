@@ -128,10 +128,14 @@ Application CodesMetamac {
     		TaskImportationInfo importCodesTsv(String codelistUrn, java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
+    		"Imports code restrictions in tsv format"
+    		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
+    		"Exports code restrictions in tsv format"
+    		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOverridingOnlyWithoutVariableElement) throws MetamacException;
 	   		    		

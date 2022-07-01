@@ -316,7 +316,7 @@ public class CodesClientSecurityUtils {
         }
         return SharedCodesSecurityUtils.canImportCodelistOrderVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-
+       
     public static boolean canUpdateCodelistOrderVisualisation(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
@@ -382,6 +382,20 @@ public class CodesClientSecurityUtils {
             return false;
         }
         return SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+    
+    public static boolean canImportCodelistRestrictionVisualisations(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canImportCodelistRestrictionVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+    
+    public static boolean canExportCodesRestriction(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canExportCodeRestrictionsTsv(MetamacSrmWeb.getCurrentUser());
     }
     
     // CODELIST FAMILY

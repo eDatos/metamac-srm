@@ -278,6 +278,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canImportCodelistRestrictionVisualisations(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canImportCodelistRestrictionVisualisations(getMetamacPrincipal(ctx), codelistProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     public static void canImportCodes(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
         if (!SharedCodesSecurityUtils.canImportCodes(getMetamacPrincipal(ctx), codelistProcStatus)) {
             throwExceptionIfOperationNotAllowed(ctx);
@@ -304,6 +310,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canExportCodeRestrictionsTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canExportCodeRestrictionsTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     public static void canExportVariableElements(ServiceContext ctx) throws MetamacException {
         if (!SharedCodesSecurityUtils.canExportVariableElementsTsv(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);

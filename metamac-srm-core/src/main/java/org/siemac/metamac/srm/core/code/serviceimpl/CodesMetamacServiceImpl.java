@@ -111,6 +111,7 @@ import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
+import org.siemac.metamac.srm.core.task.domain.ImportationCodeRestrictionsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationVariableElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
@@ -975,8 +976,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
-
-    //TODO EDATOS-3647 Ver si necesario importar/exportar
     
     @Override
     public String exportCodesTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
@@ -1071,6 +1070,185 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
     }
 
+    private TaskImportationInfo planifyJobeRestrictionimport(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground, CodelistVersionMetamac codelistVersion)
+            throws MetamacException {
+        // Planify task if can be in background
+        codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
+        itemSchemeRepository.save(codelistVersion.getItemScheme());
+
+        String jobKey = tasksMetamacService.plannifyImportCodeRestrictionsTsvInBackground(ctx, codelistUrn, file, fileName);
+        return new TaskImportationInfo(Boolean.TRUE, jobKey);
+    }
+
+    
+    @Override
+    public TaskImportationInfo importCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
+
+        // Validation
+        CodesMetamacInvocationValidator.checkImportCodeRestrictionsTsv(codelistUrn, file, fileName, canBeBackground, null);
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
+
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION);
+        if (executeInBackground) {
+            return planifyJobeRestrictionimport(ctx, codelistUrn, file, fileName, canBeBackground, codelistVersion);
+        }
+
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+        
+       
+        List<Code> codesInCodelist = null;
+        Set<String> codesInTsvToCheckAllCodesAreUpdated = null;
+        List<CodelistRestrictionVisualisation> restrictionVisualisations = null;
+        try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), FileUtils.guessCharset(file));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+
+            // Header
+            String line = bufferedReader.readLine();
+            ImportationCodeRestrictionsTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportCodeRestrictions(line, exceptionItems);
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                restrictionVisualisations = tsvHeadToRestrictionVisualisations(codelistVersion, header, exceptionItems);
+            }
+
+            // Restrictions
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+
+                // Codes in codelist
+                codesInCodelist = codelistVersion.getItems();
+                Map<String, CodeMetamac> codesInCodelistByCode = new HashMap<>();
+                for (Item item : codesInCodelist) {
+                    codesInCodelistByCode.put(item.getNameableArtefact().getCode(), (CodeMetamac) item);
+                }
+                codesInTsvToCheckAllCodesAreUpdated = new HashSet<>();
+
+                int lineNumber = 2;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (!StringUtils.isBlank(line)) {
+
+                        String[] columns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
+                        if (columns.length == header.getColumnsSize()) {
+
+                            // Transform restrictions, setting value of columns
+                            CodeMetamac code = tsvLineToCodeRestriction(header, columns, lineNumber, codesInCodelistByCode, restrictionVisualisations, exceptionItems);
+                            if (code != null) {
+                                if (codesInTsvToCheckAllCodesAreUpdated.contains(code.getNameableArtefact().getCode())) {
+                                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_RESOURCE_DUPLICATED, code.getNameableArtefact().getCode(), lineNumber));
+                                } else {
+                                    codesInTsvToCheckAllCodesAreUpdated.add(code.getNameableArtefact().getCode());
+                                }
+                            }
+                        } else {
+                            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error importing tsv restriction file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } 
+
+       return saveRestrictionsimport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
+    }
+        
+    private TaskImportationInfo saveRestrictionsimport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated,
+            List<MetamacExceptionItem> exceptionItems, String fileName, List<Code> codesInCodelist, List<MetamacExceptionItem> informationItems) throws MetamacException {
+
+        if (CollectionUtils.isEmpty(exceptionItems) && codesInTsvToCheckAllCodesAreUpdated != null && codesInTsvToCheckAllCodesAreUpdated.size() != codesInCodelist.size()) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CODES, codesInCodelist.size(), codesInTsvToCheckAllCodesAreUpdated.size()));
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            // inform about errors
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+
+        // Persist
+        for (Item code : codesInCodelist) {
+            CodeMetamac codeMetamac = (CodeMetamac) code;
+            getCodeMetamacRepository().save(codeMetamac);
+        }
+        baseService.updateItemSchemeLastUpdated(ctx, codelistVersion);
+        codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.FALSE);
+        itemSchemeRepository.save(codelistVersion.getItemScheme());
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+      
+    @Override
+    public String exportCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+
+        CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);
+
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        List<CodelistRestrictionVisualisation> restrictionVisualisations = codelistVersion.getRestrictionVisualisations();
+        String defaultLanguage = srmConfiguration.retrieveLanguageDefault();
+
+        // Retrieve items in depth
+        List<ItemResult> itemsResult = getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), null, null, null, CodeMetamacResultSelection.EXPORT_RESTRICTIONS);
+        // Retrieve all items to retrieve all restrictions
+        List<Code> codes = codelistVersion.getItems();
+        Map<Long, CodeMetamac> codesById = new HashMap<Long, CodeMetamac>(codes.size());
+        for (Item code : codes) {
+            codesById.put(code.getId(), (CodeMetamac) code);
+        }
+
+        // Export
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+        try {
+            File file = File.createTempFile("codes-restrictions", ".tsv");
+            outputStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
+
+            // header
+            writer.write(SrmConstants.TSV_HEADER_CODE);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LABEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LEVEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_PARENT);
+            for (CodelistRestrictionVisualisation restrictionVisualisation : restrictionVisualisations) {
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(restrictionVisualisation.getNameableArtefact().getCode());
+            }
+
+            // codes
+            for (ItemResult itemResult : itemsResult) {
+                CodeMetamac codeMetamac = codesById.get(itemResult.getItemIdDatabase());
+
+                writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+                // Code
+                writer.write(itemResult.getCode());
+                // Label
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(itemResult.getName().get(defaultLanguage));
+                // Level
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(String.valueOf(((CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint()).getLevel()));
+                // Parent
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                if (itemResult.getParent() != null) {
+                    writer.write(itemResult.getParent().getCode());
+                }
+                // Restriction
+                for (CodelistRestrictionVisualisation restrictionVisualisation : restrictionVisualisations) {
+                    writer.write(SrmConstants.TSV_SEPARATOR);
+                    writer.write(String.valueOf(SrmServiceUtils.getCodeRestriction(codeMetamac, restrictionVisualisation.getColumnIndex()))); // +1 to start in 1
+                }
+            }
+            writer.flush();
+            return file.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(writer);
+        }
+    }
+    
     @Override
     public void recalculateCodesVisualisations(ServiceContext ctx, List<Code> items, List<CodelistOrderVisualisation> orderVisualisations, List<CodelistOpennessVisualisation> opennessVisualisations,
             List<CodelistRestrictionVisualisation> restrictionVisualisations,
@@ -3528,6 +3706,45 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     /**
+     * Transforms tsv line to Code restriction. IMPORTANT: Do not execute save or update operation
+     */
+    private CodeMetamac tsvLineToCodeRestriction(ImportationCodeRestrictionsTsvHeader header, String[] columns, int lineNumber, Map<String, CodeMetamac> codesInCodelist,
+            List<CodelistRestrictionVisualisation> restrictionVisualisations, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+
+        // semantic identifier
+        String codeIdentifier = columns[header.getCodePosition()];
+        if (StringUtils.isBlank(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null;
+        }
+        // update restriction
+        CodeMetamac code = codesInCodelist.get(codeIdentifier);
+        if (code == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODE_NOT_FOUND, codeIdentifier));
+            return null;
+        }
+        for (CodelistRestrictionVisualisation restrictionVisualisation : restrictionVisualisations) {
+            int columnIndex = header.getRestrictionVisualisationColumn(restrictionVisualisation.getNameableArtefact().getCode());
+            String restrictionValueString = columns[columnIndex];
+            if (StringUtils.isBlank(restrictionValueString)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, code.getNameableArtefact().getCode(),
+                        ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_RESTRICTION));
+
+                return null;
+            }
+            Boolean restrictionValue = Boolean.valueOf(restrictionValueString);
+            SrmServiceUtils.setCodeRestriction(code, restrictionVisualisation.getColumnIndex(), restrictionValue);
+        }
+
+        // Do not persist if any error ocurrs
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+
+        return code;
+    }
+    
+    /**
      * Transforms tsv line to VariableElement. IMPORTANT: Do not execute save or update operation
      */
     private VariableElement tsvLineToVariableElement(ImportationVariableElementsTsvHeader header, String[] columns, int lineNumber, Variable variable, boolean updateAlreadyExisting,
@@ -3790,6 +4007,25 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return orderVisualisations;
     }
 
+    private List<CodelistRestrictionVisualisation> tsvHeadToRestrictionVisualisations(CodelistVersionMetamac codelistVersion, ImportationCodeRestrictionsTsvHeader header,
+            List<MetamacExceptionItem> exceptionItems) {
+        List<CodelistRestrictionVisualisation> restrictionVisualisations = new ArrayList<CodelistRestrictionVisualisation>();
+        for (String restrictionVisualisationCode : header.getRestrictionVisualisations()) {
+            CodelistRestrictionVisualisation restrictionVisualisation = getCodelistRestrictionVisualisationRepository().findByCode(codelistVersion.getId(), restrictionVisualisationCode);
+            if (restrictionVisualisation == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_RESTRICTION_VISUALISATION_NOT_FOUND, restrictionVisualisationCode,
+                        codelistVersion.getMaintainableArtefact().getUrn()));
+                break;
+            } else {
+                restrictionVisualisations.add(restrictionVisualisation);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+        return restrictionVisualisations;
+    }
+    
     private void saveCodesEfficiently(Collection<CodeMetamac> codesToPersist, Map<String, CodeMetamac> codesToPersistByCode) {
         for (CodeMetamac codeMetamac : codesToPersist) {
             if (codeMetamac.getParent() != null) {

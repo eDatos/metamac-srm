@@ -68,6 +68,8 @@ import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOrderAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOrderResult;
+import org.siemac.metamac.srm.web.shared.code.ExportCodesRestrictionAction;
+import org.siemac.metamac.srm.web.shared.code.ExportCodesRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistAction;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistFamiliesAction;
@@ -1321,17 +1323,16 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
-    //TODO EDATOS-3647 falta implementar    
     @Override
     public void exportCodesRestrictions(String codelistUrn) {
-        dispatcher.execute(new ExportCodesOrderAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesOrderResult>(this) {
+        dispatcher.execute(new ExportCodesRestrictionAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesRestrictionResult>(this) {
 
             @Override
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
             }
             @Override
-            public void onWaitSuccess(ExportCodesOrderResult result) {
+            public void onWaitSuccess(ExportCodesRestrictionResult result) {
                 CommonUtils.downloadFile(result.getFileName());
             }
         });

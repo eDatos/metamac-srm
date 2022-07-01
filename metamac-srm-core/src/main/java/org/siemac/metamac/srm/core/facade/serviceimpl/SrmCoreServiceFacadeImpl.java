@@ -1481,6 +1481,17 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public TaskImportationInfo importCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
+        // Security
+        CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);
+        CodesSecurityUtils.canImportCodelistRestrictionVisualisations(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCodesMetamacService().importCodeRestrictionsTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
+    }
+    
+    @Override
     public String exportCodesTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
         // Security
         CodesSecurityUtils.canExportCodesTsv(ctx);
@@ -1498,6 +1509,15 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         return getCodesMetamacService().exportCodeOrdersTsv(ctx, codelistUrn);
     }
 
+    @Override
+    public String exportCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canExportCodeRestrictionsTsv(ctx);
+
+        // Export
+        return getCodesMetamacService().exportCodeRestrictionsTsv(ctx, codelistUrn);
+    }
+    
     @Override
     public CodeMetamacDto updateCode(ServiceContext ctx, CodeMetamacDto codeDto) throws MetamacException {
         // Security

@@ -95,18 +95,6 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
     }
     
     @Override
-    public void addTreeNodesToTreeGrid(TreeNode[] treeNodes) {
-        // The root node (codelist) should be always open
-        treeNodes[0].setAttribute(CodeDS.RESTRICTION, true);
-
-        tree = new Tree();
-        tree.setOpenProperty(CodeDS.RESTRICTION); // Take into account the restriction state of the nodes
-        tree.setModelType(TreeModelType.PARENT);
-        tree.linkNodes(treeNodes);
-        setData(tree);
-    }
-
-    @Override
     protected void onNodeContextClick(String nodeName, CodeMetamacVisualisationResult code) {
         // Do nothing
     }

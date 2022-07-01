@@ -547,7 +547,7 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain",
+                     "description":"",
                      "$ref":"#/definitions/ItemResource"
                   }
                }

@@ -444,9 +444,9 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         ArgumentCaptor<ItemMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemMetamacResultSelection.class);
         ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> opennessArgument = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> restrctionArgument = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> restrictionArgument = ArgumentCaptor.forClass(String.class);
         verify(codesService).retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), codeSchemeUrnArgument.capture(), itemResultSelectionArgument.capture(), orderArgument.capture(),
-                opennessArgument.capture(), restrctionArgument.capture());
+                opennessArgument.capture(), restrictionArgument.capture());
         assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Codelist=agency1:itemScheme1(01.000)", codeSchemeUrnArgument.getValue());
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
         assertEquals(false, itemResultSelectionArgument.getValue().isDescriptions());
@@ -454,6 +454,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         assertEquals(false, itemResultSelectionArgument.getValue().isAnnotations());
         assertEquals(order, orderArgument.getValue());
         assertEquals(openness, opennessArgument.getValue());
+        
     }
 
     @Test

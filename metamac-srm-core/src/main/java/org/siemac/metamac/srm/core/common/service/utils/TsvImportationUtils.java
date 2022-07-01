@@ -601,7 +601,7 @@ public class TsvImportationUtils {
             }
         }
         if (CollectionUtils.isEmpty(exceptions) && !header.hasRestrictionVisualisations()) {
-                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_ORDER));
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_RESTRICTION));
         }
         
         return header;

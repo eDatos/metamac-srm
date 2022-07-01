@@ -5042,6 +5042,293 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
+    
+    //TEST RESTRICTION CODELIST IMPORT
+    
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsv() throws Exception {
+
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = "importation-code-restrictions-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        TaskImportationInfo taskImportTsvInfo = codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+
+        // Validate
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+        assertEquals(0, taskImportTsvInfo.getInformationItems().size());
+
+        // Validate item scheme
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
+        assertEqualsDate("2011-01-01 01:02:03", codelistVersion.getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), codelistVersion.getItemScheme().getResourceLastUpdated().toDate()));
+        assertEquals(false, codelistVersion.getItemScheme().getIsTaskInBackground());
+
+        // Validate restrictions
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_1);
+            assertEquals(Boolean.TRUE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_3);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_4);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2_1);
+            assertEquals(Boolean.TRUE, code.getRestriction2());
+            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2_2);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2_1_1);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_4_1);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+        {
+            CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_4_1_1);
+            assertEquals(Boolean.FALSE, code.getRestriction2());
+            assertEquals(Boolean.TRUE, code.getRestriction3());
+            assertEquals(null, code.getRestriction4());
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvInBackground() throws Exception {
+
+        // Import
+        final String codelistUrn = CODELIST_1_V2;
+        final String fileName = "importation-code-restrictions-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        // force background
+        long numBytesPlannifyPrevious = SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION;
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION = 1;
+        final StringBuilder jobKey = new StringBuilder();
+
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    TaskImportationInfo taskImportTsvInfo = codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+                    jobKey.append(taskImportTsvInfo.getJobKey());
+
+                    CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
+                    assertEquals(true, codelistVersion.getItemScheme().getIsTaskInBackground());
+                } catch (MetamacException e) {
+                    fail("importation failed: " + e.getHumanReadableMessage());
+                }
+            }
+        });
+        waitUntilJobFinished();
+
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION = numBytesPlannifyPrevious;
+
+        // Validate
+        Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
+        assertNotNull(task);
+        assertEquals(TaskStatusTypeEnum.FINISHED, task.getStatus());
+        assertEquals(0, task.getTaskResults().size()); // item testImportCodeRestrictionsTsv
+
+        // Validate item scheme
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
+        assertEquals(false, codelistVersion.getItemScheme().getIsTaskInBackground());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvErrorHeaderIncorrectCodeNotFound() throws Exception {
+
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = "importation-code-restrictions-02-errors-header-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+
+        // Validate item scheme
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
+        assertTrue(BooleanUtils.isNotTrue(codelistVersion.getItemScheme().getIsTaskInBackground()));
+    }
+ 
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvErrorHeaderIncorrectCodeNotFoundInBackground() throws Exception {
+
+        final String codelistUrn = CODELIST_1_V2;
+
+        // Import
+        final String fileName = "importation-code-restrictions-02-errors-header-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        // force background
+        long numBytesPlannifyPrevious = SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION;
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION = 1;
+        final StringBuilder jobKey = new StringBuilder();
+
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    TaskImportationInfo taskImportTsvInfo = codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+                    jobKey.append(taskImportTsvInfo.getJobKey());
+
+                    CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
+                    assertEquals(true, codelistVersion.getItemScheme().getIsTaskInBackground());
+                } catch (MetamacException e) {
+                    fail("importation failed: " + e.getHumanReadableMessage());
+                }
+            }
+        });
+        waitUntilJobFinished();
+
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION = numBytesPlannifyPrevious;
+
+        // Validate
+        Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
+        assertNotNull(task);
+        assertEquals(TaskStatusTypeEnum.FAILED, task.getStatus());
+        assertEquals(2, task.getTaskResults().size());
+        int i = 0;
+        TaskResultTypeEnum type = TaskResultTypeEnum.ERROR;
+        assertEqualsTaskResult(ServiceExceptionType.IMPORTATION_TSV_ERROR.getCode(), fileName, Boolean.TRUE, type, task.getTaskResults().get(i++));
+        assertEqualsTaskResult(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN.getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE, Boolean.FALSE, type,
+                task.getTaskResults().get(i++));
+        assertEquals(task.getTaskResults().size(), i);
+
+        // Validate item scheme
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
+        assertEquals(false, codelistVersion.getItemScheme().getIsTaskInBackground());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvErrorHeaderColumnVisualisationNotFound() throws Exception {
+
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = "importation-code-restrictions-02-errors-header-02.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_RESTRICTION},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvErrorBodyIncorrectNumberCodes() throws Exception {
+
+        final String codelistUrn = CODELIST_1_V2;
+        final String fileName = "importation-code-restrictions-03-errors-body-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CODES, 2, new Serializable[]{9, 6}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+   
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvErrorBodyVisualisationNotFound() throws Exception {
+
+        final String codelistUrn = CODELIST_1_V2;
+        final String fileName = "importation-code-restrictions-03-errors-body-02.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_RESTRICTION_VISUALISATION_NOT_FOUND, 2,
+                    new Serializable[]{"VISUALISATION001", "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST01(02.000)"}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCodeRestrictionsTsvErrorBodyOrderEmpty() throws Exception {
+
+        final String codelistUrn = CODELIST_1_V2;
+        final String fileName = "importation-code-restrictions-03-errors-body-03.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            codesService.importCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(2, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"CODE0201", "parameter.srm.importation.restriction"},
+                    e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"CODE04", "parameter.srm.importation.restriction"},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+    
     @DirtyDatabase
     @Test
     public void testClearDirtyDatabaseBecausePreviuosTestCanNotHaveNotTransactionalAnnotation() throws Exception {
@@ -10584,6 +10871,31 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         bufferedReader.close();
     }
 
+    @Override
+    @Test
+    public void testExportCodeRestrictionsTsv() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = codesService.exportCodeRestrictionsTsv(getServiceContextAdministrador(), codelistUrn);
+        assertNotNull(fileName);
+
+        // Validate
+        File file = new File(tempDirPath() + File.separatorChar + fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        assertEquals("code\tlabel\tlevel\tparent\tVISUALISATION01\tVISUALISATION02", bufferedReader.readLine());
+        assertEquals("CODE01\tIsla de Tenerife\t1\t\tfalse\ttrue", bufferedReader.readLine());
+        assertEquals("CODE02\tNombre codelist-1-v2-code-2 Canaria, Gran\t1\t\ttrue\tfalse", bufferedReader.readLine());
+        assertEquals("CODE0201\tcodelist-1-v2-code-2- Isla de La Gomera\t2\tCODE02\ttrue\ttrue", bufferedReader.readLine());
+        assertEquals("CODE020101\tSanta Cruz de La Palma codelist-1-v2-code-2-1-1\t3\tCODE0201\tfalse\tfalse", bufferedReader.readLine());
+        assertEquals("CODE0202\tIsla de El Hierro\t2\tCODE02\ttrue\ttrue", bufferedReader.readLine());
+        assertEquals("CODE03\tFuerteventura\t1\t\ttrue\tfalse", bufferedReader.readLine());
+        assertEquals("CODE04\tLanzarote\t1\t\tfalse\tfalse", bufferedReader.readLine());
+        assertEquals("CODE0401\tCanarias, Tenerife\t2\tCODE04\ttrue\ttrue", bufferedReader.readLine());
+        assertEquals("CODE040101\tNombre codelist-1-v2-code-4-1-1\t3\tCODE0401\tfalse\ttrue", bufferedReader.readLine());
+        bufferedReader.close();
+    }
+    
     @Override
     @Test
     @DirtyDatabase

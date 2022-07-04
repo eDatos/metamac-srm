@@ -10,12 +10,9 @@ import org.siemac.metamac.srm.web.code.model.ds.CodeDS;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ItemSchemeDto;
 import com.smartgwt.client.types.ListGridFieldType;
-import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGridField;
-import com.smartgwt.client.widgets.tree.TreeNode;
 
 /**
  * This tree is used to configure the restriction of the codes of a codelist. All the nodes are shown opened. An editable column lets the user to change the state of a node (opened or closed).
@@ -32,9 +29,7 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         setShowOpenIcons(true);
         setShowDropIcons(false);
         setCanSort(false);
-        setCustomIconProperty(CodeDS.RESTRICTION_ICON);
-        setAutoFitMaxRecords(10);
-        
+        setCustomIconProperty(CodeDS.RESTRICTION_ICON);              
         
         setFields(getCodeFieldsRequired());
 

@@ -68,7 +68,8 @@ public class CodelistRestrictionTreePanel extends VLayout {
 
         rstrictionTitle.setContents(CommonWebUtils.getElementName(codelistVisualisationDto.getCode(), codelistVisualisationDto.getName()));
         codesRestrictionVisualisationTreeGrid.setItems(codelistMetamacDto, codes, codelistVisualisationDto);
-        codesRestrictionVisualisationTreeGrid.setAutoFitMaxRecords(codes.size() + 1);
+        //codesRestrictionVisualisationTreeGrid.setAutoFitMaxRecords(codes.size() + 1); Se acota la visualización completa del árbol por problemas de rendimiento al marcar.
+        codesRestrictionVisualisationTreeGrid.setAutoFitMaxRecords(100);
 
         // Security
         editButton.setVisible(canCodeRestrictionBeModified(codelistMetamacDto, codelistVisualisationDto));

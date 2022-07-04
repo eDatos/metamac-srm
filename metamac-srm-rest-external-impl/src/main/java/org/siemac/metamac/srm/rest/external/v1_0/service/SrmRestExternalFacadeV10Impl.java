@@ -880,6 +880,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
 
+            checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
+            
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
             List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());

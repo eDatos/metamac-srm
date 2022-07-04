@@ -317,14 +317,14 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
  // ------------------------------------------------------------------------------------
     // CODELIST RESTRICTION VISUALISATIONS
     // ------------------------------------------------------------------------------------
-
+    
     public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation() {
         CodelistRestrictionVisualisation codelistRestrictionVisualisation = new CodelistRestrictionVisualisation();
         codelistRestrictionVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
         return codelistRestrictionVisualisation;
     }
-
-    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisationFixedValues(String resourceID) {
+       
+    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisationFixedValues(String agencyID, String resourceID, String version, String visualization) {
         CodelistRestrictionVisualisation target = new CodelistRestrictionVisualisation();
         target.getUuid(); // generate uuid
         target.setVersion(Long.valueOf(1));
@@ -333,8 +333,12 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setLastUpdatedBy("userLastUpdated");
         target.setLastUpdated(new DateTime(2012, 11, 5, 10, 12, 13, 14));
         target.setUpdateDate(new DateTime(2012, 11, 5, 10, 12, 13, 14));
-        target.setNameableArtefact(new NameableArtefact());
-        mockNameableArtefactFixedValues(target.getNameableArtefact(), resourceID, null);
+        target.setNameableArtefact(new NameableArtefact());             
+        mockNameableArtefactFixedValues(target.getNameableArtefact(), visualization, version);
+        String urn = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=" + agencyID + ":" + resourceID + "(" + version + ")." + visualization;
+        target.getNameableArtefact().setUrn(urn);
+        target.getNameableArtefact().setUriProvider(urn);
+        
         return target;
     }
 }

@@ -37,6 +37,7 @@ import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
@@ -57,6 +58,7 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -96,7 +98,7 @@ import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
-import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
+
 /**
  * Implementation of CategoriesMetamacService.
  */
@@ -370,6 +372,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             // Inherit InternationalStrings
             BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToItem(category, categoryTempItemResult, internationalStringRepository);
+            
+            category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
 
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
         }
@@ -406,6 +410,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         return categorySchemeVersion;
     }
 
+    private EniSchemaCatalog getEniSchemaCatalogFromExtensionPoint(ItemResult categoryTempItemResult) {
+        if (categoryTempItemResult != null && categoryTempItemResult.getExtensionPoint() != null) {
+            return ((CategoryMetamacResultExtensionPoint) categoryTempItemResult.getExtensionPoint()).getEniSchemeCatalog();
+        }
+        return null;
+    }
+    
     @Override
     public CategorySchemeVersionMetamac startCategorySchemeValidity(ServiceContext ctx, String urn) throws MetamacException {
 

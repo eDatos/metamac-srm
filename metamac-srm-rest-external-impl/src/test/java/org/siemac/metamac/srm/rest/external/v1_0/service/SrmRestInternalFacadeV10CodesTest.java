@@ -455,8 +455,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, restriction, null);
 
         assertNotNull(codes);
-        assertEquals(3, codes.getCodes().size());
-        assertEquals(BigInteger.valueOf(4), codes.getTotal());
+        assertEquals(BigInteger.valueOf(3), codes.getTotal());
         
         // Verify with mockito
         ArgumentCaptor<String> codeSchemeUrnArgument = ArgumentCaptor.forClass(String.class);

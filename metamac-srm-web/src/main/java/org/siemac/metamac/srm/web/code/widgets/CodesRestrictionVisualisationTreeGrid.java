@@ -18,7 +18,7 @@ import com.smartgwt.client.widgets.tree.TreeGridField;
  * This tree is used to configure the restriction of the codes of a codelist. All the nodes are shown opened. An editable column lets the user to change the state of a node (opened or closed).
  */
 public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
-
+        
     public CodesRestrictionVisualisationTreeGrid() {
         super(false, true);
 
@@ -81,12 +81,16 @@ public class CodesRestrictionVisualisationTreeGrid extends BaseCodesTreeGrid {
         }
     }
 
-    public void setCheckCodes(boolean checked) {       
-        ListGridRecord[] records = getRecords();
-        for (ListGridRecord code : records) {
+    public void setCheckCodes(boolean checked) {
+
+        ListGridRecord[] codes = getRecords();
+        ListGridRecord[] codesWithoutFirst = new ListGridRecord[codes.length - 1];
+        System.arraycopy(codes, 1, codesWithoutFirst, 0, codesWithoutFirst.length);
+        for (ListGridRecord code : codesWithoutFirst) {
             code.setAttribute(CodeDS.RESTRICTION_CHECK, checked);
         }
         this.refreshFields();
+
     }
     
     @Override

@@ -165,13 +165,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
 
-        // No pagination
-        targets.setSelfLink(toCodesLink(codelistVersion));
-        targets.setTotal(BigInteger.valueOf(sources.size()));
-
         if (restriction != null) {
             sources = getCodesInRestriction(sources);
         }
+        
+        // No pagination
+        targets.setSelfLink(toCodesLink(codelistVersion));
+        targets.setTotal(BigInteger.valueOf(sources.size()));
         
         // Values
         String variableID = codelistVersion.getVariable() != null ? codelistVersion.getVariable().getNameableArtefact().getCode() : null;

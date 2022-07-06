@@ -68,7 +68,7 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
     public void createInternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
             throws MetamacWebException {
         
-        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
+        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.TECNICO_APOYO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
         
         createNotification(serviceContext, ServiceNoticeAction.RESOURCE_INTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_INTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType, roles);
     }

@@ -1,82 +1,5 @@
-
-	
-											  
-		 
--- ###########################################
-			 
-  
-  
-  
-  
-  
-
-
-							  
-	
-																 
-
-															  
-
-															  
-
-														
-
-														  
-
-					   
-	
-															   
-
-														
-
-																 
-
-													   
-
-														   
-
-																 
-
-																   
-
-												   
-
-													 
-
-															
-
-															
-
-															  
-
-																
-
-															 
-
-															 
-
-															
-
-												
-
-															
-
-													
-
-															   
-
-													 
-
-																
-
-													
-
-
-				   
-	
-
-
-											  
+ 
+-- ###########################################									  
 -- # Create
 -- ###########################################
 -- Create pk sequence
@@ -99,13 +22,6 @@ CREATE TABLE TB_MISC_VALUES (
   LAST_UPDATED TIMESTAMP,
   LAST_UPDATED_BY VARCHAR(50),
   VERSION BIGINT NOT NULL
-  
-
-
-										 
-						 
-								  
-							  
 								 
 );
 
@@ -118,7 +34,7 @@ CREATE TABLE TB_LIS_ENI_SCHEMA_CATALOGS (
 );
 
 CREATE TABLE TB_M_CATEGORIES (
-  ENI_SCHEMA_FK NUMBER(19),						   
+  ENI_SCHEMA_FK BIGINT,						   
   TB_CATEGORIES BIGINT NOT NULL
 
 );
@@ -752,14 +668,13 @@ ALTER TABLE TB_M_ORG_SCHEMES_VERSIONS ADD CONSTRAINT FK_TB_M_ORG_SCHEMES_VERSION
 	FOREIGN KEY (TB_ORG_SCHEMES_VERSIONS) REFERENCES TB_ITEM_SCHEMES_VERSIONS (ID)
 ;
 
-ALTER TABLE TB_LIS_ENI_SCHEMA_CATALOGS ADD CONSTRAINT FK_TB_LIS_ENI_SCHEMA_CATALOG08
+ALTER TABLE TB_LIS_ENI_SCHEMA_CATALOGS ADD CONSTRAINT FK_TB_LIS_ENI_SCHEMA_CATALOGS_DESCRIPTION
 	FOREIGN KEY (DESCRIPTION) REFERENCES TB_INTERNATIONAL_STRINGS (ID)
 ;
 
-  
-ALTER TABLE TB_M_CATEGORIES ADD CONSTRAINT FK_TB_M_CATEGORIES_ENI_SCHEM36
+ALTER TABLE TB_M_CATEGORIES ADD CONSTRAINT FK_TB_M_CATEGORIES_ENI_SCHEMA_FK
 	FOREIGN KEY (ENI_SCHEMA_FK) REFERENCES TB_LIS_ENI_SCHEMA_CATALOGS (ID)
-;
+;  
  																			 
 ALTER TABLE TB_M_VARIABLES ADD CONSTRAINT FK_TB_M_VARIABLES_NAMEABLE_ARTEFACT_FK
 	FOREIGN KEY (NAMEABLE_ARTEFACT_FK) REFERENCES TB_ANNOTABLE_ARTEFACTS (ID)

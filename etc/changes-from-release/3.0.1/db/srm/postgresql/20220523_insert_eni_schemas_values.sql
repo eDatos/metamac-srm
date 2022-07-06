@@ -3,6 +3,11 @@
 -- EDATOS-3626 - [srm] Añadir mapeo de los temas con los propuestos por ENI-NT
 -- Se añaden los valores en la tabla maestra TB_LIS_ENI_SCHEMA_CATALOGS con los valores indicados 
 -- en el boe para la taxonomía de sectores primarios. Y las traducciones en español, catalán e inglés.
+
+-- Notas:
+-- 1. Es necesario tener instalado la extensión uuid-ossp para la generación de los uuids de los elementos insertados 
+-- -- Para ello es necesario ejecutar la siguiente sentencia como administrador de la bbdd CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- --------------------------------------------------------------------------------------------------
 
 INSERT INTO TB_INTERNATIONAL_STRINGS (ID, VERSION) values (GET_NEXT_SEQUENCE_VALUE('I18NSTRS'), 1);
@@ -248,4 +253,4 @@ UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 3 WHERE SEQU
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = 'I18NSTRS';
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = 'LIS_ENI_SCHEMA_CATALOGS';
 
-commit
+commit;

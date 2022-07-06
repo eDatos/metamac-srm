@@ -1022,10 +1022,20 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 target.setRepresentationType(RepresentationTypeEnum.ENUMERATION);
                 if (SdmxSrmUrnParserUtils.isCodelistUrn(representationValue)) {
                     CodelistVersionMetamac enumeratedCodelist = codelistVersionMetamacRepository.findByUrn(representationValue);
-                    target.setEnumerationCodelist(enumeratedCodelist);
+                    if (enumeratedCodelist != null) {
+                        target.setEnumerationCodelist(enumeratedCodelist);
+                    } else {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND, representationValue));
+                        return null;
+                    }
                 } else if (SdmxSrmUrnParserUtils.isConceptSchemeUrn(representationValue)) {
                     ConceptSchemeVersionMetamac enumeratedConceptScheme = conceptSchemeVersionMetamacRepository.findByUrn(representationValue);
-                    target.setEnumerationConceptScheme(enumeratedConceptScheme);
+                    if (enumeratedConceptScheme != null) {
+                        target.setEnumerationConceptScheme(enumeratedConceptScheme);
+                    } else {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND, representationValue));
+                        return null;
+                    }
                 } else {
                     exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT, conceptMetamac.getNameableArtefact().getCode(),
                             ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_REPRESENTATION_VALUE));

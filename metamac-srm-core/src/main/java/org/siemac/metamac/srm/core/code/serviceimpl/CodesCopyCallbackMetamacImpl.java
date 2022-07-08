@@ -47,6 +47,7 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         target.setDescriptionSource(copyInternationalString(source.getDescriptionSource()));
         target.setIsRecommended(source.getIsRecommended());
         target.setAccessType(source.getAccessType());
+        target.setNormalizationType(source.getNormalizationType());
         target.setLifeCycleMetadata(new SrmLifeCycleMetadata(ProcStatusEnum.DRAFT));
         target.getMaintainableArtefact().setFinalLogicClient(Boolean.FALSE);
         target.setVariable(source.getVariable());

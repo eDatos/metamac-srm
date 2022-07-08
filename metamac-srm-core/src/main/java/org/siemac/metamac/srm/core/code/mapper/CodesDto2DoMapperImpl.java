@@ -89,6 +89,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
                 dto2DoMapperSdmxSrm.internationalStringToEntity(source.getDescriptionSource(), target.getDescriptionSource(), ServiceExceptionParameters.CODELIST_DESCRIPTION_SOURCE));
         target.setIsRecommended(source.getIsRecommended());
         target.setAccessType(source.getAccessType());
+        target.setNormalizationType(source.getNormalizationType());
         target.setStreamMessageStatus(source.getStreamMessageStatus());
 
         target.removeAllReplaceToCodelists();

@@ -52,6 +52,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setDescriptionSource(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getDescriptionSource()));
         target.setIsRecommended(source.getIsRecommended());
         target.setAccessType(source.getAccessType());
+        target.setNormalizationType(source.getNormalizationType());
         target.setReplacedByCodelist(codelistDoToRelatedResourceDto(source.getReplacedByCodelist()));
         for (CodelistVersionMetamac replaceTo : source.getReplaceToCodelists()) {
             target.addReplaceToCodelist(codelistDoToRelatedResourceDto(replaceTo));
@@ -75,6 +76,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setIsRecommended(source.getIsRecommended());
         target.setVariable(variableDoToRelatedResourceDto(source.getVariable()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
+        target.setNormalizationType(source.getNormalizationType());
         itemSchemeVersionDoToItemSchemeBasicDto(source, source.getLifeCycleMetadata(), target);
         return target;
     }

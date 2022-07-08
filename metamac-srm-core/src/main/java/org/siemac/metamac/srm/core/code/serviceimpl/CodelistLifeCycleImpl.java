@@ -14,6 +14,7 @@ import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.code.domain.*;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.LifeCycleImpl;
@@ -160,6 +161,7 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
                 List<MetamacExceptionItem> exceptionsCodelist = new ArrayList<MetamacExceptionItem>();
                 // Metadata required
                 ValidationUtils.checkMetadataRequired(codelistVersion.getAccessType(), ServiceExceptionParameters.CODELIST_ACCESS_TYPE, exceptionsCodelist);
+                ValidationUtils.checkMetadataRequired(codelistVersion.getNormalizationType(), ServiceExceptionParameters.CODELIST_NORMALIZATION_TYPE, exceptionsCodelist);
                 ValidationUtils.checkMetadataRequired(codelistVersion.getDefaultOrderVisualisation(), ServiceExceptionParameters.CODELIST_DEFAULT_ORDER_VISUALISATION, exceptionsCodelist);
                 ValidationUtils.checkMetadataRequired(codelistVersion.getDefaultOpennessVisualisation(), ServiceExceptionParameters.CODELIST_DEFAULT_OPENNESS_VISUALISATION, exceptionsCodelist);
                 // Group exceptions by codelist
@@ -201,7 +203,7 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
                 return srmResourceVersion;
             }
         }
-
+        
         @Override
         public Object startSrmResourceValidity(ServiceContext ctx, Object srmResourceVersion) throws MetamacException {
             return codesMetamacService.startCodelistValidity(ctx, getCodelistVersionMetamac(srmResourceVersion).getMaintainableArtefact().getUrn());

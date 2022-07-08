@@ -38,6 +38,8 @@ Application DtosMetamacCodeDomain {
 			- @LifeCycleDto lifeCycle required;
 			"Stream message status"
 			- @StreamMessageStatusEnum streamMessageStatus;
+			"Normalization type"
+			- @NormalizationTypeEnum normalizationType;
 		}
 		
 		"Dto for CodelistMetamac"
@@ -45,6 +47,7 @@ Application DtosMetamacCodeDomain {
 			Boolean isRecommended;
 			- @RelatedResourceDto variable;
             - @StreamMessageStatusEnum streamMessageStatus;
+            - @NormalizationTypeEnum normalizationType;
 		}		
 
 		"Dto for CodeMetamac"

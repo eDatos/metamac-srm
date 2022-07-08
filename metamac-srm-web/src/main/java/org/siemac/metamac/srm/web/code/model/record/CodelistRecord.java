@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.web.code.model.record;
 
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacBasicDto;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.client.model.record.VersionableResourceRecord;
@@ -31,6 +32,10 @@ public class CodelistRecord extends VersionableResourceRecord {
         setAttribute(CodelistDS.PUBLICATION_STREAM_STATUS, getPublicationStreamStatusIconUrl(value));
     }
 
+    public void setNormalizationType(String value) {
+        setAttribute(CodelistDS.NORMALIZATION_TYPE, value);
+    }
+    
     public ProcStatusEnum getProcStatus() {
         return ((CodelistMetamacBasicDto) getAttributeAsObject(CodelistDS.DTO)).getLifeCycle().getProcStatus();
     }

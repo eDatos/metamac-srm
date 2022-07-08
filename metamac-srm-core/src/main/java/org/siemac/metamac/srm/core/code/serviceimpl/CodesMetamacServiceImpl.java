@@ -373,7 +373,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 .buildSingle());
         // Codelist with access type = PUBLIC
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
-
+        
         return findCodelistsByCondition(ctx, conditions, pagingParameter);
     }
 
@@ -548,6 +548,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistVersion.setIsRecommended(codelistTemporalVersion.getIsRecommended());
         // AccessType
         codelistVersion.setAccessType(codelistTemporalVersion.getAccessType());
+        // NormalizationType
+        codelistVersion.setNormalizationType(codelistTemporalVersion.getNormalizationType());
         // CodelistFamily
         codelistVersion.setFamily(codelistTemporalVersion.getFamily());
         // Variable
@@ -1284,7 +1286,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
                 .withProperty(new LeafProperty<CodeMetamac>(CodeMetamacProperties.itemSchemeVersion().getName(), CodelistVersionMetamacProperties.accessType().getName(), false, CodeMetamac.class))
                 .eq(AccessTypeEnum.PUBLIC).buildSingle());
-
+        
         return findCodesByCondition(ctx, conditions, pagingParameter);
     }
 

@@ -20,5 +20,11 @@ Application EnumsMetamacCodeDomain {
     		FUSION,
     		SEGREGATION
     	}
+    	
+    	"Codelist normalization type"
+    	enum NormalizationTypeEnum {
+    		STANDARDIZED,
+    		NOT_STANDARDIZED
+    	}
 	}
 }

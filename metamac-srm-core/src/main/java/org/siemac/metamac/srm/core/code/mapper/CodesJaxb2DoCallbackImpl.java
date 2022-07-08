@@ -73,6 +73,7 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
             targetMetamac.setDescriptionSource(BaseCopyAllMetadataUtils.copy(previousMetamac.getDescriptionSource())); // DescriptionSource
             targetMetamac.setIsRecommended(previousMetamac.getIsRecommended()); // IsRecommended
             targetMetamac.setAccessType(previousMetamac.getAccessType()); // AccesType
+            targetMetamac.setNormalizationType(previousMetamac.getNormalizationType()); // NormalizationType
             targetMetamac.setFamily(previousMetamac.getFamily()); // CodelistFamily
             targetMetamac.setVariable(previousMetamac.getVariable()); // Variable
         }

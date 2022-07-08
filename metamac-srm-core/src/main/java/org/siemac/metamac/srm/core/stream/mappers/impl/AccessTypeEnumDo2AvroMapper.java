@@ -5,6 +5,8 @@ import org.siemac.metamac.srm.core.stream.mappers.Do2AvroMapper;
 import org.siemac.metamac.srm.core.stream.message.AccessTypeEnumAvro;
 import org.springframework.stereotype.Component;
 
+//TODO EDATOS-3677
+
 @Component
 public class AccessTypeEnumDo2AvroMapper implements Do2AvroMapper<AccessTypeEnum, AccessTypeEnumAvro> {
 

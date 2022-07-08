@@ -842,6 +842,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                             propertyRestriction.getOperationType());
                 case ACCESS_TYPE:
                     return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.accessType(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
+                case NORMALIZATION_TYPE:
+                    return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.normalizationType(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
                 case IS_LAST_VERSION:
                     return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().isLastVersion(), propertyRestriction.getBooleanValue(),
                             propertyRestriction.getOperationType());

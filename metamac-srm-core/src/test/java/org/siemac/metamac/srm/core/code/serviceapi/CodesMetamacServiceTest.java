@@ -82,6 +82,7 @@ import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts;
@@ -275,6 +276,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         codelistVersion.setShortName(null);
         codelistVersion.setIsRecommended(null);
         codelistVersion.setAccessType(null);
+        codelistVersion.setNormalizationType(null);
 
         // Create
         CodelistVersionMetamac codelistVersionCreated = codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
@@ -603,7 +605,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         codelistVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
         codelistVersion.setIsVariableUpdated(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
-
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         codelistVersion.setShortName(com.arte.statistic.sdmx.srm.core.base.serviceapi.utils.BaseDoMocks.mockInternationalString());
         codelistVersion.setDescriptionSource(com.arte.statistic.sdmx.srm.core.base.serviceapi.utils.BaseDoMocks.mockInternationalString());
         codelistVersion.setIsRecommended(Boolean.TRUE);
@@ -698,6 +700,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Validate (only metadata in SRM Metamac; the others are checked in sdmx project)
         assertEquals(urn, codelistVersion.getMaintainableArtefact().getUrn());
         assertEquals(AccessTypeEnum.PUBLIC, codelistVersion.getAccessType());
+        assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
         assertEquals(Boolean.FALSE, codelistVersion.getIsRecommended());
         assertEqualsInternationalString(codelistVersion.getShortName(), "es", "Nombre corto 1-1", "en", "Short name 1-1");
         assertEqualsInternationalString(codelistVersion.getDescriptionSource(), "es", "descripción fuente codelist11-v1", null, null);
@@ -1748,6 +1751,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, urn);
             assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
             assertEquals(AccessTypeEnum.PUBLIC, codelistVersion.getAccessType());
+            assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationDate());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationUser());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getDiffusionValidationDate());
@@ -1819,7 +1823,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, urn);
         assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
         assertEquals(AccessTypeEnum.RESTRICTED, codelistVersion.getAccessType());
-
+        assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
         // save to avoid categorisations error
         codelistVersion.getMaintainableArtefact().removeAllCategorisations();
         itemSchemeRepository.save(codelistVersion);

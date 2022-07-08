@@ -301,6 +301,9 @@ Application CodesMetamac {
 
 			"Stream message status"
             - @StreamMessageStatusEnum streamMessageStatus;
+            
+            "Normalization type"
+			- @NormalizationTypeEnum normalizationType;
 			
 			Repository CodelistVersionMetamacRepository {
 				save;

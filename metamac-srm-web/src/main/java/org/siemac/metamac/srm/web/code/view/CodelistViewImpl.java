@@ -14,6 +14,7 @@ import org.siemac.metamac.srm.core.code.dto.CodelistMetamacBasicDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
@@ -652,7 +653,8 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem isRecommended = new ViewTextItem(CodelistDS.IS_RECOMMENDED, getConstants().codelistIsRecommended());
         RelatedResourceLinkItem family = new RelatedResourceLinkItem(CodelistDS.FAMILY, getConstants().codelistFamily(), getCustomLinkItemNavigationClickHandler());
         RelatedResourceLinkItem variable = new RelatedResourceLinkItem(CodelistDS.VARIABLE, getConstants().variable(), getCustomLinkItemNavigationClickHandler());
-        contentDescriptorsForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable);
+        ViewTextItem normalizationType = new ViewTextItem(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
+        contentDescriptorsForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable, normalizationType);
 
         // PRODUCTION DESCRIPTORS
         productionDescriptorsForm = new GroupDynamicForm(getConstants().formProductionDescriptors());
@@ -743,8 +745,11 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         variable.setShowIfCondition(getVariableFormItemIfFunction());
         RelatedResourceLinkItem staticVariable = new RelatedResourceLinkItem(CodelistDS.VARIABLE_VIEW, getConstants().variable(), getCustomLinkItemNavigationClickHandler());
         staticVariable.setShowIfCondition(getStaticVariableFormItemIfFunction());
-        contentDescriptorsEditionForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable, staticVariable);
+        CustomSelectItem normalizationType = new CustomSelectItem(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
+        normalizationType.setValueMap(CommonUtils.getNormalizationTypeHashMap());
+        contentDescriptorsEditionForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable, staticVariable, normalizationType);
 
+        
         // PRODUCTION DESCRIPTORS
         productionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formProductionDescriptors());
         RelatedResourceLinkItem agency = new RelatedResourceLinkItem(CodelistDS.MAINTAINER, getConstants().maintainableArtefactMaintainer(), getCustomLinkItemNavigationClickHandler());
@@ -829,7 +834,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         contentDescriptorsForm.setValue(CodelistDS.IS_RECOMMENDED, BooleanWebUtils.getBooleanLabel(codelistDto.getIsRecommended()));
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CodelistDS.FAMILY)).setRelatedResource(codelistDto.getFamily());
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CodelistDS.VARIABLE)).setRelatedResource(codelistDto.getVariable());
-
+        contentDescriptorsForm.setValue(CodelistDS.NORMALIZATION_TYPE, CommonUtils.getNormalizationTypeName(codelistDto.getNormalizationType()));
         // PRODUCTION DESCRIPTORS
 
         ((RelatedResourceLinkItem) productionDescriptorsForm.getItem(CodelistDS.MAINTAINER)).setRelatedResource(codelistDto.getMaintainer());
@@ -904,9 +909,11 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.FAMILY)).setRelatedResource(codelistDto.getFamily());
         ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE)).setRelatedResource(codelistDto.getVariable());
         ((RelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE_VIEW)).setRelatedResource(codelistDto.getVariable());
+        contentDescriptorsEditionForm.setValue(CodelistDS.NORMALIZATION_TYPE, codelistDto.getNormalizationType() != null ? codelistDto.getNormalizationType().name() : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         contentDescriptorsEditionForm.markForRedraw();
 
+        
         // PRODUCTION DESCRIPTORS
 
         ((RelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.MAINTAINER)).setRelatedResource(codelistDto.getMaintainer());
@@ -968,7 +975,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         codelistDto.setIsRecommended(((BooleanSelectItem) contentDescriptorsEditionForm.getItem(CodelistDS.IS_RECOMMENDED)).getBooleanValue());
         codelistDto.setFamily(((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.FAMILY)).getRelatedResourceDto());
         codelistDto.setVariable(((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE)).getRelatedResourceDto());
-
+        codelistDto.setNormalizationType(!StringUtils.isBlank(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
+                ? NormalizationTypeEnum.valueOf(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
+                : null);
+        
         // Diffusion descriptors
         codelistDto.getReplaceToCodelists().clear();
         codelistDto.getReplaceToCodelists().addAll(((RelatedResourceListItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).getSelectedRelatedResources());

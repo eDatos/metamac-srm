@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.code.dto.VariableDto;
 import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
@@ -45,6 +46,20 @@ public class CommonUtils {
         return accessTypeEnum != null ? MetamacSrmWeb.getCoreMessages().getString(MetamacSrmWeb.getCoreMessages().accessTypeEnum() + accessTypeEnum.name()) : null;
     }
 
+    public static LinkedHashMap<String, String> getNormalizationTypeHashMap() {
+        LinkedHashMap<String, String> normalizationTypeHashMap = new LinkedHashMap<String, String>();
+        normalizationTypeHashMap.put(StringUtils.EMPTY, StringUtils.EMPTY);
+        for (NormalizationTypeEnum a : NormalizationTypeEnum.values()) {
+            String value = MetamacSrmWeb.getCoreMessages().getString(MetamacSrmWeb.getCoreMessages().normalizationTypeEnum() + a.getName());
+            normalizationTypeHashMap.put(a.name(), value);
+        }
+        return normalizationTypeHashMap;
+    }
+
+    public static String getNormalizationTypeName(NormalizationTypeEnum normalizationTypeEnum) {
+        return normalizationTypeEnum != null ? MetamacSrmWeb.getCoreMessages().getString(MetamacSrmWeb.getCoreMessages().normalizationTypeEnum() + normalizationTypeEnum.name()) : null;
+    }
+    
     public static List<String> getUrnsFromSelectedCodelists(ListGridRecord[] records) {
         List<String> urns = new ArrayList<String>();
         for (ListGridRecord record : records) {

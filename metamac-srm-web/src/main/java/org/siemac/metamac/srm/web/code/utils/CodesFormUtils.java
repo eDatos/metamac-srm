@@ -69,4 +69,13 @@ public class CodesFormUtils {
             return !BooleanUtils.isTrue(variableDto.getHasVariableElements());
         }
     }
+    
+    // CODELIST NORMALIZATION TYPE
+
+    public static boolean canCodelistNormalizationTypeBeEdited(CodelistMetamacDto codelistDto) {
+        if (codelistDto == null) {
+            return false;
+        }
+        return !VersionUtil.isTemporalVersion(codelistDto.getVersionLogic());
+    }
 }

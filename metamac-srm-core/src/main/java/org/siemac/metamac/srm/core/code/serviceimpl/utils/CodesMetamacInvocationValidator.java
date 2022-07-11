@@ -24,6 +24,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -77,7 +78,9 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.ITEM_SCHEME_IS_PARTIAL));
         }
         if (SrmValidationUtils.mustValidateMetadataRequired(codelistVersion, creating)) {
-            ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptions);
+            if (NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
+                ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptions);
+            }
         }
         if (codelistVersion.getId() != null) {
             ValidationUtils.checkMetadataRequired(codelistVersion.getIsVariableUpdated(), ServiceExceptionParameters.CODELIST_IS_VARIABLE_UPDATED, exceptions);

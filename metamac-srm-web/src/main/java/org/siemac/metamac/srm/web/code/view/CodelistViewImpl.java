@@ -127,7 +127,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
     private SearchRelatedResourcePaginatedWindow searchFamilyWindow;
     private SearchRelatedResourcePaginatedWindow searchVariableWindow;
-
+    
     // Versions
     private final CodelistVersionsSectionStack versionsSectionStack;
 
@@ -755,7 +755,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         normalizationType.setRequired(true);        
         normalizationType.setValueMap(CommonUtils.getNormalizationTypeHashMap());
         contentDescriptorsEditionForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable, staticVariable, normalizationType);
-
+        
         
         // PRODUCTION DESCRIPTORS
         productionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formProductionDescriptors());
@@ -998,16 +998,19 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         annotationsEditionPanel.setAnnotations(codelistDto.getAnnotations(), codelistDto);
     }
 
-    private boolean setRequiredVariableWhenNotStanddardizedNormalizationType() {
+    private void setRequiredVariableWhenNotStanddardizedNormalizationType() {
+
         SearchRelatedResourceLinkItem variableEdit = ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE));
         NormalizationTypeEnum normalizationType = !StringUtils.isBlank(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
                 ? NormalizationTypeEnum.valueOf(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
                 : null;
+
         if (NormalizationTypeEnum.STANDARDIZED.equals(normalizationType)) {
-            variableEdit.setRequired(true);
-            return true;
+            variableEdit.setRequired(Boolean.TRUE);
+        } else {
+            variableEdit.setRequired(Boolean.FALSE);
         }
-        return false;
+
     }
     
     private void setInitialAccessType() {

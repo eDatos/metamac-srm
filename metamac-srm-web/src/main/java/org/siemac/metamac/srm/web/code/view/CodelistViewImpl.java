@@ -77,6 +77,8 @@ import org.siemac.metamac.web.common.client.widgets.handlers.ListRecordNavigatio
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
@@ -87,6 +89,8 @@ import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
@@ -746,6 +750,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         RelatedResourceLinkItem staticVariable = new RelatedResourceLinkItem(CodelistDS.VARIABLE_VIEW, getConstants().variable(), getCustomLinkItemNavigationClickHandler());
         staticVariable.setShowIfCondition(getStaticVariableFormItemIfFunction());
         CustomSelectItem normalizationType = new CustomSelectItem(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
+        normalizationType.setRequired(true);        
         normalizationType.setValueMap(CommonUtils.getNormalizationTypeHashMap());
         contentDescriptorsEditionForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable, staticVariable, normalizationType);
 
@@ -768,6 +773,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
                 getCustomLinkItemNavigationClickHandler());
         CustomSelectItem accessType = new CustomSelectItem(CodelistDS.ACCESS_TYPE, getConstants().codelistAccessType());
         accessType.setValueMap(CommonUtils.getAccessTypeHashMap());
+                
         CustomSelectItem defaultOrder = new CustomSelectItem(CodelistDS.DEFAULT_ORDER, getConstants().codelistDefaultOrder()); // ValueMap is set in setCodelistOrders method
         CustomSelectItem defaultOpennessLevel = new CustomSelectItem(CodelistDS.DEFAULT_OPENNESS_LEVEL, getConstants().codelistDefaultOpennessLevel()); // ValueMap is set in setCodelistOpennessLevel
                                                                                                                                                         // method
@@ -797,7 +803,11 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
         // ANNOTATIONS
         annotationsEditionPanel = new AnnotationsPanel(false);
-
+        
+        
+        //EVENTS
+        onChangeNormalizationType(normalizationType);    
+        
         mainFormLayout.addEditionCanvas(identifiersEditionForm);
         mainFormLayout.addEditionCanvas(contentDescriptorsEditionForm);
         mainFormLayout.addEditionCanvas(productionDescriptorsEditionForm);
@@ -807,6 +817,25 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         mainFormLayout.addEditionCanvas(annotationsEditionPanel);
     }
 
+    private void onChangeNormalizationType(CustomSelectItem normalizationType) {
+        normalizationType.addChangeHandler(new ChangeHandler() {
+
+            @Override
+            public void onChange(ChangeEvent event) {
+                CustomSelectItem accessTypeEdit = (CustomSelectItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.ACCESS_TYPE);
+
+                if (NormalizationTypeEnum.NOT_STANDARDIZED.getName().equals(event.getValue())) {
+                    accessTypeEdit.setValue(AccessTypeEnum.RESTRICTED.getName());
+                    accessTypeEdit.setCanEdit(false);
+                } else {
+                    accessTypeEdit.setCanEdit(true);
+                }
+            }
+
+        });
+
+    }
+    
     private void setCodelistViewMode(CodelistMetamacDto codelistDto) {
 
         // IDENTIFIERS
@@ -912,8 +941,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         contentDescriptorsEditionForm.setValue(CodelistDS.NORMALIZATION_TYPE, codelistDto.getNormalizationType() != null ? codelistDto.getNormalizationType().name() : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         contentDescriptorsEditionForm.markForRedraw();
-
-        
+                
         // PRODUCTION DESCRIPTORS
 
         ((RelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.MAINTAINER)).setRelatedResource(codelistDto.getMaintainer());
@@ -930,7 +958,8 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
         ((RelatedResourceLinkItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACED_BY_CODELIST)).setRelatedResource(codelistDto.getReplacedByCodelist());
         ((RelatedResourceListItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).setRelatedResources(codelistDto.getReplaceToCodelists());
-        diffusionDescriptorsEditionForm.setValue(CodelistDS.ACCESS_TYPE, codelistDto.getAccessType() != null ? codelistDto.getAccessType().name() : StringUtils.EMPTY);
+       
+        setInitialAccessType();
         diffusionDescriptorsEditionForm.setValue(CodelistDS.DEFAULT_ORDER,
                 codelistDto.getDefaultOrderVisualisation() != null ? codelistDto.getDefaultOrderVisualisation().getUrn() : StringUtils.EMPTY);
         diffusionDescriptorsEditionForm.setValue(CodelistDS.DEFAULT_OPENNESS_LEVEL,
@@ -963,6 +992,16 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         annotationsEditionPanel.setAnnotations(codelistDto.getAnnotations(), codelistDto);
     }
 
+    private void setInitialAccessType() {
+        String accessTypeValue = codelistDto.getAccessType() != null ? codelistDto.getAccessType().name() : StringUtils.EMPTY;
+        if (NormalizationTypeEnum.NOT_STANDARDIZED.equals(codelistDto.getNormalizationType())) {
+            accessTypeValue = AccessTypeEnum.RESTRICTED.getName();
+            CustomSelectItem accessTypeEdit = (CustomSelectItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.ACCESS_TYPE);
+            accessTypeEdit.setCanEdit(false);
+        }
+        diffusionDescriptorsEditionForm.setValue(CodelistDS.ACCESS_TYPE, accessTypeValue);
+    }
+    
     public CodelistMetamacDto getCodelistDto() {
         // Identifiers
         codelistDto.setCode(identifiersEditionForm.getValueAsString(CodelistDS.CODE));
@@ -979,12 +1018,13 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
                 ? NormalizationTypeEnum.valueOf(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
                 : null);
         
+               
         // Diffusion descriptors
         codelistDto.getReplaceToCodelists().clear();
         codelistDto.getReplaceToCodelists().addAll(((RelatedResourceListItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).getSelectedRelatedResources());
-        codelistDto.setAccessType(!StringUtils.isBlank(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.ACCESS_TYPE))
-                ? AccessTypeEnum.valueOf(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.ACCESS_TYPE))
-                : null);
+        
+        setCodeListAccessType();
+        
         codelistDto.setDefaultOrderVisualisation(!StringUtils.isBlank(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.DEFAULT_ORDER))
                 ? RelatedResourceUtils.createRelatedResourceDto(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.DEFAULT_ORDER))
                 : null);
@@ -1002,6 +1042,19 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         return codelistDto;
     }
 
+    private void setCodeListAccessType() {
+        AccessTypeEnum accessType = null;
+        if (NormalizationTypeEnum.NOT_STANDARDIZED.equals(codelistDto.getNormalizationType())) {
+            accessType = AccessTypeEnum.RESTRICTED;
+        } else {
+            accessType = !StringUtils.isBlank(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.ACCESS_TYPE))
+                    ? AccessTypeEnum.valueOf(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.ACCESS_TYPE))
+                    : null;
+
+        }
+        codelistDto.setAccessType(accessType);
+    }
+    
     private void publishCodelistInternally() {
         if (org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(codelistDto.getMaintainer())) {
             getUiHandlers().publishInternally(codelistDto.getUrn(), codelistDto.getLifeCycle().getProcStatus(), null);

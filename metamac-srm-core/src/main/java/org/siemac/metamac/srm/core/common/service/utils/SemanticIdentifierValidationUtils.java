@@ -36,12 +36,7 @@ public class SemanticIdentifierValidationUtils extends com.arte.statistic.sdmx.s
         return CoreCommonUtil.matchMetamacID(code);
     }
 
-    public static void checkCodelistOrderVisualisationSemanticIdentifier(CodelistOrderVisualisation codelistOrderVisualisation, List<MetamacExceptionItem> exceptions) {
-        ValidationUtils.checkSemanticIdentifierAsMetamacID(codelistOrderVisualisation.getNameableArtefact().getCode(), ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE, exceptions);
+    public static void checkCodelistVisualisationSemanticIdentifier(String identifier, List<MetamacExceptionItem> exceptions) {
+        ValidationUtils.checkSemanticIdentifierAsMetamacID(identifier, ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE, exceptions);
     }
-
-    public static void checkCodelistOpennessVisualisationSemanticIdentifier(CodelistOpennessVisualisation codelistOpennessVisualisation, List<MetamacExceptionItem> exceptions) {
-        ValidationUtils.checkSemanticIdentifierAsMetamacID(codelistOpennessVisualisation.getNameableArtefact().getCode(), ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE, exceptions);
-    }
-
 }

@@ -10,6 +10,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -689,6 +690,72 @@ public class CodesMetamacAsserts extends CodesAsserts {
     }
 
     public static void assertEqualsCodelistOpennessVisualisationResourceDto(CodelistOpennessVisualisation entity, RelatedResourceDto dto, MapperEnum mapperEnum) {
+        assertEqualsNullability(entity, dto);
+        if (entity == null) {
+            return;
+        }
+        assertEquals(entity.getNameableArtefact().getUrn(), dto.getUrn());
+    }
+    
+    // ------------------------------------------------------------------------------------
+    // RESTRICTION VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    public static void assertEqualsCodelistRestrictionVisualisation(CodelistRestrictionVisualisation expected, CodelistRestrictionVisualisation actual) {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        // other artefacts
+        assertEqualsNameableArtefact(expected.getNameableArtefact(), actual.getNameableArtefact());
+    }
+
+    public static void assertEqualsCodelistRestrictionVisualisation(CodelistRestrictionVisualisation expected, CodelistVisualisationDto actual) {
+        assertEqualsCodelistRestrictionVisualisation(expected, actual, MapperEnum.DO2DTO);
+    }
+
+    public static void assertEqualsCodelistRestrictionVisualisation(CodelistVisualisationDto expected, CodelistRestrictionVisualisation actual) {
+        assertEqualsCodelistRestrictionVisualisation(actual, expected, MapperEnum.DTO2DO);
+    }
+
+    public static void assertEqualsCodelistRestrictionVisualisationDto(CodelistVisualisationDto expected, CodelistVisualisationDto actual) {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        // other artefacts
+        CodesAsserts.assertEqualsNameableArtefactDto(expected, actual);
+    }
+
+    private static void assertEqualsCodelistRestrictionVisualisation(CodelistRestrictionVisualisation entity, CodelistVisualisationDto dto, MapperEnum mapperEnum) {
+        if (MapperEnum.DO2DTO.equals(mapperEnum)) {
+            assertEquals(entity.getId(), dto.getId());
+
+            assertNotNull(entity.getUuid());
+            assertEquals(entity.getUuid(), dto.getUuid());
+
+            assertNotNull(entity.getCreatedBy());
+            assertEquals(entity.getCreatedBy(), dto.getCreatedBy());
+
+            assertNotNull(entity.getCreatedDate());
+            assertTrue(DateUtils.isSameInstant(entity.getCreatedDate().toDate(), dto.getCreatedDate()));
+
+            assertNotNull(entity.getLastUpdatedBy());
+            assertEquals(entity.getLastUpdatedBy(), dto.getLastUpdatedBy());
+
+            assertNotNull(entity.getLastUpdated());
+            assertTrue(DateUtils.isSameInstant(entity.getLastUpdated().toDate(), dto.getLastUpdated()));
+
+            assertNotNull(entity.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersionOptimisticLocking());
+        }
+
+        // other artefacts
+        assertEqualsNameableArtefact(entity.getNameableArtefact(), dto, mapperEnum);
+    }
+
+    public static void assertEqualsCodelistRestrictionVisualisationResourceDto(CodelistRestrictionVisualisation entity, RelatedResourceDto dto, MapperEnum mapperEnum) {
         assertEqualsNullability(entity, dto);
         if (entity == null) {
             return;

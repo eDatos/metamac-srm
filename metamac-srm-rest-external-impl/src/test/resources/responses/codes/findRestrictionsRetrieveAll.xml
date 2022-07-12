@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sr:codelistRestrictions xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain" kind="structuralResources#restrictions">
+    <sr:restriction kind="structuralResources#restriction">
+        <cdomain:id>VISUALIZATION1</cdomain:id>
+        <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=agency1:itemScheme1(01.000).VISUALIZATION1</cdomain:urn>
+        <cdomain:selfLink kind="structuralResources#restriction" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/agency1/itemScheme1/01.000/restrictions/VISUALIZATION1"/>
+        <cdomain:name>
+            <cdomain:text xml:lang="en">name-VISUALIZATION1v01.000 in English</cdomain:text>
+            <cdomain:text xml:lang="es">name-VISUALIZATION1v01.000 en Español</cdomain:text>
+        </cdomain:name>
+    </sr:restriction>
+    <sr:restriction kind="structuralResources#restriction">
+        <cdomain:id>VISUALIZATION2</cdomain:id>
+        <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=AGENCY_1:ITEM_SCHEME_1_CODE(01.000).VISUALIZATION2</cdomain:urn>
+        <cdomain:selfLink kind="structuralResources#restriction" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/AGENCY_1/ITEM_SCHEME_1_CODE/01.000/restrictions/VISUALIZATION2"/>
+        <cdomain:name>
+            <cdomain:text xml:lang="en">name-VISUALIZATION2v01.000 in English</cdomain:text>
+            <cdomain:text xml:lang="es">name-VISUALIZATION2v01.000 en Español</cdomain:text>
+        </cdomain:name>
+    </sr:restriction>
+    <sr:restriction kind="structuralResources#restriction">
+        <cdomain:id>VISUALIZATION3</cdomain:id>
+        <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=AGENCY_1:ITEM_SCHEME_1_CODE(01.000).VISUALIZATION3</cdomain:urn>
+        <cdomain:selfLink kind="structuralResources#restriction" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/AGENCY_1/ITEM_SCHEME_1_CODE/01.000/restrictions/VISUALIZATION3"/>
+        <cdomain:name>
+            <cdomain:text xml:lang="en">name-VISUALIZATION3v01.000 in English</cdomain:text>
+            <cdomain:text xml:lang="es">name-VISUALIZATION3v01.000 en Español</cdomain:text>
+        </cdomain:name>
+    </sr:restriction>
+    <sr:restriction kind="structuralResources#restriction">
+        <cdomain:id>VISUALIZATION4</cdomain:id>
+        <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=AGENCY_1:ITEM_SCHEME_1_CODE(01.000).VISUALIZATION4</cdomain:urn>
+        <cdomain:selfLink kind="structuralResources#restriction" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/AGENCY_1/ITEM_SCHEME_1_CODE/01.000/restrictions/VISUALIZATION4"/>
+        <cdomain:name>
+            <cdomain:text xml:lang="es">name-VISUALIZATION4v01.000 en Español</cdomain:text>
+            <cdomain:text xml:lang="en">name-VISUALIZATION4v01.000 in English</cdomain:text>
+        </cdomain:name>
+    </sr:restriction>
+</sr:codelistRestrictions>

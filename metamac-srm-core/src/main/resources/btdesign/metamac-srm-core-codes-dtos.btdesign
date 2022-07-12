@@ -162,7 +162,7 @@ Application DtosMetamacCodeDomain {
 			Long versionOptimisticLocking;
 		}		
 		
-		"Dto for CodelistOrderVisualisation and CodelistOpennessVisualisation"		
+		"Dto for CodelistOrderVisualisation, CodelistOpennessVisualisation and CodelistRestrictionVisualisation"		
 		DataTransferObject CodelistVisualisationDto extends @NameableArtefactDto {
 			"Codelist"
 			- @RelatedResourceDto codelist not nullable;
@@ -170,7 +170,7 @@ Application DtosMetamacCodeDomain {
 			Long versionOptimisticLocking;
 		}
 		
-		"Dto for CodelistOrderVisualisation and CodelistOpennessVisualisation"		
+		"Dto for CodelistOrderVisualisation, CodelistOpennessVisualisation and CodelistRestrictionVisualisation"		
 		DataTransferObject CodelistVisualisationBasicDto extends @NameableArtefactMetamacBasicDto {
 			"Codelist"
 			- @RelatedResourceDto codelist not nullable;

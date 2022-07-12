@@ -9,6 +9,7 @@ public class CodeMetamacVisualisationResult extends ItemVisualisationResult {
     private VariableElementVisualisationResult variableElement;
     private Integer               order;
     private Boolean               openness;
+    private Boolean               restriction;
 
     public CodeMetamacVisualisationResult() {
     }
@@ -35,5 +36,13 @@ public class CodeMetamacVisualisationResult extends ItemVisualisationResult {
 
     public void setOpenness(Boolean openness) {
         this.openness = openness;
+    }
+
+    public Boolean getRestriction() {
+        return restriction;
+    }
+
+    public void setRestriction(Boolean restriction) {
+        this.restriction = restriction;
     }
 }

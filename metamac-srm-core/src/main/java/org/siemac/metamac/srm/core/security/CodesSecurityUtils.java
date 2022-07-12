@@ -183,6 +183,19 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    // RESTRICTION OF CODELIST
+    public static void canRetrieveOrFindCodelistRestrictionVisualisation(ServiceContext ctx) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canRetrieveOrFindCodelistRestrictionVisualisation(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canCrudCodelistRestrictionVisualisation(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(getMetamacPrincipal(ctx), codelistProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     // VARIABLES, FAMILIES...
 
     public static void canRetrieveOrFindCodelistFamily(ServiceContext ctx) throws MetamacException {
@@ -265,6 +278,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canImportCodelistRestrictionVisualisations(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canImportCodelistRestrictionVisualisations(getMetamacPrincipal(ctx), codelistProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     public static void canImportCodes(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
         if (!SharedCodesSecurityUtils.canImportCodes(getMetamacPrincipal(ctx), codelistProcStatus)) {
             throwExceptionIfOperationNotAllowed(ctx);
@@ -291,6 +310,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canExportCodeRestrictionsTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canExportCodeRestrictionsTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     public static void canExportVariableElements(ServiceContext ctx) throws MetamacException {
         if (!SharedCodesSecurityUtils.canExportVariableElementsTsv(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);

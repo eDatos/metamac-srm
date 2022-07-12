@@ -6,6 +6,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -41,7 +42,7 @@ public class CodesDoMocks {
         return target;
     }
 
-    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open) {
+    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction) {
         ItemResult itemResult = CodesMetamacDoMocks.mockCodeResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000)."));
@@ -51,8 +52,15 @@ public class CodesDoMocks {
         itemResult.setExtensionPoint(extensionPoint);
         extensionPoint.setOpenness(open);
         extensionPoint.setOrder(order);
+        extensionPoint.setRestriction(restriction);
         extensionPoint.setVariableElement(CodesMetamacDoMocks.mockVariableElementResultFixedValues("variableElement-" + resourceID));
         return itemResult;
+    }
+    
+    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String visualizationCode) {
+        CodelistRestrictionVisualisation target = CodesMetamacDoMocks.mockCodelistRestrictionVisualisationFixedValues(agencyID, resourceID, version, visualizationCode);
+        target.setCodelistVersion(mockCodelistWithCodes(agencyID, resourceID, version));
+        return target;
     }
 
     public static VariableFamily mockVariableFamily(String resourceID) {

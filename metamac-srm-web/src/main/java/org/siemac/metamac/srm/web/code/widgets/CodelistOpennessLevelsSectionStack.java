@@ -113,12 +113,14 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
     protected void updateListGridImportButtonVisibility() {
         // Openness levels cannot be imported
         importCodelistVisualisationButton.hide();
+        importRestrictionCodelistVisualisationButton.hide();
     }
 
     @Override
     protected void updateListGridExportButtonVisibility() {
         // Openness levels cannot be exported
         exportCodelistVisualisationButton.hide();
+        exportRestrictionCodelistVisualisationButton.hide();
     }
 
     @Override

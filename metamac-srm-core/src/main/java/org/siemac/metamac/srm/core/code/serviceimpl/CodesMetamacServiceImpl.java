@@ -230,7 +230,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     private static Logger                       logger = LoggerFactory.getLogger(CodesMetamacService.class);
 
     public CodesMetamacServiceImpl() {
-        // witout comment
+        // without comment
     }
 
     // ------------------------------------------------------------------------------------
@@ -1070,7 +1070,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
     }
 
-    private TaskImportationInfo planifyJobeRestrictionimport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
+    private TaskImportationInfo planifyJobRestrictionimport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
         // Planify task if can be in background
         codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
         itemSchemeRepository.save(codelistVersion.getItemScheme());
@@ -1143,7 +1143,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
         }
 
-        return saveRestrictionsimport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
+        return saveRestrictionsImport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
     }
 
     @Override
@@ -1157,14 +1157,14 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION);
         if (executeInBackground) {
-            return planifyJobeRestrictionimport(ctx, fileName, codelistUrn, file, codelistVersion);
+            return planifyJobRestrictionimport(ctx, fileName, codelistUrn, file, codelistVersion);
         }
 
         return copyRestrictionsInFile(ctx, file, fileName, codelistVersion);
 
     }
 
-    private TaskImportationInfo saveRestrictionsimport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated,
+    private TaskImportationInfo saveRestrictionsImport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated,
             List<MetamacExceptionItem> exceptionItems, String fileName, List<Code> codesInCodelist, List<MetamacExceptionItem> informationItems) throws MetamacException {
 
         if (CollectionUtils.isEmpty(exceptionItems) && codesInTsvToCheckAllCodesAreUpdated != null && codesInTsvToCheckAllCodesAreUpdated.size() != codesInCodelist.size()) {

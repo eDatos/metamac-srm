@@ -1,3 +1,11 @@
+-- --------------------------------------------------------------------------------------------------
+-- EDATOS-3647 - [srm] Añadir restricciones a los codelists
+-- Añade nuevas columnas para permitir hasta 20 restricciones para un código dado.
+-- Se crea la tabla TB_M_CODELIST_RESTRICTION_VIS para añadir los metadatos de una restricción
+-- --------------------------------------------------------------------------------------------------
+
+
+
 ALTER TABLE TB_M_CODES 
 ADD COLUMN   RESTRICTION1 BOOLEAN,
 ADD COLUMN   RESTRICTION2 BOOLEAN,

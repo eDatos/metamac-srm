@@ -217,7 +217,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ValidationUtils.checkParameterRequired(codelistUrn, ServiceExceptionParameters.URN, exceptions);
         ValidationUtils.checkParameterRequired(orderVisualisationCode, ServiceExceptionParameters.CODELIST_ORDER_VISUALISATION, exceptions);
         ValidationUtils.checkParameterRequired(opennessVisualisationCode, ServiceExceptionParameters.CODELIST_OPENNESS_VISUALISATION, exceptions);
-        ValidationUtils.checkParameterRequired(opennessVisualisationCode, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
+        ValidationUtils.checkParameterRequired(restrictionVisualisationCode, ServiceExceptionParameters.CODELIST_RESTRICTION_VISUALISATION, exceptions);
         ValidationUtils.checkParameterRequired(itemResultSelection, ServiceExceptionParameters.QUERY_SELECTION, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);

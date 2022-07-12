@@ -2795,6 +2795,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness1());
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
             assertEquals(Boolean.FALSE, code.getRestriction2());
             assertEquals(Boolean.FALSE, code.getRestriction3());

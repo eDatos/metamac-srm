@@ -39,8 +39,10 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistFamilies;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistsResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ReplaceToResources;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
@@ -67,6 +69,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -100,7 +103,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
 
         // Values
         for (CodelistVersionMetamac source : sourcesPagedResult.getValues()) {
-            ResourceInternal target = toResource(source);
+            CodelistsResourceInternal target = toCodeListsResource(source);
             targets.getCodelists().add(target);
         }
         return targets;
@@ -125,6 +128,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setIsRecommended(source.getIsRecommended());
         target.setFamily(toResource(source.getFamily()));
         target.setVariable(toResource(source.getVariable()));
+        target.setNormalizationType(toNormalizationType(source.getNormalizationType()));
         target.setAccessType(toAccessType(source.getAccessType()));
         target.setReplacedBy(toCodelistReplacedBy(source));
         target.setReplaceTo(toCodelistReplaceTo(source));
@@ -143,7 +147,17 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), toCodelistManagementApplicationLink(source), target);
         return target;
     }
-
+  
+    private CodelistsResourceInternal toCodeListsResource(CodelistVersionMetamac source) {
+        if (source == null) {
+            return null;
+        }
+        CodelistsResourceInternal target = new CodelistsResourceInternal();
+        toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), toCodelistManagementApplicationLink(source), target);
+        target.setNormalizationType(toNormalizationType(source.getNormalizationType()));
+        return target;
+    }
+    
     @Override
     public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
 
@@ -788,6 +802,18 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
     }
 
+    private NormalizationType toNormalizationType(NormalizationTypeEnum source) {
+        switch (source) {
+            case STANDARDIZED:
+                return org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType.STANDARDIZED;
+            case NOT_STANDARDIZED:
+                return org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType.NOT_STANDARDIZED;
+            default:
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     private ResourceInternal toCodelistReplacedBy(CodelistVersionMetamac source) {
         if (source.getReplacedByCodelist() == null) {
             return null;

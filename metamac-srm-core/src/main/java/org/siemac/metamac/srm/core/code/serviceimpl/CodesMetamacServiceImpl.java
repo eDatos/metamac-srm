@@ -1070,7 +1070,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
     }
 
-    private TaskImportationInfo planifyJobRestrictionimport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
+    private TaskImportationInfo planifyJobRestrictionImport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
         // Planify task if can be in background
         codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
         itemSchemeRepository.save(codelistVersion.getItemScheme());
@@ -1157,7 +1157,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION);
         if (executeInBackground) {
-            return planifyJobRestrictionimport(ctx, fileName, codelistUrn, file, codelistVersion);
+            return planifyJobRestrictionImport(ctx, fileName, codelistUrn, file, codelistVersion);
         }
 
         return copyRestrictionsInFile(ctx, file, fileName, codelistVersion);

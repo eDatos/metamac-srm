@@ -42,6 +42,7 @@ public class ImportationTsvJob implements Job {
     public static final String        OPERATION_IMPORT_CATEGORIES        = "importCategories";
     public static final String        OPERATION_IMPORT_CODES             = "importCodes";
     public static final String        OPERATION_IMPORT_CODE_ORDERS       = "importCodeOrdes";
+    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS = "importCodeRestrictions";
     public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS = "importVariableElements";
 
     private TasksMetamacServiceFacade tasksMetamacServiceFacade          = null;
@@ -77,6 +78,8 @@ public class ImportationTsvJob implements Job {
                 importCodes(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CODE_ORDERS.equals(operation)) {
                 importCodeOrders(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_CODE_RESTRICTIONS.equals(operation)) {
+                importCodeRestrictions(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_VARIABLE_ELEMENTS.equals(operation)) {
                 importVariableElements(jobKey, data, serviceContext);
             } else {
@@ -182,6 +185,19 @@ public class ImportationTsvJob implements Job {
         logger.info("ImportationJob [importCodeOrders]: " + jobKey + " finished at " + new Date());
     }
 
+    private void importCodeRestrictions(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String codelistUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+
+        // Execution
+        logger.info("ImportationJob [importCodeRestrictions]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportCodeRestrictionsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName());
+        logger.info("ImportationJob [importCodeRestrictions]: " + jobKey + " finished at " + new Date());
+    }
+    
     private NoticesRestInternalService getNoticesRestInternalService() {
         return (NoticesRestInternalService) ApplicationContextProvider.getApplicationContext().getBean(NoticesRestInternalService.BEAN_ID);
     }

@@ -32,7 +32,7 @@ public class GetCodesByCodelistActionHandler extends SecurityActionHandler<GetCo
 
             // Codes
             List<CodeMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveCodesByCodelistUrn(ServiceContextHolder.getCurrentServiceContext(), action.getCodelistUrn(), action.getLocale(),
-                    action.getCodelistOrderUrn(), action.getCodelistOpennessLevelUrn());
+                    action.getCodelistOrderUrn(), action.getCodelistOpennessLevelUrn(), action.getCodelistRestrictionUrn());
 
             // Order
             CodelistVisualisationDto codelistOrderVisualisationDto = null;
@@ -47,7 +47,13 @@ public class GetCodesByCodelistActionHandler extends SecurityActionHandler<GetCo
                         action.getCodelistOpennessLevelUrn());
             }
 
-            return new GetCodesByCodelistResult(codes, codelistOrderVisualisationDto, codelistOpennessVisualisationDto);
+            // Restriction level
+            CodelistVisualisationDto codelistRestrictionVisualisationDto = null;
+            if (action.getCodelistRestrictionUrn() != null) {
+                codelistRestrictionVisualisationDto = srmCoreServiceFacade.retrieveCodelistRestrictionVisualisationByUrn(ServiceContextHolder.getCurrentServiceContext(),
+                        action.getCodelistRestrictionUrn());
+            }
+            return new GetCodesByCodelistResult(codes, codelistOrderVisualisationDto, codelistOpennessVisualisationDto, codelistRestrictionVisualisationDto);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

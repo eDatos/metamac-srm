@@ -43,13 +43,20 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
     void saveCodelistOrder(CodelistVisualisationDto codelistOrderVisualisationDto);
     void deleteCodelistOrders(List<String> orderIdentifiers);
     void exportCodesOrder(String codelistUrn);
-
+       
     void retrieveCodesWithOpennessLevel(String opennessLevelUrn);
     void retrieveCodelistOpennessLevels(String codelistUrn);
     void saveCodelistOpennessLevel(CodelistVisualisationDto codelistOpennessVisualisationDto);
     void deleteCodelistOpennessLevel(List<String> opennessLevelsUrns);
     void updateCodesOpennessLevel(String opennessLevelUrn, Map<String, Boolean> opennessLevels);
 
+    void retrieveCodesWithRestrictions(String opennessLevelUrn);
+    void retrieveCodelistRestrictions(String codelistUrn);
+    void saveCodelistRestrictions(CodelistVisualisationDto codelistOpennessVisualisationDto);
+    void deleteCodelistRestrictions(List<String> opennessLevelsUrns);
+    void updateCodesRestrictions(String opennessLevelUrn, Map<String, Boolean> opennessLevels);
+    void exportCodesRestrictions(String codelistUrn);
+    
     // Stream messages
 
     void reSendStreamMessageCodelist(CodelistMetamacDto codelistDto);

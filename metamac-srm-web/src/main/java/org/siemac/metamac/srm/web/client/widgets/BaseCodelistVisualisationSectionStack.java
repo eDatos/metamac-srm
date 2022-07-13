@@ -32,6 +32,8 @@ public abstract class BaseCodelistVisualisationSectionStack extends CustomListGr
     protected ToolStripButton          deleteCodelistVisualisationButton;
     protected ToolStripButton          importCodelistVisualisationButton; // Only to import orders! Openness levels cannot be imported.
     protected ToolStripButton          exportCodelistVisualisationButton; // Only to export orders! Openness levels cannot be imported.
+    protected ToolStripButton          importRestrictionCodelistVisualisationButton; 
+    protected ToolStripButton          exportRestrictionCodelistVisualisationButton; 
 
     protected DeleteConfirmationWindow deleteConfirmationWindow;
 
@@ -93,11 +95,19 @@ public abstract class BaseCodelistVisualisationSectionStack extends CustomListGr
 
         exportCodelistVisualisationButton = new ToolStripButton(getConstants().codesOrderExport(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
 
+        importRestrictionCodelistVisualisationButton = new ToolStripButton(getConstants().actionImportCodeRestrictionsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource()
+                .getURL());
+
+        exportRestrictionCodelistVisualisationButton = new ToolStripButton(getConstants().codesRestrictionExport(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+
+        
         toolStrip.addButton(newCodelistVisualisationButton);
         toolStrip.addButton(editCodelistVisualisationButton);
         toolStrip.addButton(deleteCodelistVisualisationButton);
         toolStrip.addButton(importCodelistVisualisationButton);
         toolStrip.addButton(exportCodelistVisualisationButton);
+        toolStrip.addButton(importRestrictionCodelistVisualisationButton);
+        toolStrip.addButton(exportRestrictionCodelistVisualisationButton);
 
         deleteConfirmationWindow = new DeleteConfirmationWindow(getConstants().codelistVisualisationDeleteConfirmationTitle(), getConstants().codelistVisualisationDeleteConfirmation());
         deleteConfirmationWindow.setVisible(false);

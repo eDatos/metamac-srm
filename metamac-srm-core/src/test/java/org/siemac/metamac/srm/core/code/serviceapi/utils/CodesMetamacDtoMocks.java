@@ -196,4 +196,23 @@ public class CodesMetamacDtoMocks {
         return relatedResourceDto;
     }
 
+    // -----------------------------------------------------------------------------------
+    // RESTRICTION VISUALISATIONS
+    // -----------------------------------------------------------------------------------
+    public static CodelistVisualisationDto mockCodelistRestrictionVisualisationDto() {
+        CodelistVisualisationDto codelistRestrictionVisualisationDto = new CodelistVisualisationDto();
+        codelistRestrictionVisualisationDto.setCode("code-" + MetamacMocks.mockString(10));
+        codelistRestrictionVisualisationDto.setName(MetamacMocks.mockInternationalStringDto());
+        return codelistRestrictionVisualisationDto;
+    }
+
+    public static RelatedResourceDto mockCodelistRestrictionVisualisationRelatedResourceDto(String code, String urn) {
+        RelatedResourceDto relatedResourceDto = new RelatedResourceDto();
+        relatedResourceDto.setCode(code);
+        relatedResourceDto.setUrn(urn);
+        relatedResourceDto.setUrnProvider(urn);
+        relatedResourceDto.setType(null);
+        return relatedResourceDto;
+    }
+    
 }

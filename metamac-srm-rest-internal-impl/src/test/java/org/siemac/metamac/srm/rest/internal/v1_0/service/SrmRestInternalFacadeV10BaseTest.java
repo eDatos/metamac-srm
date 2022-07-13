@@ -124,6 +124,10 @@ public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTe
         return uri.toString();
     }
 
+    protected String getUriItemsRestrictions(String agencyID, String resourceID, String version) throws Exception {
+        return getUriItemSchemes(agencyID, resourceID, version) + "/restrictions";
+    }
+    
     protected String getUriItem(String agencyID, String resourceID, String version, String itemID) throws Exception {
         return getUriItems(agencyID, resourceID, version, null, null, null, null) + "/" + itemID;
     }

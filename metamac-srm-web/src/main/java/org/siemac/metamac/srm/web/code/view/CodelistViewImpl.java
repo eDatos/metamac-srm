@@ -42,6 +42,7 @@ import org.siemac.metamac.srm.web.code.widgets.CodelistCodesPanel;
 import org.siemac.metamac.srm.web.code.widgets.CodelistMainFormLayout;
 import org.siemac.metamac.srm.web.code.widgets.CodelistOpennesssLevelsPanel;
 import org.siemac.metamac.srm.web.code.widgets.CodelistOrdersPanel;
+import org.siemac.metamac.srm.web.code.widgets.CodelistRestrictionsPanel;
 import org.siemac.metamac.srm.web.code.widgets.CodelistVersionsSectionStack;
 import org.siemac.metamac.srm.web.dsd.widgets.ExportSdmxResourceWindow;
 import org.siemac.metamac.srm.web.shared.CommonSharedUtils;
@@ -139,6 +140,9 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
     // Openness levels
     private final CodelistOpennesssLevelsPanel codelistOpennesssLevelsPanel;
 
+    // Restrictions
+    private final CodelistRestrictionsPanel codelistRestrictionsPanel;
+    
     // Categorisations
     private final CodelistCategorisationsPanel categorisationsPanel;
 
@@ -196,6 +200,12 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         codelistOpennesssLevelsPanel = new CodelistOpennesssLevelsPanel();
 
         //
+        // RESTRICTIONS
+        //
+
+        codelistRestrictionsPanel = new CodelistRestrictionsPanel();
+        
+        //
         // CATEGORISATIONS
         //
 
@@ -238,12 +248,17 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         Tab opennessLevelsTab = new Tab(getConstants().codelistOpennessLevels());
         opennessLevelsTab.setPane(codelistOpennesssLevelsPanel);
         tabSet.addTab(opennessLevelsTab);
-
+        
         // Categorisations tab
         Tab categorisationsTab = new Tab(getConstants().categorisations());
         categorisationsTab.setPane(categorisationsPanel);
         tabSet.addTab(categorisationsTab);
 
+        // restrictions tab
+        Tab restrictionsTab = new Tab(getConstants().codelistRestrictions());
+        restrictionsTab.setPane(codelistRestrictionsPanel);
+        tabSet.addTab(restrictionsTab);
+        
         VLayout tabSubPanel = new VLayout();
         tabSubPanel.addMember(titleLabel);
         tabSubPanel.addMember(informationLabel);
@@ -456,6 +471,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         this.codelistCodesVariableElementsPanel.setUiHandlers(uiHandlers);
         this.codelistOrdersPanel.setUiHandlers(uiHandlers);
         this.codelistOpennesssLevelsPanel.setUiHandlers(uiHandlers);
+        this.codelistRestrictionsPanel.setUiHandlers(uiHandlers);
         this.categorisationsPanel.setUiHandlers(uiHandlers);
     }
 
@@ -469,7 +485,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         codelistDto = codelist;
         codelistOrdersPanel.getCodelistOrdersSectionStack().setCodelist(codelist);
         codelistOpennesssLevelsPanel.getCodelistOpennessLevelsSectionStack().setCodelist(codelist);
-
+        codelistRestrictionsPanel.getCodelistRestrictionSectionStack().setCodelist(codelist);
         // Set title
         titleLabel.setContents(org.siemac.metamac.srm.web.client.utils.CommonUtils.getResourceTitle(codelist));
         setInformationLabelContents(codelist);
@@ -487,6 +503,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         codelistCodesVariableElementsPanel.updateItemScheme(codelist);
         codelistOrdersPanel.updateItemScheme(codelist);
         codelistOpennesssLevelsPanel.updateItemScheme(codelist);
+        codelistRestrictionsPanel.updateItemScheme(codelist);
     }
 
     private void setInformationLabelContents(CodelistMetamacDto codelistMetamacDto) {
@@ -519,6 +536,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         // Every time new codes are set, the visualization of codes order or openness levels should be reset (maybe there are new codes, or its structure has changed)
         codelistOrdersPanel.hideCodes();
         codelistOpennesssLevelsPanel.hideCodes();
+        codelistRestrictionsPanel.hideCodes();
     }
 
     //
@@ -569,6 +587,20 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         diffusionDescriptorsEditionForm.getItem(CodelistDS.DEFAULT_OPENNESS_LEVEL).setValueMap(CommonUtils.getCodelistVisualisationsHashMap(opennessLevels));
     }
 
+    //
+    // RESTRICTION 
+    //
+
+    @Override
+    public void setCodesWithRestrictions(List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistRestrictionVisualisationDto) {
+        codelistRestrictionsPanel.setCodes(codelistDto, codes, codelistRestrictionVisualisationDto);
+    }
+
+    @Override
+    public void setCodelistRestrictions(List<CodelistVisualisationDto> restrictions) {
+        codelistRestrictionsPanel.setRestrictions(restrictions);
+    }
+    
     //
     // CATEGORISATIONS
     //
@@ -928,6 +960,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
                 codelistDto.getDefaultOrderVisualisation() != null ? codelistDto.getDefaultOrderVisualisation().getUrn() : StringUtils.EMPTY);
         diffusionDescriptorsEditionForm.setValue(CodelistDS.DEFAULT_OPENNESS_LEVEL,
                 codelistDto.getDefaultOpennessVisualisation() != null ? codelistDto.getDefaultOpennessVisualisation().getUrn() : StringUtils.EMPTY);
+        
         diffusionDescriptorsEditionForm.setValue(CodelistDS.REPLACED_BY_VERSION, codelistDto.getReplacedByVersion());
         diffusionDescriptorsEditionForm.setValue(CodelistDS.REPLACE_TO_VERSION, codelistDto.getReplaceToVersion());
         diffusionDescriptorsEditionForm.setValue(CodelistDS.VALID_FROM, DateUtils.getFormattedDate(codelistDto.getValidFrom()));

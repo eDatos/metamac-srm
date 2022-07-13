@@ -16,6 +16,8 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisationRepository;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisationRepository;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisationRepository;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacRepository;
 import org.siemac.metamac.srm.core.code.domain.Variable;
@@ -69,6 +71,9 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
     @Autowired
     private CodelistOpennessVisualisationRepository                        codelistOpennessVisualisationRepository;
 
+    @Autowired
+    private CodelistRestrictionVisualisationRepository                     codelistRestrictionVisualisationRepository;
+    
     @Override
     public CodelistVersionMetamac codelistDtoToDo(CodelistMetamacDto source) throws MetamacException {
         if (source == null) {
@@ -356,6 +361,33 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
 
         return target;
     }
+    
+    @Override
+    public CodelistRestrictionVisualisation codelistRestrictionVisualisationDtoToDo(CodelistVisualisationDto source) throws MetamacException {
+        if (source == null) {
+            return null;
+        }
+
+        // If exists, retrieves existing entity. Otherwise, creates new entity.
+        CodelistRestrictionVisualisation target = null;
+        if (source.getUrn() == null) {
+            target = new CodelistRestrictionVisualisation();
+        } else {
+            target = retrieveCodelistRestrictionVisualisation(source.getUrn());
+            OptimisticLockingUtils.checkVersion(target.getVersion(), source.getVersionOptimisticLocking());
+        }
+
+        if (target.getId() == null) {
+            target.setNameableArtefact(new NameableArtefact());
+        }
+
+        target.setNameableArtefact(dto2DoMapperSdmxSrm.nameableArtefactToEntity(source, target.getNameableArtefact()));
+
+        // Optimistic locking: Update "update date" attribute to force update to root entity, to increment "version" attribute
+        target.setUpdateDate(new DateTime());
+
+        return target;
+    }
 
     private CodelistVersionMetamac retrieveCodelist(String urn) throws MetamacException {
         CodelistVersionMetamac target = codelistVersionMetamacRepository.findByUrn(urn);
@@ -429,6 +461,15 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
         return target;
     }
 
+    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String urn) throws MetamacException {
+        CodelistRestrictionVisualisation target = codelistRestrictionVisualisationRepository.findByUrn(urn);
+        if (target == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
+        }
+        return target;
+    }
+    
     private Boolean guessIsCodelistVariableUpdated(CodelistMetamacDto source, CodelistVersionMetamac target) {
         String sourceVariableUrn = source.getVariable() != null ? source.getVariable().getUrn() : null;
         String targetVariableUrn = target.getVariable() != null ? target.getVariable().getNameableArtefact().getUrn() : null;

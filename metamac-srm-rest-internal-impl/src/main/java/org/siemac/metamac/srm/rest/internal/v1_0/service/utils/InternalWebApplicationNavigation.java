@@ -43,6 +43,7 @@ public class InternalWebApplicationNavigation {
     private final UriTemplate conceptTemplate;
     private final UriTemplate codelistTemplate;
     private final UriTemplate codeTemplate;
+    private final UriTemplate restrictionTemplate;
     private final UriTemplate variableTemplate;
     private final UriTemplate variableElementTemplate;
     private final UriTemplate variableFamilyTemplate;
@@ -88,6 +89,9 @@ public class InternalWebApplicationNavigation {
                 + PlaceRequestParams.variableParamId + "=" + "{" + VARIABLE_PARAMETER + "}" + SEPARATOR + NameTokens.variableElementPage + ";" + PlaceRequestParams.variableElementParamId + "=" + "{"
                 + RESOURCE_ID_PARAMETER + "}");
 
+        restrictionTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.codelistListPage + SEPARATOR + NameTokens.codelistPage + ";"
+                + PlaceRequestParams.codelistParamId + "=" + "{" + ITEM_SCHEME_PARAMETER + "}/" + NameTokens.restrictionListPage + ";" + PlaceRequestParams.restrictionParamId + "={" + RESOURCE_ID_PARAMETER + "}");
+        
         // Constraints
         contentConstraintTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.contentConstraintListPage + SEPARATOR
                 + NameTokens.contentConstraintPage + ";" + PlaceRequestParams.contentConstraintElementParamId + "=" + "{" + RESOURCE_ID_PARAMETER + "}");
@@ -188,7 +192,7 @@ public class InternalWebApplicationNavigation {
     public String buildCodelistUrl(CodelistVersion codelist) {
         return buildCodelistUrl(codelist.getMaintainableArtefact().getUrn());
     }
-
+    
     public String buildCodelistUrl(String urn) {
         Map<String, String> parameters = new HashMap<>(1);
         String codelistUrlPart = UrnUtils.removePrefix(urn);
@@ -209,6 +213,15 @@ public class InternalWebApplicationNavigation {
         return codeTemplate.expand(parameters).toString();
     }
 
+    public String buildRestrictionUrl(String code, String urnRestriction) {
+        String codelistUrlPart = UrnUtils.removePrefix(urnRestriction);
+        String codeUrlPart = code;
+        Map<String, String> parameters = new HashMap<>(2);
+        parameters.put(ITEM_SCHEME_PARAMETER, codelistUrlPart);
+        parameters.put(RESOURCE_ID_PARAMETER, codeUrlPart);
+        return restrictionTemplate.expand(parameters).toString();
+    }
+    
     public String buildVariableFamilyUrl(VariableFamily variableFamily) {
         Map<String, String> parameters = new HashMap<>(1);
         parameters.put(RESOURCE_ID_PARAMETER, variableFamily.getNameableArtefact().getCode());

@@ -83,7 +83,9 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.codelists.code_variable_element_required_when_geographical");
     public static final CommonServiceExceptionType CODELIST_UNSUPPORTED_TO_GEOGRAPHICAL_GRANULARITY                                   = create(
             "exception.srm.codelists.codelist_unsupported_to_geographical_granularity");
-
+    public static final CommonServiceExceptionType CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS                    = create(
+            "exception.srm.codelists.codelist_unsupported_not_standardized_with_public_access");
+    
     // Variables
     public static final CommonServiceExceptionType VARIABLE_TYPE_UPDATE_TO_GEOGRAPHICAL_UNSUPPORTED                                   = create(
             "exception.srm.codelists.variable.update_type_geographical_unsupported");

@@ -276,13 +276,36 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         codelistVersion.setShortName(null);
         codelistVersion.setIsRecommended(null);
         codelistVersion.setAccessType(null);
-        codelistVersion.setNormalizationType(null);
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
 
         // Create
         CodelistVersionMetamac codelistVersionCreated = codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
         assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersion, codelistVersionCreated);
     }
 
+    @Test
+    public void testCreateCodelistWithoutNormalizationType() throws Exception {
+        OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
+        
+        codelistVersion.setShortName(null);
+        codelistVersion.setIsRecommended(null);
+        codelistVersion.setAccessType(null);
+        codelistVersion.setNormalizationType(null);
+
+        // Create
+        try {
+            codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
+            fail("codelist without required normalization type");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.METADATA_REQUIRED.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+
+    }
+       
+    
     @Test
     public void testCreateConceptSchemeErrorMaintainerNotDefault() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
@@ -655,6 +678,52 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
+    @Test
+    public void testUpdateCodelistVariableNotRequired() throws Exception {
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_9_V1);
+        codelistVersion.setVariable(null);
+        codelistVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
+        codelistVersion.setIsVariableUpdated(Boolean.FALSE);
+        codelistVersion = codesService.updateCodelist(getServiceContextAdministrador(), codelistVersion);
+        assertEquals(NormalizationTypeEnum.NOT_STANDARDIZED, codelistVersion.getNormalizationType());
+
+    }
+    
+    @Test
+    public void testErrorCodelistCreatedNotStandardizedWithPublicAccess() throws Exception {
+        OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
+
+        codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.NOT_STANDARDIZED);
+
+        // Create codelist
+        try {
+            codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
+            fail("Codelist normalization type has not expected public access type");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS.getCode(), e.getExceptionItems().get(0).getCode());
+        }        
+    }
+    
+    @Test
+    public void testErrorCodelistUpdatedNotStandardizedWithPublicAccess() throws Exception {
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
+        codelistVersion.setIsVariableUpdated(Boolean.FALSE);
+        codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.NOT_STANDARDIZED);
+
+        try {
+            codesService.updateCodelist(getServiceContextAdministrador(), codelistVersion);
+            fail("Codelist normalization type has not expected public access type");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+    
     @Test
     public void testUpdateCodelistErrorChangeCodeInCodelistWithVersionAlreadyPublished() throws Exception {
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
@@ -1751,7 +1820,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, urn);
             assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
             assertEquals(AccessTypeEnum.PUBLIC, codelistVersion.getAccessType());
-            assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
+            assertEquals(NormalizationTypeEnum.NOT_STANDARDIZED, codelistVersion.getNormalizationType());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationDate());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationUser());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getDiffusionValidationDate());

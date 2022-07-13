@@ -13,6 +13,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
@@ -34,7 +35,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         codelistVersion.setDescriptionSource(mockInternationalString());
         codelistVersion.setIsRecommended(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.RESTRICTED);
-
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         mockCodelist(codelistVersion, maintainer);
         return codelistVersion;
     }

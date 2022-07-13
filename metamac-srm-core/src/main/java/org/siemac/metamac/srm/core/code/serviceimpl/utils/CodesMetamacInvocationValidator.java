@@ -24,6 +24,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
+import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
@@ -77,7 +78,13 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         if (BooleanUtils.isTrue(codelistVersion.getIsPartial())) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.ITEM_SCHEME_IS_PARTIAL));
         }
+        
+        if (NormalizationTypeEnum.NOT_STANDARDIZED.equals(codelistVersion.getNormalizationType()) && !AccessTypeEnum.RESTRICTED.equals(codelistVersion.getAccessType())) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS, ServiceExceptionParameters.CODELIST_NORMALIZATION_TYPE));
+        }
+        
         if (SrmValidationUtils.mustValidateMetadataRequired(codelistVersion, creating)) {
+            ValidationUtils.checkMetadataRequired(codelistVersion.getNormalizationType(), ServiceExceptionParameters.CODELIST_NORMALIZATION_TYPE, exceptions);
             if (NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
                 ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptions);
             }

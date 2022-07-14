@@ -1820,7 +1820,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, urn);
             assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
             assertEquals(AccessTypeEnum.PUBLIC, codelistVersion.getAccessType());
-            assertEquals(NormalizationTypeEnum.NOT_STANDARDIZED, codelistVersion.getNormalizationType());
+            assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationDate());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationUser());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getDiffusionValidationDate());

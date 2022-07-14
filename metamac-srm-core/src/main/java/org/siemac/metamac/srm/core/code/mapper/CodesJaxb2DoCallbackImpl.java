@@ -10,6 +10,7 @@ import org.sdmx.resources.sdmxml.schemas.v2_1.structure.CodelistsType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -76,6 +77,8 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
             targetMetamac.setNormalizationType(previousMetamac.getNormalizationType()); // NormalizationType
             targetMetamac.setFamily(previousMetamac.getFamily()); // CodelistFamily
             targetMetamac.setVariable(previousMetamac.getVariable()); // Variable
+        } else {
+            targetMetamac.setNormalizationType(NormalizationTypeEnum.STANDARDIZED); // Default NormalizationType (required)
         }
 
         targetMetamac.getMaintainableArtefact().setFinalLogic(Boolean.FALSE); // In Metamac, all artifacts imported are marked as final false

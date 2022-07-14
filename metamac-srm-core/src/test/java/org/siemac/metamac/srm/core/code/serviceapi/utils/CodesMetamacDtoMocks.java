@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
 import org.siemac.metamac.srm.core.code.dto.VariableRelatedResourceDto;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.organisation.serviceapi.utils.OrganisationsMetamacDtoMocks;
 
@@ -31,6 +32,7 @@ public class CodesMetamacDtoMocks {
         codelistDto.setShortName(MetamacMocks.mockInternationalStringDto());
         codelistDto.setDescriptionSource(MetamacMocks.mockInternationalStringDto());
         codelistDto.setAccessType(AccessTypeEnum.PUBLIC);
+        codelistDto.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         CodesDtoMocks.mockCodelistDto(codelistDto);
         codelistDto.setMaintainer(OrganisationsMetamacDtoMocks.mockMaintainerDto(codeMaintainer, urnMaintainer));
 

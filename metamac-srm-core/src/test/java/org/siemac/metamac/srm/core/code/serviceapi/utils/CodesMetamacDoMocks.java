@@ -50,6 +50,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setDescriptionSource(mockInternationalStringFixedValues("descriptionSource", getString(resourceID, version)));
         target.setIsRecommended(Boolean.TRUE);
         target.setAccessType(AccessTypeEnum.PUBLIC);
+        target.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         target.setFamily(mockCodelistFamilyFixedValues("family1"));
         target.setVariable(mockVariableFixedValues("variable1"));
         target.setDefaultOrderVisualisation(mockCodelistOrderVisualisationFixedValues("defaultOrderVisualisation1"));

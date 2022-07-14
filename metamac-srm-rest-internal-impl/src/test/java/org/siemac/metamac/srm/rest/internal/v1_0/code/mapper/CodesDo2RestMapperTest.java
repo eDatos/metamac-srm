@@ -51,6 +51,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ProcStatus;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
@@ -123,7 +124,7 @@ public class CodesDo2RestMapperTest {
             assertEqualsResource(source.get(i), target.getCodelists().get(i));
         }
     }
-
+    
     @Test
     public void testToCodelist() throws MetamacException {
 
@@ -150,6 +151,7 @@ public class CodesDo2RestMapperTest {
         assertEqualsInternationalString("es", "descriptionSource-resourceID1v01.123 en Español", "en", "descriptionSource-resourceID1v01.123 in English", target.getDescriptionSource());
         assertTrue(target.isIsRecommended());
         assertEquals(AccessType.PUBLIC, target.getAccessType());
+        assertEquals(NormalizationType.STANDARDIZED, target.getNormalizationType());
         assertEquals("family1", target.getFamily().getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistFamily=family1", target.getFamily().getUrn());
         assertEqualsInternationalString("es", "name-family1 en Español", "en", "name-family1 in English", target.getFamily().getName());

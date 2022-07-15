@@ -20,6 +20,7 @@ public class PlaceRequestParams {
     public static final String variableFamilyParamId           = "id";
     public static final String variableParamId                 = "id";
     public static final String variableElementParamId          = "id";
+    public static final String restrictionParamId              = "id";
 
     public static final String contentConstraintElementParamId = "id";
 }

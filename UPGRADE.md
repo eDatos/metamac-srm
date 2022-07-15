@@ -8,7 +8,22 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 3.0.0 a 3.0.1
+## 3.1.0 a X.Y.Z
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts en el siguiente orden:
+```shell
+  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_create_master_table_eni_schema_catalog.sql
+  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_create_tb_sequence_eni_schema_catalog.sql
+  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_create_foreign_key_to_eni_schema_catalog.sql
+  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_insert_eni_schemas_values.sql
+
+## 3.0.0 a 3.1.0
+
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.0.0/db](etc/changes-from-release/3.0.0/db)
+  ```shell
+  etc/changes-from-release/3.0.0/db/srm/postgresql/20220616_add_restriction_objects.sql
+  ```
+
+## 2.11.0 a 3.0.0
 
 * Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts en el siguiente orden:
 ```shell
@@ -20,6 +35,10 @@
 
 ## 2.11.0 a 3.0.0
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/2.11.1/db](etc/changes-from-release/2.11.1/db)
+  ```shell
+  etc/changes-from-release/2.11.1/db/srm/postgresql/20220616_add_restriction_objects.sql
+  ```
 
 ## 2.10.0 a 2.11.0
 

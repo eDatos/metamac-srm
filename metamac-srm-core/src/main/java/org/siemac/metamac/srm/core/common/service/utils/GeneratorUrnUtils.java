@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.core.common.service.utils;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
@@ -62,5 +63,15 @@ public class GeneratorUrnUtils extends com.arte.statistic.sdmx.srm.core.common.s
         String codelistVersionNumber = codelistVersion.getMaintainableArtefact().getVersionLogic();
 
         return generateSiemacStructuralResourcesCodelistOpennessLevelsUrn(maintainerCode, codelistCode, codelistVersionNumber, codelistOpennessVisualisation.getNameableArtefact().getCode());
+    }
+    
+    /**
+     * Generate openness visualisation urn
+     */
+    public static String generateCodelistRestrictionVisualisationUrn(CodelistVersion codelistVersion, CodelistRestrictionVisualisation codelistRestrictionVisualisation) {
+        String[] maintainerCode = generateSdmxUrnMaintainerIdFragment(codelistVersion.getMaintainableArtefact().getMaintainer());
+        String codelistCode = codelistVersion.getMaintainableArtefact().getCode();
+        String codelistVersionNumber = codelistVersion.getMaintainableArtefact().getVersionLogic();
+        return generateSiemacStructuralResourcesCodelistRestrictionUrn(maintainerCode, codelistCode, codelistVersionNumber, codelistRestrictionVisualisation.getNameableArtefact().getCode());
     }
 }

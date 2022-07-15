@@ -22,6 +22,9 @@ public class GetCodesByCodelist {
     String                               codelistOpennessLevelUrn;
 
     @In(4)
+    String                               codelistRestrictionUrn;
+    
+    @In(5)
     String                               locale;
 
     @Out(1)
@@ -32,4 +35,7 @@ public class GetCodesByCodelist {
 
     @Out(3)
     CodelistVisualisationDto             codelistOpennessVisualisationDto;
+    
+    @Out(4)
+    CodelistVisualisationDto             codelistRestrictionVisualisationDto;
 }

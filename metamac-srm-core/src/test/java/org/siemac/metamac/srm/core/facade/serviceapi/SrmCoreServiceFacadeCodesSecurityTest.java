@@ -781,7 +781,7 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
                 getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
-            srmCoreServiceFacade.retrieveCodesByCodelistUrn(ctx, CODELIST_1_V1, "es", null, null);
+            srmCoreServiceFacade.retrieveCodesByCodelistUrn(ctx, CODELIST_1_V1, "es", null, null, null);
         }
     }
 
@@ -791,7 +791,7 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
 
         for (ServiceContext ctx : contexts) {
             try {
-                srmCoreServiceFacade.retrieveCodesByCodelistUrn(ctx, CODELIST_1_V1, "es", null, null);
+                srmCoreServiceFacade.retrieveCodesByCodelistUrn(ctx, CODELIST_1_V1, "es", null, null, null);
                 fail("action not allowed");
             } catch (MetamacException e) {
                 assertEquals(1, e.getExceptionItems().size());

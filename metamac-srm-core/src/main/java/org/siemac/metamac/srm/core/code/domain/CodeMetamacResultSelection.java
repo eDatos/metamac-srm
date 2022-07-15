@@ -7,6 +7,7 @@ public class CodeMetamacResultSelection extends ItemMetamacResultSelection {
     public static final CodeMetamacResultSelection API                 = new CodeMetamacResultSelection(false, false, false, false, false, true);
     public static final CodeMetamacResultSelection EXPORT              = new CodeMetamacResultSelection(true, true, true, true, true, false);
     public static final CodeMetamacResultSelection EXPORT_ORDERS       = new CodeMetamacResultSelection(true, true, true, true, false, false);
+    public static final CodeMetamacResultSelection EXPORT_RESTRICTIONS = new CodeMetamacResultSelection(true, true, true, true, false, false);
 
     private boolean                                variableElementFull = false;
     private boolean                                variableElementCode = false;

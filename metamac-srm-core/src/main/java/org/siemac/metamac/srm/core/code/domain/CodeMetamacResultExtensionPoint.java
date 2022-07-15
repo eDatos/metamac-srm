@@ -10,6 +10,7 @@ public class CodeMetamacResultExtensionPoint {
     private Integer                   order;
     private String                    orderConcatenatedByLevel;
     private Boolean                   openness;
+    private Boolean                   restriction;
     private final Map<String, String> shortName = new HashMap<String, String>();
     private VariableElementResult     variableElement;
     private String                    variableElementCode;
@@ -59,5 +60,13 @@ public class CodeMetamacResultExtensionPoint {
 
     public int getLevel() {
         return orderConcatenatedByLevel.length() / (SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + 1); // 6 of order + 1 of dot
+    }
+
+    public Boolean getRestriction() {
+        return restriction;
+    }
+
+    public void setRestriction(Boolean restriction) {
+        this.restriction = restriction;
     }
 }

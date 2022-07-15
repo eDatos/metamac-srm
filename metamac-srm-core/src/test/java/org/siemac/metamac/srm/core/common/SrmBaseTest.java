@@ -316,6 +316,9 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static final String CODELIST_1_V2_OPENNESS_VISUALISATION_01_ALL_EXPANDED  = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST01(02.000).ALL_EXPANDED";
     protected static final String CODELIST_1_V2_OPENNESS_VISUALISATION_02               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST01(02.000).VISUALISATION02";
     protected static final String CODELIST_1_V2_OPENNESS_VISUALISATION_03               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST01(02.000).VISUALISATION03";
+    protected static final String CODELIST_1_V2_RESTRICTION_VISUALISATION_01               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION01";
+    protected static final String CODELIST_1_V2_RESTRICTION_VISUALISATION_02               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION02";
+    
     protected static final String CODELIST_7_V1_OPENNESS_VISUALISATION_01_ALL_EXPANDED  = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST07(01.000).ALL_EXPANDED";
     protected static final String CODELIST_14_V1_OPENNESS_VISUALISATION_01_ALL_EXPANDED = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX02:CODELIST14(01.000).ALL_EXPANDED";
 
@@ -461,6 +464,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tables.add("TB_M_CAT_SCHEMES_VERSIONS");
         tables.add("TB_M_CODELIST_FAMILIES");
         tables.add("TB_M_VARIABLES");
+        tables.add("TB_M_CODELIST_RESTRICTION_VIS");
         tables.add("TB_M_CODELIST_ORDER_VIS");
         tables.add("TB_M_CODELIST_OPENNESS_VIS");
         tables.add("TB_M_CODELISTS_VERSIONS");

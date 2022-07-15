@@ -160,6 +160,7 @@ public class CodelistOrdersSectionStack extends BaseCodelistVisualisationSection
 
     @Override
     protected void updateListGridImportButtonVisibility() {
+        importRestrictionCodelistVisualisationButton.hide();
         if (CodesClientSecurityUtils.canImportCodelistOrderVisualisations(codelistMetamacDto)) {
             importCodelistVisualisationButton.show();
         } else {
@@ -169,6 +170,7 @@ public class CodelistOrdersSectionStack extends BaseCodelistVisualisationSection
 
     @Override
     protected void updateListGridExportButtonVisibility() {
+        exportRestrictionCodelistVisualisationButton.hide();
         if (CodesClientSecurityUtils.canExportCodesOrder(codelistMetamacDto)) {
             exportCodelistVisualisationButton.show();
         } else {

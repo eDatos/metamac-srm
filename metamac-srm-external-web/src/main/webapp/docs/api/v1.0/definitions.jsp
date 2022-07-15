@@ -534,6 +534,27 @@
          ],
          "description":""
       },
+      "CodelistRestrictions":{
+         "type":"object",
+         "title":"CodelistRestrictions",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "restriction":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/ItemResource"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
       "ReplaceToCodelist":{
          "type":"object",
          "title":"ReplaceToCodelist",

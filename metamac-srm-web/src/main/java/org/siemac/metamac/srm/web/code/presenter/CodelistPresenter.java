@@ -61,11 +61,15 @@ import org.siemac.metamac.srm.web.shared.code.DeleteCodelistOpennessLevelsAction
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistOpennessLevelsResult;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistOrdersAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistOrdersResult;
+import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionAction;
+import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOrderAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOrderResult;
+import org.siemac.metamac.srm.web.shared.code.ExportCodesRestrictionAction;
+import org.siemac.metamac.srm.web.shared.code.ExportCodesRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistAction;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistFamiliesAction;
@@ -74,6 +78,8 @@ import org.siemac.metamac.srm.web.shared.code.GetCodelistOpennessLevelsAction;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistOpennessLevelsResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistOrdersAction;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistOrdersResult;
+import org.siemac.metamac.srm.web.shared.code.GetCodelistRestrictionAction;
+import org.siemac.metamac.srm.web.shared.code.GetCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistVersionsAction;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistVersionsResult;
@@ -94,6 +100,8 @@ import org.siemac.metamac.srm.web.shared.code.SaveCodelistOpennessLevelAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistOpennessLevelResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistOrderAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistOrderResult;
+import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionAction;
+import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderResult;
@@ -103,6 +111,8 @@ import org.siemac.metamac.srm.web.shared.code.UpdateCodelistProcStatusAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodelistProcStatusResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodesInOpennessVisualisationAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodesInOpennessVisualisationResult;
+import org.siemac.metamac.srm.web.shared.code.UpdateCodesInRestrictionVisualisationAction;
+import org.siemac.metamac.srm.web.shared.code.UpdateCodesInRestrictionVisualisationResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodesVariableElementsAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodesVariableElementsResult;
 import org.siemac.metamac.srm.web.shared.code.VersionCodelistAction;
@@ -186,6 +196,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         void setCodesWithOpennessLevel(List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistOpennessVisualisationDto);
         void setCodelistOpennessLevels(List<CodelistVisualisationDto> opennessLevels);
 
+        // Restrictions
+        void setCodesWithRestrictions(List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistRestrictionVisualisationDto);
+        void setCodelistRestrictions(List<CodelistVisualisationDto> restrictions);
+        
         // Complex codelists
         void setCodelistsToCreateComplexCodelist(GetCodelistsResult result);
         void setCodesToCreateComplexCodelist(CodelistMetamacDto codelistDto, List<CodeMetamacVisualisationResult> codes);
@@ -290,6 +304,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 retrieveCodelistVersions(result.getCodelistMetamacDto().getUrn());
                 retrieveCodelistOrders(result.getCodelistMetamacDto().getUrn());
                 retrieveCodelistOpennessLevels(result.getCodelistMetamacDto().getUrn());
+                retrieveCodelistRestrictions(result.getCodelistMetamacDto().getUrn());
             }
         });
     }
@@ -331,6 +346,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
                 retrieveCodelistOpennessLevels(codelistMetamacDto.getUrn());
                 retrieveCodelistOrders(codelistMetamacDto.getUrn());
+                retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
 
                 updateUrl();
                 retrieveCodelistVersions(result.getSavedCodelistDto().getUrn());
@@ -645,7 +661,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void retrieveCodes() {
-        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, null, ApplicationEditionLanguages.getCurrentLocale()),
+        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, null, null, ApplicationEditionLanguages.getCurrentLocale()),
                 new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(this) {
 
                     @Override
@@ -742,7 +758,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void retrieveCodesWithOrder(final String orderUrn) {
-        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), orderUrn, null, ApplicationEditionLanguages.getCurrentLocale()),
+        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), orderUrn, null, null, ApplicationEditionLanguages.getCurrentLocale()),
                 new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(this) {
 
                     @Override
@@ -810,7 +826,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void retrieveCodesWithOpennessLevel(String opennessLevelUrn) {
-        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, opennessLevelUrn, ApplicationEditionLanguages.getCurrentLocale()),
+        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, opennessLevelUrn, null, ApplicationEditionLanguages.getCurrentLocale()),
                 new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(this) {
 
                     @Override
@@ -824,6 +840,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 });
     }
 
+    
     @Override
     public void retrieveCodelistOpennessLevels(String codelistUrn) {
         dispatcher.execute(new GetCodelistOpennessLevelsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<GetCodelistOpennessLevelsResult>(this) {
@@ -856,7 +873,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             }
         });
     }
-
+    
     @Override
     public void deleteCodelistOpennessLevel(List<String> levelsUrns) {
         dispatcher.execute(new DeleteCodelistOpennessLevelsAction(levelsUrns), new WaitingAsyncCallbackHandlingError<DeleteCodelistOpennessLevelsResult>(this) {
@@ -888,6 +905,92 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
+    
+   //
+   // CODES RESTRICTIONS
+   //
+    
+    @Override
+    public void retrieveCodesWithRestrictions(String restrictionUrn) {
+        dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, null, restrictionUrn, ApplicationEditionLanguages.getCurrentLocale()),
+                new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetCodesByCodelistResult result) {
+                        getView().setCodesWithRestrictions(result.getCodes(), result.getCodelistRestrictionVisualisationDto());
+                    }
+                });
+    }
+    
+    @Override
+    public void retrieveCodelistRestrictions(String codelistUrn) {
+        dispatcher.execute(new GetCodelistRestrictionAction(codelistUrn), new WaitingAsyncCallbackHandlingError<GetCodelistRestrictionResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(GetCodelistRestrictionResult result) {
+                getView().setCodelistRestrictions(result.getCodelistRestrictionVisualisationDtos());
+            }
+        });
+    }
+    
+    @Override
+    public void saveCodelistRestrictions(CodelistVisualisationDto codelistRestrictionVisualisationDto) {
+        dispatcher.execute(new SaveCodelistRestrictionAction(codelistMetamacDto.getUrn(), codelistRestrictionVisualisationDto), new WaitingAsyncCallbackHandlingError<SaveCodelistRestrictionResult>(
+                this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(SaveCodelistRestrictionResult result) {
+                fireSuccessMessage(getMessages().codelistRestrictionSaved());
+                retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
+                retrieveCodesWithRestrictions(result.getCodelistRestrictionVisualisationSaved().getUrn());
+            }
+        });
+    }
+
+    @Override
+    public void deleteCodelistRestrictions(List<String> restrictionUrns) {
+        dispatcher.execute(new DeleteCodelistRestrictionAction(restrictionUrns), new WaitingAsyncCallbackHandlingError<DeleteCodelistRestrictionResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(DeleteCodelistRestrictionResult result) {
+                fireSuccessMessage(getMessages().codelistRestrictionDeleted());
+                retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
+            }
+        });
+    }
+
+    @Override
+    public void updateCodesRestrictions(String restrictionUrn, Map<String, Boolean> restrictions) {
+        dispatcher.execute(new UpdateCodesInRestrictionVisualisationAction(restrictionUrn, restrictions), new WaitingAsyncCallbackHandlingError<UpdateCodesInRestrictionVisualisationResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(UpdateCodesInRestrictionVisualisationResult result) {
+                retrieveCodesWithRestrictions(result.getCodelistVisualisationDto().getUrn());
+            }
+        });
+    }
+
+   
     //
     // COMPLEX CODELISTS
     //
@@ -919,7 +1022,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             @Override
             public void onWaitSuccess(GetCodelistResult result) {
                 final CodelistMetamacDto codelistMetamacDto = result.getCodelistMetamacDto();
-                dispatcher.execute(new GetCodesByCodelistAction(codelistUrn, null, null, ApplicationEditionLanguages.getCurrentLocale()),
+                dispatcher.execute(new GetCodesByCodelistAction(codelistUrn, null, null, null, ApplicationEditionLanguages.getCurrentLocale()),
                         new WaitingAsyncCallbackHandlingError<GetCodesByCodelistResult>(CodelistPresenter.this) {
 
                             @Override
@@ -1220,6 +1323,21 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
+    @Override
+    public void exportCodesRestrictions(String codelistUrn) {
+        dispatcher.execute(new ExportCodesRestrictionAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesRestrictionResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportCodesRestrictionResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+    }
+    
     //
     // NAVIGATION
     //

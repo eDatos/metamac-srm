@@ -452,7 +452,28 @@
               OPENNESS17="[null]"
               OPENNESS18="[null]"
               OPENNESS19="[null]"
-              OPENNESS20="[null]"              
+              OPENNESS20="[null]"  
+              
+			  RESTRICTION1="0"
+              RESTRICTION2="[null]"
+              RESTRICTION3="[null]"
+              RESTRICTION4="[null]"
+              RESTRICTION5="[null]"
+              RESTRICTION6="[null]"
+              RESTRICTION7="[null]"
+              RESTRICTION8="[null]"
+              RESTRICTION9="[null]"
+              RESTRICTION10="[null]"
+              RESTRICTION11="[null]"
+              RESTRICTION12="[null]"
+              RESTRICTION13="[null]"
+              RESTRICTION14="[null]"
+              RESTRICTION15="[null]"
+              RESTRICTION16="[null]"
+              RESTRICTION17="[null]"
+              RESTRICTION18="[null]"
+              RESTRICTION19="[null]"
+              RESTRICTION20="[null]"            
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -701,7 +722,10 @@
               ORDER3="1"
               OPENNESS1="1"
               OPENNESS2="0"
-              OPENNESS3="1"              
+              OPENNESS3="1" 
+              RESTRICTION1="1"
+              RESTRICTION2="0"
+              RESTRICTION3="1"              
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -781,7 +805,10 @@
                 ORDER3="2"
                 OPENNESS1="1"
                 OPENNESS2="1"
-                OPENNESS3="0"                   
+                OPENNESS3="0"
+                RESTRICTION1="1"
+                RESTRICTION2="1"
+                RESTRICTION3="0"                   
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -836,7 +863,10 @@
               ORDER3="1"
               OPENNESS1="1"
               OPENNESS2="1"
-              OPENNESS3="1"                 
+              OPENNESS3="1"
+              RESTRICTION1="1"
+              RESTRICTION2="1"
+              RESTRICTION3="1"                 
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -916,7 +946,10 @@
               ORDER3="0"
               OPENNESS1="1"
               OPENNESS2="0"
-              OPENNESS3="0"                 
+              OPENNESS3="0"
+              RESTRICTION1="1"
+              RESTRICTION2="0"
+              RESTRICTION3="0"       
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -971,7 +1004,10 @@
               ORDER3="0"
               OPENNESS1="1"
               OPENNESS2="1"
-              OPENNESS3="1"                 
+              OPENNESS3="1"
+              RESTRICTION1="1"
+              RESTRICTION2="1"
+              RESTRICTION3="1"                 
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1026,7 +1062,10 @@
               ORDER3="0"
               OPENNESS1="1"
               OPENNESS2="1"
-              OPENNESS3="0"                 
+              OPENNESS3="0"  
+              RESTRICTION1="1"
+              RESTRICTION2="1"
+              RESTRICTION3="0"                   
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1081,7 +1120,10 @@
               ORDER3="3"
               OPENNESS1="1"
               OPENNESS2="0"
-              OPENNESS3="0"                 
+              OPENNESS3="0"       
+              RESTRICTION1="1"
+              RESTRICTION2="0"
+              RESTRICTION3="0"                   
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1136,7 +1178,10 @@
               ORDER3="0"
               OPENNESS1="1"
               OPENNESS2="1"
-              OPENNESS3="1"                 
+              OPENNESS3="1"
+              RESTRICTION1="1"
+              RESTRICTION2="1"
+              RESTRICTION3="1"                  
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1191,7 +1236,10 @@
               ORDER3="0"
               OPENNESS1="1"
               OPENNESS2="0"
-              OPENNESS3="1"                 
+              OPENNESS3="1" 
+              RESTRICTION1="1"
+              RESTRICTION2="0"
+              RESTRICTION3="1"                   
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1514,8 +1562,97 @@
                     LAST_UPDATED="2011-01-22 01:02:03"
                     LAST_UPDATED_TZ="Europe/London"
                 />                 
+              
+              
+              <!-- RESTRICTIONS -->
+                
+                <!-- VISUALISATION01 -->                
+                <TB_M_CODELIST_RESTRICTION_VIS 
+                    ID="122"
+                    CODELIST_FK="12"
+                    NAMEABLE_ARTEFACT_FK="9998162"
+                    COLUMN_INDEX="2"
+                    
+                    UUID="codelist-restric-visualisation-122"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9998162"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION01"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION01"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION01"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="165"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9998162"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />                                 
+                                        
+            
+                <!-- VISUALISATION02 -->
+                <TB_M_CODELIST_RESTRICTION_VIS 
+                    ID="123"
+                    CODELIST_FK="12"
+                    NAMEABLE_ARTEFACT_FK="9998163"
+                    COLUMN_INDEX="3"
+                    
+                    UUID="codelist-restric-visualisation-123"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9998163"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION02"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION02"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="162"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9998163"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />                 
+              
                        
-                           
+               <!-- RESTRICTIONS -->
     <!-- ************************************************************************************** -->
     <!-- CODELIST 2                                                                             -->
     <!--        - Version 1: draft                                                              -->
@@ -1652,6 +1789,8 @@
               ORDER2="1"
               OPENNESS1="1"
               OPENNESS2="0"
+              RESTRICTION1="1"
+			  RESTRICTION2="0"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1704,7 +1843,9 @@
               ORDER1="1"
               ORDER2="0"
               OPENNESS1="1"
-              OPENNESS2="1"              
+              OPENNESS2="1"   
+              RESTRICTION1="1"
+			  RESTRICTION2="1"           
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -2058,6 +2199,8 @@
               ORDER2="1"
               OPENNESS1="1"
               OPENNESS2="1"
+              RESTRICTION1="1"
+			  RESTRICTION2="1"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -2111,6 +2254,8 @@
               ORDER2="0"
               OPENNESS1="1"
               OPENNESS2="0"
+              RESTRICTION1="1"
+			  RESTRICTION2="0"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -2164,6 +2309,8 @@
               ORDER2="1"
               OPENNESS1="1"
               OPENNESS2="1"
+              RESTRICTION1="1"
+			  RESTRICTION2="1"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -2217,6 +2364,8 @@
                       ORDER2="0"
                       OPENNESS1="1"
                       OPENNESS2="0"
+                      RESTRICTION1="1"
+					  RESTRICTION2="0"
                     />
                 
                     <TB_ANNOTABLE_ARTEFACTS 
@@ -2270,6 +2419,8 @@
               ORDER2="0"
               OPENNESS1="1"
               OPENNESS2="0"
+              RESTRICTION1="1"
+			  RESTRICTION2="0"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -2469,6 +2620,113 @@
                     LAST_UPDATED_TZ="Europe/London"
                 />                                                           
 
+ <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9998311"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="ALL_EXPANDED"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST03(01.000).ALL_EXPANDED"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST03(01.000).ALL_EXPANDED"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="105"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9998311"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />  
+                
+                <!-- RESTRICTION VISUALISATION 01 -->
+                <TB_M_CODELIST_RESTRICTION_VIS 
+                    ID="313"
+                    CODELIST_FK="31"
+                    NAMEABLE_ARTEFACT_FK="9998313"
+                    COLUMN_INDEX="2"
+                    
+                    UUID="codelist-restric-visualisation-313"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9998313"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION01"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST03(01.000).VISUALISATION01"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST03(01.000).VISUALISATION01"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="163"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9998313"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />         
+
+				<TB_M_CODELIST_RESTRICTION_VIS 
+                    ID="314"
+                    CODELIST_FK="31"
+                    NAMEABLE_ARTEFACT_FK="9998314"
+                    COLUMN_INDEX="3"
+                    
+                    UUID="codelist-restric-visualisation-314"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9998314"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION02"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST03(01.000).VISUALISATION02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST03(01.000).VISUALISATION02"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="164"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9998314"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />         
 
     <!-- ************************************************************************************** -->
     <!-- CODELIST 4                                                                             -->
@@ -2910,6 +3168,7 @@
               TB_CODES="611"
               ORDER1="0"
               OPENNESS1="1"
+              RESTRICTION1="1"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -3253,6 +3512,7 @@
               TB_CODES="721"
               ORDER1="0"
               OPENNESS1="1"
+              RESTRICTION1="1"
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -4974,6 +5234,7 @@
                 SHORT_NAME_FK="[null]"
                 ORDER1="0"
                 OPENNESS1="1"
+                RESTRICTION1="1"
             />
             
             <TB_CODES
@@ -5024,6 +5285,7 @@
                         SHORT_NAME_FK="133"
                         ORDER1="0"
                         OPENNESS1="1"
+                        RESTRICTION1="1"
                     />
                     
                     <TB_CODES
@@ -5074,6 +5336,7 @@
                 SHORT_NAME_FK="134"
                 ORDER1="1"
                 OPENNESS1="1"
+                RESTRICTION1="1"
             />
             
             <TB_CODES
@@ -5148,6 +5411,7 @@
                 SHORT_NAME_FK="135"
                 ORDER1="2"
                 OPENNESS1="1"
+                RESTRICTION1="1"
             />
             
             <TB_CODES
@@ -9570,7 +9834,74 @@
         LOCALE="en"
         VERSION="1"
         INTERNATIONAL_STRING_FK="160"
-    />              
+    />
+   
+     <TB_INTERNATIONAL_STRINGS
+        ID="162"
+        VERSION="1"
+    />
     
+    <TB_LOCALISED_STRINGS
+        ID="1621"
+        LABEL="visualización - restricciones 2"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="162"
+    />    
+
+    <TB_LOCALISED_STRINGS
+        ID="1622"
+        LABEL="restriction - visualisation 2"
+        LOCALE="en"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="162"
+    />        
+    
+    <TB_INTERNATIONAL_STRINGS
+        ID="163"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1631"
+        LABEL="Visualización de restricción 1 3-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="163"
+    />     
+    
+    <TB_INTERNATIONAL_STRINGS
+        ID="164"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1641"
+        LABEL="Visualización restrictión 2 3-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="164"
+    />   
+    
+     <TB_INTERNATIONAL_STRINGS
+        ID="165"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1651"
+        LABEL="visualización - restricciones 1-2"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="165"
+    />    
+    
+     <TB_LOCALISED_STRINGS
+        ID="1652"
+        LABEL="restriction - visualisation 1-2"
+        LOCALE="en"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="165"
+    />                 
                  
 </dataset>

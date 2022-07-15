@@ -53,6 +53,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamilies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variable;
@@ -66,6 +67,7 @@ import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacProperties;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacRepository;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableElementProperties;
@@ -357,32 +359,52 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         testFindCodes(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null); // query
         testFindCodes(AGENCY_1, WILDCARD_ALL, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC); // query and order
     }
+    
+    @Test
+    public void testFindCodelistRestrictions() throws Exception {
+
+        resetMocks();
+        CodelistRestrictions codelistRestrictions = getSrmRestInternalFacadeClientXml().findCodelistRestrictions(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
+
+        assertNotNull(codelistRestrictions);
+        assertEquals(SrmRestConstants.KIND_CODELIST_RESTRICTIONS, codelistRestrictions.getKind());
+    }
+
+    @Test
+    public void testFindRestrictionsRetrieveAllXml() throws Exception {
+        resetMocks();
+        String requestUri = getUriItemsRestrictions(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
+        InputStream responseExpected = SrmRestInternalFacadeV10CodesTest.class.getResourceAsStream("/responses/codes/findRestrictionsRetrieveAll.xml");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
 
     @Test
     public void testFindCodesWithoutVariableElementImplicit() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, null);
         assertNull(codes.getCodes().get(0).getVariableElement());
     }
 
     @Test
     public void testFindCodesWithoutVariableElementExplicit() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, "-variableElement");
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, "-variableElement");
         assertNull(codes.getCodes().get(0).getVariableElement());
     }
 
     @Test
     public void testFindCodesWithVariableElementExplicit() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, "+variableElement");
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, "+variableElement");
         assertNotNull(codes.getCodes().get(0).getVariableElement());
     }
 
     @Test
     public void testFindCodesWithDescriptionExplicit() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, "+description");
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, "+description");
         assertTrue(!codes.getCodes().get(0).getDescription().getTexts().isEmpty());
     }
 
@@ -401,7 +423,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         resetMocks();
         String order = "ORDER1";
         String openness = "OPENNESS1";
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, openness, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, openness, null, null);
 
         assertNotNull(codes);
         assertEquals(SrmRestConstants.KIND_CODES, codes.getKind());
@@ -412,8 +434,9 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         ArgumentCaptor<ItemMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemMetamacResultSelection.class);
         ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> opennessArgument = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> restrictionArgument = ArgumentCaptor.forClass(String.class);
         verify(codesService).retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), codeSchemeUrnArgument.capture(), itemResultSelectionArgument.capture(), orderArgument.capture(),
-                opennessArgument.capture());
+                opennessArgument.capture(), restrictionArgument.capture());
         assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Codelist=agency1:itemScheme1(01.000)", codeSchemeUrnArgument.getValue());
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
         assertEquals(false, itemResultSelectionArgument.getValue().isDescriptions());
@@ -421,8 +444,31 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         assertEquals(false, itemResultSelectionArgument.getValue().isAnnotations());
         assertEquals(order, orderArgument.getValue());
         assertEquals(openness, opennessArgument.getValue());
+        assertNull(restrictionArgument.getValue());
     }
 
+    @Test
+    public void testFindCodesRetrieveRestrictions() throws Exception {
+
+        resetMocks();
+        String restriction = "VISUALIZATION1";
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, restriction, null);
+
+        assertNotNull(codes);
+        assertEquals(BigInteger.valueOf(3), codes.getTotal());
+        
+        // Verify with mockito
+        ArgumentCaptor<String> codeSchemeUrnArgument = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ItemMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemMetamacResultSelection.class);
+        ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> opennessArgument = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> restrictionArgument = ArgumentCaptor.forClass(String.class);
+        verify(codesService).retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), codeSchemeUrnArgument.capture(), itemResultSelectionArgument.capture(), orderArgument.capture(),
+                opennessArgument.capture(), restrictionArgument.capture());
+        assertEquals(restriction, restrictionArgument.getValue());
+        
+    }
+    
     @Test
     public void testFindCodesRetrieveAllXml() throws Exception {
         String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
@@ -1020,7 +1066,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
     private void testFindCodes(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(agencyID, resourceID, version, query, orderBy, limit, offset, null, null, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(agencyID, resourceID, version, query, orderBy, limit, offset, null, null, null, null);
 
         assertNotNull(codes);
         assertEquals(SrmRestConstants.KIND_CODES, codes.getKind());
@@ -1125,21 +1171,37 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     }
 
     private void mockRetrieveCodesByCodelistUrnOrderedInDepth() throws MetamacException {
-        when(codesService.retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemMetamacResultSelection.class), any(String.class), any(String.class)))
+        when(codesService.retrieveCodesByCodelistUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemMetamacResultSelection.class), any(String.class), any(String.class), any(String.class)))
                 .thenAnswer(new Answer<List<ItemResult>>() {
 
                     @Override
                     public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
                         // any
-                        ItemResult code1 = CodesDoMocks.mockCodeItemResult("code1", null, 0, true);
-                        ItemResult code2 = CodesDoMocks.mockCodeItemResult("code2", null, 1, false);
-                        ItemResult code2A = CodesDoMocks.mockCodeItemResult("code2A", code2, 0, true);
-                        ItemResult code2B = CodesDoMocks.mockCodeItemResult("code2B", code2, 1, true);
+                        ItemResult code1 = CodesDoMocks.mockCodeItemResult("code1", null, 0, true, true);
+                        ItemResult code2 = CodesDoMocks.mockCodeItemResult("code2", null, 1, false, false);
+                        ItemResult code2A = CodesDoMocks.mockCodeItemResult("code2A", code2, 0, true, true);
+                        ItemResult code2B = CodesDoMocks.mockCodeItemResult("code2B", code2, 1, true, true);
                         return Arrays.asList(code1, code2, code2A, code2B);
                     };
                 });
     }
 
+    private void mockRetrieveCodelistRestrictionVisualisationsByCodelist() throws MetamacException {
+        when(codesService.retrieveCodelistRestrictionVisualisationsByCodelist(any(ServiceContext.class), any(String.class)))
+                .thenAnswer(new Answer<List<CodelistRestrictionVisualisation>>() {
+
+                    @Override
+                    public List<CodelistRestrictionVisualisation> answer(InvocationOnMock invocation) throws Throwable {
+                        // any
+                        CodelistRestrictionVisualisation codeRestriction1 = CodesDoMocks.mockCodelistRestrictionVisualisation(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, "VISUALIZATION1");
+                        CodelistRestrictionVisualisation codeRestriction2 = CodesDoMocks.mockCodelistRestrictionVisualisation("AGENCY_1", "ITEM_SCHEME_1_CODE", VERSION_1, "VISUALIZATION2");
+                        CodelistRestrictionVisualisation codeRestriction3 = CodesDoMocks.mockCodelistRestrictionVisualisation("AGENCY_1", "ITEM_SCHEME_1_CODE", VERSION_1, "VISUALIZATION3");
+                        CodelistRestrictionVisualisation codeRestriction4 = CodesDoMocks.mockCodelistRestrictionVisualisation("AGENCY_1", "ITEM_SCHEME_1_CODE", VERSION_1, "VISUALIZATION4");
+                        return Arrays.asList(codeRestriction1, codeRestriction2, codeRestriction3, codeRestriction4);
+                    };
+                });
+    }
+    
     @SuppressWarnings("unchecked")
     private void mockFindVariableFamiliesByCondition() throws MetamacException {
         when(codesService.findVariableFamiliesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class)))
@@ -1410,6 +1472,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         mockFindCodelistsByCondition();
         mockFindCodesByCondition();
         mockRetrieveCodesByCodelistUrnOrderedInDepth();
+        mockRetrieveCodelistRestrictionVisualisationsByCodelist();
         mockFindVariableFamiliesByCondition();
         mockFindVariablesByCondition();
         mockFindVariableElementsByCondition();

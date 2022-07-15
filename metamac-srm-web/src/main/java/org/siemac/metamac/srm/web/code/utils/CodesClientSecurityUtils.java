@@ -316,7 +316,7 @@ public class CodesClientSecurityUtils {
         }
         return SharedCodesSecurityUtils.canImportCodelistOrderVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-
+       
     public static boolean canUpdateCodelistOrderVisualisation(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
@@ -361,6 +361,43 @@ public class CodesClientSecurityUtils {
         return SharedCodesSecurityUtils.canCrudCodelistOpennessVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
 
+    // RESTRICTION LEVELS
+
+    public static boolean canCreateCodelistRestrictionVisualisation(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canUpdateCodelistRestrictionVisualisation(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canDeleteCodelistRestrictionVisualisation(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+    
+    public static boolean canImportCodelistRestrictionVisualisations(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canImportCodelistRestrictionVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+    
+    public static boolean canExportCodesRestriction(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canExportCodeRestrictionsTsv(MetamacSrmWeb.getCurrentUser());
+    }
+    
     // CODELIST FAMILY
 
     public static boolean canCreateCodelistFamily() {

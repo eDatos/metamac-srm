@@ -9,6 +9,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItemBuilder;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
@@ -89,7 +90,7 @@ public class SrmValidationUtils extends SdmxSrmValidationUtils {
             throw new MetamacException(ServiceExceptionType.CODELIST_ALL_EXPANDED_OPENNESS_VISUALISATION_OPERATION_NOT_SUPPORTED, opennessVisualisation.getNameableArtefact().getUrn());
         }
     }
-
+    
     public static void checkVariableIsGeographical(Variable variable) throws MetamacException {
         if (!VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_MUST_BE_GEOGRAPHICAL).withMessageParameters(variable.getNameableArtefact().getUrn()).build();

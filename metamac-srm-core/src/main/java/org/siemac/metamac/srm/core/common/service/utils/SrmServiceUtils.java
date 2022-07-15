@@ -22,6 +22,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -155,6 +156,10 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return SrmConstants.CODELIST_OPENNESS_VISUALISATION_ALL_EXPANDED_CODE.equals(opennessVisualisation.getNameableArtefact().getCode());
     }
 
+    public static Boolean isAllExpandedRestrictionVisualisation(CodelistRestrictionVisualisation restrictionVisualisation) {
+        return SrmConstants.CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_CODE.equals(restrictionVisualisation.getNameableArtefact().getCode());
+    }
+    
     /**
      * Get code order.
      * Note: can not use reflection because set to null is necessary
@@ -399,6 +404,124 @@ public class SrmServiceUtils extends SdmxSrmUtils {
                 throw new IllegalArgumentException("Openness not supported: " + columnIndex);
         }
     }
+    
+    /**
+     * Get code Restriction.
+     * Note: can not use reflection because set to null is necessary
+     */
+    public static void setCodeRestriction(CodeMetamac code, int columnIndex, Boolean codeIndex) {
+        switch (columnIndex) {
+            case 1:
+                code.setRestriction1(codeIndex);
+                break;
+            case 2:
+                code.setRestriction2(codeIndex);
+                break;
+            case 3:
+                code.setRestriction3(codeIndex);
+                break;
+            case 4:
+                code.setRestriction4(codeIndex);
+                break;
+            case 5:
+                code.setRestriction5(codeIndex);
+                break;
+            case 6:
+                code.setRestriction6(codeIndex);
+                break;
+            case 7:
+                code.setRestriction7(codeIndex);
+                break;
+            case 8:
+                code.setRestriction8(codeIndex);
+                break;
+            case 9:
+                code.setRestriction9(codeIndex);
+                break;
+            case 10:
+                code.setRestriction10(codeIndex);
+                break;
+            case 11:
+                code.setRestriction11(codeIndex);
+                break;
+            case 12:
+                code.setRestriction12(codeIndex);
+                break;
+            case 13:
+                code.setRestriction13(codeIndex);
+                break;
+            case 14:
+                code.setRestriction14(codeIndex);
+                break;
+            case 15:
+                code.setRestriction15(codeIndex);
+                break;
+            case 16:
+                code.setRestriction16(codeIndex);
+                break;
+            case 17:
+                code.setRestriction17(codeIndex);
+                break;
+            case 18:
+                code.setRestriction18(codeIndex);
+                break;
+            case 19:
+                code.setRestriction19(codeIndex);
+                break;
+            case 20:
+                code.setRestriction20(codeIndex);
+                break;
+            default:
+                throw new IllegalArgumentException("Restriction not supported: " + columnIndex);
+        }
+    }
+    
+    public static Boolean getCodeRestriction(CodeMetamac code, int columnIndex) {
+        switch (columnIndex) {
+            case 1:
+                return code.getRestriction1();
+            case 2:
+                return code.getRestriction2();
+            case 3:
+                return code.getRestriction3();
+            case 4:
+                return code.getRestriction4();
+            case 5:
+                return code.getRestriction5();
+            case 6:
+                return code.getRestriction6();
+            case 7:
+                return code.getRestriction7();
+            case 8:
+                return code.getRestriction8();
+            case 9:
+                return code.getRestriction9();
+            case 10:
+                return code.getRestriction10();
+            case 11:
+                return code.getRestriction11();
+            case 12:
+                return code.getRestriction12();
+            case 13:
+                return code.getRestriction13();
+            case 14:
+                return code.getRestriction14();
+            case 15:
+                return code.getRestriction15();
+            case 16:
+                return code.getRestriction16();
+            case 17:
+                return code.getRestriction17();
+            case 18:
+                return code.getRestriction18();
+            case 19:
+                return code.getRestriction19();
+            case 20:
+                return code.getRestriction20();
+            default:
+                throw new IllegalArgumentException("Restriction not supported: " + columnIndex);
+        }
+    }
 
     public static Map<String, String> getCodeItemResultShortName(ItemResult itemResult) {
         if (itemResult.getExtensionPoint() == null) {
@@ -432,6 +555,14 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return extensionPoint.getOpenness();
     }
 
+    public static Boolean getCodeItemResultRestriction(ItemResult itemResult) {
+        if (itemResult.getExtensionPoint() == null) {
+            return null;
+        }
+        CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        return extensionPoint.getRestriction();
+    }
+    
     public static VariableElementResult getCodeItemResultVariableElementFull(ItemResult itemResult) {
         if (itemResult.getExtensionPoint() == null) {
             return null;
@@ -501,6 +632,15 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return result;
     }
 
+    public static Map<String, CodelistRestrictionVisualisation> createMapOfCodelistRestrictionVisualisationByOriginalUrn(List<CodelistRestrictionVisualisation> restriction) {
+        Map<String, CodelistRestrictionVisualisation> result = new HashMap<String, CodelistRestrictionVisualisation>(restriction.size());
+        for (CodelistRestrictionVisualisation codelistRestrictionVisualisation : restriction) {
+            String originalUrn = GeneratorUrnUtils.makeUrnFromTemporal(codelistRestrictionVisualisation.getNameableArtefact().getUrn());
+            result.put(originalUrn, codelistRestrictionVisualisation);
+        }
+        return result;
+    }
+    
     public static Map<String, CodelistOpennessVisualisation> createMapOfCodelistOpennessVisualisationByOriginalUrn(List<CodelistOpennessVisualisation> openess) {
         Map<String, CodelistOpennessVisualisation> result = new HashMap<String, CodelistOpennessVisualisation>(openess.size());
         for (CodelistOpennessVisualisation codelistOpennessVisualisation : openess) {

@@ -320,6 +320,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
                         @Override
                         public void execute() {
+                            
                             getUiHandlers().saveCodelist(getCodelistDto());
                         }
                     });
@@ -670,7 +671,9 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateDate = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_DATE, getConstants().maintainableArtefactVersionLastUpdateDate());
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
-        productionDescriptorsForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate);
+        RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
+        
+        productionDescriptorsForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProvider);
 
         // DIFFUSION DESCRIPTORS
         diffusionDescriptorsForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
@@ -766,7 +769,9 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateDate = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_DATE, getConstants().maintainableArtefactVersionLastUpdateDate());
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
-        productionDescriptorsEditionForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate);
+        RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
+
+        productionDescriptorsEditionForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProvider);
 
         // DIFFUSION DESCRIPTORS
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
@@ -875,6 +880,8 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         productionDescriptorsForm.setValue(CodelistDS.VERSION_LAST_UPDATE_DATE, codelistDto.getLastUpdated());
         productionDescriptorsForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());
         productionDescriptorsForm.setValue(CodelistDS.RESOURCE_CREATION_DATE, codelistDto.getResourceCreatedDate());
+        ((RelatedResourceLinkItem) productionDescriptorsForm.getItem(CodelistDS.SOURCE_PROVIDER)).setRelatedResource(codelistDto.getSourceProvider());
+        
 
         // DIFFUSION DESCRIPTORS
 
@@ -957,6 +964,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_DATE, codelistDto.getLastUpdated());
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());        
         productionDescriptorsEditionForm.setValue(CodelistDS.RESOURCE_CREATION_DATE, codelistDto.getResourceCreatedDate());
+        ((RelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setRelatedResource(codelistDto.getSourceProvider());
         productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         productionDescriptorsEditionForm.markForRedraw();
 
@@ -1053,6 +1061,9 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
                 ? RelatedResourceUtils.createRelatedResourceDto(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.DEFAULT_OPENNESS_LEVEL))
                 : null);
 
+        // Production descriptors
+        codelistDto.setSourceProvider(((SearchRelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).getRelatedResourceDto());
+                
         // Comments
         codelistDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(CodelistDS.COMMENTS));
 

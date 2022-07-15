@@ -13,7 +13,9 @@
 * Es necesario ejecutar los scripts SQL del proyecto statistic-sdmx-srm contenidos en la carpeta
   ```shell
   etc/changes-from-release/3.0.0/db/srm/postgresql/20220707_create _normalization_type_column.sql
-
+  etc/changes-from-release/3.0.0/db/srm/postgresql/20220714_create _source_provider_column.sql
+  ```
+  
 ## 2.11.0 a 3.0.0
 
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.

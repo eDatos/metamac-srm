@@ -40,6 +40,8 @@ Application DtosMetamacCodeDomain {
 			- @StreamMessageStatusEnum streamMessageStatus;
 			"Normalization type"
 			- @NormalizationTypeEnum normalizationType;
+			"Association to the source organization"
+			- @RelatedResourceDto sourceProvider nullable;
 		}
 		
 		"Dto for CodelistMetamac"

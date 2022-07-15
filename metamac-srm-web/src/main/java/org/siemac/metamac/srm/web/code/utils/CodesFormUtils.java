@@ -78,4 +78,13 @@ public class CodesFormUtils {
         }
         return !VersionUtil.isTemporalVersion(codelistDto.getVersionLogic());
     }
+    
+    // CODELIST SOURCE PROVIDER
+
+    public static boolean canCodelistSourceProviderBeEdited(CodelistMetamacDto codelistDto) {
+        if (codelistDto == null) {
+            return false;
+        }
+        return !VersionUtil.isTemporalVersion(codelistDto.getVersionLogic());
+    }
 }

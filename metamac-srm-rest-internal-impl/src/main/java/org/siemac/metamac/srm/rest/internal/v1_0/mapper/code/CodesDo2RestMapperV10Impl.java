@@ -132,6 +132,8 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setAccessType(toAccessType(source.getAccessType()));
         target.setReplacedBy(toCodelistReplacedBy(source));
         target.setReplaceTo(toCodelistReplaceTo(source));
+        //TODO EDATOS-3677 ver si necesario
+        //target.setSourceProvider(source.getSourceProvider());
         target.setOrderConfigurations(toOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
         target.setOpennessConfigurations(toOpennessConfigurations(source.getOpennessVisualisations(), source.getDefaultOpennessVisualisation()));
 
@@ -155,6 +157,8 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         CodelistsResourceInternal target = new CodelistsResourceInternal();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), toCodelistManagementApplicationLink(source), target);
         target.setNormalizationType(toNormalizationType(source.getNormalizationType()));
+        //TODO EDATOS-3677 ver si necesario
+        //target.setSourceProvider(source.getSourceProvider());
         return target;
     }
     

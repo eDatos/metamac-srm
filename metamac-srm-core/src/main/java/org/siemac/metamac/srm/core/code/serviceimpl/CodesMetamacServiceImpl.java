@@ -554,6 +554,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistVersion.setFamily(codelistTemporalVersion.getFamily());
         // Variable
         codelistVersion.setVariable(codelistTemporalVersion.getVariable());
+        // SourceProvider
+        codelistVersion.setSourceProvider(codelistTemporalVersion.getSourceProvider());
 
         // Merge metadata of Item
         Map<String, Item> temporalItemMap = SrmServiceUtils.createMapOfItemsByOriginalUrn(codelistTemporalVersion.getItems());

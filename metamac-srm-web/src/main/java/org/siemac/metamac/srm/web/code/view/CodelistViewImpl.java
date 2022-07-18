@@ -3,8 +3,11 @@ package org.siemac.metamac.srm.web.code.view;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.BooleanUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
@@ -18,6 +21,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
@@ -51,9 +55,11 @@ import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
+import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.RelatedResourceItemWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.RelatedResourceWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.BooleanWebUtils;
@@ -72,8 +78,12 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTex
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmItemLinkItemWithSchemeFilterItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 import org.siemac.metamac.web.common.client.widgets.handlers.ListRecordNavigationClickHandler;
+import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
@@ -629,6 +639,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         }
     }
 
+    
     @Override
     public void setCodelistsToReplace(List<RelatedResourceDto> codelists, int firstResult, int totalResults) {
         ((SearchRelatedResourceListItemWithSchemeFilterItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).setResources(codelists, firstResult, totalResults);
@@ -770,6 +781,8 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
         RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
+        SearchExternalItemLinkItem sourceProviderItem = createSourceProviderItem(CodelistDS.SOURCE_PROVIDER,  getConstants().codelistSourceProvider());
+        
 
         productionDescriptorsEditionForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProvider);
 
@@ -1376,4 +1389,57 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
             }
         };
     }
+    
+    // ------------------------------------------------------------------------------------------------------------
+    // EXTERNAL RESOURCES ITEMS
+    // ------------------------------------------------------------------------------------------------------------
+
+    
+    private List<ExternalItemDto> organizationSchemeMetamacDtoToExternalItemDto(List<OrganisationSchemeMetamacBasicDto> organizationsDto) {
+        List<ExternalItemDto> externalItems = new ArrayList<ExternalItemDto>();
+        
+        for(OrganisationSchemeMetamacBasicDto org: organizationsDto) {
+            ExternalItemDto dto = new ExternalItemDto();
+            dto.setCode(org.getCode());
+            dto.setTitle(org.getName());
+            dto.setType(TypeExternalArtefactsEnum.ORGANISATION_SCHEME);
+            dto.setUrn(org.getUrn());
+            dto.setUrnProvider(org.getUrnProvider());  
+        }
+        
+        return externalItems;
+    }
+    
+    //Organizations
+    @Override
+    public void setOrganization(GetOrganisationSchemesResult result) {
+            ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setFilterResources(organizationSchemeMetamacDtoToExternalItemDto(result.getOrganisationSchemeMetamacDtos()), result.getFirstResultOut(),
+                    result.getOrganisationSchemeMetamacDtos().size(), result.getTotalResults());
+    }
+    
+    public static OrganisationSchemeWebCriteria buildItemSchemeWebCriteria(SrmExternalResourceRestCriteria itemSchemeRestCriteria, TypeExternalArtefactsEnum[] types) {
+
+
+        OrganisationSchemeWebCriteria organisationSchemeWebCriteria = new OrganisationSchemeWebCriteria();
+
+            return organisationSchemeWebCriteria;
+    }
+    
+    private SearchSrmItemLinkItemWithSchemeFilterItem createSourceProviderItem(final String name, String title) {
+        final SearchSrmItemLinkItemWithSchemeFilterItem item = new SearchSrmItemLinkItemWithSchemeFilterItem(name, title, SrmWebConstants.FORM_LIST_MAX_RESULTS) {
+
+            @Override
+            protected void retrieveItems(int firstResult, int maxResults, SrmItemRestCriteria webCriteria) {
+       //         getUiHandlers().retrieveItems(name, webCriteria, new TypeExternalArtefactsEnum[]{TypeExternalArtefactsEnum.AGENCY_SCHEME, TypeExternalArtefactsEnum.ORGANISATION_UNIT_SCHEME,
+       //                 TypeExternalArtefactsEnum.DATA_CONSUMER_SCHEME, TypeExternalArtefactsEnum.DATA_PROVIDER_SCHEME}, firstResult, maxResults);
+            }
+
+            @Override
+            protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
+                getUiHandlers().retrieveOrganizationsSchemes(firstResult, maxResults, buildItemSchemeWebCriteria(webCriteria, new TypeExternalArtefactsEnum[]{TypeExternalArtefactsEnum.AGENCY_SCHEME, TypeExternalArtefactsEnum.ORGANISATION_UNIT_SCHEME,
+                        TypeExternalArtefactsEnum.DATA_CONSUMER_SCHEME, TypeExternalArtefactsEnum.DATA_PROVIDER_SCHEME}));
+            }
+        };
+        return item;
+    }  
 }

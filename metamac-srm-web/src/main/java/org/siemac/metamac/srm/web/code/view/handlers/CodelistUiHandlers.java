@@ -10,6 +10,7 @@ import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
+import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
 
 public interface CodelistUiHandlers extends BaseCodeUiHandlers {
@@ -50,6 +51,9 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
     void deleteCodelistOpennessLevel(List<String> opennessLevelsUrns);
     void updateCodesOpennessLevel(String opennessLevelUrn, Map<String, Boolean> opennessLevels);
 
+    //organization
+    void retrieveOrganizationsSchemes(int firstResult, int maxResults, OrganisationSchemeWebCriteria organisationSchemeWebCriteria);
+    
     // Stream messages
 
     void reSendStreamMessageCodelist(CodelistMetamacDto codelistDto);

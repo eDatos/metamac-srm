@@ -39,15 +39,25 @@ public class GetOrganisationsActionHandler extends SecurityActionHandler<GetOrga
     public GetOrganisationsResult executeSecurityAction(GetOrganisationsAction action) throws ActionException {
         MetamacCriteria criteria = new MetamacCriteria();
 
+        
+        OrganisationWebCriteria organisationWebCriteria = action.getCriteria();
+        
         // Order
-        MetamacCriteriaOrder order = new MetamacCriteriaOrder();
+        MetamacCriteriaOrder order = new MetamacCriteriaOrder(); 
         order.setType(OrderTypeEnum.DESC);
         order.setPropertyName(OrganisationMetamacCriteriaOrderEnum.LAST_UPDATED.name());
+        
+        if (organisationWebCriteria.getOrderType() != null) {
+            order.setType(organisationWebCriteria.getOrderType());
+        }
+        
+        if (organisationWebCriteria.getOrderField() != null) {
+            order.setPropertyName(organisationWebCriteria.getOrderField().name());
+        }
+        
         List<MetamacCriteriaOrder> criteriaOrders = new ArrayList<MetamacCriteriaOrder>();
         criteriaOrders.add(order);
         criteria.setOrdersBy(criteriaOrders);
-
-        OrganisationWebCriteria organisationWebCriteria = action.getCriteria();
 
         MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
 

@@ -34,6 +34,7 @@ import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 
 public class MetamacWebCriteriaUtils {
 
@@ -876,6 +877,17 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationMetamacCriteriaPropertyEnum.ORGANISATION_SCHEME_LATEST_FINAL.name(), criteria.getIsLatestFinal(), OperationType.EQ));
             }
+            
+            if (criteria.getOrganisationTypes() != null) {
+                MetamacCriteriaDisjunctionRestriction disjuntion = new MetamacCriteriaDisjunctionRestriction();
+                for (OrganisationTypeEnum org :criteria.getOrganisationTypes()) {
+                    disjuntion.getRestrictions().add(new MetamacCriteriaPropertyRestriction(OrganisationMetamacCriteriaPropertyEnum.TYPE.name(), org, OperationType.EQ));
+                }
+                
+                conjunctionRestriction.getRestrictions().add(disjuntion);
+                
+            }
+            
         }
 
         return conjunctionRestriction;

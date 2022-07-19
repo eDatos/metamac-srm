@@ -3,7 +3,6 @@ package org.siemac.metamac.srm.web.code.view.handlers;
 import java.util.List;
 import java.util.Map;
 
-import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
@@ -11,11 +10,12 @@ import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
-import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 
 public interface CodelistUiHandlers extends BaseCodeUiHandlers {
 
@@ -57,6 +57,7 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
 
     //organization
     void retrieveOrganizationsSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria itemSchemeRestCriteria, OrganisationSchemeTypeEnum[] types);
+    void retrieveOrganizationsItems(int firstResult, int maxResults, SrmItemRestCriteria itemSchemeRestCriteria, OrganisationTypeEnum[] types);
     
     // Stream messages
 

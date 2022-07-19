@@ -3,7 +3,6 @@ package org.siemac.metamac.srm.web.server.handlers.organisation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPaginator;
@@ -13,7 +12,6 @@ import org.siemac.metamac.core.common.criteria.shared.MetamacCriteriaOrder.Order
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.criteria.OrganisationSchemeVersionMetamacCriteriaOrderEnum;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
-import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
 import org.siemac.metamac.srm.web.server.utils.MetamacWebCriteriaUtils;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
@@ -25,7 +23,6 @@ import org.siemac.metamac.web.common.server.utils.WebExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionProperties;
 import com.gwtplatform.dispatch.shared.ActionException;
 
 @Component
@@ -44,12 +41,11 @@ public class GetOrganisationSchemesByTypesActionHandler extends SecurityActionHa
 
         // Order
         MetamacCriteriaOrder order = new MetamacCriteriaOrder();
-        order.setType(OrderTypeEnum.DESC);
-        order.setPropertyName(OrganisationSchemeVersionMetamacCriteriaOrderEnum.RESOURCE_LAST_UPDATED.name());
+        order.setType(OrderTypeEnum.ASC);
+        order.setPropertyName(OrganisationSchemeVersionMetamacCriteriaOrderEnum.CODE.name());
         List<MetamacCriteriaOrder> criteriaOrders = new ArrayList<MetamacCriteriaOrder>();
         criteriaOrders.add(order);
         criteria.setOrdersBy(criteriaOrders);
-  
         OrganisationSchemeWebCriteria organisationSchemeWebCriteria = action.getCriteria();
 
         MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();

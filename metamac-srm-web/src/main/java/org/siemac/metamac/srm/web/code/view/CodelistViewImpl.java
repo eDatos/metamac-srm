@@ -19,7 +19,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
-import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
@@ -1393,7 +1393,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
       
     // Organizations
     @Override
-    public void setOrganizationSchemes(List<OrganisationSchemeMetamacDto> organisationSchemeMetamacDtos, int totalResultados, int firstResultOut) {
+    public void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto>  organisationSchemeMetamacDtos, int totalResultados, int firstResultOut) {
         ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER))
                 .setFilterResources(OrganisationSearchUtils.organizationSchemeMetamacDtoToExternalItemDto(organisationSchemeMetamacDtos), firstResultOut, organisationSchemeMetamacDtos.size(), totalResultados);
 

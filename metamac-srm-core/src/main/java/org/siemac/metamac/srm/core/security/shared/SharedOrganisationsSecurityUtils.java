@@ -18,10 +18,6 @@ public class SharedOrganisationsSecurityUtils extends SharedItemsSecurityUtils {
     public static boolean canFindOrganisationSchemesByCondition(MetamacPrincipal metamacPrincipal) {
         return canRetrieveOrFindResource(metamacPrincipal);
     }
-
-    public static boolean canFindOrganisationSchemesByTypes(MetamacPrincipal metamacPrincipal) {
-        return canRetrieveOrFindResource(metamacPrincipal);
-    }
     
     public static boolean canRetrieveOrganisationSchemeVersions(MetamacPrincipal metamacPrincipal) {
         return canRetrieveOrFindResource(metamacPrincipal);

@@ -2352,34 +2352,6 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
     
     @Override
-    public MetamacCriteriaResult<OrganisationSchemeMetamacDto> findOrganisationSchemesByTypes(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
-        // Security
-        OrganisationsSecurityUtils.canFindOrganisationSchemesByTypes(ctx);
-
-        // Transform
-        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getOrganisationSchemeMetamacCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
-
-                
-        List<ConditionalCriteria> criteriaConditions = sculptorCriteria.getConditions();
-        
-        //only published organisationSchemes
-        MaintainableArtefactProperty ma = ItemSchemeVersionProperties.maintainableArtefact();
-        criteriaConditions.add(ConditionalCriteriaBuilder.criteriaFor(OrganisationSchemeVersionMetamac.class).withProperty(ma.finalLogicClient()).eq(Boolean.TRUE).buildSingle());
-
-        
-        // Find
-        PagedResult<OrganisationSchemeVersionMetamac> result = getOrganisationsMetamacService().findOrganisationSchemesByCondition(ctx, sculptorCriteria.getConditions(),
-                sculptorCriteria.getPagingParameter());
-        
-
-        // Transform
-        MetamacCriteriaResult<OrganisationSchemeMetamacDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultOrganisationSchemeVersionToMetamacCriteriaResultOrganisationSchemeMetamac(result,
-                sculptorCriteria.getPageSize());
-
-        return metamacCriteriaResult;
-    }
-
-    @Override
     public OrganisationSchemeMetamacDto retrieveOrganisationSchemeByUrn(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         OrganisationsSecurityUtils.canRetrieveOrganisationSchemeByUrn(ctx);

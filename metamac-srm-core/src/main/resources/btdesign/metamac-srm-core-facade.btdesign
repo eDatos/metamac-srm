@@ -322,8 +322,6 @@ Application SrmFacadeCore {
             deleteOrganisationScheme(String urn) throws MetamacException;
             "Finds organisation schemes by criteria"
             MetamacCriteriaResult<@OrganisationSchemeMetamacBasicDto> findOrganisationSchemesByCondition(MetamacCriteria criteria) throws MetamacException;
-            "Finds organisation schemes by types"
-            MetamacCriteriaResult<@OrganisationSchemeMetamacDto> findOrganisationSchemesByTypes(MetamacCriteria criteria) throws MetamacException;
             "Retrieves a organisation scheme by URN"
             @OrganisationSchemeMetamacDto retrieveOrganisationSchemeByUrn(String urn) throws MetamacException;
             "Retrieves all organisation scheme versions"

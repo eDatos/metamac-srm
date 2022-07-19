@@ -814,7 +814,12 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.MAINTAINER_URN.name(), criteria.getMaintainerUrn(), OperationType.EQ));
             }
-
+            
+            if (BooleanUtils.isTrue(criteria.isOnlyPublished())) {
+                conjunctionRestriction.getRestrictions().add(
+                        new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.IS_PUBLISHED.name(), criteria.isOnlyPublished(), OperationType.EQ));
+            }
+            
         }
         return conjunctionRestriction;
     }

@@ -521,6 +521,9 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                 case LATEST_PUBLIC:
                     return new SculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().latestPublic(), propertyRestriction.getBooleanValue(),
                             propertyRestriction.getOperationType());
+                case IS_PUBLISHED:
+                    return new SculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().finalLogicClient(), propertyRestriction.getBooleanValue(),
+                            propertyRestriction.getOperationType());
                 case INTERNAL_PUBLICATION_DATE:
                     return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(OrganisationSchemeVersionMetamacProperties.lifeCycleMetadata().internalPublicationDate(),
                             OrganisationSchemeVersion.class), propertyRestriction.getDateValue(), propertyRestriction.getOperationType());

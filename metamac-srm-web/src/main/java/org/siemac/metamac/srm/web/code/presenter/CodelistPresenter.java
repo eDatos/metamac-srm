@@ -23,7 +23,7 @@ import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
-import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
@@ -118,8 +118,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
-import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesByTypesAction;
-import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesByTypesResult;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsAction;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
@@ -215,7 +215,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         void setCodelistsToReplace(List<RelatedResourceDto> codelists, int firstResult, int totalResults);
 
         //organization
-        void setOrganizationSchemes(List<OrganisationSchemeMetamacDto> organisationSchemeMetamacDtos, int totalResultados, int firstResultOut);
+        void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto>  organisationSchemeMetamacDtos, int totalResultados, int firstResultOut);
         void setOrganizations(List<OrganisationMetamacBasicDto> organisationMetamacDtos, int totalResultados, int firstResultOut);
         
         void showInformationMessage(String title, String message);
@@ -1267,11 +1267,11 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             
     @Override
     public void retrieveOrganizationsSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria itemSchemeRestCriteria, OrganisationSchemeTypeEnum[] types) {
-        dispatcher.execute(new GetOrganisationSchemesByTypesAction(firstResult, maxResults, OrganisationSearchUtils.getOrganisationSchemeWebCriteria(itemSchemeRestCriteria, types)),
-                new WaitingAsyncCallbackHandlingError<GetOrganisationSchemesByTypesResult>(this) {
+        dispatcher.execute(new GetOrganisationSchemesAction(firstResult, maxResults, OrganisationSearchUtils.getOrganisationSchemeWebCriteria(itemSchemeRestCriteria, types)),
+                new WaitingAsyncCallbackHandlingError<GetOrganisationSchemesResult>(this) {
 
                     @Override
-                    public void onWaitSuccess(GetOrganisationSchemesByTypesResult result) {
+                    public void onWaitSuccess(GetOrganisationSchemesResult result) {
                         getView().setOrganizationSchemes(result.getOrganisationSchemeMetamacDtos(), result.getTotalResults(), result.getFirstResultOut());
                     }
                 });

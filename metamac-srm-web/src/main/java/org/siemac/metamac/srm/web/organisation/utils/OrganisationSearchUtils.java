@@ -7,9 +7,10 @@ import org.siemac.metamac.core.common.criteria.shared.MetamacCriteriaOrder.Order
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
-import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationWebCriteria;
+import org.siemac.metamac.srm.web.shared.organisation.OrganisationSchemeWebCriteriaOrderEnum;
 import org.siemac.metamac.srm.web.shared.organisation.OrganisationWebCriteriaOrderEnum;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
@@ -29,10 +30,10 @@ public class OrganisationSearchUtils {
     // ------------------------------------------------------------------------------------------------------------
 
     
-    public static List<ExternalItemDto> organizationSchemeMetamacDtoToExternalItemDto(List<OrganisationSchemeMetamacDto> organizationsSchems) {
+    public static List<ExternalItemDto> organizationSchemeMetamacDtoToExternalItemDto(List<OrganisationSchemeMetamacBasicDto>  organizationsSchems) {
         List<ExternalItemDto> externalItems = new ArrayList<ExternalItemDto>(organizationsSchems.size());
 
-        for (OrganisationSchemeMetamacDto org : organizationsSchems) {
+        for (OrganisationSchemeMetamacBasicDto org : organizationsSchems) {
             ExternalItemDto dto = new ExternalItemDto();
             dto.setCode(org.getCode());
             dto.setTitle(org.getName());
@@ -69,13 +70,15 @@ public class OrganisationSearchUtils {
     // EXTERNAL ORGANISATION SCHEME CRITERIA TO ORGANISATION SCHEME WEB CRITERIA
     public static OrganisationSchemeWebCriteria getOrganisationSchemeWebCriteria(SrmExternalResourceRestCriteria itemSchemeRestCriteria, OrganisationSchemeTypeEnum[] types) {
         OrganisationSchemeWebCriteria organisationSchemeWebCriteria = new OrganisationSchemeWebCriteria();
+        organisationSchemeWebCriteria.setOrderField(OrganisationSchemeWebCriteriaOrderEnum.CODE);
+        organisationSchemeWebCriteria.setOrderType(OrderTypeEnum.ASC);
+        organisationSchemeWebCriteria.setOnlyPublished(Boolean.TRUE);
         organisationSchemeWebCriteria.setOrganisationSchemeTypes(types);
         organisationSchemeWebCriteria.setCriteria(itemSchemeRestCriteria.getCriteria());
-        organisationSchemeWebCriteria.setOnlyExternallyPublished(itemSchemeRestCriteria.isOnlyExternallyPublished());
         organisationSchemeWebCriteria.setOnlyLastVersion(itemSchemeRestCriteria.isOnlyLastVersion());
         organisationSchemeWebCriteria.setUrn(itemSchemeRestCriteria.getUrn());
         organisationSchemeWebCriteria.setUrns(itemSchemeRestCriteria.getUrns());
-
+        
         return organisationSchemeWebCriteria;
     }
 

@@ -52,7 +52,6 @@ public interface SculptorCriteria2MetamacCriteriaMapper {
     public MetamacCriteriaResult<RelatedResourceDto> pageResultConceptToMetamacCriteriaResultRelatedResource(PagedResult<ConceptMetamac> source, Integer pageSize) throws MetamacException;
 
     public MetamacCriteriaResult<OrganisationSchemeMetamacBasicDto> pageResultOrganisationSchemeVersionToMetamacCriteriaResult(PagedResult<OrganisationSchemeVersionMetamac> source, Integer pageSize);
-    public MetamacCriteriaResult<OrganisationSchemeMetamacDto> pageResultOrganisationSchemeVersionToMetamacCriteriaResultOrganisationSchemeMetamac(PagedResult<OrganisationSchemeVersionMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<OrganisationMetamacBasicDto> pageResultOrganisationToMetamacCriteriaResult(PagedResult<OrganisationMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<ContactDto> pageResultOrganisationContactToMetamacCriteriaResult(PagedResult<Contact> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultOrganisationToMetamacCriteriaResultRelatedResource(PagedResult<OrganisationMetamac> source, Integer pageSize) throws MetamacException;

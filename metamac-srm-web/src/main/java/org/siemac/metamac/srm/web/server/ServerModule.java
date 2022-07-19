@@ -136,6 +136,7 @@ import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationCo
 import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationSchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationSchemeVersionsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationSchemesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationSchemesByTypesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.GetOrganisationsBySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.ReSendOrganisationSchemeStreamMessageActionHandler;
@@ -297,8 +298,9 @@ import org.siemac.metamac.web.common.shared.LoadConfigurationPropertiesAction;
 import org.siemac.metamac.web.common.shared.MockCASUserAction;
 import org.siemac.metamac.web.common.shared.ValidateTicketAction;
 import org.springframework.stereotype.Component;
-
 import com.gwtplatform.dispatch.server.spring.HandlerModule;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesByTypesAction;
+
 
 /**
  * Module which binds the handlers and configurations.
@@ -378,7 +380,8 @@ public class ServerModule extends HandlerModule {
         bindHandler(CopyOrganisationSchemeAction.class, CopyOrganisationSchemeActionHandler.class);
         bindHandler(ExportOrganisationsAction.class, ExportOrganisationsActionHandler.class);
         bindHandler(ReSendOrganisationSchemeStreamMessageAction.class, ReSendOrganisationSchemeStreamMessageActionHandler.class);
-
+        bindHandler(GetOrganisationSchemesByTypesAction.class, GetOrganisationSchemesByTypesActionHandler.class);
+        
         // Categories
         bindHandler(GetCategorySchemesAction.class, GetCategorySchemesActionHandler.class);
         bindHandler(SaveCategorySchemeAction.class, SaveCategorySchemeActionHandler.class);

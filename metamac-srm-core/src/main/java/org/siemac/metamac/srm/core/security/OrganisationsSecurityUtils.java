@@ -49,6 +49,12 @@ public class OrganisationsSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canFindOrganisationSchemesByTypes(ServiceContext ctx) throws MetamacException {
+        if (!SharedOrganisationsSecurityUtils.canFindOrganisationSchemesByTypes(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     public static void canSendOrganisationSchemeToProductionValidation(ServiceContext ctx) throws MetamacException {
         if (!SharedOrganisationsSecurityUtils.canSendOrganisationSchemeToProductionValidation(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);

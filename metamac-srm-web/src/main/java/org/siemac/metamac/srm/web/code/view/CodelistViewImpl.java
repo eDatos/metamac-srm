@@ -21,7 +21,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
-import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
@@ -55,11 +55,9 @@ import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
-import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.RelatedResourceItemWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.RelatedResourceWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
-import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.BooleanWebUtils;
@@ -73,6 +71,7 @@ import org.siemac.metamac.web.common.client.widgets.actions.SearchPaginatedActio
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.BooleanSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
@@ -87,6 +86,7 @@ import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -682,7 +682,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateDate = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_DATE, getConstants().maintainableArtefactVersionLastUpdateDate());
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
-        RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
+        
+        ExternalItemLinkItem sourceProvider = new ExternalItemLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider());
+        
+        //RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
         
         productionDescriptorsForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProvider);
 
@@ -780,11 +783,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateDate = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_DATE, getConstants().maintainableArtefactVersionLastUpdateDate());
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
-        RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
+        //RelatedResourceLinkItem sourceProvider = new RelatedResourceLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider(), getCustomLinkItemNavigationClickHandler());
         SearchExternalItemLinkItem sourceProviderItem = createSourceProviderItem(CodelistDS.SOURCE_PROVIDER,  getConstants().codelistSourceProvider());
-        
 
-        productionDescriptorsEditionForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProvider);
+        productionDescriptorsEditionForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProviderItem);
 
         // DIFFUSION DESCRIPTORS
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
@@ -893,7 +895,8 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         productionDescriptorsForm.setValue(CodelistDS.VERSION_LAST_UPDATE_DATE, codelistDto.getLastUpdated());
         productionDescriptorsForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());
         productionDescriptorsForm.setValue(CodelistDS.RESOURCE_CREATION_DATE, codelistDto.getResourceCreatedDate());
-        ((RelatedResourceLinkItem) productionDescriptorsForm.getItem(CodelistDS.SOURCE_PROVIDER)).setRelatedResource(codelistDto.getSourceProvider());
+        //((RelatedResourceLinkItem) productionDescriptorsForm.getItem(CodelistDS.SOURCE_PROVIDER)).setRelatedResource(codelistDto.getSourceProvider());
+        productionDescriptorsForm.setValue(CodelistDS.SOURCE_PROVIDER, getExternalItemDto(codelistDto.getSourceProvider()));
         
 
         // DIFFUSION DESCRIPTORS
@@ -977,7 +980,11 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_DATE, codelistDto.getLastUpdated());
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());        
         productionDescriptorsEditionForm.setValue(CodelistDS.RESOURCE_CREATION_DATE, codelistDto.getResourceCreatedDate());
-        ((RelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setRelatedResource(codelistDto.getSourceProvider());
+        productionDescriptorsEditionForm.setValue(CodelistDS.SOURCE_PROVIDER, getExternalItemDto(codelistDto.getSourceProvider()));
+        //((RelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setRelatedResource(codelistDto.getSourceProvider());
+        //((ExternalItemListItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setExternalItems(getExternalItemDto(codelistDto.getSourceProvider()));
+        
+        
         productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         productionDescriptorsEditionForm.markForRedraw();
 
@@ -1019,6 +1026,18 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         annotationsEditionPanel.setAnnotations(codelistDto.getAnnotations(), codelistDto);
     }
 
+    private ExternalItemDto getExternalItemDto(RelatedResourceDto sourceProvider) {
+        ExternalItemDto sourceProviderExternalItem = new ExternalItemDto();
+        sourceProviderExternalItem.setCode(sourceProvider.getCode());
+        sourceProviderExternalItem.setCodeNested(sourceProvider.getCode());
+        sourceProviderExternalItem.setId(sourceProvider.getId());
+        sourceProviderExternalItem.setTitle(sourceProvider.getTitle());
+        sourceProviderExternalItem.setUrn(sourceProvider.getUrn());
+        sourceProviderExternalItem.setUrnProvider(sourceProvider.getUrnProvider());
+        return sourceProviderExternalItem;
+        
+    }
+        
     private void setRequiredVariableWhenNotStanddardizedNormalizationType() {
 
         SearchRelatedResourceLinkItem variableEdit = ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE));
@@ -1395,49 +1414,46 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
     // ------------------------------------------------------------------------------------------------------------
 
     
-    private List<ExternalItemDto> organizationSchemeMetamacDtoToExternalItemDto(List<OrganisationSchemeMetamacBasicDto> organizationsDto) {
-        List<ExternalItemDto> externalItems = new ArrayList<ExternalItemDto>();
+    private List<ExternalItemDto> organizationSchemeMetamacDtoToExternalItemDto(List<OrganisationSchemeMetamacDto> organizationsSchems) {
+        List<ExternalItemDto> externalItems = new ArrayList<ExternalItemDto>(organizationsSchems.size());
         
-        for(OrganisationSchemeMetamacBasicDto org: organizationsDto) {
+        for(OrganisationSchemeMetamacDto org: organizationsSchems) {
             ExternalItemDto dto = new ExternalItemDto();
             dto.setCode(org.getCode());
             dto.setTitle(org.getName());
-            dto.setType(TypeExternalArtefactsEnum.ORGANISATION_SCHEME);
             dto.setUrn(org.getUrn());
-            dto.setUrnProvider(org.getUrnProvider());  
+            dto.setUrnProvider(org.getUrnProvider());
+            dto.setType(TypeExternalArtefactsEnum.valueOf(org.getType().getName()));
+            dto.setCodeNested(org.getCode());
+            externalItems.add(dto);
+            
         }
         
         return externalItems;
     }
     
-    //Organizations
+    // Organizations
     @Override
-    public void setOrganization(GetOrganisationSchemesResult result) {
-            ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setFilterResources(organizationSchemeMetamacDtoToExternalItemDto(result.getOrganisationSchemeMetamacDtos()), result.getFirstResultOut(),
-                    result.getOrganisationSchemeMetamacDtos().size(), result.getTotalResults());
+    public void setOrganization(List<OrganisationSchemeMetamacDto> organisationSchemeMetamacDtos, int totalResultados, int firstResultOut) {
+        ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER))
+                .setFilterResources(organizationSchemeMetamacDtoToExternalItemDto(organisationSchemeMetamacDtos), firstResultOut, organisationSchemeMetamacDtos.size(), totalResultados);
     }
     
-    public static OrganisationSchemeWebCriteria buildItemSchemeWebCriteria(SrmExternalResourceRestCriteria itemSchemeRestCriteria, TypeExternalArtefactsEnum[] types) {
-
-
-        OrganisationSchemeWebCriteria organisationSchemeWebCriteria = new OrganisationSchemeWebCriteria();
-
-            return organisationSchemeWebCriteria;
-    }
     
     private SearchSrmItemLinkItemWithSchemeFilterItem createSourceProviderItem(final String name, String title) {
         final SearchSrmItemLinkItemWithSchemeFilterItem item = new SearchSrmItemLinkItemWithSchemeFilterItem(name, title, SrmWebConstants.FORM_LIST_MAX_RESULTS) {
 
             @Override
             protected void retrieveItems(int firstResult, int maxResults, SrmItemRestCriteria webCriteria) {
+                int i = 0;
        //         getUiHandlers().retrieveItems(name, webCriteria, new TypeExternalArtefactsEnum[]{TypeExternalArtefactsEnum.AGENCY_SCHEME, TypeExternalArtefactsEnum.ORGANISATION_UNIT_SCHEME,
        //                 TypeExternalArtefactsEnum.DATA_CONSUMER_SCHEME, TypeExternalArtefactsEnum.DATA_PROVIDER_SCHEME}, firstResult, maxResults);
             }
 
             @Override
             protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
-                getUiHandlers().retrieveOrganizationsSchemes(firstResult, maxResults, buildItemSchemeWebCriteria(webCriteria, new TypeExternalArtefactsEnum[]{TypeExternalArtefactsEnum.AGENCY_SCHEME, TypeExternalArtefactsEnum.ORGANISATION_UNIT_SCHEME,
-                        TypeExternalArtefactsEnum.DATA_CONSUMER_SCHEME, TypeExternalArtefactsEnum.DATA_PROVIDER_SCHEME}));
+                getUiHandlers().retrieveOrganizationsSchemes(firstResult, maxResults, webCriteria, new OrganisationSchemeTypeEnum[]{OrganisationSchemeTypeEnum.AGENCY_SCHEME, OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME,
+                        OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME});
             }
         };
         return item;

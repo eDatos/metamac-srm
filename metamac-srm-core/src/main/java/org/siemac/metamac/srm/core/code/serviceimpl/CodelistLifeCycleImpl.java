@@ -112,7 +112,9 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
                 // Metadata required
                 ValidationUtils.checkMetadataRequired(codelistVersion.getIsPartial(), ServiceExceptionParameters.ITEM_SCHEME_IS_PARTIAL, exceptionsCodelist);
                 // following metadata is required to create, but not for import. Check always because it is a simple checking. Codes must not be checked, because variable element is optional
-                ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptionsCodelist);
+                if (NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
+                    ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptionsCodelist);
+                }
                 // One code at least
                 Long itemsCount = codeRepository.countItems(codelistVersion.getId());
                 if (itemsCount == 0) {

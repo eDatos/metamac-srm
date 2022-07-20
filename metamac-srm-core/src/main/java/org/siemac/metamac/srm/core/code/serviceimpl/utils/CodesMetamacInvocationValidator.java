@@ -270,9 +270,10 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
     }
 
     private static void checkCode(CodelistVersionMetamac codelistVersion, CodeMetamac code, boolean creating, List<MetamacExceptionItem> exceptions) {
-        if (SrmValidationUtils.mustValidateMetadataRequired(codelistVersion, creating)) {
+        if (SrmValidationUtils.mustValidateMetadataRequired(codelistVersion, creating) && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptions);
         }
+        
         if (code.getVariableElement() != null) {
             ValidationUtils.checkMetadataEmpty(code.getShortName(), ServiceExceptionParameters.CODE_SHORT_NAME, exceptions);
         } else {

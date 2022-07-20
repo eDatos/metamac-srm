@@ -83,6 +83,7 @@ import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
@@ -753,7 +754,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Validation
         CodesMetamacInvocationValidator.checkImportCodesTsv(codelistUrn, file, fileName, updateAlreadyExisting, canBeBackground, null);
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
-        if (codelistVersion.getVariable() == null) {
+        if (codelistVersion.getVariable() == null && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
         }
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
@@ -802,8 +803,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 }
                 // Retrieve variable elements. It is more efficient retrieve all variable element in one query than execute one query by variable element
                 Map<String, VariableElement> variableElementsInVariableByCode = new HashMap<String, VariableElement>();
-                for (VariableElement variableElement : codelistVersion.getVariable().getVariableElements()) {
-                    variableElementsInVariableByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                //codelist variable may be null if normalizationType=NOT_STANDARDIZED.
+                if (codelistVersion.getVariable() != null) {
+                    for (VariableElement variableElement : codelistVersion.getVariable().getVariableElements()) {
+                        variableElementsInVariableByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                    }
                 }
 
                 int lineNumber = 2;
@@ -1158,7 +1162,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
         // Retrieve variable. All variable elements must belong to codelist varliable. In repository, error ocurrs if any variable element doesnot belong to this variable
         Variable variable = codelistVersion.getVariable();
-        if (variable == null) {
+        if (variable == null && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
         }
         // Update all

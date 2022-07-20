@@ -83,7 +83,7 @@ public class CodesDo2RestMapperTest {
     private CodesDo2RestMapperV10 do2RestInternalMapper;
 
     @Test
-    public void testToCodelists() {
+    public void testToCodelists() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String resourceID = WILDCARD_ALL;

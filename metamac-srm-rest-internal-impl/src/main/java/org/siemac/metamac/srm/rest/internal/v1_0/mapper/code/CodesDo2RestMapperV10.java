@@ -27,7 +27,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 public interface CodesDo2RestMapperV10 {
 
     org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists toCodelists(PagedResult<CodelistVersionMetamac> sources, String agencyID, String resourceID, String query,
-            String orderBy, Integer limit);
+            String orderBy, Integer limit) throws MetamacException;
     org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist toCodelist(CodelistVersionMetamac source) throws MetamacException;
     ResourceInternal toResource(CodelistVersion source);
 

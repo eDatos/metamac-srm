@@ -10,9 +10,9 @@
 
 ## 3.1.0 a X.Y.Z
 
-* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.0.0/db](etc/changes-from-release/3.0.0/db)
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
   ```shell
-  etc/changes-from-release/3.0.0/db/srm/postgresql/20220616_add_restriction_objects.sql
+  etc/changes-from-release/3.1.0/db/srm/postgresql/20220616_add_restriction_objects.sql
   ```
 
 ## 3.0.0 a 3.0.1

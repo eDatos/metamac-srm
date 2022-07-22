@@ -65,6 +65,7 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         // Visualisations
         codesMetamacService.versioningCodelistOrderVisualisations(ctx, source, target);
         codesMetamacService.versioningCodelistOpennessVisualisations(ctx, source, target);
+        codesMetamacService.versioningCodelistRestrictionVisualisations(ctx, source, target);
     }
 
     @Override
@@ -91,6 +92,7 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         target.setVariableElement(source.getVariableElement());
         copyCodeOrderVisualisations(source, target);
         copyCodeOpennessVisualisations(source, target);
+        copyCodeRestrictionVisualisations(source, target);
     }
 
     private void copyCodeOrderVisualisations(CodeMetamac source, CodeMetamac target) {
@@ -104,6 +106,13 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         for (int i = 1; i <= SrmConstants.CODELIST_OPENNESS_VISUALISATION_MAXIMUM_NUMBER; i++) {
             Boolean openness = SrmServiceUtils.getCodeOpenness(source, i);
             SrmServiceUtils.setCodeOpenness(target, i, openness);
+        }
+    }
+    
+    private void copyCodeRestrictionVisualisations(CodeMetamac source, CodeMetamac target) {
+        for (int i = 1; i <= SrmConstants.CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_NUMBER; i++) {
+            Boolean restriction = SrmServiceUtils.getCodeRestriction(source, i);
+            SrmServiceUtils.setCodeRestriction(target, i, restriction);
         }
     }
 }

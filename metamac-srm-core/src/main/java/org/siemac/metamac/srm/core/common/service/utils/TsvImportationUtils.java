@@ -33,6 +33,7 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.serviceimpl.utils.OrganisationsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
+import org.siemac.metamac.srm.core.task.domain.ImportationCodeRestrictionsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationConceptsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationItemsTsvHeader;
@@ -565,6 +566,47 @@ public class TsvImportationUtils {
         return header;
     }
 
+ // ---------------------------------------------------------------------------------------------------------------
+    // CODE RESTRICTIONS
+    // ---------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Imports header of tsv to import restrictions of codes.
+     * Columns "label", "level" and "parent" are optionals.
+     */
+    public static ImportationCodeRestrictionsTsvHeader parseTsvHeaderToImportCodeRestrictions(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
+        if (headerColumns == null || headerColumns.length < 2) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT, 2));
+        }
+        ImportationCodeRestrictionsTsvHeader header = new ImportationCodeRestrictionsTsvHeader();
+        header.setColumnsSize(headerColumns.length);
+        for (int i = 0; i < headerColumns.length; i++) {
+            String columnName = headerColumns[i];
+            if (i == 0) {
+                if (!SrmConstants.TSV_HEADER_CODE.equals(columnName)) {
+                    exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE));
+                    break;
+                }
+                header.setCodePosition(i);
+            } else if (SrmConstants.TSV_HEADER_LABEL.equals(columnName)) {
+                header.setLabelPosition(i);
+            } else if (SrmConstants.TSV_HEADER_LEVEL.equals(columnName)) {
+                header.setLevelPosition(i);
+            } else if (SrmConstants.TSV_HEADER_PARENT.equals(columnName)) {
+                header.setParentPosition(i);
+            } else {
+                // must be a code of order visualisation
+                header.addRestrictionVisualisations(columnName, i);
+            }
+        }
+        if (CollectionUtils.isEmpty(exceptions) && !header.hasRestrictionVisualisations()) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_RESTRICTION));
+        }
+        
+        return header;
+    }
+    
     // ---------------------------------------------------------------------------------------------------------------
     // INTERNATIONAL STRINGS
     // ---------------------------------------------------------------------------------------------------------------

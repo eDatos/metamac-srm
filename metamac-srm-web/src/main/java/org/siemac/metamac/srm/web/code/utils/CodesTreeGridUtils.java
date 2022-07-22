@@ -41,10 +41,15 @@ public class CodesTreeGridUtils extends ItemsTreeGridUtils {
         node.setOrder(code.getOrder() == null ? 0 : code.getOrder());
         // Specify the openness level
         node.setAttribute(CodeDS.OPENNESS_LEVEL, code.getOpenness());
-        node.setAttribute(CodeDS.OPENNESS_LEVEL_INITIAL, code.getOpenness()); // The value is unmodifiable by the user
+        node.setAttribute(CodeDS.OPENNESS_LEVEL_INITIAL, code.getOpenness()); // The value is unmodifiable by the user       
         String iconUrl = BooleanUtils.isTrue(code.getOpenness()) ? GlobalResources.RESOURCE.folderOpened().getURL() : GlobalResources.RESOURCE.folderClosed().getURL();
         node.setAttribute(CodeDS.OPENNESS_LEVEL_ICON, iconUrl);
 
+        //restriction
+        node.setAttribute(CodeDS.RESTRICTION, Boolean.TRUE); // folder always open in restriction by default.
+        node.setAttribute(CodeDS.RESTRICTION_CHECK, code.getRestriction()); 
+        node.setAttribute(CodeDS.RESTRICTION_CHECK_INITIAL, code.getRestriction()); // The value is unmodifiable by the user       
+        
         // Only for variable elements tree grid
         node.setVariableElement(code.getVariableElement());
 

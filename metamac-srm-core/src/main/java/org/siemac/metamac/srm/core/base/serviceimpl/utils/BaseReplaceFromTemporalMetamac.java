@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.core.base.serviceimpl.utils;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 
 import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.BaseMergeAssert;
@@ -43,6 +44,14 @@ public class BaseReplaceFromTemporalMetamac extends BaseReplaceFromTemporal {
     }
 
     public static CodelistOpennessVisualisation replaceInternationalStringFromTemporalToCodelistOpennessVisualisation(CodelistOpennessVisualisation target, CodelistOpennessVisualisation temp,
+            InternationalStringRepository internationalStringRepository) {
+
+        replaceInternationalStringFromTemporalToNameableArtefact(target.getNameableArtefact(), temp.getNameableArtefact(), internationalStringRepository);
+
+        return target;
+    }
+    
+    public static CodelistRestrictionVisualisation replaceInternationalStringFromTemporalToCodelistRestrictionVisualisation(CodelistRestrictionVisualisation target, CodelistRestrictionVisualisation temp,
             InternationalStringRepository internationalStringRepository) {
 
         replaceInternationalStringFromTemporalToNameableArtefact(target.getNameableArtefact(), temp.getNameableArtefact(), internationalStringRepository);

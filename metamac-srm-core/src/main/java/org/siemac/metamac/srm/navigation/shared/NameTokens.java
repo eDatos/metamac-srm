@@ -50,6 +50,8 @@ public class NameTokens {
     public static final String variablePage               = "variable";
     public static final String variableElementsPage       = "variableElements";
     public static final String variableElementPage        = "variableElement";
+    public static final String restrictionListPage        = "restrictions";
+    public static final String restrictionPage            = "restriction";
 
     // Content Constraints
     public static final String contentConstraintListPage  = "contentConstraints";

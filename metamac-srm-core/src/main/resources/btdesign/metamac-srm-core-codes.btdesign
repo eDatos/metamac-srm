@@ -31,6 +31,7 @@ Application CodesMetamac {
 			> @VariableElementOperationRepository
 			> @CodelistOrderVisualisationRepository
 			> @CodelistOpennessVisualisationRepository
+			> @CodelistRestrictionVisualisationRepository
 
 			// CODELISTS
 
@@ -107,6 +108,8 @@ Application CodesMetamac {
 			updateCodeInOrderVisualisation(String codeUrn, String codelistOrderVisualisationUrn, Integer newCodeIndex) throws MetamacException;
 			"Updates openness of code to visualisation requested"
 			updateCodesInOpennessVisualisation(String codelistOpennessVisualisationUrn, Map<String, Boolean> openness) throws MetamacException;
+			"Updates restriction of code to visualisation requested"
+			updateCodesInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction) throws MetamacException;
     		"Retrieves code by urn"
     		@CodeMetamac retrieveCodeByUrn(String urn) throws MetamacException;
     		"Finds codes by criteria"
@@ -116,9 +119,9 @@ Application CodesMetamac {
 			"Deletes code"
     		deleteCode(String urn) throws MetamacException;
     		"Retrieves codes by codelist in locale and visualisation requested. If visualisation is not provided, tries retrieve codes in default visualisations"
-    		List<CodeMetamacVisualisationResult> retrieveCodesByCodelistUrn(String codelistUrn, String locale, String codelistOrderVisualisationUrn, String codelistOpennessVisualisationUrn) throws MetamacException;
+    		List<CodeMetamacVisualisationResult> retrieveCodesByCodelistUrn(String codelistUrn, String locale, String codelistOrderVisualisationUrn, String codelistOpennessVisualisationUrn, String codelistRestrictionVisualisationUrn) throws MetamacException;
     		"Retrieves codes by codelist unordered"
-    		List<ItemResult> retrieveCodesByCodelistUrnOrderedInDepth(String codelistUrn, ItemMetamacResultSelection itemResultSelection, String orderVisualisationCode, String opennessVisualisationCode) throws MetamacException;
+    		List<ItemResult> retrieveCodesByCodelistUrnOrderedInDepth(String codelistUrn, ItemMetamacResultSelection itemResultSelection, String orderVisualisationCode, String opennessVisualisationCode, String restrictionVisualisationCode) throws MetamacException;
     		
 			"Copy codes to another codelist"
 	   		copyCodesInCodelist(String codelistSourceUrn, String codelistTargetUrn, List<CodeToCopy> codesToCopy) throws MetamacException;
@@ -126,10 +129,14 @@ Application CodesMetamac {
     		TaskImportationInfo importCodesTsv(String codelistUrn, java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
+    		"Imports code restrictions in tsv format"
+    		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
+    		"Exports code restrictions in tsv format"
+    		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOverridingOnlyWithoutVariableElement) throws MetamacException;
 	   		    		
@@ -167,8 +174,23 @@ Application CodesMetamac {
     		deleteCodelistOpennessVisualisation(String urn) throws MetamacException;
     		@CodelistVersionMetamac versioningCodelistOpennessVisualisations(@CodelistVersionMetamac source, @CodelistVersionMetamac target) throws MetamacException;
 
-			"Recalculates all visualisations: order and openness, when new codes are added in codelist"
-    		recalculateCodesVisualisations(List<@Code> items, List<@CodelistOrderVisualisation> orderVisualisations, List<@CodelistOpennessVisualisation> opennessVisualisations, boolean executeSave);
+			"Creates restrictions visualisation"
+    		@CodelistRestrictionVisualisation createCodelistRestrictionVisualisation(String codelistUrn, @CodelistRestrictionVisualisation codelistRestrictionVisualisation) throws MetamacException;
+			"Updates restriction visualisation"
+			@CodelistRestrictionVisualisation updateCodelistRestrictionVisualisation(@CodelistRestrictionVisualisation codelistRestrictionVisualisation) throws MetamacException;
+    		"Retrieves restriction visualisation by identifier"
+    		@CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieves restriction visualisation by identifier"
+    		@CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisationByCode(String codelistUrn, String code) throws MetamacException;
+    		"Retrieve restriction visualisations by codelist"
+    		List<@CodelistRestrictionVisualisation> retrieveCodelistRestrictionVisualisationsByCodelist(String codelistUrn)  throws MetamacException;
+			"Deletes restriction visualisation"
+    		deleteCodelistRestrictionVisualisation(String urn) throws MetamacException;
+    		@CodelistVersionMetamac versioningCodelistRestrictionVisualisations(@CodelistVersionMetamac source, @CodelistVersionMetamac target) throws MetamacException;
+
+
+			"Recalculates all visualisations: order, openness and restrictions, when new codes are added in codelist"
+    		recalculateCodesVisualisations(List<@Code> items, List<@CodelistOrderVisualisation> orderVisualisations, List<@CodelistOpennessVisualisation> opennessVisualisations, List<@CodelistRestrictionVisualisation> restrictionVisualisations, boolean executeSave);
 
 			// CODELIST FAMILIES
 			
@@ -300,6 +322,9 @@ Application CodesMetamac {
 			"Default openness visualisation"
 			- @CodelistOpennessVisualisation defaultOpennessVisualisation nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="DEFAULT_OPENNESS_VISUAL_FK";
 
+			"Restriction visualisations of codelist"
+			- Bag<@CodelistRestrictionVisualisation> restrictionVisualisations cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> codelistVersion;
+
 			"Stream message status"
             - @StreamMessageStatusEnum streamMessageStatus;
             
@@ -373,6 +398,27 @@ Application CodesMetamac {
 			Boolean openness19 nullable;
 			Boolean openness20 nullable;
 			
+			Boolean restriction1 nullable;
+			Boolean restriction2 nullable;
+			Boolean restriction3 nullable;
+			Boolean restriction4 nullable;
+			Boolean restriction5 nullable;
+			Boolean restriction6 nullable;
+			Boolean restriction7 nullable;
+			Boolean restriction8 nullable;
+			Boolean restriction9 nullable;
+			Boolean restriction10 nullable;
+			Boolean restriction11 nullable;
+			Boolean restriction12 nullable;
+			Boolean restriction13 nullable;
+			Boolean restriction14 nullable;
+			Boolean restriction15 nullable;
+			Boolean restriction16 nullable;
+			Boolean restriction17 nullable;
+			Boolean restriction18 nullable;
+			Boolean restriction19 nullable;
+			Boolean restriction20 nullable;
+			
 			Repository CodeMetamacRepository {
 				save;
 				deleteAllCodesEfficiently(Long itemSchemeVersionId) throws MetamacException;
@@ -381,9 +427,9 @@ Application CodesMetamac {
 				@CodeMetamac findByUrn(String urn);
 				@CodeMetamac findByCodeWithoutFlushing(Long codelistVersionId, String code);
 				findByCondition(PagingParameter pagingParameter);
-				List<CodeMetamacVisualisationResult> findCodesByCodelistUnorderedToVisualisation(Long codelistId, String locale, Integer orderColumnIndex, Integer opennessColumnIndex) throws MetamacException;
+				List<CodeMetamacVisualisationResult> findCodesByCodelistUnorderedToVisualisation(Long codelistId, String locale, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex) throws MetamacException;
 				List<ItemResult> findCodesByCodelistUnordered(Long codelistId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemResult> findCodesByCodelistOrderedInDepth(Long codelistId, Integer orderColumnIndex, Integer opennessColumnIndex, ItemMetamacResultSelection resultSelection) throws MetamacException;
+				List<ItemResult> findCodesByCodelistOrderedInDepth(Long codelistId, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex, ItemMetamacResultSelection resultSelection) throws MetamacException;
 				
 				checkCodeTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkCodesWithVariableElements(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
@@ -403,6 +449,13 @@ Application CodesMetamac {
 				updateCodesOpennessColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeOpennessColumn(@CodelistVersionMetamac codelistVersion, String codeUrn, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeOpennessColumnToLeafCodes(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
+				
+				clearCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex);
+				copyCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget);
+				updateCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException;
+				updateCodeRestrictionColumn(@CodelistVersionMetamac codelistVersion, String codeUrn, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException;
+				updateCodeRestrictionColumnToLeafCodes(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException;
+				
 			}
 		}
 		
@@ -455,6 +508,31 @@ Application CodesMetamac {
 				checkCodelistOpennessVisualisationTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 			}			
 		}						
+
+	 Entity CodelistRestrictionVisualisation {
+			databaseTable="TB_M_CODELIST_RESTRICTION_VIS"
+			hint="idSequence=M_CODELIST_RESTRICTION_VIS"
+			
+			"Nameable artefact"
+			- @NameableArtefact nameableArtefact not nullable cascade="all" fetch="lazy" databaseColumn="NAMEABLE_ARTEFACT_FK";
+			"Last update to optimistic locking"
+			DateTimeTZ updateDate nullable;
+			"Column with restriction in table of Codes"
+			Integer columnIndex not nullable;
+			"Relation to codelist"			
+			- @CodelistVersionMetamac codelistVersion not nullable cascade="none" fetch="lazy" databaseColumn="CODELIST_FK" <-> restrictionVisualisations;
+			
+			Repository CodelistRestrictionVisualisationRepository {
+				save;
+				delete;
+				findByQuery(String query, Map<String, Object> parameters, int maxResult);
+				findByCondition(PagingParameter pagingParameter);
+				@CodelistRestrictionVisualisation findByCode(Long codelistId, String restrictionVisualisationUrn);
+				@CodelistRestrictionVisualisation findByUrn(String restrictionVisualisationUrn);
+				updateUrnAllCodelistRestrictionVisualisationsByCodelistEfficiently(@CodelistVersionMetamac codelistVersionMetamac, String oldUrnExample);
+				checkCodelistRestrictionVisualisationTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+			}			
+		}		
 
 		Entity CodelistFamily {
 			databaseTable="TB_M_CODELIST_FAMILIES"

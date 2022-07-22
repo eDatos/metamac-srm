@@ -6,6 +6,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -67,6 +68,9 @@ public interface CodesDo2DtoMapper {
     public CodelistVisualisationDto codelistOpennessVisualisationDoToDto(CodelistOpennessVisualisation source);
     public List<CodelistVisualisationDto> codelistOpennessVisualisationsDoToDto(List<CodelistOpennessVisualisation> sources);
     public RelatedResourceDto codelistOrderVisualisationDoToRelatedResourceDto(CodelistOrderVisualisation source);
-    public RelatedResourceDto codelistOpennessVisualisationDoToRelatedResourceDto(CodelistOpennessVisualisation source);
+    public RelatedResourceDto codelistOpennessVisualisationDoToRelatedResourceDto(CodelistOpennessVisualisation source);   
+    public CodelistVisualisationDto codelistRestrictionVisualisationDoToDto(CodelistRestrictionVisualisation source);
+    public List<CodelistVisualisationDto> codelistRestrictionVisualisationsDoToDto(List<CodelistRestrictionVisualisation> sources);
+    public RelatedResourceDto codelistRestrictionVisualisationDoToRelatedResourceDto(CodelistRestrictionVisualisation source);
 
 }

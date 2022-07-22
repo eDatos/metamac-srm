@@ -72,7 +72,8 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  CODELIST_ORDER_VISUALISATION_INDEX                         = createCode(CODELIST_PREFIX, "codelist_order_visualisation.index");
     public static final String  CODELIST_OPENNESS_VISUALISATION                            = createCode(CODELIST_PREFIX, "codelist_openness_visualisation");
     public static final String  CODELIST_OPENNESS_VISUALISATION_EXPANDED                   = createCode(CODELIST_PREFIX, "codelist_openness_visualisation.expanded");
-
+    public static final String  CODELIST_RESTRICTION_VISUALISATION                         = createCode(CODELIST_PREFIX, "codelist_restriction_visualisation");
+    
     // CODELIST FAMILY
     public static final String  CODELIST_FAMILY                                            = createCode("codelist_family");
 
@@ -139,6 +140,7 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  IMPORTATION_TSV_COLUMN_NAME                                = createCode(IMPORTATION_PREFIX, "name");
     public static final String  IMPORTATION_TSV_COLUMN_DESCRIPTION                         = createCode(IMPORTATION_PREFIX, "description");
     public static final String  IMPORTATION_TSV_COLUMN_ORDER                               = createCode(IMPORTATION_PREFIX, "order");
+    public static final String  IMPORTATION_TSV_COLUMN_RESTRICTION                         = createCode(IMPORTATION_PREFIX, "restriction");
     public static final String  IMPORTATION_TSV_COLUMN_GEOGRAPHICAL_GRANULARITY            = createCode(IMPORTATION_PREFIX, "geographical_granularity");
     public static final String  IMPORTATION_TSV_COLUMN_REPRESENTATION_VALUE                = createCode(IMPORTATION_PREFIX, "representation_value");
     public static final String  IMPORTATION_TSV_COLUMN_CONCEPTS_EXTENDS_VALUE              = createCode(IMPORTATION_PREFIX, "concepts_extends");

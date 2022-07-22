@@ -6,6 +6,7 @@ import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -42,7 +43,7 @@ public class CodesDoMocks {
         return target;
     }
 
-    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open) {
+    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction) {
         ItemResult itemResult = CodesMetamacDoMocks.mockCodeResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000)."));
@@ -52,10 +53,19 @@ public class CodesDoMocks {
         itemResult.setExtensionPoint(extensionPoint);
         extensionPoint.setOpenness(open);
         extensionPoint.setOrder(order);
+        extensionPoint.setRestriction(restriction);
         extensionPoint.setVariableElement(CodesMetamacDoMocks.mockVariableElementResultFixedValues("variableElement-" + resourceID));
         return itemResult;
     }
 
+    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String visualizationCode) {
+        CodelistRestrictionVisualisation target = CodesMetamacDoMocks.mockCodelistRestrictionVisualisationFixedValues(agencyID, resourceID, version, visualizationCode);
+        target.setCodelistVersion(mockCodelistWithCodes(agencyID, resourceID, version));
+        return target;
+    }
+    
+    
+    
     public static VariableFamily mockVariableFamily(String resourceID) {
         return CodesMetamacDoMocks.mockVariableFamilyFixedValues(resourceID);
     }
@@ -115,6 +125,8 @@ public class CodesDoMocks {
         target.addOpennessVisualisation(mockCodelistOpennessVisualisation("openness1"));
         target.addOpennessVisualisation(mockCodelistOpennessVisualisation("openness2"));
         target.setDefaultOpennessVisualisation(target.getOpennessVisualisations().get(1));
+        target.addRestrictionVisualisation(mockCodelistRestrictionVisualisation("restriction1", 1));
+        target.addRestrictionVisualisation(mockCodelistRestrictionVisualisation("restriction2", 2));
     }
 
     private static CodelistOrderVisualisation mockCodelistOrderVisualisation(String code) {
@@ -133,6 +145,15 @@ public class CodesDoMocks {
         return target;
     }
 
+    private static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation(String code, int columnIndex) {
+        CodelistRestrictionVisualisation target = new CodelistRestrictionVisualisation();
+        target.setNameableArtefact(new NameableArtefact());
+        target.getNameableArtefact().setCode(code);
+        target.setColumnIndex(columnIndex);
+        target.getNameableArtefact().setName(BaseDoMocks.mockInternationalStringFixedValues("restriction", code));
+        return target;
+    }
+    
     private static void addReplaceMetadatasToVariable(Variable target) {
         target.setReplacedByVariable(CodesMetamacDoMocks.mockVariableFixedValues("variableReplacedBy1"));
         target.addReplaceToVariable(CodesMetamacDoMocks.mockVariableFixedValues("variableReplaceTo1"));

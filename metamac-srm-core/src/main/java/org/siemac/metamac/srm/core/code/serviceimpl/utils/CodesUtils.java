@@ -6,6 +6,7 @@ import java.util.Map;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
+import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 
@@ -58,6 +59,29 @@ public class CodesUtils {
             }
         }
         return thereAreNewOpeness;
+    }
+    
+    public static boolean addCodelistRestrictionVisualisationTemporalToItemScheme(CodelistVersionMetamac codelistTemporalVersion, CodelistVersionMetamac codelist,
+            InternationalStringRepository internationalStringRepository) {
+        boolean thereAreNewRestriction = false;
+        Map<String, CodelistRestrictionVisualisation> currentRestrictionMap = SrmServiceUtils.createMapOfCodelistRestrictionVisualisationByOriginalUrn(codelist.getRestrictionVisualisations());
+
+        for (CodelistRestrictionVisualisation codelistRestrictionVisualizationTemp : new ArrayList<CodelistRestrictionVisualisation>(codelistTemporalVersion.getRestrictionVisualisations())) {
+            String urnFromTemporal = GeneratorUrnUtils.makeUrnFromTemporal(codelistRestrictionVisualizationTemp.getNameableArtefact().getUrn());
+            if (!currentRestrictionMap.containsKey(urnFromTemporal)) {
+                // Add
+                codelist.addRestrictionVisualisation(codelistRestrictionVisualizationTemp);
+
+                codelistRestrictionVisualizationTemp.getNameableArtefact().setUrn(urnFromTemporal);
+                codelistRestrictionVisualizationTemp.getNameableArtefact().setUrnProvider(GeneratorUrnUtils.makeUrnFromTemporal(codelistRestrictionVisualizationTemp.getNameableArtefact().getUrnProvider()));
+                thereAreNewRestriction = true;
+            } else {
+                // Update International Strings is permitted
+                BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToCodelistRestrictionVisualisation(currentRestrictionMap.get(urnFromTemporal), codelistRestrictionVisualizationTemp,
+                        internationalStringRepository);
+            }
+        }
+        return thereAreNewRestriction;
     }
 
 }

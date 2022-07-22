@@ -21,6 +21,7 @@ import org.siemac.metamac.srm.core.common.LifeCycleImpl;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,7 +261,15 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
 
         @Override
         public SendStreamMessageResult notifyPublication(Object message) {
-            return streamMessagingService.sendMessage((CodelistVersionMetamac) message, codelistStreamMessagingCallback);
+            CodelistVersionMetamac codelistMessage = (CodelistVersionMetamac) message;
+            if (AccessTypeEnum.PUBLIC.equals(codelistMessage.getAccessType())) {
+                return streamMessagingService.sendMessage(codelistMessage, codelistStreamMessagingCallback);
+            }
+           
+            SendStreamMessageResult streamMessageWithoutSend = new SendStreamMessageResult();
+            streamMessageWithoutSend.setContent(StreamMessageStatusEnum.WITHOUT_ACTION);
+            codelistMessage.setStreamMessageStatus(StreamMessageStatusEnum.WITHOUT_ACTION);
+            return streamMessageWithoutSend;
         }
 
         private CodelistVersionMetamac getCodelistVersionMetamac(Object srmResource) {

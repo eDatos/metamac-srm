@@ -27,7 +27,6 @@ import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.siemac.metamac.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -65,9 +64,6 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
 
     @Autowired
     private InternationalStringRepository internationalStringRepository;
-
-    @Autowired
-    private SrmConfiguration              srmConfiguration;
 
     private final Integer                 ORDER_DEFAULT    = Integer.valueOf(1);
     private final Integer                 OPENNESS_DEFAULT = Integer.valueOf(1);
@@ -501,15 +497,13 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             mapCodeByItemId.put(itemResult.getItemIdDatabase(), itemResult);
         }
 
-        if (resultSelection.isInternationalStringsMetamac()) {
-            // Fill short name
+            // Fill extended fields (shortName, isExtended)
             StringBuilder sb = new StringBuilder();
             sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
             sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
             sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
             sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
-            executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
-        }
+            executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
         return codes;
     }
 
@@ -528,29 +522,8 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             mapCodeByItemId.put(itemResult.getItemIdDatabase(), itemResult);
         }
 
-        if (resultSelection.isInternationalStringsMetamac()) {
-            // Fill short name
-            {
-                // Try fill from variable element
-                StringBuilder sb = new StringBuilder();
-                sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, ve.SHORT_NAME_FK, c.IS_EXTENDED ");
-                sb.append("FROM TB_M_CODES c ");
-                sb.append("INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
-                sb.append("INNER JOIN TB_M_VARIABLE_ELEMENTS ve on ve.ID = c.VARIABLE_ELEMENT_FK ");
-                sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = ve.SHORT_NAME_FK ");
-                sb.append("WHERE c.VARIABLE_ELEMENT_FK is not null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
-                executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
-            }
-            {
-                // If code has not variable element, try fill with short name in code
-                StringBuilder sb = new StringBuilder();
-                sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
-                sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
-                sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
-                sb.append("WHERE c.VARIABLE_ELEMENT_FK is null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
-                executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
-            }
-        }
+        // Fill extended fields (shortName, isExtended)
+        getExtendedFieldsCode(idCodelist, resultSelection, mapCodeByItemId);
 
         if (resultSelection instanceof CodeMetamacResultSelection) {
             CodeMetamacResultSelection codeResultSelection = (CodeMetamacResultSelection) resultSelection;
@@ -606,16 +579,33 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         return ordered;
     }
 
-    private String getSelectParentRestriction(Integer restrictionColumnIndex) {
-        return restrictionColumnIndex != null ? ", R_RESTRICTION " : "";
+    private void getExtendedFieldsCode(Long idCodelist, ItemMetamacResultSelection resultSelection, Map<Long, ItemResult> mapCodeByItemId) {
+        // Fill extended fields (shortName, isExtended)
+        getExtendedFieldsWithVariableElementCode(idCodelist, resultSelection, mapCodeByItemId);
+        getExtendedFieldsFromCode(idCodelist, resultSelection, mapCodeByItemId);
+
+    }
+    
+    private void getExtendedFieldsWithVariableElementCode(Long idCodelist, ItemMetamacResultSelection resultSelection, Map<Long, ItemResult> mapCodeByItemId) {
+        // Try fill from variable element
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, ve.SHORT_NAME_FK, c.IS_EXTENDED ");
+        sb.append("FROM TB_M_CODES c ");
+        sb.append("INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
+        sb.append("INNER JOIN TB_M_VARIABLE_ELEMENTS ve on ve.ID = c.VARIABLE_ELEMENT_FK ");
+        sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = ve.SHORT_NAME_FK ");
+        sb.append("WHERE c.VARIABLE_ELEMENT_FK is not null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
+        executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
     }
 
-    private String getSelectRestriction(Integer restrictionColumnIndex, String restrictionColumn) {
-        return restrictionColumnIndex != null ? restrictionColumn : "";
-    }
-
-    private String getWhereRestriction(Integer restrictionColumnIndex) {
-        return restrictionColumnIndex != null ? " WHERE R_RESTRICTION=true " : "";
+    private void getExtendedFieldsFromCode(Long idCodelist, ItemMetamacResultSelection resultSelection, Map<Long, ItemResult> mapCodeByItemId) {
+        // If code has not variable element, try fill with short name in code
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
+        sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
+        sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
+        sb.append("WHERE c.VARIABLE_ELEMENT_FK is null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
+        executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
     }
     
     @Override
@@ -648,7 +638,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     }
 
     @SuppressWarnings("rawtypes")
-    private void executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(Long idCodelist, String sqlQuery, Map<Long, ItemResult> mapCodeByItemId) {
+    private void executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(Long idCodelist, String sqlQuery, Map<Long, ItemResult> mapCodeByItemId, boolean shortNameRequired) {
         int indexShortNameInResult = 3;
         int indexIsExtendedInResult = 4;
         Query query = getEntityManager().createNativeQuery(sqlQuery);
@@ -660,9 +650,11 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             ItemResult target = mapCodeByItemId.get(actualItemId);
             CodeMetamacResultExtensionPoint codeExtensionFields = (CodeMetamacResultExtensionPoint) target.getExtensionPoint();
 
-            Object shortName_fk = extendedResultSqlArray[indexShortNameInResult];
-            if (shortName_fk != null) {
-                internationalStringResultSqltoInternationalStringResult(extendedResultSqlArray, (codeExtensionFields).getShortName());
+            if (shortNameRequired) {
+                Object shortNameFk = extendedResultSqlArray[indexShortNameInResult];
+                if (shortNameFk != null) {
+                    internationalStringResultSqltoInternationalStringResult(extendedResultSqlArray, (codeExtensionFields).getShortName());
+                }
             }
 
             Object isExtended = extendedResultSqlArray[indexIsExtendedInResult];

@@ -216,6 +216,7 @@ public class SrmRestInternalUtils {
             validFields.add(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
             List<String> fieldList = Arrays.asList(fieldsParam.split(","));
             List<String> parsedFieldList = new ArrayList<>();
             for (String field : fieldList) {
@@ -236,5 +237,9 @@ public class SrmRestInternalUtils {
 
     public static boolean containsField(Set<String> fields, String field) {
         return fields != null && fields.contains(field);
+    }
+    
+    public static String booleanToString(Boolean field) {
+        return Boolean.TRUE.equals(field) ? "S" : "N";
     }
 }

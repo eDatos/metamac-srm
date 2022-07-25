@@ -153,7 +153,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
             target.setVariableElement(null);
         }
         target.setShortName(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getShortName(), target.getShortName(), ServiceExceptionParameters.CODE_SHORT_NAME));
-
+        target.setIsExtended(source.getIsExtended());
         dto2DoMapperSdmxSrm.codeDtoToDo(source, target);
 
         return target;

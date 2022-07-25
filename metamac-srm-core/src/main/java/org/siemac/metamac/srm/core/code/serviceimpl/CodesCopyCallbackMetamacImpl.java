@@ -86,7 +86,7 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         // Copy efficiently
         CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) sourceItemResult.getExtensionPoint();
         target.setShortName(copyInternationalString(extensionPoint.getShortName()));
-
+        target.setIsExtended(extensionPoint.getIsExtended());
         target.setVariableElement(source.getVariableElement());
         copyCodeOrderVisualisations(source, target);
         copyCodeOpennessVisualisations(source, target);

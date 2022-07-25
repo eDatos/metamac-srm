@@ -16,6 +16,7 @@ import org.siemac.metamac.srm.web.client.widgets.RelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
 import org.siemac.metamac.srm.web.code.model.ds.CodeDS;
+import org.siemac.metamac.srm.web.code.model.ds.CodelistDS;
 import org.siemac.metamac.srm.web.code.presenter.CodePresenter;
 import org.siemac.metamac.srm.web.code.utils.CodesFormUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodeUiHandlers;
@@ -23,12 +24,14 @@ import org.siemac.metamac.srm.web.code.widgets.CodeMainFormLayout;
 import org.siemac.metamac.srm.web.code.widgets.CodesTreeGrid;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
+import org.siemac.metamac.web.common.client.utils.BooleanWebUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.CustomSectionStack;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.actions.SearchPaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.BooleanSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
@@ -230,7 +233,8 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         contentDescriptorsForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         ViewMultiLanguageTextItem description = new ViewMultiLanguageTextItem(CodeDS.DESCRIPTION, getConstants().nameableArtefactDescription());
         RelatedResourceLinkItem variableElement = new RelatedResourceLinkItem(CodeDS.VARIABLE_ELEMENT, getConstants().variableElement(), getCustomLinkItemNavigationClickHandler());
-        contentDescriptorsForm.setFields(description, variableElement);
+        ViewTextItem isExtended = new ViewTextItem(CodeDS.IS_EXTENDED, getConstants().codeIsExtended());
+        contentDescriptorsForm.setFields(description, variableElement, isExtended);
 
         // Comments
         commentsForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -275,8 +279,9 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         contentDescriptorsEditionForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(CodeDS.DESCRIPTION, getConstants().nameableArtefactDescription());
         SearchRelatedResourceLinkItem variableElement = createVariableElementItem(CodeDS.VARIABLE_ELEMENT, getConstants().variableElement());
-        contentDescriptorsEditionForm.setFields(description, variableElement);
-
+        BooleanSelectItem isExtended = new BooleanSelectItem(CodeDS.IS_EXTENDED, getConstants().codeIsExtended());
+        contentDescriptorsEditionForm.setFields(description, variableElement, isExtended);
+                
         // COMMENTS
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
         MultiLanguageRichTextEditorItem comments = new MultiLanguageRichTextEditorItem(CodeDS.COMMENTS, getConstants().nameableArtefactComments());
@@ -358,7 +363,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         identifiersForm.setValue(CodeDS.URI, codeDto.getUriProvider());
         identifiersForm.setValue(CodeDS.URN, codeDto.getUrn());
         identifiersForm.setValue(CodeDS.URN_PROVIDER, codeDto.getUrnProvider());
-
+        
         // Production descriptors form
         productionDescriptorsForm.setValue(CodeDS.CREATION_DATE, codeDto.getCreatedDate());
 
@@ -367,6 +372,8 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CodeDS.VARIABLE_ELEMENT)).setRelatedResource(codeDto.getVariableElement());
         contentDescriptorsForm.markForRedraw();
 
+        contentDescriptorsForm.setValue(CodeDS.IS_EXTENDED, BooleanWebUtils.getBooleanLabel(codeDto.getIsExtended()));
+        
         // Comments
         commentsForm.setValue(CodeDS.COMMENTS, codeDto.getComment());
 
@@ -383,14 +390,15 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         identifiersEditionForm.setValue(CodeDS.URI, codeDto.getUriProvider());
         identifiersEditionForm.setValue(CodeDS.URN, codeDto.getUrn());
         identifiersEditionForm.setValue(CodeDS.URN_PROVIDER, codeDto.getUrnProvider());
-
+       
         // Production descriptors form
         productionDescriptorsEditionForm.setValue(CodeDS.CREATION_DATE, codeDto.getCreatedDate());
 
         // Content descriptors
         contentDescriptorsEditionForm.setValue(CodeDS.DESCRIPTION, codeDto.getDescription());
         ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodeDS.VARIABLE_ELEMENT)).setRelatedResource(codeDto.getVariableElement());
-
+        contentDescriptorsEditionForm.setValue(CodeDS.IS_EXTENDED, BooleanWebUtils.getBooleanLabel(codeDto.getIsExtended()));
+        
         // Comments
         commentsEditionForm.setValue(CodeDS.COMMENTS, codeDto.getComment());
 
@@ -407,6 +415,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         // Content descriptors
         codeDto.setDescription(contentDescriptorsEditionForm.getValueAsInternationalStringDto(CodeDS.DESCRIPTION));
         codeDto.setVariableElement(((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodeDS.VARIABLE_ELEMENT)).getRelatedResourceDto());
+        codeDto.setIsExtended(((BooleanSelectItem) contentDescriptorsEditionForm.getItem(CodeDS.IS_EXTENDED)).getBooleanValue());
 
         // Comments
         codeDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(CodeDS.COMMENTS));

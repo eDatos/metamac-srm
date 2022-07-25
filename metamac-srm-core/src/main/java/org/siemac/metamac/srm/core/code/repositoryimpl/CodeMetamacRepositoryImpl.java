@@ -504,11 +504,11 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         if (resultSelection.isInternationalStringsMetamac()) {
             // Fill short name
             StringBuilder sb = new StringBuilder();
-            sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL ");
+            sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
             sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
             sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
-            sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion and c.SHORT_NAME_FK is not null");
-            executeQueryCodeShortNameAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
+            sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
+            executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
         }
         return codes;
     }
@@ -533,22 +533,22 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             {
                 // Try fill from variable element
                 StringBuilder sb = new StringBuilder();
-                sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL ");
+                sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, ve.SHORT_NAME_FK, c.IS_EXTENDED ");
                 sb.append("FROM TB_M_CODES c ");
                 sb.append("INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
                 sb.append("INNER JOIN TB_M_VARIABLE_ELEMENTS ve on ve.ID = c.VARIABLE_ELEMENT_FK ");
                 sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = ve.SHORT_NAME_FK ");
                 sb.append("WHERE c.VARIABLE_ELEMENT_FK is not null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
-                executeQueryCodeShortNameAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
+                executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
             }
             {
                 // If code has not variable element, try fill with short name in code
                 StringBuilder sb = new StringBuilder();
-                sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL ");
+                sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
                 sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
                 sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
-                sb.append("WHERE c.VARIABLE_ELEMENT_FK is null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion and c.SHORT_NAME_FK is not null");
-                executeQueryCodeShortNameAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
+                sb.append("WHERE c.VARIABLE_ELEMENT_FK is null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
+                executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId);
             }
         }
 
@@ -648,15 +648,28 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     }
 
     @SuppressWarnings("rawtypes")
-    private void executeQueryCodeShortNameAndUpdateCodeMetamacResult(Long idCodelist, String sqlQuery, Map<Long, ItemResult> mapCodeByItemId) {
+    private void executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(Long idCodelist, String sqlQuery, Map<Long, ItemResult> mapCodeByItemId) {
+        int indexShortNameInResult = 3;
+        int indexIsExtendedInResult = 4;
         Query query = getEntityManager().createNativeQuery(sqlQuery);
         query.setParameter("codelistVersion", idCodelist);
-        List shortNameResultsSql = query.getResultList();
-        for (Object shortNameResultSql : shortNameResultsSql) {
-            Object[] shortNameResultSqlArray = (Object[]) shortNameResultSql;
-            Long actualItemId = getLong(shortNameResultSqlArray[0]);
+        List extendedResultsSql = query.getResultList();
+        for (Object extendedResultSql : extendedResultsSql) {
+            Object[] extendedResultSqlArray = (Object[]) extendedResultSql;
+            Long actualItemId = getLong(extendedResultSqlArray[0]);
             ItemResult target = mapCodeByItemId.get(actualItemId);
-            internationalStringResultSqltoInternationalStringResult(shortNameResultSqlArray, ((CodeMetamacResultExtensionPoint) target.getExtensionPoint()).getShortName());
+            CodeMetamacResultExtensionPoint codeExtensionFields = (CodeMetamacResultExtensionPoint) target.getExtensionPoint();
+
+            Object shortName_fk = extendedResultSqlArray[indexShortNameInResult];
+            if (shortName_fk != null) {
+                internationalStringResultSqltoInternationalStringResult(extendedResultSqlArray, (codeExtensionFields).getShortName());
+            }
+
+            Object isExtended = extendedResultSqlArray[indexIsExtendedInResult];
+            if (isExtended != null) {
+                codeExtensionFields.setIsExtended(Boolean.parseBoolean(String.valueOf(isExtended)));
+            }
+
         }
     }
 

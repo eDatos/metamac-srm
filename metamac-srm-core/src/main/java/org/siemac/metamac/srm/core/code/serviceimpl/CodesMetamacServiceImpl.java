@@ -577,7 +577,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
             // VariableElement
             code.setVariableElement(codeTemp.getVariableElement());
-
+            
+            code.setIsExtended(codeTemp.getIsExtended());
+            
             // Order Visualisation
             for (int i = 1; i <= SrmConstants.CODELIST_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
                 Integer order = SrmServiceUtils.getCodeOrder(codeTemp, i);
@@ -720,6 +722,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         Map<String, ItemResult> codesItemResultInCodelistSourceByUrn = new HashMap<>(codesItemResultInCodelistSource.size());
         for (ItemResult itemResult : codesItemResultInCodelistSource) {
             codesItemResultInCodelistSourceByUrn.put(itemResult.getUrn(), itemResult);
+            
         }
 
         boolean copyVariableElements = false;
@@ -3657,7 +3660,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         if (copyVariableElements) {
             codeTarget.setVariableElement(codeSource.getVariableElement());
         }
-
+        codeTarget.setIsExtended(SrmServiceUtils.getCodeItemResultIsExtended(codeItemResultSource));
+        
         // extra validation to avoid save some incorrect
         CodesMetamacInvocationValidator.checkCreateCode(codelistVersionTarget, codeTarget, null);
         return codeTarget;
@@ -3787,7 +3791,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, variableElement.getIdentifiableArtefact().getCode(),
                     ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
         }
-
+        
         // geographical granularity
         if (header.isGeographicalGranularitySetted()) {
             String geographicalGranularityIdentifier = columns[header.getGeographicalGranularityPosition()];

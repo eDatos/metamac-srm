@@ -9,6 +9,7 @@ public class CodeDS extends ItemDS {
     public static final String VARIABLE_ELEMENT_URN         = "code-var-elem-urn";
     public static final String VARIABLE_ELEMENT_EDITION     = "code-var-elem-edition";
     public static final String VARIABLE_ELEMENT_CLEAR       = "code-var-elem-clear";
+    public static final String IS_EXTENDED                  = "code-is_extended";
 
     public static final String ID_DATABASE                  = "code-id";
     public static final String VARIABLE_ELEMENT_ID_DATABASE = "code-var-ele-id";

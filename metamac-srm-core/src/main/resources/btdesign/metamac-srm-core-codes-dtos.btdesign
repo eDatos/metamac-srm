@@ -53,6 +53,8 @@ Application DtosMetamacCodeDomain {
 			- @InternationalStringDto shortName nullable;
 			"Variable element"
 			- @RelatedResourceDto variableElement nullable;
+			"Is extended"
+			Boolean isExtended nullable;
 		}
 		
 		"Dto for CodeMetamac"

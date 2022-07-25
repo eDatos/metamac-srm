@@ -126,6 +126,7 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
 
             // Other metatadata
             targetMetamac.setShortName(BaseCopyAllMetadataUtils.copy(previousMetamac.getShortName())); // ShortName
+            targetMetamac.setIsExtended(previousMetamac.getIsExtended());
             targetMetamac.setVariableElement(previousMetamac.getVariableElement());
 
             for (int i = 1; i <= SrmConstants.CODELIST_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {

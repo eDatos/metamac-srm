@@ -348,6 +348,8 @@ Application CodesMetamac {
 			- @InternationalString shortName nullable cascade="all" fetch="lazy" databaseColumn="SHORT_NAME_FK";
 			"Variable element"
 			- @VariableElement variableElement nullable cascade="none" fetch="lazy" databaseColumn="VARIABLE_ELEMENT_FK"  <-> codes;
+			"Is extended"
+			Boolean isExtended nullable;
 			
 			Integer order1 nullable;
 			Integer order2 nullable;

@@ -2557,6 +2557,26 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     }
 
     @Test
+    public void testCreateCodeExtended() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        code.setParent(null);
+        code.setShortName(null);
+        code.setVariableElement(null);
+        code.setIsExtended(true);
+        
+        String codelistUrn = CODELIST_1_V2;
+
+        // Create
+        CodeMetamac codeCreated = codesService.createCode(ctx, codelistUrn, code);
+        String urn = codeCreated.getNameableArtefact().getUrn();
+
+        CodeMetamac codeRetrieved = codesService.retrieveCodeByUrn(ctx, urn);
+        assertEquals(true, codeRetrieved.getIsExtended());
+    }
+    
+    @Test
     public void testCreateCodeErrorVariableElementDifferentCodelistVariable() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
@@ -2739,24 +2759,28 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder1());
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
+            assertEquals(Boolean.TRUE, code.getIsExtended());
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2);
             assertEquals(Integer.valueOf(3), code.getOrder1());
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(2), code.getOrder3());
+            assertEquals(Boolean.TRUE, code.getIsExtended());
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_3);
             assertEquals(Integer.valueOf(4), code.getOrder1());
             assertEquals(Integer.valueOf(2), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
+            assertNull(code.getIsExtended());
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_4);
             assertEquals(Integer.valueOf(5), code.getOrder1());
             assertEquals(Integer.valueOf(3), code.getOrder2());
             assertEquals(Integer.valueOf(3), code.getOrder3());
+            assertNull(code.getIsExtended());
         }
 
         // Validate copied
@@ -2799,6 +2823,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertNull(code.getRestriction1());
             assertEquals(Boolean.FALSE, code.getRestriction2());
             assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertEquals(Boolean.FALSE, code.getIsExtended());
             
             
 
@@ -2830,6 +2855,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertNull(code.getRestriction1());
             assertEquals(Boolean.FALSE, code.getRestriction2());
             assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertNull(code.getIsExtended());
 
             assertEquals(0, code.getChildren().size());
         }
@@ -2858,6 +2884,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.FALSE, code.getRestriction3());
             assertEquals(1, code.getChildren().size());
             assertEquals(code040101TargetUrn, code.getChildren().get(0).getNameableArtefact().getUrn());
+            assertNull(code.getIsExtended());
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code040101TargetUrn);
@@ -2885,6 +2912,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.FALSE, code.getRestriction2());
             assertEquals(Boolean.FALSE, code.getRestriction3());
             assertEquals(0, code.getChildren().size());
+            assertNull(code.getIsExtended());
         }
     }
 
@@ -3064,6 +3092,34 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertNull(codeTarget.getShortName()); // because in source it was null
     }
 
+    @Test
+    public void testCopyCodesInCodelistWithExtendedCode() throws Exception {
+        String codelistSourceUrn = CODELIST_1_V2;
+        CodelistVersionMetamac codelistSource = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistSourceUrn);
+        String code01SourceUrn = CODELIST_1_V2_CODE_1;
+        String codelistTargetUrn = CODELIST_2_V1;
+        CodelistVersionMetamac codelistTarget = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistTargetUrn);
+
+        // Codes to copy
+        List<CodeToCopy> codesToCopy = new ArrayList<CodeToCopy>();
+        CodeToCopy code = new CodeToCopy();
+        code.setSourceUrn(code01SourceUrn);
+        code.setNewCodeIdentifier("CODE03");
+        code.setParentNewCodeIdentifier(null);  
+        codesToCopy.add(code);
+
+        // Copy
+        codesService.copyCodesInCodelist(getServiceContextAdministrador(), codelistSourceUrn, codelistTargetUrn, codesToCopy);
+
+        entityManager.clear();
+        String code01TargetUrn = "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX01:CODELIST02(01.000).CODE03";
+
+        // Validate short name
+        CodeMetamac codeSource = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code01SourceUrn);
+        CodeMetamac codeTarget = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code01TargetUrn);
+        assertEquals(codeSource.getIsExtended(), codeSource.getIsExtended());
+    }
+    
     @Test
     @Override
     public void testPreCreateCode() throws Exception {
@@ -3271,6 +3327,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals(urn, code.getNameableArtefact().getUrn());
         assertEquals(VARIABLE_2_VARIABLE_ELEMENT_2, code.getVariableElement().getIdentifiableArtefact().getUrn());
         assertEquals(null, code.getShortName());
+        assertEquals(Boolean.TRUE, code.getIsExtended());
     }
 
     @Test
@@ -4133,6 +4190,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.FALSE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertEquals(Boolean.TRUE, code.getIsExtended());
         }
         {
             // code1 VARIABLE_ELEMENT_01 Nombre 1 Name 1 Nombre it 1 Description 1 Descripción 1
@@ -4262,6 +4320,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertEquals(Boolean.FALSE, code.getIsExtended());
         }
         {
             // CODE0400 CODE04 Nombre 4 name 4 Nombre it 4 Description 4 Descripción 4
@@ -4283,6 +4342,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertEquals(Boolean.TRUE, code.getIsExtended());
         }
         {
             // CODE040102 CODE040102 Nombre CODE040102 name CODE040102 Nombre it CODE040102 Descripción CODE040102
@@ -4557,6 +4617,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.FALSE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertEquals(Boolean.TRUE, code.getIsExtended());
         }
         {
             // NOT UPDATED: CODE02 VARIABLE_ELEMENT_03 nombre nuevo 2 new name 2 nombre nuevo it 2 descripción nueva 2 description new 2
@@ -4578,6 +4639,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.FALSE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertEquals(Boolean.TRUE, code.getIsExtended());
         }
         {
             // NOT UPDATED: CODE03 VARIABLE_ELEMENT_04 nombre nuevo 03
@@ -4599,6 +4661,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.FALSE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertNull(code.getIsExtended());
         }
         {
             // NOT UPDATED: CODE0201 CODE01 Nombre CODE0201 name CODE0201 Nombre it CODE0201 Descripción CODE0201
@@ -4620,6 +4683,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, code.getOpenness2());
             assertEquals(Boolean.TRUE, code.getOpenness3());
             assertEquals(null, code.getOpenness4());
+            assertEquals(Boolean.FALSE, code.getIsExtended());
+            
         }
     }
 

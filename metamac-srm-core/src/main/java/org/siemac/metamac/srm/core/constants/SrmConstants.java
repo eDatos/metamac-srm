@@ -35,7 +35,7 @@ public class SrmConstants {
     public static final String             TSV_HEADER_DESCRIPTION                                                 = "description";
     public static final String             TSV_HEADER_COMMENT                                                     = "comment";
     public static final String             TSV_HEADER_SHORT_NAME                                                  = "short_name";
-    public static final String             TSV_HEADER_IS_EXTENDED                                                 = "is-extended";
+    public static final String             TSV_HEADER_IS_EXTENDED                                                 = "is_extended";
     public static final String             TSV_HEADER_VARIABLE_ELEMENT                                            = "variable_element";
     public static final String             TSV_HEADER_LABEL                                                       = "label";
     public static final String             TSV_HEADER_LEVEL                                                       = "level";

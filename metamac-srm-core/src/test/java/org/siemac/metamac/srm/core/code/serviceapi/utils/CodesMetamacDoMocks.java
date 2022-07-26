@@ -62,10 +62,10 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         CodelistVersionMetamac codelistVersion = mockCodelistFixedValues(agencyID, resourceID, version);
 
         // codes
-        CodeMetamac code1 = mockCodeFixedValues("code1", codelistVersion, null);
-        CodeMetamac code2 = mockCodeFixedValues("code2", codelistVersion, null);
-        CodeMetamac code2A = mockCodeFixedValues("code2A", codelistVersion, code2);
-        CodeMetamac code2B = mockCodeFixedValues("code2B", codelistVersion, code2);
+        CodeMetamac code1 = mockCodeFixedValues("code1", codelistVersion, null, true);
+        CodeMetamac code2 = mockCodeFixedValues("code2", codelistVersion, null, false);
+        CodeMetamac code2A = mockCodeFixedValues("code2A", codelistVersion, code2, false);
+        CodeMetamac code2B = mockCodeFixedValues("code2B", codelistVersion, code2, null);
 
         // codes hierarchy
         codelistVersion.addItem(code1);
@@ -87,17 +87,19 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     public static CodeMetamac mockCode() {
         CodeMetamac codeMetamac = new CodeMetamac();
         codeMetamac.setShortName(BaseDoMocks.mockInternationalString());
+        codeMetamac.setIsExtended(false);
         mockCode(codeMetamac);
         return codeMetamac;
     }
 
-    public static CodeMetamac mockCodeFixedValues(String resourceID, ItemSchemeVersion itemSchemeVersion, CodeMetamac parent) {
+    public static CodeMetamac mockCodeFixedValues(String resourceID, ItemSchemeVersion itemSchemeVersion, CodeMetamac parent, Boolean extended) {
         CodeMetamac target = new CodeMetamac();
         CodesDoMocks.mockCodeFixedValues(target, resourceID, itemSchemeVersion, parent);
 
         // metamac
         target.setShortName(mockInternationalStringFixedValues("shortName", resourceID));
         target.setVariableElement(mockVariableElementFixedValues("variableElement1"));
+        target.setIsExtended(true);
         return target;
     }
 
@@ -240,7 +242,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setLongitude(Double.valueOf(2));
         target.setShapeWkt("shape1");
         target.setShapeGeojson("shape1Geojson");
-        target.setGeographicalGranularity(mockCodeFixedValues("code1", mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
+        target.setGeographicalGranularity(mockCodeFixedValues("code1", mockCodelistFixedValues("agency01", "codelist01", "01.000"), null, false));
         return target;
     }
 

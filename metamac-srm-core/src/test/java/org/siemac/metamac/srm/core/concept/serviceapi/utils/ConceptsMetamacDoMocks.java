@@ -103,7 +103,7 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
     private static Quantity mockQuantityFixedValues(String resourceId) {
         Quantity target = new Quantity();
         target.setQuantityType(QuantityTypeEnum.CHANGE_RATE);
-        target.setUnitCode(CodesMetamacDoMocks.mockCodeFixedValues("unitCode01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
+        target.setUnitCode(CodesMetamacDoMocks.mockCodeFixedValues("unitCode01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null, null));
         target.setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         target.setSignificantDigits(Integer.valueOf(5));
         target.setDecimalPlaces(Integer.valueOf(2));
@@ -118,7 +118,7 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
         // Note: following metadata are not in change_rate, but put it to test all metadata conversion. This entity never will be saved
         target.setBaseValue(Integer.valueOf(5));
         target.setBaseTime("2010");
-        target.setBaseLocation(CodesMetamacDoMocks.mockCodeFixedValues("baseLocation01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
+        target.setBaseLocation(CodesMetamacDoMocks.mockCodeFixedValues("baseLocation01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null, null));
         return target;
     }
 

@@ -186,11 +186,11 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, List<EquivalenceCode> sources) {
+    public EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<EquivalenceCode> sources) {
 
         EquivalentCodes targets = new EquivalentCodes();
 
-        targets.setSelfLink(toCodesLink(sourceCodelistVersion));
+        targets.setSelfLink(toEquivalentCodesLink(sourceCodelistVersion, codelistVersionToMatch));
         targets.setTotal(BigInteger.valueOf(sources.size()));
 
         for (EquivalenceCode source : sources) {
@@ -717,6 +717,9 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
     private String toCodesLink(ItemSchemeVersion itemSchemeVersion) {
         return toItemsLink(toSubpathItemSchemes(), toSubpathItems(), itemSchemeVersion);
+    }
+    private String toEquivalentCodesLink(ItemSchemeVersion itemSchemeVersion1, ItemSchemeVersion itemSchemeVersion2) {
+        return toEquivalentCodesLink(toSubpathItemSchemes(), itemSchemeVersion1, itemSchemeVersion2);
     }
     private String toCodeLink(com.arte.statistic.sdmx.srm.core.base.domain.Item item) {
         return toItemLink(toSubpathItemSchemes(), toSubpathItems(), item);

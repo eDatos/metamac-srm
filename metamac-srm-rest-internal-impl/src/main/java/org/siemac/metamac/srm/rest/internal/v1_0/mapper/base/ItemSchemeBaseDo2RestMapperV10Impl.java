@@ -6,6 +6,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
+import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -78,6 +79,19 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
         return toMaintainableArtefactLink(schemesSubPath, maintainableArtefact);
     }
 
+    protected String toEquivalentCodesLink(String schemesSubPath, ItemSchemeVersion itemSchemeVersion1, ItemSchemeVersion itemSchemeVersion2) {
+        MaintainableArtefact maintainableArtefact = itemSchemeVersion1.getMaintainableArtefact();
+        String link = toMaintainableArtefactLink(schemesSubPath, getIdAsMaintainer(maintainableArtefact.getMaintainer()), getCode(maintainableArtefact), maintainableArtefact.getVersionLogic());
+        link = RestUtils.createLink(link, SrmRestConstants.LINK_SUBPATH_EQUIVALENT_CODES);
+        
+        MaintainableArtefact maintainableArtefact2 = itemSchemeVersion2.getMaintainableArtefact();
+        link = RestUtils.createLink(link, getIdAsMaintainer(maintainableArtefact2.getMaintainer()));
+        link = RestUtils.createLink(link, getCode(maintainableArtefact2));
+        link = RestUtils.createLink(link, maintainableArtefact2.getVersionLogic());
+
+        return link;
+    }
+    
     // API/[ARTEFACT_TYPE]/{agencyID}/{resourceID}/{version}/[SUBARTEFACT_TYPES]
     protected String toItemsLink(String schemesSubPath, String itemsSubPath, String agencyID, String resourceID, String version) {
         String link = toMaintainableArtefactLink(schemesSubPath, agencyID, resourceID, version);

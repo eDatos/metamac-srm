@@ -1386,6 +1386,37 @@
          ],
          "description":""
       },
+      "EquivalentCodeResource":{
+         "type":"object",
+         "title":"EquivalentCodeResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "$ref":"#/definitions/ItemResource"
+            },
+            {
+               "properties":{
+                  "sourceCode":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "equivalentCode":"",
+                     "type":"string"
+                  },
+                  "equivalentCode":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
       "Codelist":{
          "type":"object",
          "title":"Codelist",
@@ -1563,6 +1594,27 @@
          ],
          "description":""
       },
+      "EquivalentCodes":{
+         "type":"object",
+         "title":"EquivalentCodes",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "code":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/EquivalentCodeResource"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
       "Component":{
          "type":"object",
          "title":"Component",
@@ -1610,6 +1662,7 @@
          ],
          "description":""
       },
+      
       "Concept":{
          "type":"object",
          "title":"Concept",

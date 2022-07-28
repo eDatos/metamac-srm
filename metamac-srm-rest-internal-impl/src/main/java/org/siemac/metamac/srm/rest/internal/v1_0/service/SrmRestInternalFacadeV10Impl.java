@@ -907,7 +907,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
             List<EquivalenceCode> items = codesService.retrieveEquivalenceOfCodesBetweenTwoCodelists(ctx, codelistVersionOrigin, codelistVersionToMatch);
             
-            return codesDo2RestMapper.toEquivalentCodes(codelistVersionOrigin, items);
+            return codesDo2RestMapper.toEquivalentCodes(codelistVersionOrigin, codelistVersionToMatch, items);
             
         } catch (Exception e) {
             throw manageException(e);

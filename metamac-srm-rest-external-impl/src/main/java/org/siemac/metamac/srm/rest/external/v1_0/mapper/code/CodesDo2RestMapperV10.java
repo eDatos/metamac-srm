@@ -37,7 +37,7 @@ public interface CodesDo2RestMapperV10 {
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
 
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction);
-    EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, List<EquivalenceCode> sources);
+    EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<EquivalenceCode> sources);
     
     Code toCode(CodeMetamac source);
     ItemResource toResource(CodeMetamac source);

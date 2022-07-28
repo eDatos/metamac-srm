@@ -1052,7 +1052,7 @@
                "200":{
                	  "schema":{
                      "description":"",
-                     "$ref":"#/definitions/Codes"
+                     "$ref":"#/definitions/EquivalentCodes"
                   },               
                   "headers":{
 

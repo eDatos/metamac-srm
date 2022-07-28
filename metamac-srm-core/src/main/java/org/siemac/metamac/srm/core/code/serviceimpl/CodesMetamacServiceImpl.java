@@ -82,6 +82,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
+import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
@@ -360,6 +361,28 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return findCodelistsCanReplaceToByCondition(ctx, codelistUrn, false, conditions, pagingParameter);
     }
 
+    public List<EquivalenceCode> retrieveEquivalenceOfCodesBetweenTwoCodelists(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
+            throws MetamacException {
+
+        checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
+        
+        List<EquivalenceCode> equivalenceCodes = new ArrayList<>();
+
+        Map<Long, CodeMetamac> codesToMatch = retrieveCodesToMatch(codelistVersionToMatch.getItems());
+
+        for (Code code : codelistVersionOrigin.getItems()) {
+            CodeMetamac codeMetamacOrigin = (CodeMetamac) code;
+            CodeMetamac matchedCode = null;
+            if (codeMetamacOrigin.getVariableElement() != null) {
+                matchedCode = codesToMatch.get(codeMetamacOrigin.getVariableElement().getId());
+            }
+            equivalenceCodes.add(setEquivalenceCodes(codeMetamacOrigin, matchedCode));
+        }
+
+        return equivalenceCodes;
+
+    }
+       
     @Override
     public PagedResult<CodelistVersionMetamac> findCodelistsWhoseCodesCanBeVariableElementGeographicalGranularityByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions,
             PagingParameter pagingParameter) throws MetamacException {
@@ -4241,4 +4264,37 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         codelist.setDefaultOpennessVisualisation(codelistOpennessVisualisation);
     }
+    
+    private Map<Long, CodeMetamac> retrieveCodesToMatch(List<Code> codesToMatch) {
+        Map<Long, CodeMetamac> codes = new HashMap<>();
+        for (Code code : codesToMatch) {
+            CodeMetamac codeMetamac = (CodeMetamac) code;
+            if (codeMetamac.getVariableElement() != null) {
+                codes.put(codeMetamac.getVariableElement().getId(), codeMetamac);
+            }
+        }
+        return codes;
+    }
+    
+    private EquivalenceCode setEquivalenceCodes(CodeMetamac code1, CodeMetamac code2) {
+        EquivalenceCode equivalenceCode = new EquivalenceCode();
+        equivalenceCode.setOriginCode(code1.getNameableArtefact().getCode());
+        equivalenceCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());
+        equivalenceCode.setVariableElement(code1.getVariableElement().getIdentifiableArtefact().getCode());
+        if (code2 != null) {
+            equivalenceCode.setEquivalentCode(code2.getNameableArtefact().getCode());
+            equivalenceCode.setEquivalentCodeUrn(code2.getNameableArtefact().getUrn());
+        }
+        return equivalenceCode;
+    }
+
+    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) throws MetamacException {
+        if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
+                || codelistVersion1.getVariable().getId().longValue() != codelistVersion2.getVariable().getId().longValue()) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_EQUIVALENCES)
+                    .withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
+
+        }
+    }
+    
 }

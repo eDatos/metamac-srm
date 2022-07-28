@@ -37,12 +37,6 @@
 			<artifactId>metamac-srm-core</artifactId>
 			<classifier>client</classifier>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>jakarta.ws.rs</groupId>
-					<artifactId>jakarta.ws.rs-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.siemac.metamac</groupId>

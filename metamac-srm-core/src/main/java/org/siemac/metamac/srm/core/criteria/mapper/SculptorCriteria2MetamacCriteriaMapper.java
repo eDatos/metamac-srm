@@ -31,7 +31,6 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
-import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
 
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Contact;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;

@@ -998,6 +998,79 @@
             }
          }
       },
+      "/v1.0/codelists/{agencyID1}/{resourceID1}/{version1}/equivalencies/{agencyID2}/{resourceID2}/{version2}":{
+         "get":{
+            "tags":[
+               "Clasificaciones"
+            ],
+            "description":"Permite obtener las equivalencias de los códigos de un codelist en los códigos de otro codelist",
+            "operationId":"resource__v1.0_codelists__agencyID1___resourceID1___version1__equivalencies__agencyID2___resourceID2___version2_retrieveEquivalenceOfCodes_GET",
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "parameters":[
+            {
+                  "name":"agencyID1",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador de la agencia origen"
+            },
+            {
+                  "name":"resourceID1",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador del recurso origen"
+            },
+            {
+                  "name":"version1",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador de la versión origen"
+            },
+            {
+                  "name":"agencyID2",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador de la agencia de la clasificación sobre la que obtener las equivalencias"
+            },
+            {
+                  "name":"resourceID2",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador del recurso de la clasificación sobre la que obtener las equivalencias"
+            },
+            {
+                  "name":"version2",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador de la versión de la clasificación sobre la que obtener las equivalencias"
+            }
+            
+            ],
+            "responses":{
+               "200":{
+               	  "schema":{
+                     "description":"",
+                     "$ref":"#/definitions/Codes"
+                  },               
+                  "headers":{
+
+                  },
+                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+               },
+               "406":{
+                  "description":"No aceptable. El formato solicitado no es válido"
+               },
+               "500":{
+                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+               },
+               "503":{
+                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+               }
+            }
+         }
+      },
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}/codes":{
          "get":{
             "tags":[

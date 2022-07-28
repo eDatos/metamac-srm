@@ -70,6 +70,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataPro
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataProviders;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.EquivalentCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationSchemes;
@@ -105,6 +106,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.VariableFamilyProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableProperties;
+import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
@@ -889,6 +891,29 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             throw manageException(e);
         }
     }
+    
+    @Override
+    public EquivalentCodes retrieveEquivalenceOfCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
+        try {
+
+            checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
+            checkParameterNotWildcardRetrieveItemScheme(agencyID2, resourceID2, version2);
+            
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersionOrigin = retrieveCodelistPublished(agencyID1, resourceID1, version1);
+
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
+
+            List<EquivalenceCode> items = codesService.retrieveEquivalenceOfCodesBetweenTwoCodelists(ctx, codelistVersionOrigin, codelistVersionToMatch);
+            
+            return codesDo2RestMapper.toEquivalentCodes(codelistVersionOrigin, items);
+            
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+    
     
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {

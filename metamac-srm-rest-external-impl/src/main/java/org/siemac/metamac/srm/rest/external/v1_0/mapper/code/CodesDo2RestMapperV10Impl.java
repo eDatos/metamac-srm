@@ -41,6 +41,8 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.EquivalentCodeResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.EquivalentCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ReplaceToResources;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variable;
@@ -67,6 +69,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
+import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
@@ -182,6 +185,21 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return targets;
     }
 
+    @Override
+    public EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, List<EquivalenceCode> sources) {
+
+        EquivalentCodes targets = new EquivalentCodes();
+
+        targets.setSelfLink(toCodesLink(sourceCodelistVersion));
+        targets.setTotal(BigInteger.valueOf(sources.size()));
+
+        for (EquivalenceCode source : sources) {
+            EquivalentCodeResource target = toEquivalentCodeResource(source);
+            targets.getCodes().add(target);
+        }
+        return targets;
+    }
+    
     private List<ItemResult> getCodesInRestriction(List<ItemResult> sources) {
         List<ItemResult> codesInRestriction = new ArrayList<ItemResult>();
         for (ItemResult source : sources) {
@@ -297,6 +315,17 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
     }
 
+    private EquivalentCodeResource toEquivalentCodeResource(EquivalenceCode source) {
+        if (source == null) {
+            return null;
+        }
+        EquivalentCodeResource target = new EquivalentCodeResource();
+        target.setSourceCode(source.getOriginCode());
+        target.setEquivalentCode(source.getEquivalentCode());
+
+        return target;
+    }
+    
     @Override
     protected boolean canItemSchemeVersionBeProvidedByApi(ItemSchemeVersion source) {
         CodelistVersionMetamac codelistVersion = (CodelistVersionMetamac) source;

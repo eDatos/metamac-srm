@@ -42,6 +42,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.EquivalentCodeResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.EquivalentCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ReplaceToResources;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
@@ -69,6 +71,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
+import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
@@ -165,6 +168,21 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return targets;
     }
 
+    @Override
+    public EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, List<EquivalenceCode> sources) {
+
+        EquivalentCodes targets = new EquivalentCodes();
+
+        targets.setSelfLink(toCodesLink(sourceCodelistVersion));
+        targets.setTotal(BigInteger.valueOf(sources.size()));
+
+        for (EquivalenceCode source : sources) {
+            EquivalentCodeResourceInternal target = toEquivalentCodeResourceInternal(source);
+            targets.getCodes().add(target);
+        }
+        return targets;
+    }
+    
     @Override
     public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction) {
 
@@ -270,6 +288,17 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
+    private EquivalentCodeResourceInternal toEquivalentCodeResourceInternal(EquivalenceCode source) {
+        if (source == null) {
+            return null;
+        }
+        EquivalentCodeResourceInternal target = new EquivalentCodeResourceInternal();
+        target.setSourceCode(source.getOriginCode());
+        target.setEquivalentCode(source.getEquivalentCode());
+
+        return target;
+    }
+    
     private void setVisibleFields(CodeMetamac source, CodeResourceInternal target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
             target.setVariableElement(toResource(source.getVariableElement()));

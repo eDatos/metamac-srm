@@ -24,6 +24,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
@@ -891,6 +892,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Retrieve all codes of codelist
             CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
 
+            checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
+            
             List<EquivalenceCode> items = codesService.retrieveEquivalenceOfCodesBetweenTwoCodelists(ctx, codelistVersionOrigin, codelistVersionToMatch);
             
             return codesDo2RestMapper.toEquivalentCodes(codelistVersionOrigin, codelistVersionToMatch, items);
@@ -1845,6 +1848,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         checkParameterNotWildcardAll(parameterNameItemID, itemID);
     }
 
+    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) throws MetamacException {
+        if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
+                || codelistVersion1.getVariable().getId().longValue() != codelistVersion2.getVariable().getId().longValue()) {
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_EQUIVALENCES);
+            throw new RestException(exception, Status.BAD_REQUEST);
+        }
+    }
+    
     /**
      * Check unsupported wildcards in some parameters
      */

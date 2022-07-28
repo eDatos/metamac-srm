@@ -364,8 +364,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     public List<EquivalenceCode> retrieveEquivalenceOfCodesBetweenTwoCodelists(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
             throws MetamacException {
 
-        checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
-        
         List<EquivalenceCode> equivalenceCodes = new ArrayList<>();
 
         Map<Long, CodeMetamac> codesToMatch = retrieveCodesToMatch(codelistVersionToMatch.getItems());
@@ -4286,15 +4284,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             equivalenceCode.setEquivalentCodeUrn(code2.getNameableArtefact().getUrn());
         }
         return equivalenceCode;
-    }
-
-    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) throws MetamacException {
-        if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
-                || codelistVersion1.getVariable().getId().longValue() != codelistVersion2.getVariable().getId().longValue()) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_EQUIVALENCES)
-                    .withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
-
-        }
     }
     
 }

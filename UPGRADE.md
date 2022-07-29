@@ -14,8 +14,6 @@
 * Es necesario ejecutar los scripts SQL del proyecto metamac-srm contenidos en la carpeta
   ```shell
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_create _normalization_type_column.sql
-  etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_update _normalization_type_column.sql
-  etc/changes-from-release/3.1.0/db/srm/postgresql/20220708__update _column_normalization_type_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220714_create _source_provider_column.sql
   ```
   ```

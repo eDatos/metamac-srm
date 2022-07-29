@@ -130,6 +130,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
+import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;
 import com.arte.statistic.sdmx.srm.core.task.domain.TaskResult;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskResultTypeEnum;
@@ -2134,7 +2135,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Validate
         validateVersioningCodelist3V1();
     }
-
+    
     @Test
     public void testVersioningCodelistWithTwoVersionsPublished() throws Exception {
         // This test checks the copy from one version but replacing to another one that is last version.
@@ -11216,7 +11217,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(urnExpected, codelistVersionNewVersion.getMaintainableArtefact().getUrn());
             assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersionToCopy, codelistVersionNewVersion);
         }
-
+        
         // Validate retrieving
         // New version
         {
@@ -11228,6 +11229,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(null, codelistVersionNewVersion.getMaintainableArtefact().getReplacedByVersion());
             assertTrue(codelistVersionNewVersion.getMaintainableArtefact().getIsLastVersion());
             assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersionToCopy, codelistVersionNewVersion);
+            assertEquals(codelistVersionToCopy.getNormalizationType(), codelistVersionNewVersion.getNormalizationType());
+            assertEquals(codelistVersionToCopy.getSourceProvider().getNameableArtefact().getUrn(), codelistVersionNewVersion.getSourceProvider().getNameableArtefact().getUrn());
 
             // Codes
             assertEquals(5, codelistVersionNewVersion.getItems().size());

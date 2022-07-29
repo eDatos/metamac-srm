@@ -48,7 +48,7 @@ public class OrganisationsSecurityUtils extends CommonSecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
-    
+
     public static void canSendOrganisationSchemeToProductionValidation(ServiceContext ctx) throws MetamacException {
         if (!SharedOrganisationsSecurityUtils.canSendOrganisationSchemeToProductionValidation(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);

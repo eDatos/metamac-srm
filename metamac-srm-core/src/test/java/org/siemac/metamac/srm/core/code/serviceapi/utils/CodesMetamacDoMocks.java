@@ -29,7 +29,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // CODELISTS
     // ------------------------------------------------------------------------------------
 
-    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, OrganisationMetamac sourceProviderOrganisation ) {
+    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer) {
         CodelistVersionMetamac codelistVersion = new CodelistVersionMetamac();
 
         codelistVersion.setShortName(mockInternationalString());
@@ -37,11 +37,17 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         codelistVersion.setIsRecommended(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.RESTRICTED);
         codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
-        codelistVersion.setSourceProvider(sourceProviderOrganisation);
         mockCodelist(codelistVersion, maintainer);
         return codelistVersion;
     }
 
+    
+    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, OrganisationMetamac sourceProviderOrganisation) {
+        CodelistVersionMetamac codelistVersion = mockCodelist(maintainer);
+        codelistVersion.setSourceProvider(sourceProviderOrganisation);
+        return codelistVersion;
+    }
+    
     public static CodelistVersionMetamac mockCodelistFixedValues(String agencyID, String resourceID, String version) {
         CodelistVersionMetamac target = new CodelistVersionMetamac();
         CodesDoMocks.mockCodelistFixedValues(target, agencyID, resourceID, version);

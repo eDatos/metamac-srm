@@ -310,6 +310,7 @@ import org.springframework.stereotype.Component;
 
 import com.gwtplatform.dispatch.server.spring.HandlerModule;
 
+
 /**
  * Module which binds the handlers and configurations.
  */
@@ -388,7 +389,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(CopyOrganisationSchemeAction.class, CopyOrganisationSchemeActionHandler.class);
         bindHandler(ExportOrganisationsAction.class, ExportOrganisationsActionHandler.class);
         bindHandler(ReSendOrganisationSchemeStreamMessageAction.class, ReSendOrganisationSchemeStreamMessageActionHandler.class);
-
+    
         // Categories
         bindHandler(GetCategorySchemesAction.class, GetCategorySchemesActionHandler.class);
         bindHandler(SaveCategorySchemeAction.class, SaveCategorySchemeActionHandler.class);

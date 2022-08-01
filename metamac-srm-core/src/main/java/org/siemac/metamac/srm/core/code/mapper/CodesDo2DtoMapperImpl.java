@@ -31,8 +31,10 @@ import org.siemac.metamac.srm.core.code.dto.VariableFamilyBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
 import org.siemac.metamac.srm.core.code.dto.VariableRelatedResourceDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
+import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
@@ -54,6 +56,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setDescriptionSource(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getDescriptionSource()));
         target.setIsRecommended(source.getIsRecommended());
         target.setAccessType(source.getAccessType());
+        target.setNormalizationType(source.getNormalizationType());
         target.setReplacedByCodelist(codelistDoToRelatedResourceDto(source.getReplacedByCodelist()));
         for (CodelistVersionMetamac replaceTo : source.getReplaceToCodelists()) {
             target.addReplaceToCodelist(codelistDoToRelatedResourceDto(replaceTo));
@@ -64,6 +67,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setDefaultOrderVisualisation(codelistOrderVisualisationDoToRelatedResourceDto(source.getDefaultOrderVisualisation()));
         target.setDefaultOpennessVisualisation(codelistOpennessVisualisationDoToRelatedResourceDto(source.getDefaultOpennessVisualisation()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
+        target.setSourceProvider(sourceProviderToDto(source.getSourceProvider()));
         do2DtoMapperSdmxSrm.codelistDoToDto(source, target);
         return target;
     }
@@ -77,10 +81,33 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setIsRecommended(source.getIsRecommended());
         target.setVariable(variableDoToRelatedResourceDto(source.getVariable()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
+        target.setNormalizationType(source.getNormalizationType());
         itemSchemeVersionDoToItemSchemeBasicDto(source, source.getLifeCycleMetadata(), target);
         return target;
     }
+    
+    
+    private RelatedResourceDto sourceProviderToDto(Organisation sourceProvider) {
+        if (sourceProvider != null) {
+            RelatedResourceDto target = new RelatedResourceDto();
+            target.setType(getRelatedResourceTypeEnum(sourceProvider.getOrganisationType().getName())); 
+            do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(sourceProvider.getNameableArtefact(), target);
+            return target;
+        }
+        return null;
+    }
 
+    public static RelatedResourceTypeEnum getRelatedResourceTypeEnum(String resourceType) {
+        if (!StringUtils.isBlank(resourceType)) {
+            try {
+                return RelatedResourceTypeEnum.valueOf(resourceType);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public RelatedResourceDto codelistMetamacDoToRelatedResourceDto(CodelistVersionMetamac source) {
         if (source == null) {

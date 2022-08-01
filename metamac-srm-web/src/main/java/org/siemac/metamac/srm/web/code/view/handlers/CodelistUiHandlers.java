@@ -11,6 +11,11 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
+
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 
 public interface CodelistUiHandlers extends BaseCodeUiHandlers {
 
@@ -56,6 +61,9 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
     void deleteCodelistRestrictions(List<String> opennessLevelsUrns);
     void updateCodesRestrictions(String opennessLevelUrn, Map<String, Boolean> opennessLevels);
     void exportCodesRestrictions(String codelistUrn);
+    //organization
+    void retrieveOrganizationsSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria itemSchemeRestCriteria, OrganisationSchemeTypeEnum[] types);
+    void retrieveOrganizationsItems(int firstResult, int maxResults, SrmItemRestCriteria itemSchemeRestCriteria, OrganisationTypeEnum[] types);
     
     // Stream messages
 

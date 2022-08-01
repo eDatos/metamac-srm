@@ -22,6 +22,8 @@ import org.siemac.metamac.srm.core.code.dto.CodelistMetamacBasicDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
+import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
@@ -36,7 +38,11 @@ import org.siemac.metamac.srm.web.client.utils.WaitingAsyncCallbackHandlingExpor
 import org.siemac.metamac.srm.web.code.enums.CodesToolStripButtonEnum;
 import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
 import org.siemac.metamac.srm.web.code.widgets.presenter.CodesToolStripPresenterWidget;
-import org.siemac.metamac.srm.web.shared.*;
+import org.siemac.metamac.srm.web.organisation.utils.OrganisationSearchUtils;
+import org.siemac.metamac.srm.web.shared.ExportSDMXResourceAction;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesAction;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
+import org.siemac.metamac.srm.web.shared.StructuralResourcesRelationEnum;
 import org.siemac.metamac.srm.web.shared.category.CancelCategorisationValidityAction;
 import org.siemac.metamac.srm.web.shared.category.CancelCategorisationValidityResult;
 import org.siemac.metamac.srm.web.shared.category.CreateCategorisationAction;
@@ -122,16 +128,24 @@ import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
+import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -160,7 +174,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     private CodelistMetamacDto            codelistMetamacDto;
 
     private CodesToolStripPresenterWidget codesToolStripPresenterWidget;
-
+    
     @TitleFunction
     public static String getTranslatedTitle(PlaceRequest placeRequest) {
         return PlaceRequestUtils.getCodelistBreadCrumbTitle(placeRequest);
@@ -214,6 +228,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         void setVariables(GetVariablesResult result);
         void setCodelistsToReplace(List<RelatedResourceDto> codelists, int firstResult, int totalResults);
 
+        //organization
+        void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto>  organisationSchemeMetamacDtos, int totalResultados, int firstResultOut);
+        void setOrganizations(List<OrganisationMetamacBasicDto> organisationMetamacDtos, int totalResultados, int firstResultOut);
+        
         void showInformationMessage(String title, String message);
     }
 
@@ -540,7 +558,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                     }
                 });
     }
-
+    
     @Override
     public void publishExternally(String urn, ProcStatusEnum currentProcStatus) {
         dispatcher.execute(new UpdateCodelistProcStatusAction(urn, ProcStatusEnum.EXTERNALLY_PUBLISHED, currentProcStatus, null),
@@ -1249,6 +1267,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
+    
     @Override
     public void addCodelistToFamily(final String codelistUrn, String familyUrn) {
         List<String> codelistUrns = new ArrayList<String>(1);
@@ -1363,4 +1382,29 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     public void goToCode(String urn) {
         placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeCodePlaceRequest(urn));
     }
+            
+    @Override
+    public void retrieveOrganizationsSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria itemSchemeRestCriteria, OrganisationSchemeTypeEnum[] types) {
+        dispatcher.execute(new GetOrganisationSchemesAction(firstResult, maxResults, OrganisationSearchUtils.getOrganisationSchemeWebCriteria(itemSchemeRestCriteria, types)),
+                new WaitingAsyncCallbackHandlingError<GetOrganisationSchemesResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetOrganisationSchemesResult result) {
+                        getView().setOrganizationSchemes(result.getOrganisationSchemeMetamacDtos(), result.getTotalResults(), result.getFirstResultOut());
+                    }
+                });
+    }
+
+    @Override
+    public void retrieveOrganizationsItems(int firstResult, int maxResults, SrmItemRestCriteria itemRestCriteria, OrganisationTypeEnum[] types) {
+        dispatcher.execute(new GetOrganisationsAction(firstResult, maxResults, OrganisationSearchUtils.getOrganisationWebCriteria(itemRestCriteria, types)),
+                new WaitingAsyncCallbackHandlingError<GetOrganisationsResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetOrganisationsResult result) {
+                        getView().setOrganizations(result.getOrganisations(), result.getTotalResults(), result.getFirstResultOut());
+                    }
+                });
+    }
+    
 }

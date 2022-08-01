@@ -140,3 +140,5 @@ Desktop.ini
 ######################
 **/bower_components/**
 /target/
+/bin/
+metamac-srm-core/src/test/resources/data/srm/conf/static/resources-LOCAL.xml

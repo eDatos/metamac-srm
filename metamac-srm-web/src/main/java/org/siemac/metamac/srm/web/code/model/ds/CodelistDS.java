@@ -16,4 +16,6 @@ public class CodelistDS extends ItemSchemeDS {
     public static final String VARIABLE_VIEW          = "cl-variable-view";
     public static final String DEFAULT_ORDER          = "cl-def-order";
     public static final String DEFAULT_OPENNESS_LEVEL = "cl-def-open";
+    public static final String NORMALIZATION_TYPE     = "cl-normalization-type";
+    public static final String SOURCE_PROVIDER        = "cl-source-provider";
 }

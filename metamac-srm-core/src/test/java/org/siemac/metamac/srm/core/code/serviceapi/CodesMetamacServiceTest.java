@@ -13,8 +13,8 @@ import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsse
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelist;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistFamily;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistOpennessVisualisation;
-import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistRestrictionVisualisation;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistOrderVisualisation;
+import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistRestrictionVisualisation;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsCodelistWithoutLifeCycleMetadata;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsVariable;
 import static org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts.assertEqualsVariableElement;
@@ -130,7 +130,6 @@ import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
-import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;
 import com.arte.statistic.sdmx.srm.core.task.domain.TaskResult;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskResultTypeEnum;
@@ -2666,7 +2665,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         String urn = codeCreated.getNameableArtefact().getUrn();
 
         CodeMetamac codeRetrieved = codesService.retrieveCodeByUrn(ctx, urn);
-        assertEquals(true, codeRetrieved.getIsExtended());
+        assertTrue(codeRetrieved.getIsExtended());
     }
     
     @Test
@@ -2852,14 +2851,14 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder1());
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
-            assertEquals(Boolean.TRUE, code.getIsExtended());
+            assertTrue(code.getIsExtended());
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2);
             assertEquals(Integer.valueOf(3), code.getOrder1());
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(2), code.getOrder3());
-            assertEquals(Boolean.TRUE, code.getIsExtended());
+            assertTrue(code.getIsExtended());
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_3);
@@ -2909,14 +2908,14 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(6), code.getOrder2());
             assertEquals(Integer.valueOf(6), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
-            assertEquals(Boolean.FALSE, code.getIsExtended());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
+            assertFalse(code.getIsExtended());
             
             
 
@@ -2941,13 +2940,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(4), code.getOrder2());
             assertEquals(Integer.valueOf(4), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
             assertNull(code.getIsExtended());
 
             assertEquals(0, code.getChildren().size());
@@ -2968,13 +2967,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(5), code.getOrder2());
             assertEquals(Integer.valueOf(5), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
             assertEquals(1, code.getChildren().size());
             assertEquals(code040101TargetUrn, code.getChildren().get(0).getNameableArtefact().getUrn());
             assertNull(code.getIsExtended());
@@ -2997,13 +2996,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
             assertEquals(0, code.getChildren().size());
             assertNull(code.getIsExtended());
         }
@@ -3082,13 +3081,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(4), code.getOrder2());
             assertEquals(Integer.valueOf(4), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
             
             assertEquals(0, code.getChildren().size());
         }
@@ -3100,13 +3099,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(2), code.getOrder2());
             assertEquals(Integer.valueOf(2), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
 
             assertEquals(0, code.getChildren().size());
         }
@@ -3118,13 +3117,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(3), code.getOrder2());
             assertEquals(Integer.valueOf(3), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
 
             assertEquals(1, code.getChildren().size());
             assertEquals(code040101TargetUrn, code.getChildren().get(0).getNameableArtefact().getUrn());
@@ -3135,13 +3134,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertNull(code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertNull(code.getOpenness4());
             assertNull(code.getRestriction1());
-            assertEquals(Boolean.FALSE, code.getRestriction2());
-            assertEquals(Boolean.FALSE, code.getRestriction3());
+            assertFalse(code.getRestriction2());
+            assertFalse(code.getRestriction3());
             
 
             assertEquals(0, code.getChildren().size());
@@ -3420,7 +3419,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals(urn, code.getNameableArtefact().getUrn());
         assertEquals(VARIABLE_2_VARIABLE_ELEMENT_2, code.getVariableElement().getIdentifiableArtefact().getUrn());
         assertEquals(null, code.getShortName());
-        assertEquals(Boolean.TRUE, code.getIsExtended());
+        assertTrue(code.getIsExtended());
     }
 
     @Test
@@ -4279,11 +4278,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.FALSE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertFalse(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getIsExtended());
+            assertTrue(code.getIsExtended());
         }
         {
             // code1 VARIABLE_ELEMENT_01 Nombre 1 Name 1 Nombre it 1 Description 1 Descripción 1
@@ -4301,9 +4300,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(5), code.getOrder2());
             assertEquals(Integer.valueOf(5), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4324,9 +4323,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(2), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.FALSE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertFalse(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4346,9 +4345,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4366,9 +4365,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(6), code.getOrder2());
             assertEquals(Integer.valueOf(6), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4389,9 +4388,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(2), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.FALSE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertFalse(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4409,11 +4408,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(4), code.getOrder2());
             assertEquals(Integer.valueOf(4), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
-            assertEquals(Boolean.FALSE, code.getIsExtended());
+            assertFalse(code.getIsExtended());
         }
         {
             // CODE0400 CODE04 Nombre 4 name 4 Nombre it 4 Description 4 Descripción 4
@@ -4431,11 +4430,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getIsExtended());
+            assertTrue(code.getIsExtended());
         }
         {
             // CODE040102 CODE040102 Nombre CODE040102 name CODE040102 Nombre it CODE040102 Descripción CODE040102
@@ -4453,9 +4452,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4474,9 +4473,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4495,9 +4494,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4515,9 +4514,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(7), code.getOrder2());
             assertEquals(Integer.valueOf(7), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4536,9 +4535,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4559,9 +4558,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
         {
@@ -4572,9 +4571,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(3), code.getOrder2());
             assertEquals(Integer.valueOf(3), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.FALSE, code.getOpenness2());
-            assertEquals(Boolean.FALSE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertFalse(code.getOpenness2());
+            assertFalse(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
         }
     }
@@ -4706,11 +4705,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.FALSE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertFalse(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getIsExtended());
+            assertTrue(code.getIsExtended());
         }
         {
             // NOT UPDATED: CODE02 VARIABLE_ELEMENT_03 nombre nuevo 2 new name 2 nombre nuevo it 2 descripción nueva 2 description new 2
@@ -4728,11 +4727,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(1), code.getOrder2());
             assertEquals(Integer.valueOf(2), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.FALSE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertFalse(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
-            assertEquals(Boolean.TRUE, code.getIsExtended());
+            assertTrue(code.getIsExtended());
         }
         {
             // NOT UPDATED: CODE03 VARIABLE_ELEMENT_04 nombre nuevo 03
@@ -4750,9 +4749,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(2), code.getOrder2());
             assertEquals(Integer.valueOf(0), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.FALSE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertFalse(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
             assertNull(code.getIsExtended());
         }
@@ -4772,11 +4771,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Integer.valueOf(0), code.getOrder2());
             assertEquals(Integer.valueOf(1), code.getOrder3());
             assertEquals(null, code.getOrder4());
-            assertEquals(Boolean.TRUE, code.getOpenness1());
-            assertEquals(Boolean.TRUE, code.getOpenness2());
-            assertEquals(Boolean.TRUE, code.getOpenness3());
+            assertTrue(code.getOpenness1());
+            assertTrue(code.getOpenness2());
+            assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
-            assertEquals(Boolean.FALSE, code.getIsExtended());
+            assertFalse(code.getIsExtended());
             
         }
     }

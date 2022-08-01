@@ -74,7 +74,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         CodeMetamac code1 = mockCodeFixedValues("code1", codelistVersion, null, true);
         CodeMetamac code2 = mockCodeFixedValues("code2", codelistVersion, null, false);
         CodeMetamac code2A = mockCodeFixedValues("code2A", codelistVersion, code2, false);
-        CodeMetamac code2B = mockCodeFixedValues("code2B", codelistVersion, code2, null);
+        CodeMetamac code2B = mockCodeFixedValues("code2B", codelistVersion, code2);
 
         // codes hierarchy
         codelistVersion.addItem(code1);
@@ -101,17 +101,22 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         return codeMetamac;
     }
 
-    public static CodeMetamac mockCodeFixedValues(String resourceID, ItemSchemeVersion itemSchemeVersion, CodeMetamac parent, Boolean extended) {
+    public static CodeMetamac mockCodeFixedValues(String resourceID, ItemSchemeVersion itemSchemeVersion, CodeMetamac parent) {
         CodeMetamac target = new CodeMetamac();
         CodesDoMocks.mockCodeFixedValues(target, resourceID, itemSchemeVersion, parent);
 
         // metamac
         target.setShortName(mockInternationalStringFixedValues("shortName", resourceID));
         target.setVariableElement(mockVariableElementFixedValues("variableElement1"));
-        target.setIsExtended(true);
         return target;
     }
 
+    public static CodeMetamac mockCodeFixedValues(String resourceID, ItemSchemeVersion itemSchemeVersion, CodeMetamac parent, Boolean extended) {
+        CodeMetamac target = mockCodeFixedValues(resourceID, itemSchemeVersion, parent);
+        target.setIsExtended(extended);
+        return target;
+    }
+    
     // ------------------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ------------------------------------------------------------------------------------

@@ -1782,7 +1782,7 @@
             />
  
             <TB_M_CODES
-              VARIABLE_ELEMENT_FK="[null]"
+              VARIABLE_ELEMENT_FK="21"
               SHORT_NAME_FK="[null]"
               TB_CODES="211"
               ORDER1="0"
@@ -1837,7 +1837,7 @@
             />
         
             <TB_M_CODES
-              VARIABLE_ELEMENT_FK="[null]"
+              VARIABLE_ELEMENT_FK="22"
               SHORT_NAME_FK="[null]"
               TB_CODES="212"
               ORDER1="1"

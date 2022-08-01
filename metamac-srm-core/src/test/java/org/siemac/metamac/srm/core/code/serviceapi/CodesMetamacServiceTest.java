@@ -82,6 +82,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableProperties;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
+import org.siemac.metamac.srm.core.code.domain.shared.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
@@ -3707,6 +3708,26 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
+    @Test
+    public void testRetrieveRecodedCodes() throws Exception {
+
+        CodelistVersionMetamac codelistVersionOrigin = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
+        CodelistVersionMetamac codelistVersionToMatch = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_2_V1);
+
+        List<RelatedCode> items = codesService.retrieveRecodedCodes(getServiceContextAdministrador(), codelistVersionOrigin, codelistVersionToMatch);
+
+        assertNotNull(items);
+        assertEquals(9, items.size());
+        for (RelatedCode code : items) {
+            if ("CODE01".equals(code.getOriginCode()))
+                assertEquals("CODE02", code.getRecodedCode());
+            if ("CODE02".equals(code.getOriginCode()))
+                assertNull(code.getRecodedCode());
+            if ("CODE0201".equals(code.getOriginCode()))
+                assertEquals("CODE01", code.getRecodedCode());
+        }
+    }
+    
     @Test
     public void testRetrieveCodesByCodelistUrnCheckVariableElements() throws Exception {
 
@@ -7599,7 +7620,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         String variableElementUrn = VARIABLE_2_VARIABLE_ELEMENT_2;
         String codeUrn = CODELIST_1_V2_CODE_1;
         VariableElement variableElement = codesService.retrieveVariableElementByUrn(ctx, variableElementUrn);
-        assertEquals(1, variableElement.getCodes().size());
+        assertEquals(2, variableElement.getCodes().size());
         assertEquals(codeUrn, variableElement.getCodes().get(0).getNameableArtefact().getUrn());
 
         // Delete variableElement

@@ -39,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
+import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
+import com.arte.statistic.sdmx.srm.core.organisation.domain.OrganisationRepository;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 
 @org.springframework.stereotype.Component("codesDto2DoMapper")
@@ -70,6 +72,9 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
 
     @Autowired
     private CodelistOpennessVisualisationRepository                        codelistOpennessVisualisationRepository;
+    
+    @Autowired
+    private OrganisationRepository                                          organisationRepository;
 
     @Autowired
     private CodelistRestrictionVisualisationRepository                     codelistRestrictionVisualisationRepository;
@@ -94,6 +99,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
                 dto2DoMapperSdmxSrm.internationalStringToEntity(source.getDescriptionSource(), target.getDescriptionSource(), ServiceExceptionParameters.CODELIST_DESCRIPTION_SOURCE));
         target.setIsRecommended(source.getIsRecommended());
         target.setAccessType(source.getAccessType());
+        target.setNormalizationType(source.getNormalizationType());
         target.setStreamMessageStatus(source.getStreamMessageStatus());
 
         target.removeAllReplaceToCodelists();
@@ -104,6 +110,12 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
         }
         // note: replacedBy metadata is ignored, because it will be updated by replaceTo metadata
 
+        if (source.getSourceProvider() != null) {
+            target.setSourceProvider(sourceProviderDtoToDo(source.getSourceProvider()));
+        } else {
+            target.setSourceProvider(null);
+        }           
+        
         if (source.getFamily() != null) {
             target.setFamily(retrieveCodelistFamily(source.getFamily().getUrn()));
         } else {
@@ -131,6 +143,19 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
         return target;
     }
 
+    private Organisation sourceProviderDtoToDo(RelatedResourceDto sourceProvider) throws MetamacException {
+        if (sourceProvider != null) {
+            String sourceProviderUrn = sourceProvider.getUrn();
+            Organisation organization = organisationRepository.findByUrn(sourceProviderUrn);
+            if (organization == null) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(sourceProviderUrn)
+                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
+            return organization;
+        }
+        return null;
+    }
+    
     @Override
     public CodeMetamac codeDtoToDo(CodeMetamacDto source) throws MetamacException {
         if (source == null) {

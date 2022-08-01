@@ -14,6 +14,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
@@ -35,11 +36,18 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         codelistVersion.setDescriptionSource(mockInternationalString());
         codelistVersion.setIsRecommended(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.RESTRICTED);
-
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         mockCodelist(codelistVersion, maintainer);
         return codelistVersion;
     }
 
+    
+    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, OrganisationMetamac sourceProviderOrganisation) {
+        CodelistVersionMetamac codelistVersion = mockCodelist(maintainer);
+        codelistVersion.setSourceProvider(sourceProviderOrganisation);
+        return codelistVersion;
+    }
+    
     public static CodelistVersionMetamac mockCodelistFixedValues(String agencyID, String resourceID, String version) {
         CodelistVersionMetamac target = new CodelistVersionMetamac();
         CodesDoMocks.mockCodelistFixedValues(target, agencyID, resourceID, version);
@@ -50,6 +58,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setDescriptionSource(mockInternationalStringFixedValues("descriptionSource", getString(resourceID, version)));
         target.setIsRecommended(Boolean.TRUE);
         target.setAccessType(AccessTypeEnum.PUBLIC);
+        target.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         target.setFamily(mockCodelistFamilyFixedValues("family1"));
         target.setVariable(mockVariableFixedValues("variable1"));
         target.setDefaultOrderVisualisation(mockCodelistOrderVisualisationFixedValues("defaultOrderVisualisation1"));

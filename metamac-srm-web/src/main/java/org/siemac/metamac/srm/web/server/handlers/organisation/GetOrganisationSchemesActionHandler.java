@@ -37,17 +37,37 @@ public class GetOrganisationSchemesActionHandler extends SecurityActionHandler<G
 
     @Override
     public GetOrganisationSchemesResult executeSecurityAction(GetOrganisationSchemesAction action) throws ActionException {
+      
+
+        try {
+            MetamacCriteriaResult<OrganisationSchemeMetamacBasicDto> result = srmCoreServiceFacade.findOrganisationSchemesByCondition(ServiceContextHolder.getCurrentServiceContext(), getCriterias(action));
+            return new GetOrganisationSchemesResult(result.getResults(), result.getPaginatorResult().getFirstResult(), result.getPaginatorResult().getTotalResults());
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+    private MetamacCriteria getCriterias(GetOrganisationSchemesAction action) {
         MetamacCriteria criteria = new MetamacCriteria();
+
+        OrganisationSchemeWebCriteria organisationSchemeWebCriteria = action.getCriteria();
 
         // Order
         MetamacCriteriaOrder order = new MetamacCriteriaOrder();
-        order.setType(OrderTypeEnum.DESC);
-        order.setPropertyName(OrganisationSchemeVersionMetamacCriteriaOrderEnum.RESOURCE_LAST_UPDATED.name());
+        if (organisationSchemeWebCriteria.getOrderType() != null) {
+            order.setType(organisationSchemeWebCriteria.getOrderType());
+        } else {
+            order.setType(OrderTypeEnum.DESC);
+        }
+
+        if (organisationSchemeWebCriteria.getOrderField() != null) {
+            order.setPropertyName(organisationSchemeWebCriteria.getOrderField().name());
+        } else {
+            order.setPropertyName(OrganisationSchemeVersionMetamacCriteriaOrderEnum.RESOURCE_LAST_UPDATED.name());
+        }
         List<MetamacCriteriaOrder> criteriaOrders = new ArrayList<MetamacCriteriaOrder>();
         criteriaOrders.add(order);
         criteria.setOrdersBy(criteriaOrders);
-
-        OrganisationSchemeWebCriteria organisationSchemeWebCriteria = action.getCriteria();
 
         MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
 
@@ -61,11 +81,6 @@ public class GetOrganisationSchemesActionHandler extends SecurityActionHandler<G
         criteria.getPaginator().setMaximumResultSize(action.getMaxResults());
         criteria.getPaginator().setCountTotalResults(true);
 
-        try {
-            MetamacCriteriaResult<OrganisationSchemeMetamacBasicDto> result = srmCoreServiceFacade.findOrganisationSchemesByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria);
-            return new GetOrganisationSchemesResult(result.getResults(), result.getPaginatorResult().getFirstResult(), result.getPaginatorResult().getTotalResults());
-        } catch (MetamacException e) {
-            throw WebExceptionUtils.createMetamacWebException(e);
-        }
+        return criteria;
     }
 }

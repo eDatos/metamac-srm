@@ -84,6 +84,7 @@ import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
@@ -375,7 +376,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 .buildSingle());
         // Codelist with access type = PUBLIC
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
-
+        
         return findCodelistsByCondition(ctx, conditions, pagingParameter);
     }
 
@@ -550,10 +551,14 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistVersion.setIsRecommended(codelistTemporalVersion.getIsRecommended());
         // AccessType
         codelistVersion.setAccessType(codelistTemporalVersion.getAccessType());
+        // NormalizationType
+        codelistVersion.setNormalizationType(codelistTemporalVersion.getNormalizationType());
         // CodelistFamily
         codelistVersion.setFamily(codelistTemporalVersion.getFamily());
         // Variable
         codelistVersion.setVariable(codelistTemporalVersion.getVariable());
+        // SourceProvider
+        codelistVersion.setSourceProvider(codelistTemporalVersion.getSourceProvider());
 
         // Merge metadata of Item
         Map<String, Item> temporalItemMap = SrmServiceUtils.createMapOfItemsByOriginalUrn(codelistTemporalVersion.getItems());
@@ -762,7 +767,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Validation
         CodesMetamacInvocationValidator.checkImportCodesTsv(codelistUrn, file, fileName, updateAlreadyExisting, canBeBackground, null);
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
-        if (codelistVersion.getVariable() == null) {
+        if (codelistVersion.getVariable() == null && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
         }
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
@@ -810,9 +815,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     codesPreviousInCodelistByCode.put(item.getNameableArtefact().getCode(), (CodeMetamac) item);
                 }
                 // Retrieve variable elements. It is more efficient retrieve all variable element in one query than execute one query by variable element
-                Map<String, VariableElement> variableElementsInVariableByCode = new HashMap<>();
-                for (VariableElement variableElement : codelistVersion.getVariable().getVariableElements()) {
-                    variableElementsInVariableByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                Map<String, VariableElement> variableElementsInVariableByCode = new HashMap<String, VariableElement>();
+                //codelist variable may be null if normalizationType=NOT_STANDARDIZED.
+                if (codelistVersion.getVariable() != null) {
+                    for (VariableElement variableElement : codelistVersion.getVariable().getVariableElements()) {
+                        variableElementsInVariableByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                    }
                 }
 
                 int lineNumber = 2;
@@ -1368,7 +1376,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
         // Retrieve variable. All variable elements must belong to codelist varliable. In repository, error ocurrs if any variable element doesnot belong to this variable
         Variable variable = codelistVersion.getVariable();
-        if (variable == null) {
+        if (variable == null && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
         }
         // Update all
@@ -1514,7 +1522,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
                 .withProperty(new LeafProperty<CodeMetamac>(CodeMetamacProperties.itemSchemeVersion().getName(), CodelistVersionMetamacProperties.accessType().getName(), false, CodeMetamac.class))
                 .eq(AccessTypeEnum.PUBLIC).buildSingle());
-
+        
         return findCodesByCondition(ctx, conditions, pagingParameter);
     }
 

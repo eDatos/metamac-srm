@@ -41,8 +41,11 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistsResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ReplaceToResources;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
@@ -70,14 +73,18 @@ import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
+import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
+import org.siemac.metamac.srm.rest.internal.v1_0.mapper.organisation.OrganisationsDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.internal.v1_0.service.utils.SrmRestInternalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -86,13 +93,17 @@ import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 
+
 @Component
 public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements CodesDo2RestMapperV10 {
-
+        
     private final Logger logger = LoggerFactory.getLogger(CodesDo2RestMapperV10Impl.class);
+    
+    @Autowired
+    private OrganisationsDo2RestMapperV10         organisationsDo2RestMapper;
 
     @Override
-    public Codelists toCodelists(PagedResult<CodelistVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public Codelists toCodelists(PagedResult<CodelistVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException  {
 
         Codelists targets = new Codelists();
         targets.setKind(SrmRestConstants.KIND_CODELISTS);
@@ -103,7 +114,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
 
         // Values
         for (CodelistVersionMetamac source : sourcesPagedResult.getValues()) {
-            ResourceInternal target = toResource(source);
+            CodelistsResourceInternal target = toCodeListsResource(source);
             targets.getCodelists().add(target);
         }
         return targets;
@@ -128,15 +139,37 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setIsRecommended(source.getIsRecommended());
         target.setFamily(toResource(source.getFamily()));
         target.setVariable(toResource(source.getVariable()));
+        target.setNormalizationType(toNormalizationType(source.getNormalizationType()));
         target.setAccessType(toAccessType(source.getAccessType()));
         target.setReplacedBy(toCodelistReplacedBy(source));
         target.setReplaceTo(toCodelistReplaceTo(source));
+        target.setSourceProvider(sourceProvidertoOrganisation(sdmxOrganisationToOrganisationMetamac(source.getSourceProvider())));
         target.setOrderConfigurations(toOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
         target.setOpennessConfigurations(toOpennessConfigurations(source.getOpennessVisualisations(), source.getDefaultOpennessVisualisation()));
 
         return target;
     }
 
+    private Organisation sourceProvidertoOrganisation(OrganisationMetamac organisation) throws MetamacException {
+        if (organisation != null) {
+            return organisationsDo2RestMapper.toOrganisation(organisation);
+        }
+        return null;
+    }
+
+    private OrganisationMetamac sdmxOrganisationToOrganisationMetamac(com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation sourceProvider) {
+        if (sourceProvider != null) {
+            OrganisationMetamac organisation = new OrganisationMetamac();
+            organisation.setOrganisationType(sourceProvider.getOrganisationType());
+            organisation.setItemSchemeVersion(sourceProvider.getItemSchemeVersion());
+            organisation.setNameableArtefact(sourceProvider.getNameableArtefact());
+            organisation.setParent(sourceProvider.getParent());
+            organisation.setItemSchemeVersionFirstLevel(sourceProvider.getItemSchemeVersionFirstLevel());
+            return organisation;
+        }
+        return null;
+    }
+    
     @Override
     public ResourceInternal toResource(CodelistVersion source) {
         if (source == null) {
@@ -146,7 +179,18 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), toCodelistManagementApplicationLink(source), target);
         return target;
     }
-
+  
+    private CodelistsResourceInternal toCodeListsResource(CodelistVersionMetamac source) throws MetamacException {
+        if (source == null) {
+            return null;
+        }
+        CodelistsResourceInternal target = new CodelistsResourceInternal();
+        toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), toCodelistManagementApplicationLink(source), target);
+        target.setNormalizationType(toNormalizationType(source.getNormalizationType()));
+        target.setSourceProvider(sourceProvidertoOrganisation(sdmxOrganisationToOrganisationMetamac(source.getSourceProvider())));
+        return target;
+    }
+    
     @Override
     public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, 
             String extended, Set<String> fields) {
@@ -885,6 +929,18 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
     }
 
+    private NormalizationType toNormalizationType(NormalizationTypeEnum source) {
+        switch (source) {
+            case STANDARDIZED:
+                return org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType.STANDARDIZED;
+            case NOT_STANDARDIZED:
+                return org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType.NOT_STANDARDIZED;
+            default:
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     private ResourceInternal toCodelistReplacedBy(CodelistVersionMetamac source) {
         if (source.getReplacedByCodelist() == null) {
             return null;

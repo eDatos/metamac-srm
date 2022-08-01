@@ -138,6 +138,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                     return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case VARIABLE_FAMILY_URN:
                     return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.variable().families().nameableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
+                case NORMALIZATION_TYPE:
+                    return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.normalizationType(), PropertyTypeEnum.NORMALIZATION_TYPE, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

@@ -7,6 +7,7 @@ import "classpath:/btdesign/statistic-sdmx-v2_1-domain-enums.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base.btdesign"
 import "classpath:/btdesign/metamac-srm-core-codes-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-concepts.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-organisations.btdesign"
 
 
 Application CodesMetamac {
@@ -326,6 +327,12 @@ Application CodesMetamac {
 
 			"Stream message status"
             - @StreamMessageStatusEnum streamMessageStatus;
+            
+            "Normalization type"
+			- @NormalizationTypeEnum normalizationType;
+			
+			"Association to the source organization"
+			- @Organisation sourceProvider nullable cascade="refresh" databaseColumn="SOURCE_PROVIDER_FK" fetch="lazy";
 			
 			Repository CodelistVersionMetamacRepository {
 				save;

@@ -84,6 +84,7 @@ import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts;
@@ -129,6 +130,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
+import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;
 import com.arte.statistic.sdmx.srm.core.task.domain.TaskResult;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskResultTypeEnum;
@@ -179,7 +181,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelist() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        OrganisationMetamac sourceProviderOrganisation = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, sourceProviderOrganisation);
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
         ServiceContext ctx = getServiceContextAdministrador();
 
@@ -242,7 +245,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=" + codelistVersion.getMaintainableArtefact().getMaintainer().getIdAsMaintainer() + ":"
                 + codelistVersion.getMaintainableArtefact().getCode() + "(01.000)." + allExpanded.getNameableArtefact().getCode(), allExpanded.getNameableArtefact().getUrn());
         assertNotNull(allExpanded.getNameableArtefact().getName());
-
+        
+        //Check sourceProvider is created.
+        assertEquals(AGENCY_ROOT_2_V1, codelistVersion.getSourceProvider().getNameableArtefact().getUrn());
     }
 
     @Test
@@ -271,18 +276,44 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelistWithAditionalMetadata() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        OrganisationMetamac sourceProviderOrganisation = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, sourceProviderOrganisation);
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
 
         codelistVersion.setShortName(null);
         codelistVersion.setIsRecommended(null);
         codelistVersion.setAccessType(null);
+        codelistVersion.setSourceProvider(null);
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
 
         // Create
         CodelistVersionMetamac codelistVersionCreated = codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
         assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersion, codelistVersionCreated);
     }
 
+    @Test
+    public void testCreateCodelistWithoutNormalizationType() throws Exception {
+        OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
+        
+        codelistVersion.setShortName(null);
+        codelistVersion.setIsRecommended(null);
+        codelistVersion.setAccessType(null);
+        codelistVersion.setNormalizationType(null);
+
+        // Create
+        try {
+            codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
+            fail("codelist without required normalization type");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.METADATA_REQUIRED.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+
+    }
+       
+    
     @Test
     public void testCreateConceptSchemeErrorMaintainerNotDefault() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
@@ -370,6 +401,20 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals(ctx.getUserId(), codelistVersionUpdated.getLastUpdatedBy());
     }
 
+    @Test
+    public void testUpdateSourceProviderCodelist() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+        OrganisationMetamac sourceProviderOrganisation = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
+        
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, CODELIST_2_V1);
+        assertEquals("organisationScheme-1001-v1-org-0", codelistVersion.getSourceProvider().getUuid());
+        codelistVersion.setSourceProvider(sourceProviderOrganisation);
+        codelistVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
+        codelistVersion.setIsVariableUpdated(Boolean.FALSE);
+        CodelistVersionMetamac codelistVersionUpdated = codesService.updateCodelist(ctx, codelistVersion);
+        assertEquals("organisationScheme-1001-v1-org-1", codelistVersion.getSourceProvider().getUuid());
+    }
+    
     @Test
     public void testUpdateCodelistChangingCode() throws Exception {
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_3_V1);
@@ -605,7 +650,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         codelistVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
         codelistVersion.setIsVariableUpdated(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
-
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         codelistVersion.setShortName(com.arte.statistic.sdmx.srm.core.base.serviceapi.utils.BaseDoMocks.mockInternationalString());
         codelistVersion.setDescriptionSource(com.arte.statistic.sdmx.srm.core.base.serviceapi.utils.BaseDoMocks.mockInternationalString());
         codelistVersion.setIsRecommended(Boolean.TRUE);
@@ -656,6 +701,52 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     }
 
     @Test
+    public void testUpdateCodelistVariableNotRequired() throws Exception {
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_9_V1);
+        codelistVersion.setVariable(null);
+        codelistVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
+        codelistVersion.setIsVariableUpdated(Boolean.FALSE);
+        codelistVersion = codesService.updateCodelist(getServiceContextAdministrador(), codelistVersion);
+        assertEquals(NormalizationTypeEnum.NOT_STANDARDIZED, codelistVersion.getNormalizationType());
+
+    }
+    
+    @Test
+    public void testErrorCodelistCreatedNotStandardizedWithPublicAccess() throws Exception {
+        OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
+
+        codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.NOT_STANDARDIZED);
+
+        // Create codelist
+        try {
+            codesService.createCodelist(getServiceContextAdministrador(), codelistVersion);
+            fail("Codelist normalization type has not expected public access type");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS.getCode(), e.getExceptionItems().get(0).getCode());
+        }        
+    }
+    
+    @Test
+    public void testErrorCodelistUpdatedNotStandardizedWithPublicAccess() throws Exception {
+        CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
+        codelistVersion.setIsVariableUpdated(Boolean.FALSE);
+        codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.NOT_STANDARDIZED);
+
+        try {
+            codesService.updateCodelist(getServiceContextAdministrador(), codelistVersion);
+            fail("Codelist normalization type has not expected public access type");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+    
+    @Test
     public void testUpdateCodelistErrorChangeCodeInCodelistWithVersionAlreadyPublished() throws Exception {
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
         codelistVersion.getMaintainableArtefact().setCode("newCode");
@@ -700,6 +791,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Validate (only metadata in SRM Metamac; the others are checked in sdmx project)
         assertEquals(urn, codelistVersion.getMaintainableArtefact().getUrn());
         assertEquals(AccessTypeEnum.PUBLIC, codelistVersion.getAccessType());
+        assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
         assertEquals(Boolean.FALSE, codelistVersion.getIsRecommended());
         assertEqualsInternationalString(codelistVersion.getShortName(), "es", "Nombre corto 1-1", "en", "Short name 1-1");
         assertEqualsInternationalString(codelistVersion.getDescriptionSource(), "es", "descripción fuente codelist11-v1", null, null);
@@ -1750,6 +1842,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, urn);
             assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
             assertEquals(AccessTypeEnum.PUBLIC, codelistVersion.getAccessType());
+            assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationDate());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getProductionValidationUser());
             assertNotNull(codelistVersion.getLifeCycleMetadata().getDiffusionValidationDate());
@@ -1821,7 +1914,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, urn);
         assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, codelistVersion.getLifeCycleMetadata().getProcStatus());
         assertEquals(AccessTypeEnum.RESTRICTED, codelistVersion.getAccessType());
-
+        assertEquals(NormalizationTypeEnum.STANDARDIZED, codelistVersion.getNormalizationType());
         // save to avoid categorisations error
         codelistVersion.getMaintainableArtefact().removeAllCategorisations();
         itemSchemeRepository.save(codelistVersion);
@@ -2042,7 +2135,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Validate
         validateVersioningCodelist3V1();
     }
-
+    
     @Test
     public void testVersioningCodelistWithTwoVersionsPublished() throws Exception {
         // This test checks the copy from one version but replacing to another one that is last version.
@@ -11189,7 +11282,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(urnExpected, codelistVersionNewVersion.getMaintainableArtefact().getUrn());
             assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersionToCopy, codelistVersionNewVersion);
         }
-
+        
         // Validate retrieving
         // New version
         {
@@ -11201,6 +11294,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(null, codelistVersionNewVersion.getMaintainableArtefact().getReplacedByVersion());
             assertTrue(codelistVersionNewVersion.getMaintainableArtefact().getIsLastVersion());
             assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersionToCopy, codelistVersionNewVersion);
+            assertEquals(codelistVersionToCopy.getNormalizationType(), codelistVersionNewVersion.getNormalizationType());
+            assertEquals(codelistVersionToCopy.getSourceProvider().getNameableArtefact().getUrn(), codelistVersionNewVersion.getSourceProvider().getNameableArtefact().getUrn());
 
             // Codes
             assertEquals(5, codelistVersionNewVersion.getItems().size());

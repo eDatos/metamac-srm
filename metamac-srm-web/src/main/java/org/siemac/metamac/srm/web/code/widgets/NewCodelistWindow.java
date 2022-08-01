@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.web.client.utils.SemanticIdentifiersUtils;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedItem;
 import org.siemac.metamac.srm.web.code.model.ds.CodelistDS;
@@ -97,6 +98,7 @@ public class NewCodelistWindow extends CustomWindow {
         codelistDto.setCode(form.getValueAsString(CodelistDS.CODE));
         codelistDto.setName(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(CodelistDS.NAME)));
         codelistDto.setIsPartial(false);
+        codelistDto.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         codelistDto.setVariable(variableItem.getSelectedRelatedResource());
         return codelistDto;
     }

@@ -56,6 +56,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElementResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElements;
@@ -136,6 +137,26 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         assertEquals(getApiEndpoint() + "/codelists/" + agencyID + "?limit=4&offset=0", codelists.getPreviousLink());
         assertEquals(getApiEndpoint() + "/codelists/" + agencyID + "?limit=4&offset=36", codelists.getLastLink());
         assertEquals(SrmRestConstants.KIND_CODELISTS, codelists.getKind());
+    }
+    
+    @Test
+    public void testRetrieveRecodedCodesTestLinks() throws Exception {
+        
+        resetMocks();
+        
+        String agencyID = AGENCY_1;
+        String resourceID = ITEM_SCHEME_1_CODE;
+        String version = VERSION_1;
+        String agencyIDRef = AGENCY_1;
+        String resourceIDRef = ITEM_SCHEME_1_CODE;
+        String versionRef = VERSION_1;
+        String expectedUrl = "/codelists/" + agencyID + "/" + resourceID + "/" + version + "/" + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?" + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "="
+                + agencyIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=" + resourceIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION + "=" + versionRef;
+
+        RecodedCodes codes = getSrmRestInternalFacadeClientXml().retrieveRecodedCodes(agencyID, resourceID, version, agencyIDRef, resourceIDRef, versionRef);
+
+        assertEquals(getApiEndpoint() + expectedUrl, codes.getSelfLink());
+
     }
 
     @Test

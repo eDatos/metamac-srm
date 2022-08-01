@@ -1,5 +1,7 @@
 package org.siemac.metamac.srm.rest.external.v1_0.code.utils;
 
+import java.util.List;
+
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -12,6 +14,7 @@ import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
+import org.siemac.metamac.srm.core.code.domain.shared.RelatedCode;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacDoMocks;
@@ -104,6 +107,10 @@ public class CodesDoMocks {
         return CodesMetamacDoMocks.mockCodelistFamilyFixedValues(resourceID);
     }
 
+    public static List<RelatedCode> mockRelatedCodes() {
+        return  CodesMetamacDoMocks.mockListRelatedCodeFixedValues();
+    }
+    
     private static void addReplaceMetadatasToCodelist(CodelistVersionMetamac target, String agencyID) {
         target.setReplacedByCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplacedBy", "01.000", AccessTypeEnum.PUBLIC, true, true));
         target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo1", "01.000", AccessTypeEnum.PUBLIC, true, true));

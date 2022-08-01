@@ -115,17 +115,6 @@ public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTe
         return uri.toString();
     }
 
-    protected String getUriRecodedCodes(String agencyID, String resourceID, String version, String agencyIDReference, String resourceIDReference, String versionReference) {
-        String uri = getUriItemSchemes(agencyID, resourceID, version);
-        uri = RestUtils.createLink(uri, SrmRestConstants.LINK_SUBPATH_RECODED_CODES);
-        uri = RestUtils.createLinkWithQueryParam(uri, SrmRestConstants.PARAMETER_REFERENCE_AGENCYID, agencyIDReference);
-        uri = RestUtils.createLinkWithQueryParam(uri, SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID, resourceIDReference);
-        uri = RestUtils.createLinkWithQueryParam(uri, SrmRestConstants.PARAMETER_REFERENCE_VERSION, versionReference);
-        
-        return uri.toString();
-    }
-    
-    
     protected String getUriItems(String agencyID, String resourceID, String version, String query, String limit, String offset, String fields) throws Exception {
         String uri = getUriItemSchemes(agencyID, resourceID, version) + "/" + getSupathItems();
         uri = RestUtils.createLinkWithQueryParam(uri, RestConstants.PARAMETER_QUERY, RestUtils.encodeParameter(query));

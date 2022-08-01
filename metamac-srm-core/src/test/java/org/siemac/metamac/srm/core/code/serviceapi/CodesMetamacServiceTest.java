@@ -7619,9 +7619,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         String variableElementUrn = VARIABLE_2_VARIABLE_ELEMENT_2;
         String codeUrn = CODELIST_1_V2_CODE_1;
+        String codeUrn2 = CODELIST_2_V1_CODE_2;
         VariableElement variableElement = codesService.retrieveVariableElementByUrn(ctx, variableElementUrn);
         assertEquals(2, variableElement.getCodes().size());
-        assertEquals(codeUrn, variableElement.getCodes().get(0).getNameableArtefact().getUrn());
+        assertEquals(codeUrn2, variableElement.getCodes().get(0).getNameableArtefact().getUrn());        
+        assertEquals(codeUrn, variableElement.getCodes().get(1).getNameableArtefact().getUrn());
 
         // Delete variableElement
         try {
@@ -7632,7 +7634,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(ServiceExceptionType.VARIABLE_ELEMENT_WITH_RELATIONS.getCode(), e.getExceptionItems().get(0).getCode());
             assertEquals(2, e.getExceptionItems().get(0).getMessageParameters().length);
             assertEquals(variableElementUrn, e.getExceptionItems().get(0).getMessageParameters()[0]);
-            assertEquals(codeUrn, e.getExceptionItems().get(0).getMessageParameters()[1]);
+            assertEquals(codeUrn2, e.getExceptionItems().get(0).getMessageParameters()[1]);
         }
 
         // Check that the code has not been deleted

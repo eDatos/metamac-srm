@@ -50,6 +50,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.tz.DateTimeZoneBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.siemac.metamac.common.test.utils.DirtyDatabase;
@@ -7612,7 +7613,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEqualsMetamacExceptionItem(ServiceExceptionType.VARIABLE_ELEMENT_WITH_OPERATIONS, 1, new String[]{variableElementUrn}, e.getExceptionItems().get(0));
         }
     }
-
+    
     @Test
     public void testDeleteVariableElementErrorWithCodes() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
@@ -7620,10 +7621,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         String variableElementUrn = VARIABLE_2_VARIABLE_ELEMENT_2;
         String codeUrn = CODELIST_1_V2_CODE_1;
         String codeUrn2 = CODELIST_2_V1_CODE_2;
+        List<String> codes = Arrays.asList(codeUrn, codeUrn2);
+
         VariableElement variableElement = codesService.retrieveVariableElementByUrn(ctx, variableElementUrn);
         assertEquals(2, variableElement.getCodes().size());
-        assertEquals(codeUrn2, variableElement.getCodes().get(0).getNameableArtefact().getUrn());        
-        assertEquals(codeUrn, variableElement.getCodes().get(1).getNameableArtefact().getUrn());
+        assertTrue(codes.contains(variableElement.getCodes().get(0).getNameableArtefact().getUrn()));
+        assertTrue(codes.contains(variableElement.getCodes().get(1).getNameableArtefact().getUrn()));
 
         // Delete variableElement
         try {
@@ -7634,7 +7637,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(ServiceExceptionType.VARIABLE_ELEMENT_WITH_RELATIONS.getCode(), e.getExceptionItems().get(0).getCode());
             assertEquals(2, e.getExceptionItems().get(0).getMessageParameters().length);
             assertEquals(variableElementUrn, e.getExceptionItems().get(0).getMessageParameters()[0]);
-            assertEquals(codeUrn2, e.getExceptionItems().get(0).getMessageParameters()[1]);
+            assertTrue(codes.contains(e.getExceptionItems().get(0).getMessageParameters()[1]));
         }
 
         // Check that the code has not been deleted

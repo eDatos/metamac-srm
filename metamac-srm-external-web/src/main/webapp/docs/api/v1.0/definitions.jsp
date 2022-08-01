@@ -1386,9 +1386,9 @@
          ],
          "description":""
       },
-      "EquivalentCodeResource":{
+      "RecodedCodeResource":{
          "type":"object",
-         "title":"EquivalentCodeResource",
+         "title":"RecodedCodeResource",
          "allOf":[
             {
                "$ref":"#/definitions/Resource"
@@ -1398,14 +1398,7 @@
             },
             {
                "properties":{
-                  "sourceCode":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
-                     },
-                     "equivalentCode":"",
-                     "type":"string"
-                  },
-                  "equivalentCode":{
+                  "recodedId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
@@ -1594,9 +1587,9 @@
          ],
          "description":""
       },
-      "EquivalentCodes":{
+      "RecodedCodes":{
          "type":"object",
-         "title":"EquivalentCodes",
+         "title":"RecodedCodes",
          "allOf":[
             {
                "$ref":"#/definitions/ListBase"
@@ -1608,7 +1601,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/EquivalentCodeResource"
+                     "$ref":"#/definitions/RecodedCodeResource"
                   }
                }
             }

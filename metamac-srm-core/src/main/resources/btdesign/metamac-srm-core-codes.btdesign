@@ -140,7 +140,7 @@ Application CodesMetamac {
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOverridingOnlyWithoutVariableElement) throws MetamacException;
 	   		 
 	   		"Retrieve equivalence of codes between two codelists"
-			List<EquivalenceCode> retrieveEquivalenceOfCodesBetweenTwoCodelists(@CodelistVersionMetamac codelistVersionOrigin, @CodelistVersionMetamac codelistVersionToMatch) throws MetamacException;   		
+			List<RelatedCode> retrieveRecodedCodes(@CodelistVersionMetamac codelistVersionOrigin, @CodelistVersionMetamac codelistVersionToMatch) throws MetamacException;   		
     		
     		// VISUALISATIONS
     		

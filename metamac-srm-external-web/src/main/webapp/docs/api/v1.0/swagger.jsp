@@ -998,53 +998,53 @@
             }
          }
       },
-      "/v1.0/codelists/{agencyID1}/{resourceID1}/{version1}/equivalencies/{agencyID2}/{resourceID2}/{version2}":{
+      "/v1.0/codelists/{agencyID}/{resourceID}/{version}/recode":{
          "get":{
             "tags":[
                "Clasificaciones"
             ],
             "description":"Permite obtener las equivalencias de los códigos de un codelist en los códigos de otro codelist",
-            "operationId":"resource__v1.0_codelists__agencyID1___resourceID1___version1__equivalencies__agencyID2___resourceID2___version2_retrieveEquivalenceOfCodes_GET",
+            "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__recode_retrieveRecodedCodes_GET",
             "produces":[
                "application/json",
                "application/xml"
             ],
             "parameters":[
             {
-                  "name":"agencyID1",
+                  "name":"agencyID",
                   "in":"path",
                   "type":"string",
                   "description":"Identificador de la agencia origen"
             },
             {
-                  "name":"resourceID1",
+                  "name":"resourceID",
                   "in":"path",
                   "type":"string",
                   "description":"Identificador del recurso origen"
             },
             {
-                  "name":"version1",
+                  "name":"version",
                   "in":"path",
                   "type":"string",
                   "description":"Identificador de la versión origen"
             },
             {
-                  "name":"agencyID2",
-                  "in":"path",
+                  "name":"referenceAgencyID",
+                  "in":"query",
                   "type":"string",
-                  "description":"Identificador de la agencia de la clasificación sobre la que obtener las equivalencias"
+                  "description":"Identificador de la agencia de la clasificación de referencia para recodificar"
             },
             {
-                  "name":"resourceID2",
-                  "in":"path",
+                  "name":"referenceResourceID",
+                  "in":"query",
                   "type":"string",
-                  "description":"Identificador del recurso de la clasificación sobre la que obtener las equivalencias"
+                  "description":"Identificador del recurso de la clasificación de referencia para recodificar"
             },
             {
-                  "name":"version2",
-                  "in":"path",
+                  "name":"referenceVersion",
+                  "in":"query",
                   "type":"string",
-                  "description":"Identificador de la versión de la clasificación sobre la que obtener las equivalencias"
+                  "description":"Identificador de la versión de la clasificación de referencia para recodificar"
             }
             
             ],
@@ -1052,7 +1052,7 @@
                "200":{
                	  "schema":{
                      "description":"",
-                     "$ref":"#/definitions/EquivalentCodes"
+                     "$ref":"#/definitions/RecodedCodes"
                   },               
                   "headers":{
 

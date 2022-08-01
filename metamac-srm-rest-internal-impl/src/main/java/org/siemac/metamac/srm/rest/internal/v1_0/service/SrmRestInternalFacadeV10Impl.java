@@ -71,7 +71,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataPro
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataProviders;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.EquivalentCodes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationSchemes;
@@ -107,7 +107,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.VariableFamilyProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableProperties;
-import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
+import org.siemac.metamac.srm.core.code.domain.shared.RelatedCode;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
@@ -894,7 +894,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     }
     
     @Override
-    public EquivalentCodes retrieveEquivalenceOfCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
+    public RecodedCodes retrieveRecodedCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
@@ -908,9 +908,9 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
             checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
             
-            List<EquivalenceCode> items = codesService.retrieveEquivalenceOfCodesBetweenTwoCodelists(ctx, codelistVersionOrigin, codelistVersionToMatch);
+            List<RelatedCode> items = codesService.retrieveRecodedCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
             
-            return codesDo2RestMapper.toEquivalentCodes(codelistVersionOrigin, codelistVersionToMatch, items);
+            return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
             
         } catch (Exception e) {
             throw manageException(e);
@@ -1970,10 +1970,10 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         checkParameterNotWildcardAll(parameterNameItemID, itemID);
     }
 
-    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) throws MetamacException {
+    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) {
         if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
-                || codelistVersion1.getVariable().getId().longValue() != codelistVersion2.getVariable().getId().longValue()) {
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_EQUIVALENCES);
+                || !codelistVersion1.getVariable().getNameableArtefact().getCode().equals(codelistVersion2.getVariable().getNameableArtefact().getCode())) {
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_RECODING);
             throw new RestException(exception, Status.BAD_REQUEST);
         }
     }

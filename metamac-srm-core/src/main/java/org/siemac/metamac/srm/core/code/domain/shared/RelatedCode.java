@@ -2,25 +2,26 @@ package org.siemac.metamac.srm.core.code.domain.shared;
 
 import java.io.Serializable;
 
-public class EquivalenceCode implements Serializable {
+public class RelatedCode implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String            originCodeUrn;
-    private String            equivalentCodeUrn;
+    private String            recodedCodeUrn;
     private String            originCode;
-    private String            equivalentCode;
+    private String            recodedCode;
     private String            variableElement;
 
-    public EquivalenceCode() {
+    public RelatedCode() {
+        // without impl.
     }
 
-    public String getEquivalentCode() {
-        return equivalentCode;
+    public String getRecodedCode() {
+        return recodedCode;
     }
 
-    public void setEquivalentCode(String equivalentCode) {
-        this.equivalentCode = equivalentCode;
+    public void setRecodedCode(String recodedCode) {
+        this.recodedCode = recodedCode;
     }
 
     public String getOriginCode() {
@@ -31,12 +32,12 @@ public class EquivalenceCode implements Serializable {
         this.originCode = originCode;
     }
 
-    public String getEquivalentCodeUrn() {
-        return equivalentCodeUrn;
+    public String getRecodedCodeUrn() {
+        return recodedCodeUrn;
     }
 
-    public void setEquivalentCodeUrn(String equivalentCodeUrn) {
-        this.equivalentCodeUrn = equivalentCodeUrn;
+    public void setRecodedCodeUrn(String recodedCodeUrn) {
+        this.recodedCodeUrn = recodedCodeUrn;
     }
 
     public String getOriginCodeUrn() {

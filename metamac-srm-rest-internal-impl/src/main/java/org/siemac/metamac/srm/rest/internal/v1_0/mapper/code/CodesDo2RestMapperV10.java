@@ -10,7 +10,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.EquivalentCodes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElementsGeoInfo;
@@ -23,7 +23,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
-import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
+import org.siemac.metamac.srm.core.code.domain.shared.RelatedCode;
 
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
@@ -36,7 +36,7 @@ public interface CodesDo2RestMapperV10 {
     ResourceInternal toResource(CodelistVersion source);
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
-    EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac CodelistVersionToMatch, List<EquivalenceCode> sources);
+    RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac CodelistVersionToMatch, List<RelatedCode> sources);
     
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction);
     Code toCode(CodeMetamac source);

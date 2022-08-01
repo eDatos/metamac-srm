@@ -82,7 +82,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
-import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
+import org.siemac.metamac.srm.core.code.domain.shared.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
@@ -361,23 +361,23 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return findCodelistsCanReplaceToByCondition(ctx, codelistUrn, false, conditions, pagingParameter);
     }
 
-    public List<EquivalenceCode> retrieveEquivalenceOfCodesBetweenTwoCodelists(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
+    public List<RelatedCode> retrieveRecodedCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
             throws MetamacException {
 
-        List<EquivalenceCode> equivalenceCodes = new ArrayList<>();
+        List<RelatedCode> recodedCodes = new ArrayList<>();
 
-        Map<Long, CodeMetamac> codesToMatch = retrieveCodesToMatch(codelistVersionToMatch.getItems());
+        Map<String, CodeMetamac> codesToMatch = retrieveCodesToMatch(codelistVersionToMatch.getItems());
 
         for (Code code : codelistVersionOrigin.getItems()) {
             CodeMetamac codeMetamacOrigin = (CodeMetamac) code;
             CodeMetamac matchedCode = null;
             if (codeMetamacOrigin.getVariableElement() != null) {
-                matchedCode = codesToMatch.get(codeMetamacOrigin.getVariableElement().getId());
+                matchedCode = codesToMatch.get(codeMetamacOrigin.getVariableElement().getIdentifiableArtefact().getCode());
             }
-            equivalenceCodes.add(setEquivalenceCodes(codeMetamacOrigin, matchedCode));
+            recodedCodes.add(setRecodedCodes(codeMetamacOrigin, matchedCode));
         }
 
-        return equivalenceCodes;
+        return recodedCodes;
 
     }
        
@@ -4263,27 +4263,30 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelist.setDefaultOpennessVisualisation(codelistOpennessVisualisation);
     }
     
-    private Map<Long, CodeMetamac> retrieveCodesToMatch(List<Code> codesToMatch) {
-        Map<Long, CodeMetamac> codes = new HashMap<>();
+    private Map<String, CodeMetamac> retrieveCodesToMatch(List<Code> codesToMatch) {
+        Map<String, CodeMetamac> codes = new HashMap<>();
         for (Code code : codesToMatch) {
+            
             CodeMetamac codeMetamac = (CodeMetamac) code;
+            VariableElement d = codeMetamac.getVariableElement();
             if (codeMetamac.getVariableElement() != null) {
-                codes.put(codeMetamac.getVariableElement().getId(), codeMetamac);
+                codes.put(codeMetamac.getVariableElement().getIdentifiableArtefact().getCode(), codeMetamac);
             }
         }
         return codes;
     }
     
-    private EquivalenceCode setEquivalenceCodes(CodeMetamac code1, CodeMetamac code2) {
-        EquivalenceCode equivalenceCode = new EquivalenceCode();
-        equivalenceCode.setOriginCode(code1.getNameableArtefact().getCode());
-        equivalenceCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());
-        equivalenceCode.setVariableElement(code1.getVariableElement().getIdentifiableArtefact().getCode());
+    private RelatedCode setRecodedCodes(CodeMetamac code1, CodeMetamac code2) {
+        RelatedCode recodedCode = new RelatedCode();
+        recodedCode.setOriginCode(code1.getNameableArtefact().getCode());
+        recodedCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());        
+        recodedCode.setVariableElement(code1.getVariableElement() != null ? code1.getVariableElement().getIdentifiableArtefact().getCode() : null);
+        
         if (code2 != null) {
-            equivalenceCode.setEquivalentCode(code2.getNameableArtefact().getCode());
-            equivalenceCode.setEquivalentCodeUrn(code2.getNameableArtefact().getUrn());
+            recodedCode.setRecodedCode(code2.getNameableArtefact().getCode());
+            recodedCode.setRecodedCodeUrn(code2.getNameableArtefact().getUrn());
         }
-        return equivalenceCode;
+        return recodedCode;
     }
     
 }

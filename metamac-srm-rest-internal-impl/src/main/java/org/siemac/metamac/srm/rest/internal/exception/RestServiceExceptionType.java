@@ -35,7 +35,7 @@ public class RestServiceExceptionType extends RestCommonServiceExceptionType {
     public static final RestCommonServiceExceptionType VARIABLE_NOT_FOUND                                             = create("exception.structural_resources.variable.not_found");
     public static final RestCommonServiceExceptionType VARIABLE_ELEMENT_NOT_FOUND                                     = create("exception.structural_resources.variable_element.not_found");
     public static final RestCommonServiceExceptionType CODELIST_FAMILY_NOT_FOUND                                      = create("exception.structural_resources.codelist_family.not_found");
-    public static final RestCommonServiceExceptionType VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_EQUIVALENCES         = create(
+    public static final RestCommonServiceExceptionType VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_RECODING             = create(
             "exception.structural_resources.codelists.variable.variable_must_be_the_same");
 
     public static final RestCommonServiceExceptionType DATA_STRUCTURE_NOT_FOUND                                       = create("exception.structural_resources.data_structure.not_found");

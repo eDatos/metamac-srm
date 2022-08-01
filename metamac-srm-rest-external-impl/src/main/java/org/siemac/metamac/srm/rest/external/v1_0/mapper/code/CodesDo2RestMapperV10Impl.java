@@ -41,8 +41,8 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.EquivalentCodeResource;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.EquivalentCodes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodeResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ReplaceToResources;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variable;
@@ -69,7 +69,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
-import org.siemac.metamac.srm.core.code.domain.shared.EquivalenceCode;
+import org.siemac.metamac.srm.core.code.domain.shared.RelatedCode;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
@@ -186,15 +186,15 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public EquivalentCodes toEquivalentCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<EquivalenceCode> sources) {
+    public RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources) {
 
-        EquivalentCodes targets = new EquivalentCodes();
+        RecodedCodes targets = new RecodedCodes();
 
-        targets.setSelfLink(toEquivalentCodesLink(sourceCodelistVersion, codelistVersionToMatch));
+        targets.setSelfLink(toRecodedCodesLink(sourceCodelistVersion, codelistVersionToMatch));
         targets.setTotal(BigInteger.valueOf(sources.size()));
 
-        for (EquivalenceCode source : sources) {
-            EquivalentCodeResource target = toEquivalentCodeResource(source);
+        for (RelatedCode source : sources) {
+            RecodedCodeResource target = toRecodedCodeResource(source);
             targets.getCodes().add(target);
         }
         return targets;
@@ -315,13 +315,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
     }
 
-    private EquivalentCodeResource toEquivalentCodeResource(EquivalenceCode source) {
+    private RecodedCodeResource toRecodedCodeResource(RelatedCode source) {
         if (source == null) {
             return null;
         }
-        EquivalentCodeResource target = new EquivalentCodeResource();
-        target.setSourceCode(source.getOriginCode());
-        target.setEquivalentCode(source.getEquivalentCode());
+        RecodedCodeResource target = new RecodedCodeResource();
+        target.setId(source.getOriginCode());
+        target.setRecodedId(source.getRecodedCode());
 
         return target;
     }
@@ -715,12 +715,15 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private String toCodesLink(String agencyID, String resourceID, String version) {
         return toItemsLink(toSubpathItemSchemes(), toSubpathItems(), agencyID, resourceID, version);
     }
+    
     private String toCodesLink(ItemSchemeVersion itemSchemeVersion) {
         return toItemsLink(toSubpathItemSchemes(), toSubpathItems(), itemSchemeVersion);
     }
-    private String toEquivalentCodesLink(ItemSchemeVersion itemSchemeVersion1, ItemSchemeVersion itemSchemeVersion2) {
-        return toEquivalentCodesLink(toSubpathItemSchemes(), itemSchemeVersion1, itemSchemeVersion2);
+   
+    private String toRecodedCodesLink(ItemSchemeVersion itemSchemeVersionSource, ItemSchemeVersion itemSchemeVersionReference) {
+        return toRecodedCodesItemLink(toSubpathItemSchemes(), itemSchemeVersionSource, itemSchemeVersionReference);
     }
+    
     private String toCodeLink(com.arte.statistic.sdmx.srm.core.base.domain.Item item) {
         return toItemLink(toSubpathItemSchemes(), toSubpathItems(), item);
     }

@@ -481,7 +481,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     @Test
     public void testFindCodesRetrieveExtendedXml() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, null, "S", null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, null, true, null);
         assertNotNull(codes);
         assertEquals(BigInteger.valueOf(2), codes.getTotal());
     }

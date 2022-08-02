@@ -15,6 +15,7 @@
   ```shell
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_create _normalization_type_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220714_create _source_provider_column.sql
+  etc/changes-from-release/3.1.0/db/srm/postgresql/20220725_create _is_extended_code_column.sql
   ```
   ```
 

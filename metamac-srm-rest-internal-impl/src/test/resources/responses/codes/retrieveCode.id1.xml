@@ -55,5 +55,5 @@
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/variables/variable;id=variable01/variableElement;id=variableElement-item1</sr:managementAppLink>
     </sr:variableElement>
-    <sr:extended>S</sr:extended>
+    <sr:extended>true</sr:extended>
 </sr:code>

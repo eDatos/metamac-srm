@@ -142,7 +142,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, String extended, Set<String> fields) {
+    public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
@@ -166,7 +166,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, String extended) {
+    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
@@ -201,26 +201,30 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         return codesInRestriction;
     }
-   
-    private List<ItemResult> getCodesWithExtendedSelection(List<ItemResult> sources, String extended) {
+    
+    private List<ItemResult> getCodesWithExtendedSelection(List<ItemResult> sources, Boolean extended) {
         List<ItemResult> codesWithExtendedOption = new ArrayList<>();
         for (ItemResult source : sources) {
             Boolean isExtendedCode = ((CodeMetamacResultExtensionPoint) source.getExtensionPoint()).getIsExtended();
-            if ("S".equals(extended) && Boolean.TRUE.equals(isExtendedCode) || ("N".equals(extended) && !Boolean.TRUE.equals(isExtendedCode))) {
+            if (checkExtendedField(extended, isExtendedCode)) {
                 codesWithExtendedOption.add(source);
             }
         }
         return codesWithExtendedOption;
     }
 
-    private List<CodeMetamac> getCodesWithConditionsWithExtendedSelection(List<CodeMetamac> sources, String extended) {
+    private List<CodeMetamac> getCodesWithConditionsWithExtendedSelection(List<CodeMetamac> sources, Boolean extended) {
         List<CodeMetamac> codesWithExtendedOption = new ArrayList<>();
         for (CodeMetamac source : sources) {
-            if ("S".equals(extended) && Boolean.TRUE.equals(source.getIsExtended()) || ("N".equals(extended) && !Boolean.TRUE.equals(source.getIsExtended()))) {
+            if (checkExtendedField(extended, source.getIsExtended())) {
                 codesWithExtendedOption.add(source);
             }
         }
         return codesWithExtendedOption;
+    }
+
+    private boolean checkExtendedField(Boolean extendedParam, Boolean extendedData) {
+        return (Boolean.TRUE.equals(extendedParam) && Boolean.TRUE.equals(extendedData)) || (!Boolean.TRUE.equals(extendedParam) && !Boolean.TRUE.equals(extendedData));
     }
     
     @Override
@@ -242,7 +246,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         } else {
             target.setShortName(toInternationalString(source.getVariableElement().getShortName()));
         }
-        target.setExtended(source.getIsExtended() ? "S" : "N");
+        target.setExtended(source.getIsExtended());
 
         return target;
     }
@@ -298,7 +302,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
             target.setVariableElement(toResource(source.getVariableElement()));
         }
-        target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE) ? SrmRestInternalUtils.booleanToString(source.getIsExtended())  : null);
+        target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE) ? source.getIsExtended()  : null);
         target.setOpen(null);
         target.setOrder(null);
     }
@@ -329,8 +333,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
 
         target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE)
-                ? SrmRestInternalUtils.booleanToString(SrmServiceUtils.getCodeItemResultIsExtended(source))
-                : null);
+                ? SrmServiceUtils.getCodeItemResultIsExtended(source) : null);
     }
 
     @Override

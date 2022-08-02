@@ -846,7 +846,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
     @Override
     public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
-            String extended, String fields) {
+            Boolean extended, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
@@ -938,7 +938,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         return orderToUse;
     }
 
-    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String extended,
+    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Boolean extended,
             Set<String> fieldsToShow) throws MetamacException {
         // Find. Retrieve codes paginated
         SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);

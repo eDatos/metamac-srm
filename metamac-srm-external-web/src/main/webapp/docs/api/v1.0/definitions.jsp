@@ -1348,7 +1348,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "type":"string"
+                     "type":"boolean"
                   }
                }
             }
@@ -1393,7 +1393,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "type":"string"
+                     "type":"boolean"
                   }
                }
             }

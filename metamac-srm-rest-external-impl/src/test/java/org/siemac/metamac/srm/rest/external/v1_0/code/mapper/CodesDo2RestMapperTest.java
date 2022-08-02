@@ -253,7 +253,7 @@ public class CodesDo2RestMapperTest {
         String orderBy = ORDER_BY_ID_DESC;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
-        String extended = null;
+        Boolean extended = null;
         Set<String> fields = null;
 
         CodelistVersionMetamac codeScheme1 = mockCodelist(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);

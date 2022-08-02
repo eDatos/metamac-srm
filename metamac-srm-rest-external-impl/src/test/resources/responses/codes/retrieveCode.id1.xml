@@ -40,5 +40,5 @@
         <cdomain:text xml:lang="es">shortName-variableElement-item1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">shortName-variableElement-item1 in English</cdomain:text>
     </sr:shortName>
-    <sr:extended>S</sr:extended>
+    <sr:extended>true</sr:extended>
 </sr:code>

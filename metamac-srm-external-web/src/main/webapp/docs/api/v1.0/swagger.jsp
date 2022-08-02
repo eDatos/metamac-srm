@@ -1038,8 +1038,8 @@
                {
                   "name":"extended",
                   "in":"query",
-                  "type":"string",
-                  "description":"Indicará el tipo de código que se desea mostrar. Dos valores posibles: <ul><li>S: sólo se muestran códigos extendidos</li><li>N: sólo se muestran códigos no extendidos</li></ul>"
+                  "type":"boolean",
+                  "description":"Indicará el tipo de código que se desea mostrar. Dos valores posibles: <ul><li>true: sólo se muestran códigos extendidos</li><li>false: sólo se muestran códigos no extendidos</li></ul>"
                },
               {
                   "name":"fields",

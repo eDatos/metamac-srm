@@ -9,7 +9,7 @@
             <cdomain:text xml:lang="es">name-code1 en Español</cdomain:text>
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/codelists/codelist;id=agency1:itemScheme1(01.000)/code;id=code1</sr:managementAppLink>
-        <sr:extended>S</sr:extended>
+        <sr:extended>true</sr:extended>
     </sr:code>
     <sr:code kind="structuralResources#code">
         <cdomain:id>code2</cdomain:id>
@@ -20,7 +20,7 @@
             <cdomain:text xml:lang="es">name-code2 en Español</cdomain:text>
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/codelists/codelist;id=agency1:itemScheme1(01.000)/code;id=code2</sr:managementAppLink>
-        <sr:extended>N</sr:extended>
+        <sr:extended>false</sr:extended>
     </sr:code>
     <sr:code kind="structuralResources#code">
         <cdomain:id>code2A</cdomain:id>
@@ -32,7 +32,6 @@
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/codelists/codelist;id=agency1:itemScheme1(01.000)/code;id=code2A</sr:managementAppLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2</sr:parent>
-        <sr:extended>N</sr:extended>
     </sr:code>
     <sr:code kind="structuralResources#code">
         <cdomain:id>code2B</cdomain:id>
@@ -44,6 +43,6 @@
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/codelists/codelist;id=agency1:itemScheme1(01.000)/code;id=code2B</sr:managementAppLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2</sr:parent>
-        <sr:extended>S</sr:extended>
+        <sr:extended>true</sr:extended>
     </sr:code>
 </sr:codes>

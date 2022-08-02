@@ -88,7 +88,7 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
     protected String toRecodedCodesItemLink(String schemesSubPath, ItemSchemeVersion itemSchemeVersion1, ItemSchemeVersion itemSchemeVersion2) {
         MaintainableArtefact maintainableArtefact = itemSchemeVersion1.getMaintainableArtefact();
         String link = toMaintainableArtefactLink(schemesSubPath, getIdAsMaintainer(maintainableArtefact.getMaintainer()), getCode(maintainableArtefact), maintainableArtefact.getVersionLogic());
-        link = RestUtils.createLink(link, SrmRestConstants.LINK_SUBPATH_RECODED_CODES);
+        link += SrmRestConstants.LINK_SUBPATH_RECODED_CODES; 
         
         MaintainableArtefact maintainableArtefact2 = itemSchemeVersion2.getMaintainableArtefact();
         link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_AGENCYID, getIdAsMaintainer(maintainableArtefact2.getMaintainer()));

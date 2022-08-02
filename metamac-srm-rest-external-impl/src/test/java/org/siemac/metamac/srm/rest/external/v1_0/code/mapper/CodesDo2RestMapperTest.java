@@ -233,7 +233,7 @@ public class CodesDo2RestMapperTest {
         RecodedCodes target = do2RestInternalMapper.toRecodedCodes(sourceCodelist, referenceCodelist, relatedCodes);
 
         assertTrue(2 == target.getTotal().intValue());
-        String expectedUrl = "http://data.istac.es/apis/structural-resources-internal/v1.0/codelists/agencyID1/resourceID1/01.000/" + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?"
+        String expectedUrl = "http://data.istac.es/apis/structural-resources/v1.0/codelists/agencyID1/resourceID1/01.000" + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?"
                 + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "=agencyID2&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=resourceID2&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION
                 + "=01.000";
         assertEquals(expectedUrl, target.getSelfLink());

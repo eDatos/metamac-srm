@@ -150,7 +150,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         String agencyIDRef = AGENCY_1;
         String resourceIDRef = ITEM_SCHEME_1_CODE;
         String versionRef = VERSION_1;
-        String expectedUrl = "/codelists/" + agencyID + "/" + resourceID + "/" + version + "/" + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?" + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "="
+        String expectedUrl = "/codelists/" + agencyID + "/" + resourceID + "/" + version + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?" + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "="
                 + agencyIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=" + resourceIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION + "=" + versionRef;
 
         RecodedCodes codes = getSrmRestInternalFacadeClientXml().retrieveRecodedCodes(agencyID, resourceID, version, agencyIDRef, resourceIDRef, versionRef);

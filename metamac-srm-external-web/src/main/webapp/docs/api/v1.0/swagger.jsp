@@ -998,7 +998,7 @@
             }
          }
       },
-      "/v1.0/codelists/{agencyID}/{resourceID}/{version}/recode":{
+      "/v1.0/codelists/{agencyID}/{resourceID}/{version}:recode":{
          "get":{
             "tags":[
                "Clasificaciones"

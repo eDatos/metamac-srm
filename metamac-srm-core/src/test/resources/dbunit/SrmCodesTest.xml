@@ -413,6 +413,7 @@
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
               TB_CODES="111"
+              IS_EXTENDED="[null]"
               
               ORDER1="0"
               ORDER2="[null]"
@@ -719,6 +720,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="22"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="1"
               TB_CODES="121"
               ORDER1="0"
               ORDER2="0"
@@ -802,6 +804,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="77"
+              IS_EXTENDED="1"
               TB_CODES="122"
                 ORDER1="1"
                 ORDER2="1"
@@ -860,6 +863,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="21"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="0"
               TB_CODES="1221"
               ORDER1="0"
               ORDER2="0"
@@ -943,6 +947,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="94"
+              IS_EXTENDED="0"
               TB_CODES="12211"
               ORDER1="0"
               ORDER2="0"
@@ -1001,6 +1006,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1222"
               ORDER1="1"
               ORDER2="1"
@@ -1059,6 +1065,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="23"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="123"
               ORDER1="2"
               ORDER2="2"
@@ -1117,6 +1124,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="141"
+              IS_EXTENDED="[null]"
               TB_CODES="124"
               ORDER1="3"
               ORDER2="3"
@@ -1175,6 +1183,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1241"
               ORDER1="0"
               ORDER2="0"
@@ -1233,6 +1242,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="21"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="12411"
               ORDER1="0"
               ORDER2="0"
@@ -1789,6 +1799,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="211"
               ORDER1="0"
               ORDER2="1"
@@ -1844,6 +1855,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="212"
               ORDER1="1"
               ORDER2="0"
@@ -2200,6 +2212,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="311"
               ORDER1="0"
               ORDER2="1"
@@ -2255,6 +2268,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="137"
+              IS_EXTENDED="[null]"
               TB_CODES="312"
               ORDER1="1"
               ORDER2="0"
@@ -2310,6 +2324,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="138"
+              IS_EXTENDED="[null]"
               TB_CODES="3121"
               ORDER1="0"
               ORDER2="1"
@@ -2365,6 +2380,7 @@
                     <TB_M_CODES
                       VARIABLE_ELEMENT_FK="[null]"
                       SHORT_NAME_FK="[null]"
+                      IS_EXTENDED="[null]"
                       TB_CODES="31211"
                       ORDER1="0"
                       ORDER2="0"
@@ -2420,6 +2436,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="3122"
               ORDER1="1"
               ORDER2="0"
@@ -2862,6 +2879,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="411"
             />
         
@@ -3018,6 +3036,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="511"
             />
         
@@ -3174,6 +3193,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="611"
               ORDER1="0"
               OPENNESS1="1"
@@ -3520,6 +3540,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="51"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="721"
               ORDER1="0"
               OPENNESS1="1"
@@ -3771,6 +3792,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="811"
             />
         
@@ -3927,6 +3949,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="51"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="911"
             />
         
@@ -4087,6 +4110,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1011"
             />
         
@@ -4136,6 +4160,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1012"
             />
         
@@ -4278,6 +4303,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1021"
             />
         
@@ -4420,6 +4446,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1031"
             />
         
@@ -4578,6 +4605,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1111"
             />
         
@@ -4738,6 +4766,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1211"
             />
         
@@ -4896,6 +4925,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1311"
             />
         
@@ -4945,6 +4975,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1312"
             />
         
@@ -4994,6 +5025,7 @@
             <TB_M_CODES
               VARIABLE_ELEMENT_FK="[null]"
               SHORT_NAME_FK="[null]"
+              IS_EXTENDED="[null]"
               TB_CODES="1313"
             />
         
@@ -5254,6 +5286,7 @@
             <TB_M_CODES
                 TB_CODES="1411"
                 SHORT_NAME_FK="[null]"
+                IS_EXTENDED="[null]"
                 ORDER1="0"
                 OPENNESS1="1"
                 RESTRICTION1="1"
@@ -5304,6 +5337,7 @@
                     <!-- CODE0101 -->
                     <TB_M_CODES
                         TB_CODES="14111"
+                        IS_EXTENDED="[null]"
                         SHORT_NAME_FK="133"
                         ORDER1="0"
                         OPENNESS1="1"
@@ -5356,6 +5390,7 @@
             <TB_M_CODES
                 TB_CODES="1412"
                 SHORT_NAME_FK="134"
+                IS_EXTENDED="[null]"
                 ORDER1="1"
                 OPENNESS1="1"
                 RESTRICTION1="1"
@@ -5431,6 +5466,7 @@
             <TB_M_CODES
                 TB_CODES="1413"
                 SHORT_NAME_FK="135"
+                IS_EXTENDED="[null]"
                 ORDER1="2"
                 OPENNESS1="1"
                 RESTRICTION1="1"

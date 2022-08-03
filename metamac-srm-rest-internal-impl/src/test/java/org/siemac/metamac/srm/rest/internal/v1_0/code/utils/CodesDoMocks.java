@@ -38,12 +38,12 @@ public class CodesDoMocks {
     }
 
     public static CodeMetamac mockCode(String resourceID, CodelistVersionMetamac codelist, CodeMetamac parent) {
-        CodeMetamac target = CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent);
+        CodeMetamac target = CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent, true);
         target.setVariableElement(CodesMetamacDoMocks.mockVariableElementFixedValues("variableElement-" + resourceID));
         return target;
     }
 
-    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction) {
+    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction, Boolean isExtended) {
         ItemResult itemResult = CodesMetamacDoMocks.mockCodeResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000)."));
@@ -55,6 +55,7 @@ public class CodesDoMocks {
         extensionPoint.setOrder(order);
         extensionPoint.setRestriction(restriction);
         extensionPoint.setVariableElement(CodesMetamacDoMocks.mockVariableElementResultFixedValues("variableElement-" + resourceID));
+        extensionPoint.setIsExtended(isExtended);
         return itemResult;
     }
 

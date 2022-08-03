@@ -142,7 +142,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
@@ -151,8 +151,14 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         String baseLink = toCodesLink(agencyID, resourceID, version);
         SculptorCriteria2RestCriteria.toPagedResult(sourcesPagedResult, targets, query, orderBy, limit, baseLink);
 
+        List<CodeMetamac> sources = sourcesPagedResult.getValues();
+        
+        if (extended != null) {
+            sources = getCodesWithConditionsWithExtendedSelection(sources, extended);
+        }
+        
         // Values
-        for (CodeMetamac source : sourcesPagedResult.getValues()) {
+        for (CodeMetamac source : sources) {
             CodeResource target = toCodeResource(source, fields);
             targets.getCodes().add(target);
         }
@@ -160,13 +166,17 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction) {
+    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
 
         if (restriction != null) {
             sources = getCodesInRestriction(sources);
+        }
+        
+        if (extended != null) {
+            sources = getCodesWithExtendedSelection(sources, extended);
         }
         
         // No pagination
@@ -183,13 +193,38 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     private List<ItemResult> getCodesInRestriction(List<ItemResult> sources) {
-        List<ItemResult> codesInRestriction = new ArrayList<ItemResult>();
+        List<ItemResult> codesInRestriction = new ArrayList<>();
         for (ItemResult source : sources) {
             if (SrmServiceUtils.getCodeItemResultRestriction(source)) {
                 codesInRestriction.add(source);
             }
         }
         return codesInRestriction;
+    }
+    
+    private List<ItemResult> getCodesWithExtendedSelection(List<ItemResult> sources, Boolean extended) {
+        List<ItemResult> codesWithExtendedOption = new ArrayList<>();
+        for (ItemResult source : sources) {
+            Boolean isExtendedCode = ((CodeMetamacResultExtensionPoint) source.getExtensionPoint()).getIsExtended();
+            if (checkExtendedField(extended, isExtendedCode)) {
+                codesWithExtendedOption.add(source);
+            }
+        }
+        return codesWithExtendedOption;
+    }
+
+    private List<CodeMetamac> getCodesWithConditionsWithExtendedSelection(List<CodeMetamac> sources, Boolean extended) {
+        List<CodeMetamac> codesWithExtendedOption = new ArrayList<>();
+        for (CodeMetamac source : sources) {
+            if (checkExtendedField(extended, source.getIsExtended())) {
+                codesWithExtendedOption.add(source);
+            }
+        }
+        return codesWithExtendedOption;
+    }
+
+    private boolean checkExtendedField(Boolean extendedParam, Boolean extendedData) {
+        return (Boolean.TRUE.equals(extendedParam) && Boolean.TRUE.equals(extendedData)) || (!Boolean.TRUE.equals(extendedParam) && !Boolean.TRUE.equals(extendedData));
     }
     
     @Override
@@ -211,6 +246,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         } else {
             target.setShortName(toInternationalString(source.getVariableElement().getShortName()));
         }
+        target.setExtended(source.getIsExtended());
 
         return target;
     }
@@ -266,7 +302,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
             target.setVariableElement(toResource(source.getVariableElement()));
         }
-
+        target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE) ? source.getIsExtended()  : null);
         target.setOpen(null);
         target.setOrder(null);
     }
@@ -295,6 +331,9 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_OPENNES)) {
             target.setOpen(SrmServiceUtils.getCodeItemResultOpenness(source));
         }
+
+        target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE)
+                ? SrmServiceUtils.getCodeItemResultIsExtended(source) : null);
     }
 
     @Override
@@ -907,7 +946,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         VisualisationConfigurations targets = new VisualisationConfigurations();
         for (org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation source : sources) {
             VisualisationConfiguration target = toVisualisationConfiguration(source.getNameableArtefact());
-            if (defaultOrderVisualisation.getNameableArtefact().getCode().equals(source.getNameableArtefact().getCode())) {
+            if (target != null && defaultOrderVisualisation.getNameableArtefact().getCode().equals(source.getNameableArtefact().getCode())) {
                 target.setDefault(Boolean.TRUE);
             }
             targets.getVisualisationConfigurations().add(target);

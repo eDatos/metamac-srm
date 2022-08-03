@@ -1342,6 +1342,13 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/InternationalString"
+                  },
+                  "extended":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"boolean"
                   }
                }
             }
@@ -1380,6 +1387,13 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "extended":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"boolean"
                   }
                }
             }

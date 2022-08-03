@@ -30,6 +30,7 @@ public class VersionableResourceDS extends DataSource {
     public static final String RESOURCE_CREATION_DATE     = "lc-resource-creation-date";
     public static final String PRODUCTION_VALIDATION_DATE = "lc-prod-date";
     public static final String PRODUCTION_VALIDATION_USER = "lc-prod-user";
+    public static final String SOURCE_PROVIDER             = "lc-sourceProvider";
     // DIFFUSION DESCRIPTORS
     public static final String REPLACED_BY_VERSION        = "lc-replaced-by";
     public static final String REPLACE_TO_VERSION         = "lc-replace-to";

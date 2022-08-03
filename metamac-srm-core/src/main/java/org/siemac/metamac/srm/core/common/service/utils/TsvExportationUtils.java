@@ -44,11 +44,12 @@ public class TsvExportationUtils {
                 writer.write(SrmConstants.TSV_LINE_SEPARATOR);
                 writeItemCode(writer, itemResult);
                 writeParentCode(writer, itemResult);
+                writeItemExtensionPointIsExtended(writer, itemResult);
                 writeCodeVariableElement(writer, itemResult);
                 writeItemName(writer, itemResult, languages);
                 writeItemDescription(writer, itemResult, languages);
                 writeItemComment(writer, itemResult, languages);
-                writeItemExtensionPointShortName(writer, itemResult, languages);
+                writeItemExtensionPointShortName(writer, itemResult, languages); 
             }
             writer.flush();
             return file.getName();
@@ -64,6 +65,8 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_HEADER_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_PARENT);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_IS_EXTENDED);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_VARIABLE_ELEMENT);
         for (String language : languages) {
@@ -82,6 +85,7 @@ public class TsvExportationUtils {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_HEADER_SHORT_NAME + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
         }
+        
     }
 
     private static void writeCodeVariableElement(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
@@ -483,6 +487,14 @@ public class TsvExportationUtils {
         }
     }
 
+    private static void writeItemExtensionPointIsExtended(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        if (extensionPoint.getIsExtended() != null) {
+        writer.write(String.valueOf(extensionPoint.getIsExtended()));
+        }
+    }
+    
     private static void writeConceptType(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
         ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         writer.write(SrmConstants.TSV_SEPARATOR);

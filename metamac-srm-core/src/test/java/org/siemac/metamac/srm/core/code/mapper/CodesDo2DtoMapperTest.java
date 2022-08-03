@@ -191,7 +191,7 @@ public class CodesDo2DtoMapperTest extends SrmBaseTest {
 
     private CodeMetamac mockCodeWithAllMetadata() {
         CodelistVersionMetamac codelist = CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000");
-        CodeMetamac entity = CodesMetamacDoMocks.mockCodeFixedValues("code01", codelist, null);
+        CodeMetamac entity = CodesMetamacDoMocks.mockCodeFixedValues("code01", codelist, null, true);
         entity.setVariableElement(CodesMetamacDoMocks.mockVariableElementFixedValues("variableElement01"));
         return entity;
     }

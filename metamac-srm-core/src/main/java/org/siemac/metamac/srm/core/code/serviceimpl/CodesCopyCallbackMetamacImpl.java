@@ -47,6 +47,8 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         target.setDescriptionSource(copyInternationalString(source.getDescriptionSource()));
         target.setIsRecommended(source.getIsRecommended());
         target.setAccessType(source.getAccessType());
+        target.setNormalizationType(source.getNormalizationType());
+        target.setSourceProvider(source.getSourceProvider());
         target.setLifeCycleMetadata(new SrmLifeCycleMetadata(ProcStatusEnum.DRAFT));
         target.getMaintainableArtefact().setFinalLogicClient(Boolean.FALSE);
         target.setVariable(source.getVariable());
@@ -86,7 +88,7 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         // Copy efficiently
         CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) sourceItemResult.getExtensionPoint();
         target.setShortName(copyInternationalString(extensionPoint.getShortName()));
-
+        target.setIsExtended(extensionPoint.getIsExtended());
         target.setVariableElement(source.getVariableElement());
         copyCodeOrderVisualisations(source, target);
         copyCodeOpennessVisualisations(source, target);

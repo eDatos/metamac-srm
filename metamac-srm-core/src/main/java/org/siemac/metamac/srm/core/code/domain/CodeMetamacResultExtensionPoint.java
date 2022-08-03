@@ -14,6 +14,7 @@ public class CodeMetamacResultExtensionPoint {
     private final Map<String, String> shortName = new HashMap<String, String>();
     private VariableElementResult     variableElement;
     private String                    variableElementCode;
+    private Boolean                   isExtended;
 
     public Integer getOrder() {
         return order;
@@ -68,5 +69,13 @@ public class CodeMetamacResultExtensionPoint {
 
     public void setRestriction(Boolean restriction) {
         this.restriction = restriction;
+    }
+
+    public Boolean getIsExtended() {
+        return isExtended;
+    }
+
+    public void setIsExtended(Boolean isExtended) {
+        this.isExtended = isExtended;
     }
 }

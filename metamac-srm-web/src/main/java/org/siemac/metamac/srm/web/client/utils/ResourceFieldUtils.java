@@ -116,8 +116,11 @@ public class ResourceFieldUtils {
         variable.setHidden(true);
 
         CustomListGridField streamStatus = getCustomIconListGridField(CodelistDS.PUBLICATION_STREAM_STATUS, getConstants().codelistStreamMessageStatus());
+        
+        CustomListGridField normalizationType = new CustomListGridField(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
+        normalizationType.setHidden(true);
 
-        return ListGridUtils.addFields(getVersionableResourceListGridFields(), isRecommended, variable, streamStatus);
+        return ListGridUtils.addFields(getVersionableResourceListGridFields(), isRecommended, variable, streamStatus, normalizationType);
     }
 
     public static CustomListGridField[] getCodeListGridFields() {

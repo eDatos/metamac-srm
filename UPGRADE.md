@@ -8,8 +8,18 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 3.0.0 a 3.1.0
+## 3.1.0 a 3.1.1-SNAPSHOT
 
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
+* Es necesario ejecutar los scripts SQL del proyecto metamac-srm contenidos en la carpeta
+  ```shell
+  etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_create_normalization_type_column.sql
+  etc/changes-from-release/3.1.0/db/srm/postgresql/20220714_create_source_provider_column.sql
+  etc/changes-from-release/3.1.0/db/srm/postgresql/20220725_create_is_extended_code_column.sql
+  ```
+  ```
+
+## 3.0.0 a 3.1.0
 * Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.0.0/db](etc/changes-from-release/3.0.0/db)
   ```shell
   etc/changes-from-release/3.0.0/db/srm/postgresql/20220616_add_restriction_objects.sql

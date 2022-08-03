@@ -276,6 +276,7 @@ public class CodesDo2RestMapperTest {
         String orderBy = ORDER_BY_ID_DESC;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
+        Boolean extended = null;
         Set<String> fields = null;
 
         CodelistVersionMetamac codeScheme1 = mockCodelist(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
@@ -290,7 +291,7 @@ public class CodesDo2RestMapperTest {
         PagedResult<CodeMetamac> sources = new PagedResult<CodeMetamac>(source, offset, source.size(), limit, totalRows, 0);
 
         // Transform
-        Codes target = do2RestInternalMapper.toCodes(sources, agencyID, codeSchemeID, version, query, orderBy, limit, fields);
+        Codes target = do2RestInternalMapper.toCodes(sources, agencyID, codeSchemeID, version, query, orderBy, limit, extended, fields);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CODES, target.getKind());
@@ -321,12 +322,12 @@ public class CodesDo2RestMapperTest {
 
         CodelistVersionMetamac codelist = mockCodelist(agencyID, codelistID, version);
         List<ItemResult> sources = new ArrayList<ItemResult>();
-        sources.add(mockCodeItemResult(ITEM_1_CODE, null, 1, true, true));
-        sources.add(mockCodeItemResult(ITEM_2_CODE, null, 2, true, true));
-        sources.add(mockCodeItemResult(ITEM_3_CODE, null, 3, false, true));
+        sources.add(mockCodeItemResult(ITEM_1_CODE, null, 1, true, true, true));
+        sources.add(mockCodeItemResult(ITEM_2_CODE, null, 2, true, true, false));
+        sources.add(mockCodeItemResult(ITEM_3_CODE, null, 3, false, true, null));
 
         // Transform
-        Codes target = do2RestInternalMapper.toCodes(sources, codelist, null, null);
+        Codes target = do2RestInternalMapper.toCodes(sources, codelist, null, null, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CODES, target.getKind());

@@ -43,7 +43,7 @@ public class RequiredFieldUtils {
     // CODES
     //
 
-    private static final String[] codelistFieldsToProductionValidation = new String[]{CodelistDS.IS_PARTIAL};
+    private static final String[] codelistFieldsToProductionValidation = new String[]{CodelistDS.IS_PARTIAL, CodelistDS.NORMALIZATION_TYPE};
     private static final String[] codelistFieldsToDiffusionValidation  = codelistFieldsToProductionValidation;
     private static final String[] codelistFieldsToInternalPublication  = ArrayUtils.addStringElementsToStringArray(codelistFieldsToDiffusionValidation, CodelistDS.ACCESS_TYPE,
             CodelistDS.DEFAULT_ORDER, CodelistDS.DEFAULT_OPENNESS_LEVEL);

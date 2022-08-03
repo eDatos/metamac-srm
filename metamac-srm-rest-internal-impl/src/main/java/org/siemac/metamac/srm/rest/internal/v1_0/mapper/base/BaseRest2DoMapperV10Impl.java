@@ -26,6 +26,7 @@ import org.siemac.metamac.rest.search.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.rest.search.criteria.utils.CriteriaUtils.PropertyValueRestToPropertyValueEntityInterface;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Annotations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ProcStatus;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
@@ -83,7 +84,7 @@ public abstract class BaseRest2DoMapperV10Impl {
     private PropertyValueRestToPropertyValueEntityInterface propertyValueRestToPropertyValueEntity = null;
 
     protected enum PropertyTypeEnum {
-        STRING, DATE, BOOLEAN, PROC_STATUS, PROC_STATUS_ITEM_SCHEME_FROM_ITEM, ORGANISATION_SCHEME_TYPE, ORGANISATION_TYPE, CONCEPT_SCHEME_TYPE, VARIABLE_TYPE
+        STRING, DATE, BOOLEAN, PROC_STATUS, PROC_STATUS_ITEM_SCHEME_FROM_ITEM, ORGANISATION_SCHEME_TYPE, ORGANISATION_TYPE, CONCEPT_SCHEME_TYPE, VARIABLE_TYPE, NORMALIZATION_TYPE
     }
 
     public BaseRest2DoMapperV10Impl() {
@@ -125,6 +126,8 @@ public abstract class BaseRest2DoMapperV10Impl {
                         return ConceptSchemeTypeEnum.valueOf(value);
                     case VARIABLE_TYPE:
                         return VariableTypeEnum.valueOf(value);
+                    case NORMALIZATION_TYPE:
+                        return NormalizationTypeEnum.valueOf(value);
                     default:
                         throw toRestExceptionParameterIncorrect(propertyName);
                 }

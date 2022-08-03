@@ -4,6 +4,7 @@ public class ImportationCodesTsvHeader extends ImportationItemsTsvHeader {
 
     private int                    variableElementPosition;
     private InternationalStringTsv shortName;
+    private int isExtendedPosition;
 
     public int getVariableElementPosition() {
         return variableElementPosition;
@@ -20,4 +21,13 @@ public class ImportationCodesTsvHeader extends ImportationItemsTsvHeader {
     public void setShortName(InternationalStringTsv shortName) {
         this.shortName = shortName;
     }
+
+    public int getIsExtendedPosition() {
+        return isExtendedPosition;
+    }
+
+    public void setIsExtendedPosition(int isExtendedPosition) {
+        this.isExtendedPosition = isExtendedPosition;
+    }
+
 }

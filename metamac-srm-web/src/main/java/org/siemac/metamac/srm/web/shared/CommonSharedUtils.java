@@ -41,6 +41,7 @@ public class CommonSharedUtils {
             ICON_STREAM_MESSAGE_STATUS.put(StreamMessageStatusEnum.FAILED, GlobalResources.RESOURCE.errorSmart());
             ICON_STREAM_MESSAGE_STATUS.put(StreamMessageStatusEnum.PENDING, GlobalResources.RESOURCE.warn());
             ICON_STREAM_MESSAGE_STATUS.put(StreamMessageStatusEnum.SENT, GlobalResources.RESOURCE.success());
+            ICON_STREAM_MESSAGE_STATUS.put(StreamMessageStatusEnum.WITHOUT_ACTION, GlobalResources.RESOURCE.withoutAction());
         }
 
         return ICON_STREAM_MESSAGE_STATUS.get(status).getURL();

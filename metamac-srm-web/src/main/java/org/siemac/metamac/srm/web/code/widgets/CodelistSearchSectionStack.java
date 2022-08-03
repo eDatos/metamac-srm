@@ -4,6 +4,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
@@ -57,14 +58,18 @@ public class CodelistSearchSectionStack extends VersionableResourceSearchSection
         // Variable family filter
         SearchRelatedResourceLinkItem variableFamilyItem = createVariableFamiliesItem(CodelistDS.VARIABLE_FAMILY, getConstants().variableFamily());
 
+        SelectItem normalizationType = new SelectItem(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
+        normalizationType.setValueMap(CommonUtils.getNormalizationTypeHashMap());
+        
         // Add replaceTo and accessType items to advanvedSearchForm (before the save button in the advancedSearchFormItems)
-        FormItem[] codelistFields = new FormItem[advancedSearchFormItems.length + 4];
+        FormItem[] codelistFields = new FormItem[advancedSearchFormItems.length + 5];
         System.arraycopy(advancedSearchFormItems, 0, codelistFields, 0, advancedSearchFormItems.length - 1);
         System.arraycopy(advancedSearchFormItems, advancedSearchFormItems.length - 1, codelistFields, codelistFields.length - 1, 1);
-        codelistFields[codelistFields.length - 5] = accessType;
-        codelistFields[codelistFields.length - 4] = variableItem;
-        codelistFields[codelistFields.length - 3] = variableElementItem;
-        codelistFields[codelistFields.length - 2] = variableFamilyItem;
+        codelistFields[codelistFields.length - 6] = accessType;
+        codelistFields[codelistFields.length - 5] = variableItem;
+        codelistFields[codelistFields.length - 4] = variableElementItem;
+        codelistFields[codelistFields.length - 3] = variableFamilyItem;
+        codelistFields[codelistFields.length - 2] = normalizationType;
 
         advancedSearchForm.setFields(codelistFields);
     }
@@ -94,6 +99,10 @@ public class CodelistSearchSectionStack extends VersionableResourceSearchSection
                 codelistWebCriteria.setVariableFamilyUrn(variableFamilyUrn);
             }
         }
+        
+        codelistWebCriteria.setNormalizationType(
+                !StringUtils.isBlank(advancedSearchForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE)) ? NormalizationTypeEnum.valueOf(advancedSearchForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE)) : null);
+        
         return codelistWebCriteria;
     }
 

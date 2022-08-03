@@ -345,7 +345,7 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static ImportationCodesTsvHeader parseTsvHeaderToImportCodes(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_VARIABLE_ELEMENT, SrmConstants.TSV_HEADER_NAME,
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_IS_EXTENDED, SrmConstants.TSV_HEADER_VARIABLE_ELEMENT, SrmConstants.TSV_HEADER_NAME,
                 SrmConstants.TSV_HEADER_DESCRIPTION, SrmConstants.TSV_HEADER_COMMENT, SrmConstants.TSV_HEADER_SHORT_NAME);
 
         String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
@@ -407,7 +407,12 @@ public class TsvImportationUtils {
                 if (header.getShortName().isEndPositionSetted()) {
                     headerExpectedIndex++;
                 }
+            } else if (SrmConstants.TSV_HEADER_IS_EXTENDED.equals(columnName)) {
+                header.setIsExtendedPosition(i);
+                headerExpectedIndex++; 
             }
+            
+            
         }
         if (CollectionUtils.isEmpty(exceptions)) {
             if (header.getColumnsSize() == 0) {
@@ -509,6 +514,13 @@ public class TsvImportationUtils {
             } else {
                 code.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, code.getShortName()));
             }
+        }
+        
+        String isExtended = columns[header.getIsExtendedPosition()];
+        if (!StringUtils.isBlank(isExtended)) {
+            code.setIsExtended(Boolean.valueOf(isExtended));
+        } else {
+            code.setIsExtended(null);
         }
 
         // Do not persist if any error ocurrs

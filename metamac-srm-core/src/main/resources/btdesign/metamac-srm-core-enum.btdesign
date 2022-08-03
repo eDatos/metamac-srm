@@ -31,7 +31,8 @@ Application EnumsSrmDomain {
         enum StreamMessageStatusEnum {
            PENDING,
            SENT,
-           FAILED
+           FAILED,
+           WITHOUT_ACTION
        }
 
     }

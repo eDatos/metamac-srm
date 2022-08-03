@@ -842,7 +842,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     @Override
     public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
-            String fields) {
+            Boolean extended, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
@@ -861,7 +861,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                 checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
-                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
             } else {
                 // Retrieve all codes of codelist
                 CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
@@ -875,7 +875,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                 List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
                         opennessToUse, restrictionToUse);
 
-                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction);
+                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -933,14 +933,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return orderToUse;
     }
 
-    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Boolean extended, Set<String> fieldsToShow)
             throws MetamacException {
         // Find. Retrieve codes paginated
         SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
         PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
         // Transform
-        return codesDo2RestMapper.toCodes(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        return codesDo2RestMapper.toCodes(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), extended, fieldsToShow);
     }
 
     @Override

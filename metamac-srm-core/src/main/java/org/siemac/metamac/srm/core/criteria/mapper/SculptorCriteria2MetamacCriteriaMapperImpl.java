@@ -161,7 +161,7 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
         }
         return target;
     }
-
+    
     @Override
     public MetamacCriteriaResult<OrganisationMetamacBasicDto> pageResultOrganisationToMetamacCriteriaResult(PagedResult<OrganisationMetamac> source, Integer pageSize) {
         MetamacCriteriaResult<OrganisationMetamacBasicDto> target = new MetamacCriteriaResult<OrganisationMetamacBasicDto>();

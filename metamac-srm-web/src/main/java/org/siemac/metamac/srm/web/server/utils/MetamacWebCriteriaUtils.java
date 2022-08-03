@@ -6,6 +6,7 @@ import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestric
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaDisjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction.OperationType;
+import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryDisjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaRestriction;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategorySchemeVersionMetamacCriteriaPropertyEnum;
@@ -31,6 +32,9 @@ import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 
 public class MetamacWebCriteriaUtils {
 
@@ -228,6 +232,10 @@ public class MetamacWebCriteriaUtils {
             if (criteria.getAccessType() != null) {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.ACCESS_TYPE.name(), criteria.getAccessType(), OperationType.EQ));
+            }
+            if (criteria.getNormalizationType() != null) {
+                conjunctionRestriction.getRestrictions().add(
+                        new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.NORMALIZATION_TYPE.name(), criteria.getNormalizationType(), OperationType.EQ));
             }
             if (StringUtils.isNotBlank(criteria.getCode())) {
                 conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.CODE.name(), criteria.getCode(), OperationType.ILIKE));
@@ -735,6 +743,17 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.TYPE.name(), criteria.getType(), OperationType.EQ));
             }
+            
+            if (criteria.getOrganisationSchemeTypes() != null) {
+                MetamacCriteriaDisjunctionRestriction disjuntion = new MetamacCriteriaDisjunctionRestriction();
+                for (OrganisationSchemeTypeEnum org :criteria.getOrganisationSchemeTypes()) {
+                    disjuntion.getRestrictions().add(new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.TYPE.name(), org, OperationType.EQ));
+                }
+                
+                conjunctionRestriction.getRestrictions().add(disjuntion);
+                
+            }
+            
             if (StringUtils.isNotBlank(criteria.getCode())) {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.CODE.name(), criteria.getCode(), OperationType.ILIKE));
@@ -779,7 +798,7 @@ public class MetamacWebCriteriaUtils {
                         new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.EXTERNAL_PUBLICATION_USER.name(), criteria.getExternalPublicationUser(),
                                 OperationType.ILIKE));
             }
-            if (BooleanUtils.isTrue(criteria.getIsLastVersion())) {
+            if (BooleanUtils.isTrue(criteria.getIsLastVersion()) || BooleanUtils.isTrue(criteria.isOnlyLastVersion())) {
                 MetamacCriteriaDisjunctionRestriction lastVersionRestriction = new MetamacCriteriaDisjunctionRestriction();
                 lastVersionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.IS_LAST_VERSION.name(), true, OperationType.EQ));
@@ -795,7 +814,12 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.MAINTAINER_URN.name(), criteria.getMaintainerUrn(), OperationType.EQ));
             }
-
+            
+            if (BooleanUtils.isTrue(criteria.isOnlyPublished())) {
+                conjunctionRestriction.getRestrictions().add(
+                        new MetamacCriteriaPropertyRestriction(OrganisationSchemeVersionMetamacCriteriaPropertyEnum.IS_PUBLISHED.name(), criteria.isOnlyPublished(), OperationType.EQ));
+            }
+            
         }
         return conjunctionRestriction;
     }
@@ -858,6 +882,17 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(OrganisationMetamacCriteriaPropertyEnum.ORGANISATION_SCHEME_LATEST_FINAL.name(), criteria.getIsLatestFinal(), OperationType.EQ));
             }
+            
+            if (criteria.getOrganisationTypes() != null) {
+                MetamacCriteriaDisjunctionRestriction disjuntion = new MetamacCriteriaDisjunctionRestriction();
+                for (OrganisationTypeEnum org :criteria.getOrganisationTypes()) {
+                    disjuntion.getRestrictions().add(new MetamacCriteriaPropertyRestriction(OrganisationMetamacCriteriaPropertyEnum.TYPE.name(), org, OperationType.EQ));
+                }
+                
+                conjunctionRestriction.getRestrictions().add(disjuntion);
+                
+            }
+            
         }
 
         return conjunctionRestriction;

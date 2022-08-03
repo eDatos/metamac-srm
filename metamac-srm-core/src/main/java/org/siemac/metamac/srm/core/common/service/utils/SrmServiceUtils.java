@@ -531,6 +531,14 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return extensionPoint.getShortName();
     }
 
+    public static Boolean getCodeItemResultIsExtended(ItemResult itemResult) {
+        if (itemResult.getExtensionPoint() == null) {
+            return null;
+        }
+        CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        return extensionPoint.getIsExtended();
+    }
+    
     public static String getCodeItemResultVariableElementCode(ItemResult itemResult) {
         if (itemResult.getExtensionPoint() == null) {
             return null;

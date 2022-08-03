@@ -211,6 +211,7 @@ public class SrmRestInternalUtils {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
         return parseFieldsParameter(fieldsParam, validFields);
     }
 

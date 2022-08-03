@@ -13,6 +13,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacDoMocks;
 import org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants;
@@ -37,12 +38,12 @@ public class CodesDoMocks {
     }
 
     public static CodeMetamac mockCode(String resourceID, CodelistVersionMetamac codelist, CodeMetamac parent) {
-        CodeMetamac target = CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent);
+        CodeMetamac target = CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent, true);
         target.setVariableElement(CodesMetamacDoMocks.mockVariableElementFixedValues("variableElement-" + resourceID));
         return target;
     }
 
-    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction) {
+    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction, Boolean isExtended) {
         ItemResult itemResult = CodesMetamacDoMocks.mockCodeResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000)."));
@@ -54,6 +55,7 @@ public class CodesDoMocks {
         extensionPoint.setOrder(order);
         extensionPoint.setRestriction(restriction);
         extensionPoint.setVariableElement(CodesMetamacDoMocks.mockVariableElementResultFixedValues("variableElement-" + resourceID));
+        extensionPoint.setIsExtended(isExtended);
         return itemResult;
     }
 
@@ -107,12 +109,13 @@ public class CodesDoMocks {
     }
 
     private static void addReplaceMetadatasToCodelist(CodelistVersionMetamac target, String agencyID) {
-        target.setReplacedByCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplacedBy", "01.000", AccessTypeEnum.PUBLIC, true, true));
-        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo1", "01.000", AccessTypeEnum.PUBLIC, true, true));
-        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo2", "02.000", AccessTypeEnum.PUBLIC, false, false));
-        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo3", "03.000", AccessTypeEnum.PUBLIC, true, true));
-        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo4", "04.000", AccessTypeEnum.PUBLIC, false, false));
-        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo5", "05.000", AccessTypeEnum.RESTRICTED, true, true));
+        target.setReplacedByCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplacedBy", "01.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, true, true));
+        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo1", "01.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, true, true));
+        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo2", "02.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, false, false));
+        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo3", "03.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, true, true));
+        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo4", "04.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, false, false));
+        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo5", "05.000", AccessTypeEnum.RESTRICTED, NormalizationTypeEnum.STANDARDIZED, true, true));
+        target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo6", "06.000", AccessTypeEnum.RESTRICTED, NormalizationTypeEnum.NOT_STANDARDIZED, true, true));
     }
 
     private static void addConfigurationsMetadatasToCodelist(CodelistVersionMetamac target) {
@@ -164,11 +167,12 @@ public class CodesDoMocks {
         target.addReplaceToVariableElement(CodesMetamacDoMocks.mockVariableElementFixedValues("variableElementReplaceTo2"));
     }
 
-    private static CodelistVersionMetamac mockCodelistToReplaceMetadata(String agencyID, String resourceID, String version, AccessTypeEnum accessType, boolean finalLogic, boolean publicLogic) {
+    private static CodelistVersionMetamac mockCodelistToReplaceMetadata(String agencyID, String resourceID, String version, AccessTypeEnum accessType, NormalizationTypeEnum normalizationType, boolean finalLogic, boolean publicLogic) {
         CodelistVersionMetamac codelistReplace = CodesMetamacDoMocks.mockCodelistFixedValues(agencyID, resourceID, version);
         codelistReplace.setAccessType(accessType);
         codelistReplace.getMaintainableArtefact().setFinalLogicClient(finalLogic);
         codelistReplace.getMaintainableArtefact().setPublicLogic(publicLogic);
+        codelistReplace.setNormalizationType(normalizationType);
         return codelistReplace;
     }
 }

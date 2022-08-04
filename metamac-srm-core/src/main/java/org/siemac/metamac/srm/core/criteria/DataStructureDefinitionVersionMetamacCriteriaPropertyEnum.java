@@ -11,6 +11,7 @@ public enum DataStructureDefinitionVersionMetamacCriteriaPropertyEnum {
     STATISTICAL_OPERATION_URN,
     DIMENSION_CONCEPT_URN,
     ATTRIBUTE_CONCEPT_URN,
+    CODELIST_URN,
     IS_LAST_VERSION,
     LATEST_FINAL,
     LATEST_PUBLIC,

@@ -20,6 +20,7 @@ import org.siemac.metamac.srm.web.dsd.view.handlers.DsdListUiHandlers;
 import org.siemac.metamac.srm.web.dsd.widgets.DsdSearchSectionStack;
 import org.siemac.metamac.srm.web.dsd.widgets.ExportSdmxResourceWindow;
 import org.siemac.metamac.srm.web.dsd.widgets.NewDsdWindow;
+import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsResult;
 import org.siemac.metamac.srm.web.shared.criteria.DataStructureDefinitionWebCriteria;
@@ -263,6 +264,11 @@ public class DsdListViewImpl extends ViewWithUiHandlers<DsdListUiHandlers> imple
         searchSectionStack.setAttributeConcepts(result);
     }
 
+    @Override
+    public void setCodelistsForSearchSection(GetCodelistsResult result) {
+        searchSectionStack.setCodelist(result);
+    }
+    
     @Override
     public DataStructureDefinitionWebCriteria getDataStructureDefinitionWebCriteria() {
         return searchSectionStack.getDataStructureDefinitionWebCriteria();

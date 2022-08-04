@@ -125,6 +125,12 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
         return relatedResourceDto;
     }
 
+    public static RelatedResourceDto getConceptMetamacBasicDtoAsRelatedResourceDto(CodelistMetamacBasicDto codelist) {
+        RelatedResourceDto relatedResourceDto = getNameableArtefactMetamacBasicDto(codelist);
+        relatedResourceDto.setType(RelatedResourceTypeEnum.CODELIST);
+        return relatedResourceDto;
+    }
+    
     public static List<RelatedResourceDto> getConceptMetamacDtosAsRelatedResourceDtos(List<ConceptMetamacDto> conceptMetamacDtos) {
         List<RelatedResourceDto> relatedResourceDtos = new ArrayList<RelatedResourceDto>(conceptMetamacDtos.size());
         for (ConceptMetamacDto concept : conceptMetamacDtos) {
@@ -140,7 +146,15 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
         }
         return relatedResourceDtos;
     }
-
+    
+    public static List<RelatedResourceDto> getCodelistMetamacBasicDtoAsRelatedResourceDtos(List<CodelistMetamacBasicDto> codelistMetamacDtos) {
+        List<RelatedResourceDto> relatedResourceDtos = new ArrayList<RelatedResourceDto>(codelistMetamacDtos.size());
+        for (CodelistMetamacBasicDto concept : codelistMetamacDtos) {
+            relatedResourceDtos.add(getConceptMetamacBasicDtoAsRelatedResourceDto(concept));
+        }
+        return relatedResourceDtos;
+    }
+    
     // -------------------------------------------------------------------------------------------------------------
     // CATEGORIES
     // -------------------------------------------------------------------------------------------------------------

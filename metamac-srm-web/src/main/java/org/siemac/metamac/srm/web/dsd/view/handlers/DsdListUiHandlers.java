@@ -25,4 +25,5 @@ public interface DsdListUiHandlers extends BaseUiHandlers {
     void retrieveStatisticalOperationsForSearchSection(int firstResult, int maxResults, String criteria);
     void retrieveDimensionConceptsForSearchSection(int firstResult, int maxResults, String criteria);
     void retrieveAttributeConceptsForSearchSection(int firstResult, int maxResults, String criteria);
+    void retrieveCodelistForSearchSection(int firstResult, int maxResults, String criteria);
 }

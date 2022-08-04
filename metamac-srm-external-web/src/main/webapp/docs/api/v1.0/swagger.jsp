@@ -1026,7 +1026,7 @@
                   "name":"version",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la versión origen"
+                  "description":"Versión origen"
             },
             {
                   "name":"referenceAgencyID",
@@ -1044,7 +1044,7 @@
                   "name":"referenceVersion",
                   "in":"query",
                   "type":"string",
-                  "description":"Identificador de la versión de la clasificación de referencia para recodificar"
+                  "description":"Versión de la clasificación de referencia para recodificar"
             }
             
             ],

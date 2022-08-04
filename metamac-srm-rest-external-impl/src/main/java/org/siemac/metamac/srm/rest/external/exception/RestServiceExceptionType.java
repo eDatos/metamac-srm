@@ -1,6 +1,5 @@
 package org.siemac.metamac.srm.rest.external.exception;
 
-import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 
 public class RestServiceExceptionType extends RestCommonServiceExceptionType {

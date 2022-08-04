@@ -905,7 +905,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
             checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
             
-            List<RelatedCode> items = codesService.retrieveRecodedCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
+            List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
             
             return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
             

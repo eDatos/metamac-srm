@@ -893,7 +893,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
             
-            List<RelatedCode> items = codesService.retrieveRecodedCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
+            List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
             
             return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
             

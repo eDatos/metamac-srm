@@ -362,7 +362,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return findCodelistsCanReplaceToByCondition(ctx, codelistUrn, false, conditions, pagingParameter);
     }
 
-    public List<RelatedCode> retrieveRecodedCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
+    @Override
+    public List<RelatedCode> recodeCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
             throws MetamacException {
 
         List<RelatedCode> recodedCodes = new ArrayList<>();

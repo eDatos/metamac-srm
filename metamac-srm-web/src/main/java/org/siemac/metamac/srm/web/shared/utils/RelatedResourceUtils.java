@@ -125,7 +125,7 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
         return relatedResourceDto;
     }
 
-    public static RelatedResourceDto getConceptMetamacBasicDtoAsRelatedResourceDto(CodelistMetamacBasicDto codelist) {
+    public static RelatedResourceDto getCodelistMetamacBasicDtoAsRelatedResourceDto(CodelistMetamacBasicDto codelist) {
         RelatedResourceDto relatedResourceDto = getNameableArtefactMetamacBasicDto(codelist);
         relatedResourceDto.setType(RelatedResourceTypeEnum.CODELIST);
         return relatedResourceDto;
@@ -150,7 +150,7 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
     public static List<RelatedResourceDto> getCodelistMetamacBasicDtoAsRelatedResourceDtos(List<CodelistMetamacBasicDto> codelistMetamacDtos) {
         List<RelatedResourceDto> relatedResourceDtos = new ArrayList<RelatedResourceDto>(codelistMetamacDtos.size());
         for (CodelistMetamacBasicDto concept : codelistMetamacDtos) {
-            relatedResourceDtos.add(getConceptMetamacBasicDtoAsRelatedResourceDto(concept));
+            relatedResourceDtos.add(getCodelistMetamacBasicDtoAsRelatedResourceDto(concept));
         }
         return relatedResourceDtos;
     }

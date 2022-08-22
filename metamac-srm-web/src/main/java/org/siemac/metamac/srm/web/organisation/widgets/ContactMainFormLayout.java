@@ -3,12 +3,14 @@ package org.siemac.metamac.srm.web.organisation.widgets;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
+import org.siemac.metamac.srm.web.client.model.ds.ItemDS;
 import org.siemac.metamac.srm.web.organisation.model.ds.ContactDS;
 import org.siemac.metamac.srm.web.organisation.utils.OrganisationsFormUtils;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
 import org.siemac.metamac.web.common.client.utils.UrlUtils;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
+import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
@@ -82,7 +84,8 @@ public class ContactMainFormLayout extends InternationalMainFormLayout {
         ViewTextItem telephone = new ViewTextItem(ContactDS.TELEPHONE, getConstants().organisationContactTelephone());
         ViewTextItem email = new ViewTextItem(ContactDS.EMAIL, getConstants().organisationContactEmail());
         ViewTextItem fax = new ViewTextItem(ContactDS.FAX, getConstants().organisationContactFax());
-        return new FormItem[]{name, organisationUnit, responsibily, url, telephone, email, fax};
+        ViewMultiLanguageTextItem comment = new ViewMultiLanguageTextItem(ItemDS.COMMENTS, getConstants().nameableArtefactComments());
+        return new FormItem[]{name, organisationUnit, responsibily, url, telephone, email, fax, comment};
     }
 
     private void createEditionForm() {
@@ -122,7 +125,9 @@ public class ContactMainFormLayout extends InternationalMainFormLayout {
         ViewTextItem staticFax = new ViewTextItem(ContactDS.FAX_VIEW, getConstants().organisationContactFax());
         staticFax.setShowIfCondition(getStaticFaxFormItemIfFunction());
 
-        return new FormItem[]{name, organisationUnit, responsibility, url, staticUrl, telephone, staticTelephone, email, staticEmail, fax, staticFax};
+        MultiLanguageRichTextEditorItem comments = new MultiLanguageRichTextEditorItem(ItemDS.COMMENTS, getConstants().nameableArtefactComments());
+
+        return new FormItem[]{name, organisationUnit, responsibility, url, staticUrl, telephone, staticTelephone, email, staticEmail, fax, staticFax, comments};
     }
 
     public void setContact(OrganisationSchemeMetamacDto organisationSchemeMetamacDto, ContactDto contactDto, boolean isNewContact) {
@@ -154,6 +159,9 @@ public class ContactMainFormLayout extends InternationalMainFormLayout {
         // Faxes
         contactDto.getFaxes().clear();
         contactDto.getFaxes().addAll(((MultiTextItem) editionForm.getItem(ContactDS.FAX)).getValues());
+
+        contactDto.setComment(editionForm.getValueAsInternationalStringDto(ContactDS.COMMENTS));
+
         return contactDto;
     }
 
@@ -172,6 +180,7 @@ public class ContactMainFormLayout extends InternationalMainFormLayout {
         form.setValue(ContactDS.TELEPHONE, CommonWebUtils.getStringListToString(contactDto.getTelephones()));
         form.setValue(ContactDS.EMAIL, CommonWebUtils.getStringListToString(contactDto.getEmails()));
         form.setValue(ContactDS.FAX, CommonWebUtils.getStringListToString(contactDto.getFaxes()));
+        form.setValue(ContactDS.COMMENTS, contactDto.getComment());
         form.markForRedraw();
     }
 
@@ -190,6 +199,7 @@ public class ContactMainFormLayout extends InternationalMainFormLayout {
         editionForm.setValue(ContactDS.EMAIL_VIEW, CommonWebUtils.getStringListToString(contactDto.getEmails()));
         ((MultiTextItem) editionForm.getItem(ContactDS.FAX)).setValues(contactDto.getFaxes());
         editionForm.setValue(ContactDS.FAX_VIEW, CommonWebUtils.getStringListToString(contactDto.getFaxes()));
+        editionForm.setValue(ContactDS.COMMENTS, contactDto.getResponsibility());
         editionForm.markForRedraw();
     }
 

@@ -1,4 +1,4 @@
-package org.siemac.metamac.srm.core.code.domain.shared;
+package org.siemac.metamac.srm.core.code.domain;
 
 import java.io.Serializable;
 

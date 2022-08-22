@@ -672,6 +672,13 @@ public class MetamacWebCriteriaUtils {
                         new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.ATTRIBUTE_CONCEPT_URN.name(), criteria.getAttributeConceptUrn(),
                                 OperationType.EQ));
             }
+            
+            if (StringUtils.isNotBlank(criteria.getCodelistUrn())) {
+                conjunctionRestriction.getRestrictions().add(
+                        new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.CODELIST_URN.name(), criteria.getCodelistUrn(),
+                                OperationType.EQ));
+            }
+            
             if (criteria.getInternalPublicationDate() != null) {
                 conjunctionRestriction.getRestrictions().add(
                         new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(), criteria.getInternalPublicationDate(),

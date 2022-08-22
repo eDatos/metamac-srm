@@ -8,6 +8,7 @@ public class DataStructureDefinitionDS extends VersionableResourceDS {
 
     public static final String DIMENSION_CONCEPT             = "dsd-dim-con";      // for DSD advanced search
     public static final String ATTRIBUTE_CONCEPT             = "dsd-att-con";      // for DSD advanced search
+    public static final String CODELIST_ITEM                 = "dsd-codelist";      // for DSD advanced search
 
     // VISUALISATION METADATA
     public static final String AUTO_OPEN                     = "dsd-auto-open";

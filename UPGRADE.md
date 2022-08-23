@@ -16,8 +16,10 @@
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_create_normalization_type_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220714_create_source_provider_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220725_create_is_extended_code_column.sql
-  etc/changes-from-release/3.1.0/db/srm/postgresql/20220807_add_column_comments_tbcontact.sql
   ```
+* Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
+  ```shell
+  etc/changes-from-release/3.0.2/db/postgresql/20220807_add-column-comments-tbcontact.sql
   ```
 
 ## 3.0.0 a 3.1.0

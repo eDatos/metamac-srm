@@ -3859,12 +3859,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     }
 
     @Test
-    public void testRetrieveRecodedCodes() throws Exception {
+    public void testRecodeCodes() throws Exception {
 
         CodelistVersionMetamac codelistVersionOrigin = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
         CodelistVersionMetamac codelistVersionToMatch = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_2_V1);
 
-        List<RelatedCode> items = codesService.retrieveRecodedCodes(getServiceContextAdministrador(), codelistVersionOrigin, codelistVersionToMatch);
+        List<RelatedCode> items = codesService.recodeCodes(getServiceContextAdministrador(), codelistVersionOrigin, codelistVersionToMatch);
 
         assertNotNull(items);
         assertEquals(9, items.size());

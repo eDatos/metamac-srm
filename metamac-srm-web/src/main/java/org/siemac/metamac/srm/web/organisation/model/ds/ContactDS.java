@@ -1,11 +1,12 @@
 package org.siemac.metamac.srm.web.organisation.model.ds;
 
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
+import org.siemac.metamac.srm.web.client.model.ds.ItemDS;
 
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
 
-public class ContactDS extends DataSource {
+public class ContactDS extends ItemDS {
 
     public static final String ID                = "con-id";
     public static final String NAME              = "con-name";

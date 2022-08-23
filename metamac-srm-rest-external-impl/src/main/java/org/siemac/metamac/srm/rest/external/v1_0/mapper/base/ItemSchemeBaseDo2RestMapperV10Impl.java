@@ -3,9 +3,11 @@ package org.siemac.metamac.srm.rest.external.v1_0.mapper.base;
 import java.util.Set;
 
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
+import org.siemac.metamac.rest.constants.RestConstants;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
+import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -75,7 +77,7 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
         MaintainableArtefact maintainableArtefact = itemSchemeVersion.getMaintainableArtefact();
         return toMaintainableArtefactLink(schemesSubPath, maintainableArtefact);
     }
-
+    
     // API/[ARTEFACT_TYPE]/{agencyID}/{resourceID}/{version}/[SUBARTEFACT_TYPES]
     protected String toItemsLink(String schemesSubPath, String itemsSubPath, String agencyID, String resourceID, String version) {
         String link = toMaintainableArtefactLink(schemesSubPath, agencyID, resourceID, version);
@@ -83,6 +85,19 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
         return link;
     }
 
+    protected String toRecodedCodesItemLink(String schemesSubPath, ItemSchemeVersion itemSchemeVersion1, ItemSchemeVersion itemSchemeVersion2) {
+        MaintainableArtefact maintainableArtefact = itemSchemeVersion1.getMaintainableArtefact();
+        String link = toMaintainableArtefactLink(schemesSubPath, getIdAsMaintainer(maintainableArtefact.getMaintainer()), getCode(maintainableArtefact), maintainableArtefact.getVersionLogic());
+        link += SrmRestConstants.LINK_SUBPATH_RECODED_CODES; 
+        
+        MaintainableArtefact maintainableArtefact2 = itemSchemeVersion2.getMaintainableArtefact();
+        link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_AGENCYID, getIdAsMaintainer(maintainableArtefact2.getMaintainer()));
+        link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID, getCode(maintainableArtefact2));
+        link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_VERSION, maintainableArtefact2.getVersionLogic());
+        
+        return link;
+    }
+    
     protected String toItemsLink(String schemesSubPath, String itemsSubPath, ItemSchemeVersion itemSchemeVersion) {
         MaintainableArtefact maintainableArtefact = itemSchemeVersion.getMaintainableArtefact();
         return toItemsLink(schemesSubPath, itemsSubPath, getIdAsMaintainer(maintainableArtefact.getMaintainer()), getCode(maintainableArtefact), maintainableArtefact.getVersionLogic());

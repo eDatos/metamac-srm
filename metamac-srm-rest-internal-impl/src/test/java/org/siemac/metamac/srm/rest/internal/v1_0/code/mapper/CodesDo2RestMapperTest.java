@@ -9,6 +9,7 @@ import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesAsserts.
 import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockCode;
 import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockCodeItemResult;
 import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockCodelist;
+import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockRelatedCodes;
 import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockCodelistFamily;
 import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockCodelistWithCodes;
 import static org.siemac.metamac.srm.rest.internal.v1_0.code.utils.CodesDoMocks.mockVariable;
@@ -53,6 +54,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ProcStatus;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElements;
@@ -65,6 +67,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variabl
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VisualisationConfiguration;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -242,6 +245,26 @@ public class CodesDo2RestMapperTest {
         assertEquals("uriProviderDb", target.getUri());
     }
 
+    @Test
+    public void testToRecodedCodes() {
+
+        CodelistVersionMetamac sourceCodelist = mockCodelist("agencyID1", "resourceID1", "01.000");
+        CodelistVersionMetamac referenceCodelist = mockCodelist("agencyID2", "resourceID2", "01.000");
+
+        List<RelatedCode> relatedCodes = mockRelatedCodes();
+
+        // Transform
+        RecodedCodes target = do2RestInternalMapper.toRecodedCodes(sourceCodelist, referenceCodelist, relatedCodes);
+
+        assertTrue(2 == target.getTotal().intValue());
+        String expectedUrl = "http://data.istac.es/apis/structural-resources-internal/v1.0/codelists/agencyID1/resourceID1/01.000" + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?"
+                + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "=agencyID2&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=resourceID2&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION
+                + "=01.000";
+        assertEquals(expectedUrl, target.getSelfLink());
+        assertTrue(2 == target.getCodes().size());
+
+    }
+    
     @Test
     public void testToCodelistReplacedBy() throws MetamacException {
 

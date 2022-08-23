@@ -50,6 +50,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.tz.DateTimeZoneBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.siemac.metamac.common.test.utils.DirtyDatabase;
@@ -69,6 +70,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -3856,6 +3858,26 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
+    @Test
+    public void testRetrieveRecodedCodes() throws Exception {
+
+        CodelistVersionMetamac codelistVersionOrigin = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
+        CodelistVersionMetamac codelistVersionToMatch = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_2_V1);
+
+        List<RelatedCode> items = codesService.retrieveRecodedCodes(getServiceContextAdministrador(), codelistVersionOrigin, codelistVersionToMatch);
+
+        assertNotNull(items);
+        assertEquals(9, items.size());
+        for (RelatedCode code : items) {
+            if ("CODE01".equals(code.getOriginCode()))
+                assertEquals("CODE02", code.getRecodedCode());
+            if ("CODE02".equals(code.getOriginCode()))
+                assertNull(code.getRecodedCode());
+            if ("CODE0201".equals(code.getOriginCode()))
+                assertEquals("CODE01", code.getRecodedCode());
+        }
+    }
+    
     @Test
     public void testRetrieveCodesByCodelistUrnCheckVariableElements() throws Exception {
 
@@ -7748,16 +7770,20 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEqualsMetamacExceptionItem(ServiceExceptionType.VARIABLE_ELEMENT_WITH_OPERATIONS, 1, new String[]{variableElementUrn}, e.getExceptionItems().get(0));
         }
     }
-
+    
     @Test
     public void testDeleteVariableElementErrorWithCodes() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
         String variableElementUrn = VARIABLE_2_VARIABLE_ELEMENT_2;
         String codeUrn = CODELIST_1_V2_CODE_1;
+        String codeUrn2 = CODELIST_2_V1_CODE_2;
+        List<String> codes = Arrays.asList(codeUrn, codeUrn2);
+
         VariableElement variableElement = codesService.retrieveVariableElementByUrn(ctx, variableElementUrn);
-        assertEquals(1, variableElement.getCodes().size());
-        assertEquals(codeUrn, variableElement.getCodes().get(0).getNameableArtefact().getUrn());
+        assertEquals(2, variableElement.getCodes().size());
+        assertTrue(codes.contains(variableElement.getCodes().get(0).getNameableArtefact().getUrn()));
+        assertTrue(codes.contains(variableElement.getCodes().get(1).getNameableArtefact().getUrn()));
 
         // Delete variableElement
         try {
@@ -7768,7 +7794,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(ServiceExceptionType.VARIABLE_ELEMENT_WITH_RELATIONS.getCode(), e.getExceptionItems().get(0).getCode());
             assertEquals(2, e.getExceptionItems().get(0).getMessageParameters().length);
             assertEquals(variableElementUrn, e.getExceptionItems().get(0).getMessageParameters()[0]);
-            assertEquals(codeUrn, e.getExceptionItems().get(0).getMessageParameters()[1]);
+            assertTrue(codes.contains(e.getExceptionItems().get(0).getMessageParameters()[1]));
         }
 
         // Check that the code has not been deleted

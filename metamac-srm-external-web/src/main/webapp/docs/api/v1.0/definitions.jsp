@@ -1400,6 +1400,30 @@
          ],
          "description":""
       },
+      "RecodedCodeResource":{
+         "type":"object",
+         "title":"RecodedCodeResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "$ref":"#/definitions/ItemResource"
+            },
+            {
+               "properties":{
+                  "recodedId":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
       "Codelist":{
          "type":"object",
          "title":"Codelist",
@@ -1577,6 +1601,27 @@
          ],
          "description":""
       },
+      "RecodedCodes":{
+         "type":"object",
+         "title":"RecodedCodes",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "code":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/RecodedCodeResource"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
       "Component":{
          "type":"object",
          "title":"Component",
@@ -1624,6 +1669,7 @@
          ],
          "description":""
       },
+      
       "Concept":{
          "type":"object",
          "title":"Concept",

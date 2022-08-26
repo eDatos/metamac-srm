@@ -7,6 +7,7 @@ public class DataStructureDefinitionWebCriteria extends VersionableResourceWebCr
     private String            statisticalOperationUrn;
     private String            dimensionConceptUrn;
     private String            attributeConceptUrn;
+    private String            codelistUrn;
 
     public DataStructureDefinitionWebCriteria() {
     }
@@ -37,5 +38,13 @@ public class DataStructureDefinitionWebCriteria extends VersionableResourceWebCr
 
     public void setAttributeConceptUrn(String attributeConceptUrn) {
         this.attributeConceptUrn = attributeConceptUrn;
+    }
+
+    public String getCodelistUrn() {
+        return codelistUrn;
+    }
+
+    public void setCodelistUrn(String codelistUrn) {
+        this.codelistUrn = codelistUrn;
     }
 }

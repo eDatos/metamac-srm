@@ -139,7 +139,10 @@ Application CodesMetamac {
     		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOverridingOnlyWithoutVariableElement) throws MetamacException;
-	   		    		
+	   		 
+	   		"Retrieve equivalence of codes between two codelists"
+			List<RelatedCode> recodeCodes(@CodelistVersionMetamac codelistVersionOrigin, @CodelistVersionMetamac codelistVersionToMatch) throws MetamacException;   		
+    		
     		// VISUALISATIONS
     		
     		"Creates order visualisation"
@@ -157,7 +160,7 @@ Application CodesMetamac {
 			"Deletes order visualisation"
     		deleteCodelistOrderVisualisation(String urn) throws MetamacException;
     		@CodelistVersionMetamac versioningCodelistOrderVisualisations(@CodelistVersionMetamac source, @CodelistVersionMetamac target) throws MetamacException;
-
+    		
 			"Creates openness visualisation"
     		@CodelistOpennessVisualisation createCodelistOpennessVisualisation(String codelistUrn, @CodelistOpennessVisualisation codelistOpennessVisualisation) throws MetamacException;
     		"Creates openness visualisation with all levels opened"

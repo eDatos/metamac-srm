@@ -1,5 +1,9 @@
 package org.siemac.metamac.srm.core.code.serviceapi.utils;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
@@ -9,6 +13,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
@@ -66,6 +71,24 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         return target;
     }
 
+    public static List<RelatedCode> mockListRelatedCodeFixedValues() {
+        List<RelatedCode> relatedCodes = new ArrayList<>();
+        
+        relatedCodes.add(mockRelatedCodeFixedValues("codeID1", "recodedID1"));
+        relatedCodes.add(mockRelatedCodeFixedValues("codeID2", "recodedID2"));
+        
+        return relatedCodes;
+    }
+  
+    public static RelatedCode mockRelatedCodeFixedValues(String originId, String recodedId) {
+        RelatedCode relatedCode = new RelatedCode();
+
+        relatedCode.setOriginCode(originId);
+        relatedCode.setRecodedCode(recodedId);
+        
+        return relatedCode;
+    }
+    
     public static CodelistVersionMetamac mockCodelistWithCodesFixedValues(String agencyID, String resourceID, String version) {
 
         CodelistVersionMetamac codelistVersion = mockCodelistFixedValues(agencyID, resourceID, version);

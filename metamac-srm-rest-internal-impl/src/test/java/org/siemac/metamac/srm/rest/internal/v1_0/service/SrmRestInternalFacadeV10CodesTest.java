@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.service;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -56,6 +57,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElementResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElements;
@@ -152,7 +154,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
-
+    
     @Test
     public void testFindCodelistsByAgencyTestLinks() throws Exception {
         String agencyID = AGENCY_1;
@@ -164,6 +166,27 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         assertEquals(SrmRestConstants.KIND_CODELISTS, codelists.getKind());
     }
 
+    @Test
+    public void testRetrieveRecodedCodesTestLinks() throws Exception {
+        
+        resetMocks();
+        
+        String agencyID = AGENCY_1;
+        String resourceID = ITEM_SCHEME_1_CODE;
+        String version = VERSION_1;
+        String agencyIDRef = AGENCY_1;
+        String resourceIDRef = ITEM_SCHEME_1_CODE;
+        String versionRef = VERSION_1;
+        String expectedUrl = "/codelists/" + agencyID + "/" + resourceID + "/" + version + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?" + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "="
+                + agencyIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=" + resourceIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION + "=" + versionRef;
+
+        RecodedCodes codes = getSrmRestInternalFacadeClientXml().retrieveRecodedCodes(agencyID, resourceID, version, agencyIDRef, resourceIDRef, versionRef);
+
+        assertEquals(getApiEndpoint() + expectedUrl, codes.getSelfLink());
+
+    }
+    
+    
     @Test
     public void testFindCodelistsByAgencyErrorWildcard() throws Exception {
         try {

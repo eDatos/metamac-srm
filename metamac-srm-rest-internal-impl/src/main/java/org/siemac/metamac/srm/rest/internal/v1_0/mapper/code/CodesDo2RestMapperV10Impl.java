@@ -43,6 +43,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistsResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodeResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisation;
@@ -70,6 +72,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
@@ -217,6 +220,21 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
+    public RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch,  List<RelatedCode> sources) {
+
+        RecodedCodes targets = new RecodedCodes();
+
+        targets.setSelfLink(toRecodedCodesLink(sourceCodelistVersion, codelistVersionToMatch));
+        targets.setTotal(BigInteger.valueOf(sources.size()));
+
+        for (RelatedCode source : sources) {
+            RecodedCodeResourceInternal target = toRecodedCodeResourceInternal(source);
+            targets.getCodes().add(target);
+        }
+        return targets;
+    }
+    
+    @Override
     public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) {
 
         Codes targets = new Codes();
@@ -351,6 +369,17 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
+    private RecodedCodeResourceInternal toRecodedCodeResourceInternal(RelatedCode source) {
+        if (source == null) {
+            return null;
+        }
+        RecodedCodeResourceInternal target = new RecodedCodeResourceInternal();
+        target.setId(source.getOriginCode());
+        target.setRecodedId(source.getRecodedCode());
+
+        return target;
+    }
+    
     private void setVisibleFields(CodeMetamac source, CodeResourceInternal target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
             target.setVariableElement(toResource(source.getVariableElement()));
@@ -799,6 +828,9 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
     private String toCodesLink(ItemSchemeVersion itemSchemeVersion) {
         return toItemsLink(toSubpathItemSchemes(), toSubpathItems(), itemSchemeVersion);
+    }
+    private String toRecodedCodesLink(ItemSchemeVersion itemSchemeVersionSource, ItemSchemeVersion itemSchemeVersionReference) {
+        return toRecodedCodesItemLink(toSubpathItemSchemes(), itemSchemeVersionSource, itemSchemeVersionReference);
     }
     private String toCodeLink(com.arte.statistic.sdmx.srm.core.base.domain.Item item) {
         return toItemLink(toSubpathItemSchemes(), toSubpathItems(), item);

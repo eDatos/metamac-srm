@@ -71,6 +71,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -361,6 +362,27 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return findCodelistsCanReplaceToByCondition(ctx, codelistUrn, false, conditions, pagingParameter);
     }
 
+    @Override
+    public List<RelatedCode> recodeCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
+            throws MetamacException {
+
+        List<RelatedCode> recodedCodes = new ArrayList<>();
+
+        Map<String, CodeMetamac> codesToMatch = retrieveCodesToMatch(codelistVersionToMatch.getItems());
+
+        for (Code code : codelistVersionOrigin.getItems()) {
+            CodeMetamac codeMetamacOrigin = (CodeMetamac) code;
+            CodeMetamac matchedCode = null;
+            if (codeMetamacOrigin.getVariableElement() != null) {
+                matchedCode = codesToMatch.get(codeMetamacOrigin.getVariableElement().getIdentifiableArtefact().getCode());
+            }
+            recodedCodes.add(setRecodedCodes(codeMetamacOrigin, matchedCode));
+        }
+
+        return recodedCodes;
+
+    }
+       
     @Override
     public PagedResult<CodelistVersionMetamac> findCodelistsWhoseCodesCanBeVariableElementGeographicalGranularityByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions,
             PagingParameter pagingParameter) throws MetamacException {
@@ -4253,4 +4275,31 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         codelist.setDefaultOpennessVisualisation(codelistOpennessVisualisation);
     }
+    
+    private Map<String, CodeMetamac> retrieveCodesToMatch(List<Code> codesToMatch) {
+        Map<String, CodeMetamac> codes = new HashMap<>();
+        for (Code code : codesToMatch) {
+            
+            CodeMetamac codeMetamac = (CodeMetamac) code;
+            VariableElement d = codeMetamac.getVariableElement();
+            if (codeMetamac.getVariableElement() != null) {
+                codes.put(codeMetamac.getVariableElement().getIdentifiableArtefact().getCode(), codeMetamac);
+            }
+        }
+        return codes;
+    }
+    
+    private RelatedCode setRecodedCodes(CodeMetamac code1, CodeMetamac code2) {
+        RelatedCode recodedCode = new RelatedCode();
+        recodedCode.setOriginCode(code1.getNameableArtefact().getCode());
+        recodedCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());        
+        recodedCode.setVariableElement(code1.getVariableElement() != null ? code1.getVariableElement().getIdentifiableArtefact().getCode() : null);
+        
+        if (code2 != null) {
+            recodedCode.setRecodedCode(code2.getNameableArtefact().getCode());
+            recodedCode.setRecodedCodeUrn(code2.getNameableArtefact().getUrn());
+        }
+        return recodedCode;
+    }
+    
 }

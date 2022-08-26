@@ -21,23 +21,17 @@
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_create_normalization_type_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220714_create_source_provider_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220725_create_is_extended_code_column.sql
+  
   ```
+* Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
+  ```shell
+  etc/changes-from-release/3.0.1/db/postgresql/20220807_add-column-comments-tbcontact.sql
   ```
 
 ## 3.0.0 a 3.1.0
 * Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.0.0/db](etc/changes-from-release/3.0.0/db)
   ```shell
   etc/changes-from-release/3.0.0/db/srm/postgresql/20220616_add_restriction_objects.sql
-  ```
-
-## 2.11.0 a 3.0.0
-
-* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts en el siguiente orden:
-```shell
-  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_create_master_table_eni_schema_catalog.sql
-  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_create_tb_sequence_eni_schema_catalog.sql
-  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_create_foreign_key_to_eni_schema_catalog.sql
-  etc/changes-from-release/2.11.1/db/srm/postgressql/20220523_insert_eni_schemas_values.sql
   ```
 
 ## 2.11.0 a 3.0.0

@@ -3831,7 +3831,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                             ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_GEOGRAPHICAL_GRANULARITY));
                 } else {
                     CodeMetamac geographicalGranularity = codesCanBeGeographicalGranularityByCode.get(geographicalGranularityIdentifier);
-                    variableElement.setGeographicalGranularity(geographicalGranularity);
+                    if (geographicalGranularity == null) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY_NOT_FOUND, geographicalGranularityIdentifier,
+                                variableElement.getIdentifiableArtefact().getCode()));
+                    } else {
+                        variableElement.setGeographicalGranularity(geographicalGranularity);
+                    }
                 }
             } else {
                 if (!StringUtils.isBlank(geographicalGranularityIdentifier)) {

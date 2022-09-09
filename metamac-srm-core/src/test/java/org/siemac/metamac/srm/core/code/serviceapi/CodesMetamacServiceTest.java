@@ -10969,6 +10969,29 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     @DirtyDatabase
+    public void testImportVariableElementsTsvGeographicalGeographicalGranularityNotFound() throws Exception {
+
+        final String variableUrn = VARIABLE_5;
+        final String fileName = "importation-variable-element-09-geographical-granularity-not-found.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        final boolean updateAlreadyExisting = true;
+
+        try {
+            codesService.importVariableElementsTsv(getServiceContextAdministrador(), variableUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(2, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY_NOT_FOUND, 2,
+                    new Serializable[]{"DUMMY_GEO_CODE", "VARIABLE_ELEMENT_03"}, e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY_NOT_FOUND, 2,
+                    new Serializable[]{"ANOTHER_DUMMY_GEO_CODE", "VARIABLE_ELEMENT_04"}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
     public void testImportVariableElementsTsvGeographicalErrorWithBodyIncorrect() throws Exception {
 
         final String variableUrn = VARIABLE_5;

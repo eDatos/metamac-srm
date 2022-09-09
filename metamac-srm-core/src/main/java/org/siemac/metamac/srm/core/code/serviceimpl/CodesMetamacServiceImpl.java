@@ -4215,7 +4215,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 // Extract code of variable element
                 Object code = feature.getAttribute(SrmConstants.SHAPE_VARIABLE_ELEMENT_ATTRIBUTE);
                 if (code == null) {
-                    continue;
+                    throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_ATTRIBUTE_NOT_FOUND).build();
                 }
                 VariableElement variableElement = variableElementsByCode.get(code);
                 if (variableElement == null) {

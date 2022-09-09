@@ -11161,6 +11161,21 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertTrue(DateUtils.isSameDay(new Date(), lastUpdateVariableElementsGeoInfo.toDate()));
     }
 
+    @Test
+    @DirtyDatabase
+    public void testImportVariableElementsShapeVarElemColumnNotFound() throws Exception {
+        String variableUrn = VARIABLE_5;
+        URL shapeFileUrl = this.getClass().getResource("/shape/comarcas_n2_error_var_elem_column/comarcas_n2.shp");
+
+        try {
+            codesService.importVariableElementsShape(getServiceContextAdministrador(), variableUrn, shapeFileUrl, Boolean.TRUE);
+            fail("expected variable element attribute not found exception");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_ATTRIBUTE_NOT_FOUND, 0, null, e.getExceptionItems().get(0));
+        }
+    }
+
     @Override
     @Test
     @DirtyDatabase
@@ -11205,6 +11220,21 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Double.valueOf("71.5559"), variableElement.getLatitude());
             assertEquals("MULTIPOLYGON (((-20.91900240266335 31.856725761393726)))", variableElement.getShapeWkt());
             assertEquals("{(((-20.91900240266335 31.856725761393726)))}", variableElement.getShapeGeojson());
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportVariableElementsPointsVarElemColumnNotFound() throws Exception {
+        String variableUrn = VARIABLE_5;
+        URL shapeFileUrl = this.getClass().getResource("/shape/comarcas_n2_error_var_elem_column/comarcas_n2_point.shp");
+
+        try {
+            codesService.importVariableElementsPoints(getServiceContextAdministrador(), variableUrn, shapeFileUrl, Boolean.TRUE);
+            fail("expected variable element attribute not found exception");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_ATTRIBUTE_NOT_FOUND, 0, null, e.getExceptionItems().get(0));
         }
     }
 

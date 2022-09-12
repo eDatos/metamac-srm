@@ -186,8 +186,12 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.incorrect_number_codes");
     public static final CommonServiceExceptionType IMPORTATION_SHAPE_ERROR                                                               = create("exception.srm.importation.shape.error");
     public static final CommonServiceExceptionType IMPORTATION_SHAPE_ERROR_FILE_PARSING                                                  = create("exception.srm.importation.shape.error.file_parse");
-    public static final CommonServiceExceptionType IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_ATTRIBUTE_NOT_FOUND                          = create(
-            "exception.srm.importation.shape.error.variable_element_attribute.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_COLUMN_NOT_FOUND                             = create(
+            "exception.srm.importation.shape.error.variable_element_column.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_IS_NULL                                 = create(
+            "exception.srm.importation.shape.variable_element_value.is_null");
+    public static final CommonServiceExceptionType IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_NOT_FOUND                               = create(
+            "exception.srm.importation.shape.variable_element_value.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND                                              = create(
             "exception.srm.importation.tsv.error.codelist.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND                                        = create(

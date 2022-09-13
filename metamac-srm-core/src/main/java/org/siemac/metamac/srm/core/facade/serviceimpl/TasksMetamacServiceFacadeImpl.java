@@ -68,15 +68,17 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     }
 
     @Override
-    public void processImportVariableElementsShape(ServiceContext ctx, String variableUrn, URL shapeFile, String jobKey) throws MetamacException {
+    public TaskImportationInfo processImportVariableElementsShape(ServiceContext ctx, String variableUrn, URL shapeFile, String jobKey) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importVariableElementsShape(ctx, variableUrn, shapeFile, CAN_NOT_BE_BACKGROUND);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
+        return taskImportationInfo;
     }
 
     @Override
-    public void processImportVariableElementsPoints(ServiceContext ctx, String variableUrn, URL shapeFile, String jobKey) throws MetamacException {
+    public TaskImportationInfo processImportVariableElementsPoints(ServiceContext ctx, String variableUrn, URL shapeFile, String jobKey) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importVariableElementsPoints(ctx, variableUrn, shapeFile, CAN_NOT_BE_BACKGROUND);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
+        return taskImportationInfo;
     }
 
     @Override

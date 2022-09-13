@@ -30,19 +30,19 @@ where
 -- -----------------------------------------------------------------------------------------------------
 -- Esta sentencia actualiza los elementos de variable pertenecientes a una variable de tipo geográfica
 -- cuya granularidad geográfica no está informada estableciendo de forma genérica el valor Otros de la 
--- clasificación ISTAC:CL_GEO_GRANULARITIES(01.006).
+-- clasificación ISTAC:CL_GEO_GRANULARITIES(02.000).
 --
 -- ATENCIÓN: Esta sentencia SÓLO HA DE EJECUTARSE EN EL ENTORNO DE DEMO dado que es el entorno donde se
 -- ha detectado la incidencia tratada en esta tarea. Para cualquier realizar una adecuación	de datos
 -- en cualquier otro entorno, esta consulta NO DEBE SER EJECUTADA EN SU ESTADO ACTUAL y debe ser el 
 -- equipo de eDatos quien establezca el valor por defecto que debe ser informado.
 -- -----------------------------------------------------------------------------------------------------
--- update tb_m_variable_elements tmve
--- set	tmve.geographical_granularity_fk = (select tc.id 
+-- update tb_m_variable_elements
+-- set geographical_granularity_fk = (select tc.id 
 -- 										from tb_codes tc 
 -- 											left join tb_annotable_artefacts taa on tc.nameable_artefact_fk = taa.id 
 -- 										where 
--- 											taa.urn = 'urn:sdmx:org.sdmx.infomodel.codelist.Code=ISTAC:CL_GEO_GRANULARITIES(01.006)._O')
+-- 											taa.urn = 'urn:sdmx:org.sdmx.infomodel.codelist.Code=ISTAC:CL_GEO_GRANULARITIES(02.000)._O')
 -- where
 -- 	id in (select tmve.id
 -- 		   from tb_m_variable_elements tmve

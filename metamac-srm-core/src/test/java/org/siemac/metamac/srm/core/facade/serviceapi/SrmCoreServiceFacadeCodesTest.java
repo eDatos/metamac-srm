@@ -2262,7 +2262,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         {
             MetamacCriteriaResult<VariableElementBasicDto> result = srmCoreServiceFacade.findVariableElementsByCondition(getServiceContextAdministrador(), metamacCriteria);
 
-            assertEquals(15, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(16, result.getPaginatorResult().getTotalResults().intValue());
             int i = 0;
             assertEquals(VARIABLE_7_VARIABLE_ELEMENT_1_WORLD, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_1_VARIABLE_ELEMENT_1, result.getResults().get(i++).getUrn());
@@ -2279,6 +2279,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_2, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_3, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_4, result.getResults().get(i++).getUrn());
+            assertEquals(VARIABLE_5_VARIABLE_ELEMENT_5, result.getResults().get(i++).getUrn());
             assertEquals(result.getPaginatorResult().getTotalResults().intValue(), i);
         }
         // Find by short name
@@ -2326,7 +2327,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             MetamacCriteriaResult<VariableElementBasicDto> result = srmCoreServiceFacade.findVariableElementsByCondition(getServiceContextAdministrador(), metamacCriteria);
 
             assertEquals(4, result.getResults().size());
-            assertEquals(15, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(16, result.getPaginatorResult().getTotalResults().intValue());
             assertEquals(firstResult, result.getPaginatorResult().getFirstResult().intValue());
             assertEquals(maxResultSize, result.getPaginatorResult().getMaximumResultSize().intValue());
             assertEquals(VARIABLE_7_VARIABLE_ELEMENT_1_WORLD, result.getResults().get(0).getUrn());
@@ -2341,7 +2342,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             MetamacCriteriaResult<VariableElementBasicDto> result = srmCoreServiceFacade.findVariableElementsByCondition(getServiceContextAdministrador(), metamacCriteria);
 
             assertEquals(4, result.getResults().size());
-            assertEquals(15, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(16, result.getPaginatorResult().getTotalResults().intValue());
             assertEquals(firstResult, result.getPaginatorResult().getFirstResult().intValue());
             assertEquals(VARIABLE_2_VARIABLE_ELEMENT_3, result.getResults().get(0).getUrn());
             assertEquals(VARIABLE_2_VARIABLE_ELEMENT_4, result.getResults().get(1).getUrn());
@@ -2356,7 +2357,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             MetamacCriteriaResult<VariableElementBasicDto> result = srmCoreServiceFacade.findVariableElementsByCondition(getServiceContextAdministrador(), metamacCriteria);
 
             assertEquals(4, result.getResults().size());
-            assertEquals(15, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(16, result.getPaginatorResult().getTotalResults().intValue());
             assertEquals(firstResult, result.getPaginatorResult().getFirstResult().intValue());
             assertEquals(VARIABLE_2_VARIABLE_ELEMENT_7, result.getResults().get(0).getUrn());
             assertEquals(VARIABLE_2_VARIABLE_ELEMENT_8, result.getResults().get(1).getUrn());
@@ -2369,12 +2370,13 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
             MetamacCriteriaResult<VariableElementBasicDto> result = srmCoreServiceFacade.findVariableElementsByCondition(getServiceContextAdministrador(), metamacCriteria);
 
-            assertEquals(3, result.getResults().size());
-            assertEquals(15, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(4, result.getResults().size());
+            assertEquals(16, result.getPaginatorResult().getTotalResults().intValue());
             assertEquals(firstResult, result.getPaginatorResult().getFirstResult().intValue());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_2, result.getResults().get(0).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_3, result.getResults().get(1).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_4, result.getResults().get(2).getUrn());
+            assertEquals(VARIABLE_5_VARIABLE_ELEMENT_5, result.getResults().get(3).getUrn());
         }
     }
 
@@ -2396,12 +2398,13 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         // Find all
         {
             MetamacCriteriaResult<RelatedResourceDto> result = srmCoreServiceFacade.findVariableElementsForCodesByCondition(getServiceContextAdministrador(), metamacCriteria, codelistUrn);
-            assertEquals(4, result.getResults().size());
+            assertEquals(5, result.getResults().size());
             int i = 0;
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_1, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_2, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_3, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_4, result.getResults().get(i++).getUrn());
+            assertEquals(VARIABLE_5_VARIABLE_ELEMENT_5, result.getResults().get(i++).getUrn());
         }
         // Find by name
         {

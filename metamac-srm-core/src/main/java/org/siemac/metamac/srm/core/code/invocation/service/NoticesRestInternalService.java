@@ -13,4 +13,6 @@ public interface NoticesRestInternalService {
 
     public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, Serializable... successMessageParameters);
 
+    public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, MetamacException exception, Serializable... successMessageParameters);
+
 }

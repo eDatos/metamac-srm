@@ -52,6 +52,22 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
+    public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, MetamacException exception, Serializable... successMessageParameters) {
+        try {
+            Locale locale = configurationService.retrieveLanguageDefaultLocale();
+            String localisedMessage = LocaleUtil.getMessageForCode(successMessageCode, locale);
+            localisedMessage = MessageFormat.format(localisedMessage, successMessageParameters);
+
+            Throwable localisedException = translateExceptions.translateException(locale, exception);
+            localisedMessage += "\r\n" + localisedException.getMessage();
+
+            createBackgroundNotification(actionCode, localisedMessage, user);
+        } catch (MetamacException e) {
+            logger.error("Error creating createSuccessBackgroundNotification:", e);
+        }
+    }
+
+    @Override
     public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, Serializable... successMessageParameters) {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();

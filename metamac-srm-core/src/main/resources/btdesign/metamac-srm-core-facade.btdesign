@@ -811,9 +811,9 @@ Application SrmFacadeCore {
     		"Imports variable elements in tsv format"
     		processImportVariableElementsTsv(String variableUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports geographical information (shape) of variable elements"
-    		processImportVariableElementsShape(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
+    		TaskImportationInfo processImportVariableElementsShape(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
 			"Imports geographical information (points) of variable elements"
-    		processImportVariableElementsPoints(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
+    		TaskImportationInfo processImportVariableElementsPoints(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
     		"Perform a merge with temporal codelist"
 			processPublishInternallyCodelist(String urnToCopy, boolean forceLatestFinal, String jobKey) throws MetamacException;
 

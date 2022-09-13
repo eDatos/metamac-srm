@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ExceptionHelper;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.quartz.DisallowConcurrentExecution;
@@ -16,6 +17,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -65,15 +67,23 @@ public class ImportationShapeJob implements Job {
 
             // Parameters
             logger.info("ImportationShapeJob: Import " + shapeFileUrl + ", job " + jobKey + " starting at " + new Date());
+            TaskImportationInfo taskImportationInfo;
             if (SrmConstants.SHAPE_OPERATION_IMPORT_SHAPES.equals(operation)) {
-                getTaskMetamacServiceFacade().processImportVariableElementsShape(serviceContext, variableUrn, shapeFileUrl, jobKey.getName());
+                taskImportationInfo = getTaskMetamacServiceFacade().processImportVariableElementsShape(serviceContext, variableUrn, shapeFileUrl, jobKey.getName());
             } else if (SrmConstants.SHAPE_OPERATION_IMPORT_POINTS.equals(operation)) {
-                getTaskMetamacServiceFacade().processImportVariableElementsPoints(serviceContext, variableUrn, shapeFileUrl, jobKey.getName());
+                taskImportationInfo = getTaskMetamacServiceFacade().processImportVariableElementsPoints(serviceContext, variableUrn, shapeFileUrl, jobKey.getName());
             } else {
                 throw new IllegalArgumentException("Job with operation " + operation + " is not supported");
             }
             logger.info("ImportationShapeJob: Import " + shapeFileUrl + ", job " + jobKey + " finished at " + new Date());
-            getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_SHAPE_JOB, ServiceNoticeMessage.IMPORT_SHAPE_JOB_OK, shapeFile);
+
+            if (taskImportationInfo != null && !CollectionUtils.isEmpty(taskImportationInfo.getInformationItems())) {
+                MetamacException metamacException = new MetamacException(taskImportationInfo.getInformationItems());
+                getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_SHAPE_JOB, ServiceNoticeMessage.IMPORT_SHAPE_JOB_WARNING, metamacException,
+                        shapeFile);
+            } else {
+                getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_SHAPE_JOB, ServiceNoticeMessage.IMPORT_SHAPE_JOB_OK, shapeFile);
+            }
         } catch (Exception e) {
             // Concert parser exception to metamac exception
             MetamacException metamacException = null;

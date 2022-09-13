@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -45,6 +46,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.joda.time.DateTime;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
@@ -4168,7 +4170,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } else {
             throw new UnsupportedOperationException("Operation unsupported: " + operationType);
         }
-        addVariableElementGeographicalInformationFromShapeFile(shapeFileUrl, variableElementsByCode, variableElementsToPersist, geometryTypes);
+
+        addVariableElementGeographicalInformationFromShapeFile(shapeFileUrl, variableElementsByCode, variableElementsToPersist, informationItems, geometryTypes);
         // Persist
         for (VariableElement variableElement : variableElementsToPersist) {
             getVariableElementRepository().save(variableElement);
@@ -4182,9 +4185,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     /**
      * Adds geographical information of specific type. Modify existing variable element from map, and adds updated variable element to list to mark to execute save operation
+     * 
+     * @param informationItems
      */
     private void addVariableElementGeographicalInformationFromShapeFile(URL shapeFileUrl, Map<String, VariableElement> variableElementsByCode, List<VariableElement> variableElementsToPersist,
-            String... geometryTypes) throws MetamacException {
+            List<MetamacExceptionItem> informationItems, String... geometryTypes) throws MetamacException {
 
         DataStore dataStore = null;
         try {
@@ -4213,13 +4218,21 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 }
 
                 // Extract code of variable element
+                if (!CollectionUtils.exists(feature.getProperties(), getShapeVariableElementColumnPredicate())) {
+                    throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_COLUMN_NOT_FOUND).build();
+                }
+
                 Object code = feature.getAttribute(SrmConstants.SHAPE_VARIABLE_ELEMENT_ATTRIBUTE);
-                if (code == null) {
+                if (StringUtils.isBlank(code.toString())) {
+                    if (!CollectionUtils.exists(informationItems, getVariableElementValueIsNullExceptionPredicate())) {
+                        informationItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_IS_NULL));
+                    }
                     continue;
                 }
+
                 VariableElement variableElement = variableElementsByCode.get(code);
                 if (variableElement == null) {
-                    // ignore, do not throw exception
+                    informationItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_NOT_FOUND, code.toString()));
                     continue;
                 }
 
@@ -4248,6 +4261,26 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 dataStore.dispose();
             }
         }
+    }
+
+    private Predicate getShapeVariableElementColumnPredicate() {
+        return new Predicate() {
+
+            @Override
+            public boolean evaluate(Object object) {
+                return SrmConstants.SHAPE_VARIABLE_ELEMENT_ATTRIBUTE.equals(((Property) object).getName().toString());
+            }
+        };
+    }
+
+    private Predicate getVariableElementValueIsNullExceptionPredicate() {
+        return new Predicate() {
+
+            @Override
+            public boolean evaluate(Object object) {
+                return ServiceExceptionType.IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_IS_NULL.getCode().equals(((MetamacExceptionItem) object).getCode());
+            }
+        };
     }
 
     private CodelistVersionMetamac retrieveCodelistOriginalFromUrnTemporal(ServiceContext ctx, String urnTemporal) throws MetamacException {

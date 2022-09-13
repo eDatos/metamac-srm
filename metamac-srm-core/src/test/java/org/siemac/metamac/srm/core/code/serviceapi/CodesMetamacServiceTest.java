@@ -7370,7 +7370,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<VariableElement> result = codesService.findVariableElementsByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
-            assertEquals(15, result.getTotalRows());
+            assertEquals(16, result.getTotalRows());
             int i = 0;
             assertEquals(VARIABLE_7_VARIABLE_ELEMENT_1_WORLD, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
             assertEquals(VARIABLE_1_VARIABLE_ELEMENT_1, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
@@ -7387,6 +7387,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_2, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_3, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_4, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(VARIABLE_5_VARIABLE_ELEMENT_5, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
         }
         // Find by urn
         {
@@ -7413,12 +7414,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<VariableElement> result = codesService.findVariableElementsForCodesByCondition(getServiceContextAdministrador(), conditions, pagingParameter, codelistUrn);
 
-            assertEquals(4, result.getTotalRows());
+            assertEquals(5, result.getTotalRows());
             int i = 0;
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_1, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_2, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_3, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
             assertEquals(VARIABLE_5_VARIABLE_ELEMENT_4, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(VARIABLE_5_VARIABLE_ELEMENT_5, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
         }
         // Find by short name
         {
@@ -7506,7 +7508,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             String variableUrn = VARIABLE_5;
             String locale = "en";
             List<VariableElementVisualisationResult> result = codesService.retrieveVariableElementsByVariable(getServiceContextAdministrador(), variableUrn, locale);
-            assertEquals(4, result.size());
+            assertEquals(5, result.size());
             {
                 VariableElementVisualisationResult ve = assertContainsVariableElementVisualisationResult(VARIABLE_5_VARIABLE_ELEMENT_1, result);
                 assertEquals(Long.valueOf(51), ve.getIdDatabase());
@@ -7532,6 +7534,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 VariableElementVisualisationResult ve = assertContainsVariableElementVisualisationResult(VARIABLE_5_VARIABLE_ELEMENT_4, result);
                 assertEquals(Long.valueOf(54), ve.getIdDatabase());
                 assertEquals("VARIABLE_ELEMENT_04", ve.getCode());
+            }
+            {
+                VariableElementVisualisationResult ve = assertContainsVariableElementVisualisationResult(VARIABLE_5_VARIABLE_ELEMENT_5, result);
+                assertEquals(Long.valueOf(55), ve.getIdDatabase());
+                assertEquals("VARIABLE_ELEMENT_05", ve.getCode());
             }
         }
     }

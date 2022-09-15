@@ -105,7 +105,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
                 ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeIdentifier(eniSchemeCatalog.getIdentifier());
                 
             } catch (EniSchemaCatalogNotFoundException e) {
-                throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOGNOT_FOUND, eniSchemeId);
+                throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOG_NOT_FOUND, eniSchemeId);
             }
         }
 

@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
-import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -37,7 +36,7 @@ public class MasterTablesServiceTest extends SrmBaseTest
     @Test
     @Transactional
     public void testFindAllEniSchemaCatalogs() throws MetamacException {
-        List<EniSchemaCatalogDto> eniSchemas = masterTableService.findAllEniSchemaCatalogs(getServiceContextAdministrador());
+        List<EniSchemaCatalog> eniSchemas = masterTableService.findAllEniSchemaCatalogs(getServiceContextAdministrador());
         assertTrue(!eniSchemas.isEmpty());
     }
 

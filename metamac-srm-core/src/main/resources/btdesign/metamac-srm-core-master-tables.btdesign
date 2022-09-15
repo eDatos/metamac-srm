@@ -16,7 +16,7 @@ Application MasterTablesMetamac {
 			> @EniSchemaCatalogRepository
 
 		"EniSchemaSource"
-       		List<@EniSchemaCatalogDto> findAllEniSchemaCatalogs throws MetamacException;
+       		List<@EniSchemaCatalog> findAllEniSchemaCatalogs throws MetamacException;
        		
        		"EniSchemaCatalogRepository"
        		@EniSchemaCatalog findEniSchemaCatalogById(Long id) throws MetamacException;

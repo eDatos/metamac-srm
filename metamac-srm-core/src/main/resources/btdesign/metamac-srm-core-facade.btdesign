@@ -32,6 +32,8 @@ import "classpath:/btdesign/metamac-srm-core-codes-dtos.btdesign"
 
 import "classpath:/btdesign/metamac-srm-core-tasks.btdesign"
 
+import "classpath:/btdesign/metamac-srm-core-master-tables-dtos.btdesign"
+
 Application SrmFacadeCore {
     basePackage=unused
     
@@ -757,6 +759,8 @@ Application SrmFacadeCore {
 			"Exports variable elements in tsv format"
     		String exportVariableElementsTsv(String variableUrn) throws MetamacException;
     		    		
+    		"ENI scheme catalogs"
+    		List<@EniSchemaCatalogDto> findAllEniSchemaCatalogs() throws MetamacException;
     		/**************************************************************************
 		     * COMMON
 		     **************************************************************************/

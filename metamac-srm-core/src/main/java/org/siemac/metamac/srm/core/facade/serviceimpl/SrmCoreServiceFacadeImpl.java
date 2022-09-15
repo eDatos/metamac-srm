@@ -86,6 +86,10 @@ import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.core.dsd.mapper.DataStructureDefinitionDo2DtoMapper;
 import org.siemac.metamac.srm.core.dsd.mapper.DataStructureDefinitionDto2DoMapper;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
+import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
+import org.siemac.metamac.srm.core.master.serviceapi.MasterTablesService;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.shared.OrganisationMetamacVisualisationResult;
@@ -185,6 +189,12 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Autowired
     private ExportService                              exportService;
+    
+    @Autowired
+    private MasterTablesDo2DtoMapper                           do2DtoMapper;
+    
+    @Autowired
+    private MasterTablesService                           masterTablesService;
 
     private final static Comparator<ItemSchemeVersion> ITEM_SCHEME_CREATED_DATE_DESC_COMPARATOR = new ItemSchemeCreatedDateDescComparator();
     private final static Comparator<StructureVersion>  STRUCTURE_CREATED_DATE_DESC_COMPARATOR   = new StructureCreatedDateDescComparator();
@@ -4062,6 +4072,17 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Update order
         getConceptsMetamacService().updateConceptInOrder(ctx, conceptUrn, conceptSchemeUrn, newConceptIndex);
+    }
+    
+    public List<EniSchemaCatalogDto> findAllEniSchemaCatalogs(ServiceContext ctx) throws MetamacException {
+
+        List<EniSchemaCatalog> eniSchemaCatalogs = masterTablesService.findAllEniSchemaCatalogs(ctx);
+        List<EniSchemaCatalogDto> eniSchemaCatalogDtoList = new ArrayList<>();
+        for (EniSchemaCatalog item : eniSchemaCatalogs) {
+            eniSchemaCatalogDtoList.add(do2DtoMapper.eniSchemaCatalogToDto(item));
+        }
+        return eniSchemaCatalogDtoList;
+
     }
 
 }

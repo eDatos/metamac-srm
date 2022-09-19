@@ -998,6 +998,79 @@
             }
          }
       },
+      "/v1.0/codelists/{agencyID}/{resourceID}/{version}:recode":{
+         "get":{
+            "tags":[
+               "Clasificaciones"
+            ],
+            "description":"Permite obtener las equivalencias de los códigos de un codelist en los códigos de otro codelist",
+            "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__recode_retrieveRecodedCodes_GET",
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "parameters":[
+            {
+                  "name":"agencyID",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador de la agencia origen"
+            },
+            {
+                  "name":"resourceID",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Identificador del recurso origen"
+            },
+            {
+                  "name":"version",
+                  "in":"path",
+                  "type":"string",
+                  "description":"Versión origen"
+            },
+            {
+                  "name":"referenceAgencyID",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Identificador de la agencia de la clasificación de referencia para recodificar"
+            },
+            {
+                  "name":"referenceResourceID",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Identificador del recurso de la clasificación de referencia para recodificar"
+            },
+            {
+                  "name":"referenceVersion",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Versión de la clasificación de referencia para recodificar"
+            }
+            
+            ],
+            "responses":{
+               "200":{
+               	  "schema":{
+                     "description":"",
+                     "$ref":"#/definitions/RecodedCodes"
+                  },               
+                  "headers":{
+
+                  },
+                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+               },
+               "406":{
+                  "description":"No aceptable. El formato solicitado no es válido"
+               },
+               "500":{
+                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+               },
+               "503":{
+                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+               }
+            }
+         }
+      },
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}/codes":{
          "get":{
             "tags":[
@@ -1035,11 +1108,17 @@
                   "type":"string",
                   "description":"Restricción establecida para la visualización. Sólo se mostrarán los códigos de esta restricción"
                },
+               {
+                  "name":"extended",
+                  "in":"query",
+                  "type":"boolean",
+                  "description":"Indicará el tipo de código que se desea mostrar. Dos valores posibles: <ul><li>true: sólo se muestran códigos extendidos</li><li>false: sólo se muestran códigos no extendidos</li></ul>"
+               },
               {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+open: muestra la apertura del elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+order: muestra el orden establecido para el elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+variableElement: muestra su variable de elemento </li><li>+description: muestra la descripción de los códigos</li></ul> Ejemplo: fields=\"+open,+order\""
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+open: muestra la apertura del elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+order: muestra el orden establecido para el elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+variableElement: muestra su variable de elemento </li><li>+description: muestra la descripción de los códigos</li><li>+variableElement: muestra su variable de elemento </li><li>+extended: muestra si el código es extendido o no </li></ul> Ejemplo: fields=\"+open,+order\""
                }
             ],
             "responses":{

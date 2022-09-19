@@ -17,6 +17,7 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.code.dto.VariableElementOperationDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
+import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.code.model.record.CodeRecord;
 import org.siemac.metamac.srm.web.code.model.record.CodelistFamilyRecord;
 import org.siemac.metamac.srm.web.code.model.record.CodelistRecord;
@@ -40,6 +41,7 @@ public class CodesRecordUtils extends org.siemac.metamac.srm.web.client.utils.Re
         record.setVariable(codelistDto.getVariable());
         record.setCodelistBasicDto(codelistDto);
         record.setStreamMessageStatus(codelistDto.getStreamMessageStatus());
+        record.setNormalizationType(MetamacSrmWeb.getCoreMessages().getString(MetamacSrmWeb.getCoreMessages().normalizationTypeEnum() + codelistDto.getNormalizationType().getName()));
         return record;
     }
 

@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -45,6 +46,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.joda.time.DateTime;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
@@ -71,6 +73,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -84,6 +87,7 @@ import org.siemac.metamac.srm.core.code.domain.shared.CodeToCopy;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
@@ -361,6 +365,27 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public List<RelatedCode> recodeCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
+            throws MetamacException {
+
+        List<RelatedCode> recodedCodes = new ArrayList<>();
+
+        Map<String, CodeMetamac> codesToMatch = retrieveCodesToMatch(codelistVersionToMatch.getItems());
+
+        for (Code code : codelistVersionOrigin.getItems()) {
+            CodeMetamac codeMetamacOrigin = (CodeMetamac) code;
+            CodeMetamac matchedCode = null;
+            if (codeMetamacOrigin.getVariableElement() != null) {
+                matchedCode = codesToMatch.get(codeMetamacOrigin.getVariableElement().getIdentifiableArtefact().getCode());
+            }
+            recodedCodes.add(setRecodedCodes(codeMetamacOrigin, matchedCode));
+        }
+
+        return recodedCodes;
+
+    }
+       
+    @Override
     public PagedResult<CodelistVersionMetamac> findCodelistsWhoseCodesCanBeVariableElementGeographicalGranularityByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions,
             PagingParameter pagingParameter) throws MetamacException {
         // Find
@@ -375,7 +400,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 .buildSingle());
         // Codelist with access type = PUBLIC
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
-
+        
         return findCodelistsByCondition(ctx, conditions, pagingParameter);
     }
 
@@ -550,10 +575,14 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistVersion.setIsRecommended(codelistTemporalVersion.getIsRecommended());
         // AccessType
         codelistVersion.setAccessType(codelistTemporalVersion.getAccessType());
+        // NormalizationType
+        codelistVersion.setNormalizationType(codelistTemporalVersion.getNormalizationType());
         // CodelistFamily
         codelistVersion.setFamily(codelistTemporalVersion.getFamily());
         // Variable
         codelistVersion.setVariable(codelistTemporalVersion.getVariable());
+        // SourceProvider
+        codelistVersion.setSourceProvider(codelistTemporalVersion.getSourceProvider());
 
         // Merge metadata of Item
         Map<String, Item> temporalItemMap = SrmServiceUtils.createMapOfItemsByOriginalUrn(codelistTemporalVersion.getItems());
@@ -577,7 +606,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
             // VariableElement
             code.setVariableElement(codeTemp.getVariableElement());
-
+            
+            code.setIsExtended(codeTemp.getIsExtended());
+            
             // Order Visualisation
             for (int i = 1; i <= SrmConstants.CODELIST_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
                 Integer order = SrmServiceUtils.getCodeOrder(codeTemp, i);
@@ -720,6 +751,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         Map<String, ItemResult> codesItemResultInCodelistSourceByUrn = new HashMap<>(codesItemResultInCodelistSource.size());
         for (ItemResult itemResult : codesItemResultInCodelistSource) {
             codesItemResultInCodelistSourceByUrn.put(itemResult.getUrn(), itemResult);
+            
         }
 
         boolean copyVariableElements = false;
@@ -759,7 +791,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Validation
         CodesMetamacInvocationValidator.checkImportCodesTsv(codelistUrn, file, fileName, updateAlreadyExisting, canBeBackground, null);
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
-        if (codelistVersion.getVariable() == null) {
+        if (codelistVersion.getVariable() == null && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
         }
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
@@ -807,9 +839,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     codesPreviousInCodelistByCode.put(item.getNameableArtefact().getCode(), (CodeMetamac) item);
                 }
                 // Retrieve variable elements. It is more efficient retrieve all variable element in one query than execute one query by variable element
-                Map<String, VariableElement> variableElementsInVariableByCode = new HashMap<>();
-                for (VariableElement variableElement : codelistVersion.getVariable().getVariableElements()) {
-                    variableElementsInVariableByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                Map<String, VariableElement> variableElementsInVariableByCode = new HashMap<String, VariableElement>();
+                //codelist variable may be null if normalizationType=NOT_STANDARDIZED.
+                if (codelistVersion.getVariable() != null) {
+                    for (VariableElement variableElement : codelistVersion.getVariable().getVariableElements()) {
+                        variableElementsInVariableByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                    }
                 }
 
                 int lineNumber = 2;
@@ -1365,7 +1400,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
         // Retrieve variable. All variable elements must belong to codelist varliable. In repository, error ocurrs if any variable element doesnot belong to this variable
         Variable variable = codelistVersion.getVariable();
-        if (variable == null) {
+        if (variable == null && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(ServiceExceptionParameters.CODELIST_VARIABLE).build();
         }
         // Update all
@@ -1511,7 +1546,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
                 .withProperty(new LeafProperty<CodeMetamac>(CodeMetamacProperties.itemSchemeVersion().getName(), CodelistVersionMetamacProperties.accessType().getName(), false, CodeMetamac.class))
                 .eq(AccessTypeEnum.PUBLIC).buildSingle());
-
+        
         return findCodesByCondition(ctx, conditions, pagingParameter);
     }
 
@@ -3657,7 +3692,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         if (copyVariableElements) {
             codeTarget.setVariableElement(codeSource.getVariableElement());
         }
-
+        codeTarget.setIsExtended(SrmServiceUtils.getCodeItemResultIsExtended(codeItemResultSource));
+        
         // extra validation to avoid save some incorrect
         CodesMetamacInvocationValidator.checkCreateCode(codelistVersionTarget, codeTarget, null);
         return codeTarget;
@@ -3787,7 +3823,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, variableElement.getIdentifiableArtefact().getCode(),
                     ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
         }
-
+        
         // geographical granularity
         if (header.isGeographicalGranularitySetted()) {
             String geographicalGranularityIdentifier = columns[header.getGeographicalGranularityPosition()];
@@ -3797,7 +3833,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                             ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_GEOGRAPHICAL_GRANULARITY));
                 } else {
                     CodeMetamac geographicalGranularity = codesCanBeGeographicalGranularityByCode.get(geographicalGranularityIdentifier);
-                    variableElement.setGeographicalGranularity(geographicalGranularity);
+                    if (geographicalGranularity == null) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY_NOT_FOUND, geographicalGranularityIdentifier,
+                                variableElement.getIdentifiableArtefact().getCode()));
+                    } else {
+                        variableElement.setGeographicalGranularity(geographicalGranularity);
+                    }
                 }
             } else {
                 if (!StringUtils.isBlank(geographicalGranularityIdentifier)) {
@@ -4129,7 +4170,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } else {
             throw new UnsupportedOperationException("Operation unsupported: " + operationType);
         }
-        addVariableElementGeographicalInformationFromShapeFile(shapeFileUrl, variableElementsByCode, variableElementsToPersist, geometryTypes);
+
+        addVariableElementGeographicalInformationFromShapeFile(shapeFileUrl, variableElementsByCode, variableElementsToPersist, informationItems, geometryTypes);
         // Persist
         for (VariableElement variableElement : variableElementsToPersist) {
             getVariableElementRepository().save(variableElement);
@@ -4143,9 +4185,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     /**
      * Adds geographical information of specific type. Modify existing variable element from map, and adds updated variable element to list to mark to execute save operation
+     * 
+     * @param informationItems
      */
     private void addVariableElementGeographicalInformationFromShapeFile(URL shapeFileUrl, Map<String, VariableElement> variableElementsByCode, List<VariableElement> variableElementsToPersist,
-            String... geometryTypes) throws MetamacException {
+            List<MetamacExceptionItem> informationItems, String... geometryTypes) throws MetamacException {
 
         DataStore dataStore = null;
         try {
@@ -4174,13 +4218,21 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 }
 
                 // Extract code of variable element
+                if (!CollectionUtils.exists(feature.getProperties(), getShapeVariableElementColumnPredicate())) {
+                    throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_SHAPE_ERROR_VARIABLE_ELEMENT_COLUMN_NOT_FOUND).build();
+                }
+
                 Object code = feature.getAttribute(SrmConstants.SHAPE_VARIABLE_ELEMENT_ATTRIBUTE);
-                if (code == null) {
+                if (StringUtils.isBlank(code.toString())) {
+                    if (!CollectionUtils.exists(informationItems, getVariableElementValueIsNullExceptionPredicate())) {
+                        informationItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_IS_NULL));
+                    }
                     continue;
                 }
+
                 VariableElement variableElement = variableElementsByCode.get(code);
                 if (variableElement == null) {
-                    // ignore, do not throw exception
+                    informationItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_NOT_FOUND, code.toString()));
                     continue;
                 }
 
@@ -4209,6 +4261,26 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 dataStore.dispose();
             }
         }
+    }
+
+    private Predicate getShapeVariableElementColumnPredicate() {
+        return new Predicate() {
+
+            @Override
+            public boolean evaluate(Object object) {
+                return SrmConstants.SHAPE_VARIABLE_ELEMENT_ATTRIBUTE.equals(((Property) object).getName().toString());
+            }
+        };
+    }
+
+    private Predicate getVariableElementValueIsNullExceptionPredicate() {
+        return new Predicate() {
+
+            @Override
+            public boolean evaluate(Object object) {
+                return ServiceExceptionType.IMPORTATION_SHAPE_INFO_VARIABLE_ELEMENT_VALUE_IS_NULL.getCode().equals(((MetamacExceptionItem) object).getCode());
+            }
+        };
     }
 
     private CodelistVersionMetamac retrieveCodelistOriginalFromUrnTemporal(ServiceContext ctx, String urnTemporal) throws MetamacException {
@@ -4241,4 +4313,31 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         codelist.setDefaultOpennessVisualisation(codelistOpennessVisualisation);
     }
+    
+    private Map<String, CodeMetamac> retrieveCodesToMatch(List<Code> codesToMatch) {
+        Map<String, CodeMetamac> codes = new HashMap<>();
+        for (Code code : codesToMatch) {
+            
+            CodeMetamac codeMetamac = (CodeMetamac) code;
+            VariableElement d = codeMetamac.getVariableElement();
+            if (codeMetamac.getVariableElement() != null) {
+                codes.put(codeMetamac.getVariableElement().getIdentifiableArtefact().getCode(), codeMetamac);
+            }
+        }
+        return codes;
+    }
+    
+    private RelatedCode setRecodedCodes(CodeMetamac code1, CodeMetamac code2) {
+        RelatedCode recodedCode = new RelatedCode();
+        recodedCode.setOriginCode(code1.getNameableArtefact().getCode());
+        recodedCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());        
+        recodedCode.setVariableElement(code1.getVariableElement() != null ? code1.getVariableElement().getIdentifiableArtefact().getCode() : null);
+        
+        if (code2 != null) {
+            recodedCode.setRecodedCode(code2.getNameableArtefact().getCode());
+            recodedCode.setRecodedCodeUrn(code2.getNameableArtefact().getUrn());
+        }
+        return recodedCode;
+    }
+    
 }

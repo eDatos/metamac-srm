@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.web.client.widgets.SearchStatisticalOperationLinkI
 import org.siemac.metamac.srm.web.client.widgets.VersionableResourceSearchSectionStack;
 import org.siemac.metamac.srm.web.dsd.model.ds.DataStructureDefinitionDS;
 import org.siemac.metamac.srm.web.dsd.view.handlers.DsdListUiHandlers;
+import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsResult;
 import org.siemac.metamac.srm.web.shared.criteria.DataStructureDefinitionWebCriteria;
@@ -35,6 +36,7 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
 
     private SearchRelatedResourcePaginatedWindow searchDimensionConceptWindow;
     private SearchRelatedResourcePaginatedWindow searchAttributeConceptWindow;
+    private SearchRelatedResourcePaginatedWindow searchCodelistWindow;
 
     private SearchStatisticalOperationLinkItem   statisticalOperationItem;
 
@@ -52,13 +54,18 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
         // Attribute concept item
         SearchRelatedResourceLinkItem attributeConcept = createAttributeConceptItem(DataStructureDefinitionDS.ATTRIBUTE_CONCEPT, getConstants().dsdAttributeConcept());
 
+        // Codelist item
+        SearchRelatedResourceLinkItem codelistItem = createCodelistItem(DataStructureDefinitionDS.CODELIST_ITEM, getConstants().dsdCodelist());
+
+        
         // Add items to advanvedSearchForm (before the save button in the advancedSearchFormItems)
-        FormItem[] dsdFields = new FormItem[advancedSearchFormItems.length + 3];
+        FormItem[] dsdFields = new FormItem[advancedSearchFormItems.length + 4];
         System.arraycopy(advancedSearchFormItems, 0, dsdFields, 0, advancedSearchFormItems.length - 1);
         System.arraycopy(advancedSearchFormItems, advancedSearchFormItems.length - 1, dsdFields, dsdFields.length - 1, 1);
-        dsdFields[dsdFields.length - 4] = statisticalOperationItem;
-        dsdFields[dsdFields.length - 3] = dimensionConcept;
-        dsdFields[dsdFields.length - 2] = attributeConcept;
+        dsdFields[dsdFields.length - 5] = statisticalOperationItem;
+        dsdFields[dsdFields.length - 4] = dimensionConcept;
+        dsdFields[dsdFields.length - 3] = attributeConcept;
+        dsdFields[dsdFields.length - 2] = codelistItem;
         advancedSearchForm.setFields(dsdFields);
     }
 
@@ -74,6 +81,9 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
         RelatedResourceDto attributeConcept = ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(DataStructureDefinitionDS.ATTRIBUTE_CONCEPT)).getRelatedResourceDto();
         dataStructureDefinitionWebCriteria.setAttributeConceptUrn(attributeConcept != null ? attributeConcept.getUrn() : null);
 
+        RelatedResourceDto codelist = ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(DataStructureDefinitionDS.CODELIST_ITEM)).getRelatedResourceDto();
+        dataStructureDefinitionWebCriteria.setCodelistUrn(codelist != null ? codelist.getUrn() : null);
+        
         return dataStructureDefinitionWebCriteria;
     }
 
@@ -102,6 +112,14 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
         }
     }
 
+    public void setCodelist(GetCodelistsResult result) {
+        if (searchCodelistWindow != null) {
+            List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getCodelistMetamacBasicDtoAsRelatedResourceDtos(result.getCodelists());
+            searchCodelistWindow.setRelatedResources(relatedResourceDtos);
+            searchCodelistWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), relatedResourceDtos.size(), result.getTotalResults());
+        }
+    }
+    
     public void setUiHandlers(DsdListUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }
@@ -207,11 +225,55 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
         return attributeConceptItem;
     }
 
+    private SearchRelatedResourceLinkItem createCodelistItem(String name, String title) {
+        final int FIRST_RESULST = 0;
+        final int MAX_RESULTS = 8;
+        final SearchRelatedResourceLinkItem codelistItem = new SearchRelatedResourceLinkItem(name, title, getCustomLinkItemNavigationClickHandler());
+        codelistItem.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+
+                searchCodelistWindow = new SearchRelatedResourcePaginatedWindow(getConstants().codelistSelection(), MAX_RESULTS, new PaginatedAction() {
+
+                    @Override
+                    public void retrieveResultSet(int firstResult, int maxResults) {
+                        getUiHandlers().retrieveCodelistForSearchSection(firstResult, maxResults, searchCodelistWindow.getRelatedResourceCriteria());
+                    }
+                });
+
+                // Load codelist (to populate the selection window)
+                getUiHandlers().retrieveCodelistForSearchSection(FIRST_RESULST, MAX_RESULTS, null);
+
+                searchCodelistWindow.getListGridItem().getListGrid().setSelectionType(SelectionStyle.SINGLE);
+                searchCodelistWindow.getListGridItem().setSearchAction(new SearchPaginatedAction() {
+
+                    @Override
+                    public void retrieveResultSet(int firstResult, int maxResults, String criteria) {
+                        getUiHandlers().retrieveCodelistForSearchSection(firstResult, maxResults, criteria);
+                    }
+                });
+                searchCodelistWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent arg0) {
+                        RelatedResourceDto selectedCodelist = searchCodelistWindow.getSelectedRelatedResource();
+                        searchCodelistWindow.markForDestroy();
+                        // Set selected concept in form
+                        ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(DataStructureDefinitionDS.CODELIST_ITEM)).setRelatedResource(selectedCodelist);
+                    }
+                });
+            }
+        });
+        return codelistItem;
+    }
+    
     @Override
     protected void clearAdvancedSearchSection() {
         super.clearAdvancedSearchSection();
         ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(DataStructureDefinitionDS.DIMENSION_CONCEPT)).clearRelatedResource();
         ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(DataStructureDefinitionDS.ATTRIBUTE_CONCEPT)).clearRelatedResource();
+        ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(DataStructureDefinitionDS.CODELIST_ITEM)).clearRelatedResource();
     }
 
     // ------------------------------------------------------------------------------------------------------------

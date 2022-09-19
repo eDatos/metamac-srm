@@ -1,5 +1,9 @@
 package org.siemac.metamac.srm.core.code.serviceapi.utils;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
@@ -9,11 +13,13 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
@@ -35,11 +41,18 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         codelistVersion.setDescriptionSource(mockInternationalString());
         codelistVersion.setIsRecommended(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.RESTRICTED);
-
+        codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         mockCodelist(codelistVersion, maintainer);
         return codelistVersion;
     }
 
+    
+    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, OrganisationMetamac sourceProviderOrganisation) {
+        CodelistVersionMetamac codelistVersion = mockCodelist(maintainer);
+        codelistVersion.setSourceProvider(sourceProviderOrganisation);
+        return codelistVersion;
+    }
+    
     public static CodelistVersionMetamac mockCodelistFixedValues(String agencyID, String resourceID, String version) {
         CodelistVersionMetamac target = new CodelistVersionMetamac();
         CodesDoMocks.mockCodelistFixedValues(target, agencyID, resourceID, version);
@@ -50,6 +63,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setDescriptionSource(mockInternationalStringFixedValues("descriptionSource", getString(resourceID, version)));
         target.setIsRecommended(Boolean.TRUE);
         target.setAccessType(AccessTypeEnum.PUBLIC);
+        target.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
         target.setFamily(mockCodelistFamilyFixedValues("family1"));
         target.setVariable(mockVariableFixedValues("variable1"));
         target.setDefaultOrderVisualisation(mockCodelistOrderVisualisationFixedValues("defaultOrderVisualisation1"));
@@ -57,14 +71,32 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         return target;
     }
 
+    public static List<RelatedCode> mockListRelatedCodeFixedValues() {
+        List<RelatedCode> relatedCodes = new ArrayList<>();
+        
+        relatedCodes.add(mockRelatedCodeFixedValues("codeID1", "recodedID1"));
+        relatedCodes.add(mockRelatedCodeFixedValues("codeID2", "recodedID2"));
+        
+        return relatedCodes;
+    }
+  
+    public static RelatedCode mockRelatedCodeFixedValues(String originId, String recodedId) {
+        RelatedCode relatedCode = new RelatedCode();
+
+        relatedCode.setOriginCode(originId);
+        relatedCode.setRecodedCode(recodedId);
+        
+        return relatedCode;
+    }
+    
     public static CodelistVersionMetamac mockCodelistWithCodesFixedValues(String agencyID, String resourceID, String version) {
 
         CodelistVersionMetamac codelistVersion = mockCodelistFixedValues(agencyID, resourceID, version);
 
         // codes
-        CodeMetamac code1 = mockCodeFixedValues("code1", codelistVersion, null);
-        CodeMetamac code2 = mockCodeFixedValues("code2", codelistVersion, null);
-        CodeMetamac code2A = mockCodeFixedValues("code2A", codelistVersion, code2);
+        CodeMetamac code1 = mockCodeFixedValues("code1", codelistVersion, null, true);
+        CodeMetamac code2 = mockCodeFixedValues("code2", codelistVersion, null, false);
+        CodeMetamac code2A = mockCodeFixedValues("code2A", codelistVersion, code2, false);
         CodeMetamac code2B = mockCodeFixedValues("code2B", codelistVersion, code2);
 
         // codes hierarchy
@@ -87,6 +119,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     public static CodeMetamac mockCode() {
         CodeMetamac codeMetamac = new CodeMetamac();
         codeMetamac.setShortName(BaseDoMocks.mockInternationalString());
+        codeMetamac.setIsExtended(false);
         mockCode(codeMetamac);
         return codeMetamac;
     }
@@ -101,6 +134,12 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         return target;
     }
 
+    public static CodeMetamac mockCodeFixedValues(String resourceID, ItemSchemeVersion itemSchemeVersion, CodeMetamac parent, Boolean extended) {
+        CodeMetamac target = mockCodeFixedValues(resourceID, itemSchemeVersion, parent);
+        target.setIsExtended(extended);
+        return target;
+    }
+    
     // ------------------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ------------------------------------------------------------------------------------
@@ -240,7 +279,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setLongitude(Double.valueOf(2));
         target.setShapeWkt("shape1");
         target.setShapeGeojson("shape1Geojson");
-        target.setGeographicalGranularity(mockCodeFixedValues("code1", mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
+        target.setGeographicalGranularity(mockCodeFixedValues("code1", mockCodelistFixedValues("agency01", "codelist01", "01.000"), null, false));
         return target;
     }
 

@@ -23,10 +23,13 @@ import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.client.utils.WaitingAsyncCallbackHandlingExportResult;
 import org.siemac.metamac.srm.web.dsd.view.handlers.DsdListUiHandlers;
 import org.siemac.metamac.srm.web.shared.ExportSDMXResourceAction;
+import org.siemac.metamac.srm.web.shared.code.GetCodelistsAction;
+import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsAction;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsResult;
+import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.DataStructureDefinitionWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.StatisticalOperationWebCriteria;
@@ -39,6 +42,7 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDsdResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
@@ -101,6 +105,7 @@ public class DsdListPresenter extends Presenter<DsdListPresenter.DsdListView, Ds
         void setOperationsForSearchSection(GetStatisticalOperationsResult result);
         void setDimensionConceptsForSearchSection(GetConceptsResult result);
         void setAttributeConceptsForSearchSection(GetConceptsResult result);
+        void setCodelistsForSearchSection(GetCodelistsResult result);
         void clearSearchSection();
         DataStructureDefinitionWebCriteria getDataStructureDefinitionWebCriteria();
     }
@@ -289,7 +294,27 @@ public class DsdListPresenter extends Presenter<DsdListPresenter.DsdListView, Ds
             }
         });
     }
+    
+    @Override
+    public void retrieveCodelistForSearchSection(int firstResult, int maxResults, String criteria) {
 
+        CodelistWebCriteria codelistWebCriteria = new CodelistWebCriteria(criteria); 
+        
+        dispatcher.execute(new GetCodelistsAction(firstResult, maxResults, codelistWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetCodelistsResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(DsdListPresenter.this, caught);
+                    }
+                    
+                    @Override
+                    public void onWaitSuccess(GetCodelistsResult result) {
+                        getView().setCodelistsForSearchSection(result);
+                    }
+                });
+    }
+    
     //
     // NAVIGATION
     //

@@ -295,6 +295,10 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                             TypeComponent.DATA_ATTRIBUTE, OperationType.EQ);
                     return new SculptorCriteriaConjunction(propertyCriteria1, propertyCriteria2);
                 }
+                case CODELIST_URN: {
+                   return  new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().localRepresentation().enumerationCodelist().maintainableArtefact()
+                            .urn(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                }
                 default:
                     throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
             }
@@ -520,6 +524,9 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                             propertyRestriction.getOperationType());
                 case LATEST_PUBLIC:
                     return new SculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().latestPublic(), propertyRestriction.getBooleanValue(),
+                            propertyRestriction.getOperationType());
+                case IS_PUBLISHED:
+                    return new SculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().finalLogicClient(), propertyRestriction.getBooleanValue(),
                             propertyRestriction.getOperationType());
                 case INTERNAL_PUBLICATION_DATE:
                     return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(OrganisationSchemeVersionMetamacProperties.lifeCycleMetadata().internalPublicationDate(),
@@ -842,6 +849,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                             propertyRestriction.getOperationType());
                 case ACCESS_TYPE:
                     return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.accessType(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
+                case NORMALIZATION_TYPE:
+                    return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.normalizationType(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
                 case IS_LAST_VERSION:
                     return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().isLastVersion(), propertyRestriction.getBooleanValue(),
                             propertyRestriction.getOperationType());

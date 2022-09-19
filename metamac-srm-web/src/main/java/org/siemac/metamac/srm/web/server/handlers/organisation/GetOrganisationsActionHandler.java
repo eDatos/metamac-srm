@@ -37,17 +37,38 @@ public class GetOrganisationsActionHandler extends SecurityActionHandler<GetOrga
 
     @Override
     public GetOrganisationsResult executeSecurityAction(GetOrganisationsAction action) throws ActionException {
+
+        try {
+            MetamacCriteriaResult<OrganisationMetamacBasicDto> result = srmCoreServiceFacade.findOrganisationsByCondition(ServiceContextHolder.getCurrentServiceContext(), getCriterias(action));
+            return new GetOrganisationsResult(result.getResults(), result.getPaginatorResult().getFirstResult(), result.getPaginatorResult().getTotalResults());
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+    private MetamacCriteria getCriterias(GetOrganisationsAction action) {
         MetamacCriteria criteria = new MetamacCriteria();
+
+        OrganisationWebCriteria organisationWebCriteria = action.getCriteria();
 
         // Order
         MetamacCriteriaOrder order = new MetamacCriteriaOrder();
-        order.setType(OrderTypeEnum.DESC);
-        order.setPropertyName(OrganisationMetamacCriteriaOrderEnum.LAST_UPDATED.name());
+
+        if (organisationWebCriteria.getOrderType() != null) {
+            order.setType(organisationWebCriteria.getOrderType());
+        } else {
+            order.setType(OrderTypeEnum.DESC);
+        }
+
+        if (organisationWebCriteria.getOrderField() != null) {
+            order.setPropertyName(organisationWebCriteria.getOrderField().name());
+        } else {
+            order.setPropertyName(OrganisationMetamacCriteriaOrderEnum.LAST_UPDATED.name());
+        }
+
         List<MetamacCriteriaOrder> criteriaOrders = new ArrayList<MetamacCriteriaOrder>();
         criteriaOrders.add(order);
         criteria.setOrdersBy(criteriaOrders);
-
-        OrganisationWebCriteria organisationWebCriteria = action.getCriteria();
 
         MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
 
@@ -61,11 +82,6 @@ public class GetOrganisationsActionHandler extends SecurityActionHandler<GetOrga
         criteria.getPaginator().setMaximumResultSize(action.getMaxResults());
         criteria.getPaginator().setCountTotalResults(true);
 
-        try {
-            MetamacCriteriaResult<OrganisationMetamacBasicDto> result = srmCoreServiceFacade.findOrganisationsByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria);
-            return new GetOrganisationsResult(result.getResults(), result.getPaginatorResult().getFirstResult(), result.getPaginatorResult().getTotalResults());
-        } catch (MetamacException e) {
-            throw WebExceptionUtils.createMetamacWebException(e);
-        }
+        return criteria;
     }
 }

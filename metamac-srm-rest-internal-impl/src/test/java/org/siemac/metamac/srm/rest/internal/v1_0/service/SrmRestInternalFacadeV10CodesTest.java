@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.service;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -56,6 +57,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElementResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElements;
@@ -152,7 +154,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
-
+    
     @Test
     public void testFindCodelistsByAgencyTestLinks() throws Exception {
         String agencyID = AGENCY_1;
@@ -164,6 +166,27 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         assertEquals(SrmRestConstants.KIND_CODELISTS, codelists.getKind());
     }
 
+    @Test
+    public void testRetrieveRecodedCodesTestLinks() throws Exception {
+        
+        resetMocks();
+        
+        String agencyID = AGENCY_1;
+        String resourceID = ITEM_SCHEME_1_CODE;
+        String version = VERSION_1;
+        String agencyIDRef = AGENCY_1;
+        String resourceIDRef = ITEM_SCHEME_1_CODE;
+        String versionRef = VERSION_1;
+        String expectedUrl = "/codelists/" + agencyID + "/" + resourceID + "/" + version + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?" + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "="
+                + agencyIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=" + resourceIDRef + "&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION + "=" + versionRef;
+
+        RecodedCodes codes = getSrmRestInternalFacadeClientXml().retrieveRecodedCodes(agencyID, resourceID, version, agencyIDRef, resourceIDRef, versionRef);
+
+        assertEquals(getApiEndpoint() + expectedUrl, codes.getSelfLink());
+
+    }
+    
+    
     @Test
     public void testFindCodelistsByAgencyErrorWildcard() throws Exception {
         try {
@@ -436,7 +459,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     @Test
     public void testFindCodesWithDescriptionExplicit() throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, "+description");
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null, null, "+description");
         assertTrue(!codes.getCodes().get(0).getDescription().getTexts().isEmpty());
     }
 
@@ -455,7 +478,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         resetMocks();
         String order = "ORDER1";
         String openness = "OPENNESS1";
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, openness, null, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, openness, null, null, null);
 
         assertNotNull(codes);
         assertEquals(SrmRestConstants.KIND_CODES, codes.getKind());
@@ -485,7 +508,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
         resetMocks();
         String restriction = "VISUALIZATION1";
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, restriction, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, restriction, null, null);
 
         assertNotNull(codes);
         assertEquals(BigInteger.valueOf(3), codes.getTotal());
@@ -511,6 +534,15 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
 
+    
+    @Test
+    public void testFindCodesRetrieveExtendedXml() throws Exception {
+        resetMocks();
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, null, true, null);
+        assertNotNull(codes);
+        assertEquals(BigInteger.valueOf(2), codes.getTotal());
+    }
+    
     @Test
     public void testFindCodesRetrieveAllXmlWithFields() throws Exception {
         String FIELDS = SrmRestConstants.FIELD_INCLUDE_OPENNES + "," + SrmRestConstants.FIELD_INCLUDE_ORDER + "," + SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT + ","
@@ -522,6 +554,17 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
 
+    
+    @Test
+    public void testFindCodesRetrieveAllXmlWithFieldExtended() throws Exception {
+        String fields = SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE;
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, fields);
+        InputStream responseExpected = SrmRestInternalFacadeV10CodesTest.class.getResourceAsStream("/responses/codes/findCodesRetrieveExtended.xml");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+    
     @Test
     public void testRetrieveCode() throws Exception {
         String agencyID = AGENCY_1;
@@ -1084,7 +1127,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
     private void testFindCodes(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(agencyID, resourceID, version, query, orderBy, limit, offset, null, null, null, null);
+        Codes codes = getSrmRestInternalFacadeClientXml().findCodes(agencyID, resourceID, version, query, orderBy, limit, offset, null, null, null, null, null);
 
         assertNotNull(codes);
         assertEquals(SrmRestConstants.KIND_CODES, codes.getKind());
@@ -1195,10 +1238,10 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
                     @Override
                     public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
                         // any
-                        ItemResult code1 = CodesDoMocks.mockCodeItemResult("code1", null, 0, true, true);
-                        ItemResult code2 = CodesDoMocks.mockCodeItemResult("code2", null, 1, false, false);
-                        ItemResult code2A = CodesDoMocks.mockCodeItemResult("code2A", code2, 0, true, true);
-                        ItemResult code2B = CodesDoMocks.mockCodeItemResult("code2B", code2, 1, true, true);
+                        ItemResult code1 = CodesDoMocks.mockCodeItemResult("code1", null, 0, true, true, true);
+                        ItemResult code2 = CodesDoMocks.mockCodeItemResult("code2", null, 1, false, false, false);
+                        ItemResult code2A = CodesDoMocks.mockCodeItemResult("code2A", code2, 0, true, true, null);
+                        ItemResult code2B = CodesDoMocks.mockCodeItemResult("code2B", code2, 1, true, true, true);
                         return Arrays.asList(code1, code2, code2A, code2B);
                     };
                 });

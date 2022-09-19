@@ -75,6 +75,7 @@
         <cdomain:text xml:lang="es">descriptionSource-itemScheme1v01.000 en Español</cdomain:text>
         <cdomain:text xml:lang="en">descriptionSource-itemScheme1v01.000 in English</cdomain:text>
     </sr:descriptionSource>
+    <sr:normalizationType>STANDARDIZED</sr:normalizationType>
     <sr:accessType>PUBLIC</sr:accessType>
     <sr:isRecommended>true</sr:isRecommended>
     <sr:replaceTo kind="structuralResources#codelists" total="2">

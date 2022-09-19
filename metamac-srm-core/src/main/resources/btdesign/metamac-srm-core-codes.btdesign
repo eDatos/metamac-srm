@@ -7,6 +7,7 @@ import "classpath:/btdesign/statistic-sdmx-v2_1-domain-enums.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base.btdesign"
 import "classpath:/btdesign/metamac-srm-core-codes-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-concepts.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-organisations.btdesign"
 
 
 Application CodesMetamac {
@@ -138,7 +139,10 @@ Application CodesMetamac {
     		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOverridingOnlyWithoutVariableElement) throws MetamacException;
-	   		    		
+	   		 
+	   		"Retrieve equivalence of codes between two codelists"
+			List<RelatedCode> recodeCodes(@CodelistVersionMetamac codelistVersionOrigin, @CodelistVersionMetamac codelistVersionToMatch) throws MetamacException;   		
+    		
     		// VISUALISATIONS
     		
     		"Creates order visualisation"
@@ -156,7 +160,7 @@ Application CodesMetamac {
 			"Deletes order visualisation"
     		deleteCodelistOrderVisualisation(String urn) throws MetamacException;
     		@CodelistVersionMetamac versioningCodelistOrderVisualisations(@CodelistVersionMetamac source, @CodelistVersionMetamac target) throws MetamacException;
-
+    		
 			"Creates openness visualisation"
     		@CodelistOpennessVisualisation createCodelistOpennessVisualisation(String codelistUrn, @CodelistOpennessVisualisation codelistOpennessVisualisation) throws MetamacException;
     		"Creates openness visualisation with all levels opened"
@@ -326,6 +330,12 @@ Application CodesMetamac {
 
 			"Stream message status"
             - @StreamMessageStatusEnum streamMessageStatus;
+            
+            "Normalization type"
+			- @NormalizationTypeEnum normalizationType;
+			
+			"Association to the source organization"
+			- @Organisation sourceProvider nullable cascade="refresh" databaseColumn="SOURCE_PROVIDER_FK" fetch="lazy";
 			
 			Repository CodelistVersionMetamacRepository {
 				save;
@@ -348,6 +358,8 @@ Application CodesMetamac {
 			- @InternationalString shortName nullable cascade="all" fetch="lazy" databaseColumn="SHORT_NAME_FK";
 			"Variable element"
 			- @VariableElement variableElement nullable cascade="none" fetch="lazy" databaseColumn="VARIABLE_ELEMENT_FK"  <-> codes;
+			"Is extended"
+			Boolean isExtended nullable;
 			
 			Integer order1 nullable;
 			Integer order2 nullable;

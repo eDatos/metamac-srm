@@ -1,5 +1,7 @@
 package org.siemac.metamac.srm.rest.external.v1_0.code.utils;
 
+import java.util.List;
+
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -8,6 +10,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
@@ -37,12 +40,12 @@ public class CodesDoMocks {
     }
 
     public static CodeMetamac mockCode(String resourceID, CodelistVersionMetamac codelist, CodeMetamac parent) {
-        CodeMetamac target = CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent);
+        CodeMetamac target = CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent, true);
         target.setVariableElement(CodesMetamacDoMocks.mockVariableElementFixedValues("variableElement-" + resourceID));
         return target;
     }
 
-    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction) {
+    public static ItemResult mockCodeItemResult(String resourceID, ItemResult parent, Integer order, Boolean open, Boolean restriction, Boolean isExtended) {
         ItemResult itemResult = CodesMetamacDoMocks.mockCodeResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000)."));
@@ -54,6 +57,7 @@ public class CodesDoMocks {
         extensionPoint.setOrder(order);
         extensionPoint.setRestriction(restriction);
         extensionPoint.setVariableElement(CodesMetamacDoMocks.mockVariableElementResultFixedValues("variableElement-" + resourceID));
+        extensionPoint.setIsExtended(isExtended);
         return itemResult;
     }
     
@@ -104,6 +108,10 @@ public class CodesDoMocks {
         return CodesMetamacDoMocks.mockCodelistFamilyFixedValues(resourceID);
     }
 
+    public static List<RelatedCode> mockRelatedCodes() {
+        return  CodesMetamacDoMocks.mockListRelatedCodeFixedValues();
+    }
+    
     private static void addReplaceMetadatasToCodelist(CodelistVersionMetamac target, String agencyID) {
         target.setReplacedByCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplacedBy", "01.000", AccessTypeEnum.PUBLIC, true, true));
         target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo1", "01.000", AccessTypeEnum.PUBLIC, true, true));

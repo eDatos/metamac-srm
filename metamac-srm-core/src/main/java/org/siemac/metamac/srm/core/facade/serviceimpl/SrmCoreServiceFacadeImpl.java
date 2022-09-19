@@ -2449,7 +2449,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         return metamacCriteriaResult;
     }
-
+    
     @Override
     public OrganisationSchemeMetamacDto retrieveOrganisationSchemeByUrn(ServiceContext ctx, String urn) throws MetamacException {
         // Security

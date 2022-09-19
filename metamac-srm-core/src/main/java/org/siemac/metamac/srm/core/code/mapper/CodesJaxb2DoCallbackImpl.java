@@ -10,6 +10,7 @@ import org.sdmx.resources.sdmxml.schemas.v2_1.structure.CodelistsType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -73,8 +74,13 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
             targetMetamac.setDescriptionSource(BaseCopyAllMetadataUtils.copy(previousMetamac.getDescriptionSource())); // DescriptionSource
             targetMetamac.setIsRecommended(previousMetamac.getIsRecommended()); // IsRecommended
             targetMetamac.setAccessType(previousMetamac.getAccessType()); // AccesType
+            targetMetamac.setNormalizationType(previousMetamac.getNormalizationType()); // NormalizationType
+            targetMetamac.setSourceProvider(previousMetamac.getSourceProvider()); // SourceProvider
             targetMetamac.setFamily(previousMetamac.getFamily()); // CodelistFamily
             targetMetamac.setVariable(previousMetamac.getVariable()); // Variable
+            
+        } else {
+            targetMetamac.setNormalizationType(NormalizationTypeEnum.STANDARDIZED); // Default NormalizationType (required)
         }
 
         targetMetamac.getMaintainableArtefact().setFinalLogic(Boolean.FALSE); // In Metamac, all artifacts imported are marked as final false
@@ -126,6 +132,7 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
 
             // Other metatadata
             targetMetamac.setShortName(BaseCopyAllMetadataUtils.copy(previousMetamac.getShortName())); // ShortName
+            targetMetamac.setIsExtended(previousMetamac.getIsExtended());
             targetMetamac.setVariableElement(previousMetamac.getVariableElement());
 
             for (int i = 1; i <= SrmConstants.CODELIST_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {

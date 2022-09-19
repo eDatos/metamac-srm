@@ -20,7 +20,8 @@ public enum CodelistVersionMetamacCriteriaPropertyEnum {
     EXTERNAL_PUBLICATION_USER,
     VARIABLE,
     VARIABLE_FAMILY,
-    VARIABLE_ELEMENT;
+    VARIABLE_ELEMENT,
+    NORMALIZATION_TYPE;
 
     public String value() {
         return name();

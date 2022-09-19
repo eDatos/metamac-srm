@@ -9,6 +9,7 @@ import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesAsserts.
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCode;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodeItemResult;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodelist;
+import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockRelatedCodes;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodelistFamily;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodelistWithCodes;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockVariable;
@@ -50,6 +51,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamilies
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElement;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElements;
@@ -62,6 +64,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfiguration;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -219,6 +222,26 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
+    public void testToRecodedCodes() {
+
+        CodelistVersionMetamac sourceCodelist = mockCodelist("agencyID1", "resourceID1", "01.000");
+        CodelistVersionMetamac referenceCodelist = mockCodelist("agencyID2", "resourceID2", "01.000");
+
+        List<RelatedCode> relatedCodes = mockRelatedCodes();
+
+        // Transform
+        RecodedCodes target = do2RestInternalMapper.toRecodedCodes(sourceCodelist, referenceCodelist, relatedCodes);
+
+        assertTrue(2 == target.getTotal().intValue());
+        String expectedUrl = "http://data.istac.es/apis/structural-resources/v1.0/codelists/agencyID1/resourceID1/01.000" + SrmRestConstants.LINK_SUBPATH_RECODED_CODES + "?"
+                + SrmRestConstants.PARAMETER_REFERENCE_AGENCYID + "=agencyID2&" + SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID + "=resourceID2&" + SrmRestConstants.PARAMETER_REFERENCE_VERSION
+                + "=01.000";
+        assertEquals(expectedUrl, target.getSelfLink());
+        assertTrue(2 == target.getCodes().size());
+
+    }
+    
+    @Test
     public void testToCodelistReplacedBy() throws MetamacException {
 
         CodelistVersionMetamac source = mockCodelist("agencyID1", "resourceID1", "01.123");
@@ -253,6 +276,7 @@ public class CodesDo2RestMapperTest {
         String orderBy = ORDER_BY_ID_DESC;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
+        Boolean extended = null;
         Set<String> fields = null;
 
         CodelistVersionMetamac codeScheme1 = mockCodelist(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
@@ -267,7 +291,7 @@ public class CodesDo2RestMapperTest {
         PagedResult<CodeMetamac> sources = new PagedResult<CodeMetamac>(source, offset, source.size(), limit, totalRows, 0);
 
         // Transform
-        Codes target = do2RestInternalMapper.toCodes(sources, agencyID, codeSchemeID, version, query, orderBy, limit, fields);
+        Codes target = do2RestInternalMapper.toCodes(sources, agencyID, codeSchemeID, version, query, orderBy, limit, extended, fields);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CODES, target.getKind());
@@ -298,12 +322,12 @@ public class CodesDo2RestMapperTest {
 
         CodelistVersionMetamac codelist = mockCodelist(agencyID, codelistID, version);
         List<ItemResult> sources = new ArrayList<ItemResult>();
-        sources.add(mockCodeItemResult(ITEM_1_CODE, null, 1, true, true));
-        sources.add(mockCodeItemResult(ITEM_2_CODE, null, 2, true, true));
-        sources.add(mockCodeItemResult(ITEM_3_CODE, null, 3, false, true));
+        sources.add(mockCodeItemResult(ITEM_1_CODE, null, 1, true, true, true));
+        sources.add(mockCodeItemResult(ITEM_2_CODE, null, 2, true, true, false));
+        sources.add(mockCodeItemResult(ITEM_3_CODE, null, 3, false, true, null));
 
         // Transform
-        Codes target = do2RestInternalMapper.toCodes(sources, codelist, null, null);
+        Codes target = do2RestInternalMapper.toCodes(sources, codelist, null, null, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CODES, target.getKind());

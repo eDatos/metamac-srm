@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,7 +18,6 @@ import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria.Operator;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
-import org.fornax.cartridges.sculptor.framework.domain.LeafProperty;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
@@ -29,6 +26,7 @@ import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
@@ -70,6 +68,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataPro
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataProviders;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationSchemes;
@@ -99,7 +98,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
-import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.VariableElementProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
@@ -850,7 +849,8 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     }
 
     @Override
-    public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction, String fields) {
+    public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
@@ -869,7 +869,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
                 checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
-                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
             } else {
                 // Retrieve all codes of codelist, without pagination
                 CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
@@ -883,12 +883,37 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
                 List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
                         opennessToUse, restrictionToUse);
 
-                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction);
+                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
             }
         } catch (Exception e) {
             throw manageException(e);
         }
     }
+    
+    @Override
+    public RecodedCodes retrieveRecodedCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
+        try {
+
+            checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
+            checkParameterNotWildcardRetrieveItemScheme(agencyID2, resourceID2, version2);
+            
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersionOrigin = retrieveCodelistPublished(agencyID1, resourceID1, version1);
+
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
+
+            checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
+            
+            List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
+            
+            return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
+            
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+    
     
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
@@ -942,14 +967,14 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         return orderToUse;
     }
 
-    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
-            throws MetamacException {
+    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Boolean extended,
+            Set<String> fieldsToShow) throws MetamacException {
         // Find. Retrieve codes paginated
         SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
         PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
         // Transform
-        return codesDo2RestMapper.toCodes(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        return codesDo2RestMapper.toCodes(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), extended, fieldsToShow);
     }
 
     @Override
@@ -1679,8 +1704,6 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
         // Criteria to find item schemes by criteria
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItemSchemes(agencyID, resourceID, version, conditionalCriteriaQuery, CodelistVersionMetamac.class);
-        conditionalCriteria
-                .add(ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
 
         // Find
         return codesService.findCodelistsByCondition(ctx, conditionalCriteria, pagingParameter);
@@ -1824,10 +1847,6 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         // Criteria to find items by criteria
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItems(agencyID, resourceID, version, codeID,
                 CodeMetamacProperties.itemSchemeVersion().maintainableArtefact(), CodeMetamacProperties.nameableArtefact(), conditionalCriteriaQuery, CodeMetamac.class);
-        // Only codelists with access == public
-        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
-                .withProperty(new LeafProperty<CodeMetamac>(CodeMetamacProperties.itemSchemeVersion().getName(), CodelistVersionMetamacProperties.accessType().getName(), false, CodeMetamac.class))
-                .eq(AccessTypeEnum.PUBLIC).buildSingle());
 
         // Find
         return codesService.findCodesByCondition(ctx, conditionalCriteria, pagingParameter);
@@ -1942,6 +1961,14 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         checkParameterNotWildcardAll(parameterNameItemID, itemID);
     }
 
+    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) {
+        if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
+                || !codelistVersion1.getVariable().getNameableArtefact().getCode().equals(codelistVersion2.getVariable().getNameableArtefact().getCode())) {
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_RECODING);
+            throw new RestException(exception, Status.BAD_REQUEST);
+        }
+    }
+    
     /**
      * Check unsupported wildcards in some parameters
      */

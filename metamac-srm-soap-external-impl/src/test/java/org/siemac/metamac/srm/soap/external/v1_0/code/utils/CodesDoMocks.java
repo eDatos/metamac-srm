@@ -24,7 +24,7 @@ public class CodesDoMocks {
     }
 
     public static CodeMetamac mockCode(String resourceID, CodelistVersionMetamac codelist, CodeMetamac parent) {
-        return CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent);
+        return CodesMetamacDoMocks.mockCodeFixedValues(resourceID, codelist, parent, true);
     }
 
     public static CodelistFamily mockCodelistFamily(String resourceID) {

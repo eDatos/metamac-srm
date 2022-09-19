@@ -15,7 +15,8 @@ public enum OrganisationSchemeVersionMetamacCriteriaPropertyEnum {
     INTERNAL_PUBLICATION_DATE,
     INTERNAL_PUBLICATION_USER,
     EXTERNAL_PUBLICATION_DATE,
-    EXTERNAL_PUBLICATION_USER;
+    EXTERNAL_PUBLICATION_USER,
+    IS_PUBLISHED;
 
     public String value() {
         return name();

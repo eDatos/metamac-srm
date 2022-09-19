@@ -73,6 +73,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnit
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnitSchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnits;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variable;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElement;
@@ -95,6 +96,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
+import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.VariableElementProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
@@ -836,7 +838,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     @Override
     public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
-            String fields) {
+            Boolean extended, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
@@ -855,7 +857,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                 checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
                 checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
-                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
             } else {
                 // Retrieve all codes of codelist
                 CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
@@ -869,13 +871,37 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                 List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
                         opennessToUse, restrictionToUse);
 
-                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction);
+                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
             }
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
+    @Override
+    public RecodedCodes retrieveRecodedCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
+        try {
+
+            checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
+            checkParameterNotWildcardRetrieveItemScheme(agencyID2, resourceID2, version2);
+            
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersionOrigin = retrieveCodelistPublished(agencyID1, resourceID1, version1);
+
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
+
+            checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
+            
+            List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
+            
+            return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
+            
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+    
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
@@ -927,14 +953,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return orderToUse;
     }
 
-    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Boolean extended, Set<String> fieldsToShow)
             throws MetamacException {
         // Find. Retrieve codes paginated
         SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
         PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
         // Transform
-        return codesDo2RestMapper.toCodes(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        return codesDo2RestMapper.toCodes(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), extended, fieldsToShow);
     }
 
     @Override
@@ -1821,6 +1847,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         checkParameterNotWildcardAll(parameterNameItemID, itemID);
     }
 
+    private void checkCodelistVersionWithSameVariable(CodelistVersionMetamac codelistVersion1, CodelistVersionMetamac codelistVersion2) {
+        if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
+                || !codelistVersion1.getVariable().getNameableArtefact().getCode().equals(codelistVersion2.getVariable().getNameableArtefact().getCode())) {
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_RECODING);
+            throw new RestException(exception, Status.BAD_REQUEST);
+        }
+    }
+    
     /**
      * Check unsupported wildcards in some parameters
      */

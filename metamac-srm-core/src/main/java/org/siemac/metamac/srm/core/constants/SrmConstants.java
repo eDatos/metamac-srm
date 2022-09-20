@@ -20,11 +20,11 @@ public class SrmConstants {
     public static final String             CODELIST_OPENNESS_VISUALISATION_ALL_EXPANDED_CODE                      = "ALL_EXPANDED";
     public static final Integer            CODELIST_OPENNESS_VISUALISATION_ALL_EXPANDED_COLUMN_INDEX              = Integer.valueOf(1);
     public static final Boolean            CODELIST_OPENNESS_VISUALISATION_DEFAULT_VALUE                          = Boolean.TRUE;
-    public static final int                CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_NUMBER                         = 20;
-    public static final String             CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_CODE                      = "ALL_EXPANDED";
-    public static final Integer            CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_COLUMN_INDEX              = Integer.valueOf(1);
-    public static final Boolean            CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE                          = Boolean.FALSE;
-    
+    public static final int                CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_NUMBER                      = 20;
+    public static final String             CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_CODE                   = "ALL_EXPANDED";
+    public static final Integer            CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_COLUMN_INDEX           = Integer.valueOf(1);
+    public static final Boolean            CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE                       = Boolean.FALSE;
+
     // Importation and exportation
     public static final String             TSV_SEPARATOR                                                          = "\t";
     public static final String             TSV_LINE_SEPARATOR                                                     = "\n";
@@ -71,6 +71,8 @@ public class SrmConstants {
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_IMPORTATION                = 150000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_GEO_IMPORTATION            = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION               = 1000000;
+
+    public static final int                VARIABLE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
 
     // Misc
     public static final int                METADATA_SHORT_NAME_MAXIMUM_LENGTH                                     = 100;

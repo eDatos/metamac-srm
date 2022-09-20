@@ -2302,19 +2302,18 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                         Map<String, VariableElement> variableElementCache = getVariableElementCache(variable, fileLines, header);
 
                         for (String fileLine : fileLines) {
-                            if (StringUtils.isBlank(fileLine)) {
-                                continue;
-                            }
-                            String[] columns = StringUtils.splitPreserveAllTokens(fileLine, SrmConstants.TSV_SEPARATOR);
-                            if (columns.length != header.getColumnsSize()) {
-                                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
-                                continue;
-                            }
-                            // Transform variable element and add to list to persist
-                            VariableElement variableElement = tsvLineToVariableElement(header, columns, lineNumber, variable, variableElementCache, updateAlreadyExisting,
-                                    variableElementsToPersistByCode, codesCanBeGeographicalGranularityByCode, exceptionItems, informationItems);
-                            if (variableElement != null) {
-                                variableElementsToPersistByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                            if (StringUtils.isNotBlank(fileLine)) {
+                                String[] columns = StringUtils.splitPreserveAllTokens(fileLine, SrmConstants.TSV_SEPARATOR);
+                                if (columns.length != header.getColumnsSize()) {
+                                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                                } else {
+                                    // Transform variable element and add to list to persist
+                                    VariableElement variableElement = tsvLineToVariableElement(header, columns, lineNumber, variable, variableElementCache, updateAlreadyExisting,
+                                            variableElementsToPersistByCode, codesCanBeGeographicalGranularityByCode, exceptionItems, informationItems);
+                                    if (variableElement != null) {
+                                        variableElementsToPersistByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                                    }
+                                }
                             }
                             lineNumber++;
                         }

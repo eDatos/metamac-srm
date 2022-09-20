@@ -68,7 +68,7 @@ public class SrmConstants {
     // Tasks
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION                            = 250000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_ORDERS_IMPORTATION                     = 50000;
-    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_IMPORTATION                = 150000;
+    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_IMPORTATION                = 40000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_GEO_IMPORTATION            = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION               = 1000000;
 

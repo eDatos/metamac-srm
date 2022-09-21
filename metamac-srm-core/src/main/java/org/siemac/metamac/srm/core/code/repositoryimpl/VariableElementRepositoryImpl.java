@@ -20,8 +20,6 @@ import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
-import org.siemac.metamac.srm.core.conf.SrmConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
@@ -33,7 +31,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 public class VariableElementRepositoryImpl extends VariableElementRepositoryBase {
 
     public VariableElementRepositoryImpl() {
-        //no impl
+        // no impl
     }
 
     @Override
@@ -46,6 +44,19 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
         } else {
             return result.get(0);
         }
+    }
+
+    @Override
+    public List<VariableElement> findByCodeAndVariableId(List<String> codes, Long variableId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("codes", codes);
+        parameters.put("variableId", variableId);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("from VariableElement where identifiableArtefact.code in (:codes) ");
+        sb.append("and variable.id = :variableId ");
+
+        return findByQuery(sb.toString(), parameters, Integer.MAX_VALUE);
     }
 
     @SuppressWarnings("rawtypes")
@@ -346,4 +357,5 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
     private String getString(Object source) {
         return source == null ? null : source.toString();
     }
+
 }

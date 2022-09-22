@@ -344,7 +344,7 @@ public class SrmRestInternalFacadeV10OrganisationsTypeAgenciesTest extends SrmRe
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
         assertEquals(false, itemResultSelectionArgument.getValue().isDescriptions());
         assertEquals(false, itemResultSelectionArgument.getValue().isComments());
-        assertEquals(false, itemResultSelectionArgument.getValue().isAnnotations());
+        assertEquals(true, itemResultSelectionArgument.getValue().isAnnotations());
     }
 
     @Test

@@ -199,7 +199,36 @@
 			<configuration>
 				<forkCount>1</forkCount>
 				<reuseForks>true</reuseForks>
+				<excludes>
+					<exclude>**/SrmRestInternalFacadeV10OrganisationsTypeAgenciesTest.java</exclude>
+					<exclude>**/SrmRestInternalFacadeV10OrganisationsTypeOrganisationUnitsTest.java</exclude>
+					<exclude>**/SrmRestInternalFacadeV10OrganisationsTypeDataConsumersTest.java</exclude>
+					<exclude>**/SrmRestInternalFacadeV10OrganisationsTypeDataProvidersTest.java</exclude>
+					<exclude>**/SrmRestInternalFacadeV10ConstraintsTest.java</exclude>
+				</excludes>
 			</configuration>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-failsafe-plugin</artifactId>
+			<version>2.22.2</version>
+			<configuration>
+				<includes>
+					<include>**/SrmRestInternalFacadeV10OrganisationsTypeAgenciesTest.java</include>
+					<include>**/SrmRestInternalFacadeV10OrganisationsTypeOrganisationUnitsTest.java</include>
+					<include>**/SrmRestInternalFacadeV10OrganisationsTypeDataConsumersTest.java</include>
+					<include>**/SrmRestInternalFacadeV10OrganisationsTypeDataProvidersTest.java</include>
+					<include>**/SrmRestInternalFacadeV10ConstraintsTest.java</include>
+				</includes>
+			</configuration>
+			<executions>
+				<execution>
+					<goals>
+						<goal>integration-test</goal>
+						<goal>verify</goal>
+					</goals>
+				</execution>
+			</executions>
 		</plugin>
 	</plugins>
 </build>

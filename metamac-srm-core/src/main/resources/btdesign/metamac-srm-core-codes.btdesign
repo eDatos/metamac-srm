@@ -665,6 +665,7 @@ Application CodesMetamac {
 				findByQuery(String query, Map<String, Object> parameters, int maxResult);
 				findByCondition(PagingParameter pagingParameter);
 				@VariableElement findByUrn(String urn);
+				List<VariableElement> findByCodeAndVariableId(List<String> codes, Long variableId);
 				List<VariableElementVisualisationResult> retrieveVariableElementsByVariableEfficientlyToVisualisation(Long variableId, String locale);
 				List<VariableElementResult> findVariableElementsByVariableEfficiently(Long variableUrn, List<String> variableElementCodes, VariableElementResultSelection selection, List<String> geographicalGranularityUrns) throws MetamacException;
 				Long countVariableElementsByVariable(Long variableId);

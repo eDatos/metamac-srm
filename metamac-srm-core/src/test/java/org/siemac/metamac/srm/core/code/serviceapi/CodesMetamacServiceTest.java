@@ -10935,7 +10935,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                     e.getExceptionItems().get(i++));
             assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT_SEMANTIC_IDENTIFIER, 2,
                     new Serializable[]{"#variableNotSemanticCode", "parameter.srm.importation.code"}, e.getExceptionItems().get(i++));
-            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, 1, new Serializable[]{7}, e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, 1, new Serializable[]{8}, e.getExceptionItems().get(i++));
             assertEquals(e.getExceptionItems().size(), i);
         }
     }

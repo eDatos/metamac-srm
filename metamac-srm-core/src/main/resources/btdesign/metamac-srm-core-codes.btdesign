@@ -669,7 +669,6 @@ Application CodesMetamac {
 				List<VariableElementVisualisationResult> retrieveVariableElementsByVariableEfficientlyToVisualisation(Long variableId, String locale);
 				List<VariableElementResult> findVariableElementsByVariableEfficiently(Long variableUrn, List<String> variableElementCodes, VariableElementResultSelection selection, List<String> geographicalGranularityUrns) throws MetamacException;
 				Long countVariableElementsByVariable(Long variableId);
-				clearGeographicalInformationByVariable(Long variableId);
 			}
 		}
 		

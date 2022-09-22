@@ -282,16 +282,6 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
         return getLong(query.getResultList().get(0));
     }
 
-    @Override
-    public void clearGeographicalInformationByVariable(Long variableId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("UPDATE TB_M_VARIABLE_ELEMENTS set LATITUDE = null, LONGITUDE = null, SHAPE_WKT = null, SHAPE_GEOJSON = null, GEOGRAPHICAL_GRANULARITY_FK = null ");
-        sb.append("WHERE VARIABLE_FK = :variableId");
-        Query queryUpdate = getEntityManager().createNativeQuery(sb.toString());
-        queryUpdate.setParameter("variableId", variableId);
-        queryUpdate.executeUpdate();
-    }
-
     private VariableElementVisualisationResult variableElementResultSqlToVariableElementVisualisationResult(Object[] source) {
         VariableElementVisualisationResult target = new VariableElementVisualisationResult();
         int i = 0;

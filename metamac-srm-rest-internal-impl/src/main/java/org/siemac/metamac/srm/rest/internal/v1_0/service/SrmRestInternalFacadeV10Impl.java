@@ -1123,7 +1123,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     @Override
     public Response findVariableElementsGeoInfoJson(String variableID, String resourceID, String query, String orderBy, String limit, String offset, String fields) {
         String target = (String) findVariableElementsGeoInfoCommon(variableID, resourceID, query, orderBy, limit, offset, fields, MediaType.APPLICATION_JSON);
-        return Response.status(Status.OK).type("text/javascript;charset=UTF-8").entity(target).build();
+        return Response.status(Status.OK).entity(target).build();
     }
 
     @Override

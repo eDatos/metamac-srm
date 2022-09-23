@@ -1111,7 +1111,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Response findVariableElementsGeoInfoJson(String variableID, String resourceID, String query, String orderBy, String limit, String offset, String fields) {
         String target = (String) findVariableElementsGeoInfoCommon(variableID, resourceID, query, orderBy, limit, offset, fields, MediaType.APPLICATION_JSON);
-        return Response.status(Status.OK).type(MediaType.APPLICATION_JSON).entity(target).build();
+        return Response.status(Status.OK).entity(target).build();
     }
 
     @Override

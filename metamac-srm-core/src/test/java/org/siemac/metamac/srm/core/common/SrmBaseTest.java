@@ -280,6 +280,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static final String VARIABLE_5                                            = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=VARIABLE_05";
     protected static final String VARIABLE_6                                            = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=VARIABLE_06";
     protected static final String VARIABLE_7_WORLD                                      = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=TERRITORIO_MUNDO";
+    protected static final String VARIABLE_8                                            = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=VARIABLE_08";
 
     // Variable elements
     protected static final String VARIABLE_1_VARIABLE_ELEMENT_1                         = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableElement=VARIABLE_01.VARIABLE_ELEMENT_01";
@@ -317,9 +318,9 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static final String CODELIST_1_V2_OPENNESS_VISUALISATION_01_ALL_EXPANDED  = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST01(02.000).ALL_EXPANDED";
     protected static final String CODELIST_1_V2_OPENNESS_VISUALISATION_02               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST01(02.000).VISUALISATION02";
     protected static final String CODELIST_1_V2_OPENNESS_VISUALISATION_03               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST01(02.000).VISUALISATION03";
-    protected static final String CODELIST_1_V2_RESTRICTION_VISUALISATION_01               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION01";
-    protected static final String CODELIST_1_V2_RESTRICTION_VISUALISATION_02               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION02";
-    
+    protected static final String CODELIST_1_V2_RESTRICTION_VISUALISATION_01            = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION01";
+    protected static final String CODELIST_1_V2_RESTRICTION_VISUALISATION_02            = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=SDMX01:CODELIST01(02.000).VISUALISATION02";
+
     protected static final String CODELIST_7_V1_OPENNESS_VISUALISATION_01_ALL_EXPANDED  = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX01:CODELIST07(01.000).ALL_EXPANDED";
     protected static final String CODELIST_14_V1_OPENNESS_VISUALISATION_01_ALL_EXPANDED = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=SDMX02:CODELIST14(01.000).ALL_EXPANDED";
 

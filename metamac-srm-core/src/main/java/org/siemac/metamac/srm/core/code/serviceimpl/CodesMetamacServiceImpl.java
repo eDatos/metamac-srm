@@ -1914,6 +1914,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Validation
         CodesMetamacInvocationValidator.checkUpdateVariable(variable, null);
         checkVariableToCreateOrUpdate(ctx, variable);
+        checkVariableChangesToNonGeographical(variable);
 
         // Code modifications unsupported (METAMAC-1644). If this change, avoid modify code to 'SrmConfigurationConstants.VARIABLE_WORLD'
         if (variable.getNameableArtefact().getIsCodeUpdated()) {
@@ -1931,16 +1932,19 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             variableReplaceTo.setReplacedByVariable(variable);
         }
 
-        // Clear geographical information if type is changed to non geographical
+        // Update
+        return getVariableRepository().save(variable);
+    }
+
+    private void checkVariableChangesToNonGeographical(Variable variable) throws MetamacException {
+        // If the variable is modified to non-geographic, it is necessary that it does not have associated variable elements
         if (variable.getType() == null && VariableTypeEnum.GEOGRAPHICAL.equals(variable.getPreviousType())) {
             Long variableElementsCount = getVariableElementRepository().countVariableElementsByVariable(variable.getId());
             if (variableElementsCount != 0) {
-                getVariableElementRepository().clearGeographicalInformationByVariable(variable.getId());
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_TYPE_UPDATE_TO_NON_GEOGRAPHICAL_UNSUPPORTED)
+                        .withMessageParameters(variable.getNameableArtefact().getUrn()).build();
             }
         }
-
-        // Update
-        return getVariableRepository().save(variable);
     }
 
     @Override

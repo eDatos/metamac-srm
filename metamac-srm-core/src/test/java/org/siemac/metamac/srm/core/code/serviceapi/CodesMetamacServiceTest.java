@@ -6624,7 +6624,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<Variable> result = codesService.findVariablesByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
-            assertEquals(7, result.getTotalRows());
+            assertEquals(8, result.getTotalRows());
             int i = 0;
             assertEquals(VARIABLE_7_WORLD, result.getValues().get(i++).getNameableArtefact().getUrn());
             assertEquals(VARIABLE_1, result.getValues().get(i++).getNameableArtefact().getUrn());
@@ -6633,6 +6633,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(VARIABLE_4, result.getValues().get(i++).getNameableArtefact().getUrn());
             assertEquals(VARIABLE_5, result.getValues().get(i++).getNameableArtefact().getUrn());
             assertEquals(VARIABLE_6, result.getValues().get(i++).getNameableArtefact().getUrn());
+            assertEquals(VARIABLE_8, result.getValues().get(i++).getNameableArtefact().getUrn());
         }
         // Find by urn
         {

@@ -683,11 +683,12 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
 
             @Override
             public void onClick(ClickEvent event) {
-                if (variableDto != null && variableDto.getType() == null && !BooleanUtils.isTrue(variableDto.getHasVariableElements())) {
-                    // If it is not a geographical variable and the first variable element is going to be created, show an information message saying that once a variable had a variable element,
-                    // cannot be turned into a geographical variable
-                    final InformationWindow informationWindow = new InformationWindow(getConstants().variableElementCreate(),
-                            getConstants().variableElementCreateInANonGeographicalVariableInfoMessage());
+                if (variableDto != null && !BooleanUtils.isTrue(variableDto.getHasVariableElements())) {
+                    String createVariableElementInformationWindowMessage = variableDto.getType() == null
+                            ? getConstants().variableElementCreateInANonGeographicalVariableInfoMessage()
+                            : getConstants().variableElementCreateInGeographicalVariableInfoMessage();
+
+                    final InformationWindow informationWindow = new InformationWindow(getConstants().variableElementCreate(), createVariableElementInformationWindowMessage);
                     informationWindow.show();
                     informationWindow.getAcceptButtonHandlerRegistration().removeHandler();
                     informationWindow.getAcceptButton().addClickHandler(new ClickHandler() {

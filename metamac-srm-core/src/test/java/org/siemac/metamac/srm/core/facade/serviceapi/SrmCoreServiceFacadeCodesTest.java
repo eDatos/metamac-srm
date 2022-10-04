@@ -1906,6 +1906,20 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
     @Test
     public void testUpdateVariableTypeGeographicalToNull() throws Exception {
+        VariableDto variableDto = srmCoreServiceFacade.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_8);
+        assertEquals(VariableTypeEnum.GEOGRAPHICAL, variableDto.getType());
+        variableDto.setType(null);
+
+        // Check that the variable has no variable elements
+        assertFalse(variableDto.getHasVariableElements());
+
+        VariableDto variableDtoUpdated = srmCoreServiceFacade.updateVariable(getServiceContextAdministrador(), variableDto);
+
+        assertNull(variableDtoUpdated.getType());
+    }
+
+    @Test
+    public void testUpdateVariableErrorTypeGeographicalToNull() throws Exception {
         VariableDto variableDto = srmCoreServiceFacade.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_5);
         assertEquals(VariableTypeEnum.GEOGRAPHICAL, variableDto.getType());
         variableDto.setType(null);
@@ -1920,19 +1934,12 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             assertNotNull(variableElementDto.getGeographicalGranularity());
         }
 
-        VariableDto variableUpdated = srmCoreServiceFacade.updateVariable(getServiceContextAdministrador(), variableDto);
-        assertEquals(null, variableUpdated.getType());
-
-        entityManager.clear();
-
-        // Check variable elements
-        {
-            VariableElementDto variableElementDto = srmCoreServiceFacade.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_5_VARIABLE_ELEMENT_1);
-            assertNull(variableElementDto.getLatitude());
-            assertNull(variableElementDto.getLongitude());
-            assertNull(variableElementDto.getShapeWkt());
-            assertNull(variableElementDto.getShapeGeojson());
-            assertNull(variableElementDto.getGeographicalGranularity());
+        try {
+            srmCoreServiceFacade.updateVariable(getServiceContextAdministrador(), variableDto);
+            fail("updating type to non geographical is unsupported with variable elements");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.VARIABLE_TYPE_UPDATE_TO_NON_GEOGRAPHICAL_UNSUPPORTED, 1, new String[]{variableDto.getUrn()}, e.getExceptionItems().get(0));
         }
     }
 
@@ -2007,7 +2014,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         {
             MetamacCriteriaResult<VariableBasicDto> result = srmCoreServiceFacade.findVariablesByCondition(getServiceContextAdministrador(), metamacCriteria);
 
-            assertEquals(7, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(8, result.getPaginatorResult().getTotalResults().intValue());
             int i = 0;
             assertEquals(VARIABLE_7_WORLD, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_1, result.getResults().get(i++).getUrn());
@@ -2016,6 +2023,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             assertEquals(VARIABLE_4, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_5, result.getResults().get(i++).getUrn());
             assertEquals(VARIABLE_6, result.getResults().get(i++).getUrn());
+            assertEquals(VARIABLE_8, result.getResults().get(i++).getUrn());
             assertEquals(result.getPaginatorResult().getTotalResults().intValue(), i);
         }
         // Find by Name
@@ -2073,7 +2081,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             MetamacCriteriaResult<VariableBasicDto> result = srmCoreServiceFacade.findVariablesByCondition(getServiceContextAdministrador(), metamacCriteria);
 
             assertEquals(4, result.getResults().size());
-            assertEquals(7, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(8, result.getPaginatorResult().getTotalResults().intValue());
             assertEquals(firstResult, result.getPaginatorResult().getFirstResult().intValue());
             assertEquals(maxResultSize, result.getPaginatorResult().getMaximumResultSize().intValue());
             assertEquals(VARIABLE_7_WORLD, result.getResults().get(0).getUrn());
@@ -2087,12 +2095,13 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
             MetamacCriteriaResult<VariableBasicDto> result = srmCoreServiceFacade.findVariablesByCondition(getServiceContextAdministrador(), metamacCriteria);
 
-            assertEquals(3, result.getResults().size());
-            assertEquals(7, result.getPaginatorResult().getTotalResults().intValue());
+            assertEquals(4, result.getResults().size());
+            assertEquals(8, result.getPaginatorResult().getTotalResults().intValue());
             assertEquals(firstResult, result.getPaginatorResult().getFirstResult().intValue());
             assertEquals(VARIABLE_4, result.getResults().get(0).getUrn());
             assertEquals(VARIABLE_5, result.getResults().get(1).getUrn());
             assertEquals(VARIABLE_6, result.getResults().get(2).getUrn());
+            assertEquals(VARIABLE_8, result.getResults().get(3).getUrn());
         }
     }
 

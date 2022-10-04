@@ -50,7 +50,6 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.tz.DateTimeZoneBuilder;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.siemac.metamac.common.test.utils.DirtyDatabase;
@@ -6419,7 +6418,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     }
 
     @Test
-    public void testUpdateVariableTypeGeographicalToNull() throws Exception {
+    public void testUpdateVariableTypeErrorGeographicalToNullWithVariableElements() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_5);
         assertEquals(VariableTypeEnum.GEOGRAPHICAL, variable.getType());
         variable.getNameableArtefact().setIsCodeUpdated(Boolean.FALSE);
@@ -6444,39 +6443,30 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertNotNull(variableElement.getGeographicalGranularity());
         }
 
+        try {
+            codesService.updateVariable(getServiceContextAdministrador(), variable);
+            fail("updating type to non geographical is unsupported with variable elements");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.VARIABLE_TYPE_UPDATE_TO_NON_GEOGRAPHICAL_UNSUPPORTED, 1, new String[]{variable.getNameableArtefact().getUrn()},
+                    e.getExceptionItems().get(0));
+        }
+    }
+
+    @Test
+    public void testUpdateVariableTypeGeographicalToNullWithoutVariableElements() throws Exception {
+        Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_8);
+        assertEquals(VariableTypeEnum.GEOGRAPHICAL, variable.getType());
+        variable.getNameableArtefact().setIsCodeUpdated(Boolean.FALSE);
+        variable.setPreviousType(variable.getType());
+        variable.setType(null);
+
+        // Check that the variable has no variable elements
+        assertTrue(CollectionUtils.isEmpty(variable.getVariableElements()));
+
         Variable variableUpdated = codesService.updateVariable(getServiceContextAdministrador(), variable);
-        assertEquals(null, variableUpdated.getType());
-        assertEquals(VariableTypeEnum.GEOGRAPHICAL, variableUpdated.getPreviousType());
 
-        entityManager.clear();
-
-        // Check variable elements
-        {
-            VariableElement variableElement = codesService.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_5_VARIABLE_ELEMENT_1);
-            assertNull(variableElement.getLatitude());
-            assertNull(variableElement.getLongitude());
-            assertNull(variableElement.getShapeWkt());
-            assertNull(variableElement.getShapeGeojson());
-            assertNull(variableElement.getGeographicalGranularity());
-        }
-        {
-            VariableElement variableElement = codesService.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_5_VARIABLE_ELEMENT_2);
-            assertNull(variableElement.getLatitude());
-            assertNull(variableElement.getLongitude());
-            assertNull(variableElement.getShapeWkt());
-            assertNull(variableElement.getShapeGeojson());
-            assertNull(variableElement.getGeographicalGranularity());
-        }
-
-        // Check another variable elements is not clear
-        {
-            VariableElement variableElement = codesService.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_4_VARIABLE_ELEMENT_1);
-            assertNotNull(variableElement.getLatitude());
-            assertNotNull(variableElement.getLongitude());
-            assertNotNull(variableElement.getShapeWkt());
-            assertNotNull(variableElement.getShapeGeojson());
-            assertNotNull(variableElement.getGeographicalGranularity());
-        }
+        assertNull(variableUpdated.getType());
     }
 
     @Test
@@ -6634,7 +6624,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<Variable> result = codesService.findVariablesByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
-            assertEquals(7, result.getTotalRows());
+            assertEquals(8, result.getTotalRows());
             int i = 0;
             assertEquals(VARIABLE_7_WORLD, result.getValues().get(i++).getNameableArtefact().getUrn());
             assertEquals(VARIABLE_1, result.getValues().get(i++).getNameableArtefact().getUrn());
@@ -6643,6 +6633,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(VARIABLE_4, result.getValues().get(i++).getNameableArtefact().getUrn());
             assertEquals(VARIABLE_5, result.getValues().get(i++).getNameableArtefact().getUrn());
             assertEquals(VARIABLE_6, result.getValues().get(i++).getNameableArtefact().getUrn());
+            assertEquals(VARIABLE_8, result.getValues().get(i++).getNameableArtefact().getUrn());
         }
         // Find by urn
         {
@@ -10935,7 +10926,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                     e.getExceptionItems().get(i++));
             assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT_SEMANTIC_IDENTIFIER, 2,
                     new Serializable[]{"#variableNotSemanticCode", "parameter.srm.importation.code"}, e.getExceptionItems().get(i++));
-            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, 1, new Serializable[]{7}, e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, 1, new Serializable[]{8}, e.getExceptionItems().get(i++));
             assertEquals(e.getExceptionItems().size(), i);
         }
     }

@@ -11,6 +11,7 @@
 ## 3.3.0 a 4.0.0-SNAPSHOT
 * Rotura de la compatibilidad:
 ** Se eliminan los servicios soap
+* Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.3.0/db](etc/changes-from-release/3.3.0/db)
 
 ## 3.2.0 a 3.3.0
 * Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.2.0/db](etc/changes-from-release/3.2.0/db)

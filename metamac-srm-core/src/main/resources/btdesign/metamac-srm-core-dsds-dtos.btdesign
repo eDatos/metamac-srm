@@ -21,7 +21,7 @@ Application DtosMetamacDsdDomain {
 			
 			"Visualisation metadata Show Decimals"
 			Integer showDecimals nullable;
-			
+
 			"Visualisation metadata Categories cells whites"
 			Boolean categoryCellWhite nullable;
 			

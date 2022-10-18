@@ -883,7 +883,12 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
             {
                 temporalDataStructureDefinitionVersionMetamac.setAutoOpen(Boolean.FALSE);
             }
-
+			{
+				temporalDataStructureDefinitionVersionMetamac.setCategoryCellCero(Boolean.FALSE);
+			}
+			{
+				temporalDataStructureDefinitionVersionMetamac.setCategoryCellWhite(Boolean.FALSE);
+			}
             // ComponentList: Add Annotation
             {
                 ComponentList componentListTemporal = temporalDataStructureDefinitionVersionMetamac.getGrouping().iterator().next();

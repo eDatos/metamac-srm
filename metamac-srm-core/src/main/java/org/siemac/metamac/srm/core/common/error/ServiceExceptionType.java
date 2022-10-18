@@ -98,6 +98,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     // Variables
     public static final CommonServiceExceptionType VARIABLE_TYPE_UPDATE_TO_GEOGRAPHICAL_UNSUPPORTED                                      = create(
             "exception.srm.codelists.variable.update_type_geographical_unsupported");
+    public static final CommonServiceExceptionType VARIABLE_TYPE_UPDATE_TO_NON_GEOGRAPHICAL_UNSUPPORTED                                  = create(
+            "exception.srm.codelists.variable.update_type_not_geographical_unsupported");
 
     // Variable elements
     public static final CommonServiceExceptionType VARIABLE_ELEMENTS_MUST_BELONG_TO_SAME_VARIABLE                                        = create(

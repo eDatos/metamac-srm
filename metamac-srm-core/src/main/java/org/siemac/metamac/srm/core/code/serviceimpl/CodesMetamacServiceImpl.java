@@ -1914,6 +1914,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Validation
         CodesMetamacInvocationValidator.checkUpdateVariable(variable, null);
         checkVariableToCreateOrUpdate(ctx, variable);
+        checkVariableChangesToNonGeographical(variable);
 
         // Code modifications unsupported (METAMAC-1644). If this change, avoid modify code to 'SrmConfigurationConstants.VARIABLE_WORLD'
         if (variable.getNameableArtefact().getIsCodeUpdated()) {
@@ -1931,16 +1932,19 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             variableReplaceTo.setReplacedByVariable(variable);
         }
 
-        // Clear geographical information if type is changed to non geographical
+        // Update
+        return getVariableRepository().save(variable);
+    }
+
+    private void checkVariableChangesToNonGeographical(Variable variable) throws MetamacException {
+        // If the variable is modified to non-geographic, it is necessary that it does not have associated variable elements
         if (variable.getType() == null && VariableTypeEnum.GEOGRAPHICAL.equals(variable.getPreviousType())) {
             Long variableElementsCount = getVariableElementRepository().countVariableElementsByVariable(variable.getId());
             if (variableElementsCount != 0) {
-                getVariableElementRepository().clearGeographicalInformationByVariable(variable.getId());
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_TYPE_UPDATE_TO_NON_GEOGRAPHICAL_UNSUPPORTED)
+                        .withMessageParameters(variable.getNameableArtefact().getUrn()).build();
             }
         }
-
-        // Update
-        return getVariableRepository().save(variable);
     }
 
     @Override
@@ -2287,23 +2291,41 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     }
                 }
 
+                List<String> fileLines = new ArrayList<>();
                 int lineNumber = 2;
-                while ((line = bufferedReader.readLine()) != null) {
-                    if (StringUtils.isBlank(line)) {
-                        continue;
+
+                line = bufferedReader.readLine();
+                boolean allFileHasBeenProcessed = line == null;
+
+                while (!allFileHasBeenProcessed) {
+                    if (line != null) {
+                        fileLines.add(line);
                     }
-                    String[] columns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
-                    if (columns.length != header.getColumnsSize()) {
-                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
-                        continue;
+
+                    if (fileLines.size() >= SrmConstants.VARIABLE_ELEMENT_CACHE_SIZE_TSV_IMPORT || line == null) {
+                        Map<String, VariableElement> variableElementCache = getVariableElementCache(variable, fileLines, header);
+
+                        for (String fileLine : fileLines) {
+                            if (StringUtils.isNotBlank(fileLine)) {
+                                String[] columns = StringUtils.splitPreserveAllTokens(fileLine, SrmConstants.TSV_SEPARATOR);
+                                if (columns.length != header.getColumnsSize()) {
+                                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                                } else {
+                                    // Transform variable element and add to list to persist
+                                    VariableElement variableElement = tsvLineToVariableElement(header, columns, lineNumber, variable, variableElementCache, updateAlreadyExisting,
+                                            variableElementsToPersistByCode, codesCanBeGeographicalGranularityByCode, exceptionItems, informationItems);
+                                    if (variableElement != null) {
+                                        variableElementsToPersistByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+                                    }
+                                }
+                            }
+                            lineNumber++;
+                        }
+
+                        fileLines.clear();
                     }
-                    // Transform variable element and add to list to persist
-                    VariableElement variableElement = tsvLineToVariableElement(header, columns, lineNumber, variable, updateAlreadyExisting, variableElementsToPersistByCode,
-                            codesCanBeGeographicalGranularityByCode, exceptionItems, informationItems);
-                    if (variableElement != null) {
-                        variableElementsToPersistByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
-                    }
-                    lineNumber++;
+                    line = bufferedReader.readLine();
+                    allFileHasBeenProcessed = line == null && fileLines.isEmpty();
                 }
             }
         } catch (Exception e) {
@@ -2328,6 +2350,38 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    private Map<String, VariableElement> getVariableElementCache(Variable variable, List<String> filePartition, ImportationVariableElementsTsvHeader header) {
+
+        List<String> variableElementCodes = new ArrayList<>();
+
+        logger.debug("Number of lines from file partition {}", filePartition.size());
+
+        for (String fileLine : filePartition) {
+            String[] columns = StringUtils.splitPreserveAllTokens(fileLine, SrmConstants.TSV_SEPARATOR);
+            if (columns.length == header.getColumnsSize()) {
+                String codeIdentifier = columns[header.getCodePosition()];
+                if (!StringUtils.isBlank(codeIdentifier) && SemanticIdentifierValidationUtils.isVariableElementSemanticIdentifier(codeIdentifier)) {
+                    variableElementCodes.add(codeIdentifier);
+                }
+            }
+        }
+
+        logger.debug("Number of extracted codes from file partition: {}", variableElementCodes.size());
+        logger.trace("Extracted codes from file partition: {}", variableElementCodes);
+
+        List<VariableElement> variableElements = getVariableElementRepository().findByCodeAndVariableId(variableElementCodes, variable.getId());
+
+        Map<String, VariableElement> variableElementsCache = new HashMap<>();
+        for (VariableElement variableElement : variableElements) {
+            variableElementsCache.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+        }
+
+        logger.debug("Number of codes in cache: {}", variableElementsCache.size());
+        logger.trace("Codes in cache: {}", variableElementsCache.keySet());
+
+        return variableElementsCache;
     }
 
     @Override
@@ -3776,13 +3830,13 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return code;
     }
-    
+
     /**
      * Transforms tsv line to VariableElement. IMPORTANT: Do not execute save or update operation
      */
-    private VariableElement tsvLineToVariableElement(ImportationVariableElementsTsvHeader header, String[] columns, int lineNumber, Variable variable, boolean updateAlreadyExisting,
-            Map<String, VariableElement> variableElementsToPersistByCode, Map<String, CodeMetamac> codesCanBeGeographicalGranularityByCode, List<MetamacExceptionItem> exceptionItems,
-            List<MetamacExceptionItem> infoItems) throws MetamacException {
+    private VariableElement tsvLineToVariableElement(ImportationVariableElementsTsvHeader header, String[] columns, int lineNumber, Variable variable,
+            Map<String, VariableElement> variableElementCache, boolean updateAlreadyExisting, Map<String, VariableElement> variableElementsToPersistByCode,
+            Map<String, CodeMetamac> codesCanBeGeographicalGranularityByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) throws MetamacException {
 
         // semantic identifier
         String codeIdentifier = columns[header.getCodePosition()];
@@ -3800,7 +3854,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             return null;
         }
         // init variable element
-        VariableElement variableElement = getVariableElementsPreviousInVariable(variable, codeIdentifier);
+        VariableElement variableElement = variableElementCache.get(codeIdentifier);
         if (variableElement == null) {
             variableElement = new VariableElement();
             variableElement.setVariable(variable);
@@ -3877,21 +3931,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             exceptionItems.add(metamacExceptionItem);
         }
         return variableElement;
-    }
-
-    private VariableElement getVariableElementsPreviousInVariable(Variable variable, String codeIdentifier) {
-        // @formatter:off
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(VariableElement.class)
-                .withProperty(VariableElementProperties.variable().nameableArtefact().urn()).eq(variable.getNameableArtefact().getUrn())
-            .and()
-                .withProperty(VariableElementProperties.identifiableArtefact().code()).eq(codeIdentifier).distinctRoot().build();
-        // @formatter:on
-
-        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-
-        PagedResult<VariableElement> variableElementPagedResult = getVariableElementRepository().findByCondition(conditions, pagingParameter);
-
-        return (!CollectionUtils.isEmpty(variableElementPagedResult.getValues()) ? variableElementPagedResult.getValues().get(0) : null);
     }
 
     /**

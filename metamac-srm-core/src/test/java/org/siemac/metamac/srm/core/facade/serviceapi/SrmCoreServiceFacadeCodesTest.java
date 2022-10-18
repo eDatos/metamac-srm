@@ -1906,6 +1906,20 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
     @Test
     public void testUpdateVariableTypeGeographicalToNull() throws Exception {
+        VariableDto variableDto = srmCoreServiceFacade.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_8);
+        assertEquals(VariableTypeEnum.GEOGRAPHICAL, variableDto.getType());
+        variableDto.setType(null);
+
+        // Check that the variable has no variable elements
+        assertFalse(variableDto.getHasVariableElements());
+
+        VariableDto variableDtoUpdated = srmCoreServiceFacade.updateVariable(getServiceContextAdministrador(), variableDto);
+
+        assertNull(variableDtoUpdated.getType());
+    }
+
+    @Test
+    public void testUpdateVariableErrorTypeGeographicalToNull() throws Exception {
         VariableDto variableDto = srmCoreServiceFacade.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_5);
         assertEquals(VariableTypeEnum.GEOGRAPHICAL, variableDto.getType());
         variableDto.setType(null);
@@ -1920,19 +1934,12 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             assertNotNull(variableElementDto.getGeographicalGranularity());
         }
 
-        VariableDto variableUpdated = srmCoreServiceFacade.updateVariable(getServiceContextAdministrador(), variableDto);
-        assertEquals(null, variableUpdated.getType());
-
-        entityManager.clear();
-
-        // Check variable elements
-        {
-            VariableElementDto variableElementDto = srmCoreServiceFacade.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_5_VARIABLE_ELEMENT_1);
-            assertNull(variableElementDto.getLatitude());
-            assertNull(variableElementDto.getLongitude());
-            assertNull(variableElementDto.getShapeWkt());
-            assertNull(variableElementDto.getShapeGeojson());
-            assertNull(variableElementDto.getGeographicalGranularity());
+        try {
+            srmCoreServiceFacade.updateVariable(getServiceContextAdministrador(), variableDto);
+            fail("updating type to non geographical is unsupported with variable elements");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.VARIABLE_TYPE_UPDATE_TO_NON_GEOGRAPHICAL_UNSUPPORTED, 1, new String[]{variableDto.getUrn()}, e.getExceptionItems().get(0));
         }
     }
 

@@ -1001,4 +1001,8 @@ public class TsvImportationUtils {
         return null;
     }
 
+
+    public static String replaceSeparatorLineInText(String line){
+        return line.replace(SrmConstants.TSV_DOUBLE_SPACE, SrmConstants.TSV_BR_TAG);
+    }
 }

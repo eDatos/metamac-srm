@@ -28,7 +28,7 @@ class SrmRewriteMatch extends AbstractRewriteMatch {
     @Override
     protected String getApiBaseUrl() throws ServletException {
         try {
-            return SOAP_API_PREFIX.equals(getCurrentApiPrefix()) ? getConfigurationService().retrieveSrmExternalSoapUrlBase() : getConfigurationService().retrieveSrmExternalApiUrlBase();
+            return getConfigurationService().retrieveSrmExternalApiUrlBase();
         } catch (MetamacException e) {
             throw new ServletException("Error retrieving configuration property of the external API URL base", e);
         }

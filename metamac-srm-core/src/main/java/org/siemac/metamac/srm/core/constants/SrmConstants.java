@@ -59,6 +59,10 @@ public class SrmConstants {
 
     public static final String             TSV_EXPORTATION_ENCODING                                               = "UTF-8";
 
+    public static final String             TSV_BR_TAG                                                             = "<br />";
+
+    public static final String             TSV_DOUBLE_SPACE                                                       = "  ";
+
     public static final String             SHAPE_VARIABLE_ELEMENT_ATTRIBUTE                                       = "VAR_ELEM";
     public static final String             SHAPE_POLYGON                                                          = "POLYGON";
     public static final String             SHAPE_MULTIPOLYGON                                                     = "MULTIPOLYGON";

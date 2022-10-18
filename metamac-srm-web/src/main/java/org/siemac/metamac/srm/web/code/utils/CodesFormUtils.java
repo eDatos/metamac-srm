@@ -5,7 +5,6 @@ import org.siemac.metamac.core.common.util.shared.BooleanUtils;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.VariableDto;
-import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 
 /**
@@ -61,15 +60,11 @@ public class CodesFormUtils {
         if (variableDto == null) {
             return false;
         }
-        // when the variable type is geographical, can always be turned into a non geographical variable, unless is the world variable
-        if (VariableTypeEnum.GEOGRAPHICAL.equals(variableDto.getType())) {
-            return org.siemac.metamac.srm.web.code.utils.CommonUtils.isVariableWorld(variableDto) ? false : true;
-        } else {
-            // the metadata can only be edited when the variable has no variable elements
-            return !BooleanUtils.isTrue(variableDto.getHasVariableElements());
-        }
+
+        // the metadata can only be edited when the variable has no variable elements
+        return !BooleanUtils.isTrue(variableDto.getHasVariableElements());
     }
-    
+
     // CODELIST NORMALIZATION TYPE
 
     public static boolean canCodelistNormalizationTypeBeEdited(CodelistMetamacDto codelistDto) {
@@ -78,7 +73,7 @@ public class CodesFormUtils {
         }
         return !VersionUtil.isTemporalVersion(codelistDto.getVersionLogic());
     }
-    
+
     // CODELIST SOURCE PROVIDER
 
     public static boolean canCodelistSourceProviderBeEdited(CodelistMetamacDto codelistDto) {

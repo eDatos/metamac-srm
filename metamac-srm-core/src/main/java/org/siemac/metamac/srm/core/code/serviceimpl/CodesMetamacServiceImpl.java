@@ -852,7 +852,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     if (StringUtils.isBlank(line)) {
                         continue;
                     }
-                    String[] columns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
+
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
                     if (columns.length != header.getColumnsSize()) {
                         exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
                         continue;
@@ -958,7 +959,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     if (StringUtils.isBlank(line)) {
                         continue;
                     }
-                    String[] columns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
                     if (columns.length != header.getColumnsSize()) {
                         exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
                         continue;
@@ -1128,7 +1129,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 continue;
             }
 
-            String[] columns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
+            String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
             if (columns.length == header.getColumnsSize()) {
 
                 // Transform restrictions, setting value of columns
@@ -2307,7 +2308,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
                         for (String fileLine : fileLines) {
                             if (StringUtils.isNotBlank(fileLine)) {
-                                String[] columns = StringUtils.splitPreserveAllTokens(fileLine, SrmConstants.TSV_SEPARATOR);
+                                String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(fileLine), SrmConstants.TSV_SEPARATOR);
                                 if (columns.length != header.getColumnsSize()) {
                                     exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
                                 } else {
@@ -2359,7 +2360,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         logger.debug("Number of lines from file partition {}", filePartition.size());
 
         for (String fileLine : filePartition) {
-            String[] columns = StringUtils.splitPreserveAllTokens(fileLine, SrmConstants.TSV_SEPARATOR);
+            String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(fileLine), SrmConstants.TSV_SEPARATOR);
             if (columns.length == header.getColumnsSize()) {
                 String codeIdentifier = columns[header.getCodePosition()];
                 if (!StringUtils.isBlank(codeIdentifier) && SemanticIdentifierValidationUtils.isVariableElementSemanticIdentifier(codeIdentifier)) {

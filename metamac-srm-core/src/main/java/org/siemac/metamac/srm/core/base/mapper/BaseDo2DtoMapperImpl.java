@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.core.base.mapper;
 
+import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
@@ -120,7 +121,10 @@ public class BaseDo2DtoMapperImpl implements org.siemac.metamac.srm.core.base.ma
             maintainerDto.setType(RelatedResourceTypeEnum.AGENCY); // always is Agency
             target.setMaintainer(maintainerDto);
         }
-        target.setValidTo(CoreCommonUtil.transformDateTimeToDate(source.getValidTo()));
+
+        if(!target.getVersionLogic().contains(UrnConstants.URN_SDMX_TEMPORAL_SUFFIX)) {
+            target.setValidTo(CoreCommonUtil.transformDateTimeToDate(source.getValidTo()));
+        }
         nameableArtefactDoToNameableArtefactBasicDto(source, target);
     }
 

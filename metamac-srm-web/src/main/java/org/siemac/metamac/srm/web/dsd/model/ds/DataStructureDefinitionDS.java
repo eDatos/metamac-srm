@@ -16,6 +16,8 @@ public class DataStructureDefinitionDS extends VersionableResourceDS {
     public static final String DIMENSIONS_VISUALISATIONS     = "dsd-stub";
     public static final String SHOW_DECIMALS_PRECISION       = "dsd-show-dec-prec";
     public static final String DIMENSION_CODES_VISUALISATION = "dsd-dim-codes";
+    public static final String CATEGORY_CELL_BLANK           = "dsd-category-cell-blank";
+    public static final String CATEGORY_CELL_CERO           = "dsd-category-cell-cero";
 
     public static final String DTO                           = "dsd-dto";
 }

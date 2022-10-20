@@ -482,7 +482,12 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         ShowDecimalsPrecisionItem showDecimalsPrecision = new ShowDecimalsPrecisionItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getConstants().dsdShowDecimalsPrecision(), true);
         DsdDimensionCodesVisualisationItem dimensionCodesVisualisationItem = new DsdDimensionCodesVisualisationItem(DataStructureDefinitionDS.DIMENSION_CODES_VISUALISATION,
                 getConstants().dsdDimensionCodesVisualisation(), true);
-        visualisationMetadataEditionForm.setFields(autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
+        CustomCheckboxItem categoryCellBlank = new CustomCheckboxItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, getConstants().dsdCategoryCellBlank());
+        categoryCellBlank.setVisible(true);
+        
+        CustomCheckboxItem categoryCellCero = new CustomCheckboxItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO, getConstants().dsdCategoryCellCero());
+        categoryCellCero.setVisible(true);
+        visualisationMetadataEditionForm.setFields(categoryCellBlank, categoryCellCero, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
 
         // Comments
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());

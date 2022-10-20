@@ -719,6 +719,10 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
 
         // Visualisation metadata
         dataStructureDefinitionMetamacDto.setAutoOpen(((BooleanSelectItem) visualisationMetadataEditionForm.getItem(DataStructureDefinitionDS.AUTO_OPEN)).getBooleanValue());
+		dataStructureDefinitionMetamacDto.setCategoryCellBlank(((BooleanSelectItem) visualisationMetadataEditionForm
+				.getItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK)).getBooleanValue());
+		dataStructureDefinitionMetamacDto.setCategoryCellCero(((BooleanSelectItem) visualisationMetadataEditionForm
+				.getItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO)).getBooleanValue());
         dataStructureDefinitionMetamacDto.setShowDecimals(!StringUtils.isBlank(visualisationMetadataEditionForm.getValueAsString(DataStructureDefinitionDS.SHOW_DECIMALS))
                 ? Integer.valueOf(visualisationMetadataEditionForm.getValueAsString(DataStructureDefinitionDS.SHOW_DECIMALS))
                 : null);

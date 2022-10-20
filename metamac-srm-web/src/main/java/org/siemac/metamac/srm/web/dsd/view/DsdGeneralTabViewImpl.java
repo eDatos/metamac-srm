@@ -365,9 +365,12 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
                 getConstants().dsdDimensionCodesVisualisation(), false);
         CustomCheckboxItem categoryCellBlank = new CustomCheckboxItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, getConstants().dsdCategoryCellBlank());
         categoryCellBlank.setVisible(true);
+        categoryCellBlank.setDisabled(true);
         
         CustomCheckboxItem categoryCellCero = new CustomCheckboxItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO, getConstants().dsdCategoryCellCero());
         categoryCellCero.setVisible(true);
+        categoryCellCero.setDisabled(true);
+
         visualisationMetadataForm.setFields(categoryCellBlank, categoryCellCero, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
 
         // Comments
@@ -586,7 +589,7 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
                 dsd.getStubDimensions());
         ((ShowDecimalsPrecisionItem) visualisationMetadataForm.getItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION)).setMeasureDimensionPrecisions(dsd.getShowDecimalsPrecisions());
         visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_CERO, dsd.getCategoryCellCero() == null ? Boolean.FALSE : dsd.getCategoryCellCero());
-        visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, dsd.getCategoryCellWhite() == null ? Boolean.FALSE : dsd.getCategoryCellWhite());
+        visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, dsd.getCategoryCellBlank() == null ? Boolean.FALSE : dsd.getCategoryCellBlank());
         // DIMENSION_CODES_VISUALISATION is set in set setDimensionsAndCandidateVisualisations
 
         // Comments

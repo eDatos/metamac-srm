@@ -99,7 +99,7 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
         // Modifiable attributes
         target.setAutoOpen(source.getAutoOpen());
         target.setCategoryCellCero(source.getCategoryCellCero());
-        target.setCategoryCellWhite(source.getCategoryCellWhite());
+        target.setCategoryCellBlank(source.getCategoryCellBlank());
         target.setShowDecimals(source.getShowDecimals());
         target.setStatisticalOperation(externalItemDtoStatisticalOperationsToExternalItemDo(source.getStatisticalOperation(), target.getStatisticalOperation(),
                 ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_RELATED_OPERATION));

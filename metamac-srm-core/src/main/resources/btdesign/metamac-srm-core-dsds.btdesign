@@ -170,8 +170,8 @@ Application DsdsMetamac {
 			Integer showDecimals nullable range="min=0,max=6,message='exception.srm.dsd.validation.showdecimals_precision'";
 			
 						
-			"Visualisation metadata Categories cells whites"
-			Boolean categoryCellWhite nullable;
+			"Visualisation metadata Categories cells blanks"
+			Boolean categoryCellBlank nullable;
 			
 			"Visualisation metadata Categories cells cero"
 			Boolean categoryCellCero nullable;

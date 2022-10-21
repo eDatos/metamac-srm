@@ -200,7 +200,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         // version
         // if (callback.isTemporalToPublishExternally(ctx, srmResourceVersion)) {
         if (isTemporalVersionWithExternalPublished) {
-            sendStreamMessageResult = publishExternally(ctx, maintainableArtefact.getUrn());
+            sendStreamMessageResult = publishExternally(ctx, maintainableArtefact.getUrn(), isTemporalVersionWithExternalPublished);
         } else {
             sendStreamMessageResult = callback.notifyPublication(srmResourceVersion);
         }
@@ -220,7 +220,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
     }
 
     @Override
-    public ResourceVersionPublicationResult<?> publishExternally(ServiceContext ctx, String urn) throws MetamacException {
+    public ResourceVersionPublicationResult<?> publishExternally(ServiceContext ctx, String urn, Boolean isFromTemporalVersion) throws MetamacException {
 
         // Validation
         checkInvocation(urn);
@@ -245,7 +245,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
             List<Object> versionsExternallyPublished = callback.findSrmResourceVersionsOfSrmResourceInProcStatus(ctx, srmResourceVersion, ProcStatusEnum.EXTERNALLY_PUBLISHED);
             for (Object versionExternallyPublished : versionsExternallyPublished) {
                 MaintainableArtefact maintainableArtefact = callback.getMaintainableArtefact(versionExternallyPublished);
-                if (maintainableArtefact.getValidTo() == null) {
+                if (maintainableArtefact.getValidTo() == null && isFromTemporalVersion == null) {
                     callback.endSrmResourceValidity(ctx, versionExternallyPublished);
                 }
             }

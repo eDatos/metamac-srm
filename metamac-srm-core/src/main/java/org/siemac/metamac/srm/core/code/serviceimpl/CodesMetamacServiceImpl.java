@@ -459,7 +459,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     @Override
     @SuppressWarnings("unchecked")
     public ResourceVersionPublicationResult<CodelistVersionMetamac> publishExternallyCodelist(ServiceContext ctx, String urn) throws MetamacException {
-        return (ResourceVersionPublicationResult<CodelistVersionMetamac>) codelistLifeCycle.publishExternally(ctx, urn);
+        return (ResourceVersionPublicationResult<CodelistVersionMetamac>) codelistLifeCycle.publishExternally(ctx, urn, null);
     }
 
     @Override

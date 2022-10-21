@@ -582,7 +582,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     @Override
     @SuppressWarnings("unchecked")
     public ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> publishExternallyDataStructureDefinition(ServiceContext ctx, String urn) throws MetamacException {
-        return (ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac>) dsdLifeCycle.publishExternally(ctx, urn);
+        return (ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac>) dsdLifeCycle.publishExternally(ctx, urn, null);
     }
 
     @Override

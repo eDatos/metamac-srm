@@ -12,7 +12,7 @@ public interface LifeCycle {
     public Object rejectProductionValidation(ServiceContext ctx, String urn) throws MetamacException;
     public Object rejectDiffusionValidation(ServiceContext ctx, String urn) throws MetamacException;
     public ResourceVersionPublicationResult<?> publishInternally(ServiceContext ctx, String urn, Boolean forceLastestFinal) throws MetamacException;
-    public ResourceVersionPublicationResult<?> publishExternally(ServiceContext ctx, String urn) throws MetamacException;
+    public ResourceVersionPublicationResult<?> publishExternally(ServiceContext ctx, String urn, Boolean isFromTemporalVersion) throws MetamacException;
 
     public Object prePublishResourceInInternallyPublished(ServiceContext ctx, String urn, ProcStatusEnum targetStatus) throws MetamacException;
 }

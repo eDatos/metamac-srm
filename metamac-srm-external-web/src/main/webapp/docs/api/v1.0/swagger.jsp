@@ -83,7 +83,7 @@
                   "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>" 
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -640,7 +640,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"  
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -700,13 +700,13 @@
                   "in":"path",
                   "type":"string",
                   "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.3.description" bundle="${i18n}"/>"
-               },   
+               },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
                   "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.4.description" bundle="${i18n}"/>"
-               }           
+               }
             ],
             "responses":{
                "200":{
@@ -1109,7 +1109,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"    
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -3293,7 +3293,7 @@
                "application/json",
                "application/xml"
             ],
-             "parameters":[
+            "parameters":[
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryElementQueryParam"},
@@ -3304,7 +3304,7 @@
                	  "schema":{
                      "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategoryElements"
-                  },                
+                  },
                   "headers":{
 
                   },

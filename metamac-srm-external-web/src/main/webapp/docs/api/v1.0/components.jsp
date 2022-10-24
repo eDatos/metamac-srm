@@ -13,7 +13,7 @@
 <%@ page import="org.apache.commons.lang.LocaleUtils" %>
 <%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
 
-<%! 
+<%!
 
 String locale = "es";
 
@@ -75,7 +75,7 @@ public String queryDescriptionWithParams(String... a) {
     for (int i = 0; i < a.length; i++) {
         result += "<li>" + a[i] + "</li>";
     }
-    return result + messagesBundle.getString("api.doc.swagger.components.example");    
+    return result + messagesBundle.getString("api.doc.swagger.components.example");
 }
 %>
 

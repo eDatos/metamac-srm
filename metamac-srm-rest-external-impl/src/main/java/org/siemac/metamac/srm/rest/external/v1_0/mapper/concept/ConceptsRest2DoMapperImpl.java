@@ -81,6 +81,8 @@ public class ConceptsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
             switch (propertyNameCriteria) {
                 case ID:
                     return ConceptSchemeVersionMetamacProperties.maintainableArtefact().code();
+                case NAME:
+                    return ConceptSchemeVersionMetamacProperties.maintainableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -140,6 +142,8 @@ public class ConceptsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
             switch (propertyNameCriteria) {
                 case ID:
                     return ConceptMetamacProperties.nameableArtefact().code();
+                case NAME:
+                    return ConceptMetamacProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

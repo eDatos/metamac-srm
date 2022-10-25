@@ -184,8 +184,10 @@ public class CategorySchemeLifeCycleImpl extends LifeCycleImpl {
 
             CategorySchemeVersionMetamac categorySchemeVersion = getCategorySchemeVersionMetamac(srmResourceVersion);
 
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategorySchemeVersionMetamac.class).withProperty(CategorySchemeVersionMetamacProperties.itemScheme().id())
-                    .eq(categorySchemeVersion.getItemScheme().getId()).withProperty(CategorySchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus).distinctRoot()
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategorySchemeVersionMetamac.class)
+                    .withProperty(CategorySchemeVersionMetamacProperties.itemScheme().id()).eq(categorySchemeVersion.getItemScheme().getId())
+                    .withProperty(CategorySchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
+                    .withProperty(CategorySchemeVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(categorySchemeVersion.getMaintainableArtefact().getVersionLogic())
                     .build();
             PagingParameter pagingParameter = PagingParameter.noLimits();
             PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categorySchemeVersionMetamacRepository.findByCondition(conditions, pagingParameter);
@@ -238,6 +240,5 @@ public class CategorySchemeLifeCycleImpl extends LifeCycleImpl {
             }
             return objects;
         }
-
     }
 }

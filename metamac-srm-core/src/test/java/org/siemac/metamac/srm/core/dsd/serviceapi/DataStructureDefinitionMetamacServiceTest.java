@@ -887,7 +887,7 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
 				temporalDataStructureDefinitionVersionMetamac.setCategoryCellCero(Boolean.FALSE);
 			}
 			{
-				temporalDataStructureDefinitionVersionMetamac.setCategoryCellWhite(Boolean.FALSE);
+				temporalDataStructureDefinitionVersionMetamac.setCategoryCellBlank(Boolean.FALSE);
 			}
             // ComponentList: Add Annotation
             {

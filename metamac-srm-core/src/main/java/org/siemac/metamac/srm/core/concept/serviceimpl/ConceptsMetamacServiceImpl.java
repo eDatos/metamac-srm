@@ -431,7 +431,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
     @Override
     @SuppressWarnings("unchecked")
     public ResourceVersionPublicationResult<ConceptSchemeVersionMetamac> publishExternallyConceptScheme(ServiceContext ctx, String urn) throws MetamacException {
-        return (ResourceVersionPublicationResult<ConceptSchemeVersionMetamac>) conceptSchemeLifeCycle.publishExternally(ctx, urn, null);
+        return (ResourceVersionPublicationResult<ConceptSchemeVersionMetamac>) conceptSchemeLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override

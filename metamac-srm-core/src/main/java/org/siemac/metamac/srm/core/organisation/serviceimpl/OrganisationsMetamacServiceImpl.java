@@ -246,7 +246,7 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
     @Override
     @SuppressWarnings("unchecked")
     public ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> publishExternallyOrganisationScheme(ServiceContext ctx, String urn) throws MetamacException {
-        return (ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac>) organisationSchemeLifeCycle.publishExternally(ctx, urn, null);
+        return (ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac>) organisationSchemeLifeCycle.publishExternally(ctx, urn);
     }
 
     @Override

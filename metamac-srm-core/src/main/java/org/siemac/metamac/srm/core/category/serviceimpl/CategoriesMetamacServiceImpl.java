@@ -271,7 +271,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     @Override
     @SuppressWarnings("unchecked")
     public ResourceVersionPublicationResult<CategorySchemeVersionMetamac> publishExternallyCategoryScheme(ServiceContext ctx, String urn) throws MetamacException {
-        return (ResourceVersionPublicationResult<CategorySchemeVersionMetamac>) categorySchemeLifeCycle.publishExternally(ctx, urn, null);
+        return (ResourceVersionPublicationResult<CategorySchemeVersionMetamac>) categorySchemeLifeCycle.publishExternally(ctx, urn
+        );
     }
 
     @Override

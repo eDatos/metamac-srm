@@ -204,7 +204,7 @@ public class OrganisationSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public List<Object> findSrmResourceVersionsOfSrmResourceInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+        public List<Object> findSrmResourceVersionsWithLowerVersionInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
 
             OrganisationSchemeVersionMetamac organisationSchemeVersion = getOrganisationSchemeVersionMetamac(srmResourceVersion);
 

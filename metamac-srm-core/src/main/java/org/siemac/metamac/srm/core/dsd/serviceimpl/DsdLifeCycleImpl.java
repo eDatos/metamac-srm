@@ -277,6 +277,8 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
 
             // Check mandatory attributes
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getAutoOpen(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_AUTOPEN, exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getCategoryCellBlank(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_CATEGORY_CELL_BLANK, exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getCategoryCellCero(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_CATEGORY_CELL_CERO, exceptions);
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowDecimals(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_DECIMALS, exceptions);
 
             // Check mutual exclusivity between dimensions in the heading and stub.

@@ -23,6 +23,8 @@ public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinit
 
         // Metamac
         assertEquals(expected.getAutoOpen(), actual.getAutoOpen());
+        assertEquals(expected.getCategoryCellBlank(), actual.getCategoryCellBlank());
+        assertEquals(expected.getCategoryCellCero(), actual.getCategoryCellCero());
         assertEquals(expected.getShowDecimals(), actual.getShowDecimals());
         assertEqualsExternalItem(expected.getStatisticalOperation(), actual.getStatisticalOperation());
 
@@ -45,6 +47,8 @@ public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinit
 
         // Metamac
         assertEquals(dto.getAutoOpen(), entity.getAutoOpen());
+        assertEquals(dto.getCategoryCellBlank(), entity.getCategoryCellBlank());
+        assertEquals(dto.getCategoryCellCero(), entity.getCategoryCellCero());
         assertEquals(dto.getShowDecimals(), entity.getShowDecimals());
         BaseAsserts.assertEqualsExternalItemStatisticalOperations(entity.getStatisticalOperation(), dto.getStatisticalOperation(), mapperEnum);
 

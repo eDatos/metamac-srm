@@ -23,10 +23,10 @@ Application DtosMetamacDsdDomain {
 			Integer showDecimals nullable;
 
 			"Visualisation metadata Categories cells blanks"
-			Boolean categoryCellBlank nullable;
+			Boolean showNullValuesByDefault nullable;
 			
 			"Visualisation metadata Categories cells cero"
-			Boolean categoryCellCero nullable;
+			Boolean showZeroValuesByDefault nullable;
 
 			"Visualisation metadata Heading, dimensions list ordered"
 			- List<@RelatedResourceDto> headingDimensions nullable;

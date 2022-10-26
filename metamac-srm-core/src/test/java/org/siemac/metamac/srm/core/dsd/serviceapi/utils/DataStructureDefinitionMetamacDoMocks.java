@@ -30,8 +30,8 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         target.setLifeCycleMetadata(BaseDoMocks.mockLifeCycleExternallyPublished());
         target.setStatisticalOperation(mockExternalItemTypeOperation("operation-" + resourceID));
         target.setAutoOpen(Boolean.TRUE);
-        target.setCategoryCellCero(Boolean.TRUE);
-        target.setCategoryCellBlank(Boolean.TRUE);
+        target.setShowZeroValuesByDefault(Boolean.TRUE);
+        target.setShowNullValuesByDefault(Boolean.TRUE);
         target.setShowDecimals(Integer.valueOf(3));
         // Sdmx metadata
         mockDataStructureDefinitionFixedValues(target, agencyID, resourceID, version);

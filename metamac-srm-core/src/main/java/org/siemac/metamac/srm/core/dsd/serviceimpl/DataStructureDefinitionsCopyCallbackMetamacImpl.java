@@ -37,8 +37,8 @@ public class DataStructureDefinitionsCopyCallbackMetamacImpl extends DataStructu
         // Metamac Metadata
         target.setAutoOpen(source.getAutoOpen());
         target.setShowDecimals(source.getShowDecimals());
-        target.setCategoryCellCero(source.getCategoryCellCero());
-        target.setCategoryCellBlank(source.getCategoryCellBlank());
+        target.setShowZeroValuesByDefault(source.getShowZeroValuesByDefault());
+        target.setShowNullValuesByDefault(source.getShowNullValuesByDefault());
         // can not copy heading here, because they belong to same dsd, and new dimension in new version must relate to versioned related dimension
         // can not copy stub here, because they belong to same dsd, and new dimension in new version must relate to versioned related dimension
         // can not copy showDecimalsPrecisions here

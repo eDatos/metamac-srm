@@ -112,8 +112,8 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  DATA_STRUCTURE_DEFINITION_RELATED_OPERATION                = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "related_operation");
     public static final String  DATA_STRUCTURE_DEFINITION_RELATED_OPERATION_TITLE          = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "related_operation.title");
     public static final String  DATA_STRUCTURE_DEFINITION_AUTOPEN                          = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "autopen");
-    public static final String  DATA_STRUCTURE_DEFINITION_CATEGORY_CELL_BLANK              = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "categoryCellBlank");
-    public static final String  DATA_STRUCTURE_DEFINITION_CATEGORY_CELL_CERO               = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "categoryCellCero");
+    public static final String  DATA_STRUCTURE_DEFINITION_CATEGORY_CELL_BLANK              = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "showNullValuesByDefault");
+    public static final String  DATA_STRUCTURE_DEFINITION_CATEGORY_CELL_CERO               = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "showZeroValuesByDefault");
     public static final String  DATA_STRUCTURE_DEFINITION_SHOW_DECIMALS                    = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "show_decimals");
     public static final String  DATA_STRUCTURE_DEFINITION_HEADING                          = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "heading");
     public static final String  DATA_STRUCTURE_DEFINITION_STUB                             = createCode(DATA_STRUCTURE_DEFINITION_PREFIX, "stub");

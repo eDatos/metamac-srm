@@ -153,8 +153,8 @@ public class StructureJaxb2DoCallbackImpl extends ImportationMetamacCommonValida
             // Visualization Metadata
             targetMetamac.setAutoOpen(previousMetamac.getAutoOpen());
             targetMetamac.setShowDecimals(previousMetamac.getShowDecimals());
-            targetMetamac.setCategoryCellCero(previousMetamac.getCategoryCellCero());
-            targetMetamac.setCategoryCellBlank(previousMetamac.getCategoryCellBlank());
+            targetMetamac.setShowZeroValuesByDefault(previousMetamac.getShowZeroValuesByDefault());
+            targetMetamac.setShowNullValuesByDefault(previousMetamac.getShowNullValuesByDefault());
             // can not copy heading here, because they belong to same dsd, and new dimension in new version must relate to versioned related dimension
             // can not copy stub here, because they belong to same dsd, and new dimension in new version must relate to versioned related dimension
             // can not copy showDecimalsPrecisions here

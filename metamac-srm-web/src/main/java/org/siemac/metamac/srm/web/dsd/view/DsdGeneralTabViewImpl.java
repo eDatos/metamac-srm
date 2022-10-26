@@ -356,15 +356,15 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         // Visualisation metadata
         visualisationMetadataForm = new GroupDynamicForm(getConstants().dsdVisualisationMetadata());
         ViewTextItem autoOpen = new ViewTextItem(DataStructureDefinitionDS.AUTO_OPEN, getConstants().dsdAutoOpen());
-        ViewTextItem categoryCellBlank = new ViewTextItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, getConstants().dsdCategoryCellBlank());
-        ViewTextItem categoryCellCero = new ViewTextItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO, getConstants().dsdCategoryCellCero());
+        ViewTextItem showNullValuesByDefault = new ViewTextItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, getConstants().dsdShowNullValuesByDefault());
+        ViewTextItem showZeroValuesByDefault = new ViewTextItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO, getConstants().dsdShowZeroValuesByDefault());
         ViewTextItem showDecimals = new ViewTextItem(DataStructureDefinitionDS.SHOW_DECIMALS, getConstants().dsdShowDecimals());
         DimensionsVisualisationItem dimensionsVisualisationItem = new DimensionsVisualisationItem(DataStructureDefinitionDS.DIMENSIONS_VISUALISATIONS, getConstants().dsdDimensionsVisualisation(),
                 false);
         ShowDecimalsPrecisionItem showDecimalsPrecision = new ShowDecimalsPrecisionItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getConstants().dsdShowDecimalsPrecision(), false);
         DsdDimensionCodesVisualisationItem dimensionCodesVisualisationItem = new DsdDimensionCodesVisualisationItem(DataStructureDefinitionDS.DIMENSION_CODES_VISUALISATION,
                 getConstants().dsdDimensionCodesVisualisation(), false);
-        visualisationMetadataForm.setFields(categoryCellBlank, categoryCellCero, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
+        visualisationMetadataForm.setFields(showNullValuesByDefault, showZeroValuesByDefault, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
 
         // Comments
         commentsForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -470,24 +470,24 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
 
         SelectItem showDecimals = new SelectItem(DataStructureDefinitionDS.SHOW_DECIMALS, getConstants().dsdShowDecimals());
         showDecimals.setValueMap(org.siemac.metamac.srm.web.dsd.utils.CommonUtils.getDsdShowDecimalsHashMap());
-        final BooleanSelectItem categoryCellBlank = new BooleanSelectItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, getConstants().dsdCategoryCellBlank());
-        categoryCellBlank.setValidators(new CustomRequiredValidator() {
+        final BooleanSelectItem showNullValuesByDefault = new BooleanSelectItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, getConstants().dsdShowNullValuesByDefault());
+        showNullValuesByDefault.setValidators(new CustomRequiredValidator() {
 
             @Override
             protected boolean condition(Object value) {
                 return CommonUtils.isMaintainableArtefactInProductionValidationOrGreaterProcStatus(dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus())
-                        ? categoryCellBlank.getBooleanValue() != null
+                        ? showNullValuesByDefault.getBooleanValue() != null
                         : Boolean.TRUE;
             }
         });
         
-        final BooleanSelectItem categoryCellCero = new BooleanSelectItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO, getConstants().dsdCategoryCellCero());
-        categoryCellBlank.setValidators(new CustomRequiredValidator() {
+        final BooleanSelectItem showZeroValuesByDefault = new BooleanSelectItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO, getConstants().dsdShowZeroValuesByDefault());
+        showNullValuesByDefault.setValidators(new CustomRequiredValidator() {
 
             @Override
             protected boolean condition(Object value) {
                 return CommonUtils.isMaintainableArtefactInProductionValidationOrGreaterProcStatus(dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus())
-                        ? categoryCellCero.getBooleanValue() != null
+                        ? showZeroValuesByDefault.getBooleanValue() != null
                         : Boolean.TRUE;
             }
         });
@@ -498,7 +498,7 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         DsdDimensionCodesVisualisationItem dimensionCodesVisualisationItem = new DsdDimensionCodesVisualisationItem(DataStructureDefinitionDS.DIMENSION_CODES_VISUALISATION,
                 getConstants().dsdDimensionCodesVisualisation(), true);
         
-        visualisationMetadataEditionForm.setFields(categoryCellBlank, categoryCellCero, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
+        visualisationMetadataEditionForm.setFields(showNullValuesByDefault, showZeroValuesByDefault, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
 
         // Comments
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -604,8 +604,8 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         ((DimensionsVisualisationItem) visualisationMetadataForm.getItem(DataStructureDefinitionDS.DIMENSIONS_VISUALISATIONS)).setVisualisationDimensions(dsd.getHeadingDimensions(),
                 dsd.getStubDimensions());
         ((ShowDecimalsPrecisionItem) visualisationMetadataForm.getItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION)).setMeasureDimensionPrecisions(dsd.getShowDecimalsPrecisions());
-        visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_CERO, BooleanWebUtils.getBooleanLabel(dsd.getCategoryCellCero() == null ? Boolean.FALSE : dsd.getCategoryCellCero()));
-        visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, BooleanWebUtils.getBooleanLabel(dsd.getCategoryCellBlank() == null ? Boolean.FALSE : dsd.getCategoryCellBlank()));
+        visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_CERO, BooleanWebUtils.getBooleanLabel(dsd.getShowZeroValuesByDefault() == null ? Boolean.FALSE : dsd.getShowZeroValuesByDefault()));
+        visualisationMetadataForm.setValue(DataStructureDefinitionDS.CATEGORY_CELL_BLANK, BooleanWebUtils.getBooleanLabel(dsd.getShowNullValuesByDefault() == null ? Boolean.FALSE : dsd.getShowNullValuesByDefault()));
         // DIMENSION_CODES_VISUALISATION is set in set setDimensionsAndCandidateVisualisations
 
         // Comments
@@ -719,9 +719,9 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
 
         // Visualisation metadata
         dataStructureDefinitionMetamacDto.setAutoOpen(((BooleanSelectItem) visualisationMetadataEditionForm.getItem(DataStructureDefinitionDS.AUTO_OPEN)).getBooleanValue());
-		dataStructureDefinitionMetamacDto.setCategoryCellBlank(((BooleanSelectItem) visualisationMetadataEditionForm
+		dataStructureDefinitionMetamacDto.setShowNullValuesByDefault(((BooleanSelectItem) visualisationMetadataEditionForm
 				.getItem(DataStructureDefinitionDS.CATEGORY_CELL_BLANK)).getBooleanValue());
-		dataStructureDefinitionMetamacDto.setCategoryCellCero(((BooleanSelectItem) visualisationMetadataEditionForm
+		dataStructureDefinitionMetamacDto.setShowZeroValuesByDefault(((BooleanSelectItem) visualisationMetadataEditionForm
 				.getItem(DataStructureDefinitionDS.CATEGORY_CELL_CERO)).getBooleanValue());
         dataStructureDefinitionMetamacDto.setShowDecimals(!StringUtils.isBlank(visualisationMetadataEditionForm.getValueAsString(DataStructureDefinitionDS.SHOW_DECIMALS))
                 ? Integer.valueOf(visualisationMetadataEditionForm.getValueAsString(DataStructureDefinitionDS.SHOW_DECIMALS))

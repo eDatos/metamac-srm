@@ -171,10 +171,10 @@ Application DsdsMetamac {
 			
 						
 			"Visualisation metadata Categories cells blanks"
-			Boolean categoryCellBlank nullable;
+			Boolean showNullValuesByDefault nullable;
 			
 			"Visualisation metadata Categories cells cero"
-			Boolean categoryCellCero nullable;
+			Boolean showZeroValuesByDefault nullable;
 
 			"Visualisation metadata Heading, dimensions list ordered"
 			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> dsdVersionHeading;

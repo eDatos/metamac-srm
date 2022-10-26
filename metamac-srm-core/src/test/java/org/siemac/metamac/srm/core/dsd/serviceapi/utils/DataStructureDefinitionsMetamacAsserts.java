@@ -23,8 +23,8 @@ public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinit
 
         // Metamac
         assertEquals(expected.getAutoOpen(), actual.getAutoOpen());
-        assertEquals(expected.getCategoryCellBlank(), actual.getCategoryCellBlank());
-        assertEquals(expected.getCategoryCellCero(), actual.getCategoryCellCero());
+        assertEquals(expected.getShowNullValuesByDefault(), actual.getShowNullValuesByDefault());
+        assertEquals(expected.getShowZeroValuesByDefault(), actual.getShowZeroValuesByDefault());
         assertEquals(expected.getShowDecimals(), actual.getShowDecimals());
         assertEqualsExternalItem(expected.getStatisticalOperation(), actual.getStatisticalOperation());
 
@@ -47,8 +47,8 @@ public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinit
 
         // Metamac
         assertEquals(dto.getAutoOpen(), entity.getAutoOpen());
-        assertEquals(dto.getCategoryCellBlank(), entity.getCategoryCellBlank());
-        assertEquals(dto.getCategoryCellCero(), entity.getCategoryCellCero());
+        assertEquals(dto.getShowNullValuesByDefault(), entity.getShowNullValuesByDefault());
+        assertEquals(dto.getShowZeroValuesByDefault(), entity.getShowZeroValuesByDefault());
         assertEquals(dto.getShowDecimals(), entity.getShowDecimals());
         BaseAsserts.assertEqualsExternalItemStatisticalOperations(entity.getStatisticalOperation(), dto.getStatisticalOperation(), mapperEnum);
 

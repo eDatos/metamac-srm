@@ -204,13 +204,15 @@ public class OrganisationSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public List<Object> findSrmResourceVersionsOfSrmResourceInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+        public List<Object> findSrmResourceVersionsWithLowerVersionInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
 
             OrganisationSchemeVersionMetamac organisationSchemeVersion = getOrganisationSchemeVersionMetamac(srmResourceVersion);
 
             List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(OrganisationSchemeVersionMetamac.class)
                     .withProperty(OrganisationSchemeVersionMetamacProperties.itemScheme().id()).eq(organisationSchemeVersion.getItemScheme().getId())
-                    .withProperty(OrganisationSchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus).distinctRoot().build();
+                    .withProperty(OrganisationSchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
+                    .withProperty(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(organisationSchemeVersion.getMaintainableArtefact().getVersionLogic())
+                    .build();
             PagingParameter pagingParameter = PagingParameter.noLimits();
             PagedResult<OrganisationSchemeVersionMetamac> organisationSchemeVersionPagedResult = organisationSchemeVersionMetamacRepository.findByCondition(conditions, pagingParameter);
             return organisationSchemeMetamacToObject(organisationSchemeVersionPagedResult.getValues());

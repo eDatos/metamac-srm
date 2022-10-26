@@ -204,13 +204,17 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public List<Object> findSrmResourceVersionsOfSrmResourceInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+        public List<Object> findSrmResourceVersionsWithLowerVersionInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+            DataStructureDefinitionVersionMetamac dataStructureVersion = getDataStructureDefinitionVersionMetamac(srmResourceVersion);
 
             List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
                     .withProperty(DataStructureDefinitionVersionMetamacProperties.structure().id()).eq(getDataStructureDefinitionVersionMetamac(srmResourceVersion).getStructure().getId())
-                    .withProperty(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus).distinctRoot().build();
+                    .withProperty(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
+                    .withProperty(DataStructureDefinitionVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(dataStructureVersion.getMaintainableArtefact().getVersionLogic())
+                    .build();
             PagingParameter pagingParameter = PagingParameter.noLimits();
             PagedResult<DataStructureDefinitionVersionMetamac> dataStructureDefinitionVersionMetamac = dataStructureDefinitionVersionMetamacRepository.findByCondition(conditions, pagingParameter);
+
             return dataStructureDefinitionMetamacVersionsToObject(dataStructureDefinitionVersionMetamac.getValues());
         }
 

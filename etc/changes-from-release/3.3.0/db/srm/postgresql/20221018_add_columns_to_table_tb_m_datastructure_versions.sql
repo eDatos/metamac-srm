@@ -10,3 +10,5 @@ add column SHOW_NULL_VALUES_BY_DEFAULT bool not null default TRUE;
 
 alter table tb_m_datastructure_versions
 add column SHOW_ZERO_VALUES_BY_DEFAULT bool not null default TRUE;
+
+commit;

@@ -69,6 +69,8 @@ public class DataStructureDefinitionMetamacDo2DtoMapperTest extends SrmBaseTest 
 
         // Metamac
         dataStructureDefinitionVersionMetamac.setAutoOpen(true);
+        dataStructureDefinitionVersionMetamac.setShowZeroValuesByDefault(true);
+        dataStructureDefinitionVersionMetamac.setShowNullValuesByDefault(true);
         dataStructureDefinitionVersionMetamac.setShowDecimals(2);
 
         Concept concept01 = conceptMetamacRepository.findByUrn(CONCEPT_SCHEME_1_V2_CONCEPT_2);

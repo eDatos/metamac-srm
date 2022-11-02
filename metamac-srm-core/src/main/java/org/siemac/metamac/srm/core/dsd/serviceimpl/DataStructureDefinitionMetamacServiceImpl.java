@@ -239,6 +239,8 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         dataStructureDefinitionVersion.getMaintainableArtefact().setIsExternalReference(Boolean.FALSE);
         dataStructureDefinitionVersion.getMaintainableArtefact().setFinalLogicClient(Boolean.FALSE);
         dataStructureDefinitionVersion.setAutoOpen(Boolean.TRUE);
+        dataStructureDefinitionVersion.setShowZeroValuesByDefault(Boolean.TRUE);
+        dataStructureDefinitionVersion.setShowNullValuesByDefault(Boolean.TRUE);
         dataStructureDefinitionVersion.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
 
         return dataStructureDefinitionVersion;
@@ -497,6 +499,8 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
         // Merge Metamac metadata of ItemScheme
         dataStructureDefinitionVersion.setAutoOpen(dataStructureTemporalVersion.getAutoOpen());
+        dataStructureDefinitionVersion.setShowZeroValuesByDefault(dataStructureTemporalVersion.getShowZeroValuesByDefault());
+        dataStructureDefinitionVersion.setShowNullValuesByDefault(dataStructureTemporalVersion.getShowNullValuesByDefault());
         dataStructureDefinitionVersion.setShowDecimals(dataStructureTemporalVersion.getShowDecimals());
         dataStructureDefinitionVersion.setStatisticalOperation(BaseReplaceFromTemporalMetamac.replaceExternalItemFromTemporal(dataStructureDefinitionVersion.getStatisticalOperation(),
                 dataStructureTemporalVersion.getStatisticalOperation(), internationalStringRepository, externalItemRepository));

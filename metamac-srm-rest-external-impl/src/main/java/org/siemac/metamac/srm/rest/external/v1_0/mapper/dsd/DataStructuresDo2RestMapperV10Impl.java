@@ -111,6 +111,8 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         target.setDataStructureComponents(toDataStructureComponents(source.getGrouping(), isImported));
         target.setStatisticalOperation(toResourceExternalItemStatisticalOperation(source.getStatisticalOperation()));
         target.setAutoOpen(source.getAutoOpen());
+        target.setShowNullValuesByDefault(source.getShowNullValuesByDefault());
+        target.setShowZeroValuesByDefault(source.getShowZeroValuesByDefault());
         target.setHeading(toDimensionReferences(source.getHeadingDimensions()));
         target.setStub(toDimensionReferences(source.getStubDimensions()));
         target.setShowDecimals(source.getShowDecimals());

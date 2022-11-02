@@ -181,6 +181,8 @@ public class DataStructuresDo2RestMapperTest {
         }
 
         assertEquals(Boolean.TRUE, target.isAutoOpen());
+        assertEquals(Boolean.TRUE, target.isShowNullValuesByDefault());
+        assertEquals(Boolean.TRUE, target.isShowZeroValuesByDefault());
         assertEquals(3, target.getShowDecimals().intValue());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=operation-resourceID1", target.getStatisticalOperation().getUrn());
         assertEquals("statisticalOperations#operation", target.getStatisticalOperation().getKind());

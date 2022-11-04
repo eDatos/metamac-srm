@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.web.dsd.view;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -469,6 +470,8 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         });
 
         final BooleanSelectItem showNullValuesByDefault = new BooleanSelectItem(DataStructureDefinitionDS.SHOW_NULL_VALUES_BY_DEFAULT, getConstants().dsdShowNullValuesByDefault());
+        LinkedHashMap<String, String> map = getComboWithoutWhiteSpaces();
+        showNullValuesByDefault.setValueMap(map);
         showNullValuesByDefault.setValidators(new CustomRequiredValidator() {
 
             @Override
@@ -480,7 +483,8 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         });
 
         final BooleanSelectItem showZeroValuesByDefault = new BooleanSelectItem(DataStructureDefinitionDS.SHOW_ZERO_VALUES_BY_DEFAULT, getConstants().dsdShowZeroValuesByDefault());
-        showNullValuesByDefault.setValidators(new CustomRequiredValidator() {
+        showZeroValuesByDefault.setValueMap(map);
+        showZeroValuesByDefault.setValidators(new CustomRequiredValidator() {
 
             @Override
             protected boolean condition(Object value) {
@@ -518,6 +522,13 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         mainFormLayout.addEditionCanvas(visualisationMetadataEditionForm);
         mainFormLayout.addEditionCanvas(commentsEditionForm);
         mainFormLayout.addEditionCanvas(annotationsEditionPanel);
+    }
+
+    private LinkedHashMap<String, String> getComboWithoutWhiteSpaces() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        map.put(Boolean.TRUE.toString(), MetamacWebCommon.getConstants().yes());
+        map.put(Boolean.FALSE.toString(), MetamacWebCommon.getConstants().no());
+        return map;
     }
 
     @Override

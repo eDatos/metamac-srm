@@ -262,7 +262,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         if (source.getVariableElement() == null) {
             target.setShortName(toInternationalString(source.getShortName()));
         } else {
-            if (source.getVariableElement() != null && !fields.isEmpty()) {
+            if (!fields.isEmpty() && fields.contains(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
                 target.setVariableElement(toResource(source.getVariableElement()));
             }
             

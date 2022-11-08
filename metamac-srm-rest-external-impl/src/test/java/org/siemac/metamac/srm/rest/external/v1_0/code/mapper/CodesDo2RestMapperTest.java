@@ -353,9 +353,10 @@ public class CodesDo2RestMapperTest {
         CodelistVersionMetamac codeScheme = mockCodelist("agencyID1", "resourceID1", "01.123");
         CodeMetamac parent = mockCode("codeParent1", codeScheme, null);
         CodeMetamac source = mockCode("code2", codeScheme, parent);
+        Set<String> fields = null;
 
         // Transform
-        Code target = do2RestInternalMapper.toCode(source);
+        Code target = do2RestInternalMapper.toCode(source, fields);
 
         // Validate (only Metamac metadata and some SDMX). Note: check with concrete values (not doing "getter" of source)
         assertEquals(SrmRestConstants.KIND_CODE, target.getKind());
@@ -386,7 +387,7 @@ public class CodesDo2RestMapperTest {
         source.getNameableArtefact().setUriProvider("uriProviderDb");
 
         // Transform
-        Code target = do2RestInternalMapper.toCode(source);
+        Code target = do2RestInternalMapper.toCode(source, null);
 
         // Validate
         assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=agencyID1:resourceID1(01.123).code2", target.getUrn());
@@ -402,7 +403,7 @@ public class CodesDo2RestMapperTest {
         source.setVariableElement(null);
 
         // Transform
-        Code target = do2RestInternalMapper.toCode(source);
+        Code target = do2RestInternalMapper.toCode(source, null);
 
         // Validate
         assertEqualsInternationalString("es", "shortName-code2 en Español", "en", "shortName-code2 in English", target.getShortName());

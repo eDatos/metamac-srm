@@ -534,7 +534,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         String resourceID = ITEM_SCHEME_1_CODE;
         String version = VERSION_1;
         String codeID = ITEM_1_CODE;
-        Code code = getSrmRestInternalFacadeClientXml().retrieveCode(agencyID, resourceID, version, codeID);
+        Code code = getSrmRestInternalFacadeClientXml().retrieveCode(agencyID, resourceID, version, codeID, null);
 
         // Validation
         assertNotNull(code);
@@ -565,7 +565,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         String version = VERSION_1;
         String codeID = NOT_EXISTS;
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCode(agencyID, resourceID, version, codeID);
+            getSrmRestInternalFacadeClientXml().retrieveCode(agencyID, resourceID, version, codeID, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.NOT_FOUND.getStatusCode(), e.getStatus());
 
@@ -596,7 +596,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
         // AgencyID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCode(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE);
+            getSrmRestInternalFacadeClientXml().retrieveCode(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -610,7 +610,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         }
         // AgencyID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, WILDCARD_ALL, VERSION_1, ITEM_1_CODE);
+            getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, WILDCARD_ALL, VERSION_1, ITEM_1_CODE, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -625,7 +625,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
         // AgencyID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, ITEM_1_CODE);
+            getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, ITEM_1_CODE, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -640,7 +640,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
         // ItemID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, WILDCARD_ALL);
+            getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, WILDCARD_ALL, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -652,6 +652,24 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         } catch (Exception e) {
             fail("Incorrect exception");
         }
+    }
+    
+    @Test
+    public void testRetrieveCodeWithVariableElementExplicit() throws Exception {
+        Code code = getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE, "+variableElement");
+        assertNotNull(code.getVariableElement());
+    }
+    
+    @Test
+    public void testRetrieveCodeWithoutVariableElementImplicit() throws Exception {
+        Code code = getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE, null);
+        assertNull(code.getVariableElement());
+    }
+    
+    @Test
+    public void testRetrieveCodeWithoutVariableElementExplicit() throws Exception {
+        Code code = getSrmRestInternalFacadeClientXml().retrieveCode(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE, "-variableElement");
+        assertNull(code.getVariableElement());
     }
 
     @Test

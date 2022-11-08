@@ -39,7 +39,7 @@ public interface CodesDo2RestMapperV10 {
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended);
     RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources);
     
-    Code toCode(CodeMetamac source);
+    Code toCode(CodeMetamac source, Set<String> fields);
     ItemResource toResource(CodeMetamac source);
 
     org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies toVariableFamilies(PagedResult<VariableFamily> sources, String query, String orderBy, Integer limit);

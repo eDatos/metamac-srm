@@ -49,7 +49,6 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
-import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 
@@ -413,7 +412,7 @@ public class TsvImportationUtils {
     /**
      * Transforms tsv line to Code. IMPORTANT: Do not execute save or update operation
      */
-    public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion,
+    public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion, Boolean isDefaultMantainer,
             Map<String, VariableElement> variableElementsInVariableByCode, boolean updateAlreadyExisting, Map<String, CodeMetamac> codesPreviousInCodelist,
             Map<String, CodeMetamac> codesToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) throws MetamacException {
 
@@ -483,23 +482,24 @@ public class TsvImportationUtils {
                 code.setUpdateDate(new DateTime());
             }
         }
-        code.getNameableArtefact().setName(TsvImportationUtils.tsvLineToInternationalString(header.getName(), columns, code.getNameableArtefact().getName()));
+
+        code.getNameableArtefact().setName(TsvImportationUtils.tsvLineToInternationalStringBase(header.getName(), columns, code.getNameableArtefact().getName(), isDefaultMantainer));
         if (code.getNameableArtefact().getName() == null) {
             exceptionItems.add(
                     new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, code.getNameableArtefact().getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_NAME));
         }
-        code.getNameableArtefact().setDescription(TsvImportationUtils.tsvLineToInternationalString(header.getDescription(), columns, code.getNameableArtefact().getDescription()));
-        code.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalString(header.getComment(), columns, code.getNameableArtefact().getComment()));
+        code.getNameableArtefact().setDescription(TsvImportationUtils.tsvLineToInternationalStringBase(header.getDescription(), columns, code.getNameableArtefact().getDescription(), isDefaultMantainer));
+        code.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalStringBase(header.getComment(), columns, code.getNameableArtefact().getComment(), isDefaultMantainer));
         if (updateVariableElement) {
             code.setVariableElement(variableElement);
             // Short name. Only filled if code has not related variable element
             if (variableElement != null) {
                 code.setShortName(null);
             } else {
-                code.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, code.getShortName()));
+                code.setShortName(TsvImportationUtils.tsvLineToInternationalStringBase(header.getShortName(), columns, code.getShortName(), isDefaultMantainer));
             }
         }
-        
+
         String isExtended = columns[header.getIsExtendedPosition()];
         if (!StringUtils.isBlank(isExtended)) {
             code.setIsExtended(Boolean.valueOf(isExtended));
@@ -624,6 +624,10 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static InternationalString tsvLineToInternationalString(InternationalStringTsv internationalStringTsv, String[] columns, InternationalString target) {
+        return tsvLineToInternationalStringBase(internationalStringTsv, columns, target, false);
+    }
+
+    public static InternationalString tsvLineToInternationalStringBase(InternationalStringTsv internationalStringTsv, String[] columns, InternationalString target, Boolean changeUnmodifiables) {
         if (internationalStringTsv == null) {
             return null;
         }
@@ -640,7 +644,9 @@ public class TsvImportationUtils {
                 if (localisedString == null) {
                     localisedString = new LocalisedString(locale, label);
                 } else {
-                    localisedString.setLabel(label);
+                    if (!changeUnmodifiables && (localisedString.getIsUnmodifiable() == null || Boolean.FALSE.equals(localisedString.getIsUnmodifiable()))) {
+                        localisedString.setLabel(label);
+                    }
                 }
                 localisedStringTargets.add(localisedString);
             }
@@ -658,6 +664,7 @@ public class TsvImportationUtils {
         return target;
     }
 
+    
     private static InternationalStringTsv columnHeaderToInternationalStringTsv(String[] headerColumns, int headerColumnIndex, String[] columnSplited, String headerExpected,
             InternationalStringTsv target, List<MetamacExceptionItem> exceptions) {
         if (columnSplited == null || columnSplited.length != 2) {

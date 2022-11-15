@@ -461,13 +461,10 @@ public class TsvImportationUtils {
         // init code
         CodeMetamac code = codesPreviousInCodelist.get(codeIdentifier);
         if (code == null) {
-            code = new CodeMetamac();
-            code.setNameableArtefact(new NameableArtefact());
-            code.getNameableArtefact().setCode(codeIdentifier);
-            String urn = GeneratorUrnUtils.generateCodeUrn(codelistVersion, code.getNameableArtefact().getCode());
-            code.getNameableArtefact().setUrn(urn);
-            code.getNameableArtefact().setUrnProvider(urn);
-            code.setParent(codeParent);
+            code = initNewCode(codeIdentifier, codeParent, isDefaultMantainer, codelistVersion, infoItems);
+            if (code == null) {
+                return null;
+            }
         } else {
             if (!updateAlreadyExisting) {
                 infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED, code.getNameableArtefact().getCode()));
@@ -488,7 +485,8 @@ public class TsvImportationUtils {
             exceptionItems.add(
                     new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, code.getNameableArtefact().getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_NAME));
         }
-        code.getNameableArtefact().setDescription(TsvImportationUtils.tsvLineToInternationalStringBase(header.getDescription(), columns, code.getNameableArtefact().getDescription(), isDefaultMantainer));
+        code.getNameableArtefact()
+                .setDescription(TsvImportationUtils.tsvLineToInternationalStringBase(header.getDescription(), columns, code.getNameableArtefact().getDescription(), isDefaultMantainer));
         code.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalStringBase(header.getComment(), columns, code.getNameableArtefact().getComment(), isDefaultMantainer));
         if (updateVariableElement) {
             code.setVariableElement(variableElement);
@@ -533,6 +531,21 @@ public class TsvImportationUtils {
             code.setItemSchemeVersionFirstLevel(null);
         }
 
+        return code;
+    }
+
+    private static CodeMetamac initNewCode(String codeIdentifier, CodeMetamac codeParent, Boolean isDefaultMantainer, CodelistVersionMetamac codelistVersion, List<MetamacExceptionItem> infoItems) {
+        if (!isDefaultMantainer) {
+            infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED, codeIdentifier));
+            return null;
+        }
+        CodeMetamac code = new CodeMetamac();
+        code.setNameableArtefact(new NameableArtefact());
+        code.getNameableArtefact().setCode(codeIdentifier);
+        String urn = GeneratorUrnUtils.generateCodeUrn(codelistVersion, code.getNameableArtefact().getCode());
+        code.getNameableArtefact().setUrn(urn);
+        code.getNameableArtefact().setUrnProvider(urn);
+        code.setParent(codeParent);
         return code;
     }
 

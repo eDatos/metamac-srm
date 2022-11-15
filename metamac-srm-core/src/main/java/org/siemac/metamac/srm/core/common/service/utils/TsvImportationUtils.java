@@ -657,7 +657,7 @@ public class TsvImportationUtils {
                 if (localisedString == null) {
                     localisedString = new LocalisedString(locale, label);
                 } else {
-                    if (!changeUnmodifiables && (localisedString.getIsUnmodifiable() == null || Boolean.FALSE.equals(localisedString.getIsUnmodifiable()))) {
+                    if (changeUnmodifiables || (!changeUnmodifiables && (localisedString.getIsUnmodifiable() == null || Boolean.FALSE.equals(localisedString.getIsUnmodifiable())))) {
                         localisedString.setLabel(label);
                     }
                 }

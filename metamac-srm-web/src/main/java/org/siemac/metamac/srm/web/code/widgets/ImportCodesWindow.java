@@ -39,7 +39,7 @@ public class ImportCodesWindow extends ImportResourceWindow {
     }
 
     private void buildInformationExternalResourceLabel() {
-        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + ". " + getConstants().itemImportationExternalResourcesfoMessage());
+        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationExternalResourcesfoMessage());
         informationExternalResourceLabel.setWidth(this.form.getWidth());
         informationExternalResourceLabel.setMargin(10);
         informationExternalResourceLabel.hide();
@@ -71,9 +71,11 @@ public class ImportCodesWindow extends ImportResourceWindow {
         if (Boolean.FALSE.equals(isLocalResource)) {
             updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
             updateExistingCodesItem.setCanEdit(false);
+            updateExistingCodesItem.hide();
             informationExternalResourceLabel.show();
             informationLabel.hide();
         } else {
+            updateExistingCodesItem.show();
             updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
             updateExistingCodesItem.setCanEdit(true);
             informationExternalResourceLabel.hide();

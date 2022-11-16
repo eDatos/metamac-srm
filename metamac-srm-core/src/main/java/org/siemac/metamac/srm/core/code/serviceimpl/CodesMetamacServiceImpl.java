@@ -850,6 +850,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 }
 
                 Boolean isDefaultMaintainer = isDefaultMaintainer(codelistVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
+                if (isDefaultMaintainer) {
+                    updateAlreadyExisting = true;
+                }
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {

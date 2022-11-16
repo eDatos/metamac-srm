@@ -22,10 +22,11 @@ import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 public class ImportCodesWindow extends ImportResourceWindow {
     private static int formWidth = 600;
-    
+        
     private CodelistUiHandlers uiHandlers;
     protected WarningLabel     warningLabel;
     protected InformationLabel informationExternalResourceLabel;
+    protected InformationLabel informationLabel;
     public ImportCodesWindow() {
         super(getConstants().actionImportCodesTsv());
 
@@ -38,7 +39,7 @@ public class ImportCodesWindow extends ImportResourceWindow {
     }
 
     private void buildInformationExternalResourceLabel() {
-        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationExternalResourcesfoMessage());
+        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + ". " + getConstants().itemImportationExternalResourcesfoMessage());
         informationExternalResourceLabel.setWidth(this.form.getWidth());
         informationExternalResourceLabel.setMargin(10);
         informationExternalResourceLabel.hide();
@@ -46,7 +47,7 @@ public class ImportCodesWindow extends ImportResourceWindow {
     }
     
     private void buildInformationLabel() {
-        InformationLabel informationLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage());
+        informationLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage());
         informationLabel.setWidth(getWidth());
         informationLabel.setMargin(10);
         body.addMember(informationLabel, 1);
@@ -71,10 +72,12 @@ public class ImportCodesWindow extends ImportResourceWindow {
             updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
             updateExistingCodesItem.setCanEdit(false);
             informationExternalResourceLabel.show();
+            informationLabel.hide();
         } else {
             updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
             updateExistingCodesItem.setCanEdit(true);
             informationExternalResourceLabel.hide();
+            informationLabel.show();
         }
     }
     

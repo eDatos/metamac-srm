@@ -8,8 +8,6 @@ public interface SrmConfiguration extends SdmxSrmConfiguration {
 
     public String retrieveHelpUrl() throws MetamacException;
 
-    public String retrieveDocsPath() throws MetamacException;
-
     /**
      * Retrieves the concept ID for concept identification default of primary measure to create artefacts
      */

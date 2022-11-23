@@ -150,6 +150,10 @@ public class DsdClientSecurityUtils {
         String operationCode = CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacDto);
         return SharedDsdSecurityUtils.canUpdateAttributes(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), operationCode);
     }
+    
+    public static boolean canUpdateAttributeOrderInLevel(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
+        return canUpdateAttribute(dataStructureDefinitionMetamacDto);
+    }
 
     public static boolean canDeleteAttribute(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
         // Maintainer is checked because the structure of an imported resource can not be modified

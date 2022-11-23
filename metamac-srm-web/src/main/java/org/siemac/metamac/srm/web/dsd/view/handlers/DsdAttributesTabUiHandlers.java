@@ -14,7 +14,8 @@ public interface DsdAttributesTabUiHandlers extends BaseUiHandlers {
 
     void saveAttribute(DataAttributeDto dataAttributeDto);
     void deleteAttributes(List<DataAttributeDto> dataAttributeDtos);
-
+    void updateAttributeInOrder(String conceptUrn, String conceptScheme, int newConceptIndex);
+    
     void retrieveConceptSchemes(SpecialAttributeTypeEnum specialAttributeTypeEnum, int firstResult, int maxResults, ConceptSchemeWebCriteria conceptSchemeWebCriteria);
     void retrieveConcepts(SpecialAttributeTypeEnum specialAttributeTypeEnum, int firstResult, int maxResults, ConceptWebCriteria conceptWebCriteria);
 

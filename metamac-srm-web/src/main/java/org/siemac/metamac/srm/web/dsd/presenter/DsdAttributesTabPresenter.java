@@ -8,12 +8,13 @@ import java.util.Set;
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
-import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
+import org.siemac.metamac.srm.web.concept.presenter.ConceptPresenter;
 import org.siemac.metamac.srm.web.dsd.enums.DsdTabTypeEnum;
 import org.siemac.metamac.srm.web.dsd.events.SelectViewDsdDescriptorEvent;
 import org.siemac.metamac.srm.web.dsd.utils.CommonUtils;
@@ -36,7 +37,8 @@ import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
-
+import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributeInOrderAction;
+import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributeInOrderResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DataAttributeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
@@ -201,6 +203,22 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
             public void onWaitSuccess(DeleteAttributesForDsdResult result) {
                 updateAttributeList(true);
                 fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeDeleted());
+            }
+        });
+    }
+    
+    @Override
+    public void updateAttributeInOrder(final String conceptUrn, String conceptScheme, int newConceptIndex) {
+        dispatcher.execute(new UpdateAttributeInOrderAction(conceptUrn, conceptScheme, newConceptIndex), new WaitingAsyncCallbackHandlingError<UpdateAttributeInOrderResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(UpdateAttributeInOrderResult result) {
+            	retrieveAttributes(conceptUrn);
             }
         });
     }

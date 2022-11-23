@@ -276,6 +276,8 @@ import org.siemac.metamac.srm.web.shared.dsd.SaveDescriptorForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusAction;
 import org.siemac.metamac.srm.web.shared.dsd.VersionDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributeInOrderAction;
+import org.siemac.metamac.srm.web.server.handlers.dsd.UpdateAttributeInOrderActionHandler;
 import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityAction;
 import org.siemac.metamac.srm.web.shared.organisation.CopyOrganisationSchemeAction;
 import org.siemac.metamac.srm.web.shared.organisation.CreateOrganisationSchemeTemporalVersionAction;
@@ -333,6 +335,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(DeleteDsdsAction.class, DeleteDsdsActionHandler.class);
         bindHandler(DeleteDimensionListForDsdAction.class, DeleteDimensionListForDsdActionHandler.class);
         bindHandler(DeleteAttributesForDsdAction.class, DeleteAttributesForDsdActionHandler.class);
+        bindHandler(UpdateAttributeInOrderAction.class, UpdateAttributeInOrderActionHandler.class);
         bindHandler(DeleteDescriptorListForDsdAction.class, DeleteDescriptorListForDsdActionHandler.class);
         bindHandler(ExportSDMXResourceAction.class, ExportSDMXResourceActionHandler.class);
         bindHandler(UpdateDsdProcStatusAction.class, UpdateDsdProcStatusActionHandlder.class);

@@ -23,6 +23,8 @@ import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceListItemWithSchemeFilterItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
 import org.siemac.metamac.srm.web.client.widgets.search.SearchSrmItemLinkItemWithSchemeFilterItem;
+import org.siemac.metamac.srm.web.concept.model.ds.ConceptDS;
+import org.siemac.metamac.srm.web.concept.utils.ConceptsClientSecurityUtils;
 import org.siemac.metamac.srm.web.dsd.model.ds.DataAttributeDS;
 import org.siemac.metamac.srm.web.dsd.model.record.DataAttributeRecord;
 import org.siemac.metamac.srm.web.dsd.presenter.DsdAttributesTabPresenter;
@@ -72,10 +74,22 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.data.SortSpecifier;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.DropEvent;
+import com.smartgwt.client.widgets.events.DropHandler;
+import com.smartgwt.client.widgets.events.DropMoveEvent;
+import com.smartgwt.client.widgets.events.DropMoveHandler;
+import com.smartgwt.client.widgets.events.DropOutEvent;
+import com.smartgwt.client.widgets.events.DropOutHandler;
+import com.smartgwt.client.widgets.events.DropOverEvent;
+import com.smartgwt.client.widgets.events.DropOverHandler;
 import com.smartgwt.client.widgets.events.HasClickHandlers;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
@@ -87,14 +101,23 @@ import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.CustomValidator;
 import com.smartgwt.client.widgets.form.validator.RequiredIfFunction;
 import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellMouseDownEvent;
+import com.smartgwt.client.widgets.grid.events.CellMouseDownHandler;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
+import com.smartgwt.client.widgets.grid.events.SortChangedHandler;
+import com.smartgwt.client.widgets.grid.events.SortEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
+import com.smartgwt.client.widgets.tree.TreeGridField;
+import com.smartgwt.client.widgets.tree.TreeNode;
+import com.smartgwt.client.widgets.tree.events.FolderDropEvent;
+import com.smartgwt.client.widgets.tree.events.FolderDropHandler;
 
 public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTabUiHandlers> implements DsdAttributesTabPresenter.DsdAttributesTabView {
 
@@ -175,6 +198,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
         attributesGrid = new NavigableListGrid();
         attributesGrid.setWidth100();
+        attributesGrid.setCanReorderRecords(true);
+        attributesGrid.setDragDataAction(DragDataAction.MOVE);
         attributesGrid.setHeight(150);
         attributesGrid.setSelectionType(SelectionStyle.SIMPLE);
         attributesGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
@@ -183,8 +208,51 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         CustomListGridField specialAttributeTypeField = new CustomListGridField(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE, getConstants().dsdAttributeType());
         CustomListGridField relatedTo = new CustomListGridField(DataAttributeDS.RELATED_TO, getConstants().dsdAttributeRelatedWith());
         CustomLinkListGridField conceptField = new CustomLinkListGridField(DataAttributeDS.CONCEPT, getConstants().concept());
-        attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField);
 
+        CustomListGridField orderField = new CustomListGridField(ConceptDS.ORDER, getConstants().conceptOrder());
+        orderField.setCanSort(Boolean.FALSE);
+        orderField.setShowHover(Boolean.FALSE);
+        orderField.setHidden(Boolean.TRUE); // By default the order column is not shown (it could be show choosing it in the header context menu)
+        orderField.setCanFreeze(Boolean.FALSE);
+        attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField, orderField);
+
+        attributesGrid.addSortChangedHandler(new SortChangedHandler() {
+
+            @Override
+            public void onSortChanged(SortEvent event) {
+                SortSpecifier[] sortSpecifiers = event.getSortSpecifiers();
+                if (sortSpecifiers != null) {
+                    for (SortSpecifier sortSpecifier : sortSpecifiers) {
+                        if (SortDirection.DESCENDING.equals(sortSpecifier.getSortDirection())) {
+                            // Instead of cancel the event (do not know if it is possible), the column is ordered again in ascending order
+                        	attributesGrid.sort(ConceptDS.ORDER, SortDirection.ASCENDING);
+                        }
+                    }
+                }
+            }
+        });
+        
+        attributesGrid.addDropHandler(new DropHandler() {
+
+            @Override
+            public void onDrop(DropEvent event) {
+            	DataAttributeRecord droppedNode = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+            	int position = attributesGrid.getRecordIndex(droppedNode); // Anterior position
+            	NavigableListGrid newList = (NavigableListGrid) event.getSource();
+            	int relativePosition = position; // Used to update position
+                int pos = -1;
+                for (int i = 0; i < newList.getRecordList().getLength(); i++) {
+                    if (newList.getRecordList().get(i) == droppedNode) {
+                        pos = i;
+                    }
+                }
+                SC.say("Esta es la posición de antes : " + position +" y esta es la posición despues de mover el elemento: " + pos);
+                if (DsdClientSecurityUtils.canUpdateAttributeOrderInLevel(dataStructureDefinitionMetamacDto)) {
+                    getUiHandlers().updateAttributeInOrder(droppedNode.getAttribute(ConceptDS.URN), dataStructureDefinitionMetamacDto.getUrn(), relativePosition);
+                }
+
+            }
+        });
         // Show attribute details when record clicked
         attributesGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 

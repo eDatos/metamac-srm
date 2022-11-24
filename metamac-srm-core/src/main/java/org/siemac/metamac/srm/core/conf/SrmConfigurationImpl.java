@@ -12,11 +12,6 @@ public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements Sr
     }
 
     @Override
-    public String retrieveDocsPath() throws MetamacException {
-        return retrieveProperty(SrmConfigurationConstants.DOCS_PATH);
-    }
-
-    @Override
     public String retrievePrimaryMeasureConceptIdUrnDefault() throws MetamacException {
         return retrieveProperty(SrmConfigurationConstants.DSD_PRIMARY_MEASURE_DEFAULT_CONCEPT_ID_URN);
     }

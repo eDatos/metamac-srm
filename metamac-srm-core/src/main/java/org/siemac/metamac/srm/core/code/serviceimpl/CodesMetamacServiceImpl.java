@@ -798,7 +798,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureIsTemporal(ctx, codelistVersion.getMaintainableArtefact());
+        srmValidation.checkItemsStructureIsNotTemporal(ctx, codelistVersion.getMaintainableArtefact());
 
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
@@ -849,7 +849,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     }
                 }
 
-                Boolean isDefaultMaintainer = isDefaultMaintainer(codelistVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
+                boolean isDefaultMaintainer = isDefaultMaintainer(codelistVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
                 if (isDefaultMaintainer) {
                     updateAlreadyExisting = true;
                 }

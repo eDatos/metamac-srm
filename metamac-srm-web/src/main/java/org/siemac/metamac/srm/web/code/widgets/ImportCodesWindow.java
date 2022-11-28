@@ -39,7 +39,7 @@ public class ImportCodesWindow extends ImportResourceWindow {
     }
 
     private void buildInformationExternalResourceLabel() {
-        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationExternalResourcesfoMessage());
+        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationExternalResourcesInfoMessage());
         informationExternalResourceLabel.setWidth(this.form.getWidth());
         informationExternalResourceLabel.setMargin(10);
         informationExternalResourceLabel.hide();

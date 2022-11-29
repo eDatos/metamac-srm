@@ -412,7 +412,7 @@ public class TsvImportationUtils {
     /**
      * Transforms tsv line to Code. IMPORTANT: Do not execute save or update operation
      */
-    public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion, Boolean isDefaultMantainer,
+    public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion, boolean isDefaultMantainer,
             Map<String, VariableElement> variableElementsInVariableByCode, boolean updateAlreadyExisting, Map<String, CodeMetamac> codesPreviousInCodelist,
             Map<String, CodeMetamac> codesToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) throws MetamacException {
 
@@ -640,7 +640,7 @@ public class TsvImportationUtils {
         return tsvLineToInternationalStringBase(internationalStringTsv, columns, target, false);
     }
 
-    public static InternationalString tsvLineToInternationalStringBase(InternationalStringTsv internationalStringTsv, String[] columns, InternationalString target, Boolean changeUnmodifiables) {
+    public static InternationalString tsvLineToInternationalStringBase(InternationalStringTsv internationalStringTsv, String[] columns, InternationalString target, boolean changeUnmodifiables) {
         if (internationalStringTsv == null) {
             return null;
         }

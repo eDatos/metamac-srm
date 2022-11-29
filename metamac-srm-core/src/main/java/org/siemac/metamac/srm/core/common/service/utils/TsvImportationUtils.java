@@ -461,10 +461,17 @@ public class TsvImportationUtils {
         // init code
         CodeMetamac code = codesPreviousInCodelist.get(codeIdentifier);
         if (code == null) {
-            code = initNewCode(codeIdentifier, codeParent, isDefaultMantainer, codelistVersion, infoItems);
-            if (code == null) {
+            if (!isDefaultMantainer) {
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED, codeIdentifier));
                 return null;
             }
+            code = new CodeMetamac();
+            code.setNameableArtefact(new NameableArtefact());
+            code.getNameableArtefact().setCode(codeIdentifier);
+            String urn = GeneratorUrnUtils.generateCodeUrn(codelistVersion, code.getNameableArtefact().getCode());
+            code.getNameableArtefact().setUrn(urn);
+            code.getNameableArtefact().setUrnProvider(urn);
+            code.setParent(codeParent);
         } else {
             if (!updateAlreadyExisting) {
                 infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED, code.getNameableArtefact().getCode()));
@@ -531,21 +538,6 @@ public class TsvImportationUtils {
             code.setItemSchemeVersionFirstLevel(null);
         }
 
-        return code;
-    }
-
-    private static CodeMetamac initNewCode(String codeIdentifier, CodeMetamac codeParent, Boolean isDefaultMantainer, CodelistVersionMetamac codelistVersion, List<MetamacExceptionItem> infoItems) {
-        if (!isDefaultMantainer) {
-            infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED, codeIdentifier));
-            return null;
-        }
-        CodeMetamac code = new CodeMetamac();
-        code.setNameableArtefact(new NameableArtefact());
-        code.getNameableArtefact().setCode(codeIdentifier);
-        String urn = GeneratorUrnUtils.generateCodeUrn(codelistVersion, code.getNameableArtefact().getCode());
-        code.getNameableArtefact().setUrn(urn);
-        code.getNameableArtefact().setUrnProvider(urn);
-        code.setParent(codeParent);
         return code;
     }
 

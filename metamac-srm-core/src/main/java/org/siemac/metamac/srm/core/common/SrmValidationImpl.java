@@ -71,6 +71,11 @@ public class SrmValidationImpl implements SrmValidation {
     }
 
     @Override
+    public void checkItemsStructureIsNotTemporal(ServiceContext ctx, MaintainableArtefact maintainableArtefact) throws MetamacException {
+        SrmValidationUtils.checkArtefactIsNotTemporal(maintainableArtefact);
+    }
+    
+    @Override
     public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion) throws MetamacException {
         checkItemsStructureCanBeModified(ctx, itemSchemeVersion.getMaintainableArtefact());
     }

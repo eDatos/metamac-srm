@@ -136,6 +136,17 @@ public class CommonUtils {
         }
         return isDefaultMaintainer(maintainer);
     }
+    
+    /**
+     * Returns true if the version artefactDto is not a temporal one ir de agency is sdmx
+     * 
+     * @param artefactDto
+     * @param checkDefaultMantainer. True if it is necessary to check the default mantainer. False in another case.
+     * @return
+     */
+    public static boolean canSdmxMetadataAndStructureBeModified(MaintainableArtefactDto artefactDto, boolean checkDefaultMantainer) {
+        return canSdmxMetadataAndStructureBeModified(artefactDto.getUrn(), artefactDto.getMaintainer(), artefactDto.getVersionLogic(), checkDefaultMantainer);
+    }
 
     /**
      * Returns true if the artefactDto belongs to the default maintainer, and the version is not a temporal one
@@ -148,8 +159,16 @@ public class CommonUtils {
     }
 
     public static boolean canSdmxMetadataAndStructureBeModified(String urn, RelatedResourceDto maintainer, String versionLogic) {
-        return hasDefaultMaintainerOrIsAgencySchemeSdmxResource(urn, maintainer) && !VersionUtil.isTemporalVersion(versionLogic);
+        return canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic, true);
     }
+
+    public static boolean canSdmxMetadataAndStructureBeModified(String urn, RelatedResourceDto maintainer, String versionLogic, boolean checkDefaultMaintainer) {
+        if (checkDefaultMaintainer) {
+            return hasDefaultMaintainerOrIsAgencySchemeSdmxResource(urn, maintainer) && !VersionUtil.isTemporalVersion(versionLogic);
+        } else {
+            return !VersionUtil.isTemporalVersion(versionLogic);
+        }
+    }   
 
     // EXPORTATION UTILS
 

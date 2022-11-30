@@ -208,8 +208,8 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
     }
     
     @Override
-    public void updateAttributeInOrder(final String conceptUrn, String conceptScheme, int newConceptIndex) {
-        dispatcher.execute(new UpdateAttributeInOrderAction(conceptUrn, conceptScheme, newConceptIndex), new WaitingAsyncCallbackHandlingError<UpdateAttributeInOrderResult>(this) {
+    public void updateAttributeInOrder(final String attributeUrn, String attributeScheme, int newAttributeIndex) {
+        dispatcher.execute(new UpdateAttributeInOrderAction(attributeUrn, attributeScheme, newAttributeIndex), new WaitingAsyncCallbackHandlingError<UpdateAttributeInOrderResult>(this) {
 
             @Override
             public void onWaitFailure(Throwable caught) {
@@ -218,7 +218,7 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
 
             @Override
             public void onWaitSuccess(UpdateAttributeInOrderResult result) {
-            	retrieveAttributes(conceptUrn);
+            	retrieveAttributes(attributeUrn);
             }
         });
     }

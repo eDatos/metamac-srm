@@ -413,7 +413,7 @@ public class TsvImportationUtils {
      * Transforms tsv line to Code. IMPORTANT: Do not execute save or update operation
      */
     public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion, boolean isDefaultMantainer,
-            Map<String, VariableElement> variableElementsInVariableByCode, boolean updateAlreadyExisting, Map<String, CodeMetamac> codesPreviousInCodelist,
+            boolean isTemporalVersion, Map<String, VariableElement> variableElementsInVariableByCode, boolean updateAlreadyExisting, Map<String, CodeMetamac> codesPreviousInCodelist,
             Map<String, CodeMetamac> codesToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) throws MetamacException {
 
         // semantic identifier
@@ -434,7 +434,7 @@ public class TsvImportationUtils {
         // parent
         CodeMetamac codeParent = null;
         String codeParentIdentifier = columns[header.getParentPosition()];
-        if (!StringUtils.isBlank(codeParentIdentifier)) {
+        if (!StringUtils.isBlank(codeParentIdentifier) && !isTemporalVersion) {
             if (codesToPersistByCode.containsKey(codeParentIdentifier)) {
                 codeParent = codesToPersistByCode.get(codeParentIdentifier);
             } else {
@@ -461,8 +461,10 @@ public class TsvImportationUtils {
         // init code
         CodeMetamac code = codesPreviousInCodelist.get(codeIdentifier);
         if (code == null) {
-            if (!isDefaultMantainer) {
-                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED, codeIdentifier));
+            if (!isDefaultMantainer || isTemporalVersion) {
+                infoItems.add(new MetamacExceptionItem(
+                        !isDefaultMantainer ? ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED : ServiceExceptionType.IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED,
+                        codeIdentifier));
                 return null;
             }
             code = new CodeMetamac();
@@ -478,11 +480,13 @@ public class TsvImportationUtils {
                 return null;
             } else {
                 infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, code.getNameableArtefact().getCode()));
-                if (SdmxSrmUtils.isItemParentChanged(code.getParent(), codeParent)) {
-                    // Clear all order columns to put at the end of new level
-                    SrmServiceUtils.clearCodeOrders(code);
+                if (!isTemporalVersion) {
+                    if (SdmxSrmUtils.isItemParentChanged(code.getParent(), codeParent)) {
+                        // Clear all order columns to put at the end of new level
+                        SrmServiceUtils.clearCodeOrders(code);
+                    }
+                    code.setParent(codeParent);
                 }
-                code.setParent(codeParent);
                 code.setUpdateDate(new DateTime());
             }
         }

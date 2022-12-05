@@ -117,10 +117,10 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link OrganisationMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static OrganisationMetamac tsvLineToOrganisation(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+    public static OrganisationMetamac tsvLineToOrganisation(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        return (OrganisationMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, false, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
+        return (OrganisationMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
                 getOrganisationType((OrganisationSchemeVersionMetamac) itemSchemeVersion));
     }
 

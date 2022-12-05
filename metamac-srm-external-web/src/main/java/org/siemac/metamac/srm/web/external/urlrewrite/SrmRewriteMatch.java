@@ -11,13 +11,12 @@ import org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants;
 class SrmRewriteMatch extends AbstractRewriteMatch {
 
     private static final String  SRM_API_PREFIX       = "structural-resources";
-    private static final String  SOAP_API_PREFIX      = "soap";
 
     private ConfigurationService configurationService = null;
 
     @Override
     protected String[] getAcceptedApiPrefixes() {
-        return new String[]{SRM_API_PREFIX, SOAP_API_PREFIX};
+        return new String[]{SRM_API_PREFIX};
     }
 
     @Override
@@ -28,7 +27,7 @@ class SrmRewriteMatch extends AbstractRewriteMatch {
     @Override
     protected String getApiBaseUrl() throws ServletException {
         try {
-            return SOAP_API_PREFIX.equals(getCurrentApiPrefix()) ? getConfigurationService().retrieveSrmExternalSoapUrlBase() : getConfigurationService().retrieveSrmExternalApiUrlBase();
+            return getConfigurationService().retrieveSrmExternalApiUrlBase();
         } catch (MetamacException e) {
             throw new ServletException("Error retrieving configuration property of the external API URL base", e);
         }

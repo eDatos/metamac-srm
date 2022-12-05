@@ -17,6 +17,8 @@ public class DataStructureDefinitionMetamacDtoMocks extends DataStructureDefinit
 
         // ADD Metamac metadata
         dataStructureDefinitionMetamacDto.setAutoOpen(true);
+        dataStructureDefinitionMetamacDto.setShowZeroValuesByDefault(Boolean.TRUE);
+        dataStructureDefinitionMetamacDto.setShowNullValuesByDefault(Boolean.TRUE);
         dataStructureDefinitionMetamacDto.setShowDecimals(6);
         dataStructureDefinitionMetamacDto.setStatisticalOperation(BaseDtoMocks.mockExternalItemStatisticalOperationDto("operation1"));
 

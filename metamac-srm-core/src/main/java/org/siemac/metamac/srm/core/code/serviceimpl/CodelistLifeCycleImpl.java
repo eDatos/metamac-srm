@@ -218,12 +218,15 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public List<Object> findSrmResourceVersionsOfSrmResourceInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+        public List<Object> findSrmResourceVersionsWithLowerVersionInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
 
             CodelistVersionMetamac codelistVersion = getCodelistVersionMetamac(srmResourceVersion);
 
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.itemScheme().id())
-                    .eq(codelistVersion.getItemScheme().getId()).withProperty(CodelistVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus).distinctRoot().build();
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class)
+                    .withProperty(CodelistVersionMetamacProperties.itemScheme().id()).eq(codelistVersion.getItemScheme().getId())
+                    .withProperty(CodelistVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
+                    .withProperty(CodelistVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(codelistVersion.getMaintainableArtefact().getVersionLogic())
+                    .build();
             PagingParameter pagingParameter = PagingParameter.noLimits();
             PagedResult<CodelistVersionMetamac> codelistVersionPagedResult = codelistVersionMetamacRepository.findByCondition(conditions, pagingParameter);
             return codelistMetamacToObject(codelistVersionPagedResult.getValues());
@@ -283,6 +286,5 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
             }
             return objects;
         }
-
     }
 }

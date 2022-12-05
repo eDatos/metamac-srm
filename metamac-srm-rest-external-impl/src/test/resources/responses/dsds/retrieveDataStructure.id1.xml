@@ -249,6 +249,8 @@
         </cdomain:name>
     </sr:statisticalOperation>
     <sr:autoOpen>true</sr:autoOpen>
+    <sr:showZeroValuesByDefault>true</sr:showZeroValuesByDefault>
+    <sr:showNullValuesByDefault>true</sr:showNullValuesByDefault>
     <sr:heading total="2">
         <sr:dimension>dimension01</sr:dimension>
         <sr:dimension>dimension02</sr:dimension>

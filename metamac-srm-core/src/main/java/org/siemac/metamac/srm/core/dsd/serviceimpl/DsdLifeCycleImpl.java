@@ -204,13 +204,17 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public List<Object> findSrmResourceVersionsOfSrmResourceInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+        public List<Object> findSrmResourceVersionsWithLowerVersionInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus) {
+            DataStructureDefinitionVersionMetamac dataStructureVersion = getDataStructureDefinitionVersionMetamac(srmResourceVersion);
 
             List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
                     .withProperty(DataStructureDefinitionVersionMetamacProperties.structure().id()).eq(getDataStructureDefinitionVersionMetamac(srmResourceVersion).getStructure().getId())
-                    .withProperty(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus).distinctRoot().build();
+                    .withProperty(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
+                    .withProperty(DataStructureDefinitionVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(dataStructureVersion.getMaintainableArtefact().getVersionLogic())
+                    .build();
             PagingParameter pagingParameter = PagingParameter.noLimits();
             PagedResult<DataStructureDefinitionVersionMetamac> dataStructureDefinitionVersionMetamac = dataStructureDefinitionVersionMetamacRepository.findByCondition(conditions, pagingParameter);
+
             return dataStructureDefinitionMetamacVersionsToObject(dataStructureDefinitionVersionMetamac.getValues());
         }
 
@@ -277,6 +281,8 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
 
             // Check mandatory attributes
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getAutoOpen(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_AUTOPEN, exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowNullValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_NULL_VALUES_BY_DEFAULT, exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowZeroValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_ZERO_VALUES_BY_DEFAULT, exceptions);
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowDecimals(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_DECIMALS, exceptions);
 
             // Check mutual exclusivity between dimensions in the heading and stub.

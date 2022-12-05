@@ -242,7 +242,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
 
         // Fill validTo in previous externally published versions without end validity. Note: is imported, validTo can not be override
         if (!callback.getMaintainableArtefact(srmResourceVersion).getIsImported()) {
-            List<Object> versionsExternallyPublished = callback.findSrmResourceVersionsOfSrmResourceInProcStatus(ctx, srmResourceVersion, ProcStatusEnum.EXTERNALLY_PUBLISHED);
+            List<Object> versionsExternallyPublished = callback.findSrmResourceVersionsWithLowerVersionInProcStatus(ctx, srmResourceVersion, ProcStatusEnum.EXTERNALLY_PUBLISHED);
             for (Object versionExternallyPublished : versionsExternallyPublished) {
                 MaintainableArtefact maintainableArtefact = callback.getMaintainableArtefact(versionExternallyPublished);
                 if (maintainableArtefact.getValidTo() == null) {
@@ -447,7 +447,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Object updateSrmResource(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public SrmLifeCycleMetadata getLifeCycleMetadata(Object srmResourceVersion);
         public MaintainableArtefact getMaintainableArtefact(Object srmResourceVersion);
-        public List<Object> findSrmResourceVersionsOfSrmResourceInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus);
+        public List<Object> findSrmResourceVersionsWithLowerVersionInProcStatus(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum... procStatus);
 
         // Conditions to update state
         public void checkConcreteResourceInProductionValidation(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum targetStatus) throws MetamacException;

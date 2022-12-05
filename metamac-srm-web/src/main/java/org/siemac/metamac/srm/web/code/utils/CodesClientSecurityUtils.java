@@ -266,7 +266,7 @@ public class CodesClientSecurityUtils {
             return false;
         }
         return SharedCodesSecurityUtils.canImportCodes(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus())
-                && CommonUtils.canSdmxMetadataAndStructureBeModified(codelistMetamacDto);
+                && CommonUtils.canSdmxMetadataAndStructureBeModified(codelistMetamacDto, false);
     }
 
     public static boolean canUpdateCodeParent(CodelistMetamacDto codelistMetamacDto) {

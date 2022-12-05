@@ -71,6 +71,11 @@ public class SrmValidationImpl implements SrmValidation {
     }
     
     @Override
+    public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion, boolean checkIsTemporalVersion) throws MetamacException {
+        checkItemsStructureCanBeModified(ctx, itemSchemeVersion.getMaintainableArtefact(), checkIsTemporalVersion);
+    }
+    
+    @Override
     public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion) throws MetamacException {
         checkItemsStructureCanBeModified(ctx, itemSchemeVersion.getMaintainableArtefact());
     }
@@ -103,10 +108,17 @@ public class SrmValidationImpl implements SrmValidation {
         return maintainerUrnDefault.equals(maintainerUrn);
     }
 
-    private void checkItemsStructureCanBeModified(ServiceContext ctx, MaintainableArtefact maintainableArtefact) throws MetamacException {
-        SrmValidationUtils.checkArtefactIsNotTemporal(maintainableArtefact);
+    private void checkItemsStructureCanBeModified(ServiceContext ctx, MaintainableArtefact maintainableArtefact, boolean checkIsTemporalVersion) throws MetamacException {
+        if (checkIsTemporalVersion) {
+            SrmValidationUtils.checkArtefactIsNotTemporal(maintainableArtefact);
+        }
+
         if (BooleanUtils.isTrue(maintainableArtefact.getIsImported())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.STRUCTURE_MODIFICATIONS_NOT_SUPPORTED_IMPORTED).build();
         }
+    }
+    
+    private void checkItemsStructureCanBeModified(ServiceContext ctx, MaintainableArtefact maintainableArtefact) throws MetamacException {
+        checkItemsStructureCanBeModified(ctx, maintainableArtefact, true);
     }
 }

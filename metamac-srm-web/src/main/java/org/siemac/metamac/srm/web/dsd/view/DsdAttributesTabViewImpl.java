@@ -241,6 +241,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                 // If it is a new dimension, hide mainFormLayout
                 if (dataAttributeDto.getId() == null) {
                     selectedComponentLayout.hide();
+                } else {
+                    selectAttribute(dataAttributeDto);
                 }
             }
         });
@@ -583,7 +585,6 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             if (result.getRelatedResourceDtos().size() > 0) {
                 searchCodelistForEnumeratedRepresentationWindow.hideInfoMessage();
             } else {
-                searchCodelistForEnumeratedRepresentationWindow.showInfoMessage();
             }
         }
     }

@@ -11,13 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.lang.model.element.VariableElement;
-
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.sdmx.resources.sdmxml.rest.schemas.v2_1.types.StructureParameterDetailEnum;
 import org.sdmx.resources.sdmxml.rest.schemas.v2_1.types.StructureParameterReferencesEnum;
-import org.sdmx.resources.sdmxml.schemas.v2_1.structure.ConceptType;
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
@@ -43,6 +40,8 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
+import org.siemac.metamac.srm.core.code.domain.Variable;
+import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementOperation;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
@@ -70,6 +69,7 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
@@ -4072,11 +4072,11 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     @Override
     public void updateAttributeInOrder(ServiceContext ctx, String attributeUrn, String attributeSchemeUrn, Integer newAttributeIndex) throws MetamacException {
         // Security
-        ConceptSchemeVersionMetamac conceptSchemeVersionMetamac = getConceptsMetamacService().retrieveConceptSchemeByConceptUrn(ctx, attributeUrn);
-        ConceptsSecurityUtils.canUpdateConcept(ctx, conceptSchemeVersionMetamac);
+        DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, attributeUrn); // Load DSD
+        DataStructureDefinitionSecurityUtils.canUpdateAttribute(ctx, dataStructureDefinitionVersionMetamac);
 
         // Update order
-        getConceptsMetamacService().updateConceptInOrder(ctx, attributeUrn, attributeSchemeUrn, newAttributeIndex);
+        getDataStructureDefinitionMetamacService().updateAttributeInOrder(ctx, attributeUrn, attributeSchemeUrn, newAttributeIndex);
     }
 
 }

@@ -23,8 +23,6 @@ import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceListItemWithSchemeFilterItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
 import org.siemac.metamac.srm.web.client.widgets.search.SearchSrmItemLinkItemWithSchemeFilterItem;
-import org.siemac.metamac.srm.web.concept.model.ds.ConceptDS;
-import org.siemac.metamac.srm.web.concept.utils.ConceptsClientSecurityUtils;
 import org.siemac.metamac.srm.web.dsd.model.ds.DataAttributeDS;
 import org.siemac.metamac.srm.web.dsd.model.record.DataAttributeRecord;
 import org.siemac.metamac.srm.web.dsd.presenter.DsdAttributesTabPresenter;
@@ -74,22 +72,11 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import com.smartgwt.client.data.SortSpecifier;
 import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
-import com.smartgwt.client.types.SortDirection;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
-import com.smartgwt.client.widgets.events.DropEvent;
-import com.smartgwt.client.widgets.events.DropHandler;
-import com.smartgwt.client.widgets.events.DropMoveEvent;
-import com.smartgwt.client.widgets.events.DropMoveHandler;
-import com.smartgwt.client.widgets.events.DropOutEvent;
-import com.smartgwt.client.widgets.events.DropOutHandler;
-import com.smartgwt.client.widgets.events.DropOverEvent;
-import com.smartgwt.client.widgets.events.DropOverHandler;
 import com.smartgwt.client.widgets.events.HasClickHandlers;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
@@ -101,23 +88,16 @@ import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.CustomValidator;
 import com.smartgwt.client.widgets.form.validator.RequiredIfFunction;
 import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
-import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
-import com.smartgwt.client.widgets.grid.events.CellMouseDownEvent;
-import com.smartgwt.client.widgets.grid.events.CellMouseDownHandler;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
+import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
+import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import com.smartgwt.client.widgets.grid.events.SortChangedHandler;
-import com.smartgwt.client.widgets.grid.events.SortEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import com.smartgwt.client.widgets.tree.TreeGridField;
-import com.smartgwt.client.widgets.tree.TreeNode;
-import com.smartgwt.client.widgets.tree.events.FolderDropEvent;
-import com.smartgwt.client.widgets.tree.events.FolderDropHandler;
 
 public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTabUiHandlers> implements DsdAttributesTabPresenter.DsdAttributesTabView {
 
@@ -152,6 +132,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
     private SearchRelatedResourcePaginatedWindow searchCodelistForEnumeratedRepresentationWindow;
     private SearchRelatedResourcePaginatedWindow searchConceptSchemeForEnumeratedRepresentationWindow;
+    private Integer                              position;
 
     @Inject
     public DsdAttributesTabViewImpl() {
@@ -199,6 +180,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         attributesGrid = new NavigableListGrid();
         attributesGrid.setWidth100();
         attributesGrid.setCanReorderRecords(true);
+        attributesGrid.setCanAcceptDroppedRecords(true);
+        attributesGrid.setCanDragRecordsOut(false);
         attributesGrid.setDragDataAction(DragDataAction.MOVE);
         attributesGrid.setHeight(150);
         attributesGrid.setSelectionType(SelectionStyle.SIMPLE);
@@ -209,50 +192,25 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         CustomListGridField relatedTo = new CustomListGridField(DataAttributeDS.RELATED_TO, getConstants().dsdAttributeRelatedWith());
         CustomLinkListGridField conceptField = new CustomLinkListGridField(DataAttributeDS.CONCEPT, getConstants().concept());
 
-        CustomListGridField orderField = new CustomListGridField(ConceptDS.ORDER, getConstants().conceptOrder());
-        orderField.setCanSort(Boolean.FALSE);
-        orderField.setShowHover(Boolean.FALSE);
-        orderField.setHidden(Boolean.TRUE); // By default the order column is not shown (it could be show choosing it in the header context menu)
-        orderField.setCanFreeze(Boolean.FALSE);
-        attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField, orderField);
+        attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField);
 
-        attributesGrid.addSortChangedHandler(new SortChangedHandler() {
+        attributesGrid.addRecordDropHandler(new RecordDropHandler() {
 
             @Override
-            public void onSortChanged(SortEvent event) {
-                SortSpecifier[] sortSpecifiers = event.getSortSpecifiers();
-                if (sortSpecifiers != null) {
-                    for (SortSpecifier sortSpecifier : sortSpecifiers) {
-                        if (SortDirection.DESCENDING.equals(sortSpecifier.getSortDirection())) {
-                            // Instead of cancel the event (do not know if it is possible), the column is ordered again in ascending order
-                        	attributesGrid.sort(ConceptDS.ORDER, SortDirection.ASCENDING);
-                        }
-                    }
+            public void onRecordDrop(RecordDropEvent arg0) {
+                position = arg0.getIndex();
+                if (position >= 0 && position < arg0.getIndex()) {
+                    position--;
                 }
-            }
-        });
-        
-        attributesGrid.addDropHandler(new DropHandler() {
 
-            @Override
-            public void onDrop(DropEvent event) {
-            	DataAttributeRecord droppedNode = (DataAttributeRecord) attributesGrid.getSelectedRecord();
-            	int position = attributesGrid.getRecordIndex(droppedNode); // Anterior position
-            	NavigableListGrid newList = (NavigableListGrid) event.getSource();
-            	int relativePosition = position; // Used to update position
-                int pos = -1;
-                for (int i = 0; i < newList.getRecordList().getLength(); i++) {
-                    if (newList.getRecordList().get(i) == droppedNode) {
-                        pos = i;
-                    }
-                }
-                SC.say("Esta es la posición de antes : " + position +" y esta es la posición despues de mover el elemento: " + pos);
+                DataAttributeRecord droppedNode = (DataAttributeRecord) attributesGrid.getSelectedRecord();
                 if (DsdClientSecurityUtils.canUpdateAttributeOrderInLevel(dataStructureDefinitionMetamacDto)) {
-                    getUiHandlers().updateAttributeInOrder(droppedNode.getAttribute(ConceptDS.URN), dataStructureDefinitionMetamacDto.getUrn(), relativePosition);
+                    getUiHandlers().updateAttributeInOrder(droppedNode.getAttribute(DataAttributeDS.URN), dataStructureDefinitionMetamacDto.getUrn(), position);
                 }
-
             }
+
         });
+
         // Show attribute details when record clicked
         attributesGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 
@@ -260,11 +218,13 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             public void onSelectionChanged(SelectionEvent event) {
                 if (attributesGrid.getSelectedRecords() != null && attributesGrid.getSelectedRecords().length == 1) {
                     DataAttributeRecord record = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+                    position = attributesGrid.getRecordIndex(record);
                     DataAttributeDto dataAttributeDto = record.getDataAttributeDto();
                     selectAttribute(dataAttributeDto);
                 } else {
                     // No record selected
                     deselectAttribute();
+                    position = null;
                     if (attributesGrid.getSelectedRecords().length > 1) {
                         // Delete more than one dimension with one click
                         showDeleteToolStripButton();
@@ -337,10 +297,10 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         RelatedResourceListItem roleItem = new RelatedResourceListItem(DataAttributeDS.ROLE, getConstants().dsdAttributeRole(), false, getListRecordNavigationClickHandler());
         ViewTextItem usageStatusItem = new ViewTextItem(DataAttributeDS.USAGE_STATUS, getConstants().dsdAttributeUsageStatus());
         ViewTextItem relatedTo = new ViewTextItem(DataAttributeDS.RELATED_TO, getConstants().dsdAttributeRelatedWith());
-        ViewTextItem staticGroupKeysForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP, getConstants()
-                .dsdAttributeGroupKeysForDimensionRelationship());
-        ViewTextItem staticDimensionsForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP, getConstants()
-                .dsdAttributeDimensionsForDimensionRelationship());
+        ViewTextItem staticGroupKeysForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP,
+                getConstants().dsdAttributeGroupKeysForDimensionRelationship());
+        ViewTextItem staticDimensionsForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP,
+                getConstants().dsdAttributeDimensionsForDimensionRelationship());
         ViewTextItem staticGroupKeyFormForGroupRelationship = new ViewTextItem(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP, getConstants().dsdAttributeGroupKeyForGroupRelationship());
 
         ViewTextItem staticRepresentationTypeItem = new ViewTextItem(DataAttributeDS.REPRESENTATION_TYPE, getConstants().representation());
@@ -431,10 +391,12 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
                 // The attributes with a type specified, can only be related to datasets (TypeRelathionship = NO_SPECIFIED_RELATIONSHIP)
 
-                SpecialAttributeTypeEnum attributeType = !StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE)) ? SpecialAttributeTypeEnum.valueOf(editionForm
-                        .getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE)) : null;
-                TypeRelathionship typeRelathionship = !StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.RELATED_TO)) ? TypeRelathionship.valueOf(editionForm
-                        .getValueAsString(DataAttributeDS.RELATED_TO)) : null;
+                SpecialAttributeTypeEnum attributeType = !StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE))
+                        ? SpecialAttributeTypeEnum.valueOf(editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE))
+                        : null;
+                TypeRelathionship typeRelathionship = !StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.RELATED_TO))
+                        ? TypeRelathionship.valueOf(editionForm.getValueAsString(DataAttributeDS.RELATED_TO))
+                        : null;
                 if (attributeType != null && !TypeRelathionship.NO_SPECIFIED_RELATIONSHIP.equals(typeRelathionship)) {
                     return false;
                 }
@@ -447,28 +409,28 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
         // Relation: Group keys for dimension relationship
 
-        CustomSelectItem groupKeysForDimensionRelationshipItem = new CustomSelectItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP, getConstants()
-                .dsdAttributeGroupKeysForDimensionRelationship());
+        CustomSelectItem groupKeysForDimensionRelationshipItem = new CustomSelectItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP,
+                getConstants().dsdAttributeGroupKeysForDimensionRelationship());
         groupKeysForDimensionRelationshipItem.setMultiple(true);
         groupKeysForDimensionRelationshipItem.setAllowEmptyValue(false);
         groupKeysForDimensionRelationshipItem.setPickListWidth(350);
         groupKeysForDimensionRelationshipItem.setShowIfCondition(getGroupKeysForDimensionRelationshipFormItemIfFunction());
 
-        ViewTextItem staticGroupKeysForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP_VIEW, getConstants()
-                .dsdAttributeGroupKeysForDimensionRelationship());
+        ViewTextItem staticGroupKeysForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP_VIEW,
+                getConstants().dsdAttributeGroupKeysForDimensionRelationship());
         staticGroupKeysForDimensionRelationshipItem.setShowIfCondition(getStaticGroupKeysForDimensionRelationshipFormItemIfFunction());
 
         // Relation: Dimensions for dimension relationship
 
-        RequiredSelectItem dimensionsForDimensionRelationshipItem = new RequiredSelectItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP, getConstants()
-                .dsdAttributeDimensionsForDimensionRelationship());
+        RequiredSelectItem dimensionsForDimensionRelationshipItem = new RequiredSelectItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP,
+                getConstants().dsdAttributeDimensionsForDimensionRelationship());
         dimensionsForDimensionRelationshipItem.setMultiple(true);
         dimensionsForDimensionRelationshipItem.setAllowEmptyValue(false);
         dimensionsForDimensionRelationshipItem.setPickListWidth(350);
         dimensionsForDimensionRelationshipItem.setShowIfCondition(getDimensionsForDimensionRelationshipFormItemIfFunction());
 
-        ViewTextItem staticDimensionsForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP_VIEW, getConstants()
-                .dsdAttributeDimensionsForDimensionRelationship());
+        ViewTextItem staticDimensionsForDimensionRelationshipItem = new ViewTextItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP_VIEW,
+                getConstants().dsdAttributeDimensionsForDimensionRelationship());
         staticDimensionsForDimensionRelationshipItem.setShowIfCondition(getStaticDimensionsForDimensionRelationshipFormItemIfFunction());
 
         // Relation: Group Keys for group relationship
@@ -511,8 +473,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
         // ConceptScheme
 
-        SearchRelatedResourceLinkItem staticEditableConceptScheme = createMeasureAttributeEnumeratedRepresentationItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME, getConstants()
-                .conceptScheme());
+        SearchRelatedResourceLinkItem staticEditableConceptScheme = createMeasureAttributeEnumeratedRepresentationItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME,
+                getConstants().conceptScheme());
         staticEditableConceptScheme.setShowIfCondition(getConceptSchemeEnumeratedRepresentationFormItemIfFunction()); // Shown in editionMode, only when the conceptScheme is editable
 
         RelatedResourceLinkItem staticConceptScheme = new RelatedResourceLinkItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW, getConstants().conceptScheme(),
@@ -604,14 +566,14 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
     @Override
     public void setConceptSchemes(GetRelatedResourcesResult result) {
-        ((SearchSrmItemLinkItemWithSchemeFilterItem) editionForm.getItem(DataAttributeDS.CONCEPT)).setFilterResources(result.getRelatedResourceDtos(), result.getFirstResultOut(), result
-                .getRelatedResourceDtos().size(), result.getTotalResults());
+        ((SearchSrmItemLinkItemWithSchemeFilterItem) editionForm.getItem(DataAttributeDS.CONCEPT)).setFilterResources(result.getRelatedResourceDtos(), result.getFirstResultOut(),
+                result.getRelatedResourceDtos().size(), result.getTotalResults());
     }
 
     @Override
     public void setConcepts(GetRelatedResourcesResult result) {
-        ((SearchSrmItemLinkItemWithSchemeFilterItem) editionForm.getItem(DataAttributeDS.CONCEPT)).setResources(result.getRelatedResourceDtos(), result.getFirstResultOut(), result
-                .getRelatedResourceDtos().size(), result.getTotalResults());
+        ((SearchSrmItemLinkItemWithSchemeFilterItem) editionForm.getItem(DataAttributeDS.CONCEPT)).setResources(result.getRelatedResourceDtos(), result.getFirstResultOut(),
+                result.getRelatedResourceDtos().size(), result.getTotalResults());
     }
 
     @Override
@@ -708,8 +670,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
             // Group keys for group relationship
             if (TypeRelathionship.GROUP_RELATIONSHIP.equals(dataAttributeDto.getRelateTo().getTypeRelathionship())) {
-                form.setValue(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP, (dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship() == null) ? null : dataAttributeDto.getRelateTo()
-                        .getGroupKeyForGroupRelationship().getCode());
+                form.setValue(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP,
+                        (dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship() == null) ? null : dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship().getCode());
                 form.showItem(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP);
             }
 
@@ -752,8 +714,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                     // CONCEPTSCHEME
 
                     if (SpecialAttributeTypeEnum.MEASURE_EXTENDS.equals(dataAttributeDto.getSpecialAttributeType())) {
-                        ((RelatedResourceLinkItem) form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(dataAttributeDto.getLocalRepresentation()
-                                .getEnumeration());
+                        ((RelatedResourceLinkItem) form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME))
+                                .setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME).show();
                     }
                 }
@@ -802,20 +764,20 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             editionForm.setValue(DataAttributeDS.RELATED_TO_VIEW, CommonUtils.getTypeRelationshipName(dataAttributeDto.getRelateTo().getTypeRelathionship()));
 
             // Group keys for group relationship
-            editionForm.setValue(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP, (dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship() == null) ? null : dataAttributeDto.getRelateTo()
-                    .getGroupKeyForGroupRelationship().getUrn());
-            editionForm.setValue(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP_VIEW, (dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship() == null) ? null : dataAttributeDto
-                    .getRelateTo().getGroupKeyForGroupRelationship().getCode());
+            editionForm.setValue(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP,
+                    (dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship() == null) ? null : dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship().getUrn());
+            editionForm.setValue(DataAttributeDS.GROUP_KEY_FOR_GROUP_RELATIONSHIP_VIEW,
+                    (dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship() == null) ? null : dataAttributeDto.getRelateTo().getGroupKeyForGroupRelationship().getCode());
 
             // Group keys form dimension relationship
-            ((CustomSelectItem) editionForm.getItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP)).setValues(CommonUtils.getUrnsFromDescriptorDtos(dataAttributeDto.getRelateTo()
-                    .getGroupKeyForDimensionRelationship()));
-            editionForm
-                    .setValue(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP_VIEW, CommonUtils.getDescriptorListAsString(dataAttributeDto.getRelateTo().getGroupKeyForDimensionRelationship()));
+            ((CustomSelectItem) editionForm.getItem(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP))
+                    .setValues(CommonUtils.getUrnsFromDescriptorDtos(dataAttributeDto.getRelateTo().getGroupKeyForDimensionRelationship()));
+            editionForm.setValue(DataAttributeDS.GROUP_KEY_FOR_DIMENSION_RELATIONSHIP_VIEW,
+                    CommonUtils.getDescriptorListAsString(dataAttributeDto.getRelateTo().getGroupKeyForDimensionRelationship()));
 
             // Dimensions for dimension relationship
-            ((CustomSelectItem) editionForm.getItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP)).setValues(CommonUtils.getUrnsFromDimensionComponentDtos(dataAttributeDto.getRelateTo()
-                    .getDimensionForDimensionRelationship()));
+            ((CustomSelectItem) editionForm.getItem(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP))
+                    .setValues(CommonUtils.getUrnsFromDimensionComponentDtos(dataAttributeDto.getRelateTo().getDimensionForDimensionRelationship()));
             editionForm.setValue(DataAttributeDS.DIMENSION_FOR_DIMENSION_RELATIONSHIP_VIEW,
                     CommonUtils.getDimensionComponentListAsString(dataAttributeDto.getRelateTo().getDimensionForDimensionRelationship()));
         }
@@ -850,10 +812,10 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                     // Codelist
 
                     if (!SpecialAttributeTypeEnum.MEASURE_EXTENDS.equals(dataAttributeDto.getSpecialAttributeType())) {
-                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(dataAttributeDto.getLocalRepresentation()
-                                .getEnumeration());
-                        ((RelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST_VIEW)).setRelatedResource(dataAttributeDto.getLocalRepresentation()
-                                .getEnumeration());
+                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST))
+                                .setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
+                        ((RelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST_VIEW))
+                                .setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
                     }
 
                 } else if (RelatedResourceTypeEnum.CONCEPT_SCHEME.equals(dataAttributeDto.getLocalRepresentation().getEnumeration().getType())) {
@@ -944,8 +906,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         dataAttributeDto.setCptIdRef(getConceptFromEditionForm());
 
         // Usage Status
-        dataAttributeDto.setUsageStatus(StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.USAGE_STATUS)) ? null : UsageStatus.valueOf(editionForm
-                .getValueAsString(DataAttributeDS.USAGE_STATUS)));
+        dataAttributeDto.setUsageStatus(
+                StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.USAGE_STATUS)) ? null : UsageStatus.valueOf(editionForm.getValueAsString(DataAttributeDS.USAGE_STATUS)));
 
         // Relation
         if (dataAttributeDto.getRelateTo() == null) {
@@ -996,8 +958,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
                     // Codelist
 
-                    dataAttributeDto.getLocalRepresentation().setEnumeration(
-                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST)).getRelatedResourceDto());
+                    dataAttributeDto.getLocalRepresentation()
+                            .setEnumeration(((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST)).getRelatedResourceDto());
                 }
 
                 dataAttributeDto.getLocalRepresentation().setTextFormat(null);
@@ -1033,8 +995,9 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
     }
 
     private SpecialAttributeTypeEnum getSpecialAttributeTypeFromEditionForm() {
-        return !StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE)) ? SpecialAttributeTypeEnum.valueOf(editionForm
-                .getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE)) : null;
+        return !StringUtils.isBlank(editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE))
+                ? SpecialAttributeTypeEnum.valueOf(editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE))
+                : null;
     }
 
     private RelatedResourceDto getConceptSchemeEnumeratedRepresentationFromEditionForm() {
@@ -1641,8 +1604,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 // Shown when the representation type selected is ENUMERATION and the enumerated representation can be edited
                 return CommonUtils.isAttributeCodelistEnumeratedRepresentationVisible(editionForm.getValueAsString(DataAttributeDS.REPRESENTATION_TYPE),
-                        editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE))
-                        && DsdsFormUtils.canAttributeCodelistEnumeratedRepresentationBeEdited(dataStructureDefinitionMetamacDto);
+                        editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE)) && DsdsFormUtils.canAttributeCodelistEnumeratedRepresentationBeEdited(dataStructureDefinitionMetamacDto);
             }
         };
     }
@@ -1654,8 +1616,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 // Shown when the representation type selected is ENUMERATION and the enumerated representation can NOT be edited
                 return CommonUtils.isAttributeCodelistEnumeratedRepresentationVisible(editionForm.getValueAsString(DataAttributeDS.REPRESENTATION_TYPE),
-                        editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE))
-                        && !DsdsFormUtils.canAttributeCodelistEnumeratedRepresentationBeEdited(dataStructureDefinitionMetamacDto);
+                        editionForm.getValueAsString(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE)) && !DsdsFormUtils.canAttributeCodelistEnumeratedRepresentationBeEdited(dataStructureDefinitionMetamacDto);
             }
         };
     }

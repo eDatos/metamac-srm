@@ -29,6 +29,8 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionP
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
@@ -176,6 +178,8 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             executeQueryRetrieveConceptRepresentation(conceptSchemeVersionId, mapConceptByItemId);
             executeQueryRetrieveConceptConceptExtends(conceptSchemeVersionId, mapConceptByItemId);
             executeQueryRetrieveConceptSdmxRelatedArtefact(conceptSchemeVersionId, mapConceptByItemId);
+            
+            executeQueryRetrieveConceptQuantityType(conceptSchemeVersionId, mapConceptByItemId);
         }
 
         StringBuilder sb = new StringBuilder();
@@ -543,6 +547,73 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    private void executeQueryRetrieveConceptQuantityType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) {
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("SELECT c.TB_CONCEPTS, ct.QUANTITY_TYPE, ausv.CODE as UNIT_CODELIST_CODE, acb.CODE as UNIT_CODE, "
+                + "ct.UNIT_SYMBOL_POSITION, ct.UNIT_MULTIPLIER, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
+                + " aicd.code as DENOMINATOR_CONCEPT_SCHEME_CODE, acd.code as DENOMINATOR_CONCEPT_CODE, "
+                + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE ");
+        sqlQuery.append("FROM TB_M_CONCEPTS c ");
+        sqlQuery.append("INNER JOIN TB_CONCEPTS cb on cb.ID = c.TB_CONCEPTS ");
+        sqlQuery.append("INNER JOIN TB_M_QUANTITIES ct on ct.id = c.QUANTITY_FK ");
+        sqlQuery.append("INNER JOIN TB_CODES unit on unit.ID = ct.UNIT_CODE_FK ");
+        sqlQuery.append("INNER JOIN TB_ITEM_SCHEMES_VERSIONS usv ON usv.ID = unit.ITEM_SCHEME_VERSION_FK AND usv.ID != :itemSchemVersionId ");
+        sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS ausv ON ausv.ID = usv.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb ON acb.ID = unit.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_CONCEPTS cd ON cd.ID = ct.DENOMINATOR_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS icd ON icd.ID = cd.ITEM_SCHEME_VERSION_FK AND icd.ID != :itemSchemVersionId ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aicd ON aicd.ID = icd.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS acd ON acd.ID = cd.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_CONCEPTS cn ON cn.ID = ct.NUMERATOR_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS icn ON icn.ID = cn.ITEM_SCHEME_VERSION_FK AND icn.ID != :itemSchemVersionId ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aicn ON aicn.ID = icn.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS acn ON acn.ID = cn.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemVersionId and c.QUANTITY_FK IS NOT NULL");
+
+        Query query = getEntityManager().createNativeQuery(sqlQuery.toString());
+        query.setParameter("itemSchemVersionId", itemSchemVersionId);
+        List resultsSql = query.getResultList();
+        for (Object resultSql : resultsSql) {
+            Object[] resultSqlArray = (Object[]) resultSql;
+            Long actualItemId = getLong(resultSqlArray[0]);
+            String quantityTypeIdentifier = getString(resultSqlArray[1]);
+            String quantityUnitCodelistCode = getString(resultSqlArray[2]);
+            String quantityUnitCode = getString(resultSqlArray[3]);
+            String quantityUnitSymbolPosition = getString(resultSqlArray[4]);
+            Integer quantityUnitMultiplier = getInteger(resultSqlArray[5]);
+            Integer quantitySignificantDigits = getInteger(resultSqlArray[6]);
+            Integer quantityDecimalPlaces = getInteger(resultSqlArray[7]);
+            Integer quantityMinimum = getInteger(resultSqlArray[8]);
+            Integer quantityMaximum = getInteger(resultSqlArray[9]);
+            String quantityDenominatorConceptScheme = getString(resultSqlArray[10]);
+            String quantityDenominatorConcept = getString(resultSqlArray[11]);
+            String quantityNumeratorConceptScheme = getString(resultSqlArray[12]);
+            String quantityNumeratorConcept = getString(resultSqlArray[13]);
+
+            QuantityTypeEnum quantityType = QuantityTypeEnum.valueOf(quantityTypeIdentifier);
+            QuantityUnitSymbolPositionEnum quantityUnitSymbolPositionType = QuantityUnitSymbolPositionEnum.valueOf(quantityUnitSymbolPosition);
+
+            ItemResult target = mapItemByItemId.get(actualItemId);
+            ConceptMetamacResultExtensionPoint extensionEndpoint = ((ConceptMetamacResultExtensionPoint) target.getExtensionPoint());
+
+            extensionEndpoint.setQuantityType(quantityType);
+            extensionEndpoint.setUnitCodelistCode(quantityUnitCodelistCode);
+            extensionEndpoint.setUnitCode(quantityUnitCode);
+            extensionEndpoint.setUnitSymbolPosition(quantityUnitSymbolPositionType);
+            extensionEndpoint.setUnitMultiplier(quantityUnitMultiplier);
+            extensionEndpoint.setSignificantDigits(quantitySignificantDigits);
+            extensionEndpoint.setDecimalPlaces(quantityDecimalPlaces);
+            extensionEndpoint.setMiminum(quantityMinimum);
+            extensionEndpoint.setMaximum(quantityMaximum);
+            extensionEndpoint.setDenominatorConceptScheme(quantityDenominatorConceptScheme);
+            extensionEndpoint.setDenominatorConcept(quantityDenominatorConcept);
+            extensionEndpoint.setNumeratorConceptScheme(quantityNumeratorConceptScheme);
+            extensionEndpoint.setNumeratorConcept(quantityNumeratorConcept);
+
+        }
+    }
+    
     @SuppressWarnings("rawtypes")
     private void executeQueryRetrieveConceptConceptType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) {
         StringBuilder sqlQuery = new StringBuilder();

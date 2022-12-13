@@ -70,6 +70,14 @@ public class SrmConstants {
     public static final String             TSV_HEADER_DENOMINATOR_CONCEPT                                         = "denominator_concept";
     public static final String             TSV_HEADER_NUMERATOR_CONCEPT_SCHEME                                    = "numerator_concept_scheme";
     public static final String             TSV_HEADER_NUMERATOR_CONCEPT                                           = "numerator_concept";
+    public static final String             TSV_HEADER_IS_PERCENTAGE                                               = "is_percentage";
+    public static final String             TSV_HEADER_PERCENTAGE_OF                                               = "percentage_of";
+    public static final String             TSV_HEADER_INDEX_BASE_VALUE                                            = "index_base_value";
+    public static final String             TSV_HEADER_INDEX_BASE_TIME                                             = "index_base_time";
+    public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE                           = "index_base_location_codelist_code";
+    public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODE                                    = "index_base_location_code";
+    public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME                                = "base_quantity_concept_scheme";
+    public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT                                       = "base_quantity_concept";
 
     public static final String             TSV_EXPORTATION_ENCODING                                               = "UTF-8";
 

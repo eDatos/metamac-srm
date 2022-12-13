@@ -129,7 +129,7 @@ public class TsvExportationUtils {
                 writeConceptExtends(writer, itemResult);
                 writeSdmxRelatedArtefact(conceptSchemeVersion, writer, itemResult);
                 
-                writeQuantityMetadata(writer, itemResult);
+                writeQuantityMetadata(writer, itemResult, languages);
                 
                 
             }
@@ -227,6 +227,24 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_IS_PERCENTAGE);
+        for (String language : languages) {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_PERCENTAGE_OF + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
+        }
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_VALUE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_TIME);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT);
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -546,7 +564,7 @@ public class TsvExportationUtils {
         }
     }
 
-    private static void writeQuantityMetadata(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
+    private static void writeQuantityMetadata(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
         ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         writer.write(SrmConstants.TSV_SEPARATOR);
 
@@ -612,6 +630,57 @@ public class TsvExportationUtils {
             writer.write(extensionPoint.getNumeratorConcept());
         } else {
             writer.write(SrmConstants.TSV_SEPARATOR);
+        }
+
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        if (extensionPoint.getIsPercentage() != null) {
+            writer.write(extensionPoint.getIsPercentage().toString());
+        } 
+  
+        writeItemExtensionPointPercentageOf(writer, itemResult, languages);
+
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        if (extensionPoint.getIndexBaseValue() != null) {
+            writer.write(Integer.toString(extensionPoint.getIndexBaseValue()));
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+        } else if (!StringUtils.isBlank(extensionPoint.getIndexBaseTime())) {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(extensionPoint.getIndexBaseTime());
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+        } else if (!StringUtils.isBlank(extensionPoint.getIndexBaseLocationCode()) && !StringUtils.isBlank(extensionPoint.getIndexBaseLocationCodelistCode())) {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(extensionPoint.getIndexBaseLocationCodelistCode());
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(extensionPoint.getIndexBaseLocationCode());
+        } else {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+        }
+        
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        if (!StringUtils.isBlank(extensionPoint.getIndexBaseQuantityConceptScheme()) && !StringUtils.isBlank(extensionPoint.getIndexBaseQuantityConcept())) {
+            writer.write(extensionPoint.getIndexBaseQuantityConceptScheme());
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(extensionPoint.getIndexBaseQuantityConcept());
+        } else {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+        }
+    }
+    
+    private static void writeItemExtensionPointPercentageOf(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
+        ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        for (String language : languages) {
+            String textInLocale = extensionPoint.getPercentageOf().get(language);
+            textInLocale = removeUnsupportedCharaters(textInLocale);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            if (textInLocale != null) {
+                writer.write(textInLocale);
+            }
         }
     }
     

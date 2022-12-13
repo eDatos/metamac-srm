@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.core.concept.repositoryimpl;
 
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.booleanToBooleanDatabase;
+import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getBoolean;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getDate;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getInteger;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getLong;
@@ -19,7 +20,6 @@ import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
@@ -68,6 +68,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     private static final String COLUMN_NAME_DOC_METHOD = "DOC_METHOD_FK";
     private static final String COLUMN_NAME_DERIVATION = "DERIVATION_FK";
     private static final String COLUMN_NAME_LEGAL_ACTS = "LEGAL_ACTS_FK";
+    private static final String COLUMN_NAME_PERCENTAGE_OF = "PERCENTAGE_OF_FK";
 
     // This constant is used in the query destined to order concepts for a SQL Server database.
     // Specifically, it is used to compare sibling concepts at the same level and, because of the comparison must be done lexicographically, it is necessary to format the value of the order value by
@@ -180,6 +181,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             executeQueryRetrieveConceptSdmxRelatedArtefact(conceptSchemeVersionId, mapConceptByItemId);
             
             executeQueryRetrieveConceptQuantityType(conceptSchemeVersionId, mapConceptByItemId);
+            executeQueryRetrieveQuantityConceptInternationalString(conceptSchemeVersionId, mapConceptByItemId, ConceptExtensionPointUtilities.PERCENTAGE_OF);
         }
 
         StringBuilder sb = new StringBuilder();
@@ -548,12 +550,36 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     }
 
     @SuppressWarnings("rawtypes")
-    private void executeQueryRetrieveConceptQuantityType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) {
+    private void executeQueryRetrieveQuantityConceptInternationalString(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId, ConceptExtensionPointUtility extractor) {
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("SELECT c.TB_CONCEPTS, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL ");
+        sqlQuery.append("FROM TB_M_CONCEPTS c ");
+        sqlQuery.append("INNER JOIN TB_CONCEPTS cb on cb.ID = c.TB_CONCEPTS ");
+        sqlQuery.append("INNER JOIN TB_M_QUANTITIES ct on ct.id = c.QUANTITY_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = ct." + extractor.getColumnName() + " ");
+        sqlQuery.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemVersionId and c.QUANTITY_FK IS NOT NULL and ct." + extractor.getColumnName() + " IS NOT NULL");
+
+        Query query = getEntityManager().createNativeQuery(sqlQuery.toString());
+        query.setParameter("itemSchemVersionId", itemSchemVersionId);
+        List resultsSql = query.getResultList();
+        for (Object resultSql : resultsSql) {
+            Object[] resultSqlArray = (Object[]) resultSql;
+            Long actualItemId = getLong(resultSqlArray[0]);
+            ItemResult target = mapItemByItemId.get(actualItemId);
+            internationalStringResultSqltoInternationalStringResult(resultSqlArray, extractor.getMetadata(target));
+        }
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private void executeQueryRetrieveConceptQuantityType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) throws MetamacException {
         StringBuilder sqlQuery = new StringBuilder();
         sqlQuery.append("SELECT c.TB_CONCEPTS, ct.QUANTITY_TYPE, ausv.CODE as UNIT_CODELIST_CODE, acb.CODE as UNIT_CODE, "
                 + "ct.UNIT_SYMBOL_POSITION, ct.UNIT_MULTIPLIER, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
-                + " aicd.code as DENOMINATOR_CONCEPT_SCHEME_CODE, acd.code as DENOMINATOR_CONCEPT_CODE, "
-                + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE ");
+                + " aicd.code as DENOMINATOR_CONCEPT_SCHEME_CODE, acd.code as DENOMINATOR_CONCEPT_CODE,"
+                + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE, ct.IS_PERCENTAGE,"
+                + " ct.BASE_VALUE, ct.BASE_TIME,"
+                + " aubl.CODE as LOCATION_BASE_CODELIST_CODE, abl.CODE  as LOCATION_BASE_CODE,"
+                + " aibq.code as BQ_SCHEME_CODE, abq.code as BQ_CODE ");
         sqlQuery.append("FROM TB_M_CONCEPTS c ");
         sqlQuery.append("INNER JOIN TB_CONCEPTS cb on cb.ID = c.TB_CONCEPTS ");
         sqlQuery.append("INNER JOIN TB_M_QUANTITIES ct on ct.id = c.QUANTITY_FK ");
@@ -569,6 +595,14 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS icn ON icn.ID = cn.ITEM_SCHEME_VERSION_FK AND icn.ID != :itemSchemVersionId ");
         sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aicn ON aicn.ID = icn.MAINTAINABLE_ARTEFACT_FK ");
         sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS acn ON acn.ID = cn.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_CODES baseloc on baseloc.ID = ct.BASE_LOCATION_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS ubl ON ubl.ID = baseloc.ITEM_SCHEME_VERSION_FK AND ubl.ID != :itemSchemVersionId ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aubl ON aubl.ID = ubl.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS abl ON abl.ID = baseloc.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_CONCEPTS baseq ON baseq.ID = ct.BASE_QUANTITY_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS ibq ON ibq.ID = baseq.ITEM_SCHEME_VERSION_FK AND ibq.ID != :itemSchemVersionId ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aibq ON aibq.ID = ibq.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS abq ON abq.ID = baseq.NAMEABLE_ARTEFACT_FK ");
         sqlQuery.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemVersionId and c.QUANTITY_FK IS NOT NULL");
 
         Query query = getEntityManager().createNativeQuery(sqlQuery.toString());
@@ -590,7 +624,14 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             String quantityDenominatorConcept = getString(resultSqlArray[11]);
             String quantityNumeratorConceptScheme = getString(resultSqlArray[12]);
             String quantityNumeratorConcept = getString(resultSqlArray[13]);
-
+            Boolean quantityIsPercentage = getBoolean(resultSqlArray[14]);
+            Integer quantityIndexBaseValue = getInteger(resultSqlArray[15]);
+            String quantityIndexBaseTime = getString(resultSqlArray[16]);
+            String quantityIndexBaseLocationCodelistCode = getString(resultSqlArray[17]);
+            String quantityIndexBaseLocationCode = getString(resultSqlArray[18]);
+            String quantityBaseQuantityConceptScheme = getString(resultSqlArray[19]);
+            String quantityBaseQuantityConcept = getString(resultSqlArray[20]);
+            
             QuantityTypeEnum quantityType = QuantityTypeEnum.valueOf(quantityTypeIdentifier);
             QuantityUnitSymbolPositionEnum quantityUnitSymbolPositionType = QuantityUnitSymbolPositionEnum.valueOf(quantityUnitSymbolPosition);
 
@@ -610,6 +651,13 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             extensionEndpoint.setDenominatorConcept(quantityDenominatorConcept);
             extensionEndpoint.setNumeratorConceptScheme(quantityNumeratorConceptScheme);
             extensionEndpoint.setNumeratorConcept(quantityNumeratorConcept);
+            extensionEndpoint.setIsPercentage(quantityIsPercentage);
+            extensionEndpoint.setIndexBaseValue(quantityIndexBaseValue);
+            extensionEndpoint.setIndexBaseTime(quantityIndexBaseTime);
+            extensionEndpoint.setIndexBaseLocationCodelistCode(quantityIndexBaseLocationCodelistCode);
+            extensionEndpoint.setIndexBaseLocationCode(quantityIndexBaseLocationCode);
+            extensionEndpoint.setIndexBaseQuantityConceptScheme(quantityBaseQuantityConceptScheme);
+            extensionEndpoint.setIndexBaseQuantityConcept(quantityBaseQuantityConcept);
 
         }
     }
@@ -871,6 +919,17 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             @Override
             public java.util.Map<String, String> getMetadata(ItemResult item) {
                 return getConceptExtensionPoint(item).getLegalActs();
+            }
+        };
+        public static ConceptExtensionPointUtility PERCENTAGE_OF = new ConceptExtensionPointUtility() {
+
+            @Override
+            public String getColumnName() {
+                return COLUMN_NAME_PERCENTAGE_OF;
+            };
+            @Override
+            public java.util.Map<String, String> getMetadata(ItemResult item) {
+                return getConceptExtensionPoint(item).getPercentageOf();
             }
         };
     }

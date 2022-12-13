@@ -146,7 +146,13 @@ public class TsvImportationUtils {
         List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION,
                 SrmConstants.TSV_HEADER_COMMENT, SrmConstants.TSV_HEADER_PLURAL_NAME, SrmConstants.TSV_HEADER_ACRONYM, SrmConstants.TSV_HEADER_DESCRIPTION_SOURCE, SrmConstants.TSV_HEADER_CONTEXT,
                 SrmConstants.TSV_HEADER_DOC_METHOD, SrmConstants.TSV_HEADER_DERIVATION, SrmConstants.TSV_HEADER_LEGAL_ACTS, SrmConstants.TSV_HEADER_CONCEPT_TYPE,
-                SrmConstants.TSV_HEADER_REPRESENTATION, SrmConstants.TSV_HEADER_CONCEPT_EXTENDS, SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT);
+                SrmConstants.TSV_HEADER_REPRESENTATION, SrmConstants.TSV_HEADER_CONCEPT_EXTENDS, SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT, 
+                SrmConstants.TSV_HEADER_QUANTITY_TYPE, SrmConstants.TSV_HEADER_UNIT_CODELIST_CODE, SrmConstants.TSV_HEADER_UNIT_CODE, SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION,
+                SrmConstants.TSV_HEADER_UNIT_MULTIPLIER, SrmConstants.TSV_HEADER_SIGNIFICANT_DIGITS, SrmConstants.TSV_HEADER_DECIMAL_PLACES, SrmConstants.TSV_HEADER_MINIMUM,
+                SrmConstants.TSV_HEADER_MAXIMUM, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
+                SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE, SrmConstants.TSV_HEADER_PERCENTAGE_OF, SrmConstants.TSV_HEADER_INDEX_BASE_VALUE,
+                SrmConstants.TSV_HEADER_INDEX_BASE_TIME, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE, SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME,
+                SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT);
 
         String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
         if (headerColumns == null || headerColumns.length < headersExpected.size()) {
@@ -266,7 +272,77 @@ public class TsvImportationUtils {
             } else if (SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT.equals(columnName)) {
                 header.setSdmxRelatedArtefactPosition(i);
                 headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_QUANTITY_TYPE.equals(columnName)) {
+                header.setQuantityTypePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_UNIT_CODELIST_CODE.equals(columnName)) {
+                header.setUnitCodelistCodePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_UNIT_CODE.equals(columnName)) {
+                header.setUnitCodePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION.equals(columnName)) {
+                header.setUnitSymbolPositionPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_UNIT_MULTIPLIER.equals(columnName)) {
+                header.setUnitMultiplierPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_SIGNIFICANT_DIGITS.equals(columnName)) {
+                header.setSignificantDigitsPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_DECIMAL_PLACES.equals(columnName)) {
+                header.setDecimalPlacesPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_MINIMUM.equals(columnName)) {
+                header.setMiminumPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_MAXIMUM.equals(columnName)) {
+                header.setMaximumPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME.equals(columnName)) {
+                header.setDenominatorConceptSchemePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT.equals(columnName)) {
+                header.setDenominatorConceptPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME.equals(columnName)) {
+                header.setNumeratorConceptSchemePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT.equals(columnName)) {
+                header.setNumeratorConceptPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_IS_PERCENTAGE.equals(columnName)) {
+                header.setIsPercentagePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_PERCENTAGE_OF.equals(columnName)) {
+                header.setPercentageOf(columnHeaderToInternationalStringTsv(headerColumns, i, columnSplited, headerExpected, header.getPercentageOf(), exceptions));
+                if (header.getPercentageOf() == null) {
+                    break;
+                }
+                if (header.getPercentageOf().isEndPositionSetted()) {
+                    headerExpectedIndex++;
+                }
+            } else if (SrmConstants.TSV_HEADER_INDEX_BASE_VALUE.equals(columnName)) {
+                header.setIndexBaseValuePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_INDEX_BASE_TIME.equals(columnName)) {
+                header.setIndexBaseTimePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE.equals(columnName)) {
+                header.setIndexBaseLocationCodelistCodePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE.equals(columnName)) {
+                header.setIndexBaseLocationCodePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME.equals(columnName)) {
+                header.setIndexBaseQuantityConceptSchemePosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT.equals(columnName)) {
+                header.setIndexBaseQuantityConceptPosition(i);
+                headerExpectedIndex++;
             }
+            
+            
         }
         if (CollectionUtils.isEmpty(exceptions)) {
             if (header.getColumnsSize() == 0) {
@@ -283,7 +359,7 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link ConceptMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static ConceptMetamac tsvLineToConcept(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+    public static ConceptMetamac tsvLineToConcept(ImportationConceptsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
         ConceptMetamac conceptMetamac = (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode,
@@ -302,9 +378,10 @@ public class TsvImportationUtils {
         conceptMetamac.setDocMethod(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getDocMethod(), columns, conceptMetamac.getDocMethod()));
         conceptMetamac.setDerivation(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getDerivation(), columns, conceptMetamac.getDerivation()));
         conceptMetamac.setLegalActs(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getLegalActs(), columns, conceptMetamac.getLegalActs()));
-
+        
         return conceptMetamac;
     }
+    
     // ---------------------------------------------------------------------------------------------------------------
     // CATEGORIES
     // ---------------------------------------------------------------------------------------------------------------
@@ -912,10 +989,7 @@ public class TsvImportationUtils {
                             .add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_SDMX_RELATED_ARTEFACT, item.getNameableArtefact().getCode(), sdmxRelatedArtefact));
                     return null;
                 }
-            } else {
-                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_SDMX_RELATED_ARTEFACT, item.getNameableArtefact().getCode(), sdmxRelatedArtefact));
-                return null;
-            }
+            } 
         }
 
         return null;

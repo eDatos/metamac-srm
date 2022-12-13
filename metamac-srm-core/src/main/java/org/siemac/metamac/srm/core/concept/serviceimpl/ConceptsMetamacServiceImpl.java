@@ -68,6 +68,8 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.Quantity;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -875,6 +877,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
                         // ConceptsExtends
                         concept.setConceptExtends(tsvLineToConceptExtends(ctx, conceptTsvHeader, columns, lineNumber, concept, exceptionItems));
+
+                        concept.setQuantity(setQuantityMetadata(header, columns, lineNumber, conceptSchemeVersion, updateAlreadyExisting, conceptsPreviousInConceptSchemeByCode,
+                                conceptsToPersistByCode, exceptionItems, informationItems));
+   
                     }
 
                     if (concept != null) {
@@ -913,6 +919,67 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
+    private Quantity setQuantityMetadata(ImportationConceptsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+            Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) {
+
+        Quantity quantity = new Quantity();
+
+        String quatityType = columns[header.getQuantityTypePosition()];
+        QuantityTypeEnum quantityTypeEnum = QuantityTypeEnum.valueOf(quatityType);
+        quantity.setQuantityType(quantityTypeEnum);
+        
+        String unitSymbolPosition = columns[header.getUnitSymbolPositionPosition()];
+        QuantityUnitSymbolPositionEnum unitSymbolPositionEnum = QuantityUnitSymbolPositionEnum.valueOf(unitSymbolPosition);
+        quantity.setUnitSymbolPosition(unitSymbolPositionEnum);
+        
+        String intValue = columns[header.getUnitMultiplierPosition()];
+        if (intValue != null) {
+            quantity.setUnitMultiplier(Integer.valueOf(intValue));
+        } else {
+            quantity.setUnitMultiplier(null);
+        }
+         
+        intValue = columns[header.getSignificantDigitsPosition()];
+        if (intValue != null) {
+            quantity.setSignificantDigits(Integer.valueOf(intValue));
+        } else {
+            quantity.setSignificantDigits(null);
+        }
+        
+        intValue = columns[header.getDecimalPlacesPosition()];
+        if (intValue != null) {
+            quantity.setDecimalPlaces(Integer.valueOf(intValue));
+        } else {
+            quantity.setDecimalPlaces(null);
+        }
+        
+        intValue = columns[header.getMiminumPosition()];
+        if (intValue != null) {
+            quantity.setMinimum(Integer.valueOf(intValue));
+        } else {
+            quantity.setMinimum(null);
+        }
+        
+        intValue = columns[header.getMaximumPosition()];
+        if (intValue != null) {
+            quantity.setMaximum(Integer.valueOf(intValue));
+        } else {
+            quantity.setMaximum(null);
+        }
+        
+        String isPercentage = columns[header.getIsPercentagePosition()];
+        if (!StringUtils.isBlank(isPercentage)) {
+            quantity.setIsPercentage(Boolean.valueOf(isPercentage));
+        } else {
+            quantity.setIsPercentage(null);
+        }        
+
+        quantity.setPercentageOf(TsvImportationUtils.tsvLineToInternationalString(header.getPercentageOf(), columns, quantity.getPercentageOf()));
+
+        return quantity;
+
+    }
+    
     private void sortConceptsByOrder(List<Concept> allItemsToUpdate) {
         if (CollectionUtils.isEmpty(allItemsToUpdate)) {
             return;
@@ -995,7 +1062,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         }
         return null;
     }
-
+    
     private Representation tsvLineToRepresentation(ServiceContext ctx, RepresentationsTsv representationsTsv, String[] columns, int lineNumber, ConceptMetamac conceptMetamac,
             List<MetamacExceptionItem> exceptionItems) {
         if (representationsTsv == null) {

@@ -195,12 +195,8 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_HEADER_REPRESENTATION + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + SrmConstants.TSV_HEADER_REPRESENTATION_SUB_VALUE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_CONCEPT_EXTENDS);
-
-        if (ConceptSchemeTypeEnum.OPERATION.equals(conceptSchemeVersion.getType()) || ConceptSchemeTypeEnum.TRANSVERSAL.equals(conceptSchemeVersion.getType())) {
-            writer.write(SrmConstants.TSV_SEPARATOR);
-            writer.write(SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT);
-        }
-        
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT);        
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_QUANTITY_TYPE);
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -699,6 +695,8 @@ public class TsvExportationUtils {
             if (extensionPoint.getSdmxRelatedArtefact() != null) {
                 writer.write(extensionPoint.getSdmxRelatedArtefact().toString());
             }
+        } else {
+            writer.write(SrmConstants.TSV_SEPARATOR);
         }
     }
 

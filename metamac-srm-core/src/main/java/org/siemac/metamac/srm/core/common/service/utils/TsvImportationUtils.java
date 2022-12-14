@@ -26,6 +26,7 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
@@ -56,6 +57,24 @@ public class TsvImportationUtils {
 
     private static Logger logger = LoggerFactory.getLogger(TsvImportationUtils.class);
 
+    protected static final String[]                  fieldForMagnitudeQuantityType  = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM};
+    protected static final String[]                  fieldForFractionQuantityType   = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM,
+            SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
+            SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT};
+    protected static final String[]                  fieldForRatioQuantityType      = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM,
+            SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
+            SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE, SrmConstants.TSV_HEADER_PERCENTAGE_OF};
+    protected static final String[]                  fieldForAmountQuantityType     = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM,
+            SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
+            SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE, SrmConstants.TSV_HEADER_PERCENTAGE_OF};
+    protected static final String[]                  fieldForIndexQuantityType      = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM,
+            SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
+            SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE, SrmConstants.TSV_HEADER_PERCENTAGE_OF, SrmConstants.TSV_HEADER_INDEX_BASE_VALUE,
+            SrmConstants.TSV_HEADER_INDEX_BASE_TIME, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE};
+    protected static final String[]                  fieldForChangeRateQuantityType = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM,
+            SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
+            SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE, SrmConstants.TSV_HEADER_PERCENTAGE_OF, SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME,
+            SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT};
     // ---------------------------------------------------------------------------------------------------------------
     // VARIABLE ELEMENTS
     // ---------------------------------------------------------------------------------------------------------------
@@ -354,6 +373,27 @@ public class TsvImportationUtils {
             // description is optional
         }
         return header;
+    }
+    
+    
+    public static boolean isValidFieldForQuantityType(String columnName, QuantityTypeEnum quantityType) {
+        switch (quantityType) {
+            case MAGNITUDE:
+                return Arrays.asList(fieldForMagnitudeQuantityType).contains(columnName);
+            case FRACTION:
+                return Arrays.asList(fieldForFractionQuantityType).contains(columnName);
+            case RATIO:
+                return Arrays.asList(fieldForRatioQuantityType).contains(columnName);
+            case AMOUNT:
+                return Arrays.asList(fieldForAmountQuantityType).contains(columnName);
+            case INDEX:
+                return Arrays.asList(fieldForIndexQuantityType).contains(columnName);
+            case CHANGE_RATE:
+                return Arrays.asList(fieldForChangeRateQuantityType).contains(columnName);
+            default:
+                return false;
+
+        }
     }
 
     /**

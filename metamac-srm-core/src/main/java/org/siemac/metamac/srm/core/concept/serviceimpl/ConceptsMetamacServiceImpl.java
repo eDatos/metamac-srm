@@ -878,7 +878,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                         // ConceptsExtends
                         concept.setConceptExtends(tsvLineToConceptExtends(ctx, conceptTsvHeader, columns, lineNumber, concept, exceptionItems));
 
-                        concept.setQuantity(setQuantityMetadata(header, columns, lineNumber, conceptSchemeVersion, updateAlreadyExisting, conceptsPreviousInConceptSchemeByCode,
+                        concept.setQuantity(setQuantityMetadata(ctx, header, columns, lineNumber, conceptSchemeVersion, updateAlreadyExisting, conceptsPreviousInConceptSchemeByCode,
                                 conceptsToPersistByCode, exceptionItems, informationItems));
    
                     }
@@ -919,8 +919,54 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
-    private Quantity setQuantityMetadata(ImportationConceptsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
-            Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) {
+    private CodeMetamac findCodesByCodelistCodeByCondition(ServiceContext ctx, String codeListCode, String codeInCodelist) throws MetamacException {
+
+        // Prepare conditions
+
+        PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1, false);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).distinctRoot().build();
+
+        // codelist internally or externally published
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
+                .withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient()).eq(Boolean.TRUE).buildSingle());
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
+                .withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(codeListCode).buildSingle());
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
+                .withProperty(CodeMetamacProperties.nameableArtefact().code()).eq(codeInCodelist).buildSingle());
+        
+
+        PagedResult<CodeMetamac> result = codesMetamacService.findCodesByCondition(ctx, conditions, pagingParameter);
+        
+        if (result.getValues() != null && result.getValues().size() == 1) {
+            return result.getValues().get(0);
+        }
+        
+        return null;
+    }
+    
+    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeCode, String conceptCodeInConceptScheme) throws MetamacException {
+
+        PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1, false);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).distinctRoot().build();
+
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient())
+                .eq(Boolean.TRUE).buildSingle());
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(conceptSchemeCode)
+                .buildSingle());
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.nameableArtefact().code()).eq(conceptCodeInConceptScheme).buildSingle());
+
+        PagedResult<ConceptMetamac> result = findConceptsByCondition(ctx, conditions, pagingParameter);
+        if (result.getValues() != null && result.getValues().size() == 1) {
+            return result.getValues().get(0);
+        }
+
+        return null;
+    }
+        
+    private Quantity setQuantityMetadata(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+            Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) throws MetamacException {
 
         Quantity quantity = new Quantity();
 
@@ -928,44 +974,70 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         QuantityTypeEnum quantityTypeEnum = QuantityTypeEnum.valueOf(quatityType);
         quantity.setQuantityType(quantityTypeEnum);
         
+        String unitCodeList = columns[header.getUnitCodelistCodePosition()];
+        String unitCode = columns[header.getUnitCodePosition()];
+        if (unitCodeList != null && unitCode != null) {
+            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, unitCodeList, unitCode);
+            quantity.setUnitCode(code);
+        } else {
+            // TODO EDATOS-3811
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND, unitCodeList));
+            return null;
+        }
+        
+        
         String unitSymbolPosition = columns[header.getUnitSymbolPositionPosition()];
         QuantityUnitSymbolPositionEnum unitSymbolPositionEnum = QuantityUnitSymbolPositionEnum.valueOf(unitSymbolPosition);
         quantity.setUnitSymbolPosition(unitSymbolPositionEnum);
         
         String intValue = columns[header.getUnitMultiplierPosition()];
-        if (intValue != null) {
+        if (!StringUtils.isBlank(intValue)) {
             quantity.setUnitMultiplier(Integer.valueOf(intValue));
         } else {
             quantity.setUnitMultiplier(null);
         }
          
         intValue = columns[header.getSignificantDigitsPosition()];
-        if (intValue != null) {
+        if (!StringUtils.isBlank(intValue)) {
             quantity.setSignificantDigits(Integer.valueOf(intValue));
         } else {
             quantity.setSignificantDigits(null);
         }
         
         intValue = columns[header.getDecimalPlacesPosition()];
-        if (intValue != null) {
+        if (!StringUtils.isBlank(intValue)) {
             quantity.setDecimalPlaces(Integer.valueOf(intValue));
         } else {
             quantity.setDecimalPlaces(null);
         }
         
         intValue = columns[header.getMiminumPosition()];
-        if (intValue != null) {
+        if (!StringUtils.isBlank(intValue)) {
             quantity.setMinimum(Integer.valueOf(intValue));
         } else {
             quantity.setMinimum(null);
         }
         
         intValue = columns[header.getMaximumPosition()];
-        if (intValue != null) {
+        if (!StringUtils.isBlank(intValue)) {
             quantity.setMaximum(Integer.valueOf(intValue));
         } else {
             quantity.setMaximum(null);
         }
+        
+        String denominatorConceptScheme = columns[header.getDenominatorConceptSchemePosition()];
+        String denominatorConcept = columns[header.getDenominatorConceptPosition()];
+        if (denominatorConceptScheme != null && denominatorConcept != null) {
+            ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, denominatorConceptScheme, denominatorConcept);
+            quantity.setDenominator(concept);
+        } 
+        
+        String numeratorConceptScheme = columns[header.getNumeratorConceptSchemePosition()];
+        String numeratorConcept = columns[header.getNumeratorConceptPosition()];
+        if (numeratorConceptScheme != null && numeratorConcept != null) {
+            ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, numeratorConceptScheme, numeratorConcept);
+            quantity.setNumerator(concept);
+        } 
         
         String isPercentage = columns[header.getIsPercentagePosition()];
         if (!StringUtils.isBlank(isPercentage)) {
@@ -976,6 +1048,35 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         quantity.setPercentageOf(TsvImportationUtils.tsvLineToInternationalString(header.getPercentageOf(), columns, quantity.getPercentageOf()));
 
+        
+        intValue = columns[header.getIndexBaseValuePosition()];
+        if (!StringUtils.isBlank(intValue)) {
+            quantity.setBaseValue(Integer.valueOf(intValue));
+        } else {
+            quantity.setBaseValue(null);
+        }
+        
+        String indexBaseTime = columns[header.getIndexBaseTimePosition()];
+        if (!StringUtils.isBlank(indexBaseTime)) {
+            quantity.setBaseTime(indexBaseTime);
+        } else {
+            quantity.setBaseTime(null);
+        }  
+        
+        String indexBaseLocationCodeList = columns[header.getIndexBaseLocationCodelistCodePosition()];
+        String indexBaseLocationCode = columns[header.getIndexBaseLocationCodePosition()];
+        if (indexBaseLocationCodeList != null && indexBaseLocationCode != null) {
+            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, indexBaseLocationCodeList, indexBaseLocationCode);
+            quantity.setBaseLocation(code);
+        } 
+        
+        String indexBaseQuantityConceptScheme = columns[header.getIndexBaseQuantityConceptSchemePosition()];
+        String indexBaseQuantityConcept = columns[header.getIndexBaseQuantityConceptPosition()];
+        if (indexBaseQuantityConceptScheme != null && indexBaseQuantityConcept != null) {
+            ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, indexBaseQuantityConceptScheme, indexBaseQuantityConcept);
+            quantity.setBaseQuantity(concept);
+        } 
+        
         return quantity;
 
     }

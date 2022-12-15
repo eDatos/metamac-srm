@@ -884,7 +884,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
               
                     }
 
-                    if (concept != null && !CollectionUtils.isEmpty(exceptionItems)) {
+                    if (concept != null && CollectionUtils.isEmpty(exceptionItems)) {
                         conceptsToPersist.add(concept);
                         conceptsToPersistByCode.put(concept.getNameableArtefact().getCode(), concept);
                     }

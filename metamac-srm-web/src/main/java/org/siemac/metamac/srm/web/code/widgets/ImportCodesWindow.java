@@ -27,17 +27,27 @@ public class ImportCodesWindow extends ImportResourceWindow {
     protected WarningLabel     warningLabel;
     protected InformationLabel informationExternalResourceLabel;
     protected InformationLabel informationLabel;
+    protected InformationLabel informationTemporalVersionLabel;
     public ImportCodesWindow() {
         super(getConstants().actionImportCodesTsv());
 
         UploadCodesForm form = new UploadCodesForm();
         setForm(form);
 
+        buildInformationTemporalVersionLabel();
         buildInformationExternalResourceLabel();
         buildInformationLabel();
         buildWarningLabel();
     }
 
+    private void buildInformationTemporalVersionLabel() {
+        informationTemporalVersionLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationTemporalVersionInfoMessage());
+        informationTemporalVersionLabel.setWidth(this.form.getWidth());
+        informationTemporalVersionLabel.setMargin(10);
+        informationTemporalVersionLabel.hide();
+        body.addMember(informationTemporalVersionLabel, 1);
+    }
+    
     private void buildInformationExternalResourceLabel() {
         informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationExternalResourcesInfoMessage());
         informationExternalResourceLabel.setWidth(this.form.getWidth());
@@ -65,7 +75,7 @@ public class ImportCodesWindow extends ImportResourceWindow {
         ((HiddenItem) form.getItem(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN)).setDefaultValue(codelistMetamacDto.getUrn());
     }
 
-    public void initImportWindow(Boolean isLocalResource) {
+    public void initImportWindow(Boolean isLocalResource, Boolean isTemporalVersion) {
         CustomCheckboxItem updateExistingCodesItem = (CustomCheckboxItem) this.form.getItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING);
 
         if (Boolean.FALSE.equals(isLocalResource)) {
@@ -73,12 +83,21 @@ public class ImportCodesWindow extends ImportResourceWindow {
             updateExistingCodesItem.setCanEdit(false);
             updateExistingCodesItem.hide();
             informationExternalResourceLabel.show();
+            informationTemporalVersionLabel.hide();
+            informationLabel.hide();
+        } else if (Boolean.TRUE.equals(isTemporalVersion)) {
+            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
+            updateExistingCodesItem.setCanEdit(false);
+            updateExistingCodesItem.hide();
+            informationExternalResourceLabel.hide();
+            informationTemporalVersionLabel.show();
             informationLabel.hide();
         } else {
             updateExistingCodesItem.show();
             updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
             updateExistingCodesItem.setCanEdit(true);
             informationExternalResourceLabel.hide();
+            informationTemporalVersionLabel.hide();
             informationLabel.show();
         }
     }

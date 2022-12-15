@@ -33,6 +33,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
@@ -806,7 +807,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, conceptSchemeUrn);
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(conceptSchemeVersion, conceptSchemeVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureCanBeModified(ctx, conceptSchemeVersion);
+        srmValidation.checkItemsStructureCanBeModified(ctx, conceptSchemeVersion, false);
 
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
@@ -848,7 +849,12 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 for (Item item : conceptSchemeVersion.getItems()) {
                     conceptsPreviousInConceptSchemeByCode.put(item.getNameableArtefact().getCode(), item);
                 }
-
+                
+                boolean isTemporalVersion = VersionUtil.isTemporalVersion(conceptSchemeVersion.getMaintainableArtefact().getVersionLogic());
+                if (isTemporalVersion) {
+                    updateAlreadyExisting = true;
+                }
+                
                 int lineNumber = 2;
                 Map<String, ConceptType> cachedConceptTypeMap = new HashMap<String, ConceptType>();
                 while ((line = bufferedReader.readLine()) != null) {
@@ -861,7 +867,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                         continue;
                     }
                     // Transform concept and add to list to persist
-                    ConceptMetamac concept = TsvImportationUtils.tsvLineToConcept(header, columns, lineNumber, conceptSchemeVersion, updateAlreadyExisting, conceptsPreviousInConceptSchemeByCode,
+                    ConceptMetamac concept = TsvImportationUtils.tsvLineToConcept(header, columns, lineNumber, conceptSchemeVersion, isTemporalVersion, updateAlreadyExisting, conceptsPreviousInConceptSchemeByCode,
                             conceptsToPersistByCode, exceptionItems, informationItems);
 
                     // Import other specials Metadata
@@ -871,8 +877,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                         concept.setConceptType(tsvLineToConceptType(ctx, conceptTsvHeader, columns, cachedConceptTypeMap));
 
                         // Representation
-                        concept.setCoreRepresentation(tsvLineToRepresentation(ctx, conceptTsvHeader.getRepresentation(), columns, lineNumber, concept, exceptionItems));
-
+                        if (!isTemporalVersion) {
+                            concept.setCoreRepresentation(tsvLineToRepresentation(ctx, conceptTsvHeader.getRepresentation(), columns, lineNumber, concept, exceptionItems));
+                        }
+                        
                         // ConceptsExtends
                         concept.setConceptExtends(tsvLineToConceptExtends(ctx, conceptTsvHeader, columns, lineNumber, concept, exceptionItems));
                     }

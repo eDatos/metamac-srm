@@ -57,6 +57,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
@@ -798,8 +799,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureIsNotTemporal(ctx, codelistVersion.getMaintainableArtefact());
-
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
 
@@ -850,7 +849,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 }
 
                 boolean isDefaultMaintainer = isDefaultMaintainer(codelistVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
-                if (!isDefaultMaintainer) {
+                boolean isTemporalVersion = VersionUtil.isTemporalVersion(codelistVersion.getMaintainableArtefact().getVersionLogic());
+                if (!isDefaultMaintainer || isTemporalVersion) {
                     updateAlreadyExisting = true;
                 }
                 int lineNumber = 2;
@@ -865,8 +865,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                         continue;
                     }
                     // Transform code and add to list to persist
-                    CodeMetamac code = TsvImportationUtils.tsvLineToCode(header, columns, lineNumber, codelistVersion, isDefaultMaintainer, variableElementsInVariableByCode, updateAlreadyExisting,
-                            codesPreviousInCodelistByCode, codesToPersistByCode, exceptionItems, informationItems);
+                    CodeMetamac code = TsvImportationUtils.tsvLineToCode(header, columns, lineNumber, codelistVersion, isDefaultMaintainer, isTemporalVersion, variableElementsInVariableByCode,
+                            updateAlreadyExisting, codesPreviousInCodelistByCode, codesToPersistByCode, exceptionItems, informationItems);
                     if (code != null) {
                         codesToPersist.add(code);
                         codesToPersistByCode.put(code.getNameableArtefact().getCode(), code);

@@ -877,12 +877,14 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
                         // ConceptsExtends
                         concept.setConceptExtends(tsvLineToConceptExtends(ctx, conceptTsvHeader, columns, lineNumber, concept, exceptionItems));
-
-                        concept.setQuantity(setQuantityMetadata(ctx, header, columns, conceptSchemeVersion, exceptionItems, informationItems));
+                        
+                        concept.setQuantity(setQuantityMetadata(ctx, header, columns, concept.getQuantity() != null ? concept.getQuantity() : new Quantity(), exceptionItems));
    
+                        TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
+              
                     }
 
-                    if (concept != null) {
+                    if (concept != null && !CollectionUtils.isEmpty(exceptionItems)) {
                         conceptsToPersist.add(concept);
                         conceptsToPersistByCode.put(concept.getNameableArtefact().getCode(), concept);
                     }
@@ -963,11 +965,75 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         return null;
     }
-        
-    private Quantity setQuantityMetadata(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, ItemSchemeVersion itemSchemeVersion, List<MetamacExceptionItem> exceptionItems,
-            List<MetamacExceptionItem> infoItems) throws MetamacException {
 
-        Quantity quantity = new Quantity();
+    private Quantity setQuantityMetadata(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, Quantity quantity, List<MetamacExceptionItem> exceptionItems) {
+        try {
+
+            setQuantityCommonMetadata(ctx, header, columns, quantity);
+
+            String intValue = columns[header.getMiminumPosition()];
+            if (!StringUtils.isBlank(intValue)) {
+                quantity.setMinimum(Integer.valueOf(intValue));
+            } else {
+                quantity.setMinimum(null);
+            }
+
+            intValue = columns[header.getMaximumPosition()];
+            if (!StringUtils.isBlank(intValue)) {
+                quantity.setMaximum(Integer.valueOf(intValue));
+            } else {
+                quantity.setMaximum(null);
+            }
+
+            String denominatorConceptScheme = columns[header.getDenominatorConceptSchemePosition()];
+            String denominatorConcept = columns[header.getDenominatorConceptPosition()];
+            if (denominatorConceptScheme != null && denominatorConcept != null) {
+                ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, denominatorConceptScheme, denominatorConcept);
+                quantity.setDenominator(concept);
+            } else {
+                quantity.setDenominator(null);
+            }
+
+            String numeratorConceptScheme = columns[header.getNumeratorConceptSchemePosition()];
+            String numeratorConcept = columns[header.getNumeratorConceptPosition()];
+            if (numeratorConceptScheme != null && numeratorConcept != null) {
+                ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, numeratorConceptScheme, numeratorConcept);
+                quantity.setNumerator(concept);
+            } else {
+                quantity.setNumerator(null);
+            }
+
+            String isPercentage = columns[header.getIsPercentagePosition()];
+            if (!StringUtils.isBlank(isPercentage)) {
+                quantity.setIsPercentage(Boolean.valueOf(isPercentage));
+                if (Boolean.TRUE.equals(quantity.getIsPercentage())) {
+                    quantity.setPercentageOf(TsvImportationUtils.tsvLineToInternationalString(header.getPercentageOf(), columns, quantity.getPercentageOf()));
+                } else {
+                    quantity.setPercentageOf(null);
+                }
+            } else {
+                quantity.setIsPercentage(null);
+                quantity.setPercentageOf(null);
+            }
+
+            setIndexBaseType(ctx, header, columns, quantity);
+
+            String indexBaseQuantityConceptScheme = columns[header.getIndexBaseQuantityConceptSchemePosition()];
+            String indexBaseQuantityConcept = columns[header.getIndexBaseQuantityConceptPosition()];
+            if (indexBaseQuantityConceptScheme != null && indexBaseQuantityConcept != null) {
+                ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, indexBaseQuantityConceptScheme, indexBaseQuantityConcept);
+                quantity.setBaseQuantity(concept);
+            } else {
+                quantity.setBaseQuantity(null);
+            }
+
+        } catch (MetamacException e) {
+            exceptionItems.addAll(e.getExceptionItems());
+        }
+        return quantity;
+    }
+
+    private void setQuantityCommonMetadata(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, Quantity quantity) throws MetamacException {
 
         String quatityType = columns[header.getQuantityTypePosition()];
         QuantityTypeEnum quantityTypeEnum = QuantityTypeEnum.valueOf(quatityType);
@@ -978,10 +1044,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         if (unitCodeList != null && unitCode != null) {
             CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, unitCodeList, unitCode);
             quantity.setUnitCode(code);
-        } else {
-            // TODO EDATOS-3811
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND, unitCodeList));
-            return null;
         }
 
         String unitSymbolPosition = columns[header.getUnitSymbolPositionPosition()];
@@ -1009,88 +1071,35 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             quantity.setDecimalPlaces(null);
         }
 
-        intValue = columns[header.getMiminumPosition()];
-        if (!StringUtils.isBlank(intValue) && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_MINIMUM, quantityTypeEnum)) {
-            quantity.setMinimum(Integer.valueOf(intValue));
-        } else {
-            quantity.setMinimum(null);
-        }
-
-        intValue = columns[header.getMaximumPosition()];
-        if (!StringUtils.isBlank(intValue) && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_MAXIMUM, quantityTypeEnum)) {
-            quantity.setMaximum(Integer.valueOf(intValue));
-        } else {
-            quantity.setMaximum(null);
-        }
-
-        String denominatorConceptScheme = columns[header.getDenominatorConceptSchemePosition()];
-        String denominatorConcept = columns[header.getDenominatorConceptPosition()];
-        if (denominatorConceptScheme != null && denominatorConcept != null && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, quantityTypeEnum)) {
-            ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, denominatorConceptScheme, denominatorConcept);
-            quantity.setDenominator(concept);
-        }
-
-        String numeratorConceptScheme = columns[header.getNumeratorConceptSchemePosition()];
-        String numeratorConcept = columns[header.getNumeratorConceptPosition()];
-        if (numeratorConceptScheme != null && numeratorConcept != null && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME, quantityTypeEnum)) {
-            ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, numeratorConceptScheme, numeratorConcept);
-            quantity.setNumerator(concept);
-        }
-
-        String isPercentage = columns[header.getIsPercentagePosition()];
-        if (!StringUtils.isBlank(isPercentage) && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_IS_PERCENTAGE, quantityTypeEnum)) {
-            quantity.setIsPercentage(Boolean.valueOf(isPercentage));
-            quantity.setPercentageOf(TsvImportationUtils.tsvLineToInternationalString(header.getPercentageOf(), columns, quantity.getPercentageOf()));
-        } else {
-            quantity.setIsPercentage(null);
-            quantity.setPercentageOf(null);
-        }
-
-        setIndexBaseType(ctx, header, columns, quantity, exceptionItems, infoItems); 
-        
-        String indexBaseQuantityConceptScheme = columns[header.getIndexBaseQuantityConceptSchemePosition()];
-        String indexBaseQuantityConcept = columns[header.getIndexBaseQuantityConceptPosition()];
-        if (indexBaseQuantityConceptScheme != null && indexBaseQuantityConcept != null && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME, quantityTypeEnum)) {
-            ConceptMetamac concept = findConceptsByConceptSchemesCodeByCondiction(ctx, indexBaseQuantityConceptScheme, indexBaseQuantityConcept);
-            quantity.setBaseQuantity(concept);
-        }
-
-        return quantity;
-
     }
-    
-    private void setIndexBaseType(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, Quantity quantity, List<MetamacExceptionItem> exceptionItems,
-            List<MetamacExceptionItem> infoItems) {
-        try {
-            String intValue = columns[header.getIndexBaseValuePosition()];
-            if (!StringUtils.isBlank(intValue) && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_INDEX_BASE_VALUE, quantity.getQuantityType())) {
-                quantity.setBaseValue(Integer.valueOf(intValue));
-                return;
-            } else {
-                quantity.setBaseValue(null);
-            }
 
-            String indexBaseTime = columns[header.getIndexBaseTimePosition()];
-            if (!StringUtils.isBlank(indexBaseTime) && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_INDEX_BASE_TIME, quantity.getQuantityType())) {
-                quantity.setBaseTime(indexBaseTime);
-                return;
-            } else {
-                quantity.setBaseTime(null);
-            }
+    private void setIndexBaseType(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, Quantity quantity) throws MetamacException {
+        String intValue = columns[header.getIndexBaseValuePosition()];
+        if (!StringUtils.isBlank(intValue)) {
+            quantity.setBaseValue(Integer.valueOf(intValue));
+            return;
+        } else {
+            quantity.setBaseValue(null);
+        }
 
-            String indexBaseLocationCodeList = columns[header.getIndexBaseLocationCodelistCodePosition()];
-            String indexBaseLocationCode = columns[header.getIndexBaseLocationCodePosition()];
-            if (indexBaseLocationCodeList != null && indexBaseLocationCode != null
-                    && TsvImportationUtils.isValidFieldForQuantityType(SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE, quantity.getQuantityType())) {
-                CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, indexBaseLocationCodeList, indexBaseLocationCode);
-                quantity.setBaseLocation(code);
-            }
-        } catch (MetamacException e) {
-            // TODO EDATOS-3811 Tratar error
+        String indexBaseTime = columns[header.getIndexBaseTimePosition()];
+        if (!StringUtils.isBlank(indexBaseTime)) {
+            quantity.setBaseTime(indexBaseTime);
+            return;
+        } else {
+            quantity.setBaseTime(null);
+        }
+
+        String indexBaseLocationCodeList = columns[header.getIndexBaseLocationCodelistCodePosition()];
+        String indexBaseLocationCode = columns[header.getIndexBaseLocationCodePosition()];
+        if (indexBaseLocationCodeList != null && indexBaseLocationCode != null) {
+            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, indexBaseLocationCodeList, indexBaseLocationCode);
+            quantity.setBaseLocation(code);
+        } else {
+            quantity.setBaseLocation(null);
         }
     }
-    
-    
+      
     private void sortConceptsByOrder(List<Concept> allItemsToUpdate) {
         if (CollectionUtils.isEmpty(allItemsToUpdate)) {
             return;

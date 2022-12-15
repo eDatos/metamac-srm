@@ -26,7 +26,6 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
-import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
@@ -373,27 +372,6 @@ public class TsvImportationUtils {
             // description is optional
         }
         return header;
-    }
-    
-    
-    public static boolean isValidFieldForQuantityType(String columnName, QuantityTypeEnum quantityType) {
-        switch (quantityType) {
-            case MAGNITUDE:
-                return Arrays.asList(fieldForMagnitudeQuantityType).contains(columnName);
-            case FRACTION:
-                return Arrays.asList(fieldForFractionQuantityType).contains(columnName);
-            case RATIO:
-                return Arrays.asList(fieldForRatioQuantityType).contains(columnName);
-            case AMOUNT:
-                return Arrays.asList(fieldForAmountQuantityType).contains(columnName);
-            case INDEX:
-                return Arrays.asList(fieldForIndexQuantityType).contains(columnName);
-            case CHANGE_RATE:
-                return Arrays.asList(fieldForChangeRateQuantityType).contains(columnName);
-            default:
-                return false;
-
-        }
     }
 
     /**
@@ -1045,6 +1023,21 @@ public class TsvImportationUtils {
         return false;
     }
 
+    public static void checkCanCreateOrUpdateConcept(ConceptSchemeVersionMetamac itemSchemeVersion, ConceptMetamac concept, int lineNumber, List<MetamacExceptionItem> exceptionItems) {
+        try {
+            if (concept.getId() == null) {
+                checkCanCreateItem(itemSchemeVersion, concept, TypeExternalArtefactsEnum.CONCEPT);
+            } else {
+                checkCanUpdateItem(itemSchemeVersion, concept, TypeExternalArtefactsEnum.CONCEPT);
+            }
+        } catch (MetamacException metamacException) {
+            logger.error("Error importing concept from tsv file", metamacException);
+            MetamacExceptionItem metamacExceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
+            metamacExceptionItem.setExceptionItems(metamacException.getExceptionItems());
+            exceptionItems.add(metamacExceptionItem);
+        }
+    }
+    
     private static void checkCanCreateItem(ItemSchemeVersion itemSchemeVersion, Item item, TypeExternalArtefactsEnum itemType) throws MetamacException {
         if (TypeExternalArtefactsEnum.CONCEPT.equals(itemType)) {
             ConceptsMetamacInvocationValidator.checkCreateConcept((ConceptSchemeVersionMetamac) itemSchemeVersion, (ConceptMetamac) item, null);

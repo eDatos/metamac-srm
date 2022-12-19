@@ -123,7 +123,7 @@ public class OrganisationsClientSecurityUtils {
 
         // ORGANISATION UNIT SCHEMES
 
-        return SharedOrganisationsSecurityUtils.canEndOrganisationSchemeValidity(MetamacSrmWeb.getCurrentUser()) && CommonUtils.canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic);
+        return SharedOrganisationsSecurityUtils.canEndOrganisationSchemeValidity(MetamacSrmWeb.getCurrentUser()) && CommonUtils.canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic, true);
     }
 
     public static boolean canCreateCategorisationFromOrganisationScheme(ProcStatusEnum procStatus, OrganisationSchemeTypeEnum type) {
@@ -183,11 +183,17 @@ public class OrganisationsClientSecurityUtils {
     // ORGANISATIONS
 
     public static boolean canCreateOrganisation(OrganisationSchemeMetamacDto organisationSchemeMetamacDto) {
+        return canCreateOrganisation(organisationSchemeMetamacDto, true);
+    }
+
+    // ORGANISATIONS
+
+    public static boolean canCreateOrganisation(OrganisationSchemeMetamacDto organisationSchemeMetamacDto, boolean checkTemporalVersion) {
         if (!org.siemac.metamac.srm.web.client.utils.CommonUtils.hasDefaultMaintainerOrIsAgencySchemeSdmxResource(organisationSchemeMetamacDto)) {
             return false;
 
-        } else if (org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(organisationSchemeMetamacDto.getUrn())
-                && OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME.equals(organisationSchemeMetamacDto.getType())) {
+        } else if (Boolean.TRUE.equals(org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(organisationSchemeMetamacDto.getUrn()))
+                && OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME.equals(organisationSchemeMetamacDto.getType()) && checkTemporalVersion) {
             return false;
 
         } else if (!org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(organisationSchemeMetamacDto.getUrn())
@@ -199,7 +205,7 @@ public class OrganisationsClientSecurityUtils {
                     organisationSchemeMetamacDto.getType());
         }
     }
-
+    
     public static boolean canUpdateOrganisation(ProcStatusEnum procStatus, OrganisationSchemeTypeEnum type) {
         return SharedOrganisationsSecurityUtils.canModifyOrganisationFromOrganisationScheme(MetamacSrmWeb.getCurrentUser(), procStatus, type);
     }
@@ -246,7 +252,7 @@ public class OrganisationsClientSecurityUtils {
         if (isTaskInBackground(organisationSchemeMetamacDto.getIsTaskInBackground())) {
             return false;
         }
-        return canCreateOrganisation(organisationSchemeMetamacDto);
+        return canCreateOrganisation(organisationSchemeMetamacDto, false);
     }
 
     // CONTACTS

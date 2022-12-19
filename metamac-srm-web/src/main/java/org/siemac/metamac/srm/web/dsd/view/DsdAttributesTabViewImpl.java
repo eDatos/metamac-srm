@@ -585,6 +585,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             if (result.getRelatedResourceDtos().size() > 0) {
                 searchCodelistForEnumeratedRepresentationWindow.hideInfoMessage();
             } else {
+                searchCodelistForEnumeratedRepresentationWindow.showInfoMessage();
             }
         }
     }

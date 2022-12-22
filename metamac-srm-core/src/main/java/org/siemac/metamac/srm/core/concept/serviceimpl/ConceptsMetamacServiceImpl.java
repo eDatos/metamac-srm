@@ -900,7 +900,9 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                         conceptsToPersistByCode.put(concept.getNameableArtefact().getCode(), concept);
                     } else {
                         //restore concept because it could has been changed.
-                        concept = conceptsPreviousInConceptSchemeByCode.containsKey(concept.getNameableArtefact().getCode());
+                        if (conceptsPreviousInConceptSchemeByCode.containsKey(concept.getNameableArtefact().getCode())) {
+                            concept = (ConceptMetamac) conceptsPreviousInConceptSchemeByCode.get(concept.getNameableArtefact().getCode());
+                        }
                         setImportErrors(exceptionItems, informationItems, fileName, lineNumber);
                     }
                     lineNumber++;

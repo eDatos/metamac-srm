@@ -851,12 +851,12 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 for (Item item : conceptSchemeVersion.getItems()) {
                     conceptsPreviousInConceptSchemeByCode.put(item.getNameableArtefact().getCode(), item);
                 }
-                
+
                 boolean isTemporalVersion = VersionUtil.isTemporalVersion(conceptSchemeVersion.getMaintainableArtefact().getVersionLogic());
                 if (isTemporalVersion) {
                     updateAlreadyExisting = true;
                 }
-                
+
                 int lineNumber = 2;
                 Map<String, ConceptType> cachedConceptTypeMap = new HashMap<String, ConceptType>();
                 while ((line = bufferedReader.readLine()) != null) {
@@ -865,12 +865,15 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                     }
                     String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
                     if (columns.length != header.getColumnsSize()) {
-                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++));
+                        String itemIdentifier = columns[header.getCodePosition()];
+                        MetamacExceptionItem infoItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED_WITH_ERRORS, !StringUtils.isEmpty(itemIdentifier) ? itemIdentifier : "DESCONOCIDO");
+                        infoItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++));
+                        informationItems.add(infoItem);
                         continue;
                     }
                     // Transform concept and add to list to persist
-                    ConceptMetamac concept = TsvImportationUtils.tsvLineToConcept(header, columns, lineNumber, conceptSchemeVersion, isTemporalVersion, updateAlreadyExisting, conceptsPreviousInConceptSchemeByCode,
-                            conceptsToPersistByCode, exceptionItems, informationItems);
+                    ConceptMetamac concept = TsvImportationUtils.tsvLineToConcept(header, columns, lineNumber, conceptSchemeVersion, isTemporalVersion, updateAlreadyExisting,
+                            conceptsPreviousInConceptSchemeByCode, conceptsToPersistByCode, exceptionItems, informationItems);
 
                     // Import other specials Metadata
                     ImportationConceptsTsvHeader conceptTsvHeader = header;
@@ -882,35 +885,41 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                         if (!isTemporalVersion) {
                             concept.setCoreRepresentation(tsvLineToRepresentation(ctx, conceptTsvHeader.getRepresentation(), columns, lineNumber, concept, exceptionItems));
                         }
-                        
+
                         // ConceptsExtends
                         concept.setConceptExtends(tsvLineToConceptExtends(ctx, conceptTsvHeader, columns, lineNumber, concept, exceptionItems));
-                        
+
                         concept.setQuantity(setQuantityMetadata(ctx, header, columns, concept.getQuantity() != null ? concept.getQuantity() : new Quantity(), exceptionItems));
-   
+
                         TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
-              
+
                     }
 
                     if (concept != null && CollectionUtils.isEmpty(exceptionItems)) {
                         conceptsToPersist.add(concept);
                         conceptsToPersistByCode.put(concept.getNameableArtefact().getCode(), concept);
+                    } else {
+                        //restore concept because it could has been changed.
+                        concept = conceptsPreviousInConceptSchemeByCode.containsKey(concept.getNameableArtefact().getCode());
+                        setImportErrors(exceptionItems, informationItems, fileName, lineNumber);
                     }
                     lineNumber++;
                 }
             }
         } catch (Exception e) {
             logger.error("Error importing tsv file", e);
+            informationItems = null;
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
         } finally {
             IOUtils.closeQuietly(inputStreamReader);
             IOUtils.closeQuietly(bufferedReader);
         }
-        if (!CollectionUtils.isEmpty(exceptionItems)) {
+        
+        if (CollectionUtils.isEmpty(informationItems) && !CollectionUtils.isEmpty(exceptionItems)) {
             // rollback and inform about errors
             throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
         }
-
+        
         List<Concept> allItemsToUpdate = new ArrayList<Concept>(conceptSchemeVersion.getItems());
         for (ConceptMetamac concept : conceptsToPersist) {
             if (!conceptsPreviousInConceptSchemeByCode.containsKey(concept.getNameableArtefact().getCode())) {
@@ -928,6 +937,27 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
+    private void setImportErrors(List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> informationItems, String fileName, int lineNumber) throws MetamacException {
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            if (!informationItems.isEmpty()) {
+                MetamacExceptionItem info = informationItems.get(informationItems.size() - 1);
+
+                for (MetamacExceptionItem exception : exceptionItems) {
+                    info.getExceptionItems().addAll(exception.getExceptionItems());
+                }
+                MetamacExceptionItem metamacExceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
+                info.setMessage(metamacExceptionItem.getMessage());
+                info.setCode(metamacExceptionItem.getCode());
+                info.setMessageParameters(metamacExceptionItem.getMessageParameters());
+                exceptionItems.clear();
+
+            } else {
+                throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems)
+                        .build();
+            }
+        }
+    }
+    
     private CodeMetamac findCodesByCodelistCodeByCondition(ServiceContext ctx, String codeListCode, String codeInCodelist) throws MetamacException {
 
         // Prepare conditions

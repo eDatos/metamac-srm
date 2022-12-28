@@ -269,6 +269,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                 // If it is a new dimension, hide mainFormLayout
                 if (dataAttributeDto.getId() == null) {
                     selectedComponentLayout.hide();
+                } else {
+                    selectAttribute(dataAttributeDto);
                 }
             }
         });

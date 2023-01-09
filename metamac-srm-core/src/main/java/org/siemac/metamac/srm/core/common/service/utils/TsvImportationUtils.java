@@ -380,14 +380,14 @@ public class TsvImportationUtils {
     public static ConceptMetamac tsvLineToConcept(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        ConceptMetamac conceptMetamac = (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode,
+        return (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode,
                 exceptionItems, infoItems, TypeExternalArtefactsEnum.CONCEPT);
 
-        if (conceptMetamac == null) {
-            return null;
-        }
+    }
+    
+    public static ConceptMetamac setInternationalStringConceptFields(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, ConceptMetamac conceptMetamac)
+            throws MetamacException {
 
-        ImportationConceptsTsvHeader conceptTsvHeader = (ImportationConceptsTsvHeader) header;
 
         conceptMetamac.setPluralName(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getPluralName(), columns, conceptMetamac.getPluralName()));
         conceptMetamac.setAcronym(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getAcronym(), columns, conceptMetamac.getAcronym()));
@@ -954,11 +954,13 @@ public class TsvImportationUtils {
             item.getNameableArtefact().setUrn(urn);
             item.getNameableArtefact().setUrnProvider(urn);
         } else {
+            
+            item = cloneItemInImport(item, itemType);
             if (!updateAlreadyExisting) {
-                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED, item.getNameableArtefact().getCode()));
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED, itemIdentifier));
                 return null;
             } else {
-                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, item.getNameableArtefact().getCode()));
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, itemIdentifier));
                 
                 if (!isTemporalVersion) {
                 item.setParent(itemParent);
@@ -1120,4 +1122,43 @@ public class TsvImportationUtils {
     public static String replaceSeparatorLineInText(String line){
         return line.replace(SrmConstants.TSV_DOUBLE_SPACE, SrmConstants.TSV_BR_TAG);
     }
+    
+    public static Item cloneItemInImport(Item source, TypeExternalArtefactsEnum itemType) {
+        if (TypeExternalArtefactsEnum.CONCEPT.equals(itemType)) {
+            ConceptMetamac target = new ConceptMetamac();
+            target.setNameableArtefact(new NameableArtefact());
+            return target;
+        }
+        return source;
+    }
+    
+    public static void updateOriginalConceptMetamacInImport(ConceptMetamac source, ConceptMetamac target, boolean isTemporalVersion) {
+
+        if (!isTemporalVersion) {
+            target.setParent(source.getParent());
+            target.setCoreRepresentation(source.getCoreRepresentation());
+        }
+        target.setUpdateDate(source.getUpdateDate());
+        target.setLastUpdated(source.getLastUpdated());
+        target.setOrderValue(source.getOrderValue());
+        target.setPluralName(source.getPluralName());
+        target.setAcronym(source.getAcronym());
+        target.setDescriptionSource(source.getDescriptionSource());
+        target.setContext(source.getContext());
+        target.setDocMethod(source.getDocMethod());
+        target.setSdmxRelatedArtefact(source.getSdmxRelatedArtefact());
+        target.setConceptType(source.getConceptType());
+        target.setDerivation(source.getDerivation());
+        target.setLegalActs(source.getLegalActs());
+        target.setConceptExtends(source.getConceptExtends());
+        target.setVariable(source.getVariable());
+        target.setQuantity(source.getQuantity());
+        target.getRoleConcepts().addAll(source.getRoleConcepts());
+        target.getRelatedConcepts().addAll(source.getRelatedConcepts());
+        target.setItemSchemeVersionFirstLevel(source.getItemSchemeVersionFirstLevel());
+        target.getNameableArtefact().setName(source.getNameableArtefact().getName());
+        target.getNameableArtefact().setIsCodeUpdated(source.getNameableArtefact().getIsCodeUpdated());
+        target.getNameableArtefact().setDescription(source.getNameableArtefact().getDescription());
+        target.getNameableArtefact().setComment(source.getNameableArtefact().getComment());
+    }    
 }

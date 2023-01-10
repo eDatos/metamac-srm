@@ -150,6 +150,7 @@ public class CodelistRestrictionSectionStack extends BaseCodelistVisualisationSe
     @Override
     protected void updateListGridImportButtonVisibility() {
         importCodelistVisualisationButton.hide();
+        importOpennessCodelistVisualisationButton.hide();
         if (CodesClientSecurityUtils.canImportCodelistRestrictionVisualisations(codelistMetamacDto)) {
             importRestrictionCodelistVisualisationButton.show();
         } else {

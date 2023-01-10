@@ -109,6 +109,10 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
         return canUpdateCode(metamacPrincipal, procStatus);
     }
     
+    public static boolean canImportCodelistOpennessVisualisations(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canUpdateCode(metamacPrincipal, procStatus);
+    }
+    
     public static boolean canImportCodes(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
         return canCreateCode(metamacPrincipal, procStatus);
     }

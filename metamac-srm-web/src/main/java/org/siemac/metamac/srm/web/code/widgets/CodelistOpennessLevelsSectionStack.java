@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.web.code.model.ds.CodelistVisualisationDS;
 import org.siemac.metamac.srm.web.code.model.record.CodelistVisualisationRecord;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.utils.CommonUtils;
+import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.CustomListGrid;
 import org.siemac.metamac.web.common.client.widgets.InformationWindow;
 
@@ -22,6 +23,8 @@ import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisationSectionStack {
 
+    private ImportCodeOpennessLevelsWindow importCodeOpennessLevelsWindow;
+    
     public CodelistOpennessLevelsSectionStack() {
         super(new CustomListGrid(), getConstants().codelistOpennessLevels());
 
@@ -98,6 +101,29 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
                 }
             }
         });
+      
+        // Import
+
+        importOpennessCodelistVisualisationButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                importCodeOpennessLevelsWindow.show();
+            }
+        });
+
+        importCodeOpennessLevelsWindow = new ImportCodeOpennessLevelsWindow();
+        importCodeOpennessLevelsWindow.setUploadListener(new UploadListener() {
+
+            @Override
+            public void uploadFailed(String errorMessage) {
+                uiHandlers.resourceImportationFailed(errorMessage);
+            }
+            @Override
+            public void uploadComplete(String fileName) {
+                uiHandlers.resourceImportationSucceed(fileName);
+            }
+        });   
         
      // Export
 
@@ -122,16 +148,20 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
 
     @Override
     protected void updateListGridImportButtonVisibility() {
-        // Openness levels cannot be imported
         importCodelistVisualisationButton.hide();
         importRestrictionCodelistVisualisationButton.hide();
+        if (CodesClientSecurityUtils.canImportCodelistOpennessVisualisations(codelistMetamacDto)) {
+            importOpennessCodelistVisualisationButton.show();
+        } else {
+            importOpennessCodelistVisualisationButton.hide();
+        }
     }
 
     @Override
     protected void updateListGridExportButtonVisibility() {
         exportCodelistVisualisationButton.hide();
         exportRestrictionCodelistVisualisationButton.hide();
-        if (CodesClientSecurityUtils.canExportCodesOrder(codelistMetamacDto)) {
+        if (CodesClientSecurityUtils.canExportCodesOpennessLevels(codelistMetamacDto)) {
             exportOpennessCodelistVisualisationButton.show();
         } else {
             exportOpennessCodelistVisualisationButton.hide();

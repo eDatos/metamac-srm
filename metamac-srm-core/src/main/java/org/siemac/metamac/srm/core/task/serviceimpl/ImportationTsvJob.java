@@ -30,20 +30,21 @@ public class ImportationTsvJob implements Job {
     private static Logger             logger                             = LoggerFactory.getLogger(ImportationTsvJob.class);
 
     // Job Context Param
-    public static final String        USER                               = "user";
-    public static final String        FILE_PATH                          = "filePath";
-    public static final String        FILE_NAME                          = "fileName";
-    public static final String        VARIABLE_URN                       = "variableUrn";
-    public static final String        ITEM_SCHEME_URN                    = "codelistUrn";
-    public static final String        UPDATE_ALREADY_EXISTING            = "updateAlreadyExisting";
-    public static final String        OPERATION                          = "operation";
-    public static final String        OPERATION_IMPORT_CONCEPTS          = "importConcepts";
-    public static final String        OPERATION_IMPORT_ORGANISATIONS     = "importOrganisations";
-    public static final String        OPERATION_IMPORT_CATEGORIES        = "importCategories";
-    public static final String        OPERATION_IMPORT_CODES             = "importCodes";
-    public static final String        OPERATION_IMPORT_CODE_ORDERS       = "importCodeOrdes";
-    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS = "importCodeRestrictions";
-    public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS = "importVariableElements";
+    public static final String        USER                                    = "user";
+    public static final String        FILE_PATH                               = "filePath";
+    public static final String        FILE_NAME                               = "fileName";
+    public static final String        VARIABLE_URN                            = "variableUrn";
+    public static final String        ITEM_SCHEME_URN                         = "codelistUrn";
+    public static final String        UPDATE_ALREADY_EXISTING                 = "updateAlreadyExisting";
+    public static final String        OPERATION                               = "operation";
+    public static final String        OPERATION_IMPORT_CONCEPTS               = "importConcepts";
+    public static final String        OPERATION_IMPORT_ORGANISATIONS          = "importOrganisations";
+    public static final String        OPERATION_IMPORT_CATEGORIES             = "importCategories";
+    public static final String        OPERATION_IMPORT_CODES                  = "importCodes";
+    public static final String        OPERATION_IMPORT_CODE_ORDERS            = "importCodeOrdes";
+    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS      = "importCodeRestrictions";
+    public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS   = "importCodeOpennessLevels";
+    public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS      = "importVariableElements";
 
     private TasksMetamacServiceFacade tasksMetamacServiceFacade          = null;
 

@@ -146,6 +146,11 @@ public class ResourceImportationServlet extends HttpServlet {
                 TaskImportationInfo taskImportationInfo = importCodeRestrictions(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
 
+            } else if (ImportableResourceTypeEnum.CODES_OPENNESS_LEVEL.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
+
+                TaskImportationInfo taskImportationInfo = importCodeOpennessLevels(srmCoreServiceFacade, fileName, inputStream, args);
+                successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+
             } else if (ImportableResourceTypeEnum.VARIABLE_ELEMENTS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
                 TaskImportationInfo taskImportationInfo = importVariableElements(srmCoreServiceFacade, fileName, inputStream, args);
@@ -311,6 +316,15 @@ public class ResourceImportationServlet extends HttpServlet {
         String codelistUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN);
 
         return srmCoreServiceFacade.importCodeRestrictionsTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName);
+    }
+    
+ // Code openness levels
+
+    private TaskImportationInfo importCodeOpennessLevels(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
+
+        String codelistUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN);
+
+        return srmCoreServiceFacade.importCodeOpennessLevelsTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName);
     }
     
     // Variable elements

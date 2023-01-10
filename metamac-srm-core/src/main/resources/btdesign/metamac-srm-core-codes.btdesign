@@ -135,6 +135,8 @@ Application CodesMetamac {
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
+    		"Exports code openness leves in tsv format"
+    		String exportCodeOpennessLevelsTsv(String codelistUrn) throws MetamacException;
     		"Exports code restrictions in tsv format"
     		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"

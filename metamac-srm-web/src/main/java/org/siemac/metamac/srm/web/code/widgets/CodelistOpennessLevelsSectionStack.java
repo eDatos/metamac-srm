@@ -98,7 +98,18 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
                 }
             }
         });
+        
+     // Export
+
+        exportOpennessCodelistVisualisationButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                uiHandlers.exportCodesOpenness(codelistMetamacDto.getUrn());
+            }
+        });
     }
+    
 
     @Override
     protected void updateListGridNewButtonVisibility() {
@@ -118,9 +129,13 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
 
     @Override
     protected void updateListGridExportButtonVisibility() {
-        // Openness levels cannot be exported
         exportCodelistVisualisationButton.hide();
         exportRestrictionCodelistVisualisationButton.hide();
+        if (CodesClientSecurityUtils.canExportCodesOrder(codelistMetamacDto)) {
+            exportOpennessCodelistVisualisationButton.show();
+        } else {
+            exportOpennessCodelistVisualisationButton.hide();
+        }
     }
 
     @Override

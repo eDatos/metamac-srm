@@ -316,6 +316,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
     
+    public static void canExportCodeOpennessTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canExportCodeOpennessTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
     public static void canExportVariableElements(ServiceContext ctx) throws MetamacException {
         if (!SharedCodesSecurityUtils.canExportVariableElementsTsv(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);

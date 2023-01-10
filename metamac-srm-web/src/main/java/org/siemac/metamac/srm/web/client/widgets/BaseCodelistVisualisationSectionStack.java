@@ -30,8 +30,9 @@ public abstract class BaseCodelistVisualisationSectionStack extends CustomListGr
     protected ToolStripButton          newCodelistVisualisationButton;
     protected ToolStripButton          editCodelistVisualisationButton;
     protected ToolStripButton          deleteCodelistVisualisationButton;
-    protected ToolStripButton          importCodelistVisualisationButton; // Only to import orders! Openness levels cannot be imported.
-    protected ToolStripButton          exportCodelistVisualisationButton; // Only to export orders! Openness levels cannot be imported.
+    protected ToolStripButton          importCodelistVisualisationButton; 
+    protected ToolStripButton          exportCodelistVisualisationButton; 
+    protected ToolStripButton          exportOpennessCodelistVisualisationButton;
     protected ToolStripButton          importRestrictionCodelistVisualisationButton; 
     protected ToolStripButton          exportRestrictionCodelistVisualisationButton; 
 
@@ -100,6 +101,8 @@ public abstract class BaseCodelistVisualisationSectionStack extends CustomListGr
 
         exportRestrictionCodelistVisualisationButton = new ToolStripButton(getConstants().codesRestrictionExport(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
 
+        exportOpennessCodelistVisualisationButton = new ToolStripButton(getConstants().codesOpennessExport(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+
         
         toolStrip.addButton(newCodelistVisualisationButton);
         toolStrip.addButton(editCodelistVisualisationButton);
@@ -108,6 +111,7 @@ public abstract class BaseCodelistVisualisationSectionStack extends CustomListGr
         toolStrip.addButton(exportCodelistVisualisationButton);
         toolStrip.addButton(importRestrictionCodelistVisualisationButton);
         toolStrip.addButton(exportRestrictionCodelistVisualisationButton);
+        toolStrip.addButton(exportOpennessCodelistVisualisationButton);
 
         deleteConfirmationWindow = new DeleteConfirmationWindow(getConstants().codelistVisualisationDeleteConfirmationTitle(), getConstants().codelistVisualisationDeleteConfirmation());
         deleteConfirmationWindow.setVisible(false);

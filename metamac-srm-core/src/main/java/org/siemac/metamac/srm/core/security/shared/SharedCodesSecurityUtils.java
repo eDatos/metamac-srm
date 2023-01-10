@@ -128,6 +128,10 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
     public static boolean canExportCodeRestrictionsTsv(MetamacPrincipal metamacPrincipal) {
         return canRetrieveOrFindResource(metamacPrincipal);
     }
+
+    public static boolean canExportCodeOpennessTsv(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
     
     public static boolean canExportVariableElementsTsv(MetamacPrincipal metamacPrincipal) {
         return canRetrieveOrFindResource(metamacPrincipal);

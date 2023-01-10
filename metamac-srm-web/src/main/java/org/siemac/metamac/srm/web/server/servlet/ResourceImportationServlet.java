@@ -159,7 +159,7 @@ public class ResourceImportationServlet extends HttpServlet {
             } else if (ImportableResourceTypeEnum.CONCEPTS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
                 TaskImportationInfo taskImportationInfo = importConcepts(srmCoreServiceFacade, fileName, inputStream, args);
-                successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+                successMessage = updateSuccessMessageOrError(successMessage, taskImportationInfo);
 
             } else if (ImportableResourceTypeEnum.ORGANISATIONS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
@@ -195,21 +195,40 @@ public class ResourceImportationServlet extends HttpServlet {
         return updateSuccessMessage(successMessage, taskInfo.getIsPlannedInBackground());
     }
 
-    private String updateSuccessMessage(String successMessage, TaskImportationInfo taskImportationInfo) {
+    private String updateSuccessMessage(String successMessage, TaskImportationInfo taskImportationInfo) throws MetamacException {
         if (BooleanUtils.isFalse(taskImportationInfo.getIsPlannedInBackground())) {
             if (taskImportationInfo.getInformationItems() != null && !taskImportationInfo.getInformationItems().isEmpty()) {
+
                 // The importation was executed synchronously
                 // There may be information items that have to be shown... that's why these information items (MetamacExceptionItem) are serialized in JSON
                 List<MetamacExceptionItem> infoItems = taskImportationInfo.getInformationItems();
                 MetamacException infoItemsContainer = new MetamacException();
                 infoItemsContainer.getExceptionItems().addAll(infoItems);
-
                 return WebExceptionUtils.serializeToJson((MetamacException) getWebTranslateExceptions().translateException(ServiceContextHolder.getCurrentServiceContext(), infoItemsContainer));
             }
         }
         return updateSuccessMessage(successMessage, taskImportationInfo.getIsPlannedInBackground());
     }
 
+    private String updateSuccessMessageOrError(String successMessage, TaskImportationInfo taskImportationInfo) throws MetamacException {
+
+        if (taskImportationInfo.getInformationItems() != null && isImportResultsWithError(taskImportationInfo.getInformationItems())) {
+            MetamacException infoItemsContainer = new MetamacException();
+            infoItemsContainer.getExceptionItems().addAll(taskImportationInfo.getInformationItems());
+            throw infoItemsContainer;
+        }
+        return updateSuccessMessage(successMessage, taskImportationInfo);
+    }
+    
+    private boolean isImportResultsWithError(List<MetamacExceptionItem> infoItems) {
+        for (MetamacExceptionItem info : infoItems) {
+            if (!info.getExceptionItems().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private String updateSuccessMessage(String successMessage, Boolean isPlannedInBackground) {
         if (BooleanUtils.isFalse(isPlannedInBackground)) {
             // Synchronous importation

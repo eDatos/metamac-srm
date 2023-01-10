@@ -246,7 +246,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
     
     @Override
-    public Code toCode(CodeMetamac source) {
+    public Code toCode(CodeMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
@@ -262,6 +262,10 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         if (source.getVariableElement() == null) {
             target.setShortName(toInternationalString(source.getShortName()));
         } else {
+            if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
+                target.setVariableElement(toResource(source.getVariableElement()));
+            }
+            
             target.setShortName(toInternationalString(source.getVariableElement().getShortName()));
         }
         target.setExtended(source.getIsExtended());

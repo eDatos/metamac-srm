@@ -212,6 +212,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
         DataStructureDefinitionVersionMetamac dsd = dataStructureDefinitionMetamacService.retrieveDataStructureDefinitionByUrn(getServiceContextAdministrador(), urn);
 
         assertFalse(dsd.getAutoOpen());
+        assertFalse(dsd.getShowNullValuesByDefault());
+        assertFalse(dsd.getShowZeroValuesByDefault());
         assertEquals(1, dsd.getDimensionVisualisationInfos().size());
         assertEquals(2, dsd.getHeadingDimensions().size());
         assertEquals(1, dsd.getStubDimensions().size());
@@ -607,6 +609,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
         {
             // Metamac Metadata
             assertEquals(dsdToCopy.getAutoOpen(), dataStructureDefinitionVersionNewArtefact.getAutoOpen());
+            assertEquals(dsdToCopy.getShowNullValuesByDefault(), dataStructureDefinitionVersionNewArtefact.getShowNullValuesByDefault());
+            assertEquals(dsdToCopy.getShowZeroValuesByDefault(), dataStructureDefinitionVersionNewArtefact.getShowZeroValuesByDefault());
             assertEquals(dsdToCopy.getShowDecimals(), dataStructureDefinitionVersionNewArtefact.getShowDecimals());
             assertEquals(dsdToCopy.getHeadingDimensions().size(), dataStructureDefinitionVersionNewArtefact.getHeadingDimensions().size());
             assertEquals(dsdToCopy.getDimensionVisualisationInfos().size(), dataStructureDefinitionVersionNewArtefact.getDimensionVisualisationInfos().size());
@@ -666,6 +670,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
         {
             // Metamac Metadata
             assertEquals(dsdToCopy.getAutoOpen(), dsdNewVersion.getAutoOpen());
+            assertEquals(dsdToCopy.getShowNullValuesByDefault(), dsdNewVersion.getShowNullValuesByDefault());
+            assertEquals(dsdToCopy.getShowZeroValuesByDefault(), dsdNewVersion.getShowZeroValuesByDefault());
             assertEquals(dsdToCopy.getShowDecimals(), dsdNewVersion.getShowDecimals());
             assertEquals(dsdToCopy.getHeadingDimensions().size(), dsdNewVersion.getHeadingDimensions().size());
             assertEquals(dsdToCopy.getDimensionVisualisationInfos().size(), dsdNewVersion.getDimensionVisualisationInfos().size());
@@ -761,6 +767,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
         {
             // Metamac Metadata
             assertEquals(dsdToCopy.getAutoOpen(), dsdNewVersion.getAutoOpen());
+            assertEquals(dsdToCopy.getShowNullValuesByDefault(), dsdNewVersion.getShowNullValuesByDefault());
+            assertEquals(dsdToCopy.getShowZeroValuesByDefault(), dsdNewVersion.getShowZeroValuesByDefault());
             assertEquals(dsdToCopy.getShowDecimals(), dsdNewVersion.getShowDecimals());
             assertEquals(dsdToCopy.getHeadingDimensions().size(), dsdNewVersion.getHeadingDimensions().size());
             assertEquals(dsdToCopy.getDimensionVisualisationInfos().size(), dsdNewVersion.getDimensionVisualisationInfos().size());
@@ -883,7 +891,12 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
             {
                 temporalDataStructureDefinitionVersionMetamac.setAutoOpen(Boolean.FALSE);
             }
-
+            {
+                temporalDataStructureDefinitionVersionMetamac.setShowZeroValuesByDefault(Boolean.FALSE);
+            }
+            {
+                temporalDataStructureDefinitionVersionMetamac.setShowNullValuesByDefault(Boolean.FALSE);
+            }
             // ComponentList: Add Annotation
             {
                 ComponentList componentListTemporal = temporalDataStructureDefinitionVersionMetamac.getGrouping().iterator().next();
@@ -929,6 +942,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
             assertEquals(3, dataStructureDefinitionVersionMetamac.getMaintainableArtefact().getName().getTexts().size());
             assertEquals("dsd - text sample", dataStructureDefinitionVersionMetamac.getMaintainableArtefact().getName().getLocalisedLabel("fr"));
             assertFalse(dataStructureDefinitionVersionMetamac.getAutoOpen());
+            assertFalse(dataStructureDefinitionVersionMetamac.getShowNullValuesByDefault());
+            assertFalse(dataStructureDefinitionVersionMetamac.getShowZeroValuesByDefault());
             assertNull(dataStructureDefinitionVersionMetamac.getMaintainableArtefact().getIsTemporal());
 
             // ComponentList

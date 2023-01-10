@@ -4,6 +4,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.web.category.utils.CategoriesClientSecurityUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategorySchemeUiHandlers;
@@ -52,6 +53,7 @@ public class CategorySchemeCategoriesPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
+                importCategoriesWindow.initImportWindow(VersionUtil.isTemporalVersion(categorySchemeMetamacDto.getVersionLogic()));
                 importCategoriesWindow.show();
             }
         });

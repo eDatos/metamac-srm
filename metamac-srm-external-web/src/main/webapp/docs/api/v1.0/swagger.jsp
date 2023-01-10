@@ -1171,6 +1171,12 @@
                   "type":"string",
                   "description":"Identificador del código"
                },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+variableElement: muestra su variable de elemento </li></ul> Ejemplo: fields=\"+variableElement\""
+               }
             ],
             "responses":{
                "200":{

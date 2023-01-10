@@ -212,9 +212,11 @@ public class SrmRestInternalUtils {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
         return parseFieldsParameter(fieldsParam, validFields);
     }
 
+    
     public static Set<String> parseFieldsParameter(String fieldsParam, Set<String> validFields) {
         Set<String> showFields = new HashSet<>();
         if (fieldsParam != null) {

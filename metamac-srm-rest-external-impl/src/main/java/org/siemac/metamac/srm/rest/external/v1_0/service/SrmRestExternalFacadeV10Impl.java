@@ -1161,9 +1161,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Code retrieveCode(String agencyID, String resourceID, String version, String codeID) {
+    public Code retrieveCode(String agencyID, String resourceID, String version, String codeID, String fields) {
         try {
             checkParameterNotWildcardRetrieveItem(agencyID, resourceID, version, codeID, SrmRestConstants.PARAMETER_CODE_ID);
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
             // Find one
             PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, codeID, null, pagingParameterOneResult);
@@ -1173,7 +1174,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             }
 
             // Transform
-            return codesDo2RestMapper.toCode(entitiesPagedResult.getValues().get(0));
+            return codesDo2RestMapper.toCode(entitiesPagedResult.getValues().get(0), fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
         }

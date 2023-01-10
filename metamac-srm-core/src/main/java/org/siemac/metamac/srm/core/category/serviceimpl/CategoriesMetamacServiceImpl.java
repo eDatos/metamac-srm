@@ -33,6 +33,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
@@ -513,7 +514,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(categorySchemeVersion, categorySchemeVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion);
+        srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion, false);
 
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
@@ -556,6 +557,12 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     categoriesPreviousInCategorySchemeByCode.put(item.getNameableArtefact().getCodeFull(), item);
                 }
 
+                boolean isTemporalVersion = VersionUtil.isTemporalVersion(categorySchemeVersion.getMaintainableArtefact().getVersionLogic());
+                if (isTemporalVersion) {
+                    updateAlreadyExisting = true;
+                }
+                
+                
                 LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
                                 
                 int lineNumber = 2;
@@ -569,7 +576,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                         continue;
                     }
                     // Transform category and add to list to persist
-                    CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, updateAlreadyExisting,
+                    CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isTemporalVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
                     TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                     if (category != null) {

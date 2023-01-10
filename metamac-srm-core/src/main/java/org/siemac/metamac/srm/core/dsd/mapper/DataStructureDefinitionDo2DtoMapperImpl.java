@@ -111,6 +111,8 @@ public class DataStructureDefinitionDo2DtoMapperImpl extends BaseDo2DtoMapperImp
         // Metamac
         target.setAutoOpen(source.getAutoOpen());
         target.setShowDecimals(source.getShowDecimals());
+        target.setShowZeroValuesByDefault(source.getShowZeroValuesByDefault());
+        target.setShowNullValuesByDefault(source.getShowNullValuesByDefault());
         target.setStatisticalOperation(externalItemStatisticalOperationsToExternalItemDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getStatisticalOperation()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
 

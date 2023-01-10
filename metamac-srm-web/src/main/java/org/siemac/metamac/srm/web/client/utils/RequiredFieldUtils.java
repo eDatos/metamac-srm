@@ -70,7 +70,8 @@ public class RequiredFieldUtils {
     // DSDs
     //
 
-    private static final String[] dsdFieldsToProductionValidation = new String[]{DataStructureDefinitionDS.AUTO_OPEN, DataStructureDefinitionDS.SHOW_DECIMALS};
+    private static final String[] dsdFieldsToProductionValidation = new String[]{DataStructureDefinitionDS.AUTO_OPEN, DataStructureDefinitionDS.SHOW_DECIMALS,
+            DataStructureDefinitionDS.SHOW_NULL_VALUES_BY_DEFAULT, DataStructureDefinitionDS.SHOW_ZERO_VALUES_BY_DEFAULT};
     private static final String[] dsdFieldsToDiffusionValidation  = dsdFieldsToProductionValidation;
     private static final String[] dsdFieldsToInternalPublication  = dsdFieldsToDiffusionValidation;
     private static final String[] dsdFieldsToExternalPublication  = dsdFieldsToInternalPublication;

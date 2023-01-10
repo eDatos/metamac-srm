@@ -22,6 +22,7 @@ public class SrmSharedTokens extends org.siemac.metamac.web.common.shared.utils.
     // Codes upload configuration
 
     public static final String UPLOAD_PARAM_CODELIST_URN                = "codelist-urn";
+    public static final String UPLOAD_PARAM_CODELIST_MANTAINER          = "codelist-mantainer";
     public static final String UPLOAD_PARAM_VARIABLE_URN                = "variable-urn";
     public static final String UPLOAD_PARAM_UPDATE_EXISTING             = "update-existing";
     public static final String UPLOAD_PARAM_VARIABLE_ELEMENT_SHAPE_TYPE = "var-ele-shp-type";

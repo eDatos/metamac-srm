@@ -51,7 +51,6 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
-import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 public class TsvImportationUtils {
@@ -121,10 +120,10 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link OrganisationMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static OrganisationMetamac tsvLineToOrganisation(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+    public static OrganisationMetamac tsvLineToOrganisation(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        return (OrganisationMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
+        return (OrganisationMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
                 getOrganisationType((OrganisationSchemeVersionMetamac) itemSchemeVersion));
     }
 
@@ -287,10 +286,10 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link ConceptMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static ConceptMetamac tsvLineToConcept(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+    public static ConceptMetamac tsvLineToConcept(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        ConceptMetamac conceptMetamac = (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode,
+        ConceptMetamac conceptMetamac = (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode,
                 exceptionItems, infoItems, TypeExternalArtefactsEnum.CONCEPT);
 
         if (conceptMetamac == null) {
@@ -322,10 +321,10 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link CategoryMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static CategoryMetamac tsvLineToCategory(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+    public static CategoryMetamac tsvLineToCategory(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        return (CategoryMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
+        return (CategoryMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
                 TypeExternalArtefactsEnum.CATEGORY);
 
     }
@@ -429,8 +428,8 @@ public class TsvImportationUtils {
     /**
      * Transforms tsv line to Code. IMPORTANT: Do not execute save or update operation
      */
-    public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion,
-            Map<String, VariableElement> variableElementsInVariableByCode, boolean updateAlreadyExisting, Map<String, CodeMetamac> codesPreviousInCodelist,
+    public static CodeMetamac tsvLineToCode(ImportationCodesTsvHeader header, String[] columns, int lineNumber, CodelistVersionMetamac codelistVersion, boolean isDefaultMantainer,
+            boolean isTemporalVersion, Map<String, VariableElement> variableElementsInVariableByCode, boolean updateAlreadyExisting, Map<String, CodeMetamac> codesPreviousInCodelist,
             Map<String, CodeMetamac> codesToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems) throws MetamacException {
 
         // semantic identifier
@@ -451,7 +450,7 @@ public class TsvImportationUtils {
         // parent
         CodeMetamac codeParent = null;
         String codeParentIdentifier = columns[header.getParentPosition()];
-        if (!StringUtils.isBlank(codeParentIdentifier)) {
+        if (!StringUtils.isBlank(codeParentIdentifier) && !isTemporalVersion) {
             if (codesToPersistByCode.containsKey(codeParentIdentifier)) {
                 codeParent = codesToPersistByCode.get(codeParentIdentifier);
             } else {
@@ -478,6 +477,12 @@ public class TsvImportationUtils {
         // init code
         CodeMetamac code = codesPreviousInCodelist.get(codeIdentifier);
         if (code == null) {
+            if (!isDefaultMantainer || isTemporalVersion) {
+                infoItems.add(new MetamacExceptionItem(
+                        !isDefaultMantainer ? ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED : ServiceExceptionType.IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED,
+                        codeIdentifier));
+                return null;
+            }
             code = new CodeMetamac();
             code.setNameableArtefact(new NameableArtefact());
             code.getNameableArtefact().setCode(codeIdentifier);
@@ -491,31 +496,35 @@ public class TsvImportationUtils {
                 return null;
             } else {
                 infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, code.getNameableArtefact().getCode()));
-                if (SdmxSrmUtils.isItemParentChanged(code.getParent(), codeParent)) {
-                    // Clear all order columns to put at the end of new level
-                    SrmServiceUtils.clearCodeOrders(code);
+                if (!isTemporalVersion) {
+                    if (SdmxSrmUtils.isItemParentChanged(code.getParent(), codeParent)) {
+                        // Clear all order columns to put at the end of new level
+                        SrmServiceUtils.clearCodeOrders(code);
+                    }
+                    code.setParent(codeParent);
                 }
-                code.setParent(codeParent);
                 code.setUpdateDate(new DateTime());
             }
         }
-        code.getNameableArtefact().setName(TsvImportationUtils.tsvLineToInternationalString(header.getName(), columns, code.getNameableArtefact().getName()));
+
+        code.getNameableArtefact().setName(TsvImportationUtils.tsvLineToInternationalStringBase(header.getName(), columns, code.getNameableArtefact().getName(), isDefaultMantainer));
         if (code.getNameableArtefact().getName() == null) {
             exceptionItems.add(
                     new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, code.getNameableArtefact().getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_NAME));
         }
-        code.getNameableArtefact().setDescription(TsvImportationUtils.tsvLineToInternationalString(header.getDescription(), columns, code.getNameableArtefact().getDescription()));
-        code.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalString(header.getComment(), columns, code.getNameableArtefact().getComment()));
+        code.getNameableArtefact()
+                .setDescription(TsvImportationUtils.tsvLineToInternationalStringBase(header.getDescription(), columns, code.getNameableArtefact().getDescription(), isDefaultMantainer));
+        code.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalStringBase(header.getComment(), columns, code.getNameableArtefact().getComment(), isDefaultMantainer));
         if (updateVariableElement) {
             code.setVariableElement(variableElement);
             // Short name. Only filled if code has not related variable element
             if (variableElement != null) {
                 code.setShortName(null);
             } else {
-                code.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, code.getShortName()));
+                code.setShortName(TsvImportationUtils.tsvLineToInternationalStringBase(header.getShortName(), columns, code.getShortName(), isDefaultMantainer));
             }
         }
-        
+
         String isExtended = columns[header.getIsExtendedPosition()];
         if (!StringUtils.isBlank(isExtended)) {
             code.setIsExtended(Boolean.valueOf(isExtended));
@@ -640,6 +649,10 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static InternationalString tsvLineToInternationalString(InternationalStringTsv internationalStringTsv, String[] columns, InternationalString target) {
+        return tsvLineToInternationalStringBase(internationalStringTsv, columns, target, false);
+    }
+
+    public static InternationalString tsvLineToInternationalStringBase(InternationalStringTsv internationalStringTsv, String[] columns, InternationalString target, boolean changeUnmodifiables) {
         if (internationalStringTsv == null) {
             return null;
         }
@@ -656,7 +669,9 @@ public class TsvImportationUtils {
                 if (localisedString == null) {
                     localisedString = new LocalisedString(locale, label);
                 } else {
-                    localisedString.setLabel(label);
+                    if (changeUnmodifiables || (!changeUnmodifiables && (!Boolean.TRUE.equals(localisedString.getIsUnmodifiable())))) {
+                        localisedString.setLabel(label);
+                    }
                 }
                 localisedStringTargets.add(localisedString);
             }
@@ -674,6 +689,7 @@ public class TsvImportationUtils {
         return target;
     }
 
+    
     private static InternationalStringTsv columnHeaderToInternationalStringTsv(String[] headerColumns, int headerColumnIndex, String[] columnSplited, String headerExpected,
             InternationalStringTsv target, List<MetamacExceptionItem> exceptions) {
         if (columnSplited == null || columnSplited.length != 2) {
@@ -795,7 +811,7 @@ public class TsvImportationUtils {
         return header;
     }
 
-    private static Item tsvLineToItem(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean updateAlreadyExisting,
+    private static Item tsvLineToItem(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems,
             TypeExternalArtefactsEnum itemType) throws MetamacException {
 
@@ -817,8 +833,10 @@ public class TsvImportationUtils {
         }
         // parent
         Item itemParent = null;
+        
+        // if temporal version, parent can not be modified.
         String itemParentIdentifier = columns[header.getParentPosition()];
-        if (!StringUtils.isBlank(itemParentIdentifier)) {
+        if (!StringUtils.isBlank(itemParentIdentifier) && !isTemporalVersion) {
             if (TypeExternalArtefactsEnum.AGENCY.equals(itemType) || TypeExternalArtefactsEnum.DATA_CONSUMER.equals(itemType) || TypeExternalArtefactsEnum.DATA_PROVIDER.equals(itemType)) {
                 exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_PARENT, itemIdentifier, itemParentIdentifier));
                 return null;
@@ -838,6 +856,10 @@ public class TsvImportationUtils {
                 ? (itemsPreviousInItemScheme.get(StringUtils.isNotBlank(itemParentIdentifier) ? itemParentIdentifier + "." + itemIdentifier : itemIdentifier))
                 : itemsPreviousInItemScheme.get(itemIdentifier);
         if (item == null) {
+            if (isTemporalVersion) {
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED, itemIdentifier));
+                return null;
+            }
             item = createItem(itemType);
             item.setNameableArtefact(new NameableArtefact());
             item.getNameableArtefact().setCode(itemIdentifier);
@@ -860,7 +882,11 @@ public class TsvImportationUtils {
                 return null;
             } else {
                 infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, item.getNameableArtefact().getCode()));
+                
+                if (!isTemporalVersion) {
                 item.setParent(itemParent);
+                }
+                
                 item.setUpdateDate(new DateTime());
             }
             item.getNameableArtefact().setIsCodeUpdated(false);

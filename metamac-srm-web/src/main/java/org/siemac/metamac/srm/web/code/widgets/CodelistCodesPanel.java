@@ -4,8 +4,10 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
@@ -56,6 +58,7 @@ public class CodelistCodesPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
+                importCodesWindow.initImportWindow(CommonUtils.isDefaultMaintainer(codelistMetamacDto.getMaintainer()), VersionUtil.isTemporalVersion(codelistMetamacDto.getVersionLogic()));
                 importCodesWindow.show();
             }
         });

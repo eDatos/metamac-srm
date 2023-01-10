@@ -21,22 +21,34 @@ import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 public class ImportOrganisationsWindow extends ImportResourceWindow {
-
+    private static int formWidth = 600;
+    
     private OrganisationSchemeUiHandlers uiHandlers;
     protected WarningLabel               warningLabel;
-
+    protected InformationLabel informationTemporalVersionLabel;
+    protected InformationLabel informationLabel;
+    
     public ImportOrganisationsWindow() {
         super(getConstants().actionImportOrganisationsTsv());
 
         UploadOrganisationsForm form = new UploadOrganisationsForm();
         setForm(form);
 
+        buildInformationTemporalVersionLabel();
         buildInformationLabel();
         buildWarningLabel();
     }
 
+    private void buildInformationTemporalVersionLabel() {
+        informationTemporalVersionLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationTemporalVersionInfoMessage());
+        informationTemporalVersionLabel.setWidth(this.form.getWidth());
+        informationTemporalVersionLabel.setMargin(10);
+        informationTemporalVersionLabel.hide();
+        body.addMember(informationTemporalVersionLabel, 1);
+    }
+    
     private void buildInformationLabel() {
-        InformationLabel informationLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage());
+        informationLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage());
         informationLabel.setWidth(getWidth());
         informationLabel.setMargin(10);
         body.addMember(informationLabel, 1);
@@ -54,11 +66,30 @@ public class ImportOrganisationsWindow extends ImportResourceWindow {
         ((HiddenItem) form.getItem(SrmSharedTokens.UPLOAD_PARAM_ORGANISATION_SCHEME_URN)).setDefaultValue(organisationSchemeMetamacDto.getUrn());
     }
 
+    public void initImportWindow(Boolean isTemporalVersionUnitScheme) {
+        CustomCheckboxItem updateExistingCodesItem = (CustomCheckboxItem) this.form.getItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING);
+
+        if (Boolean.TRUE.equals(isTemporalVersionUnitScheme)) {
+            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
+            updateExistingCodesItem.setCanEdit(false);
+            updateExistingCodesItem.hide();
+            informationTemporalVersionLabel.show();
+            informationLabel.hide();
+        } else {
+            updateExistingCodesItem.show();
+            updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
+            updateExistingCodesItem.setCanEdit(true);
+            informationTemporalVersionLabel.hide();
+            informationLabel.show();
+        }
+    }
+    
     private class UploadOrganisationsForm extends UploadForm {
 
         public UploadOrganisationsForm() {
             super(getConstants().organisations());
-
+            this.setWidth(formWidth);
+            
             HiddenItem fileTypeItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE);
             fileTypeItem.setDefaultValue(ImportableResourceTypeEnum.ORGANISATIONS.name());
 

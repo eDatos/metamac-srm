@@ -971,6 +971,12 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 MetamacExceptionItem info = informationItems.get(informationItems.size() - 1);
 
                 for (MetamacExceptionItem exception : exceptionItems) {
+                    if (exception.getExceptionItems().isEmpty() && exception.getMessage() != null) {
+                        MetamacExceptionItem metamacExceptionItem = new MetamacExceptionItem();
+                        metamacExceptionItem.setMessage(exception.getMessage());
+                        metamacExceptionItem.setCode(exception.getCode());
+                        exception.getExceptionItems().add(metamacExceptionItem);
+                    }
                     info.getExceptionItems().addAll(exception.getExceptionItems());
                 }
                 MetamacExceptionItem metamacExceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);

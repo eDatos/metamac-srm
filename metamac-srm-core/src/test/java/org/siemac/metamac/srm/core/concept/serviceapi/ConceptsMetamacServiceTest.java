@@ -4193,6 +4193,21 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
         assertTrue(taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getMessage().contains("No enum constant org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum.WRONG_QUANTITY_TYPE"));
     }
+  
+    @Test
+    public void testImportConceptsTsvWithWrongFieldsForQuantityType() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
+        String fileName = "importation-concept-02-error_05.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = false;
+
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(1, taskImportTsvInfo.getInformationItems().size());
+        assertEquals(5, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals(ServiceExceptionType.METADATA_UNEXPECTED.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(i).getCode());
+        }
+    }
     
     @Test
     public void testImportConceptsTsvCodelistNotFound() throws Exception {

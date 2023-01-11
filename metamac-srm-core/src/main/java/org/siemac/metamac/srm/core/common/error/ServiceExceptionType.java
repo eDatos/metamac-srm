@@ -175,6 +175,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED                             = create("info.srm.importation.tsv.external_agency_resource_not_updated");
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED                                     = create("info.srm.importation.tsv.temporal_version_resource_not_updated");
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_RESOURCE_UPDATED                                                 = create("info.srm.importation.tsv.resource_updated");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED_WITH_ERRORS                         = create("info.srm.importation.tsv.resource_not_updated_with_errors");
+
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_VARIABLE_ELEMENT_NOT_FOUND                                       = create(
             "info.srm.importation.tsv.error.variable_element.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_RESOURCE_DUPLICATED                                                   = create(

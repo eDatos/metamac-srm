@@ -148,6 +148,8 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  IMPORTATION_TSV_COLUMN_REPRESENTATION_VALUE                = createCode(IMPORTATION_PREFIX, "representation_value");
     public static final String  IMPORTATION_TSV_COLUMN_CONCEPTS_EXTENDS_VALUE              = createCode(IMPORTATION_PREFIX, "concepts_extends");
 
+    public static final String  IMPORTATION_TSV_COLUMN_INDEX_BASE                          = createCode(IMPORTATION_PREFIX, "index_base_value");
+    
     // MISC
     public static final String  STREAM                                                     = createCode("stream");
     public static final String  FILE_URL                                                   = createCode("file_url");

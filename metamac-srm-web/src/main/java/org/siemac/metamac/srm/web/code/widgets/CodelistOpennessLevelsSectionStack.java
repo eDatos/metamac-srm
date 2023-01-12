@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
 import java.util.List;
 
+import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.widgets.BaseCodelistVisualisationSectionStack;
@@ -137,6 +138,12 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
     }
     
 
+    @Override
+    public void setCodelist(CodelistMetamacDto codelistMetamacDto) {
+        super.setCodelist(codelistMetamacDto);
+        importCodeOpennessLevelsWindow.setCodelist(codelistMetamacDto);
+    }
+    
     @Override
     protected void updateListGridNewButtonVisibility() {
         if (CodesClientSecurityUtils.canCreateCodelistOpennessVisualisation(codelistMetamacDto)) {

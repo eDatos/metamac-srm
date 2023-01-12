@@ -4333,6 +4333,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_OPENNESS_LEVEL_VISUALISATION_NOT_FOUND, opennessVisualisationCode,
                         codelistVersion.getMaintainableArtefact().getUrn()));
                 break;
+            }
+            if (SrmServiceUtils.isAllExpandedOpennessVisualisation(opennessVisualisation)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ALL_EXPANDED_VISUALISATION_NOT_SUPPORTED));
+                break;
             } else {
                 opennessVisualisations.add(opennessVisualisation);
             }
@@ -4342,7 +4346,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         return opennessVisualisations;
     }
-    
+
     private void saveCodesEfficiently(Collection<CodeMetamac> codesToPersist, Map<String, CodeMetamac> codesToPersistByCode) {
         for (CodeMetamac codeMetamac : codesToPersist) {
             if (codeMetamac.getParent() != null && codesToPersistByCode.containsKey(codeMetamac.getParent().getNameableArtefact().getCode())) {

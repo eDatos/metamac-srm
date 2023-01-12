@@ -191,6 +191,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.openness_level_visualisation.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_ALPHABETICAL_VISUALISATION_NOT_SUPPORTED                        = create(
             "exception.srm.importation.tsv.error.order_visualisation.alphabetical_not_supported");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_ALL_EXPANDED_VISUALISATION_NOT_SUPPORTED                        = create(
+            "exception.srm.importation.tsv.error.openness_visualisation.all_expanded_not_supported");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CODE_NOT_FOUND                                                  = create("exception.srm.importation.tsv.error.code.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CODES                                          = create(
             "exception.srm.importation.tsv.error.incorrect_number_codes");

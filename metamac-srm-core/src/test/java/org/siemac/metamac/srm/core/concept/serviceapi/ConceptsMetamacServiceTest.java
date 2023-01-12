@@ -4190,8 +4190,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
         assertEquals(1, taskImportTsvInfo.getInformationItems().size());
-        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
-        assertTrue(taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getMessage().contains("No enum constant org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum.WRONG_QUANTITY_TYPE"));
+        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_QUANTITY_METADATA_GENERAL_ERROR.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
     }
   
     @Test

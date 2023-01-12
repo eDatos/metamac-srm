@@ -1105,7 +1105,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             }
 
         } catch (Exception e) {
-            MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+            MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
             exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_QUANTITY_METADATA_GENERAL_ERROR));
             exceptionItems.add(exceptionItem);
         }

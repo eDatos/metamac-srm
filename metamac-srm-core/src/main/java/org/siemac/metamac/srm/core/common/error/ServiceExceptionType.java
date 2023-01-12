@@ -148,6 +148,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.error.there_are_not_final_versions");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR                                                                 = create("exception.srm.importation.tsv.error");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_FILE_PARSING                                                    = create("exception.srm.importation.tsv.error.file_parse");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_QUANTITY_METADATA_GENERAL_ERROR                                 = create("exception.srm.importation.tsv.error.quantity_metadata_general_error");
+    
     public static final CommonServiceExceptionType IMPORTATION_TSV_HEADER_INCORRECT                                                      = create(
             "exception.srm.importation.tsv.error.header.incorrect");
     public static final CommonServiceExceptionType IMPORTATION_TSV_HEADER_INCORRECT_COLUMN                                               = create(

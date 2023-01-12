@@ -4190,7 +4190,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
         assertEquals(1, taskImportTsvInfo.getInformationItems().size());
-        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_QUANTITY_METADATA_GENERAL_ERROR.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
+        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
+        assertEquals(ServiceExceptionParameters.CONCEPT_QUANTITY_TYPE, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getMessageParameters()[0]);
     }
   
     @Test

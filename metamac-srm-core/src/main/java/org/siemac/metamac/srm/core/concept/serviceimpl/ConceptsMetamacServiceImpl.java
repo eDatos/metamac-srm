@@ -954,13 +954,13 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             // ConceptsExtends
             concept.setConceptExtends(tsvLineToConceptExtends(ctx, header, columns, lineNumber, conceptIdentifier, exceptionItems));
 
-            concept.setQuantity(setQuantityMetadata(ctx, header, columns, concept.getQuantity() != null ? concept.getQuantity() : new Quantity(), exceptionItems));
+            concept.setQuantity(setQuantityMetadata(ctx, lineNumber, header, columns, concept.getQuantity() != null ? concept.getQuantity() : new Quantity(), exceptionItems));
 
             TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
 
-        } catch (Exception e) {
+        } catch (Exception e) {            
             MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
-            exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+            exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, ServiceExceptionParameters.CONCEPT));
             exceptionItems.add(exceptionItem);
         }
     }
@@ -1038,7 +1038,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return null;
     }
 
-    private Quantity setQuantityMetadata(ServiceContext ctx, ImportationConceptsTsvHeader header, String[] columns, Quantity quantity, List<MetamacExceptionItem> exceptionItems) {
+    private Quantity setQuantityMetadata(ServiceContext ctx, int lineNumber, ImportationConceptsTsvHeader header, String[] columns, Quantity quantity, List<MetamacExceptionItem> exceptionItems) {
         try {
 
             
@@ -1104,8 +1104,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 quantity.setBaseQuantity(null);
             }
 
-        } catch (MetamacException e) {
-            exceptionItems.addAll(e.getExceptionItems());
+        } catch (Exception e) {
+            MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+            exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_QUANTITY_METADATA_GENERAL_ERROR));
+            exceptionItems.add(exceptionItem);
         }
         return quantity;
     }

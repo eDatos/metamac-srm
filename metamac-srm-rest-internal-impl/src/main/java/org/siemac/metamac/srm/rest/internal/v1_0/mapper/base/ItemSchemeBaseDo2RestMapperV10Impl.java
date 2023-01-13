@@ -60,6 +60,9 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
         if (source.getParent() != null) {
             target.setParent(source.getParent().getNameableArtefact().getUrn());
         }
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            target.setAnnotations(toAnnotations(source.getNameableArtefact().getAnnotations()));
+        }
     }
 
     protected boolean canResourceBeProvidedByApi(ItemSchemeVersion source) {

@@ -2,12 +2,14 @@ package org.siemac.metamac.srm.rest.internal.v1_0.mapper.base;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.Response.Status;
 
+import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -183,7 +185,24 @@ public abstract class BaseDo2RestMapperV10Impl {
         return targets;
     }
 
-    private Annotations toAnnotations(Set<com.arte.statistic.sdmx.srm.core.base.domain.Annotation> sources) {
+    private Annotations toAnnotations(List<AnnotationResult> sources) {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        Annotations targets = new Annotations();
+        targets.setTotal(BigInteger.valueOf(sources.size()));
+        for (AnnotationResult source : sources) {
+            Annotation target = toAnnotation(source);
+            targets.getAnnotations().add(target);
+        }
+        return targets;
+    }
+
+    private Annotation toAnnotation(AnnotationResult source) {
+        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getType(), source.getUrl(), toInternationalString(source.getText()));
+    }
+
+    protected Annotations toAnnotations(Set<com.arte.statistic.sdmx.srm.core.base.domain.Annotation> sources) {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
@@ -197,15 +216,16 @@ public abstract class BaseDo2RestMapperV10Impl {
     }
 
     private Annotation toAnnotation(com.arte.statistic.sdmx.srm.core.base.domain.Annotation source) {
-        if (source == null) {
-            return null;
-        }
+        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getType(), source.getUrl(), toInternationalString(source.getText()));
+    }
+
+    private Annotation toAnnotation(String code, String title, String type, String url, InternationalString internationalString) {
         Annotation target = new Annotation();
-        target.setId(source.getCode());
-        target.setTitle(source.getTitle());
-        target.setType(source.getType());
-        target.setUrl(source.getUrl());
-        target.setText(toInternationalString(source.getText()));
+        target.setId(code);
+        target.setTitle(title);
+        target.setType(type);
+        target.setUrl(url);
+        target.setText(internationalString);
         return target;
     }
 
@@ -319,6 +339,9 @@ public abstract class BaseDo2RestMapperV10Impl {
         target.setName(toInternationalString(source.getName()));
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
             target.setDescription(toInternationalString(source.getDescription()));
+        }
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            target.setAnnotations(toAnnotations(source.getAnnotations()));
         }
         if (source.getParent() != null) {
             target.setParent(source.getParent().getUrn());

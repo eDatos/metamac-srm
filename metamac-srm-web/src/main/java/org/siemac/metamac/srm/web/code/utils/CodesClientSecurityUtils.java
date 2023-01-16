@@ -359,6 +359,20 @@ public class CodesClientSecurityUtils {
         }
         return SharedCodesSecurityUtils.canCrudCodelistOpennessVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
+    
+    public static boolean canImportCodelistOpennessVisualisations(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canImportCodelistOpennessVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
+    }
+    
+    public static boolean canExportCodesOpennessLevels(CodelistMetamacDto codelistMetamacDto) {
+        if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCodesSecurityUtils.canExportCodeOpennessTsv(MetamacSrmWeb.getCurrentUser());
+    }
 
     // RESTRICTION LEVELS
 

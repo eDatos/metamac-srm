@@ -1,0 +1,10 @@
+code	label	level	parent	VISUALISATION02	VISUALISATION03
+CODE01				1	false
+CODE02				2	false
+CODE0201				true	
+CODE0202				true	false
+CODE020101				false	true
+CODE03				6	false
+CODE04					true
+CODE0401				true	false
+CODE040101				false	true

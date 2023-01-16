@@ -151,6 +151,18 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase {
     }
     
     @Override
+    public String plannifyImportCodeOpennessLevelsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
+        // Validation
+        TasksMetamacInvocationValidator.checkImportCodeOpennessTsvInBackground(codelistUrn, file, fileName, null);
+
+        // Plan job
+        JobDataMap jobDataAdditional = new JobDataMap();
+        jobDataAdditional.put(ImportationTsvJob.ITEM_SCHEME_URN, codelistUrn);
+        jobDataAdditional.put(ImportationTsvJob.OPERATION, ImportationTsvJob.OPERATION_IMPORT_CODE_OPENNESS_LEVELS);
+        return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
+    }
+    
+    @Override
     public String plannifyImportVariableElementsTsvInBackground(ServiceContext ctx, String variableUrn, File file, String fileName, boolean updateAlreadyExisting) throws MetamacException {
 
         // Validation

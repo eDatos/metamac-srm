@@ -54,6 +54,7 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
     void saveCodelistOpennessLevel(CodelistVisualisationDto codelistOpennessVisualisationDto);
     void deleteCodelistOpennessLevel(List<String> opennessLevelsUrns);
     void updateCodesOpennessLevel(String opennessLevelUrn, Map<String, Boolean> opennessLevels);
+    void exportCodesOpenness(String codelistUrn);
 
     void retrieveCodesWithRestrictions(String opennessLevelUrn);
     void retrieveCodelistRestrictions(String codelistUrn);

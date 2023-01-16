@@ -30,20 +30,21 @@ public class ImportationTsvJob implements Job {
     private static Logger             logger                             = LoggerFactory.getLogger(ImportationTsvJob.class);
 
     // Job Context Param
-    public static final String        USER                               = "user";
-    public static final String        FILE_PATH                          = "filePath";
-    public static final String        FILE_NAME                          = "fileName";
-    public static final String        VARIABLE_URN                       = "variableUrn";
-    public static final String        ITEM_SCHEME_URN                    = "codelistUrn";
-    public static final String        UPDATE_ALREADY_EXISTING            = "updateAlreadyExisting";
-    public static final String        OPERATION                          = "operation";
-    public static final String        OPERATION_IMPORT_CONCEPTS          = "importConcepts";
-    public static final String        OPERATION_IMPORT_ORGANISATIONS     = "importOrganisations";
-    public static final String        OPERATION_IMPORT_CATEGORIES        = "importCategories";
-    public static final String        OPERATION_IMPORT_CODES             = "importCodes";
-    public static final String        OPERATION_IMPORT_CODE_ORDERS       = "importCodeOrdes";
-    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS = "importCodeRestrictions";
-    public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS = "importVariableElements";
+    public static final String        USER                                    = "user";
+    public static final String        FILE_PATH                               = "filePath";
+    public static final String        FILE_NAME                               = "fileName";
+    public static final String        VARIABLE_URN                            = "variableUrn";
+    public static final String        ITEM_SCHEME_URN                         = "codelistUrn";
+    public static final String        UPDATE_ALREADY_EXISTING                 = "updateAlreadyExisting";
+    public static final String        OPERATION                               = "operation";
+    public static final String        OPERATION_IMPORT_CONCEPTS               = "importConcepts";
+    public static final String        OPERATION_IMPORT_ORGANISATIONS          = "importOrganisations";
+    public static final String        OPERATION_IMPORT_CATEGORIES             = "importCategories";
+    public static final String        OPERATION_IMPORT_CODES                  = "importCodes";
+    public static final String        OPERATION_IMPORT_CODE_ORDERS            = "importCodeOrdes";
+    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS      = "importCodeRestrictions";
+    public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS   = "importCodeOpennessLevels";
+    public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS      = "importVariableElements";
 
     private TasksMetamacServiceFacade tasksMetamacServiceFacade          = null;
 
@@ -80,6 +81,8 @@ public class ImportationTsvJob implements Job {
                 importCodeOrders(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CODE_RESTRICTIONS.equals(operation)) {
                 importCodeRestrictions(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_CODE_OPENNESS_LEVELS.equals(operation)) {
+                importCodeOpennessLevels(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_VARIABLE_ELEMENTS.equals(operation)) {
                 importVariableElements(jobKey, data, serviceContext);
             } else {
@@ -196,6 +199,19 @@ public class ImportationTsvJob implements Job {
         logger.info("ImportationJob [importCodeRestrictions]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportCodeRestrictionsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName());
         logger.info("ImportationJob [importCodeRestrictions]: " + jobKey + " finished at " + new Date());
+    }
+    
+    private void importCodeOpennessLevels(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String codelistUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+
+        // Execution
+        logger.info("ImportationJob [importCodeOpennessLevels]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportCodeOpennessLevelsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName());
+        logger.info("ImportationJob [importCodeOpennessLevels]: " + jobKey + " finished at " + new Date());
     }
     
     private NoticesRestInternalService getNoticesRestInternalService() {

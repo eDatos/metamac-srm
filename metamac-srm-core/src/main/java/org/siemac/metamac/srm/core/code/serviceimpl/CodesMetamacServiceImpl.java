@@ -115,6 +115,7 @@ import org.siemac.metamac.srm.core.notices.serviceimpl.utils.NoticesCallbackMeta
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
+import org.siemac.metamac.srm.core.task.domain.ImportationCodeOpennessLevelsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeRestrictionsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodesTsvHeader;
@@ -1054,7 +1055,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         String defaultLanguage = srmConfiguration.retrieveLanguageDefault();
 
         // Retrieve items in depth
-        List<ItemResult> itemsResult = getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), null, null, null, CodeMetamacResultSelection.EXPORT_ORDERS);
+        List<ItemResult> itemsResult = getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), null, null, null, CodeMetamacResultSelection.EXPORT_ORDERS_AND_OPENNESS);
         // Retrieve all items to retrieve all orders
         List<Code> codes = codelistVersion.getItems();
         Map<Long, CodeMetamac> codesById = new HashMap<Long, CodeMetamac>(codes.size());
@@ -1117,6 +1118,175 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
     }
 
+   //  IMPORT OPENNESS LEVELS
+    
+    @Override
+    public TaskImportationInfo importCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
+
+        // Validation
+        CodesMetamacInvocationValidator.checkImportCodeOpennessLevelsTsv(codelistUrn, file, fileName, canBeBackground, null);
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        TsvImportationUtils.checkItemSchemeCanExecuteImportation(codelistVersion, codelistVersion.getLifeCycleMetadata(), canBeBackground);
+
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CODES_OPENNESS_LEVES_IMPORTATION);
+        if (executeInBackground) {
+            return planifyJobOpennessLevelImport(ctx, fileName, codelistUrn, file, codelistVersion);
+        }
+
+        return copyOpennessLevelsInFile(ctx, file, fileName, codelistVersion);
+
+    }
+    
+    private TaskImportationInfo planifyJobOpennessLevelImport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
+        // Planify task if can be in background
+        codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
+        itemSchemeRepository.save(codelistVersion.getItemScheme());
+
+        String jobKey = tasksMetamacService.plannifyImportCodeOpennessLevelsTsvInBackground(ctx, codelistUrn, file, fileName);
+        return new TaskImportationInfo(Boolean.TRUE, jobKey);
+    }
+
+    private void getCodesOpennessLevelsToImport(List<Code> codesInCodelist, Set<String> codesInTsvToCheckAllCodesAreUpdated, BufferedReader bufferedReader, List<MetamacExceptionItem> exceptionItems,
+            List<CodelistOpennessVisualisation> opennessVisualisations, ImportationCodeOpennessLevelsTsvHeader header) throws MetamacException, IOException {
+        Map<String, CodeMetamac> codesInCodelistByCode = new HashMap<>();
+        for (Item item : codesInCodelist) {
+            codesInCodelistByCode.put(item.getNameableArtefact().getCode(), (CodeMetamac) item);
+        }
+
+        int lineNumber = 2;
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            if (StringUtils.isBlank(line)) {
+                continue;
+            }
+
+            String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
+            if (columns.length == header.getColumnsSize()) {
+
+                // Transform restrictions, setting value of columns
+                CodeMetamac code = tsvLineToCodeOpenness(header, columns, lineNumber, codesInCodelistByCode, opennessVisualisations, exceptionItems);
+                if (code != null) {
+                    if (codesInTsvToCheckAllCodesAreUpdated.contains(code.getNameableArtefact().getCode())) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_RESOURCE_DUPLICATED, code.getNameableArtefact().getCode(), lineNumber));
+                    } else {
+                        codesInTsvToCheckAllCodesAreUpdated.add(code.getNameableArtefact().getCode());
+                    }
+                }
+            } else {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            }
+
+        }
+    }
+
+    private TaskImportationInfo copyOpennessLevelsInFile(ServiceContext ctx, File file, String fileName, CodelistVersionMetamac codelistVersion) throws MetamacException {
+
+        List<CodelistOpennessVisualisation> opennessVisualisations = null;
+        List<Code> codesInCodelist = null;
+        Set<String> codesInTsvToCheckAllCodesAreUpdated = null;
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+
+        try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), FileUtils.guessCharset(file));
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+
+            // Header
+            String line = bufferedReader.readLine();
+            ImportationCodeOpennessLevelsTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportCodeOpennessLevels(line, exceptionItems);
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                opennessVisualisations = tsvHeadToOpennessLevelVisualisations(codelistVersion, header, exceptionItems);
+            }
+
+            // Restrictions
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                // Codes in codelist
+                codesInCodelist = codelistVersion.getItems();
+                codesInTsvToCheckAllCodesAreUpdated = new HashSet<>();
+                getCodesOpennessLevelsToImport(codesInCodelist, codesInTsvToCheckAllCodesAreUpdated, bufferedReader, exceptionItems, opennessVisualisations, header);
+
+            }
+        } catch (Exception e) {
+            logger.error("Error importing tsv openness levels file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        }
+
+        return saveCodesImport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
+    }
+        
+    @Override
+    public String exportCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+
+        CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);
+
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        List<CodelistOpennessVisualisation> opennessVisualisations = codelistVersion.getOpennessVisualisations();
+        String defaultLanguage = srmConfiguration.retrieveLanguageDefault();
+
+        // Retrieve items in depth
+        List<ItemResult> itemsResult = getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), null, null, null, CodeMetamacResultSelection.EXPORT_ORDERS_AND_OPENNESS);
+        // Retrieve all items to retrieve all orders
+        List<Code> codes = codelistVersion.getItems();
+        Map<Long, CodeMetamac> codesById = new HashMap<Long, CodeMetamac>(codes.size());
+        for (Item code : codes) {
+            codesById.put(code.getId(), (CodeMetamac) code);
+        }
+
+        // Export
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+        try {
+            File file = File.createTempFile("codes-openness", ".tsv");
+            outputStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
+
+            // header
+            writer.write(SrmConstants.TSV_HEADER_CODE);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LABEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LEVEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_PARENT);
+            for (CodelistOpennessVisualisation opennessVisualisation : opennessVisualisations) {
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(opennessVisualisation.getNameableArtefact().getCode());
+            }
+
+            // codes
+            for (ItemResult itemResult : itemsResult) {
+                CodeMetamac codeMetamac = codesById.get(itemResult.getItemIdDatabase());
+
+                writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+                // Code
+                writer.write(itemResult.getCode());
+                // Label
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(itemResult.getName().get(defaultLanguage));
+                // Level
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(String.valueOf(((CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint()).getLevel()));
+                // Parent
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                if (itemResult.getParent() != null) {
+                    writer.write(itemResult.getParent().getCode());
+                }
+                // Order
+                for (CodelistOpennessVisualisation opennessVisualisation : opennessVisualisations) {
+                    writer.write(SrmConstants.TSV_SEPARATOR);
+                    writer.write(String.valueOf(SrmServiceUtils.getCodeOpenness(codeMetamac, opennessVisualisation.getColumnIndex()))); // +1 to start in 1
+                }
+            }
+            writer.flush();
+            return file.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(writer);
+        }
+    }
+    
     private TaskImportationInfo planifyJobRestrictionImport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
         // Planify task if can be in background
         codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
@@ -1190,9 +1360,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
         }
 
-        return saveRestrictionsImport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
+        return saveCodesImport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
     }
-
+    
     @Override
     public TaskImportationInfo importCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
 
@@ -1211,7 +1381,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     }
 
-    private TaskImportationInfo saveRestrictionsImport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated,
+    private TaskImportationInfo saveCodesImport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated,
             List<MetamacExceptionItem> exceptionItems, String fileName, List<Code> codesInCodelist, List<MetamacExceptionItem> informationItems) throws MetamacException {
 
         if (CollectionUtils.isEmpty(exceptionItems) && codesInTsvToCheckAllCodesAreUpdated != null && codesInTsvToCheckAllCodesAreUpdated.size() != codesInCodelist.size()) {
@@ -1233,7 +1403,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
-      
+ 
     @Override
     public String exportCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
@@ -3844,6 +4014,45 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     /**
+     * Transforms tsv line to Code restriction. IMPORTANT: Do not execute save or update operation
+     */
+    private CodeMetamac tsvLineToCodeOpenness(ImportationCodeOpennessLevelsTsvHeader header, String[] columns, int lineNumber, Map<String, CodeMetamac> codesInCodelist,
+            List<CodelistOpennessVisualisation> opennessVisualisations, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+
+        // semantic identifier
+        String codeIdentifier = columns[header.getCodePosition()];
+        if (StringUtils.isBlank(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null;
+        }
+        // update openness level
+        CodeMetamac code = codesInCodelist.get(codeIdentifier);
+        if (code == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODE_NOT_FOUND, codeIdentifier));
+            return null;
+        }
+        for (CodelistOpennessVisualisation opennessVisualisation : opennessVisualisations) {
+            int columnIndex = header.getOpennessVisualisationColumn(opennessVisualisation.getNameableArtefact().getCode());
+            String opennessValueString = columns[columnIndex];
+            if (StringUtils.isBlank(opennessValueString)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, code.getNameableArtefact().getCode(),
+                        ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_OPENNESS_LEVEL));
+
+                return null;
+            }
+            Boolean opennessValue = Boolean.valueOf(opennessValueString);
+            SrmServiceUtils.setCodeOpenness(code, opennessVisualisation.getColumnIndex(), opennessValue);
+        }
+
+        // Do not persist if any error ocurrs
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+
+        return code;
+    }
+    
+    /**
      * Transforms tsv line to VariableElement. IMPORTANT: Do not execute save or update operation
      */
     private VariableElement tsvLineToVariableElement(ImportationVariableElementsTsvHeader header, String[] columns, int lineNumber, Variable variable,
@@ -4115,6 +4324,29 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return restrictionVisualisations;
     }
     
+    private List<CodelistOpennessVisualisation> tsvHeadToOpennessLevelVisualisations(CodelistVersionMetamac codelistVersion, ImportationCodeOpennessLevelsTsvHeader header,
+            List<MetamacExceptionItem> exceptionItems) {
+        List<CodelistOpennessVisualisation> opennessVisualisations = new ArrayList<>();
+        for (String opennessVisualisationCode : header.getOpennessVisualisations()) {
+            CodelistOpennessVisualisation opennessVisualisation = getCodelistOpennessVisualisationRepository().findByCode(codelistVersion.getId(), opennessVisualisationCode);
+            if (opennessVisualisation == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_OPENNESS_LEVEL_VISUALISATION_NOT_FOUND, opennessVisualisationCode,
+                        codelistVersion.getMaintainableArtefact().getUrn()));
+                break;
+            }
+            if (SrmServiceUtils.isAllExpandedOpennessVisualisation(opennessVisualisation)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ALL_EXPANDED_VISUALISATION_NOT_SUPPORTED));
+                break;
+            } else {
+                opennessVisualisations.add(opennessVisualisation);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+        return opennessVisualisations;
+    }
+
     private void saveCodesEfficiently(Collection<CodeMetamac> codesToPersist, Map<String, CodeMetamac> codesToPersistByCode) {
         for (CodeMetamac codeMetamac : codesToPersist) {
             if (codeMetamac.getParent() != null && codesToPersistByCode.containsKey(codeMetamac.getParent().getNameableArtefact().getCode())) {

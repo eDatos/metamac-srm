@@ -81,6 +81,8 @@ public class ImportationTsvJob implements Job {
                 importCodeOrders(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CODE_RESTRICTIONS.equals(operation)) {
                 importCodeRestrictions(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_CODE_OPENNESS_LEVELS.equals(operation)) {
+                importCodeOpennessLevels(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_VARIABLE_ELEMENTS.equals(operation)) {
                 importVariableElements(jobKey, data, serviceContext);
             } else {
@@ -197,6 +199,19 @@ public class ImportationTsvJob implements Job {
         logger.info("ImportationJob [importCodeRestrictions]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportCodeRestrictionsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName());
         logger.info("ImportationJob [importCodeRestrictions]: " + jobKey + " finished at " + new Date());
+    }
+    
+    private void importCodeOpennessLevels(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String codelistUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+
+        // Execution
+        logger.info("ImportationJob [importCodeOpennessLevels]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportCodeOpennessLevelsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName());
+        logger.info("ImportationJob [importCodeOpennessLevels]: " + jobKey + " finished at " + new Date());
     }
     
     private NoticesRestInternalService getNoticesRestInternalService() {

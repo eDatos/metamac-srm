@@ -4039,6 +4039,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                         ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_OPENNESS_LEVEL));
 
                 return null;
+            } else if (!("true".equals(opennessValueString) || "false".equals(opennessValueString))) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT, code.getNameableArtefact().getCode(),
+                        ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_OPENNESS_LEVEL));
             }
             Boolean opennessValue = Boolean.valueOf(opennessValueString);
             SrmServiceUtils.setCodeOpenness(code, opennessVisualisation.getColumnIndex(), opennessValue);

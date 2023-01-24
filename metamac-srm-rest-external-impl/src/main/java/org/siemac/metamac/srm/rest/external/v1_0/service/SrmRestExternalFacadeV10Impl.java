@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -339,7 +341,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
@@ -451,7 +453,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Organisations findOrganisations(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public Organisations findOrganisations(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
@@ -527,7 +529,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
     @Override
-    public Agencies findAgencies(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public Agencies findAgencies(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
@@ -604,7 +606,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public OrganisationUnits findOrganisationUnits(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public OrganisationUnits findOrganisationUnits(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
@@ -682,7 +684,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public DataProviders findDataProviders(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public DataProviders findDataProviders(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
@@ -760,7 +762,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public DataConsumers findDataConsumers(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
+    public DataConsumers findDataConsumers(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
@@ -885,7 +887,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
             checkParameterNotWildcardRetrieveItemScheme(agencyID2, resourceID2, version2);
-            
+
             // Retrieve all codes of codelist
             CodelistVersionMetamac codelistVersionOrigin = retrieveCodelistPublished(agencyID1, resourceID1, version1);
 
@@ -893,33 +895,33 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
 
             checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
-            
+
             List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
-            
+
             return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
-            
+
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
+
     @Override
-    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
+    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version, String fields) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
-            
+
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
-            
+            List<CodelistRestrictionVisualisation> restrictions = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
+
             return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
-         
+
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
+
     private String getOpennessToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String openness, CodelistVersionMetamac codelistVersion) throws MetamacException {
         String opennessToUse = null;
         if (openness == null) {
@@ -931,7 +933,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
         return opennessToUse;
     }
-    
+
     private String getRestrictionToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String restriction, CodelistVersionMetamac codelistVersion) throws MetamacException {
         String restrictionToUse = null;
         if (restriction != null) {
@@ -954,8 +956,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return orderToUse;
     }
 
-    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Boolean extended, Set<String> fieldsToShow)
-            throws MetamacException {
+    private Codes findCodesInMultipleCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Boolean extended,
+            Set<String> fieldsToShow) throws MetamacException {
         // Find. Retrieve codes paginated
         SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
         PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -1558,8 +1560,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             }
         }
     }
-    
-    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction) throws MetamacException {
+
+    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction)
+            throws MetamacException {
         try {
             return codesService.retrieveCodelistRestrictionVisualisationByCode(ctx, codelistUrn, restriction);
         } catch (MetamacException e) {
@@ -1856,7 +1859,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             throw new RestException(exception, Status.BAD_REQUEST);
         }
     }
-    
+
     /**
      * Check unsupported wildcards in some parameters
      */

@@ -607,7 +607,7 @@ Application CodesMetamac {
 			Boolean hasVariableElements nullable transient;
 			
 			"Variable families"
-			- Bag<@VariableFamily> families cascade="none" fetch="lazy" databaseColumn="VARIABLE_FAMILY_FK" databaseJoinTable="TB_M_VAR_FAMILIES_VARIABLES" <-> variables;
+			- Set<@VariableFamily> families cascade="none" fetch="lazy" databaseColumn="VARIABLE_FAMILY_FK" databaseJoinTable="TB_M_VAR_FAMILIES_VARIABLES" <-> variables;
 			"Codelists"
 			- Bag<@CodelistVersionMetamac> codelists cascade="none" fetch="lazy" inverse <-> variable;
 			"Concepts"

@@ -273,6 +273,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
                 ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
                 itemMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(ctx, conceptSchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
                 // Transform

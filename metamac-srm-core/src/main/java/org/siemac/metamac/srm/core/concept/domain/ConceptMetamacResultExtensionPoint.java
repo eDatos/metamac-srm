@@ -4,23 +4,48 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
+import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
 
 public class ConceptMetamacResultExtensionPoint {
 
-    private final Map<String, String> pluralName = new HashMap<String, String>();
-    private final Map<String, String> acronym = new HashMap<String, String>();
-    private final Map<String, String> descriptionSource = new HashMap<String, String>();
-    private final Map<String, String> context = new HashMap<String, String>();
-    private final Map<String, String> docMethod = new HashMap<String, String>();
-    private final Map<String, String> derivation = new HashMap<String, String>();
-    private final Map<String, String> legalActs = new HashMap<String, String>();
+    private final Map<String, String>            pluralName                     = new HashMap<String, String>();
+    private final Map<String, String>            acronym                        = new HashMap<String, String>();
+    private final Map<String, String>            descriptionSource              = new HashMap<String, String>();
+    private final Map<String, String>            context                        = new HashMap<String, String>();
+    private final Map<String, String>            docMethod                      = new HashMap<String, String>();
+    private final Map<String, String>            derivation                     = new HashMap<String, String>();
+    private final Map<String, String>            legalActs                      = new HashMap<String, String>();
 
-    private String conceptTypeIdentifier = null;
-    private String conceptExtendsUrn = null;
-    private RepresentationsTsv.RepresentationEum representationType = null;
-    private String representationValue = null;
-    private ConceptRoleEnum sdmxRelatedArtefact = null;
+    private String                               conceptTypeIdentifier          = null;
+    private String                               conceptExtendsUrn              = null;
+    private RepresentationsTsv.RepresentationEum representationType             = null;
+    private String                               representationValue            = null;
+    private ConceptRoleEnum                      sdmxRelatedArtefact            = null;
+
+    // Quantity metadata
+    private QuantityTypeEnum                     quantityType                   = null;
+    private String                               unitCodelistCode               = null;
+    private String                               unitCode                       = null;
+    private QuantityUnitSymbolPositionEnum       unitSymbolPosition             = null;
+    private Integer                              unitMultiplier                 = null;
+    private Integer                              significantDigits              = null;
+    private Integer                              decimalPlaces                  = null;
+    private Integer                              miminum                        = null;
+    private Integer                              maximum                        = null;
+    private String                               denominatorConceptScheme       = null;
+    private String                               denominatorConcept             = null;
+    private String                               numeratorConceptScheme         = null;
+    private String                               numeratorConcept               = null;
+    private Boolean                              isPercentage                   = Boolean.FALSE;
+    private final Map<String, String>            percentageOf                   = new HashMap<String, String>();
+    private Integer                              indexBaseValue                 = null;
+    private String                               indexBaseTime                  = null;
+    private String                               indexBaseLocationCodelistCode  = null;
+    private String                               indexBaseLocationCode          = null;
+    private String                               indexBaseQuantityConceptScheme = null;
+    private String                               indexBaseQuantityConcept       = null;
 
     public Map<String, String> getPluralName() {
         return pluralName;
@@ -88,5 +113,169 @@ public class ConceptMetamacResultExtensionPoint {
 
     public void setSdmxRelatedArtefact(ConceptRoleEnum sdmxRelatedArtefact) {
         this.sdmxRelatedArtefact = sdmxRelatedArtefact;
+    }
+
+    public QuantityTypeEnum getQuantityType() {
+        return quantityType;
+    }
+
+    public void setQuantityType(QuantityTypeEnum quantityType) {
+        this.quantityType = quantityType;
+    }
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
+    }
+
+    public String getUnitCodelistCode() {
+        return unitCodelistCode;
+    }
+
+    public void setUnitCodelistCode(String unitCodelistCode) {
+        this.unitCodelistCode = unitCodelistCode;
+    }
+
+    public QuantityUnitSymbolPositionEnum getUnitSymbolPosition() {
+        return unitSymbolPosition;
+    }
+
+    public void setUnitSymbolPosition(QuantityUnitSymbolPositionEnum unitSymbolPosition) {
+        this.unitSymbolPosition = unitSymbolPosition;
+    }
+
+    public Integer getUnitMultiplier() {
+        return unitMultiplier;
+    }
+
+    public void setUnitMultiplier(Integer unitMultiplier) {
+        this.unitMultiplier = unitMultiplier;
+    }
+
+    public Integer getSignificantDigits() {
+        return significantDigits;
+    }
+
+    public void setSignificantDigits(Integer significantDigits) {
+        this.significantDigits = significantDigits;
+    }
+
+    public Integer getDecimalPlaces() {
+        return decimalPlaces;
+    }
+
+    public void setDecimalPlaces(Integer decimalPlaces) {
+        this.decimalPlaces = decimalPlaces;
+    }
+
+    public Integer getMiminum() {
+        return miminum;
+    }
+
+    public void setMiminum(Integer miminum) {
+        this.miminum = miminum;
+    }
+
+    public Integer getMaximum() {
+        return maximum;
+    }
+
+    public void setMaximum(Integer maximum) {
+        this.maximum = maximum;
+    }
+
+    public String getDenominatorConceptScheme() {
+        return denominatorConceptScheme;
+    }
+
+    public void setDenominatorConceptScheme(String denominatorConceptScheme) {
+        this.denominatorConceptScheme = denominatorConceptScheme;
+    }
+
+    public String getDenominatorConcept() {
+        return denominatorConcept;
+    }
+
+    public void setDenominatorConcept(String denominatorConcept) {
+        this.denominatorConcept = denominatorConcept;
+    }
+
+    public String getNumeratorConceptScheme() {
+        return numeratorConceptScheme;
+    }
+
+    public void setNumeratorConceptScheme(String numeratorConceptScheme) {
+        this.numeratorConceptScheme = numeratorConceptScheme;
+    }
+
+    public String getNumeratorConcept() {
+        return numeratorConcept;
+    }
+
+    public void setNumeratorConcept(String numeratorConcept) {
+        this.numeratorConcept = numeratorConcept;
+    }
+
+    public Boolean getIsPercentage() {
+        return isPercentage;
+    }
+
+    public void setIsPercentage(Boolean isPercentage) {
+        this.isPercentage = isPercentage;
+    }
+
+    public Map<String, String> getPercentageOf() {
+        return percentageOf;
+    }
+
+    public Integer getIndexBaseValue() {
+        return indexBaseValue;
+    }
+
+    public void setIndexBaseValue(Integer indexBaseValue) {
+        this.indexBaseValue = indexBaseValue;
+    }
+
+    public String getIndexBaseTime() {
+        return indexBaseTime;
+    }
+
+    public void setIndexBaseTime(String indexBaseTime) {
+        this.indexBaseTime = indexBaseTime;
+    }
+
+    public String getIndexBaseLocationCodelistCode() {
+        return indexBaseLocationCodelistCode;
+    }
+
+    public void setIndexBaseLocationCodelistCode(String indexBaseLocationCodelistCode) {
+        this.indexBaseLocationCodelistCode = indexBaseLocationCodelistCode;
+    }
+
+    public String getIndexBaseLocationCode() {
+        return indexBaseLocationCode;
+    }
+
+    public void setIndexBaseLocationCode(String indexBaseLocationCode) {
+        this.indexBaseLocationCode = indexBaseLocationCode;
+    }
+
+    public String getIndexBaseQuantityConceptScheme() {
+        return indexBaseQuantityConceptScheme;
+    }
+
+    public void setIndexBaseQuantityConceptScheme(String indexBaseQuantityConceptScheme) {
+        this.indexBaseQuantityConceptScheme = indexBaseQuantityConceptScheme;
+    }
+
+    public String getIndexBaseQuantityConcept() {
+        return indexBaseQuantityConcept;
+    }
+
+    public void setIndexBaseQuantityConcept(String indexBaseQuantityConcept) {
+        this.indexBaseQuantityConcept = indexBaseQuantityConcept;
     }
 }

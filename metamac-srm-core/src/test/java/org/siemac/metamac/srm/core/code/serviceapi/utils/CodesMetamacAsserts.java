@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -294,8 +297,12 @@ public class CodesMetamacAsserts extends CodesAsserts {
         assertEqualsDate(expected.getValidFrom(), actual.getValidFrom());
         assertEqualsDate(expected.getValidTo(), actual.getValidTo());
         assertEquals(expected.getFamilies().size(), actual.getFamilies().size());
+        List<VariableFamily> expectedFamily = new ArrayList<>();
+        List<VariableFamily> actualFamily = new ArrayList<>();
+        expectedFamily.addAll(expected.getFamilies());
+        actualFamily.addAll(actual.getFamilies());
         for (int i = 0; i < expected.getFamilies().size(); i++) {
-            assertEquals(expected.getFamilies().get(i).getNameableArtefact().getUrn(), actual.getFamilies().get(i).getNameableArtefact().getUrn());
+            assertEquals(expectedFamily.get(i).getNameableArtefact().getUrn(), actualFamily.get(i).getNameableArtefact().getUrn());
         }
         assertEqualsNullability(expected.getReplacedByVariable(), actual.getReplacedByVariable());
         if (expected.getReplacedByVariable() != null) {
@@ -363,8 +370,10 @@ public class CodesMetamacAsserts extends CodesAsserts {
         assertEqualsDate(entity.getValidFrom(), dto.getValidFrom());
         assertEqualsDate(entity.getValidTo(), dto.getValidTo());
         assertEquals(entity.getFamilies().size(), dto.getFamilies().size());
+        List<VariableFamily> entityFamily = new ArrayList<>();
+        entityFamily.addAll(entity.getFamilies());
         for (int i = 0; i < entity.getFamilies().size(); i++) {
-            assertEquals(entity.getFamilies().get(i).getNameableArtefact().getUrn(), dto.getFamilies().get(i).getUrn());
+            assertEquals(entityFamily.get(i).getNameableArtefact().getUrn(), dto.getFamilies().get(i).getUrn());
         }
         assertEqualsNullability(entity.getReplacedByVariable(), dto.getReplacedByVariable());
         if (entity.getReplacedByVariable() != null) {
@@ -696,7 +705,7 @@ public class CodesMetamacAsserts extends CodesAsserts {
         }
         assertEquals(entity.getNameableArtefact().getUrn(), dto.getUrn());
     }
-    
+
     // ------------------------------------------------------------------------------------
     // RESTRICTION VISUALISATIONS
     // ------------------------------------------------------------------------------------

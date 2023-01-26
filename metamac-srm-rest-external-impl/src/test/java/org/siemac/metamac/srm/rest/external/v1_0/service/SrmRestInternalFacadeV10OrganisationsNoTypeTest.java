@@ -479,7 +479,7 @@ public class SrmRestInternalFacadeV10OrganisationsNoTypeTest extends SrmRestInte
 
     private void testFindOrganisations(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        Organisations items = getSrmRestInternalFacadeClientXml().findOrganisations(agencyID, resourceID, version, query, orderBy, limit, offset);
+        Organisations items = getSrmRestInternalFacadeClientXml().findOrganisations(agencyID, resourceID, version, query, orderBy, limit, offset, null);
 
         assertNotNull(items);
         assertEquals(SrmRestConstants.KIND_ORGANISATIONS, items.getKind());

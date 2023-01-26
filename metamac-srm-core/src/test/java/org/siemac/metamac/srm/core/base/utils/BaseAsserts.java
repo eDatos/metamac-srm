@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
@@ -86,6 +88,18 @@ public class BaseAsserts extends com.arte.statistic.sdmx.srm.core.base.serviceap
         for (int i = 0; i < expecteds.size(); i++) {
             assertEqualsRelatedResourceDto(expecteds.get(i), actuals.get(i));
         }
+    }
+
+    public static void assertEqualsRelatedResourcesDto(Set<RelatedResourceDto> expecteds, Set<RelatedResourceDto> actuals) {
+        assertEquals(expecteds.size(), actuals.size());
+        Iterator<RelatedResourceDto> expectedFamily = expecteds.iterator();
+        Iterator<RelatedResourceDto> actualFamily = actuals.iterator();
+        while (expectedFamily.hasNext() && actualFamily.hasNext()) {
+            RelatedResourceDto expected = expectedFamily.next();
+            RelatedResourceDto actual = actualFamily.next();
+            assertEqualsRelatedResourceDto(expected, actual);
+        }
+
     }
 
     public static void assertEqualsStructureBasicDto(StructureVersion expected, SrmLifeCycleMetadata expectedLifecycle, StructureMetamacBasicDto actual) {

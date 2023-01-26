@@ -127,6 +127,8 @@ public class ConceptsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                             .relatedOperation().urn().getName(), false, ConceptMetamac.class), PropertyTypeEnum.STRING, propertyRestriction);
                 case CONCEPT_SCHEME_LATEST:
                     return buildSculptorPropertyCriteria(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                case PARENT:
+                    return buildSculptorPropertyCriteria(ConceptMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

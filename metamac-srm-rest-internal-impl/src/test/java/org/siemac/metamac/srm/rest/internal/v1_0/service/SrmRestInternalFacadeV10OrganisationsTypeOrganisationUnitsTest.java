@@ -326,7 +326,7 @@ public class SrmRestInternalFacadeV10OrganisationsTypeOrganisationUnitsTest exte
     public void testFindOrganisationUnitsRetrieveAll() throws Exception {
 
         resetMocks();
-        OrganisationUnits organisationUnits = getSrmRestInternalFacadeClientXml().findOrganisationUnits(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        OrganisationUnits organisationUnits = getSrmRestInternalFacadeClientXml().findOrganisationUnits(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null);
 
         assertNotNull(organisationUnits);
         assertEquals(SrmRestConstants.KIND_ORGANISATION_UNITS, organisationUnits.getKind());
@@ -498,7 +498,7 @@ public class SrmRestInternalFacadeV10OrganisationsTypeOrganisationUnitsTest exte
 
     private void testFindOrganisationUnits(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        OrganisationUnits items = getSrmRestInternalFacadeClientXml().findOrganisationUnits(agencyID, resourceID, version, query, orderBy, limit, offset);
+        OrganisationUnits items = getSrmRestInternalFacadeClientXml().findOrganisationUnits(agencyID, resourceID, version, query, orderBy, limit, offset, null);
 
         assertNotNull(items);
         assertEquals(SrmRestConstants.KIND_ORGANISATION_UNITS, items.getKind());

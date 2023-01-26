@@ -440,7 +440,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     public void testFindCodelistRestrictions() throws Exception {
 
         resetMocks();
-        CodelistRestrictions codelistRestrictions = getSrmRestInternalFacadeClientXml().findCodelistRestrictions(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
+        CodelistRestrictions codelistRestrictions = getSrmRestInternalFacadeClientXml().findCodelistRestrictions(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null);
 
         assertNotNull(codelistRestrictions);
         assertEquals(SrmRestConstants.KIND_CODELIST_RESTRICTIONS, codelistRestrictions.getKind());

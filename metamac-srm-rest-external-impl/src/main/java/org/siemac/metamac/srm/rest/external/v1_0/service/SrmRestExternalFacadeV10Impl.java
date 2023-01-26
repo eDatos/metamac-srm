@@ -341,21 +341,26 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
                 SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
                 PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return categoriesDo2RestMapper.toCategories(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return categoriesDo2RestMapper.toCategories(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all categories of categoryScheme, without pagination
                 CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
+
+                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(),
-                        ItemMetamacResultSelection.API);
+                        itemMetamacResultSelection);
 
                 // Transform
-                return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion);
+                return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -453,6 +458,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Organisations findOrganisations(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -460,15 +467,18 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                         sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return organisationsDo2RestMapper.toOrganisations(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return organisationsDo2RestMapper.toOrganisations(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all organisations of organisationScheme, without pagination
                 OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemePublished(agencyID, resourceID, version);
+
+                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        ItemMetamacResultSelection.API);
+                        itemMetamacResultSelection);
 
                 // Transform
-                return organisationsDo2RestMapper.toOrganisations(items, organisationSchemeVersion);
+                return organisationsDo2RestMapper.toOrganisations(items, organisationSchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -529,6 +539,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Agencies findAgencies(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -536,15 +548,18 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                         sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return organisationsDo2RestMapper.toAgencies(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return organisationsDo2RestMapper.toAgencies(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all organisations of organisationScheme, without pagination
                 OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveAgencySchemePublished(agencyID, resourceID, version);
+
+                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        ItemMetamacResultSelection.API);
+                        itemMetamacResultSelection);
 
                 // Transform
-                return organisationsDo2RestMapper.toAgencies(items, organisationSchemeVersion);
+                return organisationsDo2RestMapper.toAgencies(items, organisationSchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -606,6 +621,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public OrganisationUnits findOrganisationUnits(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -613,15 +630,18 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                         sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return organisationsDo2RestMapper.toOrganisationUnits(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return organisationsDo2RestMapper.toOrganisationUnits(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all organisations of organisationScheme, without pagination
                 OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationUnitSchemePublished(agencyID, resourceID, version);
+
+                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        ItemMetamacResultSelection.API);
+                        itemMetamacResultSelection);
 
                 // Transform
-                return organisationsDo2RestMapper.toOrganisationUnits(items, organisationSchemeVersion);
+                return organisationsDo2RestMapper.toOrganisationUnits(items, organisationSchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -684,6 +704,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public DataProviders findDataProviders(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -691,15 +713,18 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                         sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return organisationsDo2RestMapper.toDataProviders(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return organisationsDo2RestMapper.toDataProviders(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all organisations of organisationScheme, without pagination
                 OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveDataProviderSchemePublished(agencyID, resourceID, version);
+
+                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        ItemMetamacResultSelection.API);
+                        itemMetamacResultSelection);
 
                 // Transform
-                return organisationsDo2RestMapper.toDataProviders(items, organisationSchemeVersion);
+                return organisationsDo2RestMapper.toDataProviders(items, organisationSchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -762,6 +787,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public DataConsumers findDataConsumers(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -769,15 +796,18 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                         sculptorCriteria.getPagingParameter());
 
                 // Transform
-                return organisationsDo2RestMapper.toDataConsumers(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit());
+                return organisationsDo2RestMapper.toDataConsumers(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
             } else {
                 // Retrieve all organisations of organisationScheme, without pagination
                 OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveDataConsumerSchemePublished(agencyID, resourceID, version);
+
+                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        ItemMetamacResultSelection.API);
+                        itemMetamacResultSelection);
 
                 // Transform
-                return organisationsDo2RestMapper.toDataConsumers(items, organisationSchemeVersion);
+                return organisationsDo2RestMapper.toDataConsumers(items, organisationSchemeVersion, fieldsToShow);
             }
         } catch (Exception e) {
             throw manageException(e);
@@ -869,6 +899,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
                 ItemMetamacResultSelection codeMetamacResultSelection = CodeMetamacResultSelection.API;
                 codeMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
+                codeMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
                 List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
                         opennessToUse, restrictionToUse);
 
@@ -906,15 +937,16 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version, String fields) {
         try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
 
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            List<CodelistRestrictionVisualisation> restrictions = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
-
-            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
-
+            List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
+            
+            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version, fieldsToShow);
+         
         } catch (Exception e) {
             throw manageException(e);
         }

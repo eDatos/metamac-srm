@@ -323,7 +323,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
     
     @Override
-    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version) {
+    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version, Set<String> fields) {
 
 
         CodelistRestrictions targets = new CodelistRestrictions();
@@ -331,19 +331,22 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
       
         // Values
         for (CodelistRestrictionVisualisation source : sources) {
-            ItemResourceInternal target = toResourceRestriction(source);
+            ItemResourceInternal target = toResourceRestriction(source, fields);
             targets.getRestrictions().add(target);
         }
         return targets;
     }
     
 
-    private ItemResourceInternal toResourceRestriction(CodelistRestrictionVisualisation source) {
+    private ItemResourceInternal toResourceRestriction(CodelistRestrictionVisualisation source, Set<String> fields) {
         if (source == null) {
             return null;
         }
         ItemResourceInternal target = new ItemResourceInternal();
-          toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
+        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, fields);
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            target.setAnnotations(toAnnotations(source.getNameableArtefact().getAnnotations()));
+        }
         return target;
     }
 

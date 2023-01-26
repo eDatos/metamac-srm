@@ -101,7 +101,7 @@ Application DtosMetamacCodeDomain {
 			"Variables that are replaced by this one"
 			- List<@RelatedResourceDto> replaceToVariables nullable;
 			"Families"
-			- List<@RelatedResourceDto> families not nullable;
+			- Set<@RelatedResourceDto> families not nullable;
 			"True when variable has some variable element. False otherwise. Null is unknown."
 			Boolean hasVariableElements nullable;
 			"Version to optimistic locking"

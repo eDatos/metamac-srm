@@ -100,6 +100,15 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return null;
     }
 
+    public static RelatedResourceDto getRelatedResource(String urn, Set<RelatedResourceDto> relatedResources) {
+        for (RelatedResourceDto relatedResourceDto : relatedResources) {
+            if (StringUtils.equals(urn, relatedResourceDto.getUrn())) {
+                return relatedResourceDto;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns TRUE if the variable with the urn variableUrn is in the variable list
      */

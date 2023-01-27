@@ -372,8 +372,10 @@ public class CodesMetamacAsserts extends CodesAsserts {
         assertEquals(entity.getFamilies().size(), dto.getFamilies().size());
         List<VariableFamily> entityFamily = new ArrayList<>();
         entityFamily.addAll(entity.getFamilies());
+        List<RelatedResourceDto> dtoFamily = new ArrayList<>();
+        dtoFamily.addAll(dto.getFamilies());
         for (int i = 0; i < entity.getFamilies().size(); i++) {
-            assertEquals(entityFamily.get(i).getNameableArtefact().getUrn(), dto.getFamilies().get(i).getUrn());
+            assertEquals(entityFamily.get(i).getNameableArtefact().getUrn(), dtoFamily.get(i).getUrn());
         }
         assertEqualsNullability(entity.getReplacedByVariable(), dto.getReplacedByVariable());
         if (entity.getReplacedByVariable() != null) {

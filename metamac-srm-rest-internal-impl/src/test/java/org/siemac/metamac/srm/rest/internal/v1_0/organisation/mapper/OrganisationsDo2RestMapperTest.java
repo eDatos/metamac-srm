@@ -347,7 +347,7 @@ public class OrganisationsDo2RestMapperTest {
         PagedResult<OrganisationMetamac> sourcesPagedList = new PagedResult<OrganisationMetamac>(sources, offset, sources.size(), limit, totalRows, 0);
 
         // Transform
-        Agencies targets = do2RestInternalMapper.toAgencies(sourcesPagedList, agencyID, organisationSchemeID, version, query, orderBy, limit);
+        Agencies targets = do2RestInternalMapper.toAgencies(sourcesPagedList, agencyID, organisationSchemeID, version, query, orderBy, limit, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_AGENCIES, targets.getKind());
@@ -388,7 +388,7 @@ public class OrganisationsDo2RestMapperTest {
         sources.add(mockOrganisationItemResult(ITEM_3_CODE, null, OrganisationTypeEnum.AGENCY));
 
         // Transform
-        Agencies targets = do2RestInternalMapper.toAgencies(sources, organisationScheme);
+        Agencies targets = do2RestInternalMapper.toAgencies(sources, organisationScheme, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_AGENCIES, targets.getKind());
@@ -425,7 +425,7 @@ public class OrganisationsDo2RestMapperTest {
         PagedResult<OrganisationMetamac> sourcesPagedResult = new PagedResult<OrganisationMetamac>(sources, offset, sources.size(), limit, sources.size() * 5, 0);
 
         // Transform
-        DataConsumers targets = do2RestInternalMapper.toDataConsumers(sourcesPagedResult, agencyID, organisationSchemeID, version, null, null, limit);
+        DataConsumers targets = do2RestInternalMapper.toDataConsumers(sourcesPagedResult, agencyID, organisationSchemeID, version, null, null, limit, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_DATA_CONSUMERS, targets.getKind());
@@ -454,7 +454,7 @@ public class OrganisationsDo2RestMapperTest {
         PagedResult<OrganisationMetamac> sourcesPagedResult = new PagedResult<OrganisationMetamac>(sources, offset, sources.size(), limit, sources.size() * 5, 0);
 
         // Transform
-        DataProviders targets = do2RestInternalMapper.toDataProviders(sourcesPagedResult, agencyID, organisationSchemeID, version, null, null, limit);
+        DataProviders targets = do2RestInternalMapper.toDataProviders(sourcesPagedResult, agencyID, organisationSchemeID, version, null, null, limit, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_DATA_PROVIDERS, targets.getKind());
@@ -483,7 +483,7 @@ public class OrganisationsDo2RestMapperTest {
         PagedResult<OrganisationMetamac> sourcesPagedResult = new PagedResult<OrganisationMetamac>(sources, offset, sources.size(), limit, sources.size() * 5, 0);
 
         // Transform
-        OrganisationUnits targets = do2RestInternalMapper.toOrganisationUnits(sourcesPagedResult, agencyID, organisationSchemeID, version, null, null, limit);
+        OrganisationUnits targets = do2RestInternalMapper.toOrganisationUnits(sourcesPagedResult, agencyID, organisationSchemeID, version, null, null, limit, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_ORGANISATION_UNITS, targets.getKind());

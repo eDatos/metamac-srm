@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.rest.internal.v1_0.code.utils;
 
 import java.util.List;
 
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -32,7 +33,7 @@ public class CodesDoMocks {
         addConfigurationsMetadatasToCodelist(target);
         return target;
     }
-    
+
     public static CodelistVersionMetamac mockCodelistWithCodes(String agencyID, String resourceID, String version) {
         CodelistVersionMetamac target = CodesMetamacDoMocks.mockCodelistWithCodesFixedValues(agencyID, resourceID, version);
         addReplaceMetadatasToCodelist(target, agencyID);
@@ -67,9 +68,7 @@ public class CodesDoMocks {
         target.setCodelistVersion(mockCodelistWithCodes(agencyID, resourceID, version));
         return target;
     }
-    
-    
-    
+
     public static VariableFamily mockVariableFamily(String resourceID) {
         return CodesMetamacDoMocks.mockVariableFamilyFixedValues(resourceID);
     }
@@ -82,6 +81,24 @@ public class CodesDoMocks {
         target.addFamily(mockVariableFamily("variableFamily3"));
         target.setType(VariableTypeEnum.GEOGRAPHICAL);
         return target;
+    }
+
+    public static boolean isFamilyInList(String familyUrn, List<ResourceInternal> list) {
+        for (ResourceInternal family : list) {
+            if (familyUrn.equals(family.getUrn())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isFamilyHrefInList(String familyUrn, List<ResourceInternal> families) {
+        for (ResourceInternal family : families) {
+            if (familyUrn.equals(family.getSelfLink().getHref())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static VariableElement mockVariableElement(String resourceID) {
@@ -112,9 +129,9 @@ public class CodesDoMocks {
     }
 
     public static List<RelatedCode> mockRelatedCodes() {
-        return  CodesMetamacDoMocks.mockListRelatedCodeFixedValues();
+        return CodesMetamacDoMocks.mockListRelatedCodeFixedValues();
     }
-    
+
     private static void addReplaceMetadatasToCodelist(CodelistVersionMetamac target, String agencyID) {
         target.setReplacedByCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplacedBy", "01.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, true, true));
         target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo1", "01.000", AccessTypeEnum.PUBLIC, NormalizationTypeEnum.STANDARDIZED, true, true));
@@ -161,7 +178,7 @@ public class CodesDoMocks {
         target.getNameableArtefact().setName(BaseDoMocks.mockInternationalStringFixedValues("restriction", code));
         return target;
     }
-    
+
     private static void addReplaceMetadatasToVariable(Variable target) {
         target.setReplacedByVariable(CodesMetamacDoMocks.mockVariableFixedValues("variableReplacedBy1"));
         target.addReplaceToVariable(CodesMetamacDoMocks.mockVariableFixedValues("variableReplaceTo1"));
@@ -174,7 +191,8 @@ public class CodesDoMocks {
         target.addReplaceToVariableElement(CodesMetamacDoMocks.mockVariableElementFixedValues("variableElementReplaceTo2"));
     }
 
-    private static CodelistVersionMetamac mockCodelistToReplaceMetadata(String agencyID, String resourceID, String version, AccessTypeEnum accessType, NormalizationTypeEnum normalizationType, boolean finalLogic, boolean publicLogic) {
+    private static CodelistVersionMetamac mockCodelistToReplaceMetadata(String agencyID, String resourceID, String version, AccessTypeEnum accessType, NormalizationTypeEnum normalizationType,
+            boolean finalLogic, boolean publicLogic) {
         CodelistVersionMetamac codelistReplace = CodesMetamacDoMocks.mockCodelistFixedValues(agencyID, resourceID, version);
         codelistReplace.setAccessType(accessType);
         codelistReplace.getMaintainableArtefact().setFinalLogicClient(finalLogic);
@@ -182,5 +200,5 @@ public class CodesDoMocks {
         codelistReplace.setNormalizationType(normalizationType);
         return codelistReplace;
     }
-    
+
 }

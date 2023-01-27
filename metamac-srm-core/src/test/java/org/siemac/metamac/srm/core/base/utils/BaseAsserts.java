@@ -2,9 +2,10 @@ package org.siemac.metamac.srm.core.base.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -92,14 +93,19 @@ public class BaseAsserts extends com.arte.statistic.sdmx.srm.core.base.serviceap
 
     public static void assertEqualsRelatedResourcesDto(Set<RelatedResourceDto> expecteds, Set<RelatedResourceDto> actuals) {
         assertEquals(expecteds.size(), actuals.size());
-        Iterator<RelatedResourceDto> expectedFamily = expecteds.iterator();
-        Iterator<RelatedResourceDto> actualFamily = actuals.iterator();
-        while (expectedFamily.hasNext() && actualFamily.hasNext()) {
-            RelatedResourceDto expected = expectedFamily.next();
-            RelatedResourceDto actual = actualFamily.next();
-            assertEqualsRelatedResourceDto(expected, actual);
-        }
+        List<RelatedResourceDto> expectedList = new ArrayList<>();
+        List<RelatedResourceDto> actualList = new ArrayList<>();
+        List<String> expectedUrns = new ArrayList<>();
+        List<String> actualsUrns = new ArrayList<>();
 
+        expectedList.addAll(expecteds);
+        actualList.addAll(actuals);
+        for (int i = 0; i < expectedList.size(); i++) {
+            expectedUrns.add(expectedList.get(i).getUrn());
+            actualsUrns.add(actualList.get(i).getUrn());
+        }
+        assertTrue(expectedUrns.containsAll(actualsUrns));
+        assertTrue(actualsUrns.containsAll(expectedUrns));
     }
 
     public static void assertEqualsStructureBasicDto(StructureVersion expected, SrmLifeCycleMetadata expectedLifecycle, StructureMetamacBasicDto actual) {

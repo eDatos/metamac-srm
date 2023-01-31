@@ -3181,7 +3181,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     public ConceptMetamacDto createConcept(ServiceContext ctx, ConceptMetamacDto conceptMetamacDto) throws MetamacException {
         // Security
         ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptsMetamacService().retrieveConceptSchemeByUrn(ctx, conceptMetamacDto.getItemSchemeVersionUrn());
-        ConceptsSecurityUtils.canCreateConcept(ctx, conceptSchemeVersion);
+        ConceptsSecurityUtils.canCreateConcept(ctx, conceptSchemeVersion); // here
 
         // Transform
         ConceptMetamac conceptMetamac = conceptsDto2DoMapper.conceptDtoToDo(conceptMetamacDto);

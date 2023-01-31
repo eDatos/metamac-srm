@@ -274,7 +274,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version, Set<String> fields) {
+    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version) {
 
 
         CodelistRestrictions targets = new CodelistRestrictions();
@@ -282,22 +282,19 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
       
         // Values
         for (CodelistRestrictionVisualisation source : sources) {
-            ItemResource target = toResourceRestriction(source, fields);
+            ItemResource target = toResourceRestriction(source);
             targets.getRestrictions().add(target);
         }
         return targets;
     }
 
-    private ItemResource toResourceRestriction(CodelistRestrictionVisualisation source, Set<String> fields) {
+    private ItemResource toResourceRestriction(CodelistRestrictionVisualisation source) {
         if (source == null) {
             return null;
         }
         ItemResource target = new ItemResource();
         toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode()), target,
                 false, null);
-        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
-            target.setAnnotations(toAnnotations(source.getNameableArtefact().getAnnotations()));
-        }
         return target;
     }
     

@@ -1502,6 +1502,17 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
     
     @Override
+    public TaskImportationInfo importCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
+        // Security
+        CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);
+        CodesSecurityUtils.canImportCodelistOpennessLevelsVisualisations(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCodesMetamacService().importCodeOpennessLevelsTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
+    }
+    
+    @Override
     public String exportCodesTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
         // Security
         CodesSecurityUtils.canExportCodesTsv(ctx);
@@ -1526,6 +1537,15 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Export
         return getCodesMetamacService().exportCodeRestrictionsTsv(ctx, codelistUrn);
+    }
+    
+    @Override
+    public String exportCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canExportCodeOpennessTsv(ctx);
+
+        // Export
+        return getCodesMetamacService().exportCodeOpennessLevelsTsv(ctx, codelistUrn);
     }
     
     @Override

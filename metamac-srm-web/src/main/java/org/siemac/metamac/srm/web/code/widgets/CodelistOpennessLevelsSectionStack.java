@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
 import java.util.List;
 
+import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
 import org.siemac.metamac.srm.core.code.dto.CodelistVisualisationDto;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.widgets.BaseCodelistVisualisationSectionStack;
@@ -12,6 +13,7 @@ import org.siemac.metamac.srm.web.code.model.ds.CodelistVisualisationDS;
 import org.siemac.metamac.srm.web.code.model.record.CodelistVisualisationRecord;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.utils.CommonUtils;
+import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.CustomListGrid;
 import org.siemac.metamac.web.common.client.widgets.InformationWindow;
 
@@ -22,6 +24,8 @@ import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisationSectionStack {
 
+    private ImportCodeOpennessLevelsWindow importCodeOpennessLevelsWindow;
+    
     public CodelistOpennessLevelsSectionStack() {
         super(new CustomListGrid(), getConstants().codelistOpennessLevels());
 
@@ -98,8 +102,48 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
                 }
             }
         });
-    }
+      
+        // Import
 
+        importOpennessCodelistVisualisationButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                importCodeOpennessLevelsWindow.show();
+            }
+        });
+
+        importCodeOpennessLevelsWindow = new ImportCodeOpennessLevelsWindow();
+        importCodeOpennessLevelsWindow.setUploadListener(new UploadListener() {
+
+            @Override
+            public void uploadFailed(String errorMessage) {
+                uiHandlers.resourceImportationFailed(errorMessage);
+            }
+            @Override
+            public void uploadComplete(String fileName) {
+                uiHandlers.resourceImportationSucceed(fileName);
+            }
+        });   
+        
+     // Export
+
+        exportOpennessCodelistVisualisationButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                uiHandlers.exportCodesOpenness(codelistMetamacDto.getUrn());
+            }
+        });
+    }
+    
+
+    @Override
+    public void setCodelist(CodelistMetamacDto codelistMetamacDto) {
+        super.setCodelist(codelistMetamacDto);
+        importCodeOpennessLevelsWindow.setCodelist(codelistMetamacDto);
+    }
+    
     @Override
     protected void updateListGridNewButtonVisibility() {
         if (CodesClientSecurityUtils.canCreateCodelistOpennessVisualisation(codelistMetamacDto)) {
@@ -111,16 +155,24 @@ public class CodelistOpennessLevelsSectionStack extends BaseCodelistVisualisatio
 
     @Override
     protected void updateListGridImportButtonVisibility() {
-        // Openness levels cannot be imported
         importCodelistVisualisationButton.hide();
         importRestrictionCodelistVisualisationButton.hide();
+        if (CodesClientSecurityUtils.canImportCodelistOpennessVisualisations(codelistMetamacDto)) {
+            importOpennessCodelistVisualisationButton.show();
+        } else {
+            importOpennessCodelistVisualisationButton.hide();
+        }
     }
 
     @Override
     protected void updateListGridExportButtonVisibility() {
-        // Openness levels cannot be exported
         exportCodelistVisualisationButton.hide();
         exportRestrictionCodelistVisualisationButton.hide();
+        if (CodesClientSecurityUtils.canExportCodesOpennessLevels(codelistMetamacDto)) {
+            exportOpennessCodelistVisualisationButton.show();
+        } else {
+            exportOpennessCodelistVisualisationButton.hide();
+        }
     }
 
     @Override

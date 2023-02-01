@@ -8,15 +8,27 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 4.4.0 a 4.0.1
+## 4.0.0 a 5.0.0
+**BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:
+  * **/agencyschemes/{agencyID}/{resourceID}/{version}/agencies**
+  * **/categoryschemes/{agencyID}/{resourceID}/{version}/categories**
+  * **/codelists/{agencyID}/{resourceID}/{version}/restrictions**
+  * **/v1.0/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers**
+  * **/dataproviderschemes/{agencyID}/{resourceID}/{version}/dataproviders**
+  * **/organisationschemes/{agencyID}/{resourceID}/{version}/organisations**
+  * **/organisationunitschemes/{agencyID}/{resourceID}/{version}/organisationunits**
+
+Se puede consultar la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto de aplicaciones 
+de eDatos que consuman la API de structural-resources a través de JAX-RS.
+
 Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
+ ```shell
  ```shell
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_master_table_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_tb_sequence_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_foreign_key_to_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_insert_eni_schemas_values.sql  
   ```
-  
 ## 3.3.0 a 4.0.0
 * Rotura de la compatibilidad:
 ** Se eliminan los servicios soap

@@ -212,7 +212,6 @@ public class SrmRestInternalUtils {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
-        validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
         return parseFieldsParameter(fieldsParam, validFields);
     }
 

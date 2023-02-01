@@ -2,6 +2,7 @@
 <%! String id = "ID: identificador"; %>
 <%! String urn = "URN: urn única"; %>
 <%! String name = "NAME: nombre"; %>
+<%! String parent = "PARENT: identificador del elemento padre"; %>
 <%! String description = "DESCRIPTION: descripción"; %>
 <%! String descriptionSource = "DESCRIPTION_SOURCE: origen de la descripción"; %>
 <%! String validFrom = "VALID_FROM: válido desde"; %>
@@ -107,7 +108,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id,urn,name,description,descriptionSource,acronym,extendsUrn,relatedConceptUrn,conceptSchemeUrn,conceptSchemeType,conceptSchemeStatisticalOperationUrn, conceptSchemeLatest) %>"
+            "description":"<%= queryDescriptionWithParams(id,urn,name,parent,description,descriptionSource,acronym,extendsUrn,relatedConceptUrn,conceptSchemeUrn,conceptSchemeType,conceptSchemeStatisticalOperationUrn, conceptSchemeLatest) %>"
         },
         "conceptOrderByParam": {
           "name":"orderBy",

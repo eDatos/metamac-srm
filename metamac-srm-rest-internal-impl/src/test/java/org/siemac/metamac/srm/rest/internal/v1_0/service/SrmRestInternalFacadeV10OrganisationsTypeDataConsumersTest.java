@@ -451,7 +451,7 @@ public class SrmRestInternalFacadeV10OrganisationsTypeDataConsumersTest extends 
 
     private void testFindDataConsumers(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        DataConsumers items = getSrmRestInternalFacadeClientXml().findDataConsumers(agencyID, resourceID, version, query, orderBy, limit, offset);
+        DataConsumers items = getSrmRestInternalFacadeClientXml().findDataConsumers(agencyID, resourceID, version, query, orderBy, limit, offset, null);
 
         assertNotNull(items);
         assertEquals(SrmRestConstants.KIND_DATA_CONSUMERS, items.getKind());

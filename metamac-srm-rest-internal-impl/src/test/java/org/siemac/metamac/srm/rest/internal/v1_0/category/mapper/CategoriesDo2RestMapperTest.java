@@ -190,7 +190,7 @@ public class CategoriesDo2RestMapperTest {
         PagedResult<CategoryMetamac> sources = new PagedResult<CategoryMetamac>(source, offset, source.size(), limit, totalRows, 0);
 
         // Transform
-        Categories target = do2RestInternalMapper.toCategories(sources, agencyID, categorySchemeID, version, query, orderBy, limit, fields);
+        Categories target = do2RestInternalMapper.toCategories(sources, agencyID, categorySchemeID, version, query, orderBy, limit, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());
@@ -277,7 +277,7 @@ public class CategoriesDo2RestMapperTest {
         
         
         // Transform
-        Categories target = do2RestInternalMapper.toCategories(sources, categoryScheme1, fields);
+        Categories target = do2RestInternalMapper.toCategories(sources, categoryScheme1, null);
 
         // Validate
         assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());

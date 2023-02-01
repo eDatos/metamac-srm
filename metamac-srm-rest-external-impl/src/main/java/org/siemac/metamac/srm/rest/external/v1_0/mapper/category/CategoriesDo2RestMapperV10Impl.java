@@ -81,7 +81,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
         // Values
         for (CategoryMetamac source : sourcesPagedResult.getValues()) {
-            CategoryResource target = toResource(source, fields);
+            ItemResource target = toResource(source, fields);
             targets.getCategories().add(target);
         }
         return targets;
@@ -99,7 +99,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
         // Values
         for (ItemResult source : sources) {
-            CategoryResource target = toResource(source, categorySchemeVersion, fields);
+            ItemResource target = toResource(source, categorySchemeVersion, fields);
             targets.getCategories().add(target);
         }
         return targets;
@@ -234,12 +234,12 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
-    private CategoryResource toResource(CategoryMetamac source, Set<String> fields) {
+    private ItemResource toResource(CategoryMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
-        CategoryResource target = new CategoryResource();
-        toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source), target, null);
+        ItemResource target = new ItemResource();
+        toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source), target, fields);
         target.setNestedId(source.getNameableArtefact().getCodeFull());
         
         setVisibleFields(source, target, fields);
@@ -247,12 +247,12 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
-    private CategoryResource toResource(ItemResult source, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
+    private ItemResource toResource(ItemResult source, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
         if (source == null) {
             return null;
         }
-        CategoryResource target = new CategoryResource();
-        toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source, categorySchemeVersion), target, categorySchemeVersion.getMaintainableArtefact().getIsImported(), null);
+        ItemResource target = new ItemResource();
+        toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source, categorySchemeVersion), target, categorySchemeVersion.getMaintainableArtefact().getIsImported(), fields);
         target.setNestedId(source.getCodeFull());
         
         setVisibleFields(source, target, fields);

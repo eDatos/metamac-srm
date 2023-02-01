@@ -99,6 +99,7 @@ public class SrmConstants {
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_IMPORTATION                = 150000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_GEO_IMPORTATION            = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION               = 1000000;
+    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_OPENNESS_LEVES_IMPORTATION             = 1000000;
 
     public static final int                VARIABLE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
 

@@ -112,7 +112,7 @@ Application ConceptsMetamac {
     		"Retrieves concepts by concept scheme in locale requested"
     		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale) throws MetamacException;
     		"Retrieves concepts by concept scheme ordered"
-    		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, ItemMetamacResultSelection itemMetamacResultSelection) throws MetamacException;
+    		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection itemMetamacResultSelection) throws MetamacException;
     		"Adds a concepts relation"
     		addRelatedConcept(String urn1, String urn2) throws MetamacException;
     		"Deletes a concepts relation"
@@ -229,7 +229,7 @@ Application ConceptsMetamac {
 				@ConceptMetamac findByUrn(String urn);
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findConceptsByConceptSchemeUnordered(Long conceptSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
+				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection resultSelection) throws MetamacException;
 				List<ConceptMetamacVisualisationResult> findConceptsByConceptSchemeUnorderedToVisualisation(Long conceptSchemeVersionId, String locale) throws MetamacException;
 				checkConceptTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				@ConceptMetamac retrieveConceptWithQuantityId(Long quantityId);

@@ -323,7 +323,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
     
     @Override
-    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version, Set<String> fields) {
+    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version) {
 
 
         CodelistRestrictions targets = new CodelistRestrictions();
@@ -331,22 +331,19 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
       
         // Values
         for (CodelistRestrictionVisualisation source : sources) {
-            ItemResourceInternal target = toResourceRestriction(source, fields);
+            ItemResourceInternal target = toResourceRestriction(source);
             targets.getRestrictions().add(target);
         }
         return targets;
     }
     
 
-    private ItemResourceInternal toResourceRestriction(CodelistRestrictionVisualisation source, Set<String> fields) {
+    private ItemResourceInternal toResourceRestriction(CodelistRestrictionVisualisation source) {
         if (source == null) {
             return null;
         }
         ItemResourceInternal target = new ItemResourceInternal();
-        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, fields);
-        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
-            target.setAnnotations(toAnnotations(source.getNameableArtefact().getAnnotations()));
-        }
+        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
         return target;
     }
 

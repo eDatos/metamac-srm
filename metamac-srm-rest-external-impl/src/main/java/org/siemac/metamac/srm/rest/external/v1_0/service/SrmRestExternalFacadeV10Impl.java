@@ -943,8 +943,6 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
-            String fields = null;
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
 
@@ -952,7 +950,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
             
-            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version, fieldsToShow);
+            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
          
         } catch (Exception e) {
             throw manageException(e);

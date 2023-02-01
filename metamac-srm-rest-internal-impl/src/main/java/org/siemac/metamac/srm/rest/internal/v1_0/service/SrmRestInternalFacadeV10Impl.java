@@ -953,16 +953,14 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
-            String fields = null;
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-           
+
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
             
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
             List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
             
-            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version, fieldsToShow);
+            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
          
         } catch (Exception e) {
             throw manageException(e);

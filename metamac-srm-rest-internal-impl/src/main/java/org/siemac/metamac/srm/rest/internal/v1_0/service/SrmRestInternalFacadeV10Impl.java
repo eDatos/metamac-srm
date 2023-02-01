@@ -951,8 +951,9 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     
     
     @Override
-    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version, String fields) {
+    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
+            String fields = null;
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
            
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);

@@ -12,8 +12,7 @@
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:
   * **/agencyschemes/{agencyID}/{resourceID}/{version}/agencies**
   * **/categoryschemes/{agencyID}/{resourceID}/{version}/categories**
-  * **/codelists/{agencyID}/{resourceID}/{version}/restrictions**
-  * **/v1.0/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers**
+  * **/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers**
   * **/dataproviderschemes/{agencyID}/{resourceID}/{version}/dataproviders**
   * **/organisationschemes/{agencyID}/{resourceID}/{version}/organisations**
   * **/organisationunitschemes/{agencyID}/{resourceID}/{version}/organisationunits**

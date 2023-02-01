@@ -12,6 +12,7 @@
     <source path='core/organisation/dto' />
     <source path='core/category/dto' />
     <source path='core/code/dto' />
+    <source path='core/master/dto' />
     <source path='core/code/enume/domain' />
     <source path='core/enume/domain' />
     <source path='core/security/shared' />

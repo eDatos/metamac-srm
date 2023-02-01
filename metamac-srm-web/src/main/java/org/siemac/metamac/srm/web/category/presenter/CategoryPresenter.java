@@ -10,6 +10,7 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.category.enums.CategoriesToolStripButtonEnum;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryUiHandlers;
@@ -20,6 +21,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent.UpdateEniSchemaCatalogHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryAction;
@@ -49,6 +52,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -58,7 +62,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView, CategoryPresenter.CategoryProxy> implements CategoryUiHandlers {
+public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView, CategoryPresenter.CategoryProxy> implements CategoryUiHandlers, UpdateEniSchemaCatalogHandler {
 
     private final DispatchAsync                dispatcher;
     private final PlaceManager                 placeManager;
@@ -84,6 +88,8 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         void setCategory(CategoryMetamacDto categoryDto);
         void setCategory(CategoryMetamacDto categoryDto, CategorySchemeMetamacDto categorySchemeMetamacDto);
         void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<ItemVisualisationResult> itemVisualisationResults);
+        void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto);
+        
     }
 
     @ContentSlot
@@ -192,7 +198,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
             }
         });
     }
-
+    
     @Override
     public void retrieveCategoryListByScheme(String categorySchemeUrn) {
         dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
@@ -247,7 +253,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
     public void retrieveCategoriesForCategorisations(int firstResult, int maxResults, CategoryWebCriteria categoryWebCriteria) {
         throw new UnsupportedOperationException();
     }
-
+       
     //
     // NAVIGATION
     //
@@ -267,5 +273,11 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
     @Override
     public void goToCategoryScheme(String urn) {
         goTo(PlaceRequestUtils.buildAbsoluteCategorySchemePlaceRequest(urn));
+    }
+    
+    @ProxyEvent
+    @Override
+    public void onUpdateEniSchemaCatalog(UpdateEniSchemaCatalogEvent event) {
+        getView().setEniSchemaCatalogList(event.getEniSchemaCatalogDto());
     }
 }

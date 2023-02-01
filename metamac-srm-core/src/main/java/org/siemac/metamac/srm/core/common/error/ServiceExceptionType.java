@@ -231,5 +231,6 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER                            = create("stream_message.srm.exception.send_message.fails");
     public static final CommonServiceExceptionType STREAM_MESSAGING_MISSING_MANDATORY_SETTINGS                                           = create(
             "stream_message.srm.exception.config.missing_settings");
+    public static final CommonServiceExceptionType ENI_SCHEMA_CATALOG_NOT_FOUND                                                          = create("exception.srm.list.eni_schema_catalog.not_found");
 
 }

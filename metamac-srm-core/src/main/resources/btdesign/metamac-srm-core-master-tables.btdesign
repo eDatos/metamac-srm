@@ -1,0 +1,40 @@
+import "classpath:/btdesign/metamac-srm-core-master-tables-dtos.btdesign"
+import "classpath:/btdesign/metamac-core-common-dtos.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-common.btdesign"
+import "classpath:/btdesign/metamac-core-common-enum.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-base.btdesign"
+import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
+import "classpath:/btdesign/statistic-sdmx-v2_1-domain-enums.btdesign"
+import "classpath:/btdesign/metamac-srm-core-base.btdesign"
+Application MasterTablesMetamac {
+    basePackage=unused
+    
+    Module domain_master_metamac {
+    	basePackage=org.siemac.metamac.srm.core.master
+    		
+		Service MasterTablesService {
+			> @EniSchemaCatalogRepository
+
+		"EniSchemaSource"
+       		List<@EniSchemaCatalog> findAllEniSchemaCatalogs throws MetamacException;
+       		
+       		"EniSchemaCatalogRepository"
+       		@EniSchemaCatalog findEniSchemaCatalogById(Long id) throws MetamacException;
+		}
+    		
+      "ENI Schema Source List"
+    	Entity EniSchemaCatalog {
+    		databaseTable="TB_LIS_ENI_SCHEMA_CATALOGS"
+    		hint="idSequence=ENI_SCHEMA_CATALOGS"
+    		
+    		not auditable
+    		String identifier;
+      		- @InternationalString description required;
+    		
+    		Repository EniSchemaCatalogRepository {
+    			findById;
+    			findAll;
+    		}
+    	}	
+	}
+}

@@ -78,6 +78,7 @@ public class SrmConstants {
     public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODE                                    = "index_base_location_code";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME                                = "base_quantity_concept_scheme";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT                                       = "base_quantity_concept";
+    public static final String             TSV_HEADER_ENI_SCHEME                                                  = "eni_scheme";
 
     public static final String             TSV_EXPORTATION_ENCODING                                               = "UTF-8";
 

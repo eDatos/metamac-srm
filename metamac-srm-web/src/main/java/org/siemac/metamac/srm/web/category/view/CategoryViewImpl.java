@@ -7,18 +7,21 @@ import java.util.List;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.srm.web.category.model.ds.CategoryDS;
 import org.siemac.metamac.srm.web.category.presenter.CategoryPresenter;
 import org.siemac.metamac.srm.web.category.utils.CategoriesFormUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryUiHandlers;
 import org.siemac.metamac.srm.web.category.widgets.CategoriesTreeGrid;
 import org.siemac.metamac.srm.web.category.widgets.CategoryMainFormLayout;
+import org.siemac.metamac.srm.web.client.utils.MasterTablesUtils;
 import org.siemac.metamac.srm.web.client.utils.SemanticIdentifiersUtils;
 import org.siemac.metamac.srm.web.client.widgets.AnnotationsPanel;
 import org.siemac.metamac.srm.web.client.widgets.CustomVLayout;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomSectionStack;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
@@ -55,12 +58,15 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
     private GroupDynamicForm identifiersEditionForm;
     private GroupDynamicForm productionDescriptorsEditionForm;
     private GroupDynamicForm contentDescriptorsEditionForm;
+    private CustomSelectItem eniSchemaCatalog;
     private GroupDynamicForm commentsEditionForm;
     private AnnotationsPanel annotationsEditionPanel;
 
     private CategorySchemeMetamacDto categorySchemeDto;
     private CategoryMetamacDto categoryDto;
-
+    
+    private List<EniSchemaCatalogDto> eniSchemaCatalogDto;
+   
     public CategoryViewImpl() {
         super();
         panel = new VLayout();
@@ -121,6 +127,13 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
     }
 
     @Override
+    public void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto) {
+        this.eniSchemaCatalogDto = eniSchemaCatalogDto;
+        eniSchemaCatalog.setSortField(CategoryDS.ENI_SCHEMA);
+        eniSchemaCatalog.setValueMap(MasterTablesUtils.getEniSchemaCatalogHashMap(this.eniSchemaCatalogDto));
+    }
+    
+    @Override
     public void setCategory(CategoryMetamacDto categoryDto, CategorySchemeMetamacDto categorySchemeMetamacDto) {
         setCategoryScheme(categorySchemeMetamacDto);
         setCategory(categoryDto);
@@ -177,7 +190,8 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         // Content descriptors
         contentDescriptorsForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         ViewMultiLanguageTextItem description = new ViewMultiLanguageTextItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
-        contentDescriptorsForm.setFields(description);
+        ViewTextItem eniSchema = new ViewTextItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
+        contentDescriptorsForm.setFields(description, eniSchema);
 
         // Comments
         commentsForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -220,7 +234,9 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         // Content descriptors
         contentDescriptorsEditionForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
-        contentDescriptorsEditionForm.setFields(description);
+        eniSchemaCatalog = new CustomSelectItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
+        
+        contentDescriptorsEditionForm.setFields(description, eniSchemaCatalog);
 
         // Comments
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -250,6 +266,9 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         contentDescriptorsForm.setValue(CategoryDS.DESCRIPTION, categoryDto.getDescription());
+        
+        contentDescriptorsForm.setValue(CategoryDS.ENI_SCHEMA,
+                categoryDto.getEniSchema() == null ? "" : InternationalStringUtils.getLocalisedString(categoryDto.getEniSchema().getDescription()));
 
         // Comments
         commentsForm.setValue(CategoryDS.COMMENTS, categoryDto.getComment());
@@ -272,6 +291,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         contentDescriptorsEditionForm.setValue(CategoryDS.DESCRIPTION, categoryDto.getDescription());
+        eniSchemaCatalog.setValue(categoryDto.getEniSchema() != null ? categoryDto.getEniSchema().getId() : null);
 
         // Comments
         commentsEditionForm.setValue(CategoryDS.COMMENTS, categoryDto.getComment());
@@ -343,6 +363,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         categoryDto.setDescription(contentDescriptorsEditionForm.getValueAsInternationalStringDto(CategoryDS.DESCRIPTION));
+        categoryDto.setEniSchema(MasterTablesUtils.geteniSchemaCatalogDto(eniSchemaCatalog.getValueAsString(), eniSchemaCatalogDto));
 
         // Comments
         categoryDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(CategoryDS.COMMENTS));
@@ -393,4 +414,5 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
             }
         };
     }
+        
 }

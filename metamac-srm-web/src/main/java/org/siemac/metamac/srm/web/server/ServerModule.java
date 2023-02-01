@@ -149,6 +149,7 @@ import org.siemac.metamac.srm.web.server.handlers.organisation.SaveOrganisationA
 import org.siemac.metamac.srm.web.server.handlers.organisation.SaveOrganisationSchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.UpdateOrganisationSchemeProcStatusActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.VersionOrganisationSchemeActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.GetEniSchemaCatalogsActionHandler;
 import org.siemac.metamac.srm.web.shared.ExportSDMXResourceAction;
 import org.siemac.metamac.srm.web.shared.GetHelpUrlAction;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesAction;
@@ -297,6 +298,7 @@ import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationAction;
 import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationSchemeAction;
 import org.siemac.metamac.srm.web.shared.organisation.UpdateOrganisationSchemeProcStatusAction;
 import org.siemac.metamac.srm.web.shared.organisation.VersionOrganisationSchemeAction;
+import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
 import org.siemac.metamac.web.common.server.handlers.CloseSessionActionHandler;
 import org.siemac.metamac.web.common.server.handlers.GetLoginPageUrlActionHandler;
 import org.siemac.metamac.web.common.server.handlers.GetNavigationBarUrlActionHandler;
@@ -481,6 +483,9 @@ public class ServerModule extends HandlerModule {
         bindHandler(ReSendCodelistStreamMessageAction.class, ReSendCodelistStreamMessageActionHandler.class);
         bindHandler(ExportCodesRestrictionAction.class, ExportCodesRestrictionActionHandler.class);
         bindHandler(ExportCodesOpennessAction.class, ExportCodesOpennessActionHandler.class);
+
+        //Master Tables
+        bindHandler(GetEniSchemaCatalogsAction.class, GetEniSchemaCatalogsActionHandler.class);
         
         // Common
         bindHandler(GetHelpUrlAction.class, GetHelpUrlActionHandler.class);

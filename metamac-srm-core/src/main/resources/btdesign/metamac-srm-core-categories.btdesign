@@ -5,6 +5,7 @@ import "classpath:/btdesign/statistic-sdmx-core-categories.btdesign"
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/statistic-sdmx-v2_1-domain-enums.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base.btdesign"
+import "classpath:/btdesign/metamac-srm-core-master-tables.btdesign"
 
 Application CategoriesMetamac {
 	basePackage=unused
@@ -148,7 +149,10 @@ Application CategoriesMetamac {
 		
 		Entity CategoryMetamac extends @Category {
 			databaseTable="TB_M_CATEGORIES"
-			hint="idSequence=M_CATEGORIES"
+			hint="idSequence=M_CATEGORIES"	
+
+			"Metadata ENI SCHEMA"
+			- @EniSchemaCatalog eniSchema nullable cascade="none" databaseColumn="ENI_SCHEMA_FK";
 			
 			Repository CategoryMetamacRepository {
 				save;

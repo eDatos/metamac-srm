@@ -1,6 +1,5 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.service;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -440,7 +439,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
     public void testFindCodelistRestrictions() throws Exception {
 
         resetMocks();
-        CodelistRestrictions codelistRestrictions = getSrmRestInternalFacadeClientXml().findCodelistRestrictions(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null);
+        CodelistRestrictions codelistRestrictions = getSrmRestInternalFacadeClientXml().findCodelistRestrictions(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
 
         assertNotNull(codelistRestrictions);
         assertEquals(SrmRestConstants.KIND_CODELIST_RESTRICTIONS, codelistRestrictions.getKind());
@@ -533,7 +532,6 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
-
     
     @Test
     public void testFindCodesRetrieveExtendedXml() throws Exception {

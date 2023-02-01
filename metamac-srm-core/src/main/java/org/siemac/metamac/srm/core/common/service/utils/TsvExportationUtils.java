@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -311,6 +312,7 @@ public class TsvExportationUtils {
                 writer.write(SrmConstants.TSV_LINE_SEPARATOR);
                 writeItemCode(writer, itemResult);
                 writeParentCodeFull(writer, itemResult);
+                writeItemExtensionPointEniSchemeIdentifier(writer, itemResult);
                 writeItemName(writer, itemResult, languages);
                 writeItemDescription(writer, itemResult, languages);
                 writeItemComment(writer, itemResult, languages);
@@ -329,6 +331,8 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_HEADER_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_PARENT);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_ENI_SCHEME);
         for (String language : languages) {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_HEADER_NAME + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
@@ -408,6 +412,14 @@ public class TsvExportationUtils {
         }
     }
 
+    private static void writeItemExtensionPointEniSchemeIdentifier(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
+        CategoryMetamacResultExtensionPoint extensionPoint = (CategoryMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        if (extensionPoint.getEniSchemeIdentifier() != null) {
+            writer.write(extensionPoint.getEniSchemeIdentifier());
+        }
+    }
+    
     private static void writeItemName(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
         for (String language : languages) {
             String nameInLocale = itemResult.getName().get(language);

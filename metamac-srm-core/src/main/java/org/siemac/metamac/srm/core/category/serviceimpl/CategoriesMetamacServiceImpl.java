@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,11 +38,12 @@ import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategoriesMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategorisationsUtils;
-import org.siemac.metamac.srm.core.code.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.common.LifeCycle;
 import org.siemac.metamac.srm.core.common.SrmValidation;
@@ -56,6 +58,8 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -64,6 +68,7 @@ import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublication
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
+import org.siemac.metamac.srm.core.util.UtilsMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +165,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
     @Autowired
     private ItemSchemeRepository                      itemSchemeRepository;
+
+    @Autowired
+    private EniSchemaCatalogRepository                eniSchemaCatalogRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                           entityManager;
@@ -365,6 +373,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             // Inherit InternationalStrings
             BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToItem(category, categoryTempItemResult, internationalStringRepository);
+            
+            category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
 
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
         }
@@ -401,6 +411,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         return categorySchemeVersion;
     }
 
+    private EniSchemaCatalog getEniSchemaCatalogFromExtensionPoint(ItemResult categoryTempItemResult) {
+        if (categoryTempItemResult != null && categoryTempItemResult.getExtensionPoint() != null) {
+            return ((CategoryMetamacResultExtensionPoint) categoryTempItemResult.getExtensionPoint()).getEniSchemeCatalog();
+        }
+        return null;
+    }
+    
     @Override
     public CategorySchemeVersionMetamac startCategorySchemeValidity(ServiceContext ctx, String urn) throws MetamacException {
 
@@ -545,6 +562,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     updateAlreadyExisting = true;
                 }
                 
+                
+                LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
+                                
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -558,6 +578,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     // Transform category and add to list to persist
                     CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isTemporalVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
+                    TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                     if (category != null) {
                         categtoriesToPersist.add(category);
                         categoriesToPersistByCode.put(category.getNameableArtefact().getCodeFull(), category);
@@ -620,7 +641,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             itemResultSelection = ItemResultSelection.RETRIEVE; // default
         }
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
-        return categoryRepository.findCategoriesByCategorySchemeUnordered(categorySchemeVersion.getId(), itemResultSelection);
+        return getCategoryMetamacRepository().findCategoriesByCategorySchemeUnordered(categorySchemeVersion.getId(), (ItemMetamacResultSelection)itemResultSelection);
     }
 
     @Override

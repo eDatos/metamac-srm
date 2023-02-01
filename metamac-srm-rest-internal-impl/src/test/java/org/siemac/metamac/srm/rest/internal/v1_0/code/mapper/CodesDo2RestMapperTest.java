@@ -580,7 +580,7 @@ public class CodesDo2RestMapperTest {
         assertEquals(SrmRestConstants.KIND_VARIABLE_FAMILIES, target.getFamilies().getKind());
         assertEquals(BigInteger.valueOf(3), target.getFamilies().getTotal());
         assertTrue(isFamilyInList("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily1", target.getFamilies().getFamilies()));
-        assertTrue(isFamilyHrefInList("http://data.istac.es/apis/structural-resources/v1.0/variablefamilies/variableFamily1", target.getFamilies().getFamilies()));
+        assertTrue(isFamilyHrefInList("http://data.istac.es/apis/structural-resources-internal/v1.0/variablefamilies/variableFamily1", target.getFamilies().getFamilies()));
         assertTrue(isFamilyInList("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily2", target.getFamilies().getFamilies()));
         assertTrue(isFamilyInList("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily3", target.getFamilies().getFamilies()));
 

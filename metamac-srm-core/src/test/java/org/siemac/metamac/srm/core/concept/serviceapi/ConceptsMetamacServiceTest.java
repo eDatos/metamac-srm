@@ -6078,7 +6078,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         // Retrieve
         String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
 
-        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ItemMetamacResultSelection.API);
+        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ConceptMetamacResultSelection.API);
 
         // Validate
         assertEquals(8, concepts.size());

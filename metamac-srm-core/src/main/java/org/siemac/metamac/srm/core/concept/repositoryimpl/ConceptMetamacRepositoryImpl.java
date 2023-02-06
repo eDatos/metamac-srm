@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -155,7 +156,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     }
 
     @Override
-    public List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException {
+    public List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, ConceptMetamacResultSelection resultSelection) throws MetamacException {
         // Find concepts
         List<ItemResult> concepts = conceptRepository.findConceptsByConceptSchemeUnordered(conceptSchemeVersionId, resultSelection);
 
@@ -182,6 +183,8 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             
             executeQueryRetrieveConceptQuantityType(conceptSchemeVersionId, mapConceptByItemId);
             executeQueryRetrieveQuantityConceptInternationalString(conceptSchemeVersionId, mapConceptByItemId, ConceptExtensionPointUtilities.PERCENTAGE_OF);
+        } else if (resultSelection.isPluralName()) {
+            executeQueryRetrieveConceptInternationalString(conceptSchemeVersionId, mapConceptByItemId, ConceptExtensionPointUtilities.PLURAL_NAME);
         }
 
         StringBuilder sb = new StringBuilder();

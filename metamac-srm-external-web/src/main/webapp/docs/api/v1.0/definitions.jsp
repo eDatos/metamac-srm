@@ -1829,6 +1829,19 @@
          ],
          "description":""
       },
+      "ConceptResource":{
+         "type":"object",
+         "title":"ConceptResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "$ref":"#/definitions/ItemResource"
+            }
+         ],
+         "description":""
+      },
       "ConceptScheme":{
          "type":"object",
          "title":"ConceptScheme",
@@ -1948,7 +1961,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/ItemResource"
+                     "$ref":"#/definitions/ConceptResource"
                   }
                }
             }

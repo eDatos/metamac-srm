@@ -44,6 +44,7 @@ import org.siemac.metamac.srm.core.task.domain.ImportationOrganisationsTsvHeader
 import org.siemac.metamac.srm.core.task.domain.ImportationVariableElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.InternationalStringTsv;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
+import org.siemac.metamac.srm.core.util.InternationalStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,10 +140,10 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link OrganisationMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static OrganisationMetamac tsvLineToOrganisation(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
+    public static OrganisationMetamac tsvLineToOrganisation(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isDefaultMaintainer, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        return (OrganisationMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
+        return (OrganisationMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
                 getOrganisationType((OrganisationSchemeVersionMetamac) itemSchemeVersion));
     }
 
@@ -381,26 +382,26 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link ConceptMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static ConceptMetamac tsvLineToConcept(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
-            Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
-            throws MetamacException {
-        return (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode,
-                exceptionItems, infoItems, TypeExternalArtefactsEnum.CONCEPT);
+    public static ConceptMetamac tsvLineToConcept(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isDefaultMaintainer,
+            boolean isTemporalVersion, boolean updateAlreadyExisting, Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems,
+            List<MetamacExceptionItem> infoItems) throws MetamacException {
+        return (ConceptMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems,
+                infoItems, TypeExternalArtefactsEnum.CONCEPT);
 
     }
     
-    public static ConceptMetamac setInternationalStringConceptFields(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, ConceptMetamac conceptMetamac)
+    public static ConceptMetamac setInternationalStringConceptFields(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, ConceptMetamac conceptMetamac, boolean isDefaultMaintainer)
             throws MetamacException {
 
+        conceptMetamac.setPluralName(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getPluralName(), columns, conceptMetamac.getPluralName(), isDefaultMaintainer));
+        conceptMetamac.setAcronym(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getAcronym(), columns, conceptMetamac.getAcronym(), isDefaultMaintainer));
+        conceptMetamac.setDescriptionSource(
+                TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getDescriptionSource(), columns, conceptMetamac.getDescriptionSource(), isDefaultMaintainer));
+        conceptMetamac.setContext(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getContext(), columns, conceptMetamac.getContext(), isDefaultMaintainer));
+        conceptMetamac.setDocMethod(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getDocMethod(), columns, conceptMetamac.getDocMethod(), isDefaultMaintainer));
+        conceptMetamac.setDerivation(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getDerivation(), columns, conceptMetamac.getDerivation(), isDefaultMaintainer));
+        conceptMetamac.setLegalActs(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getLegalActs(), columns, conceptMetamac.getLegalActs(), isDefaultMaintainer));
 
-        conceptMetamac.setPluralName(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getPluralName(), columns, conceptMetamac.getPluralName()));
-        conceptMetamac.setAcronym(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getAcronym(), columns, conceptMetamac.getAcronym()));
-        conceptMetamac.setDescriptionSource(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getDescriptionSource(), columns, conceptMetamac.getDescriptionSource()));
-        conceptMetamac.setContext(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getContext(), columns, conceptMetamac.getContext()));
-        conceptMetamac.setDocMethod(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getDocMethod(), columns, conceptMetamac.getDocMethod()));
-        conceptMetamac.setDerivation(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getDerivation(), columns, conceptMetamac.getDerivation()));
-        conceptMetamac.setLegalActs(TsvImportationUtils.tsvLineToInternationalString(conceptTsvHeader.getLegalActs(), columns, conceptMetamac.getLegalActs()));
-        
         return conceptMetamac;
     }
     
@@ -417,10 +418,10 @@ public class TsvImportationUtils {
     /**
      * Transforms TSV line to {@link CategoryMetamac}. IMPORTANT: Do not execute save or update operation
      */
-    public static CategoryMetamac tsvLineToCategory(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
+    public static CategoryMetamac tsvLineToCategory(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isDefaultMaintainer, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
             throws MetamacException {
-        return (CategoryMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
+        return (CategoryMetamac) tsvLineToItem(header, columns, lineNumber, itemSchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting, itemsPreviousInItemScheme, itemsToPersistByCode, exceptionItems, infoItems,
                 TypeExternalArtefactsEnum.CATEGORY);
 
     }
@@ -948,7 +949,7 @@ public class TsvImportationUtils {
         return header;
     }
 
-    private static Item tsvLineToItem(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isTemporalVersion, boolean updateAlreadyExisting,
+    private static Item tsvLineToItem(ImportationItemsTsvHeader header, String[] columns, int lineNumber, ItemSchemeVersion itemSchemeVersion, boolean isDefaultMaintainer, boolean isTemporalVersion, boolean updateAlreadyExisting,
             Map<String, Item> itemsPreviousInItemScheme, Map<String, Item> itemsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems,
             TypeExternalArtefactsEnum itemType) throws MetamacException {
 
@@ -993,10 +994,14 @@ public class TsvImportationUtils {
                 ? (itemsPreviousInItemScheme.get(StringUtils.isNotBlank(itemParentIdentifier) ? itemParentIdentifier + "." + itemIdentifier : itemIdentifier))
                 : itemsPreviousInItemScheme.get(itemIdentifier);
         if (item == null) {
-            if (isTemporalVersion) {
-                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED, itemIdentifier));
+            
+            if (!isDefaultMaintainer || isTemporalVersion) {
+                infoItems.add(new MetamacExceptionItem(
+                        !isDefaultMaintainer ? ServiceExceptionType.IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED : ServiceExceptionType.IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED,
+                                itemIdentifier));
                 return null;
             }
+
             item = createItem(itemType);
             item.setNameableArtefact(new NameableArtefact());
             item.getNameableArtefact().setCode(itemIdentifier);
@@ -1030,13 +1035,13 @@ public class TsvImportationUtils {
             }
             item.getNameableArtefact().setIsCodeUpdated(false);
         }
-        item.getNameableArtefact().setName(TsvImportationUtils.tsvLineToInternationalString(header.getName(), columns, item.getNameableArtefact().getName()));
+        item.getNameableArtefact().setName(TsvImportationUtils.tsvLineToInternationalStringBase(header.getName(), columns, item.getNameableArtefact().getName(), isDefaultMaintainer));
         if (item.getNameableArtefact().getName() == null) {
             exceptionItems.add(
                     new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, item.getNameableArtefact().getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_NAME));
         }
-        item.getNameableArtefact().setDescription(TsvImportationUtils.tsvLineToInternationalString(header.getDescription(), columns, item.getNameableArtefact().getDescription()));
-        item.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalString(header.getComment(), columns, item.getNameableArtefact().getComment()));
+        item.getNameableArtefact().setDescription(TsvImportationUtils.tsvLineToInternationalStringBase(header.getDescription(), columns, item.getNameableArtefact().getDescription(), isDefaultMaintainer));
+        item.getNameableArtefact().setComment(TsvImportationUtils.tsvLineToInternationalStringBase(header.getComment(), columns, item.getNameableArtefact().getComment(), isDefaultMaintainer));
 
         if (TypeExternalArtefactsEnum.CONCEPT.equals(itemType)) {
             ((ConceptMetamac) item).setSdmxRelatedArtefact(tsvLineToSdmxRelatedArtefact(header, columns, item, exceptionItems));
@@ -1186,7 +1191,14 @@ public class TsvImportationUtils {
     public static Item cloneItemInImport(Item source, TypeExternalArtefactsEnum itemType) {
         if (TypeExternalArtefactsEnum.CONCEPT.equals(itemType)) {
             ConceptMetamac target = new ConceptMetamac();
+            ConceptMetamac conceptSource = (ConceptMetamac) source;
             target.setNameableArtefact(new NameableArtefact());
+            
+            //copy only common international strings metadata. To allow importation of concepts from external agencies without modify the source information.
+            target.getNameableArtefact().setName(InternationalStringUtils.copy(conceptSource.getNameableArtefact().getName()));
+            target.getNameableArtefact().setDescription(InternationalStringUtils.copy(conceptSource.getNameableArtefact().getDescription()));
+            target.getNameableArtefact().setComment(InternationalStringUtils.copy(conceptSource.getNameableArtefact().getComment()));
+                                   
             return target;
         }
         return source;

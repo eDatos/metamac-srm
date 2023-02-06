@@ -37,6 +37,9 @@ public class NewConceptWindow extends CustomWindow {
         RequiredTextItem nameItem = new RequiredTextItem(ConceptDS.NAME, getConstants().nameableArtefactName());
         nameItem.setWidth(FORM_ITEM_CUSTOM_WIDTH);
 
+        RequiredTextItem pluralNameItem = new RequiredTextItem(ConceptDS.PLURAL_NAME, getConstants().conceptPluralName());
+        pluralNameItem.setWidth(FORM_ITEM_CUSTOM_WIDTH);
+
         RequiredSelectItem sdmxRelatedArtefact = new RequiredSelectItem(ConceptDS.SDMX_RELATED_ARTEFACT, getConstants().conceptSdmxRelatedArtefact());
         sdmxRelatedArtefact.setValueMap(CommonUtils.getConceptRoleHashMap());
         sdmxRelatedArtefact.setWidth(FORM_ITEM_CUSTOM_WIDTH);
@@ -46,7 +49,7 @@ public class NewConceptWindow extends CustomWindow {
 
         form = new CustomDynamicForm();
         form.setMargin(5);
-        form.setFields(codeItem, nameItem, sdmxRelatedArtefact, saveItem);
+        form.setFields(codeItem, nameItem, pluralNameItem, sdmxRelatedArtefact, saveItem);
 
         addItem(form);
         show();
@@ -60,6 +63,7 @@ public class NewConceptWindow extends CustomWindow {
         ConceptMetamacDto conceptDto = new ConceptMetamacDto();
         conceptDto.setCode(form.getValueAsString(ConceptDS.CODE));
         conceptDto.setName(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(ConceptDS.NAME)));
+        conceptDto.setPluralName(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(ConceptDS.PLURAL_NAME)));
         conceptDto.setSdmxRelatedArtefact(form.getItem(ConceptDS.SDMX_RELATED_ARTEFACT).isVisible() ? ConceptRoleEnum.valueOf(form.getValueAsString(ConceptDS.SDMX_RELATED_ARTEFACT)) : null);
         return conceptDto;
     }

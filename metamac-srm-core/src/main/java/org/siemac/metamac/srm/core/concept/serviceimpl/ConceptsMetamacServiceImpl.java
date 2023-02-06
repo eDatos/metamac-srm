@@ -2043,6 +2043,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         checkConceptMetadataExtends(ctx, conceptSchemeVersion, concept);
         checkConceptRepresentation(ctx, conceptSchemeVersion, concept, true);
         checkConceptQuantity(ctx, conceptSchemeVersion, concept);
+        checkConceptPluralName(concept);
     }
 
     private void checkConceptMetadataExtends(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeVersionSource, ConceptMetamac concept) throws MetamacException {
@@ -2129,6 +2130,14 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             if (result.getValues().size() != 1 || !result.getValues().get(0).getId().equals(codeBaseLocationId)) {
                 throw new MetamacException(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.CONCEPT_QUANTITY_BASE_LOCATION);
             }
+        }
+    }
+
+    private void checkConceptPluralName(ConceptMetamac concept) throws MetamacException {
+        if (SrmValidationUtils.isInternationalStringEmpty(concept.getPluralName())) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED)
+                    .withMessageParameters(new String[]{ServiceExceptionParameters.CONCEPT_PLURAL_NAME}).build();
+
         }
     }
 

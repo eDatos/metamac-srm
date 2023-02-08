@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.Response.Status;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -44,6 +43,7 @@ import com.arte.statistic.sdmx.srm.core.base.domain.AnnotableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
+import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.srm.core.common.domain.IdentifiableArtefactResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;

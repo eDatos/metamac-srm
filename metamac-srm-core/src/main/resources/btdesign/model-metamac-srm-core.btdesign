@@ -10,10 +10,14 @@ import "classpath:/btdesign/metamac-core-common-enum.btdesign"
 import "classpath:/btdesign/statistic-sdmx-core-structure.btdesign"
 import "classpath:/btdesign/statistic-sdmx-core-concepts.btdesign"
 
+import "classpath:/btdesign/metamac-srm-core-master-tables.btdesign"
+import "classpath:/btdesign/metamac-srm-core-master-tables-dtos.btdesign"
+
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-facade.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base-dtos.btdesign"
+
 
 import "classpath:/btdesign/metamac-srm-core-concepts.btdesign"
 import "classpath:/btdesign/metamac-srm-core-concepts-dtos.btdesign"

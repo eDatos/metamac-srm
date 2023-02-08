@@ -48,7 +48,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptTypes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
-import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
+import org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
@@ -326,7 +326,7 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
 
         // Verify with mockito
         ArgumentCaptor<String> conceptSchemeUrnArgument = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<ItemMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemMetamacResultSelection.class);
+        ArgumentCaptor<ConceptMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ConceptMetamacResultSelection.class);
         verify(conceptsService).retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), conceptSchemeUrnArgument.capture(), itemResultSelectionArgument.capture());
         assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=agency1:itemScheme1(01.000)", conceptSchemeUrnArgument.getValue());
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
@@ -610,7 +610,7 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
     }
 
     private void mockRetrieveConceptsByConceptScheme() throws MetamacException {
-        when(conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemMetamacResultSelection.class)))
+        when(conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ConceptMetamacResultSelection.class)))
                 .thenAnswer(getRetrieveConceptSchemeUrnAnswer());
     }
 

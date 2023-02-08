@@ -97,6 +97,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
+import org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection;
 import org.siemac.metamac.srm.core.code.domain.RelatedCode;
 import org.siemac.metamac.srm.core.code.domain.VariableElementProperties;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
@@ -271,9 +272,10 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
                 // Retrieve all concepts of conceptScheme, without pagination
                 ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemePublished(agencyID, resourceID, version);
 
-                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+                ConceptMetamacResultSelection itemMetamacResultSelection = ConceptMetamacResultSelection.API;
                 itemMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
                 itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+                itemMetamacResultSelection.setPluralName(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME));
                 List<ItemResult> items = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(ctx, conceptSchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
                 // Transform
@@ -351,8 +353,13 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-
+            
+            Set<String> validFields = new HashSet<>();
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
+            
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
                 SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -946,17 +953,16 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     
     
     @Override
-    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version, String fields) {
+    public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-           
+
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
             
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
             List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
             
-            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version, fieldsToShow);
+            return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
          
         } catch (Exception e) {
             throw manageException(e);
@@ -1531,7 +1537,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
     private PagedResult<CategoryMetamac> findCategoriesCore(String agencyID, String resourceID, String version, String categoryID, List<ConditionalCriteria> conditionalCriteriaQuery,
             PagingParameter pagingParameter) throws MetamacException {
-
+       
         // Criteria to find items by criteria
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItems(agencyID, resourceID, version, categoryID,
                 CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact(), CategoryMetamacProperties.nameableArtefact(), conditionalCriteriaQuery, CategoryMetamac.class);

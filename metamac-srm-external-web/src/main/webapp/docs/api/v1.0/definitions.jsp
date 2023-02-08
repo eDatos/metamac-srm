@@ -1145,7 +1145,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/ItemResource"
+                     "$ref":"#/definitions/CategoryResource"
                   }
                }
             }
@@ -1246,7 +1246,14 @@
                      },
                      "description":"",
                      "type":"string"
-                  }
+                  },
+                   "eniSchemeType":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Item"
+                  },
                }
             }
          ],
@@ -1394,6 +1401,30 @@
                      },
                      "description":"",
                      "type":"boolean"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
+        "CategoryResource":{
+         "type":"object",
+         "title":"CategoryResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "$ref":"#/definitions/ItemResource"
+            },
+            {
+               "properties":{
+                  "eniSchemeType":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Item"
                   }
                }
             }
@@ -1669,7 +1700,6 @@
          ],
          "description":""
       },
-      
       "Concept":{
          "type":"object",
          "title":"Concept",
@@ -1799,6 +1829,19 @@
          ],
          "description":""
       },
+      "ConceptResource":{
+         "type":"object",
+         "title":"ConceptResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "$ref":"#/definitions/ItemResource"
+            }
+         ],
+         "description":""
+      },
       "ConceptScheme":{
          "type":"object",
          "title":"ConceptScheme",
@@ -1918,7 +1961,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/ItemResource"
+                     "$ref":"#/definitions/ConceptResource"
                   }
                }
             }

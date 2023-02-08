@@ -12,8 +12,7 @@
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:
   * **/agencyschemes/{agencyID}/{resourceID}/{version}/agencies**
   * **/categoryschemes/{agencyID}/{resourceID}/{version}/categories**
-  * **/codelists/{agencyID}/{resourceID}/{version}/restrictions**
-  * **/v1.0/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers**
+  * **/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers**
   * **/dataproviderschemes/{agencyID}/{resourceID}/{version}/dataproviders**
   * **/organisationschemes/{agencyID}/{resourceID}/{version}/organisations**
   * **/organisationunitschemes/{agencyID}/{resourceID}/{version}/organisationunits**
@@ -21,6 +20,14 @@
 Se puede consultar la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto de aplicaciones 
 de eDatos que consuman la API de structural-resources a través de JAX-RS.
 
+Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
+ ```shell
+ ```shell
+  etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_master_table_eni_schema_catalog.sql
+  etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_tb_sequence_eni_schema_catalog.sql
+  etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_foreign_key_to_eni_schema_catalog.sql
+  etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_insert_eni_schemas_values.sql  
+  ```
 ## 3.3.0 a 4.0.0
 * Rotura de la compatibilidad:
 ** Se eliminan los servicios soap
@@ -31,6 +38,7 @@ de eDatos que consuman la API de structural-resources a través de JAX-RS.
 
 ## 3.1.0 a 3.2.0
 
+
 * Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
 * Es necesario ejecutar los scripts SQL del proyecto metamac-srm contenidos en la carpeta
   ```shell
@@ -38,6 +46,7 @@ de eDatos que consuman la API de structural-resources a través de JAX-RS.
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220707_create_normalization_type_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220714_create_source_provider_column.sql
   etc/changes-from-release/3.1.0/db/srm/postgresql/20220725_create_is_extended_code_column.sql
+  
   ```
 * Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
   ```shell
@@ -51,7 +60,6 @@ de eDatos que consuman la API de structural-resources a través de JAX-RS.
   ```
 
 ## 2.11.0 a 3.0.0
-
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.
 * Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/2.11.1/db](etc/changes-from-release/2.11.1/db)
   ```shell

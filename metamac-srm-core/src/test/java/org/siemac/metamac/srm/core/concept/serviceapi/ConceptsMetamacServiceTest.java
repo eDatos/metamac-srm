@@ -4354,7 +4354,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     @Test
     public void testRetrieveConceptsOrderedInDepthByConceptSchemeUrn() throws Exception {
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(Long.valueOf(12), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(Long.valueOf(12), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         assertEquals(8, concepts.size());
 
@@ -4432,7 +4432,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 11
@@ -4506,7 +4506,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 12: 1 parent concept and 11 child concepts
@@ -4615,7 +4615,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts2.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 24: 2 parent concepts and 11 child concepts for each parent
@@ -6078,7 +6078,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         // Retrieve
         String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
 
-        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ItemMetamacResultSelection.API);
+        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ConceptMetamacResultSelection.API);
 
         // Validate
         assertEquals(8, concepts.size());

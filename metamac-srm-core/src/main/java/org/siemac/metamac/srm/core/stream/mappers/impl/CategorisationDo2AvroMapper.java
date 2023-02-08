@@ -1,12 +1,12 @@
 package org.siemac.metamac.srm.core.stream.mappers.impl;
 
-import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
-import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
-import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import org.siemac.metamac.srm.core.stream.mappers.Do2AvroMapper;
 import org.siemac.metamac.srm.core.stream.message.RelatedResourceAvro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 
 @Component
 public class CategorisationDo2AvroMapper implements Do2AvroMapper<Categorisation, RelatedResourceAvro> {

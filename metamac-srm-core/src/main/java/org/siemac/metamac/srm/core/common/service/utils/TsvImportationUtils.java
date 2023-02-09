@@ -425,13 +425,15 @@ public class TsvImportationUtils {
 
     }
     
-    public static void tsvLineToItemCategoryOwnFields(CategoryMetamac category,  LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap, ImportationCategoriesTsvHeader header, String[] columns) {
+    public static void tsvLineToItemCategoryOwnFields(CategoryMetamac category, LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap, ImportationCategoriesTsvHeader header, String[] columns) {
 
         // eni scheme field
         String itemIdentifierEniScheme = columns[header.getEniSchemePosition()];
         if (!StringUtils.isBlank(itemIdentifierEniScheme)) {
             EniSchemaCatalog eniScheme = eniSchemeMap.get(itemIdentifierEniScheme);
             category.setEniSchema(eniScheme);
+        } else {
+            category.setEniSchema(null);
         }
     }
         

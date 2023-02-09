@@ -70,8 +70,8 @@ public class ConceptsCopyCallbackMetamacImpl extends ConceptsCopyCallbackImpl {
     }
 
     @Override
-    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem) {
-        super.copyItem(sourceItem, sourceItemResult, targetItem);
+    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
 
         ConceptMetamac source = (ConceptMetamac) sourceItem;
         ConceptMetamac target = (ConceptMetamac) targetItem;

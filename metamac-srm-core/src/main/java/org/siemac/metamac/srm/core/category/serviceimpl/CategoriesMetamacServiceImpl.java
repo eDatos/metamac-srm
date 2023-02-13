@@ -58,8 +58,8 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
-import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -514,8 +514,6 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(categorySchemeVersion, categorySchemeVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion, false);
-
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
 
@@ -556,13 +554,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                 for (Item item : categorySchemeVersion.getItems()) {
                     categoriesPreviousInCategorySchemeByCode.put(item.getNameableArtefact().getCodeFull(), item);
                 }
-
+                
+                boolean isDefaultMaintainer = isDefaultMaintainer(categorySchemeVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
                 boolean isTemporalVersion = VersionUtil.isTemporalVersion(categorySchemeVersion.getMaintainableArtefact().getVersionLogic());
-                if (isTemporalVersion) {
+                if (!isDefaultMaintainer || isTemporalVersion) {
                     updateAlreadyExisting = true;
                 }
-                
-                
+  
                 LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
                                 
                 int lineNumber = 2;
@@ -576,7 +574,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                         continue;
                     }
                     // Transform category and add to list to persist
-                    CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isTemporalVersion, updateAlreadyExisting,
+                    CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
                     TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                     if (category != null) {
@@ -607,6 +605,10 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
+    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
+        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
+    }
+    
     @Override
     public String exportCategoriesTsv(ServiceContext ctx, String categorySchemetUrn) throws MetamacException {
 

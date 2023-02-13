@@ -79,8 +79,8 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
     }
 
     @Override
-    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem) {
-        super.copyItem(sourceItem, sourceItemResult, targetItem);
+    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
 
         CodeMetamac source = (CodeMetamac) sourceItem;
         CodeMetamac target = (CodeMetamac) targetItem;

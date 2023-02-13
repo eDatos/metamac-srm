@@ -26,6 +26,7 @@ public class ImportOrganisationsWindow extends ImportResourceWindow {
     private OrganisationSchemeUiHandlers uiHandlers;
     protected WarningLabel               warningLabel;
     protected InformationLabel informationTemporalVersionLabel;
+    protected InformationLabel informationExternalResourceLabel;
     protected InformationLabel informationLabel;
     
     public ImportOrganisationsWindow() {
@@ -35,10 +36,19 @@ public class ImportOrganisationsWindow extends ImportResourceWindow {
         setForm(form);
 
         buildInformationTemporalVersionLabel();
+        buildInformationExternalResourceLabel();
         buildInformationLabel();
         buildWarningLabel();
     }
 
+    private void buildInformationExternalResourceLabel() {
+        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationExternalResourcesInfoMessage());
+        informationExternalResourceLabel.setWidth(this.form.getWidth());
+        informationExternalResourceLabel.setMargin(10);
+        informationExternalResourceLabel.hide();
+        body.addMember(informationExternalResourceLabel, 1);
+    }
+    
     private void buildInformationTemporalVersionLabel() {
         informationTemporalVersionLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationTemporalVersionInfoMessage());
         informationTemporalVersionLabel.setWidth(this.form.getWidth());
@@ -66,19 +76,28 @@ public class ImportOrganisationsWindow extends ImportResourceWindow {
         ((HiddenItem) form.getItem(SrmSharedTokens.UPLOAD_PARAM_ORGANISATION_SCHEME_URN)).setDefaultValue(organisationSchemeMetamacDto.getUrn());
     }
 
-    public void initImportWindow(Boolean isTemporalVersionUnitScheme) {
+    public void initImportWindow(Boolean isLocalResource, Boolean isTemporalVersionUnitScheme) {
         CustomCheckboxItem updateExistingCodesItem = (CustomCheckboxItem) this.form.getItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING);
 
-        if (Boolean.TRUE.equals(isTemporalVersionUnitScheme)) {
+        if (Boolean.FALSE.equals(isLocalResource)) {
             updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
             updateExistingCodesItem.setCanEdit(false);
             updateExistingCodesItem.hide();
+            informationExternalResourceLabel.show();
+            informationTemporalVersionLabel.hide();
+            informationLabel.hide();
+        } else if (Boolean.TRUE.equals(isTemporalVersionUnitScheme)) {
+            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
+            updateExistingCodesItem.setCanEdit(false);
+            updateExistingCodesItem.hide();
+            informationExternalResourceLabel.hide();
             informationTemporalVersionLabel.show();
             informationLabel.hide();
         } else {
             updateExistingCodesItem.show();
             updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
             updateExistingCodesItem.setCanEdit(true);
+            informationExternalResourceLabel.hide();
             informationTemporalVersionLabel.hide();
             informationLabel.show();
         }

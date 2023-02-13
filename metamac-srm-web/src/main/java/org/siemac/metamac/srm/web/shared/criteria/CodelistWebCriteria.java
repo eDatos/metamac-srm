@@ -1,5 +1,7 @@
 package org.siemac.metamac.srm.web.shared.criteria;
 
+import java.util.List;
+
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 
@@ -16,6 +18,7 @@ public class CodelistWebCriteria extends VersionableResourceWebCriteria {
     private String                variableFamilyUrn;
     private String                codelisUrnToReplaceCodelist;
     private NormalizationTypeEnum normalizationType;
+    private List<Object>            codeListIds;
 
     public CodelistWebCriteria() {
     }
@@ -99,5 +102,13 @@ public class CodelistWebCriteria extends VersionableResourceWebCriteria {
 
     public void setNormalizationType(NormalizationTypeEnum normalizationType) {
         this.normalizationType = normalizationType;
+    }
+
+    public List<Object> getCodeListIds() {
+        return codeListIds;
+    }
+
+    public void setCodeListIds(List<Object> codeListIds) {
+        this.codeListIds = codeListIds;
     }
 }

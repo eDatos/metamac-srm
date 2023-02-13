@@ -829,6 +829,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
         public SculptorPropertyCriteria retrieveProperty(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {
             CodelistVersionMetamacCriteriaPropertyEnum propertyEnum = CodelistVersionMetamacCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
             switch (propertyEnum) {
+                case ID:
+                    return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.id(), propertyRestriction.getValueList(), propertyRestriction.getOperationType());
                 case CODE:
                     return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case URN:

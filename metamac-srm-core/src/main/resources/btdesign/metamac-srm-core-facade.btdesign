@@ -580,6 +580,8 @@ Application SrmFacadeCore {
             @CodelistMetamacDto retrieveCodelistByUrn(String urn) throws MetamacException;
             "Retrieves all codelist versions"
             List<@CodelistMetamacBasicDto> retrieveCodelistVersions(String urn) throws MetamacException;
+            "Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
+            List<Object> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
             
             "Sends Codelist to production validation"
 	    	@CodelistMetamacDto sendCodelistToProductionValidation(String urn) throws MetamacException;

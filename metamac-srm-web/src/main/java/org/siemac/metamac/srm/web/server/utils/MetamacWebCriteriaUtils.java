@@ -6,7 +6,6 @@ import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestric
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaDisjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction.OperationType;
-import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryDisjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaRestriction;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategorySchemeVersionMetamacCriteriaPropertyEnum;
@@ -309,6 +308,12 @@ public class MetamacWebCriteriaUtils {
                 MetamacCriteriaRestriction restriction = new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.VARIABLE_FAMILY.name(), criteria.getVariableFamilyUrn(),
                         OperationType.EQ);
                 conjunctionRestriction.getRestrictions().add(restriction);
+            }
+            
+            if (criteria.getCodeListIds() != null && !criteria.getCodeListIds().isEmpty()) {
+                MetamacCriteriaDisjunctionRestriction disjuntion = new MetamacCriteriaDisjunctionRestriction();
+                disjuntion.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.ID.name(), criteria.getCodeListIds(), OperationType.IN));
+                conjunctionRestriction.getRestrictions().add(disjuntion);
             }
 
         }

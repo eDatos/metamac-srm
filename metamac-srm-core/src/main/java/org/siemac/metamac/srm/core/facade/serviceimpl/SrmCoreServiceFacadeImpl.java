@@ -1250,6 +1250,16 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public List<Object> findCodelistsByVariableInformation(ServiceContext ctx, String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canFindCodelistsByCondition(ctx);
+
+        // Find
+        return getCodesMetamacService().findCodelistsByVariableInformation(ctx, variableUrn, variableFamilyUrn, variableElementUrn);
+
+    }
+    
+    @Override
     public MetamacCriteriaResult<RelatedResourceDto> findCodelistsCanReplaceToByCondition(ServiceContext ctx, String codelistUrn, MetamacCriteria criteria) throws MetamacException {
         // Security
         CodesSecurityUtils.canFindCodelistsByCondition(ctx);

@@ -809,9 +809,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         ConceptsMetamacInvocationValidator.checkImportConceptsTsv(conceptSchemeUrn, file, fileName, updateAlreadyExisting, canBeBackground, null);
         ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, conceptSchemeUrn);
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(conceptSchemeVersion, conceptSchemeVersion.getLifeCycleMetadata(), canBeBackground);
-
-        srmValidation.checkItemsStructureCanBeModified(ctx, conceptSchemeVersion, false);
-
+        
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
 
@@ -852,9 +850,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 for (Item item : conceptSchemeVersion.getItems()) {
                     conceptsPreviousInConceptSchemeByCode.put(item.getNameableArtefact().getCode(), item);
                 }
-
+           
+                boolean isDefaultMaintainer = isDefaultMaintainer(conceptSchemeVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
                 boolean isTemporalVersion = VersionUtil.isTemporalVersion(conceptSchemeVersion.getMaintainableArtefact().getVersionLogic());
-                if (isTemporalVersion) {
+                if (!isDefaultMaintainer || isTemporalVersion) {
                     updateAlreadyExisting = true;
                 }
 
@@ -875,13 +874,13 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                     }
 
                     // Transform concept and add to list to persist
-                    ConceptMetamac concept = TsvImportationUtils.tsvLineToConcept(header, columns, lineNumber, conceptSchemeVersion, isTemporalVersion, updateAlreadyExisting,
+                    ConceptMetamac concept = TsvImportationUtils.tsvLineToConcept(header, columns, lineNumber, conceptSchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
                             conceptsPreviousInConceptSchemeByCode, conceptsToPersistByCode, exceptionItems, informationItems);
                     // Import other specials Metadata
 
                     ImportationConceptsTsvHeader conceptTsvHeader = header;
                     if (concept != null) {
-                        updateConceptMetadata(ctx, itemIdentifier, concept, header, columns, lineNumber, conceptSchemeVersion, isTemporalVersion, cachedConceptTypeMap, exceptionItems);
+                        updateConceptMetadata(ctx, itemIdentifier, concept, header, columns, lineNumber, conceptSchemeVersion, isDefaultMaintainer, isTemporalVersion, cachedConceptTypeMap, exceptionItems);
                     }
 
                     boolean existsConcept = conceptsPreviousInConceptSchemeByCode.containsKey(itemIdentifier);
@@ -938,11 +937,15 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
+    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
+        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
+    }
+    
     private void updateConceptMetadata(ServiceContext ctx, String conceptIdentifier, ConceptMetamac concept, ImportationConceptsTsvHeader header, String[] columns, int lineNumber,
-            ConceptSchemeVersionMetamac conceptSchemeVersion, boolean isTemporalVersion, Map<String, ConceptType> cachedConceptTypeMap, List<MetamacExceptionItem> exceptionItems)
+            ConceptSchemeVersionMetamac conceptSchemeVersion, boolean isDefaultMaintainer, boolean isTemporalVersion, Map<String, ConceptType> cachedConceptTypeMap, List<MetamacExceptionItem> exceptionItems)
             throws MetamacException {
         try {
-            TsvImportationUtils.setInternationalStringConceptFields(header, columns, concept);
+            TsvImportationUtils.setInternationalStringConceptFields(header, columns, concept, isDefaultMaintainer);
             // ConceptType
             concept.setConceptType(tsvLineToConceptType(ctx, header, columns, cachedConceptTypeMap));
 

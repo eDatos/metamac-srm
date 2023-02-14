@@ -46,8 +46,8 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
     }
 
     @Override
-    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem) {
-        super.copyItem(sourceItem, sourceItemResult, targetItem);
+    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
         
         CategoryMetamac source = (CategoryMetamac) sourceItem;
         CategoryMetamac target = (CategoryMetamac) targetItem;

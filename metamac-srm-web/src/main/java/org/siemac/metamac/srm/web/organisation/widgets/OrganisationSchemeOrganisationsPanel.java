@@ -185,7 +185,7 @@ public class OrganisationSchemeOrganisationsPanel extends VLayout {
                 if (OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME.equals(organisationSchemeDto.getType())) {
                     isTemporalVersionUnitSchemeOrganisation = VersionUtil.isTemporalVersion(organisationSchemeDto.getVersionLogic());
                 }
-                importOrganisationsWindow.initImportWindow(isTemporalVersionUnitSchemeOrganisation);
+                importOrganisationsWindow.initImportWindow(org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(organisationSchemeDto.getMaintainer()), isTemporalVersionUnitSchemeOrganisation);
                 importOrganisationsWindow.show();
             }
         });

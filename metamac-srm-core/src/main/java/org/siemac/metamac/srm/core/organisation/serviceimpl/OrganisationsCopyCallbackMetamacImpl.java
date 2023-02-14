@@ -46,8 +46,8 @@ public class OrganisationsCopyCallbackMetamacImpl extends OrganisationsCopyCallb
     }
 
     @Override
-    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem) {
-        super.copyItem(sourceItem, sourceItemResult, targetItem);
+    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
 
         OrganisationMetamac source = (OrganisationMetamac) sourceItem;
         OrganisationMetamac target = (OrganisationMetamac) targetItem;

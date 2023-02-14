@@ -44,13 +44,13 @@ import org.siemac.metamac.srm.core.task.domain.ImportationOrganisationsTsvHeader
 import org.siemac.metamac.srm.core.task.domain.ImportationVariableElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.InternationalStringTsv;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
-import org.siemac.metamac.srm.core.util.InternationalStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
+import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.BaseCopyAllMetadataUtils;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
@@ -1193,11 +1193,11 @@ public class TsvImportationUtils {
             ConceptMetamac target = new ConceptMetamac();
             ConceptMetamac conceptSource = (ConceptMetamac) source;
             target.setNameableArtefact(new NameableArtefact());
-            
+                
             //copy only common international strings metadata. To allow importation of concepts from external agencies without modify the source information.
-            target.getNameableArtefact().setName(InternationalStringUtils.copy(conceptSource.getNameableArtefact().getName()));
-            target.getNameableArtefact().setDescription(InternationalStringUtils.copy(conceptSource.getNameableArtefact().getDescription()));
-            target.getNameableArtefact().setComment(InternationalStringUtils.copy(conceptSource.getNameableArtefact().getComment()));
+            target.getNameableArtefact().setName(BaseCopyAllMetadataUtils.copy(conceptSource.getNameableArtefact().getName()));
+            target.getNameableArtefact().setDescription(BaseCopyAllMetadataUtils.copy(conceptSource.getNameableArtefact().getDescription()));
+            target.getNameableArtefact().setComment(BaseCopyAllMetadataUtils.copy(conceptSource.getNameableArtefact().getComment()));
                                    
             return target;
         }

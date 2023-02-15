@@ -184,8 +184,7 @@ public class CategoriesClientSecurityUtils {
         if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
             return false;
         }
-        return SharedCategoriesSecurityUtils.canImportCategoriesTsv(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus())
-                && CommonUtils.canSdmxMetadataAndStructureBeModified(categorySchemeMetamacDto, false);
+        return SharedCategoriesSecurityUtils.canImportCategoriesTsv(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
     }
 
     //

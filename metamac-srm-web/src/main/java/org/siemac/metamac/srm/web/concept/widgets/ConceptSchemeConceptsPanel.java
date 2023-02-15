@@ -57,7 +57,7 @@ public class ConceptSchemeConceptsPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                importConceptsWindow.initImportWindow(VersionUtil.isTemporalVersion(conceptSchemeDto.getVersionLogic()));
+                importConceptsWindow.initImportWindow(org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(conceptSchemeDto.getMaintainer()), VersionUtil.isTemporalVersion(conceptSchemeDto.getVersionLogic()));
                 importConceptsWindow.show();
             }
         });

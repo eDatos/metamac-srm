@@ -16,7 +16,6 @@ public interface SrmValidation {
     public void checkMaintainerIsDefault(ServiceContext ctx, String maintainerUrn) throws MetamacException;
     public void checkMaintainer(ServiceContext ctx, MaintainableArtefact maintainableArtefact, Boolean artefactImported) throws MetamacException;
     public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion) throws MetamacException;
-    public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion, boolean checkIsTemporalVersion) throws MetamacException;
     public void checkItemsStructureCanBeModified(ServiceContext ctx, StructureVersion structureVersion) throws MetamacException;
     public void checkStartValidity(ServiceContext ctx, MaintainableArtefact maintainableArtefact, SrmLifeCycleMetadata lifeCycle) throws MetamacException;
     public void checkEndValidity(ServiceContext ctx, MaintainableArtefact maintainableArtefact, SrmLifeCycleMetadata lifeCycle) throws MetamacException;

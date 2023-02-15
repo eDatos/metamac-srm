@@ -79,6 +79,7 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentListRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Facet;
+import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Representation;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersionRepository;
@@ -117,6 +118,9 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
     @Autowired
     private DataStructureDefinitionService          dataStructureDefinitionService;
+
+    @Autowired
+    private MaintainableArtefactRepository          maintainableArtefactRepository;
 
     @Autowired
     private CategoriesMetamacService                categoriesMetamacService;
@@ -891,24 +895,15 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     @Override
     public void updateAttributeInOrder(ServiceContext ctx, String attributeUrn, String attributeSchemeUrn, Integer newAttributeIndex) throws MetamacException {
         // Validation
-        // DsdsMetamacInvocationValidator.checkUpdateAttributeInOrder(attributeUrn, attributeSchemeUrn, newAttributeIndex, null);
-        // DataStructureDefinitionVersionMetamac aux = retrieveDataStructureDefinitionVersions(ctx, attributeUrn);
-        // int numberOfReorderedAttributeDeletingOne = getDataStructureDefinitionVersionMetamacRepository().reorderAttributesDeletingOneAttribute(aux, attribute);
-        // int numberOfReorderedAttributeAddingOne = getDataStructureDefinitionVersionMetamacRepository().reorderAttributesAddingOneAttributeInMiddle(aux, attribute, newAttributeIndex);
-        // To avoid unexpected behaviors, only reorder codes if the concept order value changes
-        /*
-         * if (newAttributeIndex.compareTo(attribute.getOrderValue()) != 0) {
-         * // Reorder concepts in same level
-         * getDataStructureDefinitionVersionMetamacRepository().reorderAttributesDeletingOneAttribute(dataStructureDefinitionVersionMetamac, attribute);
-         * int numberOfReorderedAttributeDeletingOne = getDataStructureDefinitionVersionMetamacRepository().reorderAttributesDeletingOneAttribute(dataStructureDefinitionVersionMetamac, attribute);
-         * int numberOfReorderedAttributeAddingOne = getDataStructureDefinitionVersionMetamacRepository().reorderAttributesAddingOneAttributeInMiddle(dataStructureDefinitionVersionMetamac, attribute,
-         * newAttributeIndex);
-         * // Update concept
-         * attribute.setOrderValue(newAttributeIndex);
-         * getDataStructureDefinitionVersionMetamacRepository().save(attribute);
-         * baseService.updateItemSchemeLastUpdated(ctx, dataStructureDefinitionVersionMetamac);
-         * }
-         */
+        DsdsMetamacInvocationValidator.checkUpdateAttributeInOrder(attributeUrn, attributeSchemeUrn, newAttributeIndex, null);
+        DataStructureDefinitionVersionMetamac attribute = retrieveDataStructureDefinitionVersionByUrn(attributeSchemeUrn);
+        if (newAttributeIndex != attribute.getMaintainableArtefact().getOrderValue()) {
+            maintainableArtefactRepository.updateOthersAttributeOrder(attribute.getMaintainableArtefact().getCode(), attributeUrn, newAttributeIndex,
+                    attribute.getMaintainableArtefact().getOrderValue());
+            maintainableArtefactRepository.updateAttributeOrder(attributeUrn, newAttributeIndex);
+            attribute.getMaintainableArtefact().getOrderValue();
+        }
+
     }
 
     /**************************************************************************

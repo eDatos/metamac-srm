@@ -4113,7 +4113,8 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     @Override
     public void updateAttributeInOrder(ServiceContext ctx, String attributeUrn, String attributeSchemeUrn, Integer newAttributeIndex) throws MetamacException {
         // Security
-        DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, attributeUrn); // Load DSD
+        DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, attributeSchemeUrn); // Load
+                                                                                                                                                                                                // DSD
         DataStructureDefinitionSecurityUtils.canUpdateAttribute(ctx, dataStructureDefinitionVersionMetamac);
 
         // Update order

@@ -1193,8 +1193,8 @@ public class TsvImportationUtils {
             ConceptMetamac target = new ConceptMetamac();
             ConceptMetamac conceptSource = (ConceptMetamac) source;
             target.setNameableArtefact(new NameableArtefact());
-                
-            //copy only common international strings metadata. To allow importation of concepts from external agencies without modify the source information.
+            
+            // copy only common international strings metadata. To allow importation of concepts from external agencies without modify the source information.
             target.getNameableArtefact().setName(BaseCopyAllMetadataUtils.copy(conceptSource.getNameableArtefact().getName()));
             target.getNameableArtefact().setDescription(BaseCopyAllMetadataUtils.copy(conceptSource.getNameableArtefact().getDescription()));
             target.getNameableArtefact().setComment(BaseCopyAllMetadataUtils.copy(conceptSource.getNameableArtefact().getComment()));

@@ -431,6 +431,8 @@ public class TsvImportationUtils {
         if (!StringUtils.isBlank(itemIdentifierEniScheme)) {
             EniSchemaCatalog eniScheme = eniSchemeMap.get(itemIdentifierEniScheme);
             category.setEniSchema(eniScheme);
+        } else {
+            category.setEniSchema(null);
         }
     }
 

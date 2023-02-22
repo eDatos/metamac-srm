@@ -58,8 +58,8 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
-import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -106,71 +106,71 @@ import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 @Service("categoriesMetamacService")
 public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBase {
 
-    private static Logger                             logger = LoggerFactory.getLogger(CategoriesMetamacServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(CategoriesMetamacServiceImpl.class);
 
     @Autowired
-    private BaseService                               baseService;
+    private BaseService baseService;
 
     @Autowired
-    private CategoriesService                         categoriesService;
+    private CategoriesService categoriesService;
 
     @Autowired
-    private OrganisationsMetamacService               organisationsService;
+    private OrganisationsMetamacService organisationsService;
 
     @Autowired
     @Qualifier("categorySchemeLifeCycle")
-    private LifeCycle                                 categorySchemeLifeCycle;
+    private LifeCycle categorySchemeLifeCycle;
 
     @Autowired
-    private SrmValidation                             srmValidation;
+    private SrmValidation srmValidation;
 
     @Autowired
-    private SrmConfiguration                          srmConfiguration;
+    private SrmConfiguration srmConfiguration;
 
     @Autowired
     @Qualifier("categoriesVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback                   categoriesVersioningCallback;
+    private ItemSchemesCopyCallback categoriesVersioningCallback;
 
     @Autowired
     @Qualifier("categoriesDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback                   categoriesDummyVersioningCallback;
+    private ItemSchemesCopyCallback categoriesDummyVersioningCallback;
 
     @Autowired
     @Qualifier("categoriesCopyCallbackMetamac")
-    private ItemSchemesCopyCallback                   categoriesCopyCallback;
+    private ItemSchemesCopyCallback categoriesCopyCallback;
 
     @Autowired
     private CategorySchemeStreamMessagingCallbackImpl categorySchemeStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService                    streamMessagingService;
+    private StreamMessagingService streamMessagingService;
 
     @Autowired
-    private TasksMetamacService                       tasksMetamacService;
+    private TasksMetamacService tasksMetamacService;
 
     @Autowired
-    private MaintainableArtefactRepository            maintainableArtefactRepository;
+    private MaintainableArtefactRepository maintainableArtefactRepository;
 
     @Autowired
-    private ItemSchemeVersionRepository               itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository itemSchemeVersionRepository;
 
     @Autowired
-    private CategoryRepository                        categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    private CategorisationRepository                  categorisationRepository;
+    private CategorisationRepository categorisationRepository;
 
     @Autowired
-    private InternationalStringRepository             internationalStringRepository;
+    private InternationalStringRepository internationalStringRepository;
 
     @Autowired
-    private ItemSchemeRepository                      itemSchemeRepository;
+    private ItemSchemeRepository itemSchemeRepository;
 
     @Autowired
-    private EniSchemaCatalogRepository                eniSchemaCatalogRepository;
+    private EniSchemaCatalogRepository eniSchemaCatalogRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager                           entityManager;
+    protected EntityManager entityManager;
 
     public CategoriesMetamacServiceImpl() {
     }
@@ -373,7 +373,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             // Inherit InternationalStrings
             BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToItem(category, categoryTempItemResult, internationalStringRepository);
-            
+
             category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
 
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
@@ -417,7 +417,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
         return null;
     }
-    
+
     @Override
     public CategorySchemeVersionMetamac startCategorySchemeValidity(ServiceContext ctx, String urn) throws MetamacException {
 
@@ -514,8 +514,6 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(categorySchemeVersion, categorySchemeVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion, false);
-
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
 
@@ -557,14 +555,15 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     categoriesPreviousInCategorySchemeByCode.put(item.getNameableArtefact().getCodeFull(), item);
                 }
 
+                boolean isDefaultMaintainer = StringUtils.equals(categorySchemeVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn(),
+                        srmConfiguration.retrieveMaintainerUrnDefault());
                 boolean isTemporalVersion = VersionUtil.isTemporalVersion(categorySchemeVersion.getMaintainableArtefact().getVersionLogic());
-                if (isTemporalVersion) {
+                if (!isDefaultMaintainer || isTemporalVersion) {
                     updateAlreadyExisting = true;
                 }
-                
-                
+
                 LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
-                                
+
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -576,10 +575,10 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                         continue;
                     }
                     // Transform category and add to list to persist
-                    CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isTemporalVersion, updateAlreadyExisting,
+                    CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
-                    TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                     if (category != null) {
+                        TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                         categtoriesToPersist.add(category);
                         categoriesToPersistByCode.put(category.getNameableArtefact().getCodeFull(), category);
                     }
@@ -605,6 +604,10 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         itemSchemeRepository.save(categorySchemeVersion.getItemScheme());
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
+        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
     }
 
     @Override
@@ -641,7 +644,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             itemResultSelection = ItemResultSelection.RETRIEVE; // default
         }
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
-        return getCategoryMetamacRepository().findCategoriesByCategorySchemeUnordered(categorySchemeVersion.getId(), (ItemMetamacResultSelection)itemResultSelection);
+        return getCategoryMetamacRepository().findCategoriesByCategorySchemeUnordered(categorySchemeVersion.getId(), (ItemMetamacResultSelection) itemResultSelection);
     }
 
     @Override

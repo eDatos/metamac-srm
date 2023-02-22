@@ -69,12 +69,7 @@ public class SrmValidationImpl implements SrmValidation {
             checkMaintainerIsDefault(ctx, maintainerUrn);
         }
     }
-    
-    @Override
-    public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion, boolean checkIsTemporalVersion) throws MetamacException {
-        checkItemsStructureCanBeModified(ctx, itemSchemeVersion.getMaintainableArtefact(), checkIsTemporalVersion);
-    }
-    
+
     @Override
     public void checkItemsStructureCanBeModified(ServiceContext ctx, ItemSchemeVersion itemSchemeVersion) throws MetamacException {
         checkItemsStructureCanBeModified(ctx, itemSchemeVersion.getMaintainableArtefact());

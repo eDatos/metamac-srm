@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.web.concept.widgets;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
@@ -13,6 +14,7 @@ import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomWindow;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
 
@@ -37,7 +39,12 @@ public class NewConceptWindow extends CustomWindow {
         RequiredTextItem nameItem = new RequiredTextItem(ConceptDS.NAME, getConstants().nameableArtefactName());
         nameItem.setWidth(FORM_ITEM_CUSTOM_WIDTH);
 
-        RequiredTextItem pluralNameItem = new RequiredTextItem(ConceptDS.PLURAL_NAME, getConstants().conceptPluralName());
+        CustomTextItem pluralNameItem;
+        if (ConceptSchemeTypeEnum.OPERATION.equals(type) || ConceptSchemeTypeEnum.TRANSVERSAL.equals(type)) {
+             pluralNameItem = new RequiredTextItem(ConceptDS.PLURAL_NAME, getConstants().conceptPluralName());
+        } else {
+            pluralNameItem = new CustomTextItem(ConceptDS.PLURAL_NAME, getConstants().conceptPluralName());
+        }
         pluralNameItem.setWidth(FORM_ITEM_CUSTOM_WIDTH);
 
         RequiredSelectItem sdmxRelatedArtefact = new RequiredSelectItem(ConceptDS.SDMX_RELATED_ARTEFACT, getConstants().conceptSdmxRelatedArtefact());
@@ -63,7 +70,7 @@ public class NewConceptWindow extends CustomWindow {
         ConceptMetamacDto conceptDto = new ConceptMetamacDto();
         conceptDto.setCode(form.getValueAsString(ConceptDS.CODE));
         conceptDto.setName(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(ConceptDS.NAME)));
-        conceptDto.setPluralName(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(ConceptDS.PLURAL_NAME)));
+        conceptDto.setPluralName(InternationalStringUtils.updateInternationalString(null, form.getValueAsString(ConceptDS.PLURAL_NAME)));
         conceptDto.setSdmxRelatedArtefact(form.getItem(ConceptDS.SDMX_RELATED_ARTEFACT).isVisible() ? ConceptRoleEnum.valueOf(form.getValueAsString(ConceptDS.SDMX_RELATED_ARTEFACT)) : null);
         return conceptDto;
     }

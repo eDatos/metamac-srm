@@ -391,7 +391,6 @@ public class TsvImportationUtils {
     public static ConceptMetamac setInternationalStringConceptFields(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, ConceptMetamac conceptMetamac, boolean isDefaultMaintainer)
             throws MetamacException {
 
-        conceptMetamac.setPluralName(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getPluralName(), columns, conceptMetamac.getPluralName(), isDefaultMaintainer));
         conceptMetamac.setAcronym(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getAcronym(), columns, conceptMetamac.getAcronym(), isDefaultMaintainer));
         conceptMetamac.setDescriptionSource(
                 TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getDescriptionSource(), columns, conceptMetamac.getDescriptionSource(), isDefaultMaintainer));

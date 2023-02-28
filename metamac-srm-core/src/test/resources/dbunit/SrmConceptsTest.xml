@@ -628,7 +628,7 @@
             />
             
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="116"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -687,7 +687,7 @@
             />
 
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="117"
               ACRONYM_FK="90"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -752,7 +752,7 @@
             />
             
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="118"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -821,7 +821,7 @@
             />
             
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="119"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -891,7 +891,7 @@
             />
             
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="120"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -950,7 +950,7 @@
             />
 
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="121"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -1009,7 +1009,7 @@
             />
             
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="122"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -8041,5 +8041,96 @@
             LOCALE="es"
             VERSION="1"
             INTERNATIONAL_STRING_FK="115"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="116"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1108"
+            LABEL="PluralName conceptScheme-1-v2-concept-2"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="116"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="117"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1109"
+            LABEL="PluralName conceptScheme-1-v2-concept-2-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="117"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="118"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1110"
+            LABEL="PluralName conceptScheme-1-v2-concept-2-1-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="118"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="119"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1111"
+            LABEL="PluralName conceptScheme-1-v2-concept-3"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="119"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="120"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1112"
+            LABEL="PluralName conceptScheme-1-v2-concept-4"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="120"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="121"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1113"
+            LABEL="PluralName conceptScheme-1-v2-concept-4-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="121"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="122"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1114"
+            LABEL="PluralName conceptScheme-1-v2-concept-4-1-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="122"
     />
 </dataset>

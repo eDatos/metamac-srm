@@ -2221,7 +2221,7 @@
             />
 
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="111"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -2379,7 +2379,7 @@
             />
 
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="112"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -2965,7 +2965,7 @@
             />
  
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="113"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -3453,7 +3453,7 @@
             />
  
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="114"
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -3613,7 +3613,7 @@
             />
  
             <TB_M_CONCEPTS
-              PLURAL_NAME_FK="[null]"
+              PLURAL_NAME_FK="[null]" <!-- here -->
               ACRONYM_FK="[null]"
               DESCRIPTION_SOURCE_FK="[null]"
               CONTEXT_FK="[null]"
@@ -7976,5 +7976,70 @@
         LOCALE="en"
         VERSION="1"
         INTERNATIONAL_STRING_FK="110"
-    />                                                                  
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="111"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1103"
+            LABEL="PluralName conceptScheme-5-v1-concept-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="111"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="112"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1104"
+            LABEL="PluralName conceptScheme-6-v1-concept-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="112"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="113"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1105"
+            LABEL="PluralName conceptScheme-8-v1-concept-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="113"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="114"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1106"
+            LABEL="PluralName conceptScheme-10-v3-concept-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="114"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+            ID="115"
+            VERSION="1"
+    />
+
+    <TB_LOCALISED_STRINGS
+            ID="1107"
+            LABEL="PluralName conceptScheme-11-v1-concept-1"
+            LOCALE="es"
+            VERSION="1"
+            INTERNATIONAL_STRING_FK="115"
+    />
 </dataset>

@@ -391,7 +391,6 @@ public class TsvImportationUtils {
     public static ConceptMetamac setInternationalStringConceptFields(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, ConceptMetamac conceptMetamac, boolean isDefaultMaintainer)
             throws MetamacException {
 
-        conceptMetamac.setPluralName(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getPluralName(), columns, conceptMetamac.getPluralName(), isDefaultMaintainer));
         conceptMetamac.setAcronym(TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getAcronym(), columns, conceptMetamac.getAcronym(), isDefaultMaintainer));
         conceptMetamac.setDescriptionSource(
                 TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getDescriptionSource(), columns, conceptMetamac.getDescriptionSource(), isDefaultMaintainer));
@@ -797,8 +796,10 @@ public class TsvImportationUtils {
         int j = 0;
         for (int i = internationalStringTsv.getStartPosition(); i <= internationalStringTsv.getEndPosition(); i++) {
             String label = columns[i];
-            if (!StringUtils.isBlank(label)) {
-                String locale = internationalStringTsv.getLocale(j);
+            String locale = internationalStringTsv.getLocale(j);
+            boolean isUnmodifiable = isLocalisedStringUnmodifiable(target, locale, changeUnmodifiables);
+
+            if (!StringUtils.isBlank(label) || isUnmodifiable) {
                 if (target == null) {
                     target = new InternationalString();
                 }
@@ -806,7 +807,7 @@ public class TsvImportationUtils {
                 if (localisedString == null) {
                     localisedString = new LocalisedString(locale, label);
                 } else {
-                    if (changeUnmodifiables || (!changeUnmodifiables && (!Boolean.TRUE.equals(localisedString.getIsUnmodifiable())))) {
+                    if (!isUnmodifiable) {
                         localisedString.setLabel(label);
                     }
                 }
@@ -814,7 +815,7 @@ public class TsvImportationUtils {
             }
             j++;
         }
-        if (localisedStringTargets.size() == 0) {
+        if (localisedStringTargets.isEmpty()) {
             return null;
         }
         if (target != null) {
@@ -824,6 +825,15 @@ public class TsvImportationUtils {
             }
         }
         return target;
+    }
+
+    private static boolean isLocalisedStringUnmodifiable(InternationalString target, String locale, boolean changeUnmodifiables) {
+        if (target != null) {
+            LocalisedString localisedString = target.getLocalisedLabelEntity(locale);
+
+            return localisedString != null && !changeUnmodifiables && Boolean.TRUE.equals(localisedString.getIsUnmodifiable());
+        }
+        return false;
     }
 
     private static InternationalStringTsv columnHeaderToInternationalStringTsv(String[] headerColumns, int headerColumnIndex, String[] columnSplited, String headerExpected,

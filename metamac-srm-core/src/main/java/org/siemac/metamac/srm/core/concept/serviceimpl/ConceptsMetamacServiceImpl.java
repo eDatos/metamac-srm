@@ -101,6 +101,7 @@ import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.BaseCopyAllMetada
 import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.BaseMergeAssert;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItemRepository;
+import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalStringRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
@@ -944,6 +945,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         try {
             TsvImportationUtils.setInternationalStringConceptFields(header, columns, concept, isDefaultMaintainer);
+
+            // PluralName
+            concept.setPluralName(tsvLineToPluralName(header, columns, isDefaultMaintainer, conceptSchemeVersion, concept, exceptionItems));
+
             // ConceptType
             concept.setConceptType(tsvLineToConceptType(ctx, header, columns, cachedConceptTypeMap));
 
@@ -1393,6 +1398,18 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         }
 
         return null;
+    }
+
+    private InternationalString tsvLineToPluralName(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, boolean isDefaultMaintainer, ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptMetamac concept, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+        try {
+            InternationalString pluralName = TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getPluralName(), columns, concept.getPluralName(), isDefaultMaintainer);
+            checkConceptPluralName(conceptSchemeVersion.getType(), pluralName);
+
+            return pluralName;
+        } catch (MetamacException e) {
+            exceptionItems.addAll(e.getExceptionItems());
+            return null;
+        }
     }
 
     @Override
@@ -2041,6 +2058,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         checkConceptMetadataExtends(ctx, conceptSchemeVersion, concept);
         checkConceptRepresentation(ctx, conceptSchemeVersion, concept, true);
         checkConceptQuantity(ctx, conceptSchemeVersion, concept);
+        checkConceptPluralName(conceptSchemeVersion, concept);
     }
 
     private void checkConceptMetadataExtends(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeVersionSource, ConceptMetamac concept) throws MetamacException {
@@ -2127,6 +2145,18 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             if (result.getValues().size() != 1 || !result.getValues().get(0).getId().equals(codeBaseLocationId)) {
                 throw new MetamacException(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.CONCEPT_QUANTITY_BASE_LOCATION);
             }
+        }
+    }
+
+    private void checkConceptPluralName(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptMetamac concept) throws MetamacException {
+        checkConceptPluralName(conceptSchemeVersion.getType(), concept.getPluralName());
+    }
+
+    private void checkConceptPluralName(ConceptSchemeTypeEnum conceptSchemeType, InternationalString pluralName) throws MetamacException {
+        boolean isTypeOperationOrTransversal = ConceptSchemeTypeEnum.OPERATION.equals(conceptSchemeType) || ConceptSchemeTypeEnum.TRANSVERSAL.equals(conceptSchemeType);
+        if (isTypeOperationOrTransversal && SrmValidationUtils.isInternationalStringEmpty(pluralName)) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_REQUIRED).withMessageParameters(new String[]{ServiceExceptionParameters.CONCEPT_PLURAL_NAME})
+                    .build();
         }
     }
 

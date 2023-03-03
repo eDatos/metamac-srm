@@ -23,6 +23,7 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacRepository;
+import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
@@ -152,6 +153,9 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
                             List<MetamacExceptionItem> exceptionsConcept = new ArrayList<MetamacExceptionItem>();
                             // Check misc metadata
                             ConceptsMetamacInvocationValidator.checkConcept(conceptSchemeVersion, concept, false, false, false, exceptionsConcept);
+                            if (ConceptSchemeTypeEnum.OPERATION.equals(conceptSchemeVersion.getType()) || ConceptSchemeTypeEnum.TRANSVERSAL.equals(conceptSchemeVersion.getType())) {
+                                ValidationUtils.checkMetadataRequired(concept.getPluralName(), ServiceExceptionParameters.CONCEPT_PLURAL_NAME, exceptionsConcept);
+                            }
                             // Check core representation
                             MetamacExceptionItem exceptionItem = conceptsMetamacService.checkConceptRepresentation(ctx, conceptSchemeVersion, concept, false);
                             if (exceptionItem != null) {

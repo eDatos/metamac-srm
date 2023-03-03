@@ -90,20 +90,20 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponent;
 @Component("metamacCriteria2SculptorCriteriaMapperSrm")
 public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriteria2SculptorCriteriaMapper {
 
-    private MetamacCriteria2SculptorCriteria<DataStructureDefinitionVersionMetamac> dataStructureMetamacCriteriaMapper      = null;
-    private MetamacCriteria2SculptorCriteria<ConceptSchemeVersionMetamac>           conceptSchemeMetamacCriteriaMapper      = null;
-    private MetamacCriteria2SculptorCriteria<ConceptMetamac>                        conceptMetamacCriteriaMapper            = null;
-    private MetamacCriteria2SculptorCriteria<OrganisationSchemeVersionMetamac>      organisationSchemeMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<OrganisationMetamac>                   organisationMetamacCriteriaMapper       = null;
-    private MetamacCriteria2SculptorCriteria<Contact>                               organisationContactCriteriaMapper       = null;
-    private MetamacCriteria2SculptorCriteria<CategorySchemeVersionMetamac>          categorySchemeMetamacCriteriaMapper     = null;
-    private MetamacCriteria2SculptorCriteria<CategoryMetamac>                       categoryMetamacCriteriaMapper           = null;
-    private MetamacCriteria2SculptorCriteria<CodelistVersionMetamac>                codelistMetamacCriteriaMapper           = null;
-    private MetamacCriteria2SculptorCriteria<CodeMetamac>                           codeMetamacCriteriaMapper               = null;
-    private MetamacCriteria2SculptorCriteria<CodelistFamily>                        codelistFamilyCriteriaMapper            = null;
-    private MetamacCriteria2SculptorCriteria<VariableFamily>                        variableFamilyCriteriaMapper            = null;
-    private MetamacCriteria2SculptorCriteria<Variable>                              variableCriteriaMapper                  = null;
-    private MetamacCriteria2SculptorCriteria<VariableElement>                       variableElementCriteriaMapper           = null;
+    private MetamacCriteria2SculptorCriteria<DataStructureDefinitionVersionMetamac> dataStructureMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<ConceptSchemeVersionMetamac> conceptSchemeMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<ConceptMetamac> conceptMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<OrganisationSchemeVersionMetamac> organisationSchemeMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<OrganisationMetamac> organisationMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<Contact> organisationContactCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<CategorySchemeVersionMetamac> categorySchemeMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<CategoryMetamac> categoryMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<CodelistVersionMetamac> codelistMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<CodeMetamac> codeMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<CodelistFamily> codelistFamilyCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<VariableFamily> variableFamilyCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<Variable> variableCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<VariableElement> variableElementCriteriaMapper = null;
 
     /**************************************************************************
      * Constructor
@@ -287,12 +287,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                     return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().externalPublicationUser(), propertyRestriction.getStringValue(),
                             propertyRestriction.getOperationType());
                 case DIMENSION_CONCEPT_URN: {
-                    String[] values = propertyRestriction.getStringValue().replace(" ", "").replace("[", "").replace("]", "").split(",");
-                    List<Object> valueList = new ArrayList<>();
-                    for (String value : values) {
-                        valueList.add((Object) value);
-                    }
-                    return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(), valueList, OperationType.IN);
+                    return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(), propertyRestriction.getListValue(),
+                            OperationType.IN);
                 }
                 case ATTRIBUTE_CONCEPT_URN: {
                     SculptorPropertyCriteria propertyCriteria1 = new SculptorPropertyCriteria(

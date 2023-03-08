@@ -287,8 +287,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                     return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().externalPublicationUser(), propertyRestriction.getStringValue(),
                             propertyRestriction.getOperationType());
                 case DIMENSION_CONCEPT_URN: {
-                    return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(), propertyRestriction.getListValue(),
-                            OperationType.IN);
+                    return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(),
+                            new ArrayList<>(propertyRestriction.getListStringValue()), OperationType.IN);
                 }
                 case ATTRIBUTE_CONCEPT_URN: {
                     SculptorPropertyCriteria propertyCriteria1 = new SculptorPropertyCriteria(

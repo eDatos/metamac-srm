@@ -1,7 +1,5 @@
 package org.siemac.metamac.srm.web.server.utils;
 
-import java.util.ArrayList;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
@@ -654,7 +652,7 @@ public class MetamacWebCriteriaUtils {
             }
             if (criteria.getDimensionConceptUrn() != null && !criteria.getDimensionConceptUrn().isEmpty()) {
                 conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.DIMENSION_CONCEPT_URN.name(),
-                        new ArrayList<Object>(criteria.getDimensionConceptUrn()), OperationType.IN));
+                        criteria.getDimensionConceptUrn(), OperationType.IN));
             }
             if (StringUtils.isNotBlank(criteria.getAttributeConceptUrn())) {
                 conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.ATTRIBUTE_CONCEPT_URN.name(),

@@ -1,0 +1,11 @@
+{
+  "type": "enum",
+  "name": "OrganisationSchemeTypeEnumAvro",
+  "namespace": "org.siemac.metamac.srm.core.stream.message",
+  "symbols": [
+    "ORGANISATION_UNIT_SCHEME",
+    "AGENCY_SCHEME",
+    "DATA_PROVIDER_SCHEME",
+    "DATA_CONSUMER_SCHEME"
+  ]
+}

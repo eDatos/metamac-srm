@@ -97,8 +97,10 @@
                             <imports>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/proc-status-enum.avsc</import>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/organisation-scheme-type-enum.avsc</import>
+                                <import>${project.basedir}/src/main/resources/avro-schemas/concept-scheme-type-enum.avsc</import>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/datetime.avsc</import>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/international-string.avsc</import>
+                                <import>${project.basedir}/src/main/resources/avro-schemas/external-item.avsc</import>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/related-resource.avsc</import>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/categorisation.avsc</import>
                                 <import>${project.basedir}/src/main/resources/avro-schemas/codelist.avsc</import>

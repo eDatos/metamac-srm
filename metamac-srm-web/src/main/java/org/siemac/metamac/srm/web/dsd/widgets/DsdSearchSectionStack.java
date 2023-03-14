@@ -38,14 +38,14 @@ import com.smartgwt.client.widgets.form.validator.CustomValidator;
 
 public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack {
 
-    private final int                            FIRST_RESULST = 0;
-    private final int                            MAX_RESULTS   = 8;
+    private final int FIRST_RESULST = 0;
+    private final int MAX_RESULTS = 8;
 
-    private DsdListUiHandlers                    uiHandlers;
+    private DsdListUiHandlers uiHandlers;
 
     private SearchRelatedResourcePaginatedWindow searchAttributeConceptWindow;
     private SearchRelatedResourcePaginatedWindow searchCodelistWindow;
-    private SearchStatisticalOperationLinkItem   statisticalOperationItem;
+    private SearchStatisticalOperationLinkItem statisticalOperationItem;
     private SearchMultiRelatedResourceSimpleItem searchDimensionConceptItem;
 
     public DsdSearchSectionStack() {
@@ -147,7 +147,7 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
 
     private SearchMultiRelatedResourceSimpleItem createDimensionConceptItem() {
         final SearchMultiRelatedResourceSimpleItem conceptoDimension = new SearchMultiRelatedResourceSimpleItem(DataStructureDefinitionDS.DIMENSION_CONCEPT, getConstants().dsdDimensionConcept(),
-                MAX_RESULTS, getListRecordNavigationClickHandler()) {
+                MAX_RESULTS, getListRecordNavigationClickHandler(), false) {
 
             @Override
             protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {

@@ -27,6 +27,8 @@ import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -83,6 +85,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElements
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.TsvCodelist;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
@@ -124,6 +127,7 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.srm.rest.external.v1_0.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesRest2DoMapper;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
@@ -152,68 +156,68 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.Organisatio
 public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     @Autowired
-    private ConceptsMetamacService                conceptsService;
+    private ConceptsMetamacService conceptsService;
 
     @Autowired
-    private CategoriesMetamacService              categoriesService;
+    private CategoriesMetamacService categoriesService;
 
     @Autowired
-    private OrganisationsMetamacService           organisationsService;
+    private OrganisationsMetamacService organisationsService;
 
     @Autowired
-    private CodesMetamacService                   codesService;
+    private CodesMetamacService codesService;
 
     @Autowired
     private DataStructureDefinitionMetamacService dataStructureDefinitionService;
 
     @Autowired
-    private ConstraintsService                    constraintsService;
+    private ConstraintsService constraintsService;
 
     @Autowired
-    private MiscMetamacService                    miscMetamacService;
+    private MiscMetamacService miscMetamacService;
 
     @Autowired
-    private ConfigurationService                  configurationService;
+    private ConfigurationService configurationService;
 
     @Autowired
-    private ConceptsRest2DoMapper                 conceptsRest2DoMapper;
+    private ConceptsRest2DoMapper conceptsRest2DoMapper;
 
     @Autowired
-    private CategoriesRest2DoMapper               categoriesRest2DoMapper;
+    private CategoriesRest2DoMapper categoriesRest2DoMapper;
 
     @Autowired
-    private OrganisationsRest2DoMapper            organisationsRest2DoMapper;
+    private OrganisationsRest2DoMapper organisationsRest2DoMapper;
 
     @Autowired
-    private CodesRest2DoMapper                    codesRest2DoMapper;
+    private CodesRest2DoMapper codesRest2DoMapper;
 
     @Autowired
-    private DataStructuresRest2DoMapper           dataStructuresRest2DoMapper;
+    private DataStructuresRest2DoMapper dataStructuresRest2DoMapper;
 
     @Autowired
-    private ConceptsDo2RestMapperV10              conceptsDo2RestMapper;
+    private ConceptsDo2RestMapperV10 conceptsDo2RestMapper;
 
     @Autowired
-    private CategoriesDo2RestMapperV10            categoriesDo2RestMapper;
+    private CategoriesDo2RestMapperV10 categoriesDo2RestMapper;
 
     @Autowired
-    private OrganisationsDo2RestMapperV10         organisationsDo2RestMapper;
+    private OrganisationsDo2RestMapperV10 organisationsDo2RestMapper;
 
     @Autowired
-    private CodesDo2RestMapperV10                 codesDo2RestMapper;
+    private CodesDo2RestMapperV10 codesDo2RestMapper;
 
     @Autowired
-    private ContentConstraintsRest2DoMapper       contentConstraintsRest2DoMapper;
+    private ContentConstraintsRest2DoMapper contentConstraintsRest2DoMapper;
 
     @Autowired
-    private ContentConstraintsDo2RestMapperV10    contentConstraintsDo2RestMapper;
+    private ContentConstraintsDo2RestMapperV10 contentConstraintsDo2RestMapper;
 
     @Autowired
-    private DataStructuresDo2RestMapperV10        dataStructuresDo2RestMapperV10;
+    private DataStructuresDo2RestMapperV10 dataStructuresDo2RestMapperV10;
 
-    private final ServiceContext                  ctx                      = new ServiceContext("restInternal", "restInternal", "restInternal");
-    private final Logger                          logger                   = LoggerFactory.getLogger(SrmRestExternalFacadeV10Impl.class);
-    private final PagingParameter                 pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
+    private final ServiceContext ctx = new ServiceContext("restInternal", "restInternal", "restInternal");
+    private final Logger logger = LoggerFactory.getLogger(SrmRestExternalFacadeV10Impl.class);
+    private final PagingParameter pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
 
     @Override
     public ConceptSchemes findConceptSchemes(String query, String orderBy, String limit, String offset) {
@@ -344,13 +348,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
-            
+
             Set<String> validFields = new HashSet<>();
             validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
-            
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
                 SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -364,8 +368,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
                 ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
                 itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(),
-                        itemMetamacResultSelection);
+                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
                 // Transform
                 return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
@@ -860,6 +863,50 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return findCodelists(agencyID, resourceID, null, query, orderBy, limit, offset);
     }
 
+    private InternationalString mockInternationalString(String p) {
+        InternationalString field = new InternationalString();
+
+        LocalisedString loc = new LocalisedString();
+        loc.setLang("es");
+        loc.setValue("pruebas es " + p);
+        field.getTexts().add(loc);
+
+        LocalisedString loc2 = new LocalisedString();
+        loc2.setLang("en");
+        loc2.setValue("pruebas en " + p);
+        field.getTexts().add(loc2);
+
+        return field;
+    }
+
+    private TsvCodelist mockTsvCodelist(String p, List<String> languages) throws IllegalArgumentException, IllegalAccessException {
+        TsvCodelist pruebas = new TsvCodelist();
+        pruebas.setIsRecommended(true);
+        pruebas.setShortName(mockInternationalString(" short name " + p));
+        pruebas.setDescriptionSource(mockInternationalString(" description " + p));
+
+        ExportUtils exportUtils = new ExportUtils();
+        pruebas.setFields(exportUtils.toMap(pruebas, pruebas.getClass().getDeclaredFields(), languages));
+        return pruebas;
+    }
+
+    @Override
+    public Response retrievePruebas() {
+        try {
+            final String resourceName = "pruebas.tsv";
+
+            List<String> languages = configurationService.retrieveLanguages();
+
+            List<TsvCodelist> listPruebas = new ArrayList<TsvCodelist>();
+            listPruebas.add(mockTsvCodelist("1", languages));
+            listPruebas.add(mockTsvCodelist("2", languages));
+
+            return Response.status(Status.OK).entity(listPruebas).header("Content-Disposition", "inline; filename=" + resourceName).build();
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
     @Override
     public Codelist retrieveCodelist(String agencyID, String resourceID, String version) {
         try {
@@ -950,10 +997,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
-            
+            List<CodelistRestrictionVisualisation> restrictions = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
+
             return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
-         
+
         } catch (Exception e) {
             throw manageException(e);
         }

@@ -1,0 +1,111 @@
+package org.siemac.metamac.srm.rest.external.v1_0.adapter;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
+
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.TsvTransformer;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
+
+@Produces("text/plain")
+public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
+
+    Logger logger = Logger.getLogger(TsvMessageBodyWritter.class.getName());
+
+    public long getSize(Object myCollectionOfObjects, Class type, Type genericType, Annotation[] annotations, MediaType arg4) {
+        return 0;
+    }
+
+    public boolean isWriteable(Class type, Type genericType, Annotation[] annotations, MediaType arg3) {
+        return true;
+    }
+
+    public void writeTo(Object myCollectionOfObjects, Class type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap httpHeaders, OutputStream entityHeaders)
+            throws IOException, WebApplicationException {
+        // Whatever makes it in here should be a list
+        List<?> myList = new ArrayList<>();
+        if (myCollectionOfObjects instanceof List && ((myList = (List<?>) myCollectionOfObjects).size() > 0)) {
+            CsvMapper csvMapper = new CsvMapper();
+            CsvSchema schema = null;
+
+            /*
+             * If it's not a flat POJO must implement
+             * CSVTransformer
+             */
+            if (implementsCSVTransformer(myList.get(0).getClass())) {
+                Class[] params = {};
+                try {
+                    Method meth = TsvTransformer.class.getDeclaredMethod("flatten", params);
+
+                    /*
+                     * Create a new list using the toMap() function
+                     */
+                    List<Map<String, ?>> listOfMaps = new ArrayList<>();
+                    Set<String> headers = null;
+                    for (Object obj : myList) {
+                        Map<String, ?> keyVals = (Map<String, ?>) meth.invoke(obj, params);
+
+                        if (schema == null) {
+                            schema = this.buildSchemaFromKeySet(keyVals.keySet());
+                            headers = keyVals.keySet();
+                        }
+
+                        // Validate that latest headers are the same as the original ones
+                        if (headers.equals(keyVals.keySet()))
+                            listOfMaps.add(keyVals);
+                        else
+                            logger.warning("Headers should be the same for each objects in the list, excluding this object " + keyVals);
+                    }
+
+                    csvMapper.writer(schema.withColumnSeparator('\t')).writeValue(entityHeaders, listOfMaps);
+                } catch (Exception e) {
+                    throw new IOException("Unable to retrieve flatten() " + e.getMessage());
+                }
+            } else {
+                schema = csvMapper.schemaFor(myList.get(0).getClass()).withHeader().withColumnSeparator('\t');
+                csvMapper.writer(schema).writeValue(entityHeaders, myList);
+            }
+        } else if (myList.isEmpty()) {
+            logger.warning("Nothing in list to convert to CSV....");
+            entityHeaders.write(myList.toString().getBytes(Charset.forName("UTF-8")));
+        } else {
+            throw new IOException("Not in proper format must pass a java.util.List to use this MessageBodyWriter...");
+        }
+    }
+
+    public CsvSchema buildSchemaFromKeySet(Set<String> keySet) {
+        Builder build = CsvSchema.builder();
+        for (String field : keySet) {
+            build.addColumn(field);
+        }
+        CsvSchema schema = build.build().withHeader();
+        return schema;
+    }
+
+    public Boolean implementsCSVTransformer(Class arg1) {
+        Class[] interfaces = arg1.getInterfaces();
+        for (Class aClass : interfaces) {
+            if (aClass.getName().equals(TsvTransformer.class.getName()))
+                return true;
+        }
+
+        return false;
+    }
+}

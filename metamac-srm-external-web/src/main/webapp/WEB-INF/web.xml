@@ -73,6 +73,14 @@
         <url-pattern>/apis/*</url-pattern>
     </servlet-mapping>
 
+ 	<filter>
+        <filter-name>TsvFilter</filter-name>
+        <filter-class>org.siemac.metamac.srm.web.external.request.filter.TsvFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>TsvFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+    </filter-mapping>
 	<filter>
 		<filter-name>SwaggerFilter</filter-name>
 		<filter-class>org.siemac.metamac.srm.web.external.SwaggerFilter</filter-class>

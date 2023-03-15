@@ -874,7 +874,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Transform
             List<TsvCodelist> tsvCodelist = codesDo2RestMapper.toTsvCodelist(codelistVersion, configurationService.retrieveLanguages());
 
-            String fileNamePrefix = SrmRestConstants.KIND_CODELIST + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODELISTS + "-" + agencyID + "_" + resourceID + "_" + version;
             return Response.status(Status.OK).entity(tsvCodelist).header("Content-Disposition", "inline; filename=" + getTsvFileName(fileNamePrefix)).build();
         } catch (Exception e) {
             throw manageException(e);

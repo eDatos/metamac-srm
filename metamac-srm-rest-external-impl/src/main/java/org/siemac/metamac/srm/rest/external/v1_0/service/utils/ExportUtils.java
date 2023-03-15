@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.utils.RestCommonUtil;
+import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class ExportUtils {
                 }
             }
         } catch (IllegalAccessException e) {
-            logger.error("");
+            logger.error("Illegal access to field", e);
         }
         return map;
     }
@@ -68,7 +69,7 @@ public class ExportUtils {
         // in the api, lamba functions is not allowed. the search is done with a loop.
         for (LocalisedString loc : source) {
             if (language.equals(loc.getLang())) {
-                return loc.getValue();
+                return removeUnsupportedCharaters(loc.getValue());
             }
         }
         return null;
@@ -77,7 +78,7 @@ public class ExportUtils {
     private static String getValueFieldPojo(Object obj, Field field) throws IllegalAccessException {
         Object value = field.get(obj) != null ? String.valueOf(field.get(obj)) : null;
         if (value != null) {
-            return String.valueOf(value);
+            return removeUnsupportedCharaters(String.valueOf(value));
         }
         return null;
     }
@@ -85,5 +86,9 @@ public class ExportUtils {
     public static String getDateAsString(Date date) {
         DateTime validDate = RestCommonUtil.transformDateToDateTime(date);
         return RestCommonUtil.jodaDateTime2xsDateTime(validDate);
+    }
+
+    private static String removeUnsupportedCharaters(String string) {
+        return TsvExportationUtils.removeUnsupportedCharaters(string);
     }
 }

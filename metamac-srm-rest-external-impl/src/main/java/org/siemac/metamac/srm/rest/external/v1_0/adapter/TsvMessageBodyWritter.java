@@ -80,7 +80,7 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
             }
         } else if (myList.isEmpty()) {
             logger.warn("Nothing in list to convert to TSV....");
-            entityHeaders.write(myList.toString().getBytes(StandardCharsets.ISO_8859_1));
+            entityHeaders.write(myList.toString().getBytes(StandardCharsets.UTF_8));
         } else {
             logger.error("Not in proper format must pass a java.util.List to use this MessageBodyWriter...");
             throw new IOException("Unable to obtain a valid TSV");
@@ -92,7 +92,7 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
         for (String field : keySet) {
             build.addColumn(field);
         }
-        return build.build().withHeader();
+        return build.build().withHeader().withoutQuoteChar();
     }
 
     public Boolean implementsCSVTransformer(Class arg1) {

@@ -35,7 +35,7 @@ public interface CodesDo2RestMapperV10 {
     org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist toCodelist(CodelistVersionMetamac source) throws MetamacException;
     Resource toResource(CodelistVersion source);
 
-    List<TsvCodelist> toTsvCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException, IllegalAccessException;
+    List<TsvCodelist> toTsvCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException;
 
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields);

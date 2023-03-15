@@ -136,9 +136,8 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
-    // TODO EDATOS-3821 Ver si controlar IllegalAccessException aquí y devolver siempre metamacException
     @Override
-    public List<TsvCodelist> toTsvCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException, IllegalAccessException {
+    public List<TsvCodelist> toTsvCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }

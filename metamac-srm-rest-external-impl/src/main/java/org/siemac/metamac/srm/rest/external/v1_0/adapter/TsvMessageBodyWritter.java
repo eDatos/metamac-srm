@@ -5,12 +5,11 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -19,15 +18,17 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.TsvTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
 
-@Produces("text/plain")
+@Produces("text/tab-separated-values")
 public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
 
-    Logger logger = Logger.getLogger(TsvMessageBodyWritter.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(TsvMessageBodyWritter.class);
 
     public long getSize(Object myCollectionOfObjects, Class type, Type genericType, Annotation[] annotations, MediaType arg4) {
         return 0;
@@ -45,18 +46,13 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
             CsvMapper csvMapper = new CsvMapper();
             CsvSchema schema = null;
 
-            /*
-             * If it's not a flat POJO must implement
-             * CSVTransformer
-             */
+            // If it's not a flat POJO must implement CSVTransformer
+
             if (implementsCSVTransformer(myList.get(0).getClass())) {
                 Class[] params = {};
                 try {
                     Method meth = TsvTransformer.class.getDeclaredMethod("flatten", params);
 
-                    /*
-                     * Create a new list using the toMap() function
-                     */
                     List<Map<String, ?>> listOfMaps = new ArrayList<>();
                     Set<String> headers = null;
                     for (Object obj : myList) {
@@ -71,7 +67,7 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
                         if (headers.equals(keyVals.keySet()))
                             listOfMaps.add(keyVals);
                         else
-                            logger.warning("Headers should be the same for each objects in the list, excluding this object " + keyVals);
+                            logger.warn("Headers should be the same for each objects in the list, excluding this object " + keyVals);
                     }
 
                     csvMapper.writer(schema.withColumnSeparator('\t')).writeValue(entityHeaders, listOfMaps);
@@ -83,10 +79,11 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
                 csvMapper.writer(schema).writeValue(entityHeaders, myList);
             }
         } else if (myList.isEmpty()) {
-            logger.warning("Nothing in list to convert to CSV....");
-            entityHeaders.write(myList.toString().getBytes(Charset.forName("UTF-8")));
+            logger.warn("Nothing in list to convert to TSV....");
+            entityHeaders.write(myList.toString().getBytes(StandardCharsets.ISO_8859_1));
         } else {
-            throw new IOException("Not in proper format must pass a java.util.List to use this MessageBodyWriter...");
+            logger.error("Not in proper format must pass a java.util.List to use this MessageBodyWriter...");
+            throw new IOException("Unable to obtain a valid TSV");
         }
     }
 
@@ -95,8 +92,7 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
         for (String field : keySet) {
             build.addColumn(field);
         }
-        CsvSchema schema = build.build().withHeader();
-        return schema;
+        return build.build().withHeader();
     }
 
     public Boolean implementsCSVTransformer(Class arg1) {

@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
 public class TsvFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TsvFilter.class);
-    // public static final String TSV_MIME_TYPE = "text/tab-separated-values";
-    public static final String TSV_MIME_TYPE = "text/plain";
+    public static final String TSV_MIME_TYPE = "text/tab-separated-values";
     public static final String REQUEST_PARAMETER_TYPE = "_type";
     public static final String TSV_PARAMETER_VALUE = "tsv";
 

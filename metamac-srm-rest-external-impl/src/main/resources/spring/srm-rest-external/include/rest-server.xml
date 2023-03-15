@@ -26,8 +26,7 @@
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
-            <entry key="tsv" value="text/plain" />
-        <!--<entry key="tsv" value="text/tab-separated-values" /> -->
+        	<entry key="tsv" value="text/tab-separated-values" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>

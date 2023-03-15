@@ -2,8 +2,10 @@ package org.siemac.metamac.srm.rest.external.v1_0.service;
 
 import static org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils.hasField;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +29,6 @@ import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
-import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
-import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -127,7 +127,6 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
-import org.siemac.metamac.srm.rest.external.v1_0.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesRest2DoMapper;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
@@ -863,45 +862,20 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return findCodelists(agencyID, resourceID, null, query, orderBy, limit, offset);
     }
 
-    private InternationalString mockInternationalString(String p) {
-        InternationalString field = new InternationalString();
-
-        LocalisedString loc = new LocalisedString();
-        loc.setLang("es");
-        loc.setValue("pruebas es " + p);
-        field.getTexts().add(loc);
-
-        LocalisedString loc2 = new LocalisedString();
-        loc2.setLang("en");
-        loc2.setValue("pruebas en " + p);
-        field.getTexts().add(loc2);
-
-        return field;
-    }
-
-    private TsvCodelist mockTsvCodelist(String p, List<String> languages) throws IllegalArgumentException, IllegalAccessException {
-        TsvCodelist pruebas = new TsvCodelist();
-        pruebas.setIsRecommended(true);
-        pruebas.setShortName(mockInternationalString(" short name " + p));
-        pruebas.setDescriptionSource(mockInternationalString(" description " + p));
-
-        ExportUtils exportUtils = new ExportUtils();
-        pruebas.setFields(exportUtils.toMap(pruebas, pruebas.getClass().getDeclaredFields(), languages));
-        return pruebas;
-    }
-
     @Override
-    public Response retrievePruebas() {
+    public Response retrieveCodelistTSV(String agencyID, String resourceID, String version) {
         try {
-            final String resourceName = "pruebas.tsv";
 
-            List<String> languages = configurationService.retrieveLanguages();
+            checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
 
-            List<TsvCodelist> listPruebas = new ArrayList<TsvCodelist>();
-            listPruebas.add(mockTsvCodelist("1", languages));
-            listPruebas.add(mockTsvCodelist("2", languages));
+            // Find one
+            CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            return Response.status(Status.OK).entity(listPruebas).header("Content-Disposition", "inline; filename=" + resourceName).build();
+            // Transform
+            List<TsvCodelist> tsvCodelist = codesDo2RestMapper.toTsvCodelist(codelistVersion, configurationService.retrieveLanguages());
+
+            String fileNamePrefix = SrmRestConstants.KIND_CODELIST + "-" + agencyID + "_" + resourceID + "_" + version;
+            return Response.status(Status.OK).entity(tsvCodelist).header("Content-Disposition", "inline; filename=" + getTsvFileName(fileNamePrefix)).build();
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -2066,6 +2040,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     private DateTime retrieveLastUpdatedDateVariableElementsGeographicalInformation() throws MetamacException {
         return miscMetamacService.findLastUpdatedVariableElementsGeographicalInformation(ctx);
+    }
+
+    public static String getTsvFileName(String fileNamePrefix) {
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return fileNamePrefix + "_" + timestamp + ".tsv";
     }
 
 }

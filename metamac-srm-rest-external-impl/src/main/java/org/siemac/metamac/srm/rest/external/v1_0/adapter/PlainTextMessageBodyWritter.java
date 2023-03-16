@@ -17,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.TsvTransformer;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +25,10 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
 
-@Produces("text/tab-separated-values")
-public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
+@Produces({"text/tab-separated-values", "text/csv"})
+public class PlainTextMessageBodyWritter implements MessageBodyWriter<Object> {
 
-    private final Logger logger = LoggerFactory.getLogger(TsvMessageBodyWritter.class);
+    private final Logger logger = LoggerFactory.getLogger(PlainTextMessageBodyWritter.class);
 
     public long getSize(Object myCollectionOfObjects, Class type, Type genericType, Annotation[] annotations, MediaType arg4) {
         return 0;
@@ -48,10 +48,10 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
 
             // If it's not a flat POJO must implement CSVTransformer
 
-            if (implementsCSVTransformer(myList.get(0).getClass())) {
+            if (implementsPlainTextTransformer(myList.get(0).getClass())) {
                 Class[] params = {};
                 try {
-                    Method meth = TsvTransformer.class.getDeclaredMethod("flatten", params);
+                    Method meth = PlainTextTransformer.class.getDeclaredMethod("flatten", params);
 
                     List<Map<String, ?>> listOfMaps = new ArrayList<>();
                     Set<String> headers = null;
@@ -70,12 +70,12 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
                             logger.warn("Headers should be the same for each objects in the list, excluding this object " + keyVals);
                     }
 
-                    csvMapper.writer(schema.withColumnSeparator('\t')).writeValue(entityHeaders, listOfMaps);
+                    csvMapper.writer(schema.withColumnSeparator(getColumnSeparator(mediaType))).writeValue(entityHeaders, listOfMaps);
                 } catch (Exception e) {
                     throw new IOException("Unable to retrieve flatten() " + e.getMessage());
                 }
             } else {
-                schema = csvMapper.schemaFor(myList.get(0).getClass()).withHeader().withColumnSeparator('\t');
+                schema = csvMapper.schemaFor(myList.get(0).getClass()).withHeader().withColumnSeparator(getColumnSeparator(mediaType));
                 csvMapper.writer(schema).writeValue(entityHeaders, myList);
             }
         } else if (myList.isEmpty()) {
@@ -83,11 +83,15 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
             entityHeaders.write(myList.toString().getBytes(StandardCharsets.UTF_8));
         } else {
             logger.error("Not in proper format must pass a java.util.List to use this MessageBodyWriter...");
-            throw new IOException("Unable to obtain a valid TSV");
+            throw new IOException("Unable to obtain a valid conversion to TSV/CSV");
         }
     }
 
-    public CsvSchema buildSchemaFromKeySet(Set<String> keySet) {
+    private char getColumnSeparator(MediaType mediaType) {
+        return "tab-separated-values".equals(mediaType.getSubtype()) ? '\t' : ',';
+    }
+
+    private CsvSchema buildSchemaFromKeySet(Set<String> keySet) {
         Builder build = CsvSchema.builder();
         for (String field : keySet) {
             build.addColumn(field);
@@ -95,10 +99,10 @@ public class TsvMessageBodyWritter implements MessageBodyWriter<Object> {
         return build.build().withHeader().withoutQuoteChar();
     }
 
-    public Boolean implementsCSVTransformer(Class arg1) {
+    private Boolean implementsPlainTextTransformer(Class arg1) {
         Class[] interfaces = arg1.getInterfaces();
         for (Class aClass : interfaces) {
-            if (aClass.getName().equals(TsvTransformer.class.getName()))
+            if (aClass.getName().equals(PlainTextTransformer.class.getName()))
                 return true;
         }
 

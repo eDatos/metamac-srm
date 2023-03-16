@@ -85,7 +85,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElements
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.TsvCodelist;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodelist;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
@@ -864,6 +864,15 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     @Override
     public Response retrieveCodelistTSV(String agencyID, String resourceID, String version) {
+        return retrieveCodelistPlainText(agencyID, resourceID, version, "tsv");
+    }
+
+    @Override
+    public Response retrieveCodelistCSV(String agencyID, String resourceID, String version) {
+        return retrieveCodelistPlainText(agencyID, resourceID, version, "csv");
+    }
+
+    private Response retrieveCodelistPlainText(String agencyID, String resourceID, String version, String format) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
@@ -872,10 +881,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
             // Transform
-            List<TsvCodelist> tsvCodelist = codesDo2RestMapper.toTsvCodelist(codelistVersion, configurationService.retrieveLanguages());
+            List<PlainTextCodelist> tsvCodelist = codesDo2RestMapper.toPlainTextCodelist(codelistVersion, configurationService.retrieveLanguages());
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODELISTS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(tsvCodelist).header("Content-Disposition", "inline; filename=" + getTsvFileName(fileNamePrefix)).build();
+            return Response.status(Status.OK).entity(tsvCodelist).header("Content-Disposition", "inline; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -2042,9 +2051,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return miscMetamacService.findLastUpdatedVariableElementsGeographicalInformation(ctx);
     }
 
-    public static String getTsvFileName(String fileNamePrefix) {
+    public static String getPlainTextFileName(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return fileNamePrefix + "_" + timestamp + ".tsv";
+        return fileNamePrefix + "_" + timestamp + "." + format;
     }
 
 }

@@ -60,7 +60,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableType;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfiguration;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfigurations;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.TsvCodelist;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodelist;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -137,16 +137,16 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public List<TsvCodelist> toTsvCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException {
+    public List<PlainTextCodelist> toPlainTextCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
         Codelist codelist = toCodelist(source);
 
-        List<TsvCodelist> targets = new ArrayList<>();
+        List<PlainTextCodelist> targets = new ArrayList<>();
 
-        TsvCodelist target = new TsvCodelist();
+        PlainTextCodelist target = new PlainTextCodelist();
         target.setId(codelist.getId());
         target.setUrn(codelist.getUrn());
         target.setName(codelist.getName());

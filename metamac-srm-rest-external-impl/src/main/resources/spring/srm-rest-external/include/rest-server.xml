@@ -27,6 +27,7 @@
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
         	<entry key="tsv" value="text/tab-separated-values" />
+        	<entry key="csv" value="text/csv" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>
@@ -59,7 +60,7 @@
         <property name="namespacePrefix" value="ns" />
     </bean>
     
-    <bean id="xstreamTsvProvider" class="org.siemac.metamac.srm.rest.external.v1_0.adapter.TsvMessageBodyWritter" />
+    <bean id="xstreamTsvProvider" class="org.siemac.metamac.srm.rest.external.v1_0.adapter.PlainTextMessageBodyWritter" />
     
     <util:map id="marshallerProperties">
         <entry key="jaxb.formatted.output">

@@ -85,7 +85,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElements
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodelist;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
@@ -863,34 +863,6 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Response retrieveCodelistTSV(String agencyID, String resourceID, String version) {
-        return retrieveCodelistPlainText(agencyID, resourceID, version, "tsv");
-    }
-
-    @Override
-    public Response retrieveCodelistCSV(String agencyID, String resourceID, String version) {
-        return retrieveCodelistPlainText(agencyID, resourceID, version, "csv");
-    }
-
-    private Response retrieveCodelistPlainText(String agencyID, String resourceID, String version, String format) {
-        try {
-
-            checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
-
-            // Find one
-            CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
-
-            // Transform
-            List<PlainTextCodelist> tsvCodelist = codesDo2RestMapper.toPlainTextCodelist(codelistVersion, configurationService.retrieveLanguages());
-
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODELISTS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(tsvCodelist).header("Content-Disposition", "inline; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
-        } catch (Exception e) {
-            throw manageException(e);
-        }
-    }
-
-    @Override
     public Codelist retrieveCodelist(String agencyID, String resourceID, String version) {
         try {
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
@@ -910,39 +882,36 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Boolean extended, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            return findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
 
-            if (isFindByDefaultGeographicalGranularitiesCodelist(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                String codelistUrn = configurationService.retrieveDefaultCodelistGeographicalGranularityUrn();
-                String[] codelistUrnSplited = UrnUtils.splitUrnItemScheme(codelistUrn);
-                agencyID = codelistUrnSplited[0];
-                resourceID = codelistUrnSplited[1];
-                version = codelistUrnSplited[2];
-                query = null;
-                orderBy = null;
-                limit = null;
-            }
+    @Override
+    public Response findCodesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "tsv");
+    }
 
-            if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
-                checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
-                checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
-                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
-            } else {
-                // Retrieve all codes of codelist
-                CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
+    @Override
+    public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "csv");
+    }
 
-                String orderToUse = getOrderToUseToRetrieveCodelist(agencyID, resourceID, version, order, codelistVersion);
-                String opennessToUse = getOpennessToUseToRetrieveCodelist(agencyID, resourceID, version, openness, codelistVersion);
-                String restrictionToUse = getRestrictionToUseToRetrieveCodelist(agencyID, resourceID, version, restriction, codelistVersion);
+    private Response findCodesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness,
+            String restriction, Boolean extended, String fields, String format) {
+        try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Codes codes = findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
 
-                ItemMetamacResultSelection codeMetamacResultSelection = CodeMetamacResultSelection.API;
-                codeMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
-                codeMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
-                        opennessToUse, restrictionToUse);
+            // Transform
+            List<PlainTextCodesCodelist> tsvCodesCodelist = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
 
-                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
-            }
+            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODES + "-" + agencyID + "_" + resourceID + "_" + version;
+            return Response.status(Status.OK).entity(tsvCodesCodelist).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -987,6 +956,44 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         } catch (Exception e) {
             throw manageException(e);
         }
+    }
+
+    private Codes findCodesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, Set<String> fieldsToShow) throws MetamacException {
+
+        if (isFindByDefaultGeographicalGranularitiesCodelist(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            String codelistUrn = configurationService.retrieveDefaultCodelistGeographicalGranularityUrn();
+            String[] codelistUrnSplited = UrnUtils.splitUrnItemScheme(codelistUrn);
+            agencyID = codelistUrnSplited[0];
+            resourceID = codelistUrnSplited[1];
+            version = codelistUrnSplited[2];
+            query = null;
+            orderBy = null;
+            limit = null;
+        }
+
+        if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
+            checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
+            checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
+            return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
+        } else {
+            // Retrieve all codes of codelist
+            CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
+
+            String orderToUse = getOrderToUseToRetrieveCodelist(agencyID, resourceID, version, order, codelistVersion);
+            String opennessToUse = getOpennessToUseToRetrieveCodelist(agencyID, resourceID, version, openness, codelistVersion);
+            String restrictionToUse = getRestrictionToUseToRetrieveCodelist(agencyID, resourceID, version, restriction, codelistVersion);
+
+            ItemMetamacResultSelection codeMetamacResultSelection = CodeMetamacResultSelection.API;
+            codeMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
+            codeMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
+                    opennessToUse, restrictionToUse);
+
+            return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
+        }
+
     }
 
     private String getOpennessToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String openness, CodelistVersionMetamac codelistVersion) throws MetamacException {

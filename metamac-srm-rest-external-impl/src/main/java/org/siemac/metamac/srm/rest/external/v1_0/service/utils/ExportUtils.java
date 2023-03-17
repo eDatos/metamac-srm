@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
@@ -22,11 +23,11 @@ public class ExportUtils {
     private ExportUtils() {
     }
 
-    public static Map<String, String> toMap(Object obj, Field[] fields, List<String> languages) {
+    public static Map<String, String> toMap(Object obj, Field[] fields, List<String> languages, Set<String> excludedFields) {
         Map<String, String> map = new LinkedHashMap<>();
         try {
             for (Field field : fields) {
-                if (!"fields".equals(field.getName())) {
+                if (!containsField(excludedFields, field.getName())) {
                     field.setAccessible(true);
                     map.putAll(setFieldInMap(obj, field, languages));
                 }
@@ -35,6 +36,10 @@ public class ExportUtils {
             logger.error("Illegal access to field", e);
         }
         return map;
+    }
+
+    public static boolean containsField(Set<String> fields, String field) {
+        return fields != null && fields.contains(field);
     }
 
     private static Map<String, String> setFieldInMap(Object obj, Field field, List<String> languages) throws IllegalAccessException {
@@ -52,14 +57,16 @@ public class ExportUtils {
     private static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages) {
         Map<String, String> target = new LinkedHashMap<>();
 
-        if (source == null) {
-            return target;
+        InternationalString copySource = new InternationalString();
+
+        if (source != null) {
+            copySource = source;
         }
 
         String header;
         for (String language : languages) {
             header = nameField + TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
-            target.put(header, getLocalisedStringByLang(source.getTexts(), language));
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language));
         }
 
         return target;

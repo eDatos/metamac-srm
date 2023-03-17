@@ -13,7 +13,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElementsGeoInfo;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodelist;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
@@ -35,10 +35,9 @@ public interface CodesDo2RestMapperV10 {
     org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist toCodelist(CodelistVersionMetamac source) throws MetamacException;
     Resource toResource(CodelistVersion source);
 
-    List<PlainTextCodelist> toPlainTextCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException;
-
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields);
+    List<PlainTextCodesCodelist> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException;
 
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended);
     RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources);

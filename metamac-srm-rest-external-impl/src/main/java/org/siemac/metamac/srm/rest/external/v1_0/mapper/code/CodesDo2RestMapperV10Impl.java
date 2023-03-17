@@ -60,7 +60,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableType;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfiguration;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfigurations;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodelist;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -137,37 +137,39 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public List<PlainTextCodelist> toPlainTextCodelist(CodelistVersionMetamac source, List<String> languages) throws MetamacException {
+    public List<PlainTextCodesCodelist> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        Codelist codelist = toCodelist(source);
+        List<PlainTextCodesCodelist> target = new ArrayList<>();
 
-        List<PlainTextCodelist> targets = new ArrayList<>();
+        for (CodeResource code : source.getCodes()) {
+            target.add(getPlainTextCode(code, languages, fields));
+        }
 
-        PlainTextCodelist target = new PlainTextCodelist();
-        target.setId(codelist.getId());
-        target.setUrn(codelist.getUrn());
-        target.setName(codelist.getName());
-        target.setDescription(codelist.getDescription());
-        target.setIsRecommended(codelist.isIsRecommended());
-        target.setShortName(codelist.getShortName());
-        target.setDescriptionSource(codelist.getDescriptionSource());
-        target.setValidFrom(ExportUtils.getDateAsString(codelist.getValidFrom()));
-        target.setValidTo(ExportUtils.getDateAsString(codelist.getValidTo()));
-        target.setIsFinal(codelist.isIsFinal());
-        target.setIsExternalReference(codelist.isIsExternalReference());
-        target.setIsPartial(codelist.isIsPartial());
-        target.setAgencyID(codelist.getAgencyID());
-        target.setVersion(codelist.getVersion());
-        target.setUri(codelist.getUri());
+        return target;
+    }
 
-        target.setFields(ExportUtils.toMap(target, target.getClass().getDeclaredFields(), languages));
+    private PlainTextCodesCodelist getPlainTextCode(CodeResource source, List<String> languages, Set<String> fields) {
+        PlainTextCodesCodelist target = new PlainTextCodesCodelist();
+        target.setId(source.getId());
+        target.setUrn(source.getUrn());
+        target.setParent(source.getParent());
+        target.setIsExtended(source.isExtended());
+        target.setVariableElement(source.getVariableElement() != null ? source.getVariableElement().getUrn() : null);
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
 
-        targets.add(target);
+        if (!fields.contains(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
+            String s = "dd";
+        } else {
+            String d = "s";
+        }
 
-        return targets;
+        target.setFields(ExportUtils.toMap(target, target.getClass().getDeclaredFields(), languages, target.retrieveExcludedFields(fields)));
+
+        return target;
     }
 
     @Override

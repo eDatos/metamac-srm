@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.ExportFieldAnnotation;
 import org.siemac.metamac.rest.utils.RestCommonUtil;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.slf4j.Logger;
@@ -44,11 +46,13 @@ public class ExportUtils {
 
     private static Map<String, String> setFieldInMap(Object obj, Field field, List<String> languages) throws IllegalAccessException {
         Map<String, String> target = new LinkedHashMap<>();
+        ExportFieldAnnotation exportFieldAnnotation = field.getAnnotation(ExportFieldAnnotation.class);
+        String fieldName = exportFieldAnnotation != null && !StringUtils.isBlank(exportFieldAnnotation.name()) ? exportFieldAnnotation.name() : field.getName();
         if (field.getType().isAssignableFrom(InternationalString.class)) {
             Object e = field.get(obj);
-            target.putAll(internationalString2MapExport(field.getName(), (InternationalString) e, languages));
+            target.putAll(internationalString2MapExport(fieldName, (InternationalString) e, languages));
         } else {
-            target.put(field.getName(), getValueFieldPojo(obj, field));
+            target.put(fieldName, getValueFieldPojo(obj, field));
         }
 
         return target;

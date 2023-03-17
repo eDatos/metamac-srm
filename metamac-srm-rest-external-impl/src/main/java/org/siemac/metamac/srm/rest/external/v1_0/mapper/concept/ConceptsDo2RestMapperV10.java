@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptTypes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RoleConcepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
@@ -27,6 +29,8 @@ public interface ConceptsDo2RestMapperV10 {
 
     public Concepts toConcepts(PagedResult<ConceptMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
     public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields);
+    List<PlainTextCodesConcept> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException;
+
     public Concept toConcept(ConceptMetamac source);
     public ItemResource toResource(com.arte.statistic.sdmx.srm.core.concept.domain.Concept source);
     @SuppressWarnings("rawtypes")

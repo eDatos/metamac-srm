@@ -1,12 +1,18 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.concept;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
@@ -14,7 +20,25 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.*;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptTypes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Quantity;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityAmount;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityChangeRate;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityFraction;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityIndex;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityMagnitude;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRate;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRatio;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RelatedConcepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RoleConcepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
@@ -26,6 +50,7 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
+import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -113,6 +138,44 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME)) {
             target.setPluralName(toInternationalString(source.getPluralName()));
         }
+        return target;
+    }
+
+    @Override
+    public List<PlainTextCodesConcept> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextCodesConcept> target = new ArrayList<>();
+
+        for (ConceptResource concept : source.getConcepts()) {
+            target.add(toPlainTextConcept(concept, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextCodesConcept toPlainTextConcept(ConceptResource source, List<String> languages, Set<String> fields) {
+        PlainTextCodesConcept target = new PlainTextCodesConcept();
+        target.setId(source.getId());
+        target.setUrn(source.getUrn());
+        target.setParent(source.getParent());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+        target.setPluralName(source.getPluralName());
+
+        target.setFields(ExportUtils.toMap(target, target.getClass().getDeclaredFields(), languages, null, target.retrieveExcludedFields(fields)));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+        }
+
         return target;
     }
 

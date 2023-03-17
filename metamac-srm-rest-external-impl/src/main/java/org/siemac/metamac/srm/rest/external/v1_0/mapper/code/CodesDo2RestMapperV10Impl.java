@@ -33,6 +33,7 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AccessType;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
@@ -145,13 +146,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         List<PlainTextCodesCodelist> target = new ArrayList<>();
 
         for (CodeResource code : source.getCodes()) {
-            target.add(getPlainTextCode(code, languages, fields));
+            target.add(toPlainTextCode(code, languages, fields));
         }
 
         return target;
     }
 
-    private PlainTextCodesCodelist getPlainTextCode(CodeResource source, List<String> languages, Set<String> fields) {
+    private PlainTextCodesCodelist toPlainTextCode(CodeResource source, List<String> languages, Set<String> fields) {
         PlainTextCodesCodelist target = new PlainTextCodesCodelist();
         target.setId(source.getId());
         target.setUrn(source.getUrn());
@@ -161,13 +162,17 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setName(source.getName());
         target.setDescription(source.getDescription());
 
-        if (!fields.contains(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
-            String s = "dd";
-        } else {
-            String d = "s";
-        }
+        Set<String> excludedFields = target.retrieveExcludedFields(fields);
+        target.setFields(ExportUtils.toMap(target, target.getClass().getDeclaredFields(), languages, null, excludedFields));
 
-        target.setFields(ExportUtils.toMap(target, target.getClass().getDeclaredFields(), languages, target.retrieveExcludedFields(fields)));
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+        }
 
         return target;
     }

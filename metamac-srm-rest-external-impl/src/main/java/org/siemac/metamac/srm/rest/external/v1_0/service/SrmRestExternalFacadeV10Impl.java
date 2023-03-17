@@ -86,6 +86,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
@@ -254,6 +255,40 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     public Concepts findConcepts(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            return findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
+    public Response findConceptsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    }
+
+    @Override
+    public Response findConceptsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    private Response findConceptsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+        try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Concepts concepts = findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+
+            // Transform
+            List<PlainTextCodesConcept> plainTextCodesConcept = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow);
+
+            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CONCEPTS + "-" + agencyID + "_" + resourceID + "_" + version;
+            return Response.status(Status.OK).entity(plainTextCodesConcept).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private Concepts findConceptsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow) {
+        try {
 
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve concepts paginated
@@ -907,10 +942,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Codes codes = findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
 
             // Transform
-            List<PlainTextCodesCodelist> tsvCodesCodelist = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
+            List<PlainTextCodesCodelist> plainTextCodesCodelist = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODES + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(tsvCodesCodelist).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(plainTextCodesCodelist).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             throw manageException(e);

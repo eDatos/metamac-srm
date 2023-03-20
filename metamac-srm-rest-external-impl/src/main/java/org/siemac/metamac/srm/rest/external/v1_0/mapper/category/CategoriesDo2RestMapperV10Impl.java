@@ -159,8 +159,13 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setName(source.getName());
         target.setDescription(source.getDescription());
 
+        if (source.getEniSchemeType() != null) {
+            target.setEniSchemeId(source.getEniSchemeType().getId());
+            target.setEniSchemeName(source.getEniSchemeType().getName());
+        }
+
         Set<String> excludedFields = target.retrieveExcludedFields(fields);
-        List<Field> fieldsPlainTextCategories = new LinkedList<Field>();
+        List<Field> fieldsPlainTextCategories = new LinkedList<>();
         target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCategories, PlainTextCategory.class), languages, null, excludedFields));
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {

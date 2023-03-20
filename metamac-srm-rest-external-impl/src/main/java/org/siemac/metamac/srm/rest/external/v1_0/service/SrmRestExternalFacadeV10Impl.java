@@ -380,7 +380,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Set<String> fieldsToShow = getFieldsParameters(fields);
 
             return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
         } catch (Exception e) {
@@ -400,7 +400,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
         try {
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+
+            Set<String> fieldsToShow = getFieldsParameters(fields);
+
             Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
@@ -416,11 +418,6 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     public Categories findCategoriesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
             throws MetamacException {
-
-        Set<String> validFields = new HashSet<>();
-        validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
-        validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
-        validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
 
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
             // Find. Retrieve categories paginated
@@ -2126,6 +2123,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     public static String getPlainTextFileName(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         return fileNamePrefix + "_" + timestamp + "." + format;
+    }
+
+    private Set<String> getFieldsParameters(String fields) {
+        Set<String> validFields = new HashSet<>();
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
     }
 
 }

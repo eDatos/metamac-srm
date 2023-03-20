@@ -40,7 +40,6 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRate;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRatio;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RelatedConcepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RoleConcepts;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
@@ -170,7 +169,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
 
         Set<String> excludedFields = target.retrieveExcludedFields(fields);
         List<Field> fieldsPlainTextCodesConcept = new LinkedList<Field>();
-        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesConcept, PlainTextCodesCodelist.class), languages, null, excludedFields));
+        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesConcept, PlainTextCodesConcept.class), languages, null, excludedFields));
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
             List<Annotation> annotations = new ArrayList<>();

@@ -1,27 +1,34 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.category;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCategory;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
+import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +77,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -87,7 +95,6 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return targets;
     }
 
-    
     @Override
     public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
 
@@ -125,7 +132,46 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         if (source.getEniSchema() != null) {
             target.setEniSchemeType(toItem(source.getEniSchema()));
         }
-        
+
+        return target;
+    }
+
+    @Override
+    public List<PlainTextCategory> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextCategory> target = new ArrayList<>();
+
+        for (CategoryResource category : source.getCategories()) {
+            target.add(toPlainTextCategory(category, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextCategory toPlainTextCategory(CategoryResource source, List<String> languages, Set<String> fields) {
+        PlainTextCategory target = new PlainTextCategory();
+        target.setId(source.getId());
+        target.setUrn(source.getUrn());
+        target.setParent(source.getParent());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+
+        Set<String> excludedFields = target.retrieveExcludedFields(fields);
+        List<Field> fieldsPlainTextCategories = new LinkedList<Field>();
+        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCategories, PlainTextCategory.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+        }
+
         return target;
     }
 
@@ -138,7 +184,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setName(toInternationalString(source.getDescription()));
         return target;
     }
-    
+
     @Override
     public Categorisations toCategorisations(PagedResult<Categorisation> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
@@ -242,9 +288,9 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         CategoryResource target = new CategoryResource();
         toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source), target, fields);
         target.setNestedId(source.getNameableArtefact().getCodeFull());
-        
+
         setVisibleCategoryFields(source, target, fields);
-        
+
         return target;
     }
 
@@ -255,9 +301,9 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         CategoryResource target = new CategoryResource();
         toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source, categorySchemeVersion), target, categorySchemeVersion.getMaintainableArtefact().getIsImported(), fields);
         target.setNestedId(source.getCodeFull());
-        
+
         setVisibleCategoryFields(source, target, fields);
-        
+
         return target;
     }
 
@@ -305,7 +351,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     private String toSubpathCategorisations() {
         return SrmRestConstants.LINK_SUBPATH_CATEGORISATIONS;
     }
-    
+
     private void setVisibleCategoryFields(CategoryMetamac source, CategoryResource target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             target.setEniSchemeType(toItem(source.getEniSchema()));

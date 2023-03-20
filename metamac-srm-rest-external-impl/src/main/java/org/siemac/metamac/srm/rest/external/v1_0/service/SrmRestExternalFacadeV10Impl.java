@@ -282,7 +282,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             List<PlainTextCodesConcept> plainTextCodesConcept = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CONCEPTS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextCodesConcept).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(plainTextCodesConcept).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             throw manageException(e);
@@ -410,7 +410,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             List<PlainTextCategory> plainTextCodesCategory = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CATEGORIES + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextCodesCategory).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(plainTextCodesCategory).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             throw manageException(e);
@@ -556,7 +556,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Transform
             List<PlainTextOrganisation> plainTextOrganisation = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow);
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_ORGANISATIONS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextOrganisation).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(plainTextOrganisation).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             throw manageException(e);
@@ -1003,7 +1003,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             List<PlainTextCodesCodelist> plainTextCodesCodelist = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODES + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextCodesCodelist).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(plainTextCodesCodelist).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             throw manageException(e);
@@ -2151,9 +2151,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return miscMetamacService.findLastUpdatedVariableElementsGeographicalInformation(ctx);
     }
 
-    public static String getPlainTextFileName(String fileNamePrefix, String format) {
+    public static String getContentDisposition(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return fileNamePrefix + "_" + timestamp + "." + format;
+        return "inline; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {

@@ -88,6 +88,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCategory;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextOrganisation;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
@@ -531,29 +532,59 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     public Organisations findOrganisations(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-
-            if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                // Find. Retrieve organisations paginated
-                SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-                PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(null, agencyID, resourceID, version, null, sculptorCriteria.getConditions(),
-                        sculptorCriteria.getPagingParameter());
-
-                // Transform
-                return organisationsDo2RestMapper.toOrganisations(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
-            } else {
-                // Retrieve all organisations of organisationScheme, without pagination
-                OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemePublished(agencyID, resourceID, version);
-
-                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
-                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        itemMetamacResultSelection);
-
-                // Transform
-                return organisationsDo2RestMapper.toOrganisations(items, organisationSchemeVersion, fieldsToShow);
-            }
+            return findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
+        }
+    }
+
+    @Override
+    public Response findOrganisationsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    }
+
+    @Override
+    public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    private Response findOrganisationsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+        try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Organisations organisations = findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+
+            // Transform
+            List<PlainTextOrganisation> plainTextOrganisation = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow);
+            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_ORGANISATIONS + "-" + agencyID + "_" + resourceID + "_" + version;
+            return Response.status(Status.OK).entity(plainTextOrganisation).header("Content-Disposition", "attachment; filename=" + getPlainTextFileName(fileNamePrefix, format)).build();
+
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    public Organisations findOrganisationsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+            throws MetamacException {
+
+        if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            // Find. Retrieve organisations paginated
+            SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+            PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(null, agencyID, resourceID, version, null, sculptorCriteria.getConditions(),
+                    sculptorCriteria.getPagingParameter());
+
+            // Transform
+            return organisationsDo2RestMapper.toOrganisations(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        } else {
+            // Retrieve all organisations of organisationScheme, without pagination
+            OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemePublished(agencyID, resourceID, version);
+
+            ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+            itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
+                    itemMetamacResultSelection);
+
+            // Transform
+            return organisationsDo2RestMapper.toOrganisations(items, organisationSchemeVersion, fieldsToShow);
         }
     }
 

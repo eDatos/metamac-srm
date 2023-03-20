@@ -133,21 +133,24 @@ public class ExportUtils {
     public static Map<String, String> toMapAnnotations(List<Annotation> annotations, List<String> languages) {
         Map<String, String> mapAnnotations = new LinkedHashMap<>();
         List<Annotation> copyAnnotations;
-        int iterator = 1;
-
+        int iterator = 0;
         if (annotations == null || annotations.isEmpty()) {
             copyAnnotations = new ArrayList<>();
             copyAnnotations.addAll(Collections.nCopies(NUM_MAX_ANNOTATIONS, new Annotation()));
         } else {
             copyAnnotations = annotations;
+            if (copyAnnotations.size() < NUM_MAX_ANNOTATIONS) {
+                copyAnnotations.addAll(Collections.nCopies(NUM_MAX_ANNOTATIONS - copyAnnotations.size(), new Annotation()));
+            }
         }
 
         for (Annotation annotation : copyAnnotations) {
+            iterator++;
             if (iterator > NUM_MAX_ANNOTATIONS) {
                 break;
             }
+
             mapAnnotations.putAll(toMapAnnotation(annotation, languages, iterator));
-            iterator++;
         }
 
         return mapAnnotations;

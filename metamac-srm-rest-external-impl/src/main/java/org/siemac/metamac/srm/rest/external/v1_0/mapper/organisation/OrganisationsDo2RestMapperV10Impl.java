@@ -1,6 +1,9 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +18,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencyScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencySchemes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contact;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contacts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumer;
@@ -34,10 +38,12 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnit
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnitSchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnits;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextOrganisation;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
+import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.stereotype.Component;
 
@@ -189,7 +195,8 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         Organisations targets = new Organisations();
         targets.setKind(toKindItemsFromOrganisationType(null)); // generic
@@ -225,7 +232,47 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public Agencies toAgencies(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public List<PlainTextOrganisation> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextOrganisation> target = new ArrayList<>();
+
+        for (ItemResource organisation : source.getOrganisations()) {
+            target.add(toPlainTextOrganisation(organisation, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextOrganisation toPlainTextOrganisation(ItemResource source, List<String> languages, Set<String> fields) {
+        PlainTextOrganisation target = new PlainTextOrganisation();
+        target.setId(source.getId());
+        target.setUrn(source.getUrn());
+        target.setParent(source.getParent());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+
+        Set<String> excludedFields = target.retrieveExcludedFields(fields);
+        List<Field> fieldsPlainTextOrganisations = new LinkedList<>();
+        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextOrganisations, PlainTextOrganisation.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+        }
+
+        return target;
+    }
+
+    @Override
+    public Agencies toAgencies(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         Agencies targets = new Agencies();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.AGENCY_SCHEME));
@@ -261,7 +308,8 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public OrganisationUnits toOrganisationUnits(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public OrganisationUnits toOrganisationUnits(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         OrganisationUnits targets = new OrganisationUnits();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME));
@@ -297,7 +345,8 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public DataProviders toDataProviders(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public DataProviders toDataProviders(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         DataProviders targets = new DataProviders();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME));
@@ -333,7 +382,8 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public DataConsumers toDataConsumers(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public DataConsumers toDataConsumers(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         DataConsumers targets = new DataConsumers();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME));
@@ -574,7 +624,8 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         }
         OrganisationTypeEnum organisationType = getOrganisationTypeEnum(source);
         ItemResource target = new ItemResource();
-        toResource(source, toKindItem(organisationType), toOrganisationSelfLink(source, organisationSchemeVersion), target, organisationSchemeVersion.getMaintainableArtefact().getIsImported(), fields);
+        toResource(source, toKindItem(organisationType), toOrganisationSelfLink(source, organisationSchemeVersion), target, organisationSchemeVersion.getMaintainableArtefact().getIsImported(),
+                fields);
         if (OrganisationTypeEnum.AGENCY.equals(organisationType)) {
             target.setNestedId(getIdAsMaintainer(source));
         }

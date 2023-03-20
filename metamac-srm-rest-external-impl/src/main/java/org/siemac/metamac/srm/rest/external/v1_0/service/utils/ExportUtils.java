@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.service.utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public class ExportUtils {
     private ExportUtils() {
     }
 
-    public static Map<String, String> toMap(Object obj, Field[] fields, List<String> languages, String prefixName, Set<String> excludedFields) {
+    public static Map<String, String> toMap(Object obj, List<Field> fields, List<String> languages, String prefixName, Set<String> excludedFields) {
         Map<String, String> map = new LinkedHashMap<>();
         try {
             for (Field field : fields) {
@@ -45,6 +46,17 @@ public class ExportUtils {
             logger.error("Illegal access to field", e);
         }
         return map;
+    }
+
+    public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+
+        if (type.getSuperclass() != null) {
+            getAllFields(fields, type.getSuperclass());
+        }
+
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+        return fields;
     }
 
     public static boolean containsField(Set<String> fields, String field) {
@@ -147,7 +159,7 @@ public class ExportUtils {
         plainTextAnnotation.setUrl(annotation.getUrl());
         plainTextAnnotation.setText(annotation.getText());
 
-        return toMap(plainTextAnnotation, plainTextAnnotation.getClass().getDeclaredFields(), languages, getPrefixAnnotation(iterator), new HashSet<>());
+        return toMap(plainTextAnnotation, Arrays.asList(plainTextAnnotation.getClass().getDeclaredFields()), languages, getPrefixAnnotation(iterator), new HashSet<>());
     }
 
     private static String getPrefixAnnotation(int iterator) {

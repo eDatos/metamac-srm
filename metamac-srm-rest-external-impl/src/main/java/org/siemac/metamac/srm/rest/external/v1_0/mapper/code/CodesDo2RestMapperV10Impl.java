@@ -13,8 +13,10 @@ import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalCons
 import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants.VARIABLE_ELEMENT_TYPE;
 import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants.VARIABLE_ELEMENT_URN;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -163,7 +165,8 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setDescription(source.getDescription());
 
         Set<String> excludedFields = target.retrieveExcludedFields(fields);
-        target.setFields(ExportUtils.toMap(target, target.getClass().getDeclaredFields(), languages, null, excludedFields));
+        List<Field> fieldsPlainTextCodesCodelist = new LinkedList<Field>();
+        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesCodelist, PlainTextCodesCodelist.class), languages, null, excludedFields));
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
             List<Annotation> annotations = new ArrayList<>();

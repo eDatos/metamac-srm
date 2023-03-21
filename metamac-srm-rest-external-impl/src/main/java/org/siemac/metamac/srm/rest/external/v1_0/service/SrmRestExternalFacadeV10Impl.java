@@ -285,7 +285,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             return Response.status(Status.OK).entity(plainTextCodesConcept).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
-            throw manageException(e);
+            return manageExceptionResponse(e);
         }
     }
 
@@ -413,7 +413,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             return Response.status(Status.OK).entity(plainTextCodesCategory).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
-            throw manageException(e);
+            return manageExceptionResponse(e);
         }
     }
 
@@ -559,7 +559,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             return Response.status(Status.OK).entity(plainTextOrganisation).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
-            throw manageException(e);
+            return manageExceptionResponse(e);
         }
     }
 
@@ -1006,7 +1006,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             return Response.status(Status.OK).entity(plainTextCodesCodelist).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
-            throw manageException(e);
+            return manageExceptionResponse(e);
         }
     }
 
@@ -1996,6 +1996,22 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
             return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Throws response error, logging exception
+     */
+    private Response manageExceptionResponse(Exception e) {
+        logger.error("Error", e);
+        RestException errorResponse;
+        if (e instanceof RestException) {
+            errorResponse = (RestException) e;
+        } else {
+            // do not show information details about exception to user
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
+            errorResponse = new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+        return Response.fromResponse(errorResponse.getResponse()).header("Accept", "application/xml").header("Content-Type", "application/xml").build();
     }
 
     private void checkParameterNotWildcardFindItemSchemes(String agencyID) {

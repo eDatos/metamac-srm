@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This filter allows to request a tsv resource with a query parameter _type=tsv, fixing a
+ * This filter allows to request a tsv or csv resource with a query parameter _type=tsv / _type=csv, fixing a
  * deficiency from Apache CXF, which doesn't allow modifications to the shortcuts object it uses to
  * map a name from the query parameter to a MIME type (i.e. json: application/json).
  */

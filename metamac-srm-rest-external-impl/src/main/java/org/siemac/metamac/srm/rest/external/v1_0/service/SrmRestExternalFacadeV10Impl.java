@@ -2000,6 +2000,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     /**
      * Throws response error, logging exception
+     * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */
     private Response manageExceptionResponse(Exception e) {
         logger.error("Error", e);

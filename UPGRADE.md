@@ -8,6 +8,14 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 5.0.0 a 5.X.0
+*** Esta versión requiere que se actualicen determinados topics de kafka del srm:*******
+
+ 1) Borrar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
+ 
+******** curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value
+******** curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value
+
 ## 4.0.0 a 5.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:
   * **/agencyschemes/{agencyID}/{resourceID}/{version}/agencies**

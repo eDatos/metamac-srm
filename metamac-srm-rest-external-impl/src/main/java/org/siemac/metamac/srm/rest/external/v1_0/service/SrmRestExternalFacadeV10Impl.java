@@ -2003,15 +2003,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
      * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */
     private Response manageExceptionResponse(Exception e) {
-        logger.error("Error", e);
-        RestException errorResponse;
-        if (e instanceof RestException) {
-            errorResponse = (RestException) e;
-        } else {
-            // do not show information details about exception to user
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
-            errorResponse = new RestException(exception, Status.INTERNAL_SERVER_ERROR);
-        }
+        RestException errorResponse = manageException(e);
         return Response.fromResponse(errorResponse.getResponse()).header("Accept", "application/xml").header("Content-Type", "application/xml").build();
     }
 

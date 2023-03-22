@@ -1,11 +1,9 @@
 package org.siemac.metamac.srm.rest.external.v1_0.service.utils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,6 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.ExportFieldAnnotation;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextAnnotation;
 import org.siemac.metamac.rest.utils.RestCommonUtil;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.slf4j.Logger;
@@ -27,8 +24,6 @@ public class ExportUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ExportUtils.class);
     private static final String HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
-    private static final String HEADER_PREFIX_ANNOTATION = "annotation_";
-    private static final int NUM_MAX_ANNOTATIONS = 5;
 
     private ExportUtils() {
     }
@@ -130,42 +125,46 @@ public class ExportUtils {
         return TsvExportationUtils.removeUnsupportedCharaters(string);
     }
 
+    /*
+     * All annotation metadata will be added in the same column of the tsv/csv. The format will be:
+     * [{fields annotation 1},{fields annotation 2}, ...]
+     * Ex: [{id:id1,url:url1,text:[name#es:text_es_1,name#ca:text_ca_1,...]},{id:id2,url:url2,text:[name#es:text_es_2,name#ca:text_ca_2,...]}]
+     */
     public static Map<String, String> toMapAnnotations(List<Annotation> annotations, List<String> languages) {
-        Map<String, String> mapAnnotations = new LinkedHashMap<>();
-        List<Annotation> copyAnnotations;
-        int iterator = 0;
-        if (annotations == null || annotations.isEmpty()) {
-            copyAnnotations = new ArrayList<>();
-            copyAnnotations.addAll(Collections.nCopies(NUM_MAX_ANNOTATIONS, new Annotation()));
-        } else {
-            copyAnnotations = annotations;
-            if (copyAnnotations.size() < NUM_MAX_ANNOTATIONS) {
-                copyAnnotations.addAll(Collections.nCopies(NUM_MAX_ANNOTATIONS - copyAnnotations.size(), new Annotation()));
-            }
+        Map<String, String> target = new LinkedHashMap<>();
+        StringBuilder annotationsResult = new StringBuilder();
+
+        for (Annotation annotation : annotations) {
+            annotationsResult.append(StringUtils.isEmpty(annotationsResult) ? annotationsResult : ", ");
+            String plainAnnotation = toMapAnnotation(annotation, languages);
+            annotationsResult.append("{" + plainAnnotation + "}");
         }
 
-        for (Annotation annotation : copyAnnotations) {
-            iterator++;
-            if (iterator > NUM_MAX_ANNOTATIONS) {
-                break;
-            }
-
-            mapAnnotations.putAll(toMapAnnotation(annotation, languages, iterator));
+        if (annotationsResult.length() > 0) {
+            annotationsResult.append("[" + annotationsResult + "]");
         }
-
-        return mapAnnotations;
+        target.put("annotations", annotationsResult.toString());
+        return target;
     }
 
-    private static Map<String, String> toMapAnnotation(Annotation annotation, List<String> languages, int iterator) {
-        PlainTextAnnotation plainTextAnnotation = new PlainTextAnnotation();
-        plainTextAnnotation.setId(annotation.getId());
-        plainTextAnnotation.setUrl(annotation.getUrl());
-        plainTextAnnotation.setText(annotation.getText());
+    private static String toMapAnnotation(Annotation annotation, List<String> languages) {
+        String annotationResult = null;
 
-        return toMap(plainTextAnnotation, Arrays.asList(plainTextAnnotation.getClass().getDeclaredFields()), languages, getPrefixAnnotation(iterator), new HashSet<>());
-    }
+        annotationResult = "id:" + (StringUtils.isEmpty(annotation.getId()) ? "" : annotation.getId());
+        annotationResult += ", url:" + (StringUtils.isEmpty(annotation.getUrl()) ? "" : annotation.getUrl());
+        Map<String, String> texts = internationalString2MapExport("text", annotation.getText(), languages);
+        Iterator<Map.Entry<String, String>> iterator = texts.entrySet().iterator();
 
-    private static String getPrefixAnnotation(int iterator) {
-        return HEADER_PREFIX_ANNOTATION + Integer.toString(iterator) + "_";
+        StringBuilder annotationTexts = new StringBuilder();
+        while (iterator.hasNext()) {
+
+            annotationTexts.append(StringUtils.isEmpty(annotationTexts) ? annotationTexts : ", ");
+
+            Map.Entry<String, String> text = iterator.next();
+            annotationTexts.append(text.getKey() + ":" + (StringUtils.isEmpty(text.getValue()) ? "" : text.getValue()));
+        }
+        annotationResult += ", text:[" + annotationTexts.toString() + "]";
+
+        return annotationResult;
     }
 }

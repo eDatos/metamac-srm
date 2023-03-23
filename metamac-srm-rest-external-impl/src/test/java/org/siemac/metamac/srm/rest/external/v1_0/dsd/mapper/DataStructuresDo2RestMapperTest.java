@@ -28,6 +28,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AttributeQualifierType;
@@ -101,13 +102,13 @@ public class DataStructuresDo2RestMapperTest {
     }
 
     @Test
-    public void testToDataStructure() {
+    public void testToDataStructure() throws MetamacException {
 
         DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123");
         source.getStatisticalOperation().setCodeNested("codeNested");
 
         // Transform
-        DataStructure target = do2RestInternalMapper.toDataStructure(source);
+        DataStructure target = do2RestInternalMapper.toDataStructure(source, null);
 
         // Validate (only Metamac metadata and some SDMX). Note: check with concrete values (not doing "getter" of source)
         assertEquals(SrmRestConstants.KIND_DATA_STRUCTURE, target.getKind());
@@ -233,7 +234,7 @@ public class DataStructuresDo2RestMapperTest {
         assertEquals(null, target.getChildLinks());
     }
     @Test
-    public void testToDataStructureImported() {
+    public void testToDataStructureImported() throws MetamacException {
 
         DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123");
         source.getMaintainableArtefact().setIsImported(Boolean.TRUE);
@@ -241,7 +242,7 @@ public class DataStructuresDo2RestMapperTest {
         source.getMaintainableArtefact().setUriProvider("uriProviderDb");
 
         // Transform
-        DataStructure target = do2RestInternalMapper.toDataStructure(source);
+        DataStructure target = do2RestInternalMapper.toDataStructure(source, null);
 
         // Validate
         assertEquals("urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=agencyID1:resourceID1(01.123)", target.getUrn());
@@ -250,7 +251,7 @@ public class DataStructuresDo2RestMapperTest {
     }
 
     @Test
-    public void testToDataStructureWithDimensionsSpatial() {
+    public void testToDataStructureWithDimensionsSpatial() throws MetamacException {
 
         DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123");
         ComponentList dimensionDescriptor = new DimensionDescriptor();
@@ -272,7 +273,7 @@ public class DataStructuresDo2RestMapperTest {
         dimensionDescriptor.addComponent(dimension3);
 
         // Transform
-        DataStructure target = do2RestInternalMapper.toDataStructure(source);
+        DataStructure target = do2RestInternalMapper.toDataStructure(source, null);
         assertEquals(3, target.getDataStructureComponents().getDimensions().getDimensions().size());
         assertEquals(null, ((org.siemac.metamac.rest.structural_resources.v1_0.domain.Dimension) getDimension(target, "dimension01")).isIsSpatial());
         assertEquals(true, ((org.siemac.metamac.rest.structural_resources.v1_0.domain.Dimension) getDimension(target, "dimension02")).isIsSpatial());

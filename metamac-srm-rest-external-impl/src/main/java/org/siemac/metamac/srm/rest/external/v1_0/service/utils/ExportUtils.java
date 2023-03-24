@@ -24,6 +24,7 @@ public class ExportUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ExportUtils.class);
     private static final String HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
+    private static final String ANNOTATION_METADATA_SEPARATOR = ";";
 
     private ExportUtils() {
     }
@@ -135,15 +136,17 @@ public class ExportUtils {
         StringBuilder annotationsResult = new StringBuilder();
 
         for (Annotation annotation : annotations) {
-            annotationsResult.append(StringUtils.isEmpty(annotationsResult) ? annotationsResult : ", ");
+            annotationsResult.append(StringUtils.isEmpty(annotationsResult) ? "" : ANNOTATION_METADATA_SEPARATOR + " ");
             String plainAnnotation = toMapAnnotation(annotation, languages);
             annotationsResult.append("{" + plainAnnotation + "}");
         }
 
         if (annotationsResult.length() > 0) {
-            annotationsResult.append("[" + annotationsResult + "]");
+            target.put("annotations", "[" + annotationsResult + "]");
+        } else {
+            target.put("annotations", null);
         }
-        target.put("annotations", annotationsResult.toString());
+
         return target;
     }
 
@@ -151,19 +154,19 @@ public class ExportUtils {
         String annotationResult = null;
 
         annotationResult = "id:" + (StringUtils.isEmpty(annotation.getId()) ? "" : annotation.getId());
-        annotationResult += ", url:" + (StringUtils.isEmpty(annotation.getUrl()) ? "" : annotation.getUrl());
+        annotationResult += ANNOTATION_METADATA_SEPARATOR + " url:" + (StringUtils.isEmpty(annotation.getUrl()) ? "" : annotation.getUrl());
         Map<String, String> texts = internationalString2MapExport("text", annotation.getText(), languages);
         Iterator<Map.Entry<String, String>> iterator = texts.entrySet().iterator();
 
         StringBuilder annotationTexts = new StringBuilder();
         while (iterator.hasNext()) {
 
-            annotationTexts.append(StringUtils.isEmpty(annotationTexts) ? annotationTexts : ", ");
+            annotationTexts.append(StringUtils.isEmpty(annotationTexts) ? "" : ANNOTATION_METADATA_SEPARATOR + " ");
 
             Map.Entry<String, String> text = iterator.next();
             annotationTexts.append(text.getKey() + ":" + (StringUtils.isEmpty(text.getValue()) ? "" : text.getValue()));
         }
-        annotationResult += ", text:[" + annotationTexts.toString() + "]";
+        annotationResult += ANNOTATION_METADATA_SEPARATOR + " text:[" + annotationTexts.toString() + "]";
 
         return annotationResult;
     }

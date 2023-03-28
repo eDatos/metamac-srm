@@ -28,6 +28,7 @@
             <entry key="xml" value="application/xml" />
         	<entry key="tsv" value="text/tab-separated-values" />
         	<entry key="csv" value="text/csv" />
+        	<entry key="xlsx" value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>
@@ -35,6 +36,7 @@
             <ref bean="jsonProvider" />
             <ref bean="wadlGenerator" />
             <ref bean="xstreamTsvProvider" />
+            <ref bean="xstreamXlsProvider" />
         </jaxrs:providers>
         
         <!-- JSONP -->
@@ -61,6 +63,8 @@
     </bean>
     
     <bean id="xstreamTsvProvider" class="org.siemac.metamac.srm.rest.external.v1_0.adapter.PlainTextMessageBodyWritter" />
+    
+    <bean id="xstreamXlsProvider" class="org.siemac.metamac.srm.rest.external.v1_0.adapter.XlsMessageBodyWritter" />
     
     <util:map id="marshallerProperties">
         <entry key="jaxb.formatted.output">

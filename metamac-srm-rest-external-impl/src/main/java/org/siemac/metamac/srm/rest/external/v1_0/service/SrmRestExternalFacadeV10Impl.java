@@ -399,6 +399,37 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
     }
 
+    @Override
+    public Response findCategoriesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+        /*
+         * HSSFWorkbook libro = new HSSFWorkbook();
+         * // Se crea una hoja dentro del libro
+         * HSSFSheet hoja = libro.createSheet();
+         * // Se crea una fila dentro de la hoja
+         * HSSFRow fila = hoja.createRow(0);
+         * // Se crea una celda dentro de la fila
+         * HSSFCell celda = fila.createCell((short) 0);
+         * // Se crea el contenido de la celda y se mete en ella.
+         * HSSFRichTextString texto = new HSSFRichTextString("hola mundo");
+         * celda.setCellValue(texto);
+         * // Se salva el libro.
+         * try {
+         * FileOutputStream elFichero = new FileOutputStream("holamundo.xls");
+         * libro.write(elFichero);
+         * elFichero.close();
+         * File file = new File("holamundo.xls");
+         * ResponseBuilder response = Response.ok((Object) file);
+         * response.header("Content-Disposition", "attachment; filename=new-excel-file.xls");
+         * response.header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+         * return response.build();
+         * } catch (Exception e) {
+         * return manageExceptionResponse(e);
+         * }
+         */
+
+    }
+
     private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
         try {
 

@@ -2364,6 +2364,12 @@
                 {"$ref":"#/components/parameters/agencyIdParam"},
                 {"$ref":"#/components/parameters/resourceIdParam"},
                 {"$ref":"#/components/parameters/versionParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+dimension.pluralName: muestra el nombre en plural de las dimensiones</li></ul> Ejemplo: fields=\"+dimension.pluralName\""
+                }
             ],
             "responses":{
                "200":{

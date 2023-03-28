@@ -21,6 +21,15 @@ public abstract class SearchMultiRelatedResourceSimpleItem extends RelatedResour
 
     private SearchMultipleRelatedResourcePaginatedWindow window;
 
+    public SearchMultiRelatedResourceSimpleItem(String name, String title, int maxResults, ListRecordNavigationClickHandler listRecordNavigationClickHandler, boolean autoFit) {
+        super(name, title, true, listRecordNavigationClickHandler);
+        if (!autoFit) {
+            listGrid.setHeight(110);
+            listGrid.setAutoFitMaxRecords(3);
+        }
+        appendWindow(maxResults);
+    }
+
     public SearchMultiRelatedResourceSimpleItem(String name, String title, int maxResults, ListRecordNavigationClickHandler listRecordNavigationClickHandler) {
         super(name, title, true, listRecordNavigationClickHandler);
         appendWindow(maxResults);

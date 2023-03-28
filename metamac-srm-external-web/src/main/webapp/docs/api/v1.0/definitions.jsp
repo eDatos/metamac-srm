@@ -4991,57 +4991,6 @@
          ],
          "description":""
       },
-      "Pruebas":{
-         "type":"object",
-         "title":"Pruebas",
-         "allOf":[
-            {
-               "properties":{
-                  "field1":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "field2":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "field3":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "field4":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "field5":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  }            
-               }
-            }
-         ],
-         "description":""
-      },
       "TextType":{
          "type":"object",
          "title":"TextType",

@@ -632,7 +632,8 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"
+               "text/csv",
+               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1096,7 +1097,8 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv" 
+               "text/csv",
+               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1421,7 +1423,8 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv" 
+               "text/csv",
+               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -2567,7 +2570,8 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"
+               "text/csv",
+               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

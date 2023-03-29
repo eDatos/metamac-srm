@@ -273,6 +273,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
     }
 
+    @Override
+    public Response findConceptsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
     private Response findConceptsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
@@ -402,32 +407,6 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Response findCategoriesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
-        /*
-         * HSSFWorkbook libro = new HSSFWorkbook();
-         * // Se crea una hoja dentro del libro
-         * HSSFSheet hoja = libro.createSheet();
-         * // Se crea una fila dentro de la hoja
-         * HSSFRow fila = hoja.createRow(0);
-         * // Se crea una celda dentro de la fila
-         * HSSFCell celda = fila.createCell((short) 0);
-         * // Se crea el contenido de la celda y se mete en ella.
-         * HSSFRichTextString texto = new HSSFRichTextString("hola mundo");
-         * celda.setCellValue(texto);
-         * // Se salva el libro.
-         * try {
-         * FileOutputStream elFichero = new FileOutputStream("holamundo.xls");
-         * libro.write(elFichero);
-         * elFichero.close();
-         * File file = new File("holamundo.xls");
-         * ResponseBuilder response = Response.ok((Object) file);
-         * response.header("Content-Disposition", "attachment; filename=new-excel-file.xls");
-         * response.header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-         * return response.build();
-         * } catch (Exception e) {
-         * return manageExceptionResponse(e);
-         * }
-         */
-
     }
 
     private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -577,6 +556,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    @Override
+    public Response findOrganisationsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
     }
 
     private Response findOrganisationsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -1022,6 +1006,12 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
         return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "csv");
+    }
+
+    @Override
+    public Response findCodesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xlsx");
     }
 
     private Response findCodesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness,
@@ -2195,7 +2185,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     public static String getContentDisposition(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return "inline; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+        return "attachment; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {

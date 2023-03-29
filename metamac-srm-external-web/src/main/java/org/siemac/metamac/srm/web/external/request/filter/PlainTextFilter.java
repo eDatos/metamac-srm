@@ -24,20 +24,37 @@ public class PlainTextFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlainTextFilter.class);
     public static final String CSV_MIME_TYPE = "text/csv";
     public static final String TSV_MIME_TYPE = "text/tab-separated-values";
+    public static final String XLS_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public static final String REQUEST_PARAMETER_TYPE = "_type";
     public static final String TSV_PARAMETER_VALUE = "tsv";
     public static final String CSV_PARAMETER_VALUE = "csv";
+    public static final String XLSX_PARAMETER_VALUE = "xlsx";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
+    private String getMimeTypeFromFormat(String type) {
+        if (type != null) {
+            switch (type) {
+                case TSV_PARAMETER_VALUE:
+                    return TSV_MIME_TYPE;
+                case CSV_PARAMETER_VALUE:
+                    return CSV_MIME_TYPE;
+                case XLSX_PARAMETER_VALUE:
+                    return XLS_MIME_TYPE;
+                default:
+                    LOGGER.debug(type + " type detected on query parameter but its MIME TYPE is unknown");
+                    return null;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String acceptType = request.getParameter(REQUEST_PARAMETER_TYPE);
-        if (acceptType != null && (acceptType.equals(TSV_PARAMETER_VALUE) || acceptType.equals(CSV_PARAMETER_VALUE))) {
-            String mimeType = acceptType.equals(TSV_PARAMETER_VALUE) ? TSV_MIME_TYPE : CSV_MIME_TYPE;
-            LOGGER.debug(mimeType + " MIME type detected on query parameter");
+        String mimeType = getMimeTypeFromFormat(request.getParameter(REQUEST_PARAMETER_TYPE));
+        if (mimeType != null) {
             request = getRequestWrapperForParameter(request, mimeType);
         }
         chain.doFilter(request, response);
@@ -45,7 +62,7 @@ public class PlainTextFilter implements Filter {
 
     private ServletRequest getRequestWrapperForParameter(ServletRequest request, String mimeType) {
         MutableHttpServletRequestWrapper wrapper = new MutableHttpServletRequestWrapper((HttpServletRequest) request);
-        wrapper.putHeader("Accept", TSV_MIME_TYPE);
+        wrapper.putHeader("Accept", mimeType);
         wrapper.removeParameter(REQUEST_PARAMETER_TYPE);
         return wrapper;
     }

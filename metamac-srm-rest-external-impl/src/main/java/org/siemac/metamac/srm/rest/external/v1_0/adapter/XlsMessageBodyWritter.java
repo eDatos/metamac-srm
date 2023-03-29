@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,8 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.github.sett4.dataformat.xlsx.XlsxMapper;
 
@@ -38,9 +39,8 @@ public class XlsMessageBodyWritter extends MessageBodyWritter implements Message
             throws IOException, WebApplicationException {
         // Whatever makes it in here should be a list
         List<?> myList = new ArrayList<>();
+        XlsxMapper mapper = new XlsxMapper();
         if (myCollectionOfObjects instanceof List && ((myList = (List<?>) myCollectionOfObjects).size() > 0)) {
-            XlsxMapper mapper = new XlsxMapper();
-
             // If it's not a flat POJO must implement CSVTransformer
 
             if (implementsPlainTextTransformer(myList.get(0).getClass())) {
@@ -59,11 +59,18 @@ public class XlsMessageBodyWritter extends MessageBodyWritter implements Message
 
             }
         } else if (myList.isEmpty()) {
-            logger.warn("Nothing in list to convert to XLSX....");
-            entityHeaders.write(myList.toString().getBytes(StandardCharsets.UTF_8));
+            retrieveEmptyXls(mapper, entityHeaders);
         } else {
             logger.error("Not in proper format must pass a list to use this xls mapper...");
             throw new IOException("Unable to obtain a valid conversion to xlsx");
         }
+    }
+
+    private void retrieveEmptyXls(XlsxMapper mapper, OutputStream entityHeaders) throws DatabindException, StreamWriteException, IOException {
+        logger.warn("Nothing in list to convert to XLSX.... empty xlsx is returned");
+        List<String> list = new ArrayList<>();
+        list.add("");
+        CsvSchema schema = mapper.schemaFor(list.get(0).getClass());
+        mapper.writer(schema).writeValue(entityHeaders, list);
     }
 }

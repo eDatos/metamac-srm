@@ -1469,7 +1469,8 @@
             "description":"",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts__conceptID__retrieveConcept_GET",
             "produces":[
-               "text/csv"
+               "application/json",
+               "application/xml"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

@@ -274,8 +274,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Response findConceptsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+    public Response findConceptsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findConceptsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
     }
 
     private Response findConceptsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -405,8 +410,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Response findCategoriesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findCategoriesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
     }
 
     private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -559,8 +569,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Response findOrganisationsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+    public Response findOrganisationsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findOrganisationsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
     }
 
     private Response findOrganisationsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -1009,9 +1024,15 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Response findCodesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+    public Response findCodesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
         return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xlsx");
+    }
+
+    @Override
+    public Response findCodesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xls");
     }
 
     private Response findCodesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness,

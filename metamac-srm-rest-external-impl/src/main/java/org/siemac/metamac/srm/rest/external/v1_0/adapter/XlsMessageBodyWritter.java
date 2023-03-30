@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.github.sett4.dataformat.xlsx.XlsxMapper;
 
-@Produces({"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})
+@Produces({"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"})
 public class XlsMessageBodyWritter extends MessageBodyWritter implements MessageBodyWriter<Object> {
 
     private final Logger logger = LoggerFactory.getLogger(XlsMessageBodyWritter.class);

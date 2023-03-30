@@ -633,7 +633,7 @@
                "application/xml",
                "text/tab-separated-values",
                "text/csv",
-               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+               "application/vnd.ms-excel"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1098,7 +1098,7 @@
                "application/xml",
                "text/tab-separated-values",
                "text/csv",
-               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+               "application/vnd.ms-excel"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1424,7 +1424,7 @@
                "application/xml",
                "text/tab-separated-values",
                "text/csv",
-               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+               "application/vnd.ms-excel" 
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -2571,7 +2571,7 @@
                "application/xml",
                "text/tab-separated-values",
                "text/csv",
-               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+               "application/vnd.ms-excel"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

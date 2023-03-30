@@ -24,11 +24,13 @@ public class PlainTextFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlainTextFilter.class);
     public static final String CSV_MIME_TYPE = "text/csv";
     public static final String TSV_MIME_TYPE = "text/tab-separated-values";
-    public static final String XLS_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static final String XLS_MIME_TYPE = "application/vnd.ms-excel";
+    public static final String XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public static final String REQUEST_PARAMETER_TYPE = "_type";
     public static final String TSV_PARAMETER_VALUE = "tsv";
     public static final String CSV_PARAMETER_VALUE = "csv";
     public static final String XLSX_PARAMETER_VALUE = "xlsx";
+    public static final String XLS_PARAMETER_VALUE = "xls";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -42,6 +44,8 @@ public class PlainTextFilter implements Filter {
                 case CSV_PARAMETER_VALUE:
                     return CSV_MIME_TYPE;
                 case XLSX_PARAMETER_VALUE:
+                    return XLSX_MIME_TYPE;
+                case XLS_PARAMETER_VALUE:
                     return XLS_MIME_TYPE;
                 default:
                     LOGGER.debug(type + " type detected on query parameter but its MIME TYPE is unknown");

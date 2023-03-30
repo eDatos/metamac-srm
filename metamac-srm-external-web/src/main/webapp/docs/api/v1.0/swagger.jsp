@@ -632,8 +632,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv",
-               "application/vnd.ms-excel"
+               "text/csv"  
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1097,8 +1096,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv",
-               "application/vnd.ms-excel"
+               "text/csv"    
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1423,8 +1421,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv",
-               "application/vnd.ms-excel" 
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -2571,8 +2568,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv",
-               "application/vnd.ms-excel"
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

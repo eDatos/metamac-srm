@@ -8,7 +8,6 @@
     <entry key="metamac.srm.db.url">jdbc:postgresql://artejenkins.arte.internal:5432/ARTE</entry>
     <entry key="metamac.srm.db.username">istac_metamac_srm_ci</entry>
     <entry key="metamac.srm.db.password">istac_metamac_srm_ci</entry>
-    <entry key="metamac.srm.db.dialect">org.hibernate.dialect.PostgreSQLDialect</entry>
     <entry key="metamac.srm.db.driver_name">org.postgresql.Driver</entry>
     <entry key="metamac.srm.db.provider">POSTGRESQL</entry>
     <entry key="metamac.srm.db.default_schema">istac_metamac_srm_ci</entry>

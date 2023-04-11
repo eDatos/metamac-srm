@@ -1,8 +1,5 @@
 package org.siemac.metamac.srm.rest.external.v1_0.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 
@@ -20,12 +17,5 @@ public class RestMocks {
         localisedString.setLang(lang);
         localisedString.setValue(value);
         return localisedString;
-    }
-
-    public static List<String> mockCommonMetadataLanguages() {
-        List<String> languages = new ArrayList<String>();
-        languages.add("es");
-        languages.add("en");
-        return languages;
     }
 }

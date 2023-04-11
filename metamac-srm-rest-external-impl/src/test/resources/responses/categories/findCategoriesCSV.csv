@@ -1,0 +1,5 @@
+id,parent,urn,name#es,name#en
+category1,,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1,name-category1 en Español,name-category1 in English
+category2,,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2,name-category2 en Español,name-category2 in English
+category2A,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2A,name-category2A en Español,name-category2A in English
+category2B,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2B,name-category2B en Español,name-category2B in English

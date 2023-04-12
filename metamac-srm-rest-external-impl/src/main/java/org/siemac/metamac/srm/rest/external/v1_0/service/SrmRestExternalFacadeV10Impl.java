@@ -1232,9 +1232,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public DataStructure retrieveDataStructure(String agencyID, String resourceID, String version) {
+    public DataStructure retrieveDataStructure(String agencyID, String resourceID, String version, String fields) {
         try {
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
+
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
             // Find one
             PagedResult<DataStructureDefinitionVersionMetamac> entitiesPagedResult = findDataStructuresCore(agencyID, resourceID, version, null, pagingParameterOneResult);
@@ -1244,7 +1246,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             }
 
             // Transform
-            return dataStructuresDo2RestMapperV10.toDataStructure(entitiesPagedResult.getValues().get(0));
+            return dataStructuresDo2RestMapperV10.toDataStructure(entitiesPagedResult.getValues().get(0), fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
         }

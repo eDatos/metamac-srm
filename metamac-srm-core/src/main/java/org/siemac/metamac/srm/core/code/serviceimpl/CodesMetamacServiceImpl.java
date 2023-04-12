@@ -165,77 +165,75 @@ import com.vividsolutions.jts.geom.Polygon;
 public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
-    private BaseService                         baseService;
+    private BaseService baseService;
 
     @Autowired
-    private CodesService                        codesService;
+    private CodesService codesService;
 
     @Autowired
-    private CategoriesMetamacService            categoriesMetamacService;
+    private CategoriesMetamacService categoriesMetamacService;
 
     @Autowired
-    private ItemSchemeVersionRepository         itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository itemSchemeVersionRepository;
 
     @Autowired
-    private CodeRepository                      codeRepository;
+    private CodeRepository codeRepository;
 
     @Autowired
-    private ItemSchemeRepository                itemSchemeRepository;
+    private ItemSchemeRepository itemSchemeRepository;
 
     @Autowired
-    private IdentifiableArtefactRepository      identifiableArtefactRepository;
+    private IdentifiableArtefactRepository identifiableArtefactRepository;
 
     @Autowired
     @Qualifier("codelistLifeCycle")
-    private LifeCycle                           codelistLifeCycle;
+    private LifeCycle codelistLifeCycle;
 
     @Autowired
-    private SrmValidation                       srmValidation;
+    private SrmValidation srmValidation;
 
     @Autowired
-    private SrmConfiguration                    srmConfiguration;
+    private SrmConfiguration srmConfiguration;
 
     @Autowired
     @Qualifier("codesVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback             codesVersioningWithCodesCallback;
+    private ItemSchemesCopyCallback codesVersioningWithCodesCallback;
 
     @Autowired
     @Qualifier("codesVersioningWithoutCodesCallbackMetamac")
-    private ItemSchemesCopyCallback             codesVersioningWithoutCodesCallback;
+    private ItemSchemesCopyCallback codesVersioningWithoutCodesCallback;
 
     @Autowired
     @Qualifier("codesDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback             codesDummyVersioningCallbackMetamac;
+    private ItemSchemesCopyCallback codesDummyVersioningCallbackMetamac;
 
     @Autowired
     @Qualifier("codesCopyCallbackMetamac")
-    private ItemSchemesCopyCallback             codesCopyCallback;
+    private ItemSchemesCopyCallback codesCopyCallback;
 
     @Autowired
     private CodelistStreamMessagingCallbackImpl codelistStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService              streamMessagingService;
+    private StreamMessagingService streamMessagingService;
 
     @Autowired
     @Qualifier(NoticesCallbackMetamacImpl.BEAN_ID)
-    private NoticesCallback                     noticesCallbackMetamac;
+    private NoticesCallback noticesCallbackMetamac;
 
     @Autowired
-    private TasksMetamacService                 tasksMetamacService;
+    private TasksMetamacService tasksMetamacService;
 
     @Autowired
-    private InternationalStringRepository       internationalStringRepository;
+    private InternationalStringRepository internationalStringRepository;
 
     @Autowired
-    private MiscMetamacService                  miscMetamacService;
-    
+    private MiscMetamacService miscMetamacService;
+
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager                     entityManager;
+    protected EntityManager entityManager;
 
-    private static Logger                       logger = LoggerFactory.getLogger(CodesMetamacService.class);
-    
-    
+    private static Logger logger = LoggerFactory.getLogger(CodesMetamacService.class);
 
     public CodesMetamacServiceImpl() {
         // without comment
@@ -374,8 +372,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
-    public List<RelatedCode> recodeCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch)
-            throws MetamacException {
+    public List<RelatedCode> recodeCodes(ServiceContext ctx, CodelistVersionMetamac codelistVersionOrigin, CodelistVersionMetamac codelistVersionToMatch) throws MetamacException {
 
         List<RelatedCode> recodedCodes = new ArrayList<>();
 
@@ -393,7 +390,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return recodedCodes;
 
     }
-       
+
     @Override
     public PagedResult<CodelistVersionMetamac> findCodelistsWhoseCodesCanBeVariableElementGeographicalGranularityByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions,
             PagingParameter pagingParameter) throws MetamacException {
@@ -409,7 +406,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 .buildSingle());
         // Codelist with access type = PUBLIC
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
-        
+
         return findCodelistsByCondition(ctx, conditions, pagingParameter);
     }
 
@@ -615,9 +612,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
             // VariableElement
             code.setVariableElement(codeTemp.getVariableElement());
-            
+
             code.setIsExtended(codeTemp.getIsExtended());
-            
+
             // Order Visualisation
             for (int i = 1; i <= SrmConstants.CODELIST_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
                 Integer order = SrmServiceUtils.getCodeOrder(codeTemp, i);
@@ -635,7 +632,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 Boolean restriction = SrmServiceUtils.getCodeRestriction(codeTemp, i);
                 SrmServiceUtils.setCodeRestriction(code, i, restriction);
             }
-            
+
         }
 
         // ===============================================================
@@ -760,7 +757,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         Map<String, ItemResult> codesItemResultInCodelistSourceByUrn = new HashMap<>(codesItemResultInCodelistSource.size());
         for (ItemResult itemResult : codesItemResultInCodelistSource) {
             codesItemResultInCodelistSourceByUrn.put(itemResult.getUrn(), itemResult);
-            
+
         }
 
         boolean copyVariableElements = false;
@@ -854,7 +851,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     }
                 }
 
-                boolean isDefaultMaintainer = isDefaultMaintainer(codelistVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
+                boolean isDefaultMaintainer = StringUtils.equals(codelistVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn(),
+                        srmConfiguration.retrieveMaintainerUrnDefault());
                 boolean isTemporalVersion = VersionUtil.isTemporalVersion(codelistVersion.getMaintainableArtefact().getVersionLogic());
                 if (!isDefaultMaintainer || isTemporalVersion) {
                     updateAlreadyExisting = true;
@@ -916,10 +914,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
-    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
-        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
-    }
-    
     @Override
     public TaskImportationInfo importCodeOrdersTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
 
@@ -1029,7 +1023,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
-    
+
     @Override
     public String exportCodesTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
@@ -1123,8 +1117,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
     }
 
-   //  IMPORT OPENNESS LEVELS
-    
+    // IMPORT OPENNESS LEVELS
+
     @Override
     public TaskImportationInfo importCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
 
@@ -1142,7 +1136,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return copyOpennessLevelsInFile(ctx, file, fileName, codelistVersion);
 
     }
-    
+
     private TaskImportationInfo planifyJobOpennessLevelImport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
         // Planify task if can be in background
         codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
@@ -1218,7 +1212,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return saveCodesImport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
     }
-        
+
     @Override
     public String exportCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
@@ -1291,7 +1285,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             IOUtils.closeQuietly(writer);
         }
     }
-    
+
     private TaskImportationInfo planifyJobRestrictionImport(ServiceContext ctx, String fileName, String codelistUrn, File file, CodelistVersionMetamac codelistVersion) throws MetamacException {
         // Planify task if can be in background
         codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
@@ -1367,7 +1361,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return saveCodesImport(ctx, codelistVersion, codesInTsvToCheckAllCodesAreUpdated, exceptionItems, fileName, codesInCodelist, informationItems);
     }
-    
+
     @Override
     public TaskImportationInfo importCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
 
@@ -1386,8 +1380,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     }
 
-    private TaskImportationInfo saveCodesImport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated,
-            List<MetamacExceptionItem> exceptionItems, String fileName, List<Code> codesInCodelist, List<MetamacExceptionItem> informationItems) throws MetamacException {
+    private TaskImportationInfo saveCodesImport(ServiceContext ctx, CodelistVersionMetamac codelistVersion, Set<String> codesInTsvToCheckAllCodesAreUpdated, List<MetamacExceptionItem> exceptionItems,
+            String fileName, List<Code> codesInCodelist, List<MetamacExceptionItem> informationItems) throws MetamacException {
 
         if (CollectionUtils.isEmpty(exceptionItems) && codesInTsvToCheckAllCodesAreUpdated != null && codesInTsvToCheckAllCodesAreUpdated.size() != codesInCodelist.size()) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CODES, codesInCodelist.size(), codesInTsvToCheckAllCodesAreUpdated.size()));
@@ -1408,7 +1402,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
- 
+
     @Override
     public String exportCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
@@ -1481,11 +1475,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             IOUtils.closeQuietly(writer);
         }
     }
-    
+
     @Override
     public void recalculateCodesVisualisations(ServiceContext ctx, List<Code> items, List<CodelistOrderVisualisation> orderVisualisations, List<CodelistOpennessVisualisation> opennessVisualisations,
-            List<CodelistRestrictionVisualisation> restrictionVisualisations,
-            boolean executeSave) {
+            List<CodelistRestrictionVisualisation> restrictionVisualisations, boolean executeSave) {
 
         // Recalculate all order codes
         Boolean alphabeticalAlreadyUpdated = Boolean.FALSE; // to avoid select to compare code of nameable
@@ -1511,10 +1504,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             }
             fillCodelistOpennessVisualisationToCodesWithEmptyOpenness(items, opennessVisualisation, value);
         }
-        
+
         // Fill restriction visualisations (only empty)
         recalculateCodesRestrictionVisualisations(items, restrictionVisualisations);
-        
+
     }
 
     public void recalculateCodesRestrictionVisualisations(List<Code> items, List<CodelistRestrictionVisualisation> restrictionVisualisations) {
@@ -1522,7 +1515,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             fillCodelistRestrictionVisualisationToCodesWithEmptyRestriction(items, restrictionVisualisation, SrmConstants.CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE);
         }
     }
-    
+
     @Override
     public CodeMetamac preCreateCode(ServiceContext ctx, CodelistVersionMetamac codelistVersion, CodeMetamac code) throws MetamacException {
         // Validation
@@ -1699,7 +1692,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         baseService.updateItemSchemeLastUpdated(ctx, codelistVersion);
     }
-    
+
     @Override
     public CodeMetamac retrieveCodeByUrn(ServiceContext ctx, String urn) throws MetamacException {
         CodesInvocationValidator.checkRetrieveByUrn(urn);
@@ -1733,7 +1726,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class)
                 .withProperty(new LeafProperty<CodeMetamac>(CodeMetamacProperties.itemSchemeVersion().getName(), CodelistVersionMetamacProperties.accessType().getName(), false, CodeMetamac.class))
                 .eq(AccessTypeEnum.PUBLIC).buildSingle());
-        
+
         return findCodesByCondition(ctx, conditions, pagingParameter);
     }
 
@@ -1779,12 +1772,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } else {
             // nothing! do not return default openness visualisation
         }
-        
+
         Integer restrictionColumnIndex = null;
         if (restrictionVisualisationUrn != null) {
             CodelistRestrictionVisualisation codelistRestrictionVisualisation = retrieveCodelistRestrictionVisualisationByUrn(ctx, restrictionVisualisationUrn);
             restrictionColumnIndex = codelistRestrictionVisualisation.getColumnIndex();
-        } 
+        }
 
         // Retrieve
         return getCodeMetamacRepository().findCodesByCodelistUnorderedToVisualisation(codelistVersion.getId(), locale, orderColumnIndex, opennessColumnIndex, restrictionColumnIndex);
@@ -1794,7 +1787,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     public List<ItemResult> retrieveCodesByCodelistUrnOrderedInDepth(ServiceContext ctx, String codelistUrn, ItemMetamacResultSelection itemResultSelection, String orderVisualisationCode,
             String opennessVisualisationCode, String restrictionVisualisationCode) throws MetamacException {
         // Validation
-        CodesMetamacInvocationValidator.checkRetrieveCodesByCodelistUrnOrderedInDepth(codelistUrn, itemResultSelection, orderVisualisationCode, opennessVisualisationCode, restrictionVisualisationCode, null);
+        CodesMetamacInvocationValidator.checkRetrieveCodesByCodelistUrnOrderedInDepth(codelistUrn, itemResultSelection, orderVisualisationCode, opennessVisualisationCode, restrictionVisualisationCode,
+                null);
 
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
 
@@ -2817,7 +2811,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistRestrictionVisualisation.setCodelistVersion(codelistVersion);
 
         // Assign default restriction to all codes
-        getCodeMetamacRepository().updateCodesRestrictionColumnByCodelist(codelistVersion, codelistRestrictionVisualisation.getColumnIndex(), SrmConstants.CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE);
+        getCodeMetamacRepository().updateCodesRestrictionColumnByCodelist(codelistVersion, codelistRestrictionVisualisation.getColumnIndex(),
+                SrmConstants.CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE);
 
         // Create
         setCodelistRestrictionVisualisationUrnUnique(codelistVersion, codelistRestrictionVisualisation, true);
@@ -2905,11 +2900,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
         return codelistVersion.getRestrictionVisualisations();
     }
-    
+
     // ------------------------------------------------------------------------------------
     // VARIABLE ELEMENTS
     // ------------------------------------------------------------------------------------
-    
+
     @Override
     public String exportVariableElementsTsv(ServiceContext ctx, String variableUrn) throws MetamacException {
 
@@ -3215,7 +3210,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         return codelistRestrictionVisualisation;
     }
-    
+
     private void checkCodelistCanBeModified(CodelistVersionMetamac codelistVersion) throws MetamacException {
         SrmValidationUtils.checkArtefactCanBeModified(codelistVersion.getLifeCycleMetadata(), codelistVersion.getMaintainableArtefact().getUrn());
         SrmValidationUtils.checkArtefactWithoutTaskInBackground(codelistVersion);
@@ -3510,7 +3505,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistRestrictionVisualisation.getNameableArtefact().setUrn(urn);
         codelistRestrictionVisualisation.getNameableArtefact().setUrnProvider(urn);
     }
-    
+
     /**
      * A code can not be moved to its child
      */
@@ -3623,7 +3618,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             }
         }
     }
-    
+
     private void fillCodelistRestrictionVisualisationToCodesWithEmptyRestriction(List<Code> items, CodelistRestrictionVisualisation restrictionVisualisation, Boolean value) {
         for (Code item : items) {
             CodeMetamac code = (CodeMetamac) item;
@@ -3632,7 +3627,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             }
         }
     }
-    
+
     private VariableElementOperation createVariableElementOperationCommon(VariableElementOperationTypeEnum operationType, List<String> sources, List<String> targets) throws MetamacException {
 
         // Validation
@@ -3776,7 +3771,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         target = getCodelistVersionMetamacRepository().save(target);
         return target;
     }
-    
+
     private CodelistOpennessVisualisation versioningCodelistOpennessVisualisation(CodelistOpennessVisualisation source, CodelistVersionMetamac codelistTarget) throws MetamacException {
         CodelistOpennessVisualisation target = new CodelistOpennessVisualisation();
         target.setColumnIndex(source.getColumnIndex());
@@ -3791,10 +3786,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         for (CodelistRestrictionVisualisation codelistRestrictionVisualisationSource : source.getRestrictionVisualisations()) {
             versioningCodelistRestrictionVisualisation(codelistRestrictionVisualisationSource, target);
         }
-        
+
         return getCodelistVersionMetamacRepository().save(target);
     }
-    
+
     private CodelistRestrictionVisualisation versioningCodelistRestrictionVisualisation(CodelistRestrictionVisualisation source, CodelistVersionMetamac codelistTarget) throws MetamacException {
         CodelistRestrictionVisualisation target = new CodelistRestrictionVisualisation();
         target.setColumnIndex(source.getColumnIndex());
@@ -3803,7 +3798,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         codelistTarget.addRestrictionVisualisation(target);
         return target;
     }
-      
+
     private void createOpennessVisualisationVersionFromTemporalOpennessVisualisation(CodelistVersionMetamac codelistVersionTemporal) throws MetamacException {
         for (CodelistOpennessVisualisation codelistOpennessVisualisation : codelistVersionTemporal.getOpennessVisualisations()) {
             setCodelistOpennessVisualisationUrnUnique(codelistVersionTemporal, codelistOpennessVisualisation, true);
@@ -3819,7 +3814,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         getCodelistVersionMetamacRepository().save(codelistVersionTemporal);
     }
-    
+
     private void deleteAllCodesIfProceed(CodelistVersionMetamac codelistVersionTemporal, Boolean versioningCodes) throws MetamacException {
         if (Boolean.FALSE.equals(versioningCodes)) {
             getCodeMetamacRepository().deleteAllCodesEfficiently(codelistVersionTemporal.getId());
@@ -3934,7 +3929,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             codeTarget.setVariableElement(codeSource.getVariableElement());
         }
         codeTarget.setIsExtended(SrmServiceUtils.getCodeItemResultIsExtended(codeItemResultSource));
-        
+
         // extra validation to avoid save some incorrect
         CodesMetamacInvocationValidator.checkCreateCode(codelistVersionTarget, codeTarget, null);
         return codeTarget;
@@ -4060,7 +4055,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         return code;
     }
-    
+
     /**
      * Transforms tsv line to VariableElement. IMPORTANT: Do not execute save or update operation
      */
@@ -4107,7 +4102,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, variableElement.getIdentifiableArtefact().getCode(),
                     ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
         }
-        
+
         // geographical granularity
         if (header.isGeographicalGranularitySetted()) {
             String geographicalGranularityIdentifier = columns[header.getGeographicalGranularityPosition()];
@@ -4234,7 +4229,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         return Integer.valueOf(index);
     }
-    
+
     private class AlphabeticalByLevelComparator implements Comparator<Code> {
 
         @Override
@@ -4332,7 +4327,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         return restrictionVisualisations;
     }
-    
+
     private List<CodelistOpennessVisualisation> tsvHeadToOpennessLevelVisualisations(CodelistVersionMetamac codelistVersion, ImportationCodeOpennessLevelsTsvHeader header,
             List<MetamacExceptionItem> exceptionItems) {
         List<CodelistOpennessVisualisation> opennessVisualisations = new ArrayList<>();
@@ -4605,11 +4600,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         codelist.setDefaultOpennessVisualisation(codelistOpennessVisualisation);
     }
-    
+
     private Map<String, CodeMetamac> retrieveCodesToMatch(List<Code> codesToMatch) {
         Map<String, CodeMetamac> codes = new HashMap<>();
         for (Code code : codesToMatch) {
-            
+
             CodeMetamac codeMetamac = (CodeMetamac) code;
             VariableElement d = codeMetamac.getVariableElement();
             if (codeMetamac.getVariableElement() != null) {
@@ -4618,18 +4613,18 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         return codes;
     }
-    
+
     private RelatedCode setRecodedCodes(CodeMetamac code1, CodeMetamac code2) {
         RelatedCode recodedCode = new RelatedCode();
         recodedCode.setOriginCode(code1.getNameableArtefact().getCode());
-        recodedCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());        
+        recodedCode.setOriginCodeUrn(code1.getNameableArtefact().getUrn());
         recodedCode.setVariableElement(code1.getVariableElement() != null ? code1.getVariableElement().getIdentifiableArtefact().getCode() : null);
-        
+
         if (code2 != null) {
             recodedCode.setRecodedCode(code2.getNameableArtefact().getCode());
             recodedCode.setRecodedCodeUrn(code2.getNameableArtefact().getUrn());
         }
         return recodedCode;
     }
-    
+
 }

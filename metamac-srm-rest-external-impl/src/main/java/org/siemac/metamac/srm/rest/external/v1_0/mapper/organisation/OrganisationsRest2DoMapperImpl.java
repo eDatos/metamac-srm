@@ -113,6 +113,8 @@ public class OrganisationsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
                     return buildSculptorPropertyCriteria(OrganisationMetamacProperties.itemSchemeVersion().maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case TYPE:
                     return buildSculptorPropertyCriteria(OrganisationMetamacProperties.organisationType(), PropertyTypeEnum.ORGANISATION_TYPE, propertyRestriction);
+                case PARENT:
+                    return buildSculptorPropertyCriteria(OrganisationMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

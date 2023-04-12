@@ -90,7 +90,7 @@ Application CodesMetamac {
 			"Checks related resources are externally published"
     		checkCodelistWithRelatedResourcesExternallyPublished(@CodelistVersionMetamac codelistVersion) throws MetamacException;
     		"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
-            List<Object> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
+            List<Long> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
     		
 			// CODES
 
@@ -351,7 +351,7 @@ Application CodesMetamac {
 				@CodelistVersionMetamac retrieveCodelistVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@CodelistVersionMetamac findByCode(String urn);
 				"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
-    			List<Object> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
+    			List<Long> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
     						
 				checkCodelistVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;

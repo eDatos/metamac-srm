@@ -302,11 +302,11 @@ public class MetamacWebCriteriaUtils {
                         OperationType.EQ);
                 conjunctionRestriction.getRestrictions().add(restriction);
             }
-            
+
             if (criteria.getCodeListIds() != null && !criteria.getCodeListIds().isEmpty()) {
-                MetamacCriteriaDisjunctionRestriction disjuntion = new MetamacCriteriaDisjunctionRestriction();
-                disjuntion.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.ID.name(), criteria.getCodeListIds(), OperationType.IN));
-                conjunctionRestriction.getRestrictions().add(disjuntion);
+                MetamacCriteriaPropertyRestriction metamacCriteriaPropertyRestriction = new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.ID.name(), OperationType.IN);
+                metamacCriteriaPropertyRestriction.setListLongValue(criteria.getCodeListIds());
+                conjunctionRestriction.getRestrictions().add(metamacCriteriaPropertyRestriction);
             }
 
         }

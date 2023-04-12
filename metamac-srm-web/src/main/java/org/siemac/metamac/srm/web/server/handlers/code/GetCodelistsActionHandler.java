@@ -52,20 +52,20 @@ public class GetCodelistsActionHandler extends SecurityActionHandler<GetCodelist
         MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
 
         if (codelistWebCriteria.getVariableElementUrn() != null) {
-            //Due to slow performance the search must be divided if variable element information is provided. First the match with variable, variableFamily and variable element information is found
-            //and, after this, the rest of conditions joined to the codelist Ids found in this search.
+            // Due to slow performance the search must be divided if variable element information is provided. First the match with variable, variableFamily and variable element information is found
+            // and, after this, the rest of conditions joined to the codelist Ids found in this search.
             codelistWebCriteria
                     .setCodeListIds(getCriteriaByVariableElement(codelistWebCriteria.getVariableUrn(), codelistWebCriteria.getVariableFamilyUrn(), codelistWebCriteria.getVariableElementUrn()));
-            
-            if (codelistWebCriteria.getCodeListIds() == null ||codelistWebCriteria.getCodeListIds().isEmpty()) {
+
+            if (codelistWebCriteria.getCodeListIds() == null || codelistWebCriteria.getCodeListIds().isEmpty()) {
                 return new GetCodelistsResult(new ArrayList<CodelistMetamacBasicDto>(), 0, 0);
             }
-            
+
             codelistWebCriteria.setVariableElementUrn(null);
             codelistWebCriteria.setVariableUrn(null);
             codelistWebCriteria.setVariableFamilyUrn(null);
         }
-        
+
         // Codelist criteria
         restriction.getRestrictions().add(MetamacWebCriteriaUtils.getCodelistCriteriaRestriction(codelistWebCriteria));
         criteria.setRestriction(restriction);
@@ -83,8 +83,8 @@ public class GetCodelistsActionHandler extends SecurityActionHandler<GetCodelist
             throw WebExceptionUtils.createMetamacWebException(e);
         }
     }
-    
-    private List<Object> getCriteriaByVariableElement(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws ActionException {
+
+    private List<Long> getCriteriaByVariableElement(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws ActionException {
         try {
             return srmCoreServiceFacade.findCodelistsByVariableInformation(ServiceContextHolder.getCurrentServiceContext(), variableUrn, variableFamilyUrn, variableElementUrn);
 

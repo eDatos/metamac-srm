@@ -9,16 +9,16 @@ public class CodelistWebCriteria extends VersionableResourceWebCriteria {
 
     private static final long serialVersionUID = 1L;
 
-    private String                conceptUrn;
-    private String                codelistFamilyUrn;
-    private AccessTypeEnum        accessType;
-    private String                isNotCodelistUrn;
-    private String                variableUrn;
-    private String                variableElementUrn;
-    private String                variableFamilyUrn;
-    private String                codelisUrnToReplaceCodelist;
+    private String conceptUrn;
+    private String codelistFamilyUrn;
+    private AccessTypeEnum accessType;
+    private String isNotCodelistUrn;
+    private String variableUrn;
+    private String variableElementUrn;
+    private String variableFamilyUrn;
+    private String codelisUrnToReplaceCodelist;
     private NormalizationTypeEnum normalizationType;
-    private List<Object>            codeListIds;
+    private List<Long> codeListIds;
 
     public CodelistWebCriteria() {
     }
@@ -104,11 +104,11 @@ public class CodelistWebCriteria extends VersionableResourceWebCriteria {
         this.normalizationType = normalizationType;
     }
 
-    public List<Object> getCodeListIds() {
+    public List<Long> getCodeListIds() {
         return codeListIds;
     }
 
-    public void setCodeListIds(List<Object> codeListIds) {
+    public void setCodeListIds(List<Long> codeListIds) {
         this.codeListIds = codeListIds;
     }
 }

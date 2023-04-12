@@ -96,7 +96,7 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
     @Override
     @SuppressWarnings("rawtypes")
     public void checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException {
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT DISTINCT(aisv.URN) ");
         sb.append("FROM TB_M_CODELISTS_VERSIONS c ");
@@ -139,9 +139,9 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
             addTranslationExceptionToExceptionItemsByResource(exceptionItemsByUrn, urn, ServiceExceptionParameters.CODELIST_SHORT_NAME);
         }
     }
-    
+
     @Override
-    public List<Object> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) {
+    public List<Long> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) {
 
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT distinct(cv.tb_item_schemes_versions) ");
@@ -172,7 +172,7 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
         if (variableFamilyUrn != null) {
             sb.append("AND dvf.URN = :variableFamilyUrn ");
         }
-        
+
         Query query = getEntityManager().createNativeQuery(sb.toString());
 
         query.setParameter("variableElementUrn", variableElementUrn);
@@ -184,13 +184,13 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
         if (variableFamilyUrn != null) {
             query.setParameter("variableFamilyUrn", variableFamilyUrn);
         }
-        
-        List<Object> codeListIds = new ArrayList<Object>();
-        
+
+        List<Long> codeListIds = new ArrayList<Long>();
+
         for (Object id : query.getResultList()) {
-            codeListIds.add(((BigInteger)id).longValue());
+            codeListIds.add(((BigInteger) id).longValue());
         }
-        
+
         return codeListIds;
 
     }

@@ -361,10 +361,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
-    public List<Object> findCodelistsByVariableInformation(ServiceContext ctx, String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException {
+    public List<Long> findCodelistsByVariableInformation(ServiceContext ctx, String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException {
         return getCodelistVersionMetamacRepository().findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(variableUrn, variableFamilyUrn, variableElementUrn);
     }
-    
+
     @Override
     public PagedResult<CodelistVersionMetamac> findCodelistsCanReplaceToByCondition(ServiceContext ctx, String codelistUrn, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
             throws MetamacException {

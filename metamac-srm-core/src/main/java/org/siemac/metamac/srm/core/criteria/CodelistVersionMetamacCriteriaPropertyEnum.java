@@ -1,7 +1,7 @@
 package org.siemac.metamac.srm.core.criteria;
 
 public enum CodelistVersionMetamacCriteriaPropertyEnum {
-
+    ID,
     CODE,
     URN,
     NAME,

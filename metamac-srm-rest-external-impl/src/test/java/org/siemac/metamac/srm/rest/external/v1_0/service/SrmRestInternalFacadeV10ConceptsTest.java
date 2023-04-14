@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -66,8 +67,8 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
 public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV10BaseTest {
 
-    private ConceptsMetamacService                  conceptsService;
-    private ItemSchemeVersionRepository             itemSchemeVersionRepository;
+    private ConceptsMetamacService conceptsService;
+    private ItemSchemeVersionRepository itemSchemeVersionRepository;
     private StatisticalOperationsRestExternalFacade statisticalOperationsRestExternalFacade;
 
     @Test
@@ -384,6 +385,53 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
 
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+
+    @Test
+    public void testFindConceptsRetrieveTsv() throws Exception {
+
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        InputStream responseExpected = SrmRestInternalFacadeV10ConceptsTest.class.getResourceAsStream("/responses/concepts/findConceptsTSV.tsv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/tab-separated-values", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testFindConceptsTsv() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        List<String> lines = getResponse(requestUri, "text/tab-separated-values");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("id\tparent\turn\tname#es\tname#en", iterator.next());
+        assertTrue(lines.contains("concept1\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept1\tname-concept1 en Español\tname-concept1 in English"));
+        assertTrue(lines.contains("concept2\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2\tname-concept2 en Español\tname-concept2 in English"));
+
+    }
+
+    @Test
+    public void testFindConceptsRetrieveCsv() throws Exception {
+
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        InputStream responseExpected = SrmRestInternalFacadeV10ConceptsTest.class.getResourceAsStream("/responses/concepts/findConceptsCSV.csv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/csv", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testFindConceptsCsv() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        List<String> lines = getResponse(requestUri, "text/csv");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("id,parent,urn,name#es,name#en", iterator.next());
+        assertTrue(lines.contains("concept1,,urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept1,name-concept1 en Español,name-concept1 in English"));
+        assertTrue(lines.contains("concept2,,urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2,name-concept2 en Español,name-concept2 in English"));
     }
 
     @Test

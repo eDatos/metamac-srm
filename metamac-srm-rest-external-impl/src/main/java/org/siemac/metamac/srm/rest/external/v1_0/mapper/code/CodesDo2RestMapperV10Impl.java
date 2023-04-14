@@ -63,7 +63,6 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableType;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfiguration;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfigurations;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesCodelist;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -79,9 +78,10 @@ import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesCodelist;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
-import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +174,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
                 annotations = source.getAnnotations().getAnnotations();
             }
 
-            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
         }
 
         return target;

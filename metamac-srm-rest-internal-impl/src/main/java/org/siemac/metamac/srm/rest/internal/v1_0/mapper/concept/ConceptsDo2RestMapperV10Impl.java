@@ -1,8 +1,11 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.mapper.concept;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,12 +14,14 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptScheme;
@@ -43,6 +48,8 @@ import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.shared.QuantityUtils;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesConcept;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.code.CodesDo2RestMapperV10;
@@ -104,6 +111,46 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         }
         ResourceInternal target = new ResourceInternal();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CONCEPT_SCHEME, toConceptSchemeSelfLink(source), toConceptSchemeManagementApplicationLink(source), target);
+        return target;
+    }
+
+    @Override
+    public List<PlainTextCodesConcept> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextCodesConcept> target = new ArrayList<>();
+
+        for (ConceptResourceInternal concept : source.getConcepts()) {
+            target.add(toPlainTextConcept(concept, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextCodesConcept toPlainTextConcept(ConceptResourceInternal source, List<String> languages, Set<String> fields) {
+        PlainTextCodesConcept target = new PlainTextCodesConcept();
+        target.setId(source.getId());
+        target.setUrn(source.getUrn());
+        target.setParent(source.getParent());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+        target.setPluralName(source.getPluralName());
+
+        Set<String> excludedFields = target.retrieveExcludedFields(fields);
+        List<Field> fieldsPlainTextCodesConcept = new LinkedList<Field>();
+        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesConcept, PlainTextCodesConcept.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        }
+
         return target;
     }
 

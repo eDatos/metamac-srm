@@ -12,10 +12,10 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptTypes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RoleConcepts;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesConcept;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;

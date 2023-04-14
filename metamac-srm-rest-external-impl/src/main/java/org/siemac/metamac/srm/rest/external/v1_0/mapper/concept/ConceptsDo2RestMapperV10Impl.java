@@ -40,7 +40,6 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRate;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRatio;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RelatedConcepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.RoleConcepts;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCodesConcept;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
@@ -49,10 +48,11 @@ import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.shared.QuantityUtils;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesConcept;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
-import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -177,7 +177,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
                 annotations = source.getAnnotations().getAnnotations();
             }
 
-            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
         }
 
         return target;

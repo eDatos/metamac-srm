@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Annotation;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionProperties;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
@@ -205,7 +208,7 @@ public class SrmRestInternalUtils {
     }
 
     private static final String SPACE = " ";
-    private static final String PLUS  = "+";
+    private static final String PLUS = "+";
 
     public static Set<String> parseFieldsParameter(String fieldsParam) {
         Set<String> validFields = new HashSet<>();
@@ -223,7 +226,7 @@ public class SrmRestInternalUtils {
 
     public static Set<String> parseFieldsParameter(String fieldsParam, Set<String> validFields) {
         Set<String> showFields = new HashSet<>();
-        if (fieldsParam != null) {       
+        if (fieldsParam != null) {
             List<String> fieldList = Arrays.asList(fieldsParam.split(","));
             List<String> parsedFieldList = new ArrayList<>();
             for (String field : fieldList) {
@@ -244,5 +247,16 @@ public class SrmRestInternalUtils {
 
     public static boolean containsField(Set<String> fields, String field) {
         return fields != null && fields.contains(field);
+    }
+
+    public static Map<String, String> toMapAnnotations(List<Annotation> annotations, List<String> languages) {
+
+        StringBuilder annotationsResult = new StringBuilder();
+
+        for (Annotation annotation : annotations) {
+            ExportUtils.toMapAnnotation(annotationsResult, annotation.getText(), annotation.getUrl(), annotation.getId(), languages);
+        }
+
+        return ExportUtils.closeAnnotationColumnValue(annotationsResult);
     }
 }

@@ -38,12 +38,12 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnit
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnitSchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnits;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextOrganisation;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextOrganisation;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
-import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.stereotype.Component;
 
@@ -264,7 +264,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
                 annotations = source.getAnnotations().getAnnotations();
             }
 
-            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
         }
 
         return target;

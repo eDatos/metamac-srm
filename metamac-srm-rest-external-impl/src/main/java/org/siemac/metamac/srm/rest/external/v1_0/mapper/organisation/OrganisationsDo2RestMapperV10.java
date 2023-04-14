@@ -15,9 +15,9 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnit;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnits;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextOrganisation;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextOrganisation;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 

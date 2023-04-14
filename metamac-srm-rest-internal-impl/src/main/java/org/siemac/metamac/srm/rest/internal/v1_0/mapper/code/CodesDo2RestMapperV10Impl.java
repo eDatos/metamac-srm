@@ -13,8 +13,10 @@ import static org.siemac.metamac.srm.rest.internal.constants.SrmRestInternalCons
 import static org.siemac.metamac.srm.rest.internal.constants.SrmRestInternalConstants.VARIABLE_ELEMENT_TYPE;
 import static org.siemac.metamac.srm.rest.internal.constants.SrmRestInternalConstants.VARIABLE_ELEMENT_URN;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +36,7 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AccessType;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
@@ -43,11 +46,11 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistsResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodeResourceInternal;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisation;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodeResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ReplaceToResources;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variable;
@@ -81,6 +84,8 @@ import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesCodelist;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.organisation.OrganisationsDo2RestMapperV10;
@@ -96,17 +101,16 @@ import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 
-
 @Component
 public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements CodesDo2RestMapperV10 {
-        
+
     private final Logger logger = LoggerFactory.getLogger(CodesDo2RestMapperV10Impl.class);
-    
+
     @Autowired
-    private OrganisationsDo2RestMapperV10         organisationsDo2RestMapper;
+    private OrganisationsDo2RestMapperV10 organisationsDo2RestMapper;
 
     @Override
-    public Codelists toCodelists(PagedResult<CodelistVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException  {
+    public Codelists toCodelists(PagedResult<CodelistVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         Codelists targets = new Codelists();
         targets.setKind(SrmRestConstants.KIND_CODELISTS);
@@ -172,7 +176,48 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         return null;
     }
-    
+
+    @Override
+    public List<PlainTextCodesCodelist> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextCodesCodelist> target = new ArrayList<>();
+
+        for (CodeResourceInternal code : source.getCodes()) {
+            target.add(toPlainTextCode(code, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextCodesCodelist toPlainTextCode(CodeResourceInternal source, List<String> languages, Set<String> fields) {
+        PlainTextCodesCodelist target = new PlainTextCodesCodelist();
+        target.setId(source.getId());
+        target.setUrn(source.getUrn());
+        target.setParent(source.getParent());
+        target.setIsExtended(source.isExtended());
+        target.setVariableElement(source.getVariableElement() != null ? source.getVariableElement().getUrn() : null);
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+
+        Set<String> excludedFields = target.retrieveExcludedFields(fields);
+        List<Field> fieldsPlainTextCodesCodelist = new LinkedList<Field>();
+        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesCodelist, PlainTextCodesCodelist.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        }
+
+        return target;
+    }
+
     @Override
     public ResourceInternal toResource(CodelistVersion source) {
         if (source == null) {
@@ -182,7 +227,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), toCodelistManagementApplicationLink(source), target);
         return target;
     }
-  
+
     private CodelistsResourceInternal toCodeListsResource(CodelistVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
@@ -193,24 +238,24 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setSourceProvider(sourceProvidertoOrganisation(sdmxOrganisationToOrganisationMetamac(source.getSourceProvider())));
         return target;
     }
-    
+
     @Override
-    public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, 
-            Boolean extended, Set<String> fields) {
+    public Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended,
+            Set<String> fields) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
-        
+
         // Pagination
         String baseLink = toCodesLink(agencyID, resourceID, version);
         SculptorCriteria2RestCriteria.toPagedResult(sourcesPagedResult, targets, query, orderBy, limit, baseLink);
-        
+
         List<CodeMetamac> sources = sourcesPagedResult.getValues();
-        
+
         if (extended != null) {
             sources = getCodesWithConditionsWithExtendedSelection(sources, extended);
         }
-            
+
         // Values
         for (CodeMetamac source : sources) {
             CodeResourceInternal target = toCodeResource(source, fields);
@@ -220,7 +265,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch,  List<RelatedCode> sources) {
+    public RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources) {
 
         RecodedCodes targets = new RecodedCodes();
 
@@ -233,13 +278,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         return targets;
     }
-    
+
     @Override
     public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
-       
+
         if (restriction != null) {
             sources = getCodesInRestriction(sources);
         }
@@ -247,11 +292,11 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         if (extended != null) {
             sources = getCodesWithExtendedSelection(sources, extended);
         }
-        
+
         // No pagination
         targets.setSelfLink(toCodesLink(codelistVersion));
         targets.setTotal(BigInteger.valueOf(sources.size()));
-        
+
         // Values
         String variableID = codelistVersion.getVariable() != null ? codelistVersion.getVariable().getNameableArtefact().getCode() : null;
         for (ItemResult source : sources) {
@@ -270,7 +315,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         return codesInRestriction;
     }
-    
+
     private List<ItemResult> getCodesWithExtendedSelection(List<ItemResult> sources, Boolean extended) {
         List<ItemResult> codesWithExtendedOption = new ArrayList<>();
         for (ItemResult source : sources) {
@@ -295,7 +340,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private boolean checkExtendedField(Boolean extendedParam, Boolean extendedData) {
         return (Boolean.TRUE.equals(extendedParam) && Boolean.TRUE.equals(extendedData)) || (!Boolean.TRUE.equals(extendedParam) && !Boolean.TRUE.equals(extendedData));
     }
-    
+
     @Override
     public Code toCode(CodeMetamac source) {
         if (source == null) {
@@ -318,17 +363,16 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         target.setVariableElement(toResource(source.getVariableElement()));
         target.setExtended(source.getIsExtended());
-        
+
         return target;
     }
-    
-    @Override
-    public  CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version) {
 
+    @Override
+    public CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac codelistVersion, String agencyID, String resourceID, String version) {
 
         CodelistRestrictions targets = new CodelistRestrictions();
         targets.setKind(SrmRestConstants.KIND_CODELIST_RESTRICTIONS);
-      
+
         // Values
         for (CodelistRestrictionVisualisation source : sources) {
             ItemResourceInternal target = toResourceRestriction(source);
@@ -336,14 +380,14 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         return targets;
     }
-    
 
     private ItemResourceInternal toResourceRestriction(CodelistRestrictionVisualisation source) {
         if (source == null) {
             return null;
         }
         ItemResourceInternal target = new ItemResourceInternal();
-        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
+        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode()),
+                toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
         return target;
     }
 
@@ -379,7 +423,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
 
         return target;
     }
-    
+
     private void setVisibleFields(CodeMetamac source, CodeResourceInternal target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
             target.setVariableElement(toResource(source.getVariableElement()));
@@ -410,8 +454,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
             target.setVariableElement(toResource(variableID, ((CodeMetamacResultExtensionPoint) source.getExtensionPoint()).getVariableElement()));
         }
 
-        target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE)
-                ? SrmServiceUtils.getCodeItemResultIsExtended(source) : null);
+        target.setExtended(SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE) ? SrmServiceUtils.getCodeItemResultIsExtended(source) : null);
     }
 
     @Override
@@ -692,13 +735,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
 
     private ResourceLink toCodelistRestrictionSelfLink(CodelistVersion source, String restrictionName) {
         return toResourceLink(SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionLink(source, restrictionName));
-        
+
     }
-    
+
     private ResourceLink toCodelistSelfLink(CodelistVersion source) {
         return toResourceLink(SrmRestConstants.KIND_CODELIST, toCodelistLink(source));
     }
-    
+
     @Override
     public ResourceLink toCodelistSelfLink(String agencyID, String resourceID, String version) {
         return toResourceLink(SrmRestConstants.KIND_CODELIST, toCodelistLink(agencyID, resourceID, version));
@@ -800,21 +843,20 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     private String toCodelistRestrictionLink(CodelistVersion source, String restriction) {
-        String link =  toCodelistLink(source);
+        String link = toCodelistLink(source);
         link = RestUtils.createLink(link, toSubpathItemsRestriction());
         link = RestUtils.createLink(link, restriction);
         return link;
     }
-    
+
     private String toSubpathItemsRestriction() {
         return SrmRestConstants.LINK_SUBPATH_RESTRICTIONS;
     }
-    
+
     private String toCodelistsLink(String agencyID, String resourceID, String version) {
         return toMaintainableArtefactLink(toSubpathItemSchemes(), agencyID, resourceID, version);
     }
 
-    
     private String toCodelistLink(ItemSchemeVersion itemSchemeVersion) {
         return toItemSchemeLink(toSubpathItemSchemes(), itemSchemeVersion);
     }
@@ -974,7 +1016,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
                 throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     private ResourceInternal toCodelistReplacedBy(CodelistVersionMetamac source) {
         if (source.getReplacedByCodelist() == null) {
             return null;
@@ -1049,7 +1091,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private String toCodelistRestrictionManagementApplicationLink(String code, String urnRestriction) {
         return getInternalWebApplicationNavigation().buildRestrictionUrl(code, urnRestriction);
     }
-    
+
     @Override
     public String toCodelistManagementApplicationLink(String codelistUrn) {
         return getInternalWebApplicationNavigation().buildCodelistUrl(codelistUrn);
@@ -1061,7 +1103,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private String toCodeManagementApplicationLink(CodelistVersion codelistVersion, ItemResult source) {
         return getInternalWebApplicationNavigation().buildCodeUrl(codelistVersion.getMaintainableArtefact().getUrn(), source.getCode());
     }
-    
+
     private String toCodeManagementApplicationLink(String codeUrn) {
         String[] codeUrnSplited = UrnUtils.splitUrnItem(codeUrn);
         String[] agency = StringUtils.splitPreserveAllTokens(codeUrnSplited[0], UrnConstants.DOT);

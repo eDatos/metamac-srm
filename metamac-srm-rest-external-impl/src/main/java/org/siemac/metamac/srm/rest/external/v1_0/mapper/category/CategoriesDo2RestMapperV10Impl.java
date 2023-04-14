@@ -21,14 +21,14 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextCategory;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCategory;
+import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
-import org.siemac.metamac.srm.rest.external.v1_0.service.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.stereotype.Component;
 
@@ -174,7 +174,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
                 annotations = source.getAnnotations().getAnnotations();
             }
 
-            target.getFields().putAll(ExportUtils.toMapAnnotations(annotations, languages));
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
         }
 
         return target;

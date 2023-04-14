@@ -35,6 +35,7 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AccessType;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
@@ -166,6 +167,15 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         Set<String> excludedFields = target.retrieveExcludedFields(fields);
         List<Field> fieldsPlainTextCodesCodelist = new LinkedList<Field>();
         target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesCodelist, PlainTextCodesCodelist.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        }
 
         return target;
     }

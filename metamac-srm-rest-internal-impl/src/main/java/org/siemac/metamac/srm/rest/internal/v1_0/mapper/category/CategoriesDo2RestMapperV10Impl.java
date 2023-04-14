@@ -13,6 +13,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Category;
@@ -169,6 +170,15 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         Set<String> excludedFields = target.retrieveExcludedFields(fields);
         List<Field> fieldsPlainTextCategories = new LinkedList<>();
         target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCategories, PlainTextCategory.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        }
 
         return target;
     }

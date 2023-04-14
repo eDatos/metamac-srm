@@ -18,6 +18,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencyScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencySchemes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contact;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contacts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumer;
@@ -256,6 +257,15 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         Set<String> excludedFields = target.retrieveExcludedFields(fields);
         List<Field> fieldsPlainTextOrganisations = new LinkedList<>();
         target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextOrganisations, PlainTextOrganisation.class), languages, null, excludedFields));
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
+            List<Annotation> annotations = new ArrayList<>();
+            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
+                annotations = source.getAnnotations().getAnnotations();
+            }
+
+            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        }
 
         return target;
     }

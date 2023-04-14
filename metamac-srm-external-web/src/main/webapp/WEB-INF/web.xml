@@ -75,7 +75,7 @@
 
  	<filter>
         <filter-name>PlainTextFilter</filter-name>
-        <filter-class>org.siemac.metamac.srm.web.external.request.filter.PlainTextFilter</filter-class>
+        <filter-class>org.siemac.metamac.rest.request.filter.PlainTextFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>PlainTextFilter</filter-name>

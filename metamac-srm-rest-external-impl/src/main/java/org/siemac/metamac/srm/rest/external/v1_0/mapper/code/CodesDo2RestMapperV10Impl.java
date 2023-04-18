@@ -13,10 +13,8 @@ import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalCons
 import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants.VARIABLE_ELEMENT_TYPE;
 import static org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants.VARIABLE_ELEMENT_URN;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +25,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.rest.api.export.mapper.FlattenSrmResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -34,8 +33,6 @@ import org.siemac.metamac.rest.constants.RestConstants;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.AccessType;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
@@ -76,10 +73,9 @@ import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesCodelist;
-import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
@@ -140,41 +136,37 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public List<PlainTextCodesCodelist> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<FlattenSrmResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<PlainTextCodesCodelist> target = new ArrayList<>();
+        List<FlattenSrmResource> target = new ArrayList<>();
 
         for (CodeResource code : source.getCodes()) {
-            target.add(toPlainTextCode(code, languages, fields));
+            target.add(toFlattenCode(code, languages, fields));
         }
 
         return target;
     }
 
-    private PlainTextCodesCodelist toPlainTextCode(CodeResource source, List<String> languages, Set<String> fields) {
-        PlainTextCodesCodelist target = new PlainTextCodesCodelist();
-        target.setId(source.getId());
-        target.setUrn(source.getUrn());
-        target.setParent(source.getParent());
-        target.setIsExtended(source.isExtended());
-        target.setVariableElement(source.getVariableElement() != null ? source.getVariableElement().getUrn() : null);
-        target.setName(source.getName());
-        target.setDescription(source.getDescription());
+    private FlattenSrmResource toFlattenCode(CodeResource source, List<String> languages, Set<String> fields) {
+        FlattenSrmResource target = new FlattenSrmResource();
+        target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
+        target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
+        target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
 
-        Set<String> excludedFields = target.retrieveExcludedFields(fields);
-        List<Field> fieldsPlainTextCodesCodelist = new LinkedList<Field>();
-        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCodesCodelist, PlainTextCodesCodelist.class), languages, null, excludedFields));
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE)) {
+            target.getFields().put(SrmConstants.TSV_HEADER_IS_EXTENDED, source.isExtended() != null ? String.valueOf(source.isExtended()) : null);
+        }
 
-        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
-            List<Annotation> annotations = new ArrayList<>();
-            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
-                annotations = source.getAnnotations().getAnnotations();
-            }
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
+            target.getFields().put(SrmConstants.TSV_HEADER_VARIABLE_ELEMENT, source.getVariableElement() != null ? source.getVariableElement().getUrn() : null);
+        }
 
-            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
         }
 
         return target;
@@ -929,28 +921,6 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setKind(SrmRestConstants.KIND_CODELIST_FAMILY);
         target.setHref(toCodelistFamilyLink(source));
         return target;
-    }
-
-    private AccessType toAccessType(AccessTypeEnum source) {
-        switch (source) {
-            case PUBLIC:
-                return org.siemac.metamac.rest.structural_resources.v1_0.domain.AccessType.PUBLIC;
-            case RESTRICTED:
-                return org.siemac.metamac.rest.structural_resources.v1_0.domain.AccessType.RESTRICTED;
-            default:
-                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private Resource toCodelistReplacedBy(CodelistVersionMetamac source) {
-        if (source.getReplacedByCodelist() == null) {
-            return null;
-        }
-        if (!canResourceBeProvidedByApi(source.getReplacedByCodelist())) {
-            return null;
-        }
-        return toResource(source.getReplacedByCodelist());
     }
 
     private ReplaceToResources toCodelistReplaceTo(CodelistVersionMetamac source) {

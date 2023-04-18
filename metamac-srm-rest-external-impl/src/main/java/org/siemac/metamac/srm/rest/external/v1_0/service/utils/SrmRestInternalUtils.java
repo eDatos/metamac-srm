@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.service.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,11 +11,13 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
+import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionProperties;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
@@ -246,14 +249,31 @@ public class SrmRestInternalUtils {
         return fields != null && fields.contains(field);
     }
 
-    public static Map<String, String> toMapAnnotations(List<Annotation> annotations, List<String> languages) {
+    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages) {
+        Map<String, String> target = new LinkedHashMap<>();
 
-        StringBuilder annotationsResult = new StringBuilder();
+        InternationalString copySource = new InternationalString();
 
-        for (Annotation annotation : annotations) {
-            ExportUtils.toMapAnnotation(annotationsResult, annotation.getText(), annotation.getUrl(), annotation.getId(), languages);
+        if (source != null) {
+            copySource = source;
         }
 
-        return ExportUtils.closeAnnotationColumnValue(annotationsResult);
+        String header;
+        for (String language : languages) {
+            header = nameField + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language));
+        }
+
+        return target;
+    }
+
+    private static String getLocalisedStringByLang(List<LocalisedString> source, String language) {
+        // in the api, lamba functions is not allowed. the search is done with a loop.
+        for (LocalisedString loc : source) {
+            if (language.equals(loc.getLang())) {
+                return TsvExportationUtils.removeUnsupportedCharaters(loc.getValue());
+            }
+        }
+        return null;
     }
 }

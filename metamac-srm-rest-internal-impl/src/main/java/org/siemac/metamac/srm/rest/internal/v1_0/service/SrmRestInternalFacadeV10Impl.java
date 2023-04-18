@@ -29,6 +29,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.rest.api.export.mapper.FlattenSrmResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
@@ -124,10 +125,6 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCategory;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesCodelist;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesConcept;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextOrganisation;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.category.CategoriesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.category.CategoriesRest2DoMapper;
@@ -312,10 +309,10 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             Concepts concepts = findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextCodesConcept> plainTextCodesConcept = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow);
+            List<FlattenSrmResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CONCEPTS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextCodesConcept).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             return manageExceptionResponse(e);
@@ -438,10 +435,10 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextCategory> plainTextCodesCategory = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow);
+            List<FlattenSrmResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CATEGORIES + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextCodesCategory).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             return manageExceptionResponse(e);
@@ -586,9 +583,9 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             Organisations organisations = findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextOrganisation> plainTextOrganisation = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow);
+            List<FlattenSrmResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow);
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_ORGANISATIONS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextOrganisation).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             return manageExceptionResponse(e);
@@ -1044,10 +1041,10 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             Codes codes = findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
 
             // Transform
-            List<PlainTextCodesCodelist> plainTextCodesCodelist = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
+            List<FlattenSrmResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
 
             String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODES + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextCodesCodelist).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             return manageExceptionResponse(e);

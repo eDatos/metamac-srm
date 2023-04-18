@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenSrmResource;
+import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Category;
@@ -23,7 +23,7 @@ public interface CategoriesDo2RestMapperV10 {
 
     public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
             Set<String> fields);
-    List<FlattenSrmResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<FlattenResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException;
 
     public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields);
     public Category toCategory(CategoryMetamac source);

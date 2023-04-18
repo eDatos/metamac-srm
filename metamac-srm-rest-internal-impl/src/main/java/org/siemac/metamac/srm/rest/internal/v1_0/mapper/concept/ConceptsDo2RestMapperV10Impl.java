@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenSrmResource;
+import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -112,12 +112,12 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public List<FlattenSrmResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<FlattenResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<FlattenSrmResource> target = new ArrayList<>();
+        List<FlattenResource> target = new ArrayList<>();
 
         for (ConceptResourceInternal concept : source.getConcepts()) {
             target.add(toFlattenConcept(concept, languages, fields));
@@ -126,8 +126,8 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         return target;
     }
 
-    private FlattenSrmResource toFlattenConcept(ConceptResourceInternal source, List<String> languages, Set<String> fields) {
-        FlattenSrmResource target = new FlattenSrmResource();
+    private FlattenResource toFlattenConcept(ConceptResourceInternal source, List<String> languages, Set<String> fields) {
+        FlattenResource target = new FlattenResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());

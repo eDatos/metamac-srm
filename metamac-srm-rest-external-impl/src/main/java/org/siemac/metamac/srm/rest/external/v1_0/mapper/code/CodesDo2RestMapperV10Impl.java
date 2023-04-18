@@ -25,7 +25,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
-import org.siemac.metamac.rest.api.export.mapper.FlattenSrmResource;
+import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -136,12 +136,12 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public List<FlattenSrmResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<FlattenResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<FlattenSrmResource> target = new ArrayList<>();
+        List<FlattenResource> target = new ArrayList<>();
 
         for (CodeResource code : source.getCodes()) {
             target.add(toFlattenCode(code, languages, fields));
@@ -150,8 +150,8 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
-    private FlattenSrmResource toFlattenCode(CodeResource source, List<String> languages, Set<String> fields) {
-        FlattenSrmResource target = new FlattenSrmResource();
+    private FlattenResource toFlattenCode(CodeResource source, List<String> languages, Set<String> fields) {
+        FlattenResource target = new FlattenResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());

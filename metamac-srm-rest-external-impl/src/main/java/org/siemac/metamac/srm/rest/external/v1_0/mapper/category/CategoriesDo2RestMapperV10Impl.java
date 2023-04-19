@@ -1,20 +1,18 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.category;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
@@ -24,10 +22,9 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCategory;
-import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.stereotype.Component;
@@ -137,44 +134,35 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public List<PlainTextCategory> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<PlainTextCategory> target = new ArrayList<>();
+        List<PlainTextResource> target = new ArrayList<>();
 
         for (CategoryResource category : source.getCategories()) {
-            target.add(toPlainTextCategory(category, languages, fields));
+            target.add(toFlattenCategory(category, languages, fields));
         }
 
         return target;
     }
 
-    private PlainTextCategory toPlainTextCategory(CategoryResource source, List<String> languages, Set<String> fields) {
-        PlainTextCategory target = new PlainTextCategory();
-        target.setId(source.getId());
-        target.setUrn(source.getUrn());
-        target.setParent(source.getParent());
-        target.setName(source.getName());
-        target.setDescription(source.getDescription());
+    private PlainTextResource toFlattenCategory(CategoryResource source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
+        target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
+        target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
+        target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
 
-        if (source.getEniSchemeType() != null) {
-            target.setEniSchemeId(source.getEniSchemeType().getId());
-            target.setEniSchemeName(source.getEniSchemeType().getName());
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
         }
 
-        Set<String> excludedFields = target.retrieveExcludedFields(fields);
-        List<Field> fieldsPlainTextCategories = new LinkedList<>();
-        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextCategories, PlainTextCategory.class), languages, null, excludedFields));
-
-        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
-            List<Annotation> annotations = new ArrayList<>();
-            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
-                annotations = source.getAnnotations().getAnnotations();
-            }
-
-            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
+            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, source.getEniSchemeType() != null ? source.getEniSchemeType().getId() : null);
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_ENI_SCHEME_NAME,
+                    source.getEniSchemeType() != null ? source.getEniSchemeType().getName() : null, languages));
         }
 
         return target;

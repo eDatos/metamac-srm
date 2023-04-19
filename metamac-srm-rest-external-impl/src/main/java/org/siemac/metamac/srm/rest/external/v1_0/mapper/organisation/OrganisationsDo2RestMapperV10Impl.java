@@ -1,15 +1,14 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -18,7 +17,6 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencyScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencySchemes;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Annotation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contact;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contacts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumer;
@@ -38,11 +36,10 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnit
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnitSchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnits;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextOrganisation;
-import org.siemac.metamac.srm.rest.common.export.utils.ExportUtils;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.stereotype.Component;
@@ -232,39 +229,29 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public List<PlainTextOrganisation> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<PlainTextOrganisation> target = new ArrayList<>();
+        List<PlainTextResource> target = new ArrayList<>();
 
         for (ItemResource organisation : source.getOrganisations()) {
-            target.add(toPlainTextOrganisation(organisation, languages, fields));
+            target.add(toFlattenOrganisation(organisation, languages, fields));
         }
 
         return target;
     }
 
-    private PlainTextOrganisation toPlainTextOrganisation(ItemResource source, List<String> languages, Set<String> fields) {
-        PlainTextOrganisation target = new PlainTextOrganisation();
-        target.setId(source.getId());
-        target.setUrn(source.getUrn());
-        target.setParent(source.getParent());
-        target.setName(source.getName());
-        target.setDescription(source.getDescription());
+    private PlainTextResource toFlattenOrganisation(ItemResource source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
+        target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
+        target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
+        target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
 
-        Set<String> excludedFields = target.retrieveExcludedFields(fields);
-        List<Field> fieldsPlainTextOrganisations = new LinkedList<>();
-        target.setFields(ExportUtils.toMap(target, ExportUtils.getAllFields(fieldsPlainTextOrganisations, PlainTextOrganisation.class), languages, null, excludedFields));
-
-        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS)) {
-            List<Annotation> annotations = new ArrayList<>();
-            if (source.getAnnotations() != null && source.getAnnotations().getAnnotations() != null && !source.getAnnotations().getAnnotations().isEmpty()) {
-                annotations = source.getAnnotations().getAnnotations();
-            }
-
-            target.getFields().putAll(SrmRestInternalUtils.toMapAnnotations(annotations, languages));
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
         }
 
         return target;

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
@@ -23,7 +24,6 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
-import org.siemac.metamac.srm.rest.common.export.entities.PlainTextCodesCodelist;
 
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
@@ -37,7 +37,7 @@ public interface CodesDo2RestMapperV10 {
 
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields);
-    List<PlainTextCodesCodelist> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException;
 
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended);
     RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources);

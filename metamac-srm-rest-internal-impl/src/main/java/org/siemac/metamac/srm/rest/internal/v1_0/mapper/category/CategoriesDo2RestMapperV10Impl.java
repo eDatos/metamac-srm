@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -137,12 +137,12 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public List<FlattenResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<FlattenResource> target = new ArrayList<>();
+        List<PlainTextResource> target = new ArrayList<>();
 
         for (CategoryResourceInternal category : source.getCategories()) {
             target.add(toFlattenCategory(category, languages, fields));
@@ -151,8 +151,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
-    private FlattenResource toFlattenCategory(CategoryResourceInternal source, List<String> languages, Set<String> fields) {
-        FlattenResource target = new FlattenResource();
+    private PlainTextResource toFlattenCategory(CategoryResourceInternal source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());

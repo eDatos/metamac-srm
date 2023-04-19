@@ -8,7 +8,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -229,12 +229,12 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public List<FlattenResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
 
-        List<FlattenResource> target = new ArrayList<>();
+        List<PlainTextResource> target = new ArrayList<>();
 
         for (ItemResource organisation : source.getOrganisations()) {
             target.add(toFlattenOrganisation(organisation, languages, fields));
@@ -243,8 +243,8 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return target;
     }
 
-    private FlattenResource toFlattenOrganisation(ItemResource source, List<String> languages, Set<String> fields) {
-        FlattenResource target = new FlattenResource();
+    private PlainTextResource toFlattenOrganisation(ItemResource source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptTypes;
@@ -30,7 +30,7 @@ public interface ConceptsDo2RestMapperV10 {
 
     public Concepts toConcepts(PagedResult<ConceptMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
     public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields);
-    List<FlattenResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException;
 
     public Concept toConcept(ConceptMetamac source);
     public ItemResourceInternal toResource(com.arte.statistic.sdmx.srm.core.concept.domain.Concept source);

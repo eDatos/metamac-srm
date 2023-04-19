@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumer;
@@ -31,7 +31,7 @@ public interface OrganisationsDo2RestMapperV10 {
     public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
             Set<String> fields);
     public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
-    List<FlattenResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException;
     public Organisation toOrganisation(OrganisationMetamac source) throws MetamacException;
 
     // Agencies

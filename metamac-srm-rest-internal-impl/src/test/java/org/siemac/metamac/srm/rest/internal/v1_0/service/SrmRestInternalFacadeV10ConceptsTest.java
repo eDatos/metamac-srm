@@ -67,8 +67,8 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
 public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV10BaseTest {
 
-    private ConceptsMetamacService conceptsService;
-    private ItemSchemeVersionRepository itemSchemeVersionRepository;
+    private ConceptsMetamacService                  conceptsService;
+    private ItemSchemeVersionRepository             itemSchemeVersionRepository;
     private StatisticalOperationsRestInternalFacade statisticalOperationsRestInternalFacade;
 
     @Test

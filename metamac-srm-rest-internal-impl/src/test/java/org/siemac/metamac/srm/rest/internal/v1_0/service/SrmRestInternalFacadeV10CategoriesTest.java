@@ -63,7 +63,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResultSelection;
 
 public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacadeV10BaseTest {
 
-    private CategoriesMetamacService categoriesService;
+    private CategoriesMetamacService    categoriesService;
     private ItemSchemeVersionRepository itemSchemeVersionRepository;
 
     @Test

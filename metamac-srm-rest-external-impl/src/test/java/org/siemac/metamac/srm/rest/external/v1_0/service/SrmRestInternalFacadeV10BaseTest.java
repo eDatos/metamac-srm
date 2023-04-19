@@ -36,11 +36,11 @@ import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefactProperties.N
 
 public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTest {
 
-    private static String jaxrsServerAddress = "http://localhost:" + ServerResource.PORT + "/apis/structural-resources";
-    protected String baseApi = jaxrsServerAddress + "/v1.0";
-    protected static ApplicationContext applicationContext = null;
+    private static String                   jaxrsServerAddress = "http://localhost:" + ServerResource.PORT + "/apis/structural-resources";
+    protected String                        baseApi            = jaxrsServerAddress + "/v1.0";
+    protected static ApplicationContext     applicationContext = null;
     private static SrmRestExternalFacadeV10 srmRestInternalFacadeClientXml;
-    private static String apiEndpointv10;
+    private static String                   apiEndpointv10;
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @BeforeClass

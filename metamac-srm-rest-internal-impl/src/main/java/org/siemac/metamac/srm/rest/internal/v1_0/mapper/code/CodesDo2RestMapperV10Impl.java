@@ -101,7 +101,7 @@ import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 @Component
 public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements CodesDo2RestMapperV10 {
 
-    private final Logger logger = LoggerFactory.getLogger(CodesDo2RestMapperV10Impl.class);
+    private final Logger                  logger = LoggerFactory.getLogger(CodesDo2RestMapperV10Impl.class);
 
     @Autowired
     private OrganisationsDo2RestMapperV10 organisationsDo2RestMapper;

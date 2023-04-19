@@ -43,7 +43,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.statistical_operations.v1_0.domain.Operation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes;
@@ -67,8 +66,8 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
 public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV10BaseTest {
 
-    private ConceptsMetamacService conceptsService;
-    private ItemSchemeVersionRepository itemSchemeVersionRepository;
+    private ConceptsMetamacService                  conceptsService;
+    private ItemSchemeVersionRepository             itemSchemeVersionRepository;
     private StatisticalOperationsRestExternalFacade statisticalOperationsRestExternalFacade;
 
     @Test

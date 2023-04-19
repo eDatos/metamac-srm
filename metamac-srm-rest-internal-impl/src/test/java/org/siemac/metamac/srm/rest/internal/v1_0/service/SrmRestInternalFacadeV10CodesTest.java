@@ -88,11 +88,11 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
 public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10BaseTest {
 
-    private CodesMetamacService codesService;
-    private MiscMetamacService miscMetamacService;
+    private CodesMetamacService         codesService;
+    private MiscMetamacService          miscMetamacService;
     private ItemSchemeVersionRepository itemSchemeVersionRepository;
-    private CodeRepository codeRepository;
-    private CodeMetamacRepository codeMetamacRepository;
+    private CodeRepository              codeRepository;
+    private CodeMetamacRepository       codeMetamacRepository;
 
     @Test
     public void testJsonAcceptable() throws Exception {

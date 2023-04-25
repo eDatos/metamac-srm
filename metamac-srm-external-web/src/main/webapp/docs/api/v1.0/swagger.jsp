@@ -1100,7 +1100,7 @@
                 {"$ref":"#/components/parameters/versionParam"},
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
-                {"$ref":"#/components/parameters/codelistQueryParam"},
+                {"$ref":"#/components/parameters/codelistCodesQueryParam"},
                 {"$ref":"#/components/parameters/codelistOrderByParam"},
                {
                   "name":"openness",

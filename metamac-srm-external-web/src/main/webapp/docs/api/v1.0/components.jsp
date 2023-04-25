@@ -84,7 +84,13 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description": "<%= queryDescriptionWithParams(id, urn, name, parent, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+            "description": "<%= queryDescriptionWithParams(id, urn, name, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+        },
+        "codelistCodesQueryParam": {
+        "name":"query",
+        "in":"query",
+        "type":"string",
+        "description": "<%= queryDescriptionWithParams(id, urn, name, parent, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
         },
         "codelistOrderByParam": {
           "name":"orderBy",

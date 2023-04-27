@@ -100,6 +100,15 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return null;
     }
 
+    public static RelatedResourceDto getRelatedResource(String urn, Set<RelatedResourceDto> relatedResources) {
+        for (RelatedResourceDto relatedResourceDto : relatedResources) {
+            if (StringUtils.equals(urn, relatedResourceDto.getUrn())) {
+                return relatedResourceDto;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns TRUE if the variable with the urn variableUrn is in the variable list
      */
@@ -115,7 +124,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
     /**
      * Returns TRUE if the family with the urn familyUrn is in the family list
      */
-    public static boolean isFamilyInList(String familyUrn, List<VariableFamily> families) {
+    public static boolean isFamilyInList(String familyUrn, Set<VariableFamily> families) {
         for (VariableFamily family : families) {
             if (StringUtils.equals(familyUrn, family.getNameableArtefact().getUrn())) {
                 return true;
@@ -159,7 +168,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
     public static Boolean isAllExpandedRestrictionVisualisation(CodelistRestrictionVisualisation restrictionVisualisation) {
         return SrmConstants.CODELIST_RESTRICTION_VISUALISATION_ALL_EXPANDED_CODE.equals(restrictionVisualisation.getNameableArtefact().getCode());
     }
-    
+
     /**
      * Get code order.
      * Note: can not use reflection because set to null is necessary
@@ -404,7 +413,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
                 throw new IllegalArgumentException("Openness not supported: " + columnIndex);
         }
     }
-    
+
     /**
      * Get code Restriction.
      * Note: can not use reflection because set to null is necessary
@@ -475,7 +484,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
                 throw new IllegalArgumentException("Restriction not supported: " + columnIndex);
         }
     }
-    
+
     public static Boolean getCodeRestriction(CodeMetamac code, int columnIndex) {
         switch (columnIndex) {
             case 1:
@@ -538,7 +547,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         return extensionPoint.getIsExtended();
     }
-    
+
     public static String getCodeItemResultVariableElementCode(ItemResult itemResult) {
         if (itemResult.getExtensionPoint() == null) {
             return null;
@@ -570,7 +579,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         return extensionPoint.getRestriction();
     }
-    
+
     public static VariableElementResult getCodeItemResultVariableElementFull(ItemResult itemResult) {
         if (itemResult.getExtensionPoint() == null) {
             return null;
@@ -648,7 +657,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         }
         return result;
     }
-    
+
     public static Map<String, CodelistOpennessVisualisation> createMapOfCodelistOpennessVisualisationByOriginalUrn(List<CodelistOpennessVisualisation> openess) {
         Map<String, CodelistOpennessVisualisation> result = new HashMap<String, CodelistOpennessVisualisation>(openess.size());
         for (CodelistOpennessVisualisation codelistOpennessVisualisation : openess) {
@@ -709,8 +718,8 @@ public class SrmServiceUtils extends SdmxSrmUtils {
      */
     public static void addExceptionToExceptionItemsByResource(Map<String, MetamacExceptionItem> exceptionItemsByUrn, CommonServiceExceptionType exceptionType, String urnRelatedResource) {
         if (exceptionItemsByUrn.get(urnRelatedResource) == null) {
-            exceptionItemsByUrn.put(urnRelatedResource, MetamacExceptionItemBuilder.metamacExceptionItem().withCommonServiceExceptionType(exceptionType).withMessageParameters(urnRelatedResource)
-                    .build());
+            exceptionItemsByUrn.put(urnRelatedResource,
+                    MetamacExceptionItemBuilder.metamacExceptionItem().withCommonServiceExceptionType(exceptionType).withMessageParameters(urnRelatedResource).build());
         }
     }
 

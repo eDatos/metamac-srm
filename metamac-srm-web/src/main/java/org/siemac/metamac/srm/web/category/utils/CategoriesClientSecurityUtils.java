@@ -94,7 +94,7 @@ public class CategoriesClientSecurityUtils {
             return false;
         }
 
-        return SharedCategoriesSecurityUtils.canEndCategorySchemeValidity(MetamacSrmWeb.getCurrentUser()) && CommonUtils.canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic);
+        return SharedCategoriesSecurityUtils.canEndCategorySchemeValidity(MetamacSrmWeb.getCurrentUser()) && CommonUtils.canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic, true);
     }
 
     public static boolean canCreateCategorisation(ProcStatusEnum procStatus) {
@@ -184,8 +184,7 @@ public class CategoriesClientSecurityUtils {
         if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
             return false;
         }
-        return SharedCategoriesSecurityUtils.canImportCategoriesTsv(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus())
-                && CommonUtils.canSdmxMetadataAndStructureBeModified(categorySchemeMetamacDto);
+        return SharedCategoriesSecurityUtils.canImportCategoriesTsv(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
     }
 
     //

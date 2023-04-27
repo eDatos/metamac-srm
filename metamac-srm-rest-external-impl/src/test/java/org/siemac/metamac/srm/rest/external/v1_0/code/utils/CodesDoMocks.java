@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.code.utils;
 
 import java.util.List;
 
+import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -60,7 +61,7 @@ public class CodesDoMocks {
         extensionPoint.setIsExtended(isExtended);
         return itemResult;
     }
-    
+
     public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String visualizationCode) {
         CodelistRestrictionVisualisation target = CodesMetamacDoMocks.mockCodelistRestrictionVisualisationFixedValues(agencyID, resourceID, version, visualizationCode);
         target.setCodelistVersion(mockCodelistWithCodes(agencyID, resourceID, version));
@@ -79,6 +80,24 @@ public class CodesDoMocks {
         target.addFamily(mockVariableFamily("variableFamily3"));
         target.setType(VariableTypeEnum.GEOGRAPHICAL);
         return target;
+    }
+
+    public static boolean isFamilyInList(String familyUrn, List<Resource> families) {
+        for (Resource family : families) {
+            if (familyUrn.equals(family.getUrn())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isFamilyHrefInList(String familyUrn, List<Resource> families) {
+        for (Resource family : families) {
+            if (familyUrn.equals(family.getSelfLink().getHref())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static VariableElement mockVariableElement(String resourceID) {
@@ -109,9 +128,9 @@ public class CodesDoMocks {
     }
 
     public static List<RelatedCode> mockRelatedCodes() {
-        return  CodesMetamacDoMocks.mockListRelatedCodeFixedValues();
+        return CodesMetamacDoMocks.mockListRelatedCodeFixedValues();
     }
-    
+
     private static void addReplaceMetadatasToCodelist(CodelistVersionMetamac target, String agencyID) {
         target.setReplacedByCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplacedBy", "01.000", AccessTypeEnum.PUBLIC, true, true));
         target.addReplaceToCodelist(mockCodelistToReplaceMetadata(agencyID, "codelistReplaceTo1", "01.000", AccessTypeEnum.PUBLIC, true, true));

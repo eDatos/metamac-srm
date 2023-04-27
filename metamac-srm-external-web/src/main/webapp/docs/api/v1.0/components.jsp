@@ -2,6 +2,7 @@
 <%! String id = "ID: identificador"; %>
 <%! String urn = "URN: urn única"; %>
 <%! String name = "NAME: nombre"; %>
+<%! String parent = "PARENT: identificador del elemento padre"; %>
 <%! String description = "DESCRIPTION: descripción"; %>
 <%! String descriptionSource = "DESCRIPTION_SOURCE: origen de la descripción"; %>
 <%! String validFrom = "VALID_FROM: válido desde"; %>
@@ -32,7 +33,7 @@
 <%! String attributeConceptUrn = "ATTRIBUTE_CONCEPT_URN"; %>
 <%! String dimensionConceptUrn = "DIMENSION_CONCEPT_URN"; %>
 
-<%! String validOperators = "<div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: pátron sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul>"; %>
+<%! String validOperators = "<div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: patrón sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul>"; %>
 <%! String criteriosDeOrden = "Criterios de Orden<ul><li>ASC: ascendente</li><li>DESC: descendente</li></ul>"; %>
 <%! String queryDescription = "<div>Consulta para filtrar los resultados</div>"; %>
 <%! String orderByDescription = "<div>Campo por el que ordenar los resultados</div>"; %>
@@ -107,7 +108,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id,urn,name,description,descriptionSource,acronym,extendsUrn,relatedConceptUrn,conceptSchemeUrn,conceptSchemeType,conceptSchemeStatisticalOperationUrn, conceptSchemeLatest) %>"
+            "description":"<%= queryDescriptionWithParams(id,urn,name,parent,description,descriptionSource,acronym,extendsUrn,relatedConceptUrn,conceptSchemeUrn,conceptSchemeType,conceptSchemeStatisticalOperationUrn, conceptSchemeLatest) %>"
         },
         "conceptOrderByParam": {
           "name":"orderBy",

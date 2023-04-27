@@ -97,7 +97,7 @@ public class ConceptsClientSecurityUtils {
         }
         // ConceptSchemeTypeEnum type, String operationCode
         return SharedConceptsSecurityUtils.canImportConceptsTsv(MetamacSrmWeb.getCurrentUser(), conceptSchemeMetamacDto.getLifeCycle().getProcStatus(), conceptSchemeMetamacDto.getType(),
-                operationCode) && CommonUtils.canSdmxMetadataAndStructureBeModified(conceptSchemeMetamacDto);
+                operationCode);
     }
 
     public static boolean canCancelConceptSchemeValidity(String urn, ConceptSchemeTypeEnum type, String relatedOperationCode, RelatedResourceDto maintainer, String versionLogic,
@@ -114,7 +114,7 @@ public class ConceptsClientSecurityUtils {
         }
 
         return SharedConceptsSecurityUtils.canEndConceptSchemeValidity(MetamacSrmWeb.getCurrentUser(), type, relatedOperationCode)
-                && CommonUtils.canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic);
+                && CommonUtils.canSdmxMetadataAndStructureBeModified(urn, maintainer, versionLogic, true);
     }
 
     public static boolean canCreateCategorisation(ProcStatusEnum procStatus, ConceptSchemeTypeEnum type, String operationCode) {

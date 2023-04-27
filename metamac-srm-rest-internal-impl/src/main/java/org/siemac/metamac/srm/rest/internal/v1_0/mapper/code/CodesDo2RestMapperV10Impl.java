@@ -343,7 +343,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
             return null;
         }
         ItemResourceInternal target = new ItemResourceInternal();
-          toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
+        toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_RESTRICTION, toCodelistRestrictionSelfLink(source.getCodelistVersion(), source.getNameableArtefact().getCode() ), toCodelistRestrictionManagementApplicationLink(source.getNameableArtefact().getCode(), source.getNameableArtefact().getUrn()), target, false, null);
         return target;
     }
 

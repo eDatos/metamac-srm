@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -188,7 +189,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit) {
+    public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
 
         Organisations targets = new Organisations();
         targets.setKind(toKindItemsFromOrganisationType(null)); // generic
@@ -199,14 +200,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (OrganisationMetamac source : sourcesPagedResult.getValues()) {
-            ItemResource target = toResource(source);
+            ItemResource target = toResource(source, fields);
             targets.getOrganisations().add(target);
         }
         return targets;
     }
 
     @Override
-    public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion) {
+    public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
 
         Organisations targets = new Organisations();
         targets.setKind(toKindItemsFromOrganisationType(null)); // generic
@@ -217,14 +218,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (ItemResult source : sources) {
-            ItemResource target = toResource(source, organisationSchemeVersion);
+            ItemResource target = toResource(source, organisationSchemeVersion, fields);
             targets.getOrganisations().add(target);
         }
         return targets;
     }
 
     @Override
-    public Agencies toAgencies(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit) {
+    public Agencies toAgencies(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
 
         Agencies targets = new Agencies();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.AGENCY_SCHEME));
@@ -235,14 +236,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (OrganisationMetamac source : sourcesPagedResult.getValues()) {
-            ItemResource target = toResource(source);
+            ItemResource target = toResource(source, fields);
             targets.getAgencies().add(target);
         }
         return targets;
     }
 
     @Override
-    public Agencies toAgencies(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion) {
+    public Agencies toAgencies(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
 
         Agencies targets = new Agencies();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.AGENCY_SCHEME));
@@ -253,14 +254,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (ItemResult source : sources) {
-            ItemResource target = toResource(source, organisationSchemeVersion);
+            ItemResource target = toResource(source, organisationSchemeVersion, fields);
             targets.getAgencies().add(target);
         }
         return targets;
     }
 
     @Override
-    public OrganisationUnits toOrganisationUnits(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit) {
+    public OrganisationUnits toOrganisationUnits(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
 
         OrganisationUnits targets = new OrganisationUnits();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME));
@@ -271,14 +272,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (OrganisationMetamac source : sourcesPagedResult.getValues()) {
-            ItemResource target = toResource(source);
+            ItemResource target = toResource(source, fields);
             targets.getOrganisationUnits().add(target);
         }
         return targets;
     }
 
     @Override
-    public OrganisationUnits toOrganisationUnits(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion) {
+    public OrganisationUnits toOrganisationUnits(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
 
         OrganisationUnits targets = new OrganisationUnits();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME));
@@ -289,14 +290,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (ItemResult source : sources) {
-            ItemResource target = toResource(source, organisationSchemeVersion);
+            ItemResource target = toResource(source, organisationSchemeVersion, fields);
             targets.getOrganisationUnits().add(target);
         }
         return targets;
     }
 
     @Override
-    public DataProviders toDataProviders(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit) {
+    public DataProviders toDataProviders(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
 
         DataProviders targets = new DataProviders();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME));
@@ -307,14 +308,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (OrganisationMetamac source : sourcesPagedResult.getValues()) {
-            ItemResource target = toResource(source);
+            ItemResource target = toResource(source, fields);
             targets.getDataProviders().add(target);
         }
         return targets;
     }
 
     @Override
-    public DataProviders toDataProviders(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion) {
+    public DataProviders toDataProviders(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
 
         DataProviders targets = new DataProviders();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME));
@@ -325,14 +326,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (ItemResult source : sources) {
-            ItemResource target = toResource(source, organisationSchemeVersion);
+            ItemResource target = toResource(source, organisationSchemeVersion, fields);
             targets.getDataProviders().add(target);
         }
         return targets;
     }
 
     @Override
-    public DataConsumers toDataConsumers(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit) {
+    public DataConsumers toDataConsumers(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
 
         DataConsumers targets = new DataConsumers();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME));
@@ -343,14 +344,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (OrganisationMetamac source : sourcesPagedResult.getValues()) {
-            ItemResource target = toResource(source);
+            ItemResource target = toResource(source, fields);
             targets.getDataConsumers().add(target);
         }
         return targets;
     }
 
     @Override
-    public DataConsumers toDataConsumers(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion) {
+    public DataConsumers toDataConsumers(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
         DataConsumers targets = new DataConsumers();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME));
 
@@ -360,7 +361,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
         // Values
         for (ItemResult source : sources) {
-            ItemResource target = toResource(source, organisationSchemeVersion);
+            ItemResource target = toResource(source, organisationSchemeVersion, fields);
             targets.getDataConsumers().add(target);
         }
         return targets;
@@ -555,25 +556,25 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return target;
     }
 
-    private ItemResource toResource(OrganisationMetamac source) {
+    private ItemResource toResource(OrganisationMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
         ItemResource target = new ItemResource();
-        toResource(source, toKindItem(source.getOrganisationType()), toOrganisationSelfLink(source), target, null);
+        toResource(source, toKindItem(source.getOrganisationType()), toOrganisationSelfLink(source), target, fields);
         if (OrganisationTypeEnum.AGENCY.equals(source.getOrganisationType())) {
             target.setNestedId(source.getIdAsMaintainer());
         }
         return target;
     }
 
-    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion) {
+    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
         if (source == null) {
             return null;
         }
         OrganisationTypeEnum organisationType = getOrganisationTypeEnum(source);
         ItemResource target = new ItemResource();
-        toResource(source, toKindItem(organisationType), toOrganisationSelfLink(source, organisationSchemeVersion), target, organisationSchemeVersion.getMaintainableArtefact().getIsImported(), null);
+        toResource(source, toKindItem(organisationType), toOrganisationSelfLink(source, organisationSchemeVersion), target, organisationSchemeVersion.getMaintainableArtefact().getIsImported(), fields);
         if (OrganisationTypeEnum.AGENCY.equals(organisationType)) {
             target.setNestedId(getIdAsMaintainer(source));
         }

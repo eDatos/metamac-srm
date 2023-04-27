@@ -1,4 +1,4 @@
-package org.siemac.metamac.srm.core.code.domain;
+package org.siemac.metamac.srm.core.category.domain;
 
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 

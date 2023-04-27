@@ -25,7 +25,7 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
 
     @Autowired
     private CategoryMetamacRepository categoryMetamacRepository;
-
+    
     @Override
     public ItemSchemeVersion createItemSchemeVersion() {
         return new CategorySchemeVersionMetamac();
@@ -46,10 +46,13 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
     }
 
     @Override
-    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem) {
-        super.copyItem(sourceItem, sourceItemResult, targetItem);
-        // nothing more
-
+    public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
+        
+        CategoryMetamac source = (CategoryMetamac) sourceItem;
+        CategoryMetamac target = (CategoryMetamac) targetItem;
+        target.setEniSchema(source.getEniSchema());
+        
         // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from sourceItemResult
     }
 

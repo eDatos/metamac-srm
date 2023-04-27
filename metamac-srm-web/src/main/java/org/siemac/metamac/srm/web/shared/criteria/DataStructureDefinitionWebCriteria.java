@@ -1,11 +1,13 @@
 package org.siemac.metamac.srm.web.shared.criteria;
 
+import java.util.List;
+
 public class DataStructureDefinitionWebCriteria extends VersionableResourceWebCriteria {
 
     private static final long serialVersionUID = 1L;
 
     private String            statisticalOperationUrn;
-    private String            dimensionConceptUrn;
+    private List<String>      dimensionConceptUrn;
     private String            attributeConceptUrn;
     private String            codelistUrn;
 
@@ -24,7 +26,7 @@ public class DataStructureDefinitionWebCriteria extends VersionableResourceWebCr
         this.statisticalOperationUrn = statisticalOperationUrn;
     }
 
-    public String getDimensionConceptUrn() {
+    public List<String> getDimensionConceptUrn() {
         return dimensionConceptUrn;
     }
 
@@ -32,7 +34,7 @@ public class DataStructureDefinitionWebCriteria extends VersionableResourceWebCr
         return attributeConceptUrn;
     }
 
-    public void setDimensionConceptUrn(String dimensionConceptUrn) {
+    public void setDimensionConceptUrn(List<String> dimensionConceptUrn) {
         this.dimensionConceptUrn = dimensionConceptUrn;
     }
 

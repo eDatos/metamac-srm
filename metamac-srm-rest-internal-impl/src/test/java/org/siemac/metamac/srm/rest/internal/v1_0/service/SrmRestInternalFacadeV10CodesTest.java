@@ -1,6 +1,5 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.service;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -533,7 +532,6 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
-
     
     @Test
     public void testFindCodesRetrieveExtendedXml() throws Exception {

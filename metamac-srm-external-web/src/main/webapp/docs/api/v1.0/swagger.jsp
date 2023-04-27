@@ -221,6 +221,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/organizationQueryParam"},
                 {"$ref":"#/components/parameters/organizationOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                }
             ],
             "responses":{
                "200":{
@@ -634,6 +640,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryQueryParam"},
                 {"$ref":"#/components/parameters/categoryOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType\""
+                }
             ],
             "responses":{
                "200":{
@@ -728,7 +740,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"<div>Consulta para filtrar los resultados</div><div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: pátron sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul><div>Campos válidos:<ul><li>ID</li> <li>URN</li> <li>NAME</li></ul>Ejemplo: query=\"ID EQ 2090\"</div>"
+                  "description":"<div>Consulta para filtrar los resultados</div><div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: patrón sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul><div>Campos válidos:<ul><li>ID</li> <li>URN</li> <li>NAME</li></ul>Ejemplo: query=\"ID EQ 2090\"</div>"
                }
             ],
             "responses":{
@@ -1118,7 +1130,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+open: muestra la apertura del elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+order: muestra el orden establecido para el elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+variableElement: muestra su variable de elemento </li><li>+description: muestra la descripción de los códigos</li><li>+variableElement: muestra su variable de elemento </li><li>+extended: muestra si el código es extendido o no </li></ul> Ejemplo: fields=\"+open,+order\""
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+open: muestra la apertura del elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+order: muestra el orden establecido para el elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+variableElement: muestra su variable de elemento </li><li>+description: muestra la descripción de los códigos</li><li>+variableElement: muestra su variable de elemento </li><li>+extended: muestra si el código es extendido o no </li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+open,+order\""
                }
             ],
             "responses":{
@@ -1417,8 +1429,8 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li></ul> Ejemplo: fields=\"+description\""
-               }
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+pluralName: muestra el nombre en plural del concepto</li></ul> Ejemplo: fields=\"+description,+annotations\""
+              }
             ],
             "responses":{
                "200":{
@@ -1877,6 +1889,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/organizationQueryParam"},
                 {"$ref":"#/components/parameters/organizationOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                }
             ],
             "responses":{
                "200":{
@@ -2128,6 +2146,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/organizationQueryParam"},
                 {"$ref":"#/components/parameters/organizationOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                }
             ],
             "responses":{
                "200":{
@@ -2335,6 +2359,12 @@
                 {"$ref":"#/components/parameters/agencyIdParam"},
                 {"$ref":"#/components/parameters/resourceIdParam"},
                 {"$ref":"#/components/parameters/versionParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+dimension.pluralName: muestra el nombre en plural de las dimensiones</li></ul> Ejemplo: fields=\"+dimension.pluralName\""
+                }
             ],
             "responses":{
                "200":{
@@ -2540,6 +2570,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/organizationQueryParam"},
                 {"$ref":"#/components/parameters/organizationOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                }
             ],
             "responses":{
                "200":{
@@ -2791,6 +2827,12 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/organizationSchemeQueryParam"},
                 {"$ref":"#/components/parameters/organizationSchemeOrderByParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                }
             ],
             "responses":{
                "200":{

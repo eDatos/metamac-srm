@@ -89,6 +89,8 @@ Application CodesMetamac {
     		checkCodelistVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionsByResourceUrn) throws MetamacException;
 			"Checks related resources are externally published"
     		checkCodelistWithRelatedResourcesExternallyPublished(@CodelistVersionMetamac codelistVersion) throws MetamacException;
+    		"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
+            List<Long> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
     		
 			// CODES
 
@@ -129,12 +131,16 @@ Application CodesMetamac {
     		TaskImportationInfo importCodesTsv(String codelistUrn, java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
+    		"Imports code openness levels in tsv format"
+    		TaskImportationInfo importCodeOpennessLevelsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		"Imports code restrictions in tsv format"
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
+    		"Exports code openness leves in tsv format"
+    		String exportCodeOpennessLevelsTsv(String codelistUrn) throws MetamacException;
     		"Exports code restrictions in tsv format"
     		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
@@ -344,9 +350,12 @@ Application CodesMetamac {
 				@CodelistVersionMetamac findByUrn(String urn);
 				@CodelistVersionMetamac retrieveCodelistVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@CodelistVersionMetamac findByCode(String urn);
-				
+				"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
+    			List<Long> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
+    						
 				checkCodelistVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+
 			}			
 		}
 
@@ -603,7 +612,7 @@ Application CodesMetamac {
 			Boolean hasVariableElements nullable transient;
 			
 			"Variable families"
-			- Bag<@VariableFamily> families cascade="none" fetch="lazy" databaseColumn="VARIABLE_FAMILY_FK" databaseJoinTable="TB_M_VAR_FAMILIES_VARIABLES" <-> variables;
+			- Set<@VariableFamily> families cascade="none" fetch="lazy" databaseColumn="VARIABLE_FAMILY_FK" databaseJoinTable="TB_M_VAR_FAMILIES_VARIABLES" <-> variables;
 			"Codelists"
 			- Bag<@CodelistVersionMetamac> codelists cascade="none" fetch="lazy" inverse <-> variable;
 			"Concepts"

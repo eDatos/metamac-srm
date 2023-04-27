@@ -148,6 +148,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.error.there_are_not_final_versions");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR                                                                 = create("exception.srm.importation.tsv.error");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_FILE_PARSING                                                    = create("exception.srm.importation.tsv.error.file_parse");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_QUANTITY_METADATA_GENERAL_ERROR                                 = create("exception.srm.importation.tsv.error.quantity_metadata_general_error");
+    
     public static final CommonServiceExceptionType IMPORTATION_TSV_HEADER_INCORRECT                                                      = create(
             "exception.srm.importation.tsv.error.header.incorrect");
     public static final CommonServiceExceptionType IMPORTATION_TSV_HEADER_INCORRECT_COLUMN                                               = create(
@@ -173,7 +175,10 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.parent.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED                                             = create("info.srm.importation.tsv.resource_not_updated");
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_EXTERNAL_AGENCY_RESOURCE_NOT_UPDATED                             = create("info.srm.importation.tsv.external_agency_resource_not_updated");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED                                     = create("info.srm.importation.tsv.temporal_version_resource_not_updated");
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_RESOURCE_UPDATED                                                 = create("info.srm.importation.tsv.resource_updated");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_TEMPORAL_VERSION_NOT_UPDATED_WITH_ERRORS                         = create("info.srm.importation.tsv.resource_not_updated_with_errors");
+
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_VARIABLE_ELEMENT_NOT_FOUND                                       = create(
             "info.srm.importation.tsv.error.variable_element.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_RESOURCE_DUPLICATED                                                   = create(
@@ -182,8 +187,12 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.order_visualisation.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_RESTRICTION_VISUALISATION_NOT_FOUND                             = create(
             "exception.srm.importation.tsv.error.restriction_visualisation.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_OPENNESS_LEVEL_VISUALISATION_NOT_FOUND                         = create(
+            "exception.srm.importation.tsv.error.openness_level_visualisation.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_ALPHABETICAL_VISUALISATION_NOT_SUPPORTED                        = create(
             "exception.srm.importation.tsv.error.order_visualisation.alphabetical_not_supported");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_ALL_EXPANDED_VISUALISATION_NOT_SUPPORTED                        = create(
+            "exception.srm.importation.tsv.error.openness_visualisation.all_expanded_not_supported");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CODE_NOT_FOUND                                                  = create("exception.srm.importation.tsv.error.code.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CODES                                          = create(
             "exception.srm.importation.tsv.error.incorrect_number_codes");
@@ -222,5 +231,6 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER                            = create("stream_message.srm.exception.send_message.fails");
     public static final CommonServiceExceptionType STREAM_MESSAGING_MISSING_MANDATORY_SETTINGS                                           = create(
             "stream_message.srm.exception.config.missing_settings");
+    public static final CommonServiceExceptionType ENI_SCHEMA_CATALOG_NOT_FOUND                                                          = create("exception.srm.list.eni_schema_catalog.not_found");
 
 }

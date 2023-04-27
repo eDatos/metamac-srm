@@ -1,10 +1,7 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.concept;
 
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -17,23 +14,9 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptTypes;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Quantity;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityAmount;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityChangeRate;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityFraction;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityIndex;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityMagnitude;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRate;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.QuantityRatio;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.RelatedConcepts;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.RoleConcepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.*;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
@@ -43,6 +26,7 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
+import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -114,18 +98,21 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
 
         // Values
         for (ConceptMetamac source : sourcesPagedResult.getValues()) {
-            ItemResource target = toResource(source, fields);
+            ConceptResource target = toResource(source, fields);
             targets.getConcepts().add(target);
         }
         return targets;
     }
 
-    private ItemResource toResource(com.arte.statistic.sdmx.srm.core.concept.domain.Concept source, Set<String> fields) {
+    private ConceptResource toResource(ConceptMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
-        ItemResource target = new ItemResource();
+        ConceptResource target = new ConceptResource();
         toResource(source, SrmRestConstants.KIND_CONCEPT, toConceptSelfLink(source), target, fields);
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME)) {
+            target.setPluralName(toInternationalString(source.getPluralName()));
+        }
         return target;
     }
 
@@ -141,7 +128,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
 
         // Values
         for (ItemResult source : sources) {
-            ItemResource target = toResource(source, conceptSchemeVersion, fields);
+            ConceptResource target = toResource(source, conceptSchemeVersion, fields);
             targets.getConcepts().add(target);
         }
         return targets;
@@ -292,12 +279,16 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         return target;
     }
 
-    private ItemResource toResource(ItemResult source, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) {
+    private ConceptResource toResource(ItemResult source, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) {
         if (source == null) {
             return null;
         }
-        ItemResource target = new ItemResource();
+        ConceptResource target = new ConceptResource();
         toResource(source, SrmRestConstants.KIND_CONCEPT, toConceptSelfLink(source, conceptSchemeVersion), target, conceptSchemeVersion.getMaintainableArtefact().getIsImported(), fields);
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME)) {
+            Map<String, String> sourcePluralName = ((ConceptMetamacResultExtensionPoint) source.getExtensionPoint()).getPluralName();
+            target.setPluralName(toInternationalString(sourcePluralName));
+        }
         return target;
     }
 

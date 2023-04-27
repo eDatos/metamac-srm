@@ -20,6 +20,7 @@ import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.QUERY_LATEST;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.VERSION_1;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.VERSION_2;
+import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.FIELD_ENI_SCHEME;
 
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -310,33 +311,37 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     public void testFindCategories() throws Exception {
 
         // without parameters
-        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null); // without limits
-        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "10000", null, null, null); // without limits
-        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "0", null, null); // without limits, first page
-        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null); // with pagination
-        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null); // query
-        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC); // query and order
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null); // without limits
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "10000", null, null, null, null); // without limits
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "0", null, null, null); // without limits, first page
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null, null); // with pagination
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
 
         // agency
-        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null); // without limits
-        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "10000", null, null, null); // without limits
-        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, null, "0", null, null); // without limits, first page
-        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null); // with pagination
-        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null); // query
-        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC); // query and order
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null); // without limits
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "10000", null, null, null, null); // without limits
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, null, "0", null, null, null); // without limits, first page
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null, null); // with pagination
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
+        testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
 
         // resource
-        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, null, null, null, null); // without limits
-        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "10000", null, null, null); // without limits
-        testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, WILDCARD_ALL, null, "0", null, null); // without limits, first page
-        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", null, null); // with pagination
-        testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null); // query
-        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC); // query and order
-
+        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, null, null, null, null, null); // without limits
+        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "10000", null, null, null, null); // without limits
+        testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, WILDCARD_ALL, null, "0", null, null, null); // without limits, first page
+        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", null, null, null); // with pagination
+        testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
+        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
+        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
+        
         // version
-        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", null, null); // with pagination
-        testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null); // query
-        testFindCategories(AGENCY_1, WILDCARD_ALL, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC); // query and order
+        testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", null, null, null); // with pagination
+        testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
+        testFindCategories(AGENCY_1, WILDCARD_ALL, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
+        testFindCategories(AGENCY_1, WILDCARD_ALL, VERSION_1, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
     }
 
     @Test
@@ -352,7 +357,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     public void testFindCategoriesRetrieveAll() throws Exception {
 
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null);
 
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
@@ -522,12 +527,23 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         assertEquals(SrmRestConstants.KIND_CATEGORY_SCHEMES, categorySchemes.getKind());
     }
 
-    private void testFindCategories(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
+    private void testFindCategories(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy, String fields) throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(agencyID, resourceID, version, query, orderBy, limit, offset);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(agencyID, resourceID, version, query, orderBy, limit, offset, fields);
 
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
+        
+        if (fields != null && fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
+            for (int i = 0; i < categories.getCategories().size(); i++) {
+                assertNotNull(categories.getCategories().get(i).getEniSchemeType());
+            }
+        } else {
+            for (int i = 0; i < categories.getCategories().size(); i++) {
+                assertNull(categories.getCategories().get(i).getEniSchemeType());
+            }
+        }
+        
     }
 
     private void mockRetrieveItemSchemeVersionByVersion() throws MetamacException {
@@ -618,10 +634,10 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
                     CategorySchemeVersionMetamac categoryScheme2 = CategoriesDoMocks.mockCategoryScheme(AGENCY_1, ITEM_SCHEME_2_CODE, VERSION_1);
 
                     List<CategoryMetamac> categories = new ArrayList<CategoryMetamac>();
-                    categories.add(CategoriesDoMocks.mockCategory("category1", categoryScheme1, null));
-                    categories.add(CategoriesDoMocks.mockCategory("category2", categoryScheme1, null));
-                    categories.add(CategoriesDoMocks.mockCategory("category2A", categoryScheme1, categories.get(1)));
-                    categories.add(CategoriesDoMocks.mockCategory("category1", categoryScheme2, null));
+                    categories.add(CategoriesDoMocks.mockCategoryWithEniScheme("category1", categoryScheme1, null));
+                    categories.add(CategoriesDoMocks.mockCategoryWithEniScheme("category2", categoryScheme1, null));
+                    categories.add(CategoriesDoMocks.mockCategoryWithEniScheme("category2A", categoryScheme1, categories.get(1)));
+                    categories.add(CategoriesDoMocks.mockCategoryWithEniScheme("category1", categoryScheme2, null));
 
                     return new PagedResult<CategoryMetamac>(categories, categories.size(), categories.size(), categories.size(), categories.size() * 10, 0);
                 }
@@ -635,10 +651,10 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
             @Override
             public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
                 // any
-                ItemResult category1 = CategoriesDoMocks.mockCategoryItemResult("category1", null);
-                ItemResult category2 = CategoriesDoMocks.mockCategoryItemResult("category2", null);
-                ItemResult category2A = CategoriesDoMocks.mockCategoryItemResult("category2A", category2);
-                ItemResult category2B = CategoriesDoMocks.mockCategoryItemResult("category2B", category2);
+                ItemResult category1 = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category1", null);
+                ItemResult category2 = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2", null);
+                ItemResult category2A = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2A", category2);
+                ItemResult category2B = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2B", category2);
                 return Arrays.asList(category1, category2, category2A, category2B);
             };
         });

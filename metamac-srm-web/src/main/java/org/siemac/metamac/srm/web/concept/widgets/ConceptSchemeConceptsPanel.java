@@ -4,6 +4,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
 import org.siemac.metamac.srm.web.concept.utils.CommonUtils;
@@ -56,6 +57,7 @@ public class ConceptSchemeConceptsPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
+                importConceptsWindow.initImportWindow(org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(conceptSchemeDto.getMaintainer()), VersionUtil.isTemporalVersion(conceptSchemeDto.getVersionLogic()));
                 importConceptsWindow.show();
             }
         });

@@ -29,7 +29,7 @@ public class ConceptMetamacResultExtensionPoint {
     private String                               unitCodelistCode               = null;
     private String                               unitCode                       = null;
     private QuantityUnitSymbolPositionEnum       unitSymbolPosition             = null;
-    private Integer                              unitMultiplier                 = null;
+    private String                               unitMultiplier                 = null;
     private Integer                              significantDigits              = null;
     private Integer                              decimalPlaces                  = null;
     private Integer                              miminum                        = null;
@@ -147,11 +147,11 @@ public class ConceptMetamacResultExtensionPoint {
         this.unitSymbolPosition = unitSymbolPosition;
     }
 
-    public Integer getUnitMultiplier() {
+    public String getUnitMultiplier() {
         return unitMultiplier;
     }
 
-    public void setUnitMultiplier(Integer unitMultiplier) {
+    public void setUnitMultiplier(String unitMultiplier) {
         this.unitMultiplier = unitMultiplier;
     }
 

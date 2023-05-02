@@ -14,7 +14,8 @@ public class QuantityDto extends QuantityDtoBase {
     public QuantityDto() {
         // default values
         setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.END);
-        setUnitMultiplier(Integer.valueOf(1));
+        // TODO: poner codigo por defecto del multiplicador 1
+        // setUnitMultiplier(Integer.valueOf(1));
     }
 
     public Boolean isQuantityOrExtension(QuantityTypeEnum type) {

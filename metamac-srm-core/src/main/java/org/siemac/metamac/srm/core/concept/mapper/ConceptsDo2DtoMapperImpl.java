@@ -165,7 +165,7 @@ public class ConceptsDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Co
         target.setUnitSymbolPosition(source.getUnitSymbolPosition());
         target.setSignificantDigits(source.getSignificantDigits());
         target.setDecimalPlaces(source.getDecimalPlaces());
-        target.setUnitMultiplier(source.getUnitMultiplier());
+        target.setUnitMultiplier(codesDo2DtoMapper.codeMetamacDoToRelatedResourceDto(source.getUnitMultiplier()));
         target.setMinimum(source.getMinimum());
         target.setMaximum(source.getMaximum());
         target.setNumerator(conceptMetamacDoToRelatedResourceDto(source.getNumerator()));

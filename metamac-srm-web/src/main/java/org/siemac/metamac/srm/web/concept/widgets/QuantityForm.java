@@ -40,6 +40,7 @@ public class QuantityForm extends BaseQuantityForm {
     private SearchConceptForQuantityNumeratorItem   searchNumeratorItem;
     private SearchConceptForQuantityBaseItem        searchBaseItem;
     private SearchCodeForQuantityUnitItem           searchUnitItem;
+    private SearchCodeForQuantityUnitMultiplierItem searchUnitMultiplierItem;
     private SearchCodeForQuantityBaseLocationItem   searchBaseLocationItem;
 
     public QuantityForm(String groupTitle) {
@@ -60,14 +61,14 @@ public class QuantityForm extends BaseQuantityForm {
         searchUnitItem.setValidators(getQuantityRequiredIfValidator());
         searchUnitItem.setShowIfCondition(getShowIfAnyQuantityType());
 
+        searchUnitMultiplierItem = createQuantityUnitMultiplierItem(ConceptDS.QUANTITY_UNIT_MULTIPLIER, getConstants().conceptQuantityUnitMultiplier());
+        searchUnitMultiplierItem.setValidators(getQuantityRequiredIfValidator());
+        searchUnitMultiplierItem.setShowIfCondition(getShowIfAnyQuantityType());
+
         CustomSelectItem unitSymbol = new CustomSelectItem(ConceptDS.QUANTITY_UNIT_SYMBOL_POSITION, getConstants().conceptQuantityUnitSymbolPosition());
         unitSymbol.setValueMap(getQuantityUnitSymbolValueMap());
         unitSymbol.setValidators(getQuantityRequiredIfValidator());
         unitSymbol.setShowIfCondition(getShowIfAnyQuantityType());
-
-        CustomIntegerItem unitMultiplier = new CustomIntegerItem(ConceptDS.QUANTITY_UNIT_MULTIPLIER, getConstants().conceptQuantityUnitMultiplier());
-        unitMultiplier.setValidators(getQuantityRequiredIfValidator(), getUnitMultiplierValidator());
-        unitMultiplier.setShowIfCondition(getShowIfAnyQuantityType());
 
         CustomIntegerItem sigDigits = new CustomIntegerItem(ConceptDS.QUANTITY_SIGNIFICANT_DIGITS, getConstants().conceptQuantitySignificantDigits());
         sigDigits.setShowIfCondition(getShowIfAnyQuantityType());
@@ -132,8 +133,8 @@ public class QuantityForm extends BaseQuantityForm {
         searchBaseItem = createQuantityBaseItem(ConceptDS.QUANTITY_BASE_QUANTITY, getConstants().conceptQuantityBaseQuantity());
         searchBaseItem.setShowIfCondition(getBaseQuantityIfFunction());
 
-        setFields(type, searchUnitItem, unitSymbol, unitMultiplier, sigDigits, decPlaces, min, max, searchDenominatorItem, searchNumeratorItem, isPercentange, percentageOf, indexBaseType, baseValue,
-                baseTime, searchBaseLocationItem, searchBaseItem);
+        setFields(type, searchUnitItem, unitSymbol, searchUnitMultiplierItem, sigDigits, decPlaces, min, max, searchDenominatorItem, searchNumeratorItem, isPercentange, percentageOf, indexBaseType,
+                baseValue, baseTime, searchBaseLocationItem, searchBaseItem);
     }
 
     public void setCodelistsForQuantityUnitFilter(List<RelatedResourceDto> resources, int firstResult, int totalResults) {
@@ -147,6 +148,20 @@ public class QuantityForm extends BaseQuantityForm {
         if (searchUnitItem != null && searchUnitItem.getSearchWindow() != null) {
             searchUnitItem.getSearchWindow().setRelatedResources(resources);
             searchUnitItem.getSearchWindow().refreshListPaginationInfo(firstResult, resources.size(), totalResults);
+        }
+    }
+
+    public void setCodelistsForQuantityUnitMultiplierFilter(List<RelatedResourceDto> resources, int firstResult, int totalResults) {
+        if (searchUnitMultiplierItem != null && searchUnitMultiplierItem.getSearchWindow() != null) {
+            searchUnitMultiplierItem.getSearchWindow().setFilterRelatedResources(resources);
+            searchUnitMultiplierItem.getSearchWindow().refreshFilterListPaginationInfo(firstResult, resources.size(), totalResults);
+        }
+    }
+
+    public void setCodesForQuantityUnitMultiplier(List<RelatedResourceDto> resources, int firstResult, int totalResults) {
+        if (searchUnitMultiplierItem != null && searchUnitMultiplierItem.getSearchWindow() != null) {
+            searchUnitMultiplierItem.getSearchWindow().setRelatedResources(resources);
+            searchUnitMultiplierItem.getSearchWindow().refreshListPaginationInfo(firstResult, resources.size(), totalResults);
         }
     }
 
@@ -214,7 +229,9 @@ public class QuantityForm extends BaseQuantityForm {
                 setRelatedResourceDtoValue(ConceptDS.QUANTITY_UNIT, quantityDto.getUnitCode());
             }
             setValue(ConceptDS.QUANTITY_UNIT_SYMBOL_POSITION, quantityDto.getUnitSymbolPosition() != null ? quantityDto.getUnitSymbolPosition().toString() : "");
-            setValue(ConceptDS.QUANTITY_UNIT_MULTIPLIER, quantityDto.getUnitMultiplier());
+            if (quantityDto.getUnitMultiplier() != null) {
+                setRelatedResourceDtoValue(ConceptDS.QUANTITY_UNIT_MULTIPLIER, quantityDto.getUnitMultiplier());
+            }
             if (quantityDto.getSignificantDigits() != null) {
                 setValue(ConceptDS.QUANTITY_SIGNIFICANT_DIGITS, quantityDto.getSignificantDigits());
             }
@@ -275,7 +292,7 @@ public class QuantityForm extends BaseQuantityForm {
                     : null);
 
             quantityDto.setUnitCode(getRelatedResourceDtoValue(ConceptDS.QUANTITY_UNIT));
-            quantityDto.setUnitMultiplier(getValueAsInteger(ConceptDS.QUANTITY_UNIT_MULTIPLIER));
+            quantityDto.setUnitMultiplier(getRelatedResourceDtoValue(ConceptDS.QUANTITY_UNIT_MULTIPLIER));
             quantityDto.setSignificantDigits(getValueAsInteger(ConceptDS.QUANTITY_SIGNIFICANT_DIGITS));
             quantityDto.setDecimalPlaces(getValueAsInteger(ConceptDS.QUANTITY_DECIMAL_PLACES));
             // Only set value if item is visible (these item are quantity type dependent)
@@ -302,6 +319,12 @@ public class QuantityForm extends BaseQuantityForm {
 
     private SearchCodeForQuantityUnitItem createQuantityUnitItem(final String name, String title) {
         final SearchCodeForQuantityUnitItem item = new SearchCodeForQuantityUnitItem(name, title, getCustomLinkItemNavigationClickHandler());
+        item.setSaveClickHandler(getSearchItemSaveClickHandler(item, name));
+        return item;
+    }
+
+    private SearchCodeForQuantityUnitMultiplierItem createQuantityUnitMultiplierItem(final String name, String title) {
+        final SearchCodeForQuantityUnitMultiplierItem item = new SearchCodeForQuantityUnitMultiplierItem(name, title, getCustomLinkItemNavigationClickHandler());
         item.setSaveClickHandler(getSearchItemSaveClickHandler(item, name));
         return item;
     }
@@ -389,6 +412,7 @@ public class QuantityForm extends BaseQuantityForm {
     public void setUiHandlers(ConceptUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         searchUnitItem.setUiHandlers(uiHandlers);
+        searchUnitMultiplierItem.setUiHandlers(uiHandlers);
         searchNumeratorItem.setUiHandlers(uiHandlers);
         searchDenominatorItem.setUiHandlers(uiHandlers);
         searchBaseItem.setUiHandlers(uiHandlers);

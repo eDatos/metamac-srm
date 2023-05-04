@@ -5,12 +5,12 @@
         <groupId>org.siemac.metamac</groupId>
         <artifactId>metamac-parent</artifactId>
         <version>4.0.2</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>org.siemac.metamac.metamac-srm</groupId>
     <artifactId>metamac-srm-parent</artifactId>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>5.0.0</version>
     <packaging>pom</packaging>
     <name>SIEMAC :: METAMAC :: SRM :: PARENT</name>
     <description>SIEMAC :: METAMAC :: SRM :: PARENT</description>
@@ -48,4 +48,8 @@
 
         </dependencies>
     </dependencyManagement>
+
+  <scm>
+    <tag>20230504-1239-v5.0.0</tag>
+  </scm>
 </project>

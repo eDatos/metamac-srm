@@ -29,9 +29,9 @@ public class ViewQuantityForm extends BaseQuantityForm {
         ViewTextItem unitSymbol = new ViewTextItem(ConceptDS.QUANTITY_UNIT_SYMBOL_POSITION, getConstants().conceptQuantityUnitSymbolPosition());
         unitSymbol.setShowIfCondition(getShowIfAnyQuantityType());
 
-        RelatedResourceLinkItem unitMultiplierNew = new RelatedResourceLinkItem(ConceptDS.QUANTITY_UNIT_MULTIPLIER, getConstants().conceptQuantityUnitMultiplier(),
+        RelatedResourceLinkItem unitMultiplier = new RelatedResourceLinkItem(ConceptDS.QUANTITY_UNIT_MULTIPLIER, getConstants().conceptQuantityUnitMultiplier(),
                 getCustomLinkItemNavigationClickHandler());
-        unitMultiplierNew.setShowIfCondition(getShowIfAnyQuantityType());
+        unitMultiplier.setShowIfCondition(getShowIfAnyQuantityType());
 
         ViewTextItem sigDigits = new ViewTextItem(ConceptDS.QUANTITY_SIGNIFICANT_DIGITS, getConstants().conceptQuantitySignificantDigits());
         sigDigits.setShowIfCondition(getShowIfAnyQuantityType());
@@ -79,7 +79,7 @@ public class ViewQuantityForm extends BaseQuantityForm {
         RelatedResourceLinkItem baseQuantity = new RelatedResourceLinkItem(ConceptDS.QUANTITY_BASE_QUANTITY, getConstants().conceptQuantityBaseQuantity(), getCustomLinkItemNavigationClickHandler());
         baseQuantity.setShowIfCondition(getBaseQuantityIfFunction());
 
-        setFields(type, typeText, unit, unitSymbol, unitMultiplierNew, sigDigits, decPlaces, min, max, denominator, numerator, isPercentage, isPercentageText, percentageOf, indexBaseType,
+        setFields(type, typeText, unit, unitSymbol, unitMultiplier, sigDigits, decPlaces, min, max, denominator, numerator, isPercentage, isPercentageText, percentageOf, indexBaseType,
                 indexBaseTypeText, baseValue, baseTime, baseLocation, baseQuantity);
     }
 

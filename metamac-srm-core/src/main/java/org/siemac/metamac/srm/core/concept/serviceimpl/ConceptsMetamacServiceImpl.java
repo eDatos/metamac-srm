@@ -1153,22 +1153,14 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         QuantityUnitSymbolPositionEnum unitSymbolPositionEnum = QuantityUnitSymbolPositionEnum.valueOf(unitSymbolPosition);
         quantity.setUnitSymbolPosition(unitSymbolPositionEnum);
 
-        String intValue = columns[header.getUnitMultiplierPosition()];
-        if (!StringUtils.isBlank(intValue)) {
-            try {
-                // TODO:
-                // quantity.setUnitMultiplier(Integer.valueOf(intValue));
-            } catch (IllegalArgumentException e) {
-                quantity.setUnitMultiplier(null);
-                MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
-                exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_MULTIPLIER));
-                exceptionItems.add(exceptionItem);
-            }
-        } else {
-            quantity.setUnitMultiplier(null);
+        String unitMultiplierCodeList = columns[header.getUnitMultiplierCodelistCodePosition()];
+        String unitMultiplierCode = columns[header.getUnitMultiplierCodePosition()];
+        if (unitMultiplierCodeList != null && unitMultiplierCode != null) {
+            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, unitMultiplierCodeList, unitMultiplierCode);
+            quantity.setUnitMultiplier(code);
         }
 
-        intValue = columns[header.getSignificantDigitsPosition()];
+        String intValue = columns[header.getSignificantDigitsPosition()];
         if (!StringUtils.isBlank(intValue)) {
             try {
                 quantity.setSignificantDigits(Integer.valueOf(intValue));

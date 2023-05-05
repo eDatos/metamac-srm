@@ -577,7 +577,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     private void executeQueryRetrieveConceptQuantityType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) throws MetamacException {
         StringBuilder sqlQuery = new StringBuilder();
         sqlQuery.append("SELECT c.TB_CONCEPTS, ct.QUANTITY_TYPE, ausv.CODE as UNIT_CODELIST_CODE, acb.CODE as UNIT_CODE, "
-                + "ct.UNIT_SYMBOL_POSITION, ct.UNIT_MULTIPLIER, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
+                + "ct.UNIT_SYMBOL_POSITION, aumsv.CODE as UNIT_MULTIPLIER_CODELIST_CODE, macb.CODE as UNIT_MULTIPLIER_CODE, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
                 + " aicd.code as DENOMINATOR_CONCEPT_SCHEME_CODE, acd.code as DENOMINATOR_CONCEPT_CODE,"
                 + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE, ct.IS_PERCENTAGE," + " ct.BASE_VALUE, ct.BASE_TIME,"
                 + " aubl.CODE as LOCATION_BASE_CODELIST_CODE, abl.CODE  as LOCATION_BASE_CODE," + " aibq.code as BQ_SCHEME_CODE, abq.code as BQ_CODE ");
@@ -587,7 +587,11 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sqlQuery.append("INNER JOIN TB_CODES unit on unit.ID = ct.UNIT_CODE_FK ");
         sqlQuery.append("INNER JOIN TB_ITEM_SCHEMES_VERSIONS usv ON usv.ID = unit.ITEM_SCHEME_VERSION_FK AND usv.ID != :itemSchemVersionId ");
         sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS ausv ON ausv.ID = usv.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("INNER JOIN TB_CODES multiplier on multiplier.ID = ct.UNIT_MULTIPLIER_FK ");
+        sqlQuery.append("INNER JOIN TB_ITEM_SCHEMES_VERSIONS umsv ON umsv.ID = multiplier.ITEM_SCHEME_VERSION_FK AND umsv.ID != :itemSchemVersionId ");
+        sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aumsv ON aumsv.ID = umsv.MAINTAINABLE_ARTEFACT_FK ");
         sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb ON acb.ID = unit.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS macb ON macb.ID = multiplier.NAMEABLE_ARTEFACT_FK ");
         sqlQuery.append("LEFT OUTER JOIN TB_CONCEPTS cd ON cd.ID = ct.DENOMINATOR_FK ");
         sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS icd ON icd.ID = cd.ITEM_SCHEME_VERSION_FK AND icd.ID != :itemSchemVersionId ");
         sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aicd ON aicd.ID = icd.MAINTAINABLE_ARTEFACT_FK ");
@@ -616,22 +620,23 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             String quantityUnitCodelistCode = getString(resultSqlArray[2]);
             String quantityUnitCode = getString(resultSqlArray[3]);
             String quantityUnitSymbolPosition = getString(resultSqlArray[4]);
-            Integer quantityUnitMultiplier = getInteger(resultSqlArray[5]);
-            Integer quantitySignificantDigits = getInteger(resultSqlArray[6]);
-            Integer quantityDecimalPlaces = getInteger(resultSqlArray[7]);
-            Integer quantityMinimum = getInteger(resultSqlArray[8]);
-            Integer quantityMaximum = getInteger(resultSqlArray[9]);
-            String quantityDenominatorConceptScheme = getString(resultSqlArray[10]);
-            String quantityDenominatorConcept = getString(resultSqlArray[11]);
-            String quantityNumeratorConceptScheme = getString(resultSqlArray[12]);
-            String quantityNumeratorConcept = getString(resultSqlArray[13]);
-            Boolean quantityIsPercentage = getBoolean(resultSqlArray[14]);
-            Integer quantityIndexBaseValue = getInteger(resultSqlArray[15]);
-            String quantityIndexBaseTime = getString(resultSqlArray[16]);
-            String quantityIndexBaseLocationCodelistCode = getString(resultSqlArray[17]);
-            String quantityIndexBaseLocationCode = getString(resultSqlArray[18]);
-            String quantityBaseQuantityConceptScheme = getString(resultSqlArray[19]);
-            String quantityBaseQuantityConcept = getString(resultSqlArray[20]);
+            String quantityUnitMultiplierCodelistCode = getString(resultSqlArray[5]);
+            String quantityUnitMultiplierCode = getString(resultSqlArray[6]);
+            Integer quantitySignificantDigits = getInteger(resultSqlArray[7]);
+            Integer quantityDecimalPlaces = getInteger(resultSqlArray[8]);
+            Integer quantityMinimum = getInteger(resultSqlArray[9]);
+            Integer quantityMaximum = getInteger(resultSqlArray[10]);
+            String quantityDenominatorConceptScheme = getString(resultSqlArray[11]);
+            String quantityDenominatorConcept = getString(resultSqlArray[12]);
+            String quantityNumeratorConceptScheme = getString(resultSqlArray[13]);
+            String quantityNumeratorConcept = getString(resultSqlArray[14]);
+            Boolean quantityIsPercentage = getBoolean(resultSqlArray[15]);
+            Integer quantityIndexBaseValue = getInteger(resultSqlArray[16]);
+            String quantityIndexBaseTime = getString(resultSqlArray[17]);
+            String quantityIndexBaseLocationCodelistCode = getString(resultSqlArray[18]);
+            String quantityIndexBaseLocationCode = getString(resultSqlArray[19]);
+            String quantityBaseQuantityConceptScheme = getString(resultSqlArray[20]);
+            String quantityBaseQuantityConcept = getString(resultSqlArray[21]);
 
             QuantityTypeEnum quantityType = QuantityTypeEnum.valueOf(quantityTypeIdentifier);
             QuantityUnitSymbolPositionEnum quantityUnitSymbolPositionType = QuantityUnitSymbolPositionEnum.valueOf(quantityUnitSymbolPosition);
@@ -643,8 +648,8 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             extensionEndpoint.setUnitCodelistCode(quantityUnitCodelistCode);
             extensionEndpoint.setUnitCode(quantityUnitCode);
             extensionEndpoint.setUnitSymbolPosition(quantityUnitSymbolPositionType);
-            // TODO:
-            // extensionEndpoint.setUnitMultiplier(quantityUnitMultiplier);
+            extensionEndpoint.setUnitMultiplierCodelistCode(quantityUnitMultiplierCodelistCode);
+            extensionEndpoint.setUnitMultiplierCode(quantityUnitMultiplierCode);
             extensionEndpoint.setSignificantDigits(quantitySignificantDigits);
             extensionEndpoint.setDecimalPlaces(quantityDecimalPlaces);
             extensionEndpoint.setMiminum(quantityMinimum);

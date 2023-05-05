@@ -206,7 +206,9 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION);
         writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER);
+        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_SIGNIFICANT_DIGITS);
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -595,9 +597,12 @@ public class TsvExportationUtils {
         }
 
         writer.write(SrmConstants.TSV_SEPARATOR);
-        if (extensionPoint.getUnitMultiplier() != null) {
-            // TODO:
-            // writer.write(Integer.toString(extensionPoint.getUnitMultiplier()));
+        if (!StringUtils.isBlank(extensionPoint.getUnitMultiplierCode()) && !StringUtils.isBlank(extensionPoint.getUnitMultiplierCodelistCode())) {
+            writer.write(extensionPoint.getUnitMultiplierCodelistCode());
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(extensionPoint.getUnitMultiplierCode());
+        } else {
+            writer.write(SrmConstants.TSV_SEPARATOR);
         }
 
         writer.write(SrmConstants.TSV_SEPARATOR);

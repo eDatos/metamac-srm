@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.arte.statistic.sdmx.srm.core.base.domain.AnnotableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
 import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationRepository;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactProperties.IdentifiableArtefactProperty;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
@@ -78,6 +79,9 @@ public abstract class BaseRest2DoMapperV10Impl {
 
     @Autowired
     private OrganisationRepository                          organisationRepository;
+
+    @Autowired
+    private AnnotationTypeRepository                        annotationTypeRepository;
 
     private final Whitelist                                 whitelist                              = Whitelist.none().addTags(new String[]{"b", "i", "br", "a", "p"}).addAttributes("a", "href");
 
@@ -375,7 +379,7 @@ public abstract class BaseRest2DoMapperV10Impl {
         // Metadata modifiable
         target.setCode(source.getId());
         target.setTitle(source.getTitle());
-        target.setType(source.getType());
+        target.setAnnotationType(annotationTypeRepository.findAnnotationTypeByCode(source.getType()));
         target.setUrl(source.getUrl());
         target.setAnnotableArtefact(annotableArtefactTarget);
         // Related entities

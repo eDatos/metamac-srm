@@ -7,11 +7,14 @@ import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent.SelectMenuButtonHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.client.view.handlers.MainPageUiHandlers;
 import org.siemac.metamac.srm.web.shared.GetHelpUrlAction;
 import org.siemac.metamac.srm.web.shared.GetHelpUrlResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
 import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsResult;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
@@ -113,7 +116,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
         super.onBind();
         loadMasterTablesLists();
     }
-    
+
     @Override
     protected void onReset() {
         super.onReset();
@@ -264,9 +267,10 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     public void goToCategories() {
         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategorySchemesPlaceRequest());
     }
-    
+
     private void loadMasterTablesLists() {
         retrieveEniSchemaCatalogs();
+        retrieveAnnotationTypes();
     }
 
     public void retrieveEniSchemaCatalogs() {
@@ -275,6 +279,17 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
             @Override
             public void onWaitSuccess(GetEniSchemaCatalogsResult result) {
                 UpdateEniSchemaCatalogEvent.fire(MainPagePresenter.this, result.getEniSchemaCatalogs());
+
+            }
+        });
+    }
+
+    public void retrieveAnnotationTypes() {
+        dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetAnnotationTypesResult result) {
+                UpdateAnnotationTypeEvent.fire(MainPagePresenter.this, result.getAnnotationTypes());
 
             }
         });

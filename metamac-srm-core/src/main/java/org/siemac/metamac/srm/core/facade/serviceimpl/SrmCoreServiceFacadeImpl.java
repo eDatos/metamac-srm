@@ -112,10 +112,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
+import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
@@ -135,6 +137,7 @@ import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.ReferenceResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.task.ContentInputDto;
@@ -152,54 +155,57 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Autowired
-    private DataStructureDefinitionDo2DtoMapper dataStructureDefinitionDo2DtoMapper;
+    private DataStructureDefinitionDo2DtoMapper        dataStructureDefinitionDo2DtoMapper;
 
     @Autowired
-    private DataStructureDefinitionDto2DoMapper dataStructureDefinitionDto2DoMapperDto2DoMapper;
+    private DataStructureDefinitionDto2DoMapper        dataStructureDefinitionDto2DoMapperDto2DoMapper;
 
     @Autowired
-    private ConceptsDo2DtoMapper conceptsDo2DtoMapper;
+    private ConceptsDo2DtoMapper                       conceptsDo2DtoMapper;
 
     @Autowired
-    private ConceptsDto2DoMapper conceptsDto2DoMapper;
+    private ConceptsDto2DoMapper                       conceptsDto2DoMapper;
 
     @Autowired
-    private OrganisationsDo2DtoMapper organisationsDo2DtoMapper;
+    private OrganisationsDo2DtoMapper                  organisationsDo2DtoMapper;
 
     @Autowired
-    private OrganisationsDto2DoMapper organisationsDto2DoMapper;
+    private OrganisationsDto2DoMapper                  organisationsDto2DoMapper;
 
     @Autowired
-    private CategoriesDo2DtoMapper categoriesDo2DtoMapper;
+    private CategoriesDo2DtoMapper                     categoriesDo2DtoMapper;
 
     @Autowired
-    private CategoriesDto2DoMapper categoriesDto2DoMapper;
+    private CategoriesDto2DoMapper                     categoriesDto2DoMapper;
 
     @Autowired
-    private CodesDo2DtoMapper codesDo2DtoMapper;
+    private CodesDo2DtoMapper                          codesDo2DtoMapper;
 
     @Autowired
-    private CodesDto2DoMapper codesDto2DoMapper;
+    private CodesDto2DoMapper                          codesDto2DoMapper;
 
     @Autowired
-    private MetamacCriteria2SculptorCriteriaMapper metamacCriteria2SculptorCriteriaMapper;
+    private MetamacCriteria2SculptorCriteriaMapper     metamacCriteria2SculptorCriteriaMapper;
 
     @Autowired
-    private SculptorCriteria2MetamacCriteriaMapper sculptorCriteria2MetamacCriteriaMapper;
+    private SculptorCriteria2MetamacCriteriaMapper     sculptorCriteria2MetamacCriteriaMapper;
 
     @Autowired
-    private ExportService exportService;
+    private ExportService                              exportService;
 
     @Autowired
-    private MasterTablesDo2DtoMapper do2DtoMapper;
+    private MasterTablesDo2DtoMapper                   do2DtoMapper;
 
     @Autowired
-    private MasterTablesService masterTablesService;
+    private MasterTablesService                        masterTablesService;
+
+    @Autowired
+    private BaseService                                sdmxService;
 
     private final static Comparator<ItemSchemeVersion> ITEM_SCHEME_CREATED_DATE_DESC_COMPARATOR = new ItemSchemeCreatedDateDescComparator();
-    private final static Comparator<StructureVersion> STRUCTURE_CREATED_DATE_DESC_COMPARATOR = new StructureCreatedDateDescComparator();
+    private final static Comparator<StructureVersion>  STRUCTURE_CREATED_DATE_DESC_COMPARATOR   = new StructureCreatedDateDescComparator();
 
-    private static Logger logger = LoggerFactory.getLogger(SrmCoreServiceFacade.class);
+    private static Logger                              logger                                   = LoggerFactory.getLogger(SrmCoreServiceFacade.class);
 
     protected DataStructureDefinitionDo2DtoMapper getDo2DtoMapper() {
         return dataStructureDefinitionDo2DtoMapper;
@@ -4107,6 +4113,17 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Update order
         getConceptsMetamacService().updateConceptInOrder(ctx, conceptUrn, conceptSchemeUrn, newConceptIndex);
+    }
+
+    @Override
+    public List<AnnotationTypeDto> findAllAnnotationTypes(ServiceContext ctx) throws MetamacException {
+
+        List<AnnotationType> annotationTypes = sdmxService.findAllAnnotationtypes(ctx);
+        List<AnnotationTypeDto> annotationTypesDto = new ArrayList<>();
+        for (AnnotationType type : annotationTypes) {
+            annotationTypesDto.add(do2DtoMapper.annotationTypeToDto(type));
+        }
+        return annotationTypesDto;
     }
 
     public List<EniSchemaCatalogDto> findAllEniSchemaCatalogs(ServiceContext ctx) throws MetamacException {

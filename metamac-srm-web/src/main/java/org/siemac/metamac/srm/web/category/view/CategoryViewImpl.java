@@ -29,6 +29,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguag
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
@@ -42,31 +43,31 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> implements CategoryPresenter.CategoryView {
 
-    private VLayout panel;
-    private CategoryMainFormLayout mainFormLayout;
+    private VLayout                   panel;
+    private CategoryMainFormLayout    mainFormLayout;
 
-    private CategoriesTreeGrid categoriesTreeGrid;
+    private CategoriesTreeGrid        categoriesTreeGrid;
 
     // View forms
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm commentsForm;
-    private AnnotationsPanel annotationsPanel;
+    private GroupDynamicForm          identifiersForm;
+    private GroupDynamicForm          productionDescriptorsForm;
+    private GroupDynamicForm          contentDescriptorsForm;
+    private GroupDynamicForm          commentsForm;
+    private AnnotationsPanel          annotationsPanel;
 
     // Edition forms
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private CustomSelectItem eniSchemaCatalog;
-    private GroupDynamicForm commentsEditionForm;
-    private AnnotationsPanel annotationsEditionPanel;
+    private GroupDynamicForm          identifiersEditionForm;
+    private GroupDynamicForm          productionDescriptorsEditionForm;
+    private GroupDynamicForm          contentDescriptorsEditionForm;
+    private CustomSelectItem          eniSchemaCatalog;
+    private GroupDynamicForm          commentsEditionForm;
+    private AnnotationsPanel          annotationsEditionPanel;
 
-    private CategorySchemeMetamacDto categorySchemeDto;
-    private CategoryMetamacDto categoryDto;
-    
+    private CategorySchemeMetamacDto  categorySchemeDto;
+    private CategoryMetamacDto        categoryDto;
+
     private List<EniSchemaCatalogDto> eniSchemaCatalogDto;
-   
+
     public CategoryViewImpl() {
         super();
         panel = new VLayout();
@@ -132,7 +133,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         eniSchemaCatalog.setSortField(CategoryDS.ENI_SCHEMA);
         eniSchemaCatalog.setValueMap(MasterTablesUtils.getEniSchemaCatalogHashMap(this.eniSchemaCatalogDto));
     }
-    
+
     @Override
     public void setCategory(CategoryMetamacDto categoryDto, CategorySchemeMetamacDto categorySchemeMetamacDto) {
         setCategoryScheme(categorySchemeMetamacDto);
@@ -235,7 +236,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         contentDescriptorsEditionForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
         eniSchemaCatalog = new CustomSelectItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
-        
+
         contentDescriptorsEditionForm.setFields(description, eniSchemaCatalog);
 
         // Comments
@@ -266,9 +267,8 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         contentDescriptorsForm.setValue(CategoryDS.DESCRIPTION, categoryDto.getDescription());
-        
-        contentDescriptorsForm.setValue(CategoryDS.ENI_SCHEMA,
-                categoryDto.getEniSchema() == null ? "" : InternationalStringUtils.getLocalisedString(categoryDto.getEniSchema().getDescription()));
+
+        contentDescriptorsForm.setValue(CategoryDS.ENI_SCHEMA, categoryDto.getEniSchema() == null ? "" : InternationalStringUtils.getLocalisedString(categoryDto.getEniSchema().getDescription()));
 
         // Comments
         commentsForm.setValue(CategoryDS.COMMENTS, categoryDto.getComment());
@@ -414,5 +414,10 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
             }
         };
     }
-        
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
 }

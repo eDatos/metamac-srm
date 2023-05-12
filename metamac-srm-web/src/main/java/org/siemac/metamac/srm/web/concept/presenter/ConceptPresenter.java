@@ -20,6 +20,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.concept.enums.ConceptsToolStripButtonEnum;
@@ -62,6 +64,7 @@ import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingEr
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -73,6 +76,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -82,7 +86,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, ConceptPresenter.ConceptProxy> implements ConceptUiHandlers {
+public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, ConceptPresenter.ConceptProxy> implements ConceptUiHandlers, UpdateAnnotationTypeHandler {
 
     private final DispatchAsync              dispatcher;
     private final PlaceManager               placeManager;
@@ -131,6 +135,9 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
 
         void setVariables(GetVariablesResult result);
         void setVariableFamilies(GetVariableFamiliesResult result);
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
 
     }
 
@@ -732,5 +739,11 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
                 retrieveConcept(conceptUrn);
             }
         });
+    }
+
+    @ProxyEvent
+    @Override
+    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

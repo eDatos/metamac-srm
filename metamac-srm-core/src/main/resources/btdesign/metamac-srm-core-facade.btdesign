@@ -797,6 +797,9 @@ Application SrmFacadeCore {
 
 	   		"Finds information about tasks"
     		MetamacCriteriaResult<@TaskDto> findTasksByCondition(MetamacCriteria criteria) throws MetamacException;
+    		
+    		"Annotation types"
+    		List<@AnnotationTypeDto> findAllAnnotationTypes() throws MetamacException;
     	}
 
 		Service TasksMetamacServiceFacade {

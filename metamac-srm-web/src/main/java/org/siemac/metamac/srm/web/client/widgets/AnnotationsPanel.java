@@ -272,9 +272,18 @@ public class AnnotationsPanel extends VLayout {
         ListGridRecord[] records = listGrid.getRecords();
         for (int i = 0; i < records.length; i++) {
             AnnotationDto annotationDto = (AnnotationDto) records[i].getAttributeAsObject(AnnotationDS.ANNOTATION_DTO);
+            annotationDto.setAnnotationTypeDto(getAnnotationTypeFromId(records[i]));
             annotations.add(annotationDto);
         }
         return annotations;
+    }
+
+    private AnnotationTypeDto getAnnotationTypeFromId(ListGridRecord annotationRecord) {
+        String annotationTypeId = annotationRecord.getAttribute(AnnotationDS.TYPE);
+        if (annotationTypeId != null) {
+            return MasterTablesUtils.getAnnotationTypeDto(annotationTypeId, annotationTypeDto);
+        }
+        return null;
     }
 
     public void setTranslationsShowed(boolean translationsShowed) {

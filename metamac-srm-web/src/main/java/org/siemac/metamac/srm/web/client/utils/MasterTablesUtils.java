@@ -47,7 +47,7 @@ public class MasterTablesUtils {
     }
 
     /**
-     * Returns {@link LinkedHashMap} of {@link EniSchemaCatalogDto}
+     * Returns {@link LinkedHashMap} of {@link AnnotationTypeDto}
      * 
      * @return
      */
@@ -58,5 +58,24 @@ public class MasterTablesUtils {
             hashMap.put(type.getId().toString(), InternationalStringUtils.getLocalisedString(type.getTitle()));
         }
         return hashMap;
+    }
+
+    /**
+     * Returns {AnnotationTypeDto} from id
+     * 
+     * @param AnnotationTypeDto
+     * @param id
+     * @return
+     */
+    public static AnnotationTypeDto getAnnotationTypeDto(String id, List<AnnotationTypeDto> list) {
+        if (id != null && !id.isEmpty()) {
+            Long idType = Long.valueOf(id);
+            for (AnnotationTypeDto o : list) {
+                if (o.getId().compareTo(idType) == 0) {
+                    return o;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -11,15 +11,23 @@ public class AnnotationRecord extends ListGridRecord {
     public AnnotationRecord() {
     }
 
-    public AnnotationRecord(Long id, String code, String title, AnnotationTypeDto type, String url, String text, Boolean isTextEditable, AnnotationDto annotationDto) {
+    public AnnotationRecord(Long id, String code, String title, AnnotationTypeDto type, String url, String text, Boolean isTextEditable, AnnotationDto annotationDto, Long annotationTypeId) {
         setId(id);
         setCode(code);
         setTitle(title);
-        setAnnotationType(type);
         setUrl(url);
         setText(text);
         setIsTextEditable(isTextEditable);
         setAnnotationDto(annotationDto);
+        setAnnotationTypeId(annotationTypeId);
+    }
+
+    public void setAnnotationTypeId(Long id) {
+        setAttribute(AnnotationDS.TYPE, id);
+    }
+
+    public Long setAnnotationTypeId() {
+        return getAttributeAsLong(AnnotationDS.TYPE);
     }
 
     public void setId(Long id) {
@@ -44,14 +52,6 @@ public class AnnotationRecord extends ListGridRecord {
 
     public String getTitle() {
         return getAttributeAsString(AnnotationDS.TITLE);
-    }
-
-    public void setAnnotationType(AnnotationTypeDto value) {
-        setAttribute(AnnotationDS.ANNOTATION_TYPE_DTO, value);
-    }
-
-    public AnnotationTypeDto getAnnotationType() {
-        return (AnnotationTypeDto) getAttributeAsObject(AnnotationDS.ANNOTATION_TYPE_DTO);
     }
 
     public void setUrl(String value) {

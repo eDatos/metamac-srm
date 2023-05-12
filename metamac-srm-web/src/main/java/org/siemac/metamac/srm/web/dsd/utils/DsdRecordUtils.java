@@ -145,7 +145,7 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
         boolean isRecordEditable = InternationalStringUtils.isCurrentLocalisedStringModifiable(annotationDto.getText());
 
         AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto);
+                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto, annotationDto.getAnnotationTypeDto().getId());
         return record;
     }
 
@@ -162,7 +162,7 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
         boolean isRecordEdiable = InternationalStringUtils.isLocalisedStringModifiable(annotationDto.getText(), locale);
 
         AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto);
+                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto, annotationDto.getAnnotationTypeDto().getId());
         return record;
     }
 }

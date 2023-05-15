@@ -379,7 +379,7 @@ public abstract class BaseRest2DoMapperV10Impl {
         // Metadata modifiable
         target.setCode(source.getId());
         target.setTitle(source.getTitle());
-        target.setAnnotationType(annotationTypeRepository.findAnnotationTypeByCode(source.getType()));
+        target.setAnnotationType(annotationTypeRepository.findByCode(source.getType()));
         target.setUrl(source.getUrl());
         target.setAnnotableArtefact(annotableArtefactTarget);
         // Related entities

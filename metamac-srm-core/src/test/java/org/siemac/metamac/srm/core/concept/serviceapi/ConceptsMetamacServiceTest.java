@@ -107,28 +107,28 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEn
 public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsMetamacServiceTestBase {
 
     @Autowired
-    private ConceptsMetamacService conceptsService;
+    private ConceptsMetamacService        conceptsService;
 
     @Autowired
-    private CodesMetamacService codesService;
+    private CodesMetamacService           codesService;
 
     @Autowired
     private OrganisationMetamacRepository organisationMetamacRepository;
 
     @Autowired
-    private ConceptMetamacRepository conceptMetamacRepository;
+    private ConceptMetamacRepository      conceptMetamacRepository;
 
     @Autowired
-    private ItemSchemeVersionRepository itemSchemeRepository;
+    private ItemSchemeVersionRepository   itemSchemeRepository;
 
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemRepository                itemRepository;
 
     @Autowired
-    private QuantityRepository quantityRepository;
+    private QuantityRepository            quantityRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager entityManager;
+    protected EntityManager               entityManager;
 
     @Override
     @Test
@@ -1666,7 +1666,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             concept1.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
             concept1.getQuantity().setSignificantDigits(Integer.valueOf(2));
             concept1.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-            concept1.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+            concept1.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
             concept1.getQuantity().setMinimum(Integer.valueOf(1000));
             concept1.getQuantity().setMaximum(Integer.valueOf(2000));
             concept1.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2));
@@ -1681,7 +1681,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             concept2.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
             concept2.getQuantity().setSignificantDigits(Integer.valueOf(2));
             concept2.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-            concept2.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+            concept2.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
             concept2.getQuantity().setMinimum(Integer.valueOf(1000));
             concept2.getQuantity().setMaximum(Integer.valueOf(2000));
             concept2.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_3_V1_CONCEPT_1));
@@ -1696,7 +1696,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             concept3.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
             concept3.getQuantity().setSignificantDigits(Integer.valueOf(2));
             concept3.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-            concept3.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+            concept3.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
             concept3.getQuantity().setMinimum(Integer.valueOf(1000));
             concept3.getQuantity().setMaximum(Integer.valueOf(2000));
             concept3.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_15_V1_CONCEPT_1));
@@ -1987,7 +1987,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(QuantityUnitSymbolPositionEnum.END, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(2), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(3), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(10), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).1", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(100), quantity.getMinimum());
                 assertEquals(Integer.valueOf(200), quantity.getMaximum());
                 assertEquals(urnExpectedConcept2, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -2016,7 +2016,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(QuantityUnitSymbolPositionEnum.START, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(3), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(2), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(100), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).2", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(200), quantity.getMinimum());
                 assertEquals(Integer.valueOf(350), quantity.getMaximum());
                 assertEquals(urnExpectedConcept2, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -2347,7 +2347,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(QuantityUnitSymbolPositionEnum.END, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(2), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(3), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(10), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).1", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(100), quantity.getMinimum());
                 assertEquals(Integer.valueOf(200), quantity.getMaximum());
                 assertEquals(urnExpectedConcept2, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -2376,7 +2376,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(QuantityUnitSymbolPositionEnum.START, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(3), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(2), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(100), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).2", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(200), quantity.getMinimum());
                 assertEquals(Integer.valueOf(350), quantity.getMaximum());
                 assertEquals(urnExpectedConcept2, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -2745,7 +2745,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
             concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
             concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-            concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+            concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).2"));
             concept.getQuantity().setMinimum(Integer.valueOf(1000));
             concept.getQuantity().setMaximum(Integer.valueOf(2000));
             concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), urnExpectedConcept1));
@@ -2785,7 +2785,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(QuantityUnitSymbolPositionEnum.START, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(6), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(3), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(10), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).1", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(100), quantity.getMinimum());
                 assertEquals(Integer.valueOf(200), quantity.getMaximum());
                 assertEquals(urnExpectedConcept3, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -2808,7 +2808,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(QuantityUnitSymbolPositionEnum.START, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(2), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(3), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(100), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).2", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(1000), quantity.getMinimum());
                 assertEquals(Integer.valueOf(2000), quantity.getMaximum());
                 assertEquals(urnExpectedConcept1, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -3031,7 +3031,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
 
         // Create
         String conceptSchemeUrn = CONCEPT_SCHEME_16_V1;
@@ -3056,7 +3056,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
 
@@ -3085,7 +3085,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
@@ -3116,7 +3116,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
@@ -3149,7 +3149,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
@@ -3184,7 +3184,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
@@ -3300,7 +3300,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(null);
@@ -3343,7 +3343,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
@@ -3415,7 +3415,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
         concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
-        concept.getQuantity().setUnitMultiplier(Integer.valueOf(100));
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_15_V1_CODE_2));
         concept.getQuantity().setMinimum(Integer.valueOf(1000));
         concept.getQuantity().setMaximum(Integer.valueOf(2000));
         concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
@@ -3500,7 +3500,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setPercentageOf(BaseDoMocks.mockInternationalString());
         concept.getQuantity().setBaseTime("2011");
 
-        concept.getQuantity().setUnitMultiplier(11);
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_7_V2_CODE_1));
 
         // Create
         try {
@@ -3854,7 +3854,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         concept.getQuantity().setPercentageOf(BaseDoMocks.mockInternationalString());
         concept.getQuantity().setBaseTime("2011");
 
-        concept.getQuantity().setUnitMultiplier(11);
+        concept.getQuantity().setUnitMultiplier(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_7_V2_CODE_1));
 
         try {
             conceptsService.updateConcept(getServiceContextAdministrador(), concept);
@@ -3904,7 +3904,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(QuantityUnitSymbolPositionEnum.END, concept.getQuantity().getUnitSymbolPosition());
         assertEquals(Integer.valueOf(2), concept.getQuantity().getSignificantDigits());
         assertEquals(Integer.valueOf(3), concept.getQuantity().getDecimalPlaces());
-        assertEquals(Integer.valueOf(10), concept.getQuantity().getUnitMultiplier());
+        assertEquals(CODELIST_15_V1_CODE_1, concept.getQuantity().getUnitMultiplier().getNameableArtefact().getUrn());
         assertEquals(Integer.valueOf(100), concept.getQuantity().getMinimum());
         assertEquals(Integer.valueOf(200), concept.getQuantity().getMaximum());
         assertEquals(CONCEPT_SCHEME_15_V1_CONCEPT_2, concept.getQuantity().getNumerator().getNameableArtefact().getUrn());
@@ -4180,7 +4180,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(1, taskImportTsvInfo.getInformationItems().size());
         assertEquals(ServiceExceptionType.METADATA_INCORRECT.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
     }
-    
+
     @Test
     public void testImportConceptsTsvWithWrongQuantityType() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
@@ -4193,7 +4193,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
         assertEquals(ServiceExceptionParameters.CONCEPT_QUANTITY_TYPE, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getMessageParameters()[0]);
     }
-  
+
     @Test
     public void testImportConceptsTsvWithWrongFieldsForQuantityType() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
@@ -4208,7 +4208,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             assertEquals(ServiceExceptionType.METADATA_UNEXPECTED.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(i).getCode());
         }
     }
-    
+
     @Test
     public void testImportConceptsTsvCodelistNotFound() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
@@ -4312,7 +4312,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         header.append("\t" + baseQuantityConceptScheme);
         String baseQuantityConcept = "base_quantity_concept";
         header.append("\t" + baseQuantityConcept);
-        
+
         assertEquals(header.toString(), bufferedReader.readLine());
         Set<String> lines = new HashSet<String>();
         String line = null;
@@ -4432,7 +4432,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(),
+                new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 11
@@ -4506,7 +4507,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(),
+                new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 12: 1 parent concept and 11 child concepts
@@ -4615,7 +4617,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts2.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(),
+                new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 24: 2 parent concepts and 11 child concepts for each parent

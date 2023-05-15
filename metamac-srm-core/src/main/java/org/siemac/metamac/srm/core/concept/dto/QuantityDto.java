@@ -12,10 +12,7 @@ public class QuantityDto extends QuantityDtoBase {
     private static final long serialVersionUID = 1L;
 
     public QuantityDto() {
-        // default values
         setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.END);
-        // TODO: poner codigo por defecto del multiplicador 1
-        // setUnitMultiplier(Integer.valueOf(1));
     }
 
     public Boolean isQuantityOrExtension(QuantityTypeEnum type) {

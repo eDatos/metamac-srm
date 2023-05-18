@@ -190,8 +190,8 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
     }
 
     public static PlaceRequest buildRelativeOrganisationSchemePlaceRequest(String organisationSchemeUrn, OrganisationSchemeTypeEnum organisationSchemeType) {
-        PlaceRequest placeRequest = new PlaceRequest(NameTokens.organisationSchemePage).with(PlaceRequestParams.organisationSchemeParamType, organisationSchemeType.name()).with(
-                PlaceRequestParams.organisationSchemeParamId, UrnUtils.removePrefix(organisationSchemeUrn));
+        PlaceRequest placeRequest = new PlaceRequest(NameTokens.organisationSchemePage).with(PlaceRequestParams.organisationSchemeParamType, organisationSchemeType.name())
+                .with(PlaceRequestParams.organisationSchemeParamId, UrnUtils.removePrefix(organisationSchemeUrn));
         return placeRequest;
     }
 
@@ -251,6 +251,43 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
             return organisationCode;
         }
         return getConstants().breadcrumbOrganisation();
+    }
+
+    // ---------------------------------------------------------------------------
+    // ADMIN
+    // ---------------------------------------------------------------------------
+
+    // Annotation type
+
+    public static String getAnnotationTypeParamFromUrl(PlaceManager placeManager) {
+        return getParamFromUrl(placeManager, NameTokens.annotationTypePage, PlaceRequestParams.annotationTypeParamId);
+    }
+
+    public static PlaceRequest buildRelativeAnnotationTypePlaceRequest(String annotationTypeCode) {
+        PlaceRequest placeRequest = new PlaceRequest(NameTokens.annotationTypePage).with(PlaceRequestParams.annotationTypeParamId, UrnUtils.removePrefix(annotationTypeCode));
+        return placeRequest;
+    }
+
+    public static List<PlaceRequest> buildAbsoluteAnnotationTypePlaceRequest() {
+        List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.structuralResourcesPage));
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.annotationTypePage));
+        return placeRequestHierarchy;
+    }
+
+    public static List<PlaceRequest> buildAbsoluteAnnotationTypePlaceRequest(String urn) {
+        List<PlaceRequest> placeRequests = buildAbsoluteAnnotationTypePlaceRequest();
+        PlaceRequest annotationTypePlace = buildRelativeAnnotationTypePlaceRequest(urn);
+        placeRequests.add(annotationTypePlace);
+        return placeRequests;
+    }
+
+    public static String getAnnotationTypeBreadCrumbTitle(PlaceRequest placeRequest) {
+        String annotationTypeTripletIdentifier = getRequestParameter(placeRequest, PlaceRequestParams.annotationTypeParamId);
+        if (!StringUtils.isBlank(annotationTypeTripletIdentifier)) {
+            return UrnUtils.getItemSchemeCodeFromUrnWithoutPrefix(annotationTypeTripletIdentifier);
+        }
+        return getConstants().breadcrumbCategoryScheme(); // TODO EDATOS-4082 CAMBIAR
     }
 
     // ---------------------------------------------------------------------------

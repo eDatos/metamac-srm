@@ -14,6 +14,8 @@ public class PlaceRequestParams {
     public static final String categorySchemeParamId           = "id";
     public static final String categoryParamId                 = "id";
 
+    public static final String annotationTypeParamId           = "id";
+
     public static final String codelistParamId                 = "id";
     public static final String codeParamId                     = "id";
     public static final String codelistFamilyParamId           = "id";

@@ -61,7 +61,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
-import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.Representation;
@@ -905,7 +904,7 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
                 {
                     Annotation annotationTemporal = new Annotation();
                     annotationTemporal.setTitle("title");
-                    annotationTemporal.setAnnotationType(new AnnotationType());
+                    annotationTemporal.setAnnotationType(retrieveAnnotationType_1());
                     annotationTemporal.setUrl("url");
                     InternationalString internationalString = new InternationalString();
                     internationalString.addText(new LocalisedString("fr", "cl - text sample"));
@@ -919,7 +918,7 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
                 {
                     Annotation annotationTemporal = new Annotation();
                     annotationTemporal.setTitle("title");
-                    annotationTemporal.setAnnotationType(new AnnotationType());
+                    annotationTemporal.setAnnotationType(retrieveAnnotationType_1());
                     annotationTemporal.setUrl("url");
                     InternationalString internationalString = new InternationalString();
                     internationalString.addText(new LocalisedString("fr", "fr - annotation - text sample"));

@@ -6,6 +6,7 @@ import static org.siemac.metamac.web.common.client.resources.GlobalResources.RES
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.organisation.domain.shared.OrganisationMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacDto;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
@@ -180,6 +181,11 @@ public class OrganisationSchemeOrganisationsPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
+                boolean isTemporalVersionUnitSchemeOrganisation = false;
+                if (OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME.equals(organisationSchemeDto.getType())) {
+                    isTemporalVersionUnitSchemeOrganisation = VersionUtil.isTemporalVersion(organisationSchemeDto.getVersionLogic());
+                }
+                importOrganisationsWindow.initImportWindow(org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(organisationSchemeDto.getMaintainer()), isTemporalVersionUnitSchemeOrganisation);
                 importOrganisationsWindow.show();
             }
         });

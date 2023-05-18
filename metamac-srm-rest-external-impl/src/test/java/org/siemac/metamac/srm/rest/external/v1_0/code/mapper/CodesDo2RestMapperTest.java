@@ -6,12 +6,14 @@ import static org.junit.Assert.assertTrue;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.rest.api.constants.RestApiConstants.WILDCARD_ALL;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesAsserts.assertEqualsResource;
+import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.isFamilyHrefInList;
+import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.isFamilyInList;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCode;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodeItemResult;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodelist;
-import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockRelatedCodes;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodelistFamily;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockCodelistWithCodes;
+import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockRelatedCodes;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockVariable;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockVariableElement;
 import static org.siemac.metamac.srm.rest.external.v1_0.code.utils.CodesDoMocks.mockVariableElementResult;
@@ -240,7 +242,7 @@ public class CodesDo2RestMapperTest {
         assertTrue(2 == target.getCodes().size());
 
     }
-    
+
     @Test
     public void testToCodelistReplacedBy() throws MetamacException {
 
@@ -545,10 +547,10 @@ public class CodesDo2RestMapperTest {
 
         assertEquals(SrmRestConstants.KIND_VARIABLE_FAMILIES, target.getFamilies().getKind());
         assertEquals(BigInteger.valueOf(3), target.getFamilies().getTotal());
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily1", target.getFamilies().getFamilies().get(0).getUrn());
-        assertEquals("http://data.istac.es/apis/structural-resources/v1.0/variablefamilies/variableFamily1", target.getFamilies().getFamilies().get(0).getSelfLink().getHref());
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily2", target.getFamilies().getFamilies().get(1).getUrn());
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily3", target.getFamilies().getFamilies().get(2).getUrn());
+        assertTrue(isFamilyInList("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily1", target.getFamilies().getFamilies()));
+        assertTrue(isFamilyHrefInList("http://data.istac.es/apis/structural-resources/v1.0/variablefamilies/variableFamily1", target.getFamilies().getFamilies()));
+        assertTrue(isFamilyInList("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily2", target.getFamilies().getFamilies()));
+        assertTrue(isFamilyInList("urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily3", target.getFamilies().getFamilies()));
 
         assertEquals(BigInteger.ONE, target.getChildLinks().getTotal());
         assertEquals(SrmRestConstants.KIND_VARIABLE_ELEMENTS, target.getChildLinks().getChildLinks().get(0).getKind());

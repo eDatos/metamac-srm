@@ -208,15 +208,22 @@ public class SrmRestInternalUtils {
     private static final String PLUS  = "+";
 
     public static Set<String> parseFieldsParameter(String fieldsParam) {
+        Set<String> validFields = new HashSet<>();
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_OPENNES);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ORDER);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_DIMENSION_PLURAL_NAME);
+        return parseFieldsParameter(fieldsParam, validFields);
+    }
+
+    public static Set<String> parseFieldsParameter(String fieldsParam, Set<String> validFields) {
         Set<String> showFields = new HashSet<>();
-        if (fieldsParam != null) {
-            Set<String> validFields = new HashSet<>();
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_OPENNES);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_ORDER);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
+        if (fieldsParam != null) {       
             List<String> fieldList = Arrays.asList(fieldsParam.split(","));
             List<String> parsedFieldList = new ArrayList<>();
             for (String field : fieldList) {

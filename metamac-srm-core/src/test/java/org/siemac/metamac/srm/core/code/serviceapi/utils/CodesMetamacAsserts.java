@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -294,8 +297,12 @@ public class CodesMetamacAsserts extends CodesAsserts {
         assertEqualsDate(expected.getValidFrom(), actual.getValidFrom());
         assertEqualsDate(expected.getValidTo(), actual.getValidTo());
         assertEquals(expected.getFamilies().size(), actual.getFamilies().size());
+        List<VariableFamily> expectedFamily = new ArrayList<>();
+        List<VariableFamily> actualFamily = new ArrayList<>();
+        expectedFamily.addAll(expected.getFamilies());
+        actualFamily.addAll(actual.getFamilies());
         for (int i = 0; i < expected.getFamilies().size(); i++) {
-            assertEquals(expected.getFamilies().get(i).getNameableArtefact().getUrn(), actual.getFamilies().get(i).getNameableArtefact().getUrn());
+            assertEquals(expectedFamily.get(i).getNameableArtefact().getUrn(), actualFamily.get(i).getNameableArtefact().getUrn());
         }
         assertEqualsNullability(expected.getReplacedByVariable(), actual.getReplacedByVariable());
         if (expected.getReplacedByVariable() != null) {
@@ -363,9 +370,18 @@ public class CodesMetamacAsserts extends CodesAsserts {
         assertEqualsDate(entity.getValidFrom(), dto.getValidFrom());
         assertEqualsDate(entity.getValidTo(), dto.getValidTo());
         assertEquals(entity.getFamilies().size(), dto.getFamilies().size());
+        List<VariableFamily> entityFamily = new ArrayList<>();
+        List<RelatedResourceDto> dtoFamily = new ArrayList<>();
+        List<String> entityUrns = new ArrayList<>();
+        List<String> dtoUrns = new ArrayList<>();
+        entityFamily.addAll(entity.getFamilies());
+        dtoFamily.addAll(dto.getFamilies());
         for (int i = 0; i < entity.getFamilies().size(); i++) {
-            assertEquals(entity.getFamilies().get(i).getNameableArtefact().getUrn(), dto.getFamilies().get(i).getUrn());
+            entityUrns.add(entityFamily.get(i).getNameableArtefact().getUrn());
+            dtoUrns.add(dtoFamily.get(i).getUrn());
         }
+        assertTrue(entityUrns.containsAll(dtoUrns));
+        assertTrue(dtoUrns.containsAll(entityUrns));
         assertEqualsNullability(entity.getReplacedByVariable(), dto.getReplacedByVariable());
         if (entity.getReplacedByVariable() != null) {
             assertEquals(entity.getReplacedByVariable().getNameableArtefact().getUrn(), dto.getReplacedByVariable().getUrn());
@@ -696,7 +712,7 @@ public class CodesMetamacAsserts extends CodesAsserts {
         }
         assertEquals(entity.getNameableArtefact().getUrn(), dto.getUrn());
     }
-    
+
     // ------------------------------------------------------------------------------------
     // RESTRICTION VISUALISATIONS
     // ------------------------------------------------------------------------------------

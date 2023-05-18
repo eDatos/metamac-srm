@@ -4,9 +4,11 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.web.category.utils.CategoriesClientSecurityUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategorySchemeUiHandlers;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 
@@ -52,6 +54,7 @@ public class CategorySchemeCategoriesPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
+                importCategoriesWindow.initImportWindow(CommonUtils.isDefaultMaintainer(categorySchemeMetamacDto.getMaintainer()), VersionUtil.isTemporalVersion(categorySchemeMetamacDto.getVersionLogic()));
                 importCategoriesWindow.show();
             }
         });

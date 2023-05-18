@@ -451,7 +451,7 @@ public class SrmRestInternalFacadeV10OrganisationsTypeDataProvidersTest extends 
 
     private void testFindDataProviders(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        DataProviders items = getSrmRestInternalFacadeClientXml().findDataProviders(agencyID, resourceID, version, query, orderBy, limit, offset);
+        DataProviders items = getSrmRestInternalFacadeClientXml().findDataProviders(agencyID, resourceID, version, query, orderBy, limit, offset, null);
 
         assertNotNull(items);
         assertEquals(SrmRestConstants.KIND_DATA_PROVIDERS, items.getKind());

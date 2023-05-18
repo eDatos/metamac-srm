@@ -30,6 +30,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
@@ -590,8 +591,6 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
         OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemeByUrn(ctx, organisationSchemeUrn);
         TsvImportationUtils.checkItemSchemeCanExecuteImportation(organisationSchemeVersion, organisationSchemeVersion.getLifeCycleMetadata(), canBeBackground);
 
-        srmValidation.checkItemsStructureCanBeModified(ctx, organisationSchemeVersion);
-
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION);
 
@@ -633,6 +632,19 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
                     organisationsPreviousInOrganisationSchemeByCode.put(item.getNameableArtefact().getCode(), (OrganisationMetamac) item);
                 }
 
+                boolean isDefaultMaintainer = isDefaultMaintainer(organisationSchemeVersion.getMaintainableArtefact().getMaintainer().getNameableArtefact().getUrn());
+                boolean isTemporalVersion = false;
+                if (OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME.equals(organisationSchemeVersion.getOrganisationSchemeType())) {
+                    isTemporalVersion = VersionUtil.isTemporalVersion(organisationSchemeVersion.getMaintainableArtefact().getVersionLogic());
+                    if (isTemporalVersion) {
+                        updateAlreadyExisting = true;
+                    }
+                }
+
+                if (!isDefaultMaintainer) {
+                    updateAlreadyExisting = true;
+                }
+                
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -644,7 +656,7 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
                         continue;
                     }
                     // Transform organisation and add to list to persist
-                    OrganisationMetamac organisation = TsvImportationUtils.tsvLineToOrganisation(header, columns, lineNumber, organisationSchemeVersion, updateAlreadyExisting,
+                    OrganisationMetamac organisation = TsvImportationUtils.tsvLineToOrganisation(header, columns, lineNumber, organisationSchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
                             organisationsPreviousInOrganisationSchemeByCode, organisationsToPersistByCode, exceptionItems, informationItems);
                     if (organisation != null) {
                         organisationsToPersist.add(organisation);
@@ -674,6 +686,10 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
+    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
+        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
+    }
+    
     private void saveOrganisationsEfficiently(OrganisationSchemeTypeEnum organisationSchemeType, Collection<OrganisationMetamac> organisationsToPersist, Map<String, Item> organisationsToPersistByCode) {
         for (OrganisationMetamac organisationMetamac : organisationsToPersist) {
             if (organisationMetamac.getParent() != null) {

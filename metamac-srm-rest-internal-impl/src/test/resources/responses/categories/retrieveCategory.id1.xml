@@ -42,4 +42,11 @@
         <cdomain:text xml:lang="en">comment-item1 in English</cdomain:text>
     </sr:comment>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).item2</sr:parent>
+    <sr:eniSchemeType>
+        <cdomain:id>ID - item2.item1</cdomain:id>
+        <cdomain:name>
+            <cdomain:text xml:lang="es">desc-item2.item1-viYWB2EKK1 en Español</cdomain:text>
+            <cdomain:text xml:lang="en">desc-item2.item1-DUhMD2qy5d in English</cdomain:text>
+        </cdomain:name>
+    </sr:eniSchemeType>
 </sr:category>

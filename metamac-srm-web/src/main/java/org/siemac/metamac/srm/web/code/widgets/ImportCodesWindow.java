@@ -21,22 +21,43 @@ import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 public class ImportCodesWindow extends ImportResourceWindow {
-
+    private static int formWidth = 600;
+        
     private CodelistUiHandlers uiHandlers;
     protected WarningLabel     warningLabel;
-
+    protected InformationLabel informationExternalResourceLabel;
+    protected InformationLabel informationLabel;
+    protected InformationLabel informationTemporalVersionLabel;
     public ImportCodesWindow() {
         super(getConstants().actionImportCodesTsv());
 
         UploadCodesForm form = new UploadCodesForm();
         setForm(form);
 
+        buildInformationTemporalVersionLabel();
+        buildInformationExternalResourceLabel();
         buildInformationLabel();
         buildWarningLabel();
     }
 
+    private void buildInformationTemporalVersionLabel() {
+        informationTemporalVersionLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationTemporalVersionInfoMessage());
+        informationTemporalVersionLabel.setWidth(this.form.getWidth());
+        informationTemporalVersionLabel.setMargin(10);
+        informationTemporalVersionLabel.hide();
+        body.addMember(informationTemporalVersionLabel, 1);
+    }
+    
+    private void buildInformationExternalResourceLabel() {
+        informationExternalResourceLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage() + " " + getConstants().itemImportationExternalResourcesInfoMessage());
+        informationExternalResourceLabel.setWidth(this.form.getWidth());
+        informationExternalResourceLabel.setMargin(10);
+        informationExternalResourceLabel.hide();
+        body.addMember(informationExternalResourceLabel, 1);
+    }
+    
     private void buildInformationLabel() {
-        InformationLabel informationLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage());
+        informationLabel = new InformationLabel(getConstants().itemImportationNotDeletingElementsInfoMessage());
         informationLabel.setWidth(getWidth());
         informationLabel.setMargin(10);
         body.addMember(informationLabel, 1);
@@ -54,23 +75,51 @@ public class ImportCodesWindow extends ImportResourceWindow {
         ((HiddenItem) form.getItem(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN)).setDefaultValue(codelistMetamacDto.getUrn());
     }
 
+    public void initImportWindow(Boolean isLocalResource, Boolean isTemporalVersion) {
+        CustomCheckboxItem updateExistingCodesItem = (CustomCheckboxItem) this.form.getItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING);
+
+        if (Boolean.FALSE.equals(isLocalResource)) {
+            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
+            updateExistingCodesItem.setCanEdit(false);
+            updateExistingCodesItem.hide();
+            informationExternalResourceLabel.show();
+            informationTemporalVersionLabel.hide();
+            informationLabel.hide();
+        } else if (Boolean.TRUE.equals(isTemporalVersion)) {
+            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
+            updateExistingCodesItem.setCanEdit(false);
+            updateExistingCodesItem.hide();
+            informationExternalResourceLabel.hide();
+            informationTemporalVersionLabel.show();
+            informationLabel.hide();
+        } else {
+            updateExistingCodesItem.show();
+            updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
+            updateExistingCodesItem.setCanEdit(true);
+            informationExternalResourceLabel.hide();
+            informationTemporalVersionLabel.hide();
+            informationLabel.show();
+        }
+    }
+    
     private class UploadCodesForm extends UploadForm {
 
         public UploadCodesForm() {
             super(getConstants().codes());
-
+            this.setWidth(formWidth);
+            
             HiddenItem fileTypeItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE);
             fileTypeItem.setDefaultValue(ImportableResourceTypeEnum.CODES.name());
 
             HiddenItem codelistUrnItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN);
-
+            
             CustomCheckboxItem updateExistingCodesItem = new CustomCheckboxItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING, getConstants().codesUploadUpdateExisting());
 
             addFieldsInThePenultimePosition(fileTypeItem, codelistUrnItem, updateExistingCodesItem);
 
             prepareRequiredFileCheck();
-        }
-
+        } 
+        
         private void prepareRequiredFileCheck() {
             getUploadItem().addChangeHandler(new ChangeHandler() {
 

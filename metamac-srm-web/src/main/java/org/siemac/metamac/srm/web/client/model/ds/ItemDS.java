@@ -19,6 +19,8 @@ public class ItemDS extends DataSource {
     public static final String CREATION_DATE   = "item-creation-date";
     // CONTENT DESCRIPTORS
     public static final String DESCRIPTION     = "item-desc";
+    public static final String ENI_SCHEMA     = "item-eni_schema";
+    
     // COMMENTS
     public static final String COMMENTS        = "item-comments";
 

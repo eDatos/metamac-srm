@@ -136,7 +136,7 @@ public class CommonUtils {
         }
         return isDefaultMaintainer(maintainer);
     }
-
+    
     /**
      * Returns true if the artefactDto belongs to the default maintainer, and the version is not a temporal one
      * 
@@ -144,13 +144,17 @@ public class CommonUtils {
      * @return
      */
     public static boolean canSdmxMetadataAndStructureBeModified(MaintainableArtefactDto artefactDto) {
-        return canSdmxMetadataAndStructureBeModified(artefactDto.getUrn(), artefactDto.getMaintainer(), artefactDto.getVersionLogic());
+        return canSdmxMetadataAndStructureBeModified(artefactDto.getUrn(), artefactDto.getMaintainer(), artefactDto.getVersionLogic(), true);
     }
 
-    public static boolean canSdmxMetadataAndStructureBeModified(String urn, RelatedResourceDto maintainer, String versionLogic) {
-        return hasDefaultMaintainerOrIsAgencySchemeSdmxResource(urn, maintainer) && !VersionUtil.isTemporalVersion(versionLogic);
+    public static boolean canSdmxMetadataAndStructureBeModified(MaintainableArtefactDto artefactDto, boolean checkTemporalVersion) {
+        return canSdmxMetadataAndStructureBeModified(artefactDto.getUrn(), artefactDto.getMaintainer(), artefactDto.getVersionLogic(), checkTemporalVersion);
     }
-
+    
+    public static boolean canSdmxMetadataAndStructureBeModified(String urn, RelatedResourceDto maintainer, String versionLogic, boolean checkTemporalVersion) {
+        return hasDefaultMaintainerOrIsAgencySchemeSdmxResource(urn, maintainer) && (!checkTemporalVersion || !VersionUtil.isTemporalVersion(versionLogic));
+    }
+    
     // EXPORTATION UTILS
 
     public static void downloadFile(String fileName) {

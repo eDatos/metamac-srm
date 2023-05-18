@@ -4141,77 +4141,74 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     }
 
     @Test
-    public void testImportConceptsTsvSdmxRoleWithEmptyValues() throws Exception {
+    public void testImportConceptsTsvSdmxRoleWrongConceptScheme() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
         String fileName = "importation-concept-02-error_01.tsv";
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 
-        try {
-            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
-            fail("expected tsv import error");
-        } catch (MetamacException e) {
-            assertEquals(5, e.getExceptionItems().size());
-            for (int i = 0; i < 5; i++) {
-                assertEquals(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_SDMX_RELATED_ARTEFACT.getCode(), e.getExceptionItems().get(i).getCode());
-                assertEquals(2, e.getExceptionItems().get(i).getMessageParameters().length);
-                assertEquals("", e.getExceptionItems().get(i).getMessageParameters()[1]);
-            }
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(5, taskImportTsvInfo.getInformationItems().size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_SDMX_RELATED_ARTEFACT.getCode(), taskImportTsvInfo.getInformationItems().get(i).getExceptionItems().get(0).getCode());
         }
+
     }
 
     @Test
-    public void testImportConceptsTsvSdmxRoleWrongConceptScheme() throws Exception {
+    public void testImportConceptsTsvWithWrongConceptScheme() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
         String fileName = "importation-concept-02-error_02.tsv";
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 
-        try {
-            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
-            fail("expected tsv import error");
-        } catch (MetamacException e) {
-            assertEquals(1, e.getExceptionItems().size());
-            assertEquals(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT.getCode(), e.getExceptionItems().get(0).getCode());
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(3, taskImportTsvInfo.getInformationItems().size());
+        for (int i = 0; i < 3; i++) {
+            assertEquals(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_SDMX_RELATED_ARTEFACT.getCode(), taskImportTsvInfo.getInformationItems().get(i).getExceptionItems().get(0).getCode());
         }
     }
 
     @Test
-    public void testImportConceptsTsvSdmxRoleWrongRole() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+    public void testImportConceptsTsvWithWrongQuantityBaseTime() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
         String fileName = "importation-concept-02-error_03.tsv";
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 
-        try {
-            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
-            fail("expected tsv import error");
-        } catch (MetamacException e) {
-            assertEquals(5, e.getExceptionItems().size());
-            for (int i = 0; i < 5; i++) {
-                assertEquals(ServiceExceptionType.IMPORTATION_TSV_METADATA_UNEXPECTED_SDMX_RELATED_ARTEFACT.getCode(), e.getExceptionItems().get(i).getCode());
-                assertEquals(2, e.getExceptionItems().get(i).getMessageParameters().length);
-                assertEquals("DIMEN1SION", e.getExceptionItems().get(i).getMessageParameters()[1]);
-            }
-        }
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(1, taskImportTsvInfo.getInformationItems().size());
+        assertEquals(ServiceExceptionType.METADATA_INCORRECT.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
     }
-
+    
     @Test
-    public void testImportConceptsTsvSdmxRoleNoRole() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+    public void testImportConceptsTsvWithWrongQuantityType() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
         String fileName = "importation-concept-02-error_04.tsv";
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 
-        try {
-            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
-            fail("expected tsv import error");
-        } catch (MetamacException e) {
-            assertEquals(1, e.getExceptionItems().size());
-            assertEquals(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT.getCode(), e.getExceptionItems().get(0).getCode());
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(1, taskImportTsvInfo.getInformationItems().size());
+        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
+        assertEquals(ServiceExceptionParameters.CONCEPT_QUANTITY_TYPE, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getMessageParameters()[0]);
+    }
+  
+    @Test
+    public void testImportConceptsTsvWithWrongFieldsForQuantityType() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
+        String fileName = "importation-concept-02-error_05.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = false;
+
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(1, taskImportTsvInfo.getInformationItems().size());
+        assertEquals(5, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals(ServiceExceptionType.METADATA_UNEXPECTED.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(i).getCode());
         }
     }
-
+    
     @Test
     public void testImportConceptsTsvCodelistNotFound() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_9_V1;
@@ -4219,15 +4216,9 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 
-        try {
-            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
-            fail("expected tsv import error");
-        } catch (MetamacException e) {
-            assertEquals(1, e.getExceptionItems().size());
-            assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND.getCode(), e.getExceptionItems().get(0).getCode());
-            assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
-            assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Codelist=ABCD01:WXYZ(01.000)", e.getExceptionItems().get(0).getMessageParameters()[0]);
-        }
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(1, taskImportTsvInfo.getInformationItems().size());
+        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
     }
 
     @Test
@@ -4237,15 +4228,9 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
         boolean updateAlreadyExisting = false;
 
-        try {
-            conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
-            fail("expected tsv import error");
-        } catch (MetamacException e) {
-            assertEquals(1, e.getExceptionItems().size());
-            assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND.getCode(), e.getExceptionItems().get(0).getCode());
-            assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
-            assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=ZYXW1:DCBA(01.000)", e.getExceptionItems().get(0).getMessageParameters()[0]);
-        }
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        assertEquals(1, taskImportTsvInfo.getInformationItems().size());
+        assertEquals(ServiceExceptionType.IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(0).getCode());
     }
 
     @Test
@@ -4285,7 +4270,49 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         header.append("\t" + conceptTypeHeader);
         String sdmxRelatedArtefact = "sdmx_role";
         header.append("\t" + sdmxRelatedArtefact);
-
+        String quantityType = "quantity_type";
+        header.append("\t" + quantityType);
+        String unitCodelistCode = "unit_codelist_code";
+        header.append("\t" + unitCodelistCode);
+        String unitCode = "unit_code";
+        header.append("\t" + unitCode);
+        String unitSymbolPosition = "unit_symbol_position";
+        header.append("\t" + unitSymbolPosition);
+        String unitMultiplier = "unit_multiplier";
+        header.append("\t" + unitMultiplier);
+        String significantDigits = "significant_digits";
+        header.append("\t" + significantDigits);
+        String decimalsDigits = "decimals_digits";
+        header.append("\t" + decimalsDigits);
+        String minimum = "minimum";
+        header.append("\t" + minimum);
+        String maximum = "maximum";
+        header.append("\t" + maximum);
+        String denominatorConceptScheme = "denominator_concept_scheme";
+        header.append("\t" + denominatorConceptScheme);
+        String denominatorConcept = "denominator_concept";
+        header.append("\t" + denominatorConcept);
+        String numeratorConceptScheme = "numerator_concept_scheme";
+        header.append("\t" + numeratorConceptScheme);
+        String numeratorConcept = "numerator_concept";
+        header.append("\t" + numeratorConcept);
+        String isPercentage = "is_percentage";
+        header.append("\t" + isPercentage);
+        String percentage = "percentage_of#es\tpercentage_of#pt\tpercentage_of#en\tpercentage_of#ca";
+        header.append("\t" + percentage);
+        String indexBaseValue = "index_base_value";
+        header.append("\t" + indexBaseValue);
+        String indexBaseTime = "index_base_time";
+        header.append("\t" + indexBaseTime);
+        String indexBaseLocationCodelistCode = "index_base_location_codelist_code";
+        header.append("\t" + indexBaseLocationCodelistCode);
+        String indexBaseLocationCode = "index_base_location_code";
+        header.append("\t" + indexBaseLocationCode);
+        String baseQuantityConceptScheme = "base_quantity_concept_scheme";
+        header.append("\t" + baseQuantityConceptScheme);
+        String baseQuantityConcept = "base_quantity_concept";
+        header.append("\t" + baseQuantityConcept);
+        
         assertEquals(header.toString(), bufferedReader.readLine());
         Set<String> lines = new HashSet<String>();
         String line = null;
@@ -4297,28 +4324,28 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         System.out.println(lines);
 
-        String concepto01Line = "CONCEPT01\t\tNombre conceptScheme-1-v2-concept-1\t\tName conceptScheme-1-v2-concept-1\t\tDescripción conceptScheme-1-v2-concept-1\t\t\t\tComentario conceptScheme-1-v2-concept-1\t\tComment conceptScheme-1-v2-concept-1\t\tPluralName conceptScheme-1-v2-concept-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-1\t\tAcronym conceptScheme-1-v2-concept-1\t\tDescriptionSource conceptScheme-1-v2-concept-1\t\t\t\tContext conceptScheme-1-v2-concept-1\t\t\t\tDocMethod conceptScheme-1-v2-concept-1\t\t\t\tDerivation conceptScheme-1-v2-concept-1\t\t\t\tLegalActs conceptScheme-1-v2-concept-1\t\t\t\tDIRECT\tENUMERATED\turn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST07(01.000)\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE";
+        String concepto01Line = "CONCEPT01\t\tNombre conceptScheme-1-v2-concept-1\t\tName conceptScheme-1-v2-concept-1\t\tDescripción conceptScheme-1-v2-concept-1\t\t\t\tComentario conceptScheme-1-v2-concept-1\t\tComment conceptScheme-1-v2-concept-1\t\tPluralName conceptScheme-1-v2-concept-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-1\t\tAcronym conceptScheme-1-v2-concept-1\t\tDescriptionSource conceptScheme-1-v2-concept-1\t\t\t\tContext conceptScheme-1-v2-concept-1\t\t\t\tDocMethod conceptScheme-1-v2-concept-1\t\t\t\tDerivation conceptScheme-1-v2-concept-1\t\t\t\tLegalActs conceptScheme-1-v2-concept-1\t\t\t\tDIRECT\tENUMERATED\turn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST07(01.000)\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto01Line));
 
-        String concepto02Line = "CONCEPT02\t\tNombre conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIMENSION";
+        String concepto02Line = "CONCEPT02\t\tNombre conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIMENSION\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto02Line));
 
-        String concepto0201Line = "CONCEPT0201\tCONCEPT02\tNombre conceptScheme-1-v2-concept-2-1\t\tName conceptScheme-1-v2-concept-2-1\t\tDescripción conceptScheme-1-v2-concept-2-1\t\tDescription conceptScheme-1-v2-concept-2-1\t\t\t\t\t\t\t\t\t\tAcrónimo conceptScheme-1-v2-concept-2-1\t\tAcronym conceptScheme-1-v2-concept-2-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPRIMARY_MEASURE";
+        String concepto0201Line = "CONCEPT0201\tCONCEPT02\tNombre conceptScheme-1-v2-concept-2-1\t\tName conceptScheme-1-v2-concept-2-1\t\tDescripción conceptScheme-1-v2-concept-2-1\t\tDescription conceptScheme-1-v2-concept-2-1\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-2-1\t\tAcronym conceptScheme-1-v2-concept-2-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPRIMARY_MEASURE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto0201Line));
 
-        String concepto020101Line = "CONCEPT020101\tCONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE";
+        String concepto020101Line = "CONCEPT020101\tCONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto020101Line));
 
-        String concepto03Line = "CONCEPT03\t\tnombre concept-3\t\tname concept-3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIRECT\t\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE";
+        String concepto03Line = "CONCEPT03\t\tnombre concept-3\t\tname concept-3\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIRECT\t\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto03Line));
 
-        String concepto04Line = "CONCEPT04\t\tnombre concept-4\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE";
+        String concepto04Line = "CONCEPT04\t\tnombre concept-4\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto04Line));
 
-        String concepto0401Line = "CONCEPT0401\tCONCEPT04\tnombre concept 4-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE";
+        String concepto0401Line = "CONCEPT0401\tCONCEPT04\tnombre concept 4-1\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto0401Line));
 
-        String concepto040101Line = "CONCEPT040101\tCONCEPT0401\tNombre conceptScheme-1-v2-concept-4-1-1\t\tName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE";
+        String concepto040101Line = "CONCEPT040101\tCONCEPT0401\tNombre conceptScheme-1-v2-concept-4-1-1\t\tName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto040101Line));
 
         bufferedReader.close();
@@ -4327,7 +4354,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     @Test
     public void testRetrieveConceptsOrderedInDepthByConceptSchemeUrn() throws Exception {
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(Long.valueOf(12), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(Long.valueOf(12), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         assertEquals(8, concepts.size());
 
@@ -4405,7 +4432,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 11
@@ -4479,7 +4506,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 12: 1 parent concept and 11 child concepts
@@ -4588,7 +4615,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             urnConcepts2.add(conceptCreated.getNameableArtefact().getUrn());
         }
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(), new ConceptMetamacResultSelection(true, true, true, true, false));
 
         // Validation
         // The number of concepts must be 24: 2 parent concepts and 11 child concepts for each parent
@@ -6051,7 +6078,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         // Retrieve
         String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
 
-        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ItemMetamacResultSelection.API);
+        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ConceptMetamacResultSelection.API);
 
         // Validate
         assertEquals(8, concepts.size());

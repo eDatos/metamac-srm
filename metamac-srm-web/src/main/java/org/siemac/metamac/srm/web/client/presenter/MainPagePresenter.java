@@ -7,10 +7,13 @@ import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent.SelectMenuButtonHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.client.view.handlers.MainPageUiHandlers;
 import org.siemac.metamac.srm.web.shared.GetHelpUrlAction;
 import org.siemac.metamac.srm.web.shared.GetHelpUrlResult;
+import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
+import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsResult;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent.ChangeWaitPopupVisibilityHandler;
@@ -105,6 +108,12 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
         MainPagePresenter.masterHead = getView().getMasterHead();
     }
 
+    @Override
+    protected void onBind() {
+        super.onBind();
+        loadMasterTablesLists();
+    }
+    
     @Override
     protected void onReset() {
         super.onReset();
@@ -254,5 +263,20 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     @Override
     public void goToCategories() {
         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategorySchemesPlaceRequest());
+    }
+    
+    private void loadMasterTablesLists() {
+        retrieveEniSchemaCatalogs();
+    }
+
+    public void retrieveEniSchemaCatalogs() {
+        dispatcher.execute(new GetEniSchemaCatalogsAction(), new WaitingAsyncCallbackHandlingError<GetEniSchemaCatalogsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetEniSchemaCatalogsResult result) {
+                UpdateEniSchemaCatalogEvent.fire(MainPagePresenter.this, result.getEniSchemaCatalogs());
+
+            }
+        });
     }
 }

@@ -89,6 +89,8 @@ Application CodesMetamac {
     		checkCodelistVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionsByResourceUrn) throws MetamacException;
 			"Checks related resources are externally published"
     		checkCodelistWithRelatedResourcesExternallyPublished(@CodelistVersionMetamac codelistVersion) throws MetamacException;
+    		"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
+            List<Long> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
     		
 			// CODES
 
@@ -348,9 +350,12 @@ Application CodesMetamac {
 				@CodelistVersionMetamac findByUrn(String urn);
 				@CodelistVersionMetamac retrieveCodelistVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@CodelistVersionMetamac findByCode(String urn);
-				
+				"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
+    			List<Long> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
+    						
 				checkCodelistVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+
 			}			
 		}
 
@@ -457,7 +462,7 @@ Application CodesMetamac {
 				copyCodesOpennessColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget);
 				updateCodesOpennessColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeOpennessColumn(@CodelistVersionMetamac codelistVersion, String codeUrn, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
-				updateCodeOpennessColumnToLeafCodes(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
+				updateCodeOpennessColumnToLeafCodes(List<CodeMetamac> codes) throws MetamacException;
 				
 				clearCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex);
 				copyCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget);

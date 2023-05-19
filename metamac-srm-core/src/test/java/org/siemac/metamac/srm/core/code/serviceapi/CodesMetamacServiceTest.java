@@ -1654,7 +1654,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_1);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, null));
         }
         {
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_2);
@@ -1667,7 +1667,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_2_1_1);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, null));
         }
         {
             // Leaf code
@@ -1677,7 +1677,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_3);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, null));
         }
         {
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_4);
@@ -1690,7 +1690,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_4_1_1);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, null));
         }
     }
 

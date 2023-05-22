@@ -1,7 +1,9 @@
 package org.siemac.metamac.srm.core.code.serviceimpl;
 
 import java.util.*;
-
+import com.arte.statistic.sdmx.srm.core.base.domain.Item;
+import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -178,10 +180,11 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
         public Object publishInternallyConcreteResource(ServiceContext ctx, Object srmResourceVersion) throws MetamacException {
             // Mark leaf codes with openness = false
             CodelistVersionMetamac codelistVersion = getCodelistVersionMetamac(srmResourceVersion);
-            for (CodelistOpennessVisualisation codelistOpennessVisualisation : codelistVersion.getOpennessVisualisations()) {
-                // IMPORTANT! If default value to leaf codes is changed to false, decide what to do with default configuration with all expanded
-                codeMetamacRepository.updateCodeOpennessColumnToLeafCodes(codelistVersion, codelistOpennessVisualisation.getColumnIndex(), Boolean.TRUE);
+            List<CodeMetamac> codes = new ArrayList<>();
+            for (Item item : codelistVersion.getItems()) {
+                codes.add((CodeMetamac) item);
             }
+            codeMetamacRepository.updateCodeOpennessColumnToLeafCodes(codes);
             return srmResourceVersion;
         }
 

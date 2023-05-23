@@ -50,7 +50,7 @@ public class TsvExportationUtils {
                 writeItemName(writer, itemResult, languages);
                 writeItemDescription(writer, itemResult, languages);
                 writeItemComment(writer, itemResult, languages);
-                writeItemExtensionPointShortName(writer, itemResult, languages); 
+                writeItemExtensionPointShortName(writer, itemResult, languages);
             }
             writer.flush();
             return file.getName();
@@ -86,7 +86,7 @@ public class TsvExportationUtils {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_HEADER_SHORT_NAME + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
         }
-        
+
     }
 
     private static void writeCodeVariableElement(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
@@ -129,10 +129,9 @@ public class TsvExportationUtils {
                 writeRepresentation(writer, itemResult);
                 writeConceptExtends(writer, itemResult);
                 writeSdmxRelatedArtefact(conceptSchemeVersion, writer, itemResult);
-                
+
                 writeQuantityMetadata(writer, itemResult, languages);
-                
-                
+
             }
             writer.flush();
             return file.getName();
@@ -197,7 +196,7 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_CONCEPT_EXTENDS);
         writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT);        
+        writer.write(SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_QUANTITY_TYPE);
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -207,7 +206,9 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION);
         writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER);
+        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_SIGNIFICANT_DIGITS);
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -419,7 +420,7 @@ public class TsvExportationUtils {
             writer.write(extensionPoint.getEniSchemeIdentifier());
         }
     }
-    
+
     private static void writeItemName(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
         for (String language : languages) {
             String nameInLocale = itemResult.getName().get(language);
@@ -548,10 +549,10 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         if (extensionPoint.getIsExtended() != null) {
-        writer.write(String.valueOf(extensionPoint.getIsExtended()));
+            writer.write(String.valueOf(extensionPoint.getIsExtended()));
         }
     }
-    
+
     private static void writeConceptType(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
         ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -596,8 +597,12 @@ public class TsvExportationUtils {
         }
 
         writer.write(SrmConstants.TSV_SEPARATOR);
-        if (extensionPoint.getUnitMultiplier() != null) {
-            writer.write(Integer.toString(extensionPoint.getUnitMultiplier()));
+        if (!StringUtils.isBlank(extensionPoint.getUnitMultiplierCode()) && !StringUtils.isBlank(extensionPoint.getUnitMultiplierCodelistCode())) {
+            writer.write(extensionPoint.getUnitMultiplierCodelistCode());
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(extensionPoint.getUnitMultiplierCode());
+        } else {
+            writer.write(SrmConstants.TSV_SEPARATOR);
         }
 
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -643,8 +648,8 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         if (extensionPoint.getIsPercentage() != null) {
             writer.write(extensionPoint.getIsPercentage().toString());
-        } 
-  
+        }
+
         writeItemExtensionPointPercentageOf(writer, itemResult, languages);
 
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -669,7 +674,7 @@ public class TsvExportationUtils {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_SEPARATOR);
         }
-        
+
         writer.write(SrmConstants.TSV_SEPARATOR);
         if (!StringUtils.isBlank(extensionPoint.getIndexBaseQuantityConceptScheme()) && !StringUtils.isBlank(extensionPoint.getIndexBaseQuantityConcept())) {
             writer.write(extensionPoint.getIndexBaseQuantityConceptScheme());
@@ -679,7 +684,7 @@ public class TsvExportationUtils {
             writer.write(SrmConstants.TSV_SEPARATOR);
         }
     }
-    
+
     private static void writeItemExtensionPointPercentageOf(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
         ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         for (String language : languages) {
@@ -691,7 +696,7 @@ public class TsvExportationUtils {
             }
         }
     }
-    
+
     private static void writeConceptExtends(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
         ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         writer.write(SrmConstants.TSV_SEPARATOR);

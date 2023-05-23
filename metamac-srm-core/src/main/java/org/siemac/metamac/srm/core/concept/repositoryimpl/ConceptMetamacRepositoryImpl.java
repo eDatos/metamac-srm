@@ -771,7 +771,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("facetId", facetId);
         String facetValue = (String) query.getSingleResult();
-        FacetValueTypeEnum facetValueTypeEnum = FacetValueTypeEnum.valueOf(facetValue);
+        FacetValueTypeEnum facetValueTypeEnum = FacetValueTypeEnum.fromValue(facetValue);
         return facetValueTypeEnum;
     }
 

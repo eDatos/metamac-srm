@@ -1235,10 +1235,7 @@ public class TsvImportationUtils {
         target.setDerivation(source.getDerivation());
         target.setLegalActs(source.getLegalActs());
         target.setConceptExtends(source.getConceptExtends());
-        target.setVariable(source.getVariable());
         target.setQuantity(source.getQuantity());
-        target.getRoleConcepts().addAll(source.getRoleConcepts());
-        target.getRelatedConcepts().addAll(source.getRelatedConcepts());
         target.setItemSchemeVersionFirstLevel(source.getItemSchemeVersionFirstLevel());
         target.getNameableArtefact().setName(source.getNameableArtefact().getName());
         target.getNameableArtefact().setIsCodeUpdated(source.getNameableArtefact().getIsCodeUpdated());

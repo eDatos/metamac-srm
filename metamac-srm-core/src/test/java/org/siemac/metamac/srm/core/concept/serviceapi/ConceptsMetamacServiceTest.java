@@ -3437,6 +3437,84 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     }
 
     @Test
+    public void testCreateConceptErrorNullQuantityUnitMultiplier() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        ConceptType conceptType = null;
+        String unitCodeUrn = CODELIST_7_V2_CODE_1;
+        String conceptNumerator = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
+        String conceptDenominator = CONCEPT_SCHEME_1_V2_CONCEPT_3;
+        ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_8_V1), ConceptRoleEnum.ATTRIBUTE);
+        concept.setQuantity(new Quantity());
+        concept.getQuantity().setQuantityType(QuantityTypeEnum.INDEX);
+        concept.getQuantity().setUnitCode(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), unitCodeUrn));
+        concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
+        concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
+        concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
+        concept.getQuantity().setMinimum(Integer.valueOf(1000));
+        concept.getQuantity().setMaximum(Integer.valueOf(2000));
+        concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
+        concept.getQuantity().setDenominator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptDenominator));
+        concept.getQuantity().setIsPercentage(Boolean.FALSE);
+        concept.getQuantity().setPercentageOf(BaseDoMocks.mockInternationalString());
+        concept.getQuantity().setBaseTime("2011");
+
+        concept.getQuantity().setUnitMultiplier(null);
+
+        // Create
+        try {
+            conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
+            fail("Quantity unit multiplier null");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.METADATA_REQUIRED.getCode(), e.getExceptionItems().get(0).getCode());
+            assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
+            assertEquals(ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_MULTIPLIER, e.getExceptionItems().get(0).getMessageParameters()[0]);
+        }
+    }
+
+    @Test
+    public void testUpdateConceptErrorNullQuantityUnitMultiplier() throws Exception {
+        ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_1);
+        concept.getNameableArtefact().setIsCodeUpdated(Boolean.FALSE);
+        concept.getNameableArtefact().setName(ConceptsDoMocks.mockInternationalString());
+        concept.setConceptExtends(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_7_V1_CONCEPT_1));
+        assertTrue(RepresentationTypeEnum.ENUMERATION.equals(concept.getCoreRepresentation().getRepresentationType()));
+        concept.setCoreRepresentation(ConceptsDoMocks.mockTextFormatRepresentation());
+
+        String unitCodeUrn = CODELIST_7_V2_CODE_1;
+        String conceptNumerator = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
+        String conceptDenominator = CONCEPT_SCHEME_1_V2_CONCEPT_3;
+
+        concept.setQuantity(new Quantity());
+        concept.getQuantity().setQuantityType(QuantityTypeEnum.INDEX);
+        concept.getQuantity().setUnitCode(codesService.retrieveCodeByUrn(getServiceContextAdministrador(), unitCodeUrn));
+        concept.getQuantity().setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
+        concept.getQuantity().setSignificantDigits(Integer.valueOf(2));
+        concept.getQuantity().setDecimalPlaces(Integer.valueOf(3));
+        concept.getQuantity().setMinimum(Integer.valueOf(1000));
+        concept.getQuantity().setMaximum(Integer.valueOf(2000));
+        concept.getQuantity().setNumerator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptNumerator));
+        concept.getQuantity().setDenominator(conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptDenominator));
+        concept.getQuantity().setIsPercentage(Boolean.FALSE);
+        concept.getQuantity().setPercentageOf(BaseDoMocks.mockInternationalString());
+        concept.getQuantity().setBaseTime("2011");
+
+        concept.getQuantity().setUnitMultiplier(null);
+
+        try {
+            conceptsService.updateConcept(getServiceContextAdministrador(), concept);
+            fail("Quantity unit multiplier null");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.METADATA_REQUIRED.getCode(), e.getExceptionItems().get(0).getCode());
+            assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
+            assertEquals(ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_MULTIPLIER, e.getExceptionItems().get(0).getMessageParameters()[0]);
+        }
+    }
+
+    @Test
     public void testCreateConceptErrorConceptExtendsWrongProcStatus() throws Exception {
 
         ServiceContext ctx = getServiceContextAdministrador();

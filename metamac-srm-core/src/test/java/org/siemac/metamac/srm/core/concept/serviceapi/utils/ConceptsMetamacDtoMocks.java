@@ -83,7 +83,7 @@ public class ConceptsMetamacDtoMocks {
             target.setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
             target.setSignificantDigits(Integer.valueOf(5));
             target.setDecimalPlaces(Integer.valueOf(2));
-            target.setUnitMultiplier(Integer.valueOf(10));
+            target.setUnitMultiplier(unitCode);
         }
         if (QuantityUtils.isAmountOrExtension(type)) {
             // nothing

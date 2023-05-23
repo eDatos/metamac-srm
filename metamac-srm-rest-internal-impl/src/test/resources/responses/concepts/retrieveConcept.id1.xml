@@ -176,7 +176,16 @@
         <sr:unitSymbolPosition>START</sr:unitSymbolPosition>
         <sr:significantDigits>5</sr:significantDigits>
         <sr:decimalPlaces>2</sr:decimalPlaces>
-        <sr:unitMultiplier>10</sr:unitMultiplier>
+        <sr:unitMultiplier kind="structuralResources#code">
+            <cdomain:id>unitCode01</cdomain:id>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).unitCode01</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/unitCode01"/>
+            <cdomain:name>
+                <cdomain:text xml:lang="es">name-unitCode01 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">name-unitCode01 in English</cdomain:text>
+            </cdomain:name>
+            <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/codelists/codelist;id=agency01:codelist01(01.000)/code;id=unitCode01</sr:managementAppLink>
+        </sr:unitMultiplier>
         <sr:min>1000</sr:min>
         <sr:max>2000</sr:max>
         <sr:numerator kind="structuralResources#concept">

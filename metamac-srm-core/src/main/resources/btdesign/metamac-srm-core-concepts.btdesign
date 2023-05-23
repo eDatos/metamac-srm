@@ -261,7 +261,7 @@ Application ConceptsMetamac {
 			"Number of decimal places to use for displaying the values of a metric concept"
 			Integer decimalPlaces nullable;
 			"Multiplier of percentage"
-			Integer unitMultiplier nullable;
+			- @CodeMetamac unitMultiplier nullable cascade="none" databaseColumn="UNIT_MULTIPLIER_FK";
 			"Min. Only when Quantity is Magnitude"
 			Integer minimum nullable;
 			"Max. Only when Quantity is Magnitude"

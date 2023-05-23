@@ -34,6 +34,8 @@ public interface ConceptUiHandlers extends BaseConceptUiHandlers {
 
     void retrieveCodelistsForQuantityUnitFilter(int firstResult, int maxResults, CodelistWebCriteria codelistWebCriteria);
     void retrieveCodesForQuantityUnit(int firstResult, int maxResults, CodeWebCriteria codeWebCriteria);
+    void retrieveCodelistsForQuantityUnitMultiplierFilter(int firstResult, int maxResults, CodelistWebCriteria codelistWebCriteria);
+    void retrieveCodesForQuantityUnitMultiplier(int firstResult, int maxResults, CodeWebCriteria codeWebCriteria);
 
     void retrieveCodelistsForQuantityBaseLocationFilter(int firstResult, int maxResults, CodelistWebCriteria codelistWebCriteria);
     void retrieveCodesForQuantityBaseLocation(int firstResult, int maxResults, CodeWebCriteria codeWebCriteria);

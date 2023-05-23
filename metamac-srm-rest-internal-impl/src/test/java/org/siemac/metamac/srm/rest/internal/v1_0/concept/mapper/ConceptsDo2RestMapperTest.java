@@ -300,7 +300,7 @@ public class ConceptsDo2RestMapperTest {
         assertEquals(QuantityUnitSymbolPosition.START, quantityChangeRate.getUnitSymbolPosition());
         assertEquals(Integer.valueOf(5), quantityChangeRate.getSignificantDigits());
         assertEquals(Integer.valueOf(2), quantityChangeRate.getDecimalPlaces());
-        assertEquals(10, quantityChangeRate.getUnitMultiplier());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).unitCode01", quantityChangeRate.getUnitMultiplier().getUrn());
         assertEquals(Integer.valueOf(1000), quantityChangeRate.getMin());
         assertEquals(Integer.valueOf(2000), quantityChangeRate.getMax());
         assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme02(01.000).numerator1", quantityChangeRate.getNumerator().getUrn());

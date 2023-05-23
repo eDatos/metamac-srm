@@ -8,6 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -353,13 +358,13 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
-            
+
             Set<String> validFields = new HashSet<>();
             validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
-            
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
                 SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -373,8 +378,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
                 ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
                 itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(),
-                        itemMetamacResultSelection);
+                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
                 // Transform
                 return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
@@ -926,14 +930,14 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             throw manageException(e);
         }
     }
-    
+
     @Override
     public RecodedCodes retrieveRecodedCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
             checkParameterNotWildcardRetrieveItemScheme(agencyID2, resourceID2, version2);
-            
+
             // Retrieve all codes of codelist
             CodelistVersionMetamac codelistVersionOrigin = retrieveCodelistPublished(agencyID1, resourceID1, version1);
 
@@ -941,34 +945,33 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
 
             checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
-            
+
             List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
-            
+
             return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
-            
+
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
-    
+
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
-            
+
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
-            
+            List<CodelistRestrictionVisualisation> restrictions = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
+
             return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
-         
+
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
+
     private String getOpennessToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String openness, CodelistVersionMetamac codelistVersion) throws MetamacException {
         String opennessToUse = null;
         if (openness == null) {
@@ -990,8 +993,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         }
         return restrictionToUse;
     }
-       
-    
+
     private String getOrderToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String order, CodelistVersionMetamac codelistVersion) throws MetamacException {
         String orderToUse = null;
         if (order == null) {
@@ -1223,7 +1225,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             throw manageException(e);
         }
     }
-  
+
     @Override
     public DataStructures findDataStructures(String query, String orderBy, String limit, String offset) {
         return findDataStructures(null, null, null, query, orderBy, limit, offset);
@@ -1539,7 +1541,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
     private PagedResult<CategoryMetamac> findCategoriesCore(String agencyID, String resourceID, String version, String categoryID, List<ConditionalCriteria> conditionalCriteriaQuery,
             PagingParameter pagingParameter) throws MetamacException {
-       
+
         // Criteria to find items by criteria
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItems(agencyID, resourceID, version, categoryID,
                 CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact(), CategoryMetamacProperties.nameableArtefact(), conditionalCriteriaQuery, CategoryMetamac.class);
@@ -1724,7 +1726,8 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         }
     }
 
-    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction) throws MetamacException {
+    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction)
+            throws MetamacException {
         try {
             return codesService.retrieveCodelistRestrictionVisualisationByCode(ctx, codelistUrn, restriction);
         } catch (MetamacException e) {
@@ -1737,7 +1740,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             }
         }
     }
-    
+
     private PagedResult<CodelistVersionMetamac> findCodelistsCore(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteriaQuery,
             PagingParameter pagingParameter) throws MetamacException {
 
@@ -2007,7 +2010,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             throw new RestException(exception, Status.BAD_REQUEST);
         }
     }
-    
+
     /**
      * Check unsupported wildcards in some parameters
      */
@@ -2178,6 +2181,54 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
         // Update keys
         return constraintsService.updateRegionKeys(serviceContext, contentConstraintUrn, regionValue.getCode(), keysToPersist);
+    }
+
+    @Override
+    public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return null;
+    }
+
+    @Override
+    public Response findCodesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return null;
+    }
+
+    @Override
+    public Response findConceptsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findConceptsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findOrganisationsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

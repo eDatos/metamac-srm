@@ -261,8 +261,6 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static final String CODELIST_14_V1_CODE_1_1                               = "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX02:CODELIST14(01.000).CODE0101";
     protected static final String CODELIST_14_V1_CODE_2                                 = "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX02:CODELIST14(01.000).CODE02";
     protected static final String CODELIST_14_V1_CODE_3                                 = "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX02:CODELIST14(01.000).CODE03";
-    protected static final String CODELIST_15_V1_CODE_1                                 = "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).1";
-    protected static final String CODELIST_15_V1_CODE_2                                 = "urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX:CL_UNIT_MULT(1.0).2";
 
     // Codelist families
     protected static final String CODELIST_FAMILY_1                                     = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistFamily=CODELIST_FAMILY_01";

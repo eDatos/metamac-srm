@@ -717,7 +717,7 @@ public class TsvExportationUtils {
         }
     }
 
-    private static String removeUnsupportedCharaters(String string) {
+    public static String removeUnsupportedCharaters(String string) {
         if (StringUtils.isNotBlank(string)) {
             string = string.replace('\n', ' ');
             string = string.replace('\t', ' ');

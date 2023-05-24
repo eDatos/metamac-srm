@@ -1,6 +1,8 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.service;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,7 +129,7 @@ public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTe
     protected String getUriItemsRestrictions(String agencyID, String resourceID, String version) throws Exception {
         return getUriItemSchemes(agencyID, resourceID, version) + "/restrictions";
     }
-    
+
     protected String getUriItem(String agencyID, String resourceID, String version, String itemID) throws Exception {
         return getUriItems(agencyID, resourceID, version, null, null, null, null) + "/" + itemID;
     }
@@ -176,6 +178,23 @@ public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTe
 
     protected String getApiEndpoint() {
         return apiEndpointv10;
+    }
+
+    protected List<String> getResponse(String requestUri, String mediaType) throws Exception {
+        WebClient webClient = WebClient.create(requestUri).accept(mediaType);
+        Response response = webClient.get();
+
+        InputStream responseActual = (InputStream) response.getEntity();
+        BufferedReader br = new BufferedReader(new InputStreamReader(responseActual, "UTF-8"));
+
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line.replaceAll("\t", "\\\\t"));
+            lines.add(line);
+        }
+
+        return lines;
     }
 
     protected abstract void resetMocks() throws MetamacException;

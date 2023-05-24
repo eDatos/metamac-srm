@@ -13,6 +13,8 @@ import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.VERSION_1;
 
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -321,6 +323,53 @@ public class SrmRestInternalFacadeV10OrganisationsNoTypeTest extends SrmRestInte
 
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+
+    @Test
+    public void testFindOrganisationsRetrieveTsv() throws Exception {
+
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", null);
+        InputStream responseExpected = SrmRestInternalFacadeV10OrganisationsNoTypeTest.class.getResourceAsStream("/responses/organisations/findOrganisationsTSV.tsv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/tab-separated-values", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testFindOrganisationsTsv() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", null);
+        List<String> lines = getResponse(requestUri, "text/tab-separated-values");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("id\tparent\turn\tname#es\tname#en", iterator.next());
+        assertTrue(lines.contains("item1\t\turn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item1\tname-item1 en Español\tname-item1 in English"));
+        assertTrue(lines.contains("item2\t\turn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item2\tname-item2 en Español\tname-item2 in English"));
+
+    }
+
+    @Test
+    public void testFindOrganisationsRetrieveCsv() throws Exception {
+
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", null);
+        InputStream responseExpected = SrmRestInternalFacadeV10OrganisationsNoTypeTest.class.getResourceAsStream("/responses/organisations/findOrganisationsCSV.csv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/csv", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testFindOrganisationsCsv() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", null);
+        List<String> lines = getResponse(requestUri, "text/csv");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("id,parent,urn,name#es,name#en", iterator.next());
+        assertTrue(lines.contains("item1,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item1,name-item1 en Español,name-item1 in English"));
+        assertTrue(lines.contains("item2,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item2,name-item2 en Español,name-item2 in English"));
     }
 
     @Test

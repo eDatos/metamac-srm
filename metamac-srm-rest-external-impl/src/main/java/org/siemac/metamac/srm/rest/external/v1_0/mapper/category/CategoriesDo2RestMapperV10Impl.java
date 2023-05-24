@@ -1,10 +1,13 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.category;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
@@ -19,6 +22,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
@@ -70,7 +74,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -87,7 +92,6 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return targets;
     }
 
-    
     @Override
     public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
 
@@ -125,7 +129,42 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         if (source.getEniSchema() != null) {
             target.setEniSchemeType(toItem(source.getEniSchema()));
         }
-        
+
+        return target;
+    }
+
+    @Override
+    public List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextResource> target = new ArrayList<>();
+
+        for (CategoryResource category : source.getCategories()) {
+            target.add(toFlattenCategory(category, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextResource toFlattenCategory(CategoryResource source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
+        target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
+        target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
+        target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
+
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
+        }
+
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
+            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, source.getEniSchemeType() != null ? source.getEniSchemeType().getId() : null);
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_ENI_SCHEME_NAME,
+                    source.getEniSchemeType() != null ? source.getEniSchemeType().getName() : null, languages));
+        }
+
         return target;
     }
 
@@ -138,7 +177,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setName(toInternationalString(source.getDescription()));
         return target;
     }
-    
+
     @Override
     public Categorisations toCategorisations(PagedResult<Categorisation> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
@@ -242,9 +281,9 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         CategoryResource target = new CategoryResource();
         toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source), target, fields);
         target.setNestedId(source.getNameableArtefact().getCodeFull());
-        
+
         setVisibleCategoryFields(source, target, fields);
-        
+
         return target;
     }
 
@@ -255,9 +294,9 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         CategoryResource target = new CategoryResource();
         toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source, categorySchemeVersion), target, categorySchemeVersion.getMaintainableArtefact().getIsImported(), fields);
         target.setNestedId(source.getCodeFull());
-        
+
         setVisibleCategoryFields(source, target, fields);
-        
+
         return target;
     }
 
@@ -305,7 +344,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     private String toSubpathCategorisations() {
         return SrmRestConstants.LINK_SUBPATH_CATEGORISATIONS;
     }
-    
+
     private void setVisibleCategoryFields(CategoryMetamac source, CategoryResource target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             target.setEniSchemeType(toItem(source.getEniSchema()));

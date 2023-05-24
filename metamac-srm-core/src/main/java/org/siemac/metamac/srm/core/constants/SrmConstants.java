@@ -30,6 +30,7 @@ public class SrmConstants {
     public static final String             TSV_LINE_SEPARATOR                                                     = "\n";
     public static final String             TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR                              = "#";
     public static final String             TSV_HEADER_CODE                                                        = "code";
+    public static final String             TSV_HEADER_URN                                                         = "urn";
     public static final String             TSV_HEADER_PARENT                                                      = "parent";
     public static final String             TSV_HEADER_NAME                                                        = "name";
     public static final String             TSV_HEADER_DESCRIPTION                                                 = "description";
@@ -80,6 +81,8 @@ public class SrmConstants {
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME                                = "base_quantity_concept_scheme";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT                                       = "base_quantity_concept";
     public static final String             TSV_HEADER_ENI_SCHEME                                                  = "eni_scheme";
+    public static final String             TSV_HEADER_ENI_SCHEME_ID                                               = "eni_scheme_type_id";
+    public static final String             TSV_HEADER_ENI_SCHEME_NAME                                             = "eni_scheme_type_name";
 
     public static final String             TSV_EXPORTATION_ENCODING                                               = "UTF-8";
 

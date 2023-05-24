@@ -1,0 +1,5 @@
+id	parent	urn	name#es	name#en
+concept1		urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept1	name-concept1 en Español	name-concept1 in English
+concept2		urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2	name-concept2 en Español	name-concept2 in English
+concept2A	urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2	urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2A	name-concept2A en Español	name-concept2A in English
+concept2B	urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2	urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2B	name-concept2B en Español	name-concept2B in English

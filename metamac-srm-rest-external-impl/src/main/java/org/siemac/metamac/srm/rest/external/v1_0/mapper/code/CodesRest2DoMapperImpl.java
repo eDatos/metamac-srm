@@ -181,6 +181,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                     MetamacRestQueryPropertyRestriction codelistPropertyRestriction = constructCodelistPropertyRestrictionForDefaultGeographicalGranularityCodelist(propertyRestriction);
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(codelistPropertyRestriction, CodeMetamacProperties.itemSchemeVersion().maintainableArtefact());
                 }
+                case PARENT:
+                    return buildSculptorPropertyCriteria(CodeMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

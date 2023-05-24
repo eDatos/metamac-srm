@@ -344,13 +344,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
-            
+
             Set<String> validFields = new HashSet<>();
             validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
             validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
-            
+
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve categories paginated
                 SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -364,8 +364,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
                 ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
                 itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(),
-                        itemMetamacResultSelection);
+                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
                 // Transform
                 return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
@@ -950,10 +949,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
-            
+            List<CodelistRestrictionVisualisation> restrictions = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
+
             return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
-         
+
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -2021,6 +2020,54 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     private DateTime retrieveLastUpdatedDateVariableElementsGeographicalInformation() throws MetamacException {
         return miscMetamacService.findLastUpdatedVariableElementsGeographicalInformation(ctx);
+    }
+
+    @Override
+    public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return null;
+    }
+
+    @Override
+    public Response findCodesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return null;
+    }
+
+    @Override
+    public Response findConceptsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findConceptsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findOrganisationsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -1,4 +1,4 @@
-id	parent	urn	name#es	name#en
+code	parent	urn	name#es	name#en
 code1		urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code1	name-code1 en Español	name-code1 in English
 code2		urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2	name-code2 en Español	name-code2 in English
 code2A	urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2	urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2A	name-code2A en Español	name-code2A in English

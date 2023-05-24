@@ -3489,7 +3489,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
-                     "type":"number"
+                     "$ref":"#/definitions/ItemResource"
                   },
                   "unitSymbolPosition":{
                      "xml":{

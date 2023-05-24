@@ -26,12 +26,15 @@
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
+        	<entry key="tsv" value="text/tab-separated-values" />
+        	<entry key="csv" value="text/csv" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
             <ref bean="jsonProvider" />
             <ref bean="wadlGenerator" />
+            <ref bean="xstreamTsvProvider" />
         </jaxrs:providers>
         
         <!-- JSONP -->
@@ -52,11 +55,13 @@
     </bean>
     
     <bean id="jsonProvider" class="org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider" />
-
+    <bean id="xstreamTsvProvider" class="org.siemac.metamac.rest.common.export.mappers.PlainTextMessageBodyWritter" />
+              
     <bean id="wadlGenerator" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
         <property name="namespacePrefix" value="ns" />
     </bean>
     
+   
     <util:map id="marshallerProperties">
         <entry key="jaxb.formatted.output">
             <value type="java.lang.Boolean">true</value>

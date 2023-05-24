@@ -3,12 +3,18 @@ package org.siemac.metamac.srm.rest.external.v1_0.service.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
+import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -202,7 +208,7 @@ public class SrmRestInternalUtils {
     }
 
     private static final String SPACE = " ";
-    private static final String PLUS  = "+";
+    private static final String PLUS = "+";
 
     public static Set<String> parseFieldsParameter(String fieldsParam) {
         Set<String> validFields = new HashSet<>();
@@ -218,7 +224,6 @@ public class SrmRestInternalUtils {
         return parseFieldsParameter(fieldsParam, validFields);
     }
 
-    
     public static Set<String> parseFieldsParameter(String fieldsParam, Set<String> validFields) {
         Set<String> showFields = new HashSet<>();
         if (fieldsParam != null) {
@@ -242,5 +247,33 @@ public class SrmRestInternalUtils {
 
     public static boolean containsField(Set<String> fields, String field) {
         return fields != null && fields.contains(field);
+    }
+
+    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages) {
+        Map<String, String> target = new LinkedHashMap<>();
+
+        InternationalString copySource = new InternationalString();
+
+        if (source != null) {
+            copySource = source;
+        }
+
+        String header;
+        for (String language : languages) {
+            header = nameField + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language));
+        }
+
+        return target;
+    }
+
+    private static String getLocalisedStringByLang(List<LocalisedString> source, String language) {
+        // in the api, lamba functions is not allowed. the search is done with a loop.
+        for (LocalisedString loc : source) {
+            if (language.equals(loc.getLang())) {
+                return TsvExportationUtils.removeUnsupportedCharaters(loc.getValue());
+            }
+        }
+        return null;
     }
 }

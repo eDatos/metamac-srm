@@ -134,6 +134,8 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
                             propertyRestriction);
                 case CATEGORY_SCHEME_LATEST:
                     return buildSculptorPropertyCriteria(CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                case PARENT:
+                    return buildSculptorPropertyCriteria(CategoryMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

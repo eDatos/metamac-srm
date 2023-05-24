@@ -462,7 +462,7 @@ Application CodesMetamac {
 				copyCodesOpennessColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget);
 				updateCodesOpennessColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
 				updateCodeOpennessColumn(@CodelistVersionMetamac codelistVersion, String codeUrn, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
-				updateCodeOpennessColumnToLeafCodes(@CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException;
+				updateCodeOpennessColumnToLeafCodes(List<CodeMetamac> codes) throws MetamacException;
 				
 				clearCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex);
 				copyCodesRestrictionColumnByCodelist(@CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget);

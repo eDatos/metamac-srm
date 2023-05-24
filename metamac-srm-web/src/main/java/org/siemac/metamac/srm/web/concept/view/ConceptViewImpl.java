@@ -97,7 +97,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     private VLayout                                 panel;
     private ConceptMainFormLayout                   mainFormLayout;
 
-    private ConceptsOrderTreeGrid                  conceptsTreeGrid;
+    private ConceptsOrderTreeGrid                   conceptsTreeGrid;
 
     // View forms
     private GroupDynamicForm                        identifiersForm;
@@ -760,9 +760,23 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     }
 
     @Override
+    public void setCodelistsForQuantityUnitMultiplierFilter(List<RelatedResourceDto> codelistDtos, int firstResult, int totalResults) {
+        if (quantityEditionForm != null) {
+            quantityEditionForm.setCodelistsForQuantityUnitMultiplierFilter(codelistDtos, firstResult, totalResults);
+        }
+    }
+
+    @Override
     public void setCodeThatCanBeQuantityUnit(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults) {
         if (quantityEditionForm != null) {
             quantityEditionForm.setCodesForQuantityUnit(codesDtos, firstResult, totalResults);
+        }
+    }
+
+    @Override
+    public void setCodeThatCanBeQuantityUnitMultiplier(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults) {
+        if (quantityEditionForm != null) {
+            quantityEditionForm.setCodesForQuantityUnitMultiplier(codesDtos, firstResult, totalResults);
         }
     }
 

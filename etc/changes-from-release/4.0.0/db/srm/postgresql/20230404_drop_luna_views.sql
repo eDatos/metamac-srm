@@ -1,0 +1,14 @@
+-- --------------------------------------------------------------------------------------------------
+-- EDATOS-2770 - Eliminar todo el código relacionado con la integración con LUNA
+-- --------------------------------------------------------------------------------------------------
+
+DROP VIEW TB_FAM_CONCEPTOS;
+DROP VIEW TB_CONC_FAMCONC;
+DROP VIEW TB_CONCEPTOS;
+DROP VIEW TB_CODIFICACIONES;
+DROP VIEW TB_CODIGOS;
+DROP VIEW TB_ITEMS;
+DROP VIEW TB_ORDENES;
+DROP VIEW TB_ORDENES_CODIGOS;
+
+commit;

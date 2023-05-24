@@ -277,7 +277,7 @@ public class SrmCoreServiceFacadeImportationConceptTest extends SrmBaseTest {
                 assertEquals(QuantityUnitSymbolPositionEnum.END, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(2), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(3), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(10), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX01:CODELIST07(02.000).CODE01", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(100), quantity.getMinimum());
                 assertEquals(Integer.valueOf(200), quantity.getMaximum());
                 assertEquals(urnExpectedConcept2, quantity.getNumerator().getNameableArtefact().getUrn());
@@ -306,7 +306,7 @@ public class SrmCoreServiceFacadeImportationConceptTest extends SrmBaseTest {
                 assertEquals(QuantityUnitSymbolPositionEnum.START, quantity.getUnitSymbolPosition());
                 assertEquals(Integer.valueOf(3), quantity.getSignificantDigits());
                 assertEquals(Integer.valueOf(2), quantity.getDecimalPlaces());
-                assertEquals(Integer.valueOf(100), quantity.getUnitMultiplier());
+                assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=SDMX01:CODELIST07(02.000).CODE02", quantity.getUnitMultiplier().getNameableArtefact().getUrn());
                 assertEquals(Integer.valueOf(200), quantity.getMinimum());
                 assertEquals(Integer.valueOf(350), quantity.getMaximum());
                 assertEquals(urnExpectedConcept2, quantity.getNumerator().getNameableArtefact().getUrn());

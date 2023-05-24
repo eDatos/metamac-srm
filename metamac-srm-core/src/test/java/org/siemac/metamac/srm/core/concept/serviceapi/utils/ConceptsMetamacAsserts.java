@@ -186,7 +186,7 @@ public class ConceptsMetamacAsserts extends ConceptsAsserts {
         assertEquals(expected.getUnitSymbolPosition(), actual.getUnitSymbolPosition());
         assertEquals(expected.getSignificantDigits(), actual.getSignificantDigits());
         assertEquals(expected.getDecimalPlaces(), actual.getDecimalPlaces());
-        assertEquals(expected.getUnitMultiplier(), actual.getUnitMultiplier());
+        assertQuantityRelatedItem(expected.getUnitMultiplier(), actual.getUnitMultiplier());
         assertEquals(expected.getMinimum(), actual.getMinimum());
         assertEquals(expected.getMaximum(), actual.getMaximum());
         assertQuantityRelatedItem(expected.getNumerator(), actual.getNumerator());
@@ -209,7 +209,7 @@ public class ConceptsMetamacAsserts extends ConceptsAsserts {
         assertEquals(expected.getUnitSymbolPosition(), actual.getUnitSymbolPosition());
         assertEquals(expected.getSignificantDigits(), actual.getSignificantDigits());
         assertEquals(expected.getDecimalPlaces(), actual.getDecimalPlaces());
-        assertEquals(expected.getUnitMultiplier(), actual.getUnitMultiplier());
+        BaseAsserts.assertEqualsRelatedResourceDto(expected.getUnitMultiplier(), actual.getUnitMultiplier());
         assertEquals(expected.getMinimum(), actual.getMinimum());
         assertEquals(expected.getMaximum(), actual.getMaximum());
         BaseAsserts.assertEqualsRelatedResourceDto(expected.getNumerator(), actual.getNumerator());
@@ -235,7 +235,9 @@ public class ConceptsMetamacAsserts extends ConceptsAsserts {
         assertEquals(entity.getUnitSymbolPosition(), dto.getUnitSymbolPosition());
         assertEquals(entity.getSignificantDigits(), dto.getSignificantDigits());
         assertEquals(entity.getDecimalPlaces(), dto.getDecimalPlaces());
-        assertEquals(entity.getUnitMultiplier(), dto.getUnitMultiplier());
+        if (entity.getUnitMultiplier() != null) {
+            assertEquals(entity.getUnitMultiplier().getNameableArtefact().getUrn(), dto.getUnitMultiplier().getUrn());
+        }
         assertEquals(entity.getMinimum(), dto.getMinimum());
         assertEquals(entity.getMaximum(), dto.getMaximum());
         if (entity.getNumerator() != null) {

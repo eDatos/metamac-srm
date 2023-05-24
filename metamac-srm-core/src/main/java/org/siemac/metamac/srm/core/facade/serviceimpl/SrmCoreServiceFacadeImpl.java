@@ -152,54 +152,54 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Autowired
-    private DataStructureDefinitionDo2DtoMapper        dataStructureDefinitionDo2DtoMapper;
+    private DataStructureDefinitionDo2DtoMapper dataStructureDefinitionDo2DtoMapper;
 
     @Autowired
-    private DataStructureDefinitionDto2DoMapper        dataStructureDefinitionDto2DoMapperDto2DoMapper;
+    private DataStructureDefinitionDto2DoMapper dataStructureDefinitionDto2DoMapperDto2DoMapper;
 
     @Autowired
-    private ConceptsDo2DtoMapper                       conceptsDo2DtoMapper;
+    private ConceptsDo2DtoMapper conceptsDo2DtoMapper;
 
     @Autowired
-    private ConceptsDto2DoMapper                       conceptsDto2DoMapper;
+    private ConceptsDto2DoMapper conceptsDto2DoMapper;
 
     @Autowired
-    private OrganisationsDo2DtoMapper                  organisationsDo2DtoMapper;
+    private OrganisationsDo2DtoMapper organisationsDo2DtoMapper;
 
     @Autowired
-    private OrganisationsDto2DoMapper                  organisationsDto2DoMapper;
+    private OrganisationsDto2DoMapper organisationsDto2DoMapper;
 
     @Autowired
-    private CategoriesDo2DtoMapper                     categoriesDo2DtoMapper;
+    private CategoriesDo2DtoMapper categoriesDo2DtoMapper;
 
     @Autowired
-    private CategoriesDto2DoMapper                     categoriesDto2DoMapper;
+    private CategoriesDto2DoMapper categoriesDto2DoMapper;
 
     @Autowired
-    private CodesDo2DtoMapper                          codesDo2DtoMapper;
+    private CodesDo2DtoMapper codesDo2DtoMapper;
 
     @Autowired
-    private CodesDto2DoMapper                          codesDto2DoMapper;
+    private CodesDto2DoMapper codesDto2DoMapper;
 
     @Autowired
-    private MetamacCriteria2SculptorCriteriaMapper     metamacCriteria2SculptorCriteriaMapper;
+    private MetamacCriteria2SculptorCriteriaMapper metamacCriteria2SculptorCriteriaMapper;
 
     @Autowired
-    private SculptorCriteria2MetamacCriteriaMapper     sculptorCriteria2MetamacCriteriaMapper;
+    private SculptorCriteria2MetamacCriteriaMapper sculptorCriteria2MetamacCriteriaMapper;
 
     @Autowired
-    private ExportService                              exportService;
-    
+    private ExportService exportService;
+
     @Autowired
-    private MasterTablesDo2DtoMapper                           do2DtoMapper;
-    
+    private MasterTablesDo2DtoMapper do2DtoMapper;
+
     @Autowired
-    private MasterTablesService                           masterTablesService;
+    private MasterTablesService masterTablesService;
 
     private final static Comparator<ItemSchemeVersion> ITEM_SCHEME_CREATED_DATE_DESC_COMPARATOR = new ItemSchemeCreatedDateDescComparator();
-    private final static Comparator<StructureVersion>  STRUCTURE_CREATED_DATE_DESC_COMPARATOR   = new StructureCreatedDateDescComparator();
+    private final static Comparator<StructureVersion> STRUCTURE_CREATED_DATE_DESC_COMPARATOR = new StructureCreatedDateDescComparator();
 
-    private static Logger                              logger                                   = LoggerFactory.getLogger(SrmCoreServiceFacade.class);
+    private static Logger logger = LoggerFactory.getLogger(SrmCoreServiceFacade.class);
 
     protected DataStructureDefinitionDo2DtoMapper getDo2DtoMapper() {
         return dataStructureDefinitionDo2DtoMapper;
@@ -373,12 +373,14 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public ResourceVersionPublicationResult<DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal) throws MetamacException {
+    public ResourceVersionPublicationResult<DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(ServiceContext ctx, String urn, Boolean forceLatestFinal)
+            throws MetamacException {
         // Security
         DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacOld = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, urn);
         DataStructureDefinitionSecurityUtils.canPublishDataStructureDefinitionInternally(ctx, dataStructureDefinitionVersionMetamacOld);
 
-        ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> dsdVersionPublicationResult = getDataStructureDefinitionMetamacService().publishInternallyDataStructureDefinition(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> dsdVersionPublicationResult = getDataStructureDefinitionMetamacService().publishInternallyDataStructureDefinition(ctx,
+                urn, forceLatestFinal);
 
         // Transform to Dto
         DataStructureDefinitionMetamacDto dsdVersionMetamac = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dsdVersionPublicationResult.getResourceVersion());
@@ -391,7 +393,8 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacOld = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, urn);
         DataStructureDefinitionSecurityUtils.canPublishDataStructureDefinitionExternally(ctx, dataStructureDefinitionVersionMetamacOld);
 
-        ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> dsdVersionPublicationResult = getDataStructureDefinitionMetamacService().publishExternallyDataStructureDefinition(ctx, urn);
+        ResourceVersionPublicationResult<DataStructureDefinitionVersionMetamac> dsdVersionPublicationResult = getDataStructureDefinitionMetamacService().publishExternallyDataStructureDefinition(ctx,
+                urn);
 
         // Transform to Dto
         DataStructureDefinitionMetamacDto dsdVersionMetamac = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dsdVersionPublicationResult.getResourceVersion());
@@ -1250,6 +1253,16 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public List<Long> findCodelistsByVariableInformation(ServiceContext ctx, String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canFindCodelistsByCondition(ctx);
+
+        // Find
+        return getCodesMetamacService().findCodelistsByVariableInformation(ctx, variableUrn, variableFamilyUrn, variableElementUrn);
+
+    }
+
+    @Override
     public MetamacCriteriaResult<RelatedResourceDto> findCodelistsCanReplaceToByCondition(ServiceContext ctx, String codelistUrn, MetamacCriteria criteria) throws MetamacException {
         // Security
         CodesSecurityUtils.canFindCodelistsByCondition(ctx);
@@ -1500,7 +1513,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         File file = createTempFile(tsvStream, fileName);
         return getCodesMetamacService().importCodeRestrictionsTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
     }
-    
+
     @Override
     public TaskImportationInfo importCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
         // Security
@@ -1511,7 +1524,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         File file = createTempFile(tsvStream, fileName);
         return getCodesMetamacService().importCodeOpennessLevelsTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
     }
-    
+
     @Override
     public String exportCodesTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
         // Security
@@ -1538,7 +1551,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Export
         return getCodesMetamacService().exportCodeRestrictionsTsv(ctx, codelistUrn);
     }
-    
+
     @Override
     public String exportCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
         // Security
@@ -1547,7 +1560,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Export
         return getCodesMetamacService().exportCodeOpennessLevelsTsv(ctx, codelistUrn);
     }
-    
+
     @Override
     public CodeMetamacDto updateCode(ServiceContext ctx, CodeMetamacDto codeDto) throws MetamacException {
         // Security
@@ -1871,8 +1884,8 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         CodelistRestrictionVisualisation codelistRestrictionVisualisation = codesDto2DoMapper.codelistRestrictionVisualisationDtoToDo(codelistRestrictionVisualisationDto);
 
         // Create
-        CodelistRestrictionVisualisation codelistRestrictionVisualisationCreated = getCodesMetamacService().createCodelistRestrictionVisualisation(ctx, codelistRestrictionVisualisationDto.getCodelist().getUrn(),
-                codelistRestrictionVisualisation);
+        CodelistRestrictionVisualisation codelistRestrictionVisualisationCreated = getCodesMetamacService().createCodelistRestrictionVisualisation(ctx,
+                codelistRestrictionVisualisationDto.getCodelist().getUrn(), codelistRestrictionVisualisation);
 
         // Transform to DTO
         codelistRestrictionVisualisationDto = codesDo2DtoMapper.codelistRestrictionVisualisationDoToDto(codelistRestrictionVisualisationCreated);
@@ -1917,7 +1930,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Transform
         return codesDo2DtoMapper.codelistRestrictionVisualisationsDoToDto(codelistRestrictionVisualisation);
     }
-    
+
     @Override
     public void updateCodesInRestrictionVisualisation(ServiceContext ctx, String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction) throws MetamacException {
         // Security
@@ -1927,7 +1940,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Update order
         getCodesMetamacService().updateCodesInRestrictionVisualisation(ctx, codelistRestrictionVisualisationUrn, restriction);
     }
-        
+
     // ------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ------------------------------------------------------------------------
@@ -2479,7 +2492,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         return metamacCriteriaResult;
     }
-    
+
     @Override
     public OrganisationSchemeMetamacDto retrieveOrganisationSchemeByUrn(ServiceContext ctx, String urn) throws MetamacException {
         // Security
@@ -2570,7 +2583,8 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         OrganisationsSecurityUtils.canPublishOrganisationSchemeInternally(ctx);
 
         // Publish
-        ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> organisationSchemePublicationResult = getOrganisationsMetamacService().publishInternallyOrganisationScheme(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> organisationSchemePublicationResult = getOrganisationsMetamacService().publishInternallyOrganisationScheme(ctx, urn,
+                forceLatestFinal);
 
         // Transform to Dto
         OrganisationSchemeMetamacDto organisationSchemeVersionMetamac = organisationsDo2DtoMapper.organisationSchemeMetamacDoToDto(organisationSchemePublicationResult.getResourceVersion());
@@ -3715,7 +3729,8 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         CategoriesSecurityUtils.canPublishCategorySchemeInternally(ctx);
 
         // Publish
-        ResourceVersionPublicationResult<CategorySchemeVersionMetamac> categorySchemeVersionPublicationResult = getCategoriesMetamacService().publishInternallyCategoryScheme(ctx, urn, forceLatestFinal);
+        ResourceVersionPublicationResult<CategorySchemeVersionMetamac> categorySchemeVersionPublicationResult = getCategoriesMetamacService().publishInternallyCategoryScheme(ctx, urn,
+                forceLatestFinal);
 
         // Transform to DTO
         CategorySchemeMetamacDto categorySchemeVersionMetamac = categoriesDo2DtoMapper.categorySchemeMetamacDoToDto(categorySchemeVersionPublicationResult.getResourceVersion());
@@ -4093,7 +4108,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Update order
         getConceptsMetamacService().updateConceptInOrder(ctx, conceptUrn, conceptSchemeUrn, newConceptIndex);
     }
-    
+
     public List<EniSchemaCatalogDto> findAllEniSchemaCatalogs(ServiceContext ctx) throws MetamacException {
 
         List<EniSchemaCatalog> eniSchemaCatalogs = masterTablesService.findAllEniSchemaCatalogs(ctx);

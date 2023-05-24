@@ -5,6 +5,8 @@ import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRe
 import static com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils.addTranslationExceptionToExceptionItemsByResource;
 import static org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils.addExceptionToExceptionItemsByResource;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,6 @@ import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
-import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -33,9 +34,6 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
 
     @Autowired
     private CodelistVersionRepository codelistVersionRepository;
-
-    @Autowired
-    private SrmConfiguration srmConfiguration;
 
     public CodelistVersionMetamacRepositoryImpl() {
     }
@@ -98,7 +96,7 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
     @Override
     @SuppressWarnings("rawtypes")
     public void checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException {
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT DISTINCT(aisv.URN) ");
         sb.append("FROM TB_M_CODELISTS_VERSIONS c ");
@@ -140,5 +138,60 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
             String urn = getString(resultSql);
             addTranslationExceptionToExceptionItemsByResource(exceptionItemsByUrn, urn, ServiceExceptionParameters.CODELIST_SHORT_NAME);
         }
+    }
+
+    @Override
+    public List<Long> findByVariableUrnAndVariableFamilyUrnAndVariableElementUrn(String variableUrn, String variableFamilyUrn, String variableElementUrn) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT distinct(cv.tb_item_schemes_versions) ");
+        sb.append("FROM TB_CODELISTS_VERSIONS cv ");
+        sb.append("LEFT OUTER JOIN TB_M_CODELISTS_VERSIONS mvc ON cv.TB_ITEM_SCHEMES_VERSIONS=mvc.TB_CODELISTS_VERSIONS ");
+        sb.append("LEFT OUTER JOIN TB_M_VARIABLES mv on mvc.VARIABLE_FK=mv.ID ");
+
+        if (variableUrn != null) {
+            sb.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS dmv on mv.NAMEABLE_ARTEFACT_FK=dmv.ID ");
+        }
+
+        if (variableFamilyUrn != null) {
+            sb.append("LEFT OUTER JOIN TB_M_VAR_FAMILIES_VARIABLES fm on mv.ID=fm.VARIABLE_FK ");
+            sb.append("LEFT OUTER JOIN TB_M_VARIABLE_FAMILIES vf on fm.VARIABLE_FAMILY_FK=vf.ID ");
+            sb.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS dvf on vf.NAMEABLE_ARTEFACT_FK=dvf.ID ");
+        }
+        sb.append("LEFT OUTER JOIN TB_M_VARIABLE_ELEMENTS ve on mv.ID=ve.VARIABLE_FK ");
+        sb.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS dve on ve.IDENTIFIABLE_ARTEFACT_FK=dve.ID ");
+
+        sb.append("WHERE ");
+
+        sb.append("dve.URN = :variableElementUrn ");
+
+        if (variableUrn != null) {
+            sb.append("AND dmv.URN = :variableUrn ");
+        }
+
+        if (variableFamilyUrn != null) {
+            sb.append("AND dvf.URN = :variableFamilyUrn ");
+        }
+
+        Query query = getEntityManager().createNativeQuery(sb.toString());
+
+        query.setParameter("variableElementUrn", variableElementUrn);
+
+        if (variableUrn != null) {
+            query.setParameter("variableUrn", variableUrn);
+        }
+
+        if (variableFamilyUrn != null) {
+            query.setParameter("variableFamilyUrn", variableFamilyUrn);
+        }
+
+        List<Long> codeListIds = new ArrayList<Long>();
+
+        for (Object id : query.getResultList()) {
+            codeListIds.add(((BigInteger) id).longValue());
+        }
+
+        return codeListIds;
+
     }
 }

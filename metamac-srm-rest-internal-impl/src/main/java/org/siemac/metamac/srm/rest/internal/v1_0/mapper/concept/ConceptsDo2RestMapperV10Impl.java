@@ -409,7 +409,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
             target.setUnitSymbolPosition(toQuantityUnitSymbolPosition(source.getUnitSymbolPosition()));
             target.setSignificantDigits(source.getSignificantDigits());
             target.setDecimalPlaces(source.getDecimalPlaces());
-            target.setUnitMultiplier(source.getUnitMultiplier());
+            target.setUnitMultiplier(codesDo2RestMapper.toResource(source.getUnitMultiplier()));
         }
         if (QuantityUtils.isAmountOrExtension(source.getQuantityType())) {
             // nothing

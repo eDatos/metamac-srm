@@ -1,6 +1,6 @@
 package org.siemac.metamac.srm.web.client.admin;
 
-import static es.gobcan.istac.indicators.web.client.IndicatorsWeb.getConstants;
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -75,18 +75,15 @@ public class AdminPresenter extends Presenter<AdminPresenter.AdminView, AdminPre
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-
-        // Redirect to metadata tab
-        // getView().selectQuantityUnitsTab();
         if (NameTokens.adminPage.equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
-            goToQuantityUnitsTab();
+            goToAnnotationTypeTab();
         }
     }
 
     @Override
     protected void onReset() {
         super.onReset();
-        SetTitleEvent.fire(AdminPresenter.this, getConstants().admin());
+        SetTitleEvent.fire(AdminPresenter.this, getConstants().deleteAnnotation()); // TODO EDATOS-4082
     }
 
     @Override
@@ -99,7 +96,7 @@ public class AdminPresenter extends Presenter<AdminPresenter.AdminView, AdminPre
     @Override
     public void goToAnnotationTypeTab() {
         List<PlaceRequest> hierarchy = PlaceRequestUtils.getHierarchyUntilNameToken(placeManager, NameTokens.adminPage);
-        hierarchy.add(new PlaceRequest(NameTokens.adminUnitMultipliersPage));
+        hierarchy.add(new PlaceRequest(NameTokens.annotationTypePage));
         placeManager.revealPlaceHierarchy(hierarchy);
     }
 }

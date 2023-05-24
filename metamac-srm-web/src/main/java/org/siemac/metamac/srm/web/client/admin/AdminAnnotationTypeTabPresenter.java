@@ -7,7 +7,6 @@ import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
 import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 
-import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -31,9 +30,9 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
 
     public interface AdminAnnotationTypeTabView extends View, HasUiHandlers<AdminAnnotationTypeUiHandlers> {
 
-        void onAnnotationTypeCreated();
+        void onAnnotationTypeCreated(AnnotationTypeDto dto);
         void onAnnotationUpdated(AnnotationTypeDto dto);
-        void setAnnotationTypes(int firstResult, List<AnnotationType> dtos, int totalResults);
+        void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults);
     }
 
     @ProxyCodeSplit
@@ -73,7 +72,7 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     // ACTIONS
 
     @Override
-    public void deleteAnnotationTypes(List<String> annotationTypesCodes, int firstResult) {
+    public void deleteAnnotationTypes(List<String> annotationTypesCodes) {
         // dispatcher.execute(new DeleteUnitMultipliersAction(uuids), new WaitingAsyncCallbackHandlingError<DeleteUnitMultipliersResult>(this) {
     }
 

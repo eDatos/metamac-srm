@@ -1,12 +1,19 @@
 package org.siemac.metamac.srm.web.client.admin.view;
 
-import static es.gobcan.istac.indicators.web.client.IndicatorsWeb.getConstants;
-import static es.gobcan.istac.indicators.web.client.IndicatorsWeb.getMessages;
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView;
+import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
+import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
+import org.siemac.metamac.srm.web.client.model.ds.AnnotationTypeDS;
+import org.siemac.metamac.srm.web.client.model.record.AnnotationTypeRecord;
+import org.siemac.metamac.srm.web.client.utils.RecordUtils;
+import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.web.common.client.widgets.ListGridToolStrip;
 import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
@@ -17,6 +24,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTex
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.smartgwt.client.types.Autofit;
@@ -31,15 +39,7 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-import es.gobcan.istac.indicators.core.dto.UnitMultiplierDto;
-import es.gobcan.istac.indicators.web.client.IndicatorsWeb;
-import es.gobcan.istac.indicators.web.client.admin.presenter.AdminUnitMultipliersTabPresenter.AdminUnitMultipliersTabView;
-import es.gobcan.istac.indicators.web.client.model.UnitMultiplierRecord;
-import es.gobcan.istac.indicators.web.client.model.ds.UnitMultiplierDS;
-import es.gobcan.istac.indicators.web.client.utils.ClientSecurityUtils;
-import es.gobcan.istac.indicators.web.client.utils.IndicatorsWebConstants;
-
-public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnnotationTypeUiHandlers> implements AdminUnitMultipliersTabView {
+public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnnotationTypeUiHandlers> implements AdminAnnotationTypeTabView {
 
     private Layout                 panel;
 
@@ -54,17 +54,17 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         // ToolStrip
 
-        toolStrip = new ListGridToolStrip(getMessages().unitMultipliersDeleteTitle(), getMessages().unitMultipliersConfirmDelete());
+        toolStrip = new ListGridToolStrip(getMessages().codelistOrderAlphabeticalInfoViewTitle(), getMessages().codelistOrderAlphabeticalInfoDeleteTitle());
         toolStrip.getNewButton().addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                selectUnitMultiplier(new UnitMultiplierDto());
+                selectAnnotationType(new AnnotationTypeDto());
                 unitMultiplierPanel.setEditionMode();
             }
 
         });
-        toolStrip.getNewButton().setVisibility(ClientSecurityUtils.canCreateUnitMultiplier() ? Visibility.VISIBLE : Visibility.HIDDEN);
+        toolStrip.getNewButton().setVisibility(AdminClientSecurityUtils.canCreateAnnotationType() ? Visibility.VISIBLE : Visibility.HIDDEN);
 
         toolStrip.getDeleteHandlerRegistration().removeHandler();
         toolStrip.getDeleteButton().addClickHandler(new ClickHandler() {
@@ -79,25 +79,27 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().deleteUnitMultipliers(getSelectedUnitMultipliers(), CommonUtils.getFirstResultToReloadAfterDeletion(listGrid));
+                getUiHandlers().deleteAnnotationTypes(getSelectedAnnotationTypes());
             }
         });
 
         // ListGrid
 
-        listGrid = new PaginatedCheckListGrid(IndicatorsWebConstants.LISTGRID_MAX_RESULTS, new PaginatedAction() {
+        listGrid = new PaginatedCheckListGrid(SrmWebConstants.MAIN_LIST_MAX_RESULTS, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
-                getUiHandlers().retrieveUnitMultipliers(firstResult);
+                AnnotationTypeCriteria criteria = new AnnotationTypeCriteria();
+                criteria.setFirstResult(firstResult); // TODO-EDATOS-4082 ver si añadir
+                getUiHandlers().retrieveAnnotationType(criteria);
             }
         });
 
         listGrid.getListGrid().setAutoFitData(Autofit.VERTICAL);
-        listGrid.getListGrid().setAutoFitMaxRecords(IndicatorsWebConstants.LISTGRID_MAX_RESULTS);
-        ListGridField uuidField = new ListGridField(UnitMultiplierDS.UUID, IndicatorsWeb.getConstants().unitMultiplierUuid());
-        ListGridField titleField = new ListGridField(UnitMultiplierDS.TITLE, IndicatorsWeb.getConstants().unitMultiplierTitle());
-        ListGridField multiplierField = new ListGridField(UnitMultiplierDS.MULTIPLIER, IndicatorsWeb.getConstants().unitMultiplierMultiplier());
+        listGrid.getListGrid().setAutoFitMaxRecords(SrmWebConstants.MAIN_LIST_MAX_RESULTS);
+        ListGridField uuidField = new ListGridField(AnnotationTypeDS.UUID, "Code"); // TODO-EDATOS-4082 PONER CONSTANTE
+        ListGridField titleField = new ListGridField(AnnotationTypeDS.TITLE, "IndicatorsWeb.getConstants().unitMultiplierTitle()"); // TODO-EDATOS-4082 PONER CONSTANTE
+        ListGridField multiplierField = new ListGridField(AnnotationTypeDS.MULTIPLIER, "IndicatorsWeb.getConstants().unitMultiplierMultiplier()"); // TODO-EDATOS-4082 PONER CONSTANTE
         listGrid.getListGrid().setFields(uuidField, titleField, multiplierField);
         // Show data source details when record clicked
         listGrid.getListGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
@@ -105,9 +107,9 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             @Override
             public void onSelectionChanged(SelectionEvent event) {
                 if (listGrid.getListGrid().getSelectedRecords() != null && listGrid.getListGrid().getSelectedRecords().length == 1) {
-                    UnitMultiplierRecord record = (UnitMultiplierRecord) listGrid.getListGrid().getSelectedRecord();
-                    UnitMultiplierDto selected = record.getDto();
-                    selectUnitMultiplier(selected);
+                    AnnotationTypeRecord record = (AnnotationTypeRecord) listGrid.getListGrid().getSelectedRecord();
+                    AnnotationTypeDto selected = record.getDto();
+                    selectAnnotationType(selected);
                 } else {
                     // No record selected
                     deselectQuantityUnit();
@@ -143,21 +145,21 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
     }
 
     // UTILS
-    private List<String> getSelectedUnitMultipliers() {
+    private List<String> getSelectedAnnotationTypes() {
         List<String> codes = new ArrayList<String>();
         for (ListGridRecord record : listGrid.getListGrid().getSelectedRecords()) {
-            codes.add(record.getAttribute(UnitMultiplierDS.UUID));
+            codes.add(record.getAttribute(AnnotationTypeDS.UUID));
         }
         return codes;
     }
 
     private void showToolStripDeleteButton() {
-        if (ClientSecurityUtils.canDeleteUnitMultiplier()) {
+        if (AdminClientSecurityUtils.canDeleteAnnotationType()) {
             toolStrip.getDeleteButton().show();
         }
     }
 
-    private void selectUnitMultiplier(UnitMultiplierDto dto) {
+    private void selectAnnotationType(AnnotationTypeDto dto) {
         if (dto.getUuid() != null) {
             showToolStripDeleteButton();
         } else {
@@ -165,7 +167,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             listGrid.getListGrid().deselectAllRecords();
         }
 
-        unitMultiplierPanel.setUnitMultiplierDto(dto);
+        unitMultiplierPanel.setAnnotationTypeDto(dto);
     }
 
     private void deselectQuantityUnit() {
@@ -177,26 +179,26 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
     // DATA
 
     @Override
-    public void setUnitMultipliers(int firstResult, List<UnitMultiplierDto> dtos, int totalResults) {
+    public void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults) {
         unitMultiplierPanel.hide();
 
-        UnitMultiplierRecord[] records = new UnitMultiplierRecord[dtos.size()];
+        AnnotationTypeRecord[] records = new AnnotationTypeRecord[dtos.size()];
         int index = 0;
-        for (UnitMultiplierDto ds : dtos) {
-            records[index++] = RecordUtils.getUnitMultiplierRecord(ds);
+        for (AnnotationTypeDto ds : dtos) {
+            records[index++] = RecordUtils.getAnnotationTypeRecord(ds);
         }
         listGrid.getListGrid().setData(records);
         listGrid.refreshPaginationInfo(firstResult, dtos.size(), totalResults);
     }
 
     @Override
-    public void onUnitMultiplierCreated(UnitMultiplierDto dto) {
-        selectUnitMultiplier(dto);
+    public void onAnnotationTypeCreated(AnnotationTypeDto dto) {
+        selectAnnotationType(dto);
     }
 
     @Override
-    public void onUnitMultiplierUpdated(UnitMultiplierDto dto) {
-        selectUnitMultiplier(dto);
+    public void onAnnotationUpdated(AnnotationTypeDto dto) {
+        selectAnnotationType(dto);
     }
 
     @Override
@@ -211,12 +213,12 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         private GroupDynamicForm            generalEditionForm;
         private GroupDynamicForm            generalForm;
 
-        private UnitMultiplierDto           unitMultiplierDto;
+        private AnnotationTypeDto           annotationTypeDto;
 
         public UnitMultiplierPanel() {
-            mainFormLayout = new InternationalMainFormLayout(ClientSecurityUtils.canEditUnitMultiplier());
-            mainFormLayout.setCanDelete(ClientSecurityUtils.canDeleteUnitMultiplier());
-            mainFormLayout.setTitleLabelContents(getConstants().unitMultiplier());
+            mainFormLayout = new InternationalMainFormLayout(AdminClientSecurityUtils.canUpdateAnnotationType());
+            mainFormLayout.setCanDelete(AdminClientSecurityUtils.canDeleteAnnotationType());
+            mainFormLayout.setTitleLabelContents(getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
 
             // Edit: Add a custom handler to check indicator status before start editing
             mainFormLayout.getEditToolStripButton().addClickHandler(new ClickHandler() {
@@ -232,7 +234,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 @Override
                 public void onClick(ClickEvent event) {
                     if (generalEditionForm.validate(false)) {
-                        getUiHandlers().saveUnitMultiplier(listGrid.getFirstResult(), getUnitMultiplierDto());
+                        getUiHandlers().saveAnnotationType(listGrid.getFirstResult(), getAnnotationTypeDto());
                     }
                 }
             });
@@ -242,8 +244,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 @Override
                 public void onClick(ClickEvent event) {
                     List<String> uuids = new ArrayList<String>();
-                    uuids.add(unitMultiplierDto.getUuid());
-                    getUiHandlers().deleteUnitMultipliers(uuids, CommonUtils.getFirstResultToReloadAfterDeletion(listGrid));
+                    uuids.add(annotationTypeDto.getUuid());
+                    getUiHandlers().deleteAnnotationTypes(uuids);
                 }
             });
 
@@ -251,7 +253,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    if (unitMultiplierDto.getUuid() == null || (unitMultiplierDto.getUuid() != null && unitMultiplierDto.getUuid().isEmpty())) {
+                    if (annotationTypeDto.getUuid() == null || (annotationTypeDto.getUuid() != null && annotationTypeDto.getUuid().isEmpty())) {
                         hide();
                     }
                 }
@@ -280,11 +282,11 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         }
 
         private void createViewForm() {
-            generalForm = new GroupDynamicForm(getConstants().unitMultiplierGeneral());
+            generalForm = new GroupDynamicForm(getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
 
-            ViewTextItem uuid = new ViewTextItem(UnitMultiplierDS.UUID, getConstants().unitMultiplierUuid());
-            ViewMultiLanguageTextItem title = new ViewMultiLanguageTextItem(UnitMultiplierDS.TITLE, getConstants().unitMultiplierTitle());
-            ViewTextItem multiplier = new ViewTextItem(UnitMultiplierDS.MULTIPLIER, getConstants().unitMultiplierMultiplier());
+            ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().actionEdit()); // TODO EDATOS-4082 cambiar mensaje
+            ViewMultiLanguageTextItem title = new ViewMultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().appTitle()); // TODO EDATOS-4082 cambiar mensaje
+            ViewTextItem multiplier = new ViewTextItem(AnnotationTypeDS.MULTIPLIER, getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
 
             generalForm.setFields(uuid, title, multiplier);
 
@@ -292,12 +294,12 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         }
 
         private void createEditionForm() {
-            generalEditionForm = new GroupDynamicForm(getConstants().unitMultiplierGeneral());
+            generalEditionForm = new GroupDynamicForm(getConstants().actionExportCategoriesTsv());// TODO EDATOS-4082 cambiar mensaje
 
-            ViewTextItem uuid = new ViewTextItem(UnitMultiplierDS.UUID, getConstants().unitMultiplierUuid());
-            MultiLanguageTextItem title = new MultiLanguageTextItem(UnitMultiplierDS.TITLE, getConstants().unitMultiplierTitle());
+            ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().actionEdit()); // TODO EDATOS-4082 cambiar mensaje
+            MultiLanguageTextItem title = new MultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().appTitle()); // TODO EDATOS-4082 cambiar mensaje
             title.setRequired(true);
-            CustomIntegerItem multiplier = new CustomIntegerItem(UnitMultiplierDS.MULTIPLIER, getConstants().unitMultiplierMultiplier());
+            CustomIntegerItem multiplier = new CustomIntegerItem(AnnotationTypeDS.MULTIPLIER, getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
             multiplier.setRequired(true);
 
             generalEditionForm.setFields(uuid, title, multiplier);
@@ -305,8 +307,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             mainFormLayout.addEditionCanvas(generalEditionForm);
         }
 
-        public void setUnitMultiplierDto(UnitMultiplierDto dto) {
-            this.unitMultiplierDto = dto;
+        public void setAnnotationTypeDto(AnnotationTypeDto dto) {
+            this.annotationTypeDto = dto;
 
             fillViewForm(dto);
             fillEditForm(dto);
@@ -316,29 +318,29 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             show();
         }
 
-        private void fillViewForm(UnitMultiplierDto dto) {
-            generalForm.setValue(UnitMultiplierDS.UUID, dto.getUuid());
-            generalForm.setValue(UnitMultiplierDS.MULTIPLIER, dto.getUnitMultiplier() != null ? dto.getUnitMultiplier().toString() : null);
-            generalForm.setValue(UnitMultiplierDS.TITLE, dto.getTitle());
+        private void fillViewForm(AnnotationTypeDto dto) {
+            generalForm.setValue(AnnotationTypeDS.UUID, dto.getUuid());
+            generalForm.setValue(AnnotationTypeDS.MULTIPLIER, dto.getCode() != null ? dto.getCode() : null);
+            generalForm.setValue(AnnotationTypeDS.TITLE, dto.getTitle());
         }
 
-        private void fillEditForm(UnitMultiplierDto dto) {
-            generalEditionForm.setValue(UnitMultiplierDS.UUID, dto.getUuid());
-            if (dto.getUnitMultiplier() != null) {
-                generalEditionForm.setValue(UnitMultiplierDS.MULTIPLIER, dto.getUnitMultiplier());
+        private void fillEditForm(AnnotationTypeDto dto) {
+            generalEditionForm.setValue(AnnotationTypeDS.UUID, dto.getUuid());
+            if (dto.getCode() != null) {
+                generalEditionForm.setValue(AnnotationTypeDS.MULTIPLIER, dto.getCode());
             } else {
-                generalEditionForm.clearValue(UnitMultiplierDS.MULTIPLIER);
+                generalEditionForm.clearValue(AnnotationTypeDS.MULTIPLIER);
             }
-            generalEditionForm.setValue(UnitMultiplierDS.TITLE, dto.getTitle());
+            generalEditionForm.setValue(AnnotationTypeDS.TITLE, dto.getTitle());
         }
 
-        private UnitMultiplierDto getUnitMultiplierDto() {
-            unitMultiplierDto.setTitle(generalEditionForm.getValueAsInternationalStringDto(UnitMultiplierDS.TITLE));
+        private AnnotationTypeDto getAnnotationTypeDto() {
+            annotationTypeDto.setTitle(generalEditionForm.getValueAsInternationalStringDto(AnnotationTypeDS.TITLE));
 
-            String multiplierStr = generalEditionForm.getValueAsString(UnitMultiplierDS.MULTIPLIER);
-            unitMultiplierDto.setUnitMultiplier(Integer.valueOf(multiplierStr));
+            String annotationType = generalEditionForm.getValueAsString(AnnotationTypeDS.MULTIPLIER);
+            annotationTypeDto.setCode(annotationType);
 
-            return unitMultiplierDto;
+            return annotationTypeDto;
         }
     }
 }

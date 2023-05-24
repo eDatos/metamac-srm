@@ -9,7 +9,7 @@ import com.gwtplatform.mvp.client.UiHandlers;
 
 public interface AdminAnnotationTypeUiHandlers extends UiHandlers {
 
-    void deleteAnnotationTypes(List<String> annotationTypesCodes, int firstResult);
+    void deleteAnnotationTypes(List<String> annotationTypesCodes);
 
     void saveAnnotationType(int currentPage, AnnotationTypeDto annotationTypeDto);
 

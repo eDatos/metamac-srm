@@ -1,6 +1,6 @@
 package org.siemac.metamac.srm.web.client.admin.view;
 
-import static es.gobcan.istac.indicators.web.client.IndicatorsWeb.getConstants;
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import org.siemac.metamac.srm.web.client.admin.AdminPresenter;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminUiHandlers;
@@ -16,46 +16,25 @@ import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
 import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 
-import es.gobcan.istac.indicators.web.client.admin.presenter.AdminGeoGranularitiesTabPresenter.AdminGeoGranularitiesTabView;
-import es.gobcan.istac.indicators.web.client.admin.presenter.AdminGeoValuesTabPresenter.AdminGeoValuesTabView;
-import es.gobcan.istac.indicators.web.client.admin.presenter.AdminQuantityUnitsTabPresenter.AdminQuantityUnitsTabView;
-import es.gobcan.istac.indicators.web.client.admin.presenter.AdminUnitMultipliersTabPresenter.AdminUnitMultipliersTabView;
-
 public class AdminViewImpl extends ViewWithUiHandlers<AdminUiHandlers> implements AdminPresenter.AdminView {
 
     private VLayout    panel;
     private TitleLabel adminLabel;
     private TabSet     tabset;
 
-    private Tab        quantityUnitsTab;
-    private Tab        geoGranularitiesTab;
-    private Tab        unitMultipliersTab;
-    private Tab        geoValuesTab;
+    private Tab        annotationTypeTab;
 
     @Inject
-    public AdminViewImpl(AdminQuantityUnitsTabView quantityUnitsView, AdminGeoGranularitiesTabView geoGranularitiesView, AdminUnitMultipliersTabView unitMultipliersTabView,
-            AdminGeoValuesTabView geoValuesTabView) {
+    public AdminViewImpl(AdminAnnotationTypeTabViewImpl annotationTypeView) {
 
         adminLabel = new TitleLabel();
         adminLabel.setStyleName("sectionTitleLeftMargin");
 
-        quantityUnitsTab = new Tab(getConstants().adminQuantityUnits());
-        quantityUnitsTab.setPane((Canvas) quantityUnitsView.asWidget());
-
-        unitMultipliersTab = new Tab(getConstants().adminUnitMultipliers());
-        unitMultipliersTab.setPane((Canvas) unitMultipliersTabView.asWidget());
-
-        geoGranularitiesTab = new Tab(getConstants().adminGeoGranularities());
-        geoGranularitiesTab.setPane((Canvas) geoGranularitiesView.asWidget());
-
-        geoValuesTab = new Tab(getConstants().adminGeoValues());
-        geoValuesTab.setPane((Canvas) geoValuesTabView.asWidget());
+        annotationTypeTab = new Tab(getConstants().actionCopy()); // TODO EDATOS-4082 cambiar mensaje
+        annotationTypeTab.setPane((Canvas) annotationTypeView.asWidget());
 
         tabset = new TabSet();
-        tabset.addTab(quantityUnitsTab);
-        tabset.addTab(unitMultipliersTab);
-        tabset.addTab(geoGranularitiesTab);
-        tabset.addTab(geoValuesTab);
+        tabset.addTab(annotationTypeTab);
 
         panel = new VLayout();
         panel.addMember(adminLabel);
@@ -65,42 +44,18 @@ public class AdminViewImpl extends ViewWithUiHandlers<AdminUiHandlers> implement
     }
 
     private void bindEvents() {
-        quantityUnitsTab.addTabSelectedHandler(new TabSelectedHandler() {
+        annotationTypeTab.addTabSelectedHandler(new TabSelectedHandler() {
 
             @Override
             public void onTabSelected(TabSelectedEvent event) {
-                getUiHandlers().goToQuantityUnitsTab();
-            }
-        });
-
-        geoGranularitiesTab.addTabSelectedHandler(new TabSelectedHandler() {
-
-            @Override
-            public void onTabSelected(TabSelectedEvent event) {
-                getUiHandlers().goToGeoGranularitiesTab();
-            }
-        });
-
-        geoValuesTab.addTabSelectedHandler(new TabSelectedHandler() {
-
-            @Override
-            public void onTabSelected(TabSelectedEvent event) {
-                getUiHandlers().goToGeoValuesTab();
-            }
-        });
-
-        unitMultipliersTab.addTabSelectedHandler(new TabSelectedHandler() {
-
-            @Override
-            public void onTabSelected(TabSelectedEvent event) {
-                getUiHandlers().goToUnitMultipliersTab();
+                getUiHandlers().goToAnnotationTypeTab();;
             }
         });
     }
 
     @Override
-    public void selectQuantityUnitsTab() {
-        tabset.selectTab(quantityUnitsTab);
+    public void selectAnnotationTypeTab() {
+        tabset.selectTab(annotationTypeTab);
     }
 
     @Override

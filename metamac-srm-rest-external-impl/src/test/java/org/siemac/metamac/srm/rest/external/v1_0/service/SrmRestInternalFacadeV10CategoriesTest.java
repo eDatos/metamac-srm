@@ -372,7 +372,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id\tparent\turn\tname#es\tname#en", iterator.next());
+        assertEquals("code\tparent\turn\tname#es\tname#en", iterator.next());
         assertTrue(lines.contains("category1\t\turn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1\tname-category1 en Español\tname-category1 in English"));
         assertTrue(lines.contains("category2\t\turn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2\tname-category2 en Español\tname-category2 in English"));
 
@@ -396,7 +396,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id,parent,urn,name#es,name#en", iterator.next());
+        assertEquals("code,parent,urn,name#es,name#en", iterator.next());
         assertTrue(lines.contains("category1,,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1,name-category1 en Español,name-category1 in English"));
         assertTrue(lines.contains("category2,,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2,name-category2 en Español,name-category2 in English"));
     }

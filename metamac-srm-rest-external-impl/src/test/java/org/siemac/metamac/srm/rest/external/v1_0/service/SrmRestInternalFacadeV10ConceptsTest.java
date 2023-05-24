@@ -43,6 +43,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.statistical_operations.v1_0.domain.Operation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes;
@@ -404,7 +405,7 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id\tparent\turn\tname#es\tname#en", iterator.next());
+        assertEquals("code\tparent\turn\tname#es\tname#en", iterator.next());
         assertTrue(lines.contains("concept1\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept1\tname-concept1 en Español\tname-concept1 in English"));
         assertTrue(lines.contains("concept2\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2\tname-concept2 en Español\tname-concept2 in English"));
 
@@ -428,7 +429,7 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id,parent,urn,name#es,name#en", iterator.next());
+        assertEquals("code,parent,urn,name#es,name#en", iterator.next());
         assertTrue(lines.contains("concept1,,urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept1,name-concept1 en Español,name-concept1 in English"));
         assertTrue(lines.contains("concept2,,urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2,name-concept2 en Español,name-concept2 in English"));
     }

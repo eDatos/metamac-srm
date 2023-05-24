@@ -1,4 +1,4 @@
-id,parent,urn,name#es,name#en
+code,parent,urn,name#es,name#en
 item1,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item1,name-item1 en Español,name-item1 in English
 item2,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item2,name-item2 en Español,name-item2 in English
 item3,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item3,name-item3 en Español,name-item3 in English

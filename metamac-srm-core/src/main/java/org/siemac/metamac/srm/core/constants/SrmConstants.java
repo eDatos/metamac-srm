@@ -62,7 +62,8 @@ public class SrmConstants {
     public static final String             TSV_HEADER_UNIT_CODELIST_CODE                                          = "unit_codelist_code";
     public static final String             TSV_HEADER_UNIT_CODE                                                   = "unit_code";
     public static final String             TSV_HEADER_UNIT_SYMBOL_POSITION                                        = "unit_symbol_position";
-    public static final String             TSV_HEADER_UNIT_MULTIPLIER                                             = "unit_multiplier";
+    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE                               = "unit_multiplier_codelist_code";
+    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODE                                        = "unit_multiplier_code";
     public static final String             TSV_HEADER_SIGNIFICANT_DIGITS                                          = "significant_digits";
     public static final String             TSV_HEADER_DECIMAL_PLACES                                              = "decimals_digits";
     public static final String             TSV_HEADER_MINIMUM                                                     = "minimum";

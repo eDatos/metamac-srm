@@ -38,7 +38,6 @@ import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisati
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
-import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -268,11 +267,9 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     }
 
     @Override
-    public void updateCodeOpennessColumnToLeafCodes(CodelistVersionMetamac codelistVersion, Integer opennessColumnIndex, Boolean expanded) throws MetamacException {
-        String opennessColumn = getOpennessColumnName(opennessColumnIndex);
-        updateCodeColumnToLeafCodes(codelistVersion, opennessColumn + " = " + getDatabaseBooleanColumnValue(expanded) + " ");
+    public void updateCodeOpennessColumnToLeafCodes(List<CodeMetamac> codes) throws MetamacException {
+        updateCodeColumnToLeafCodes(codes);
     }
-    
     // RESTRICTION FUNCTIONS
     
     @Override
@@ -332,6 +329,12 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         queryUpdate.setParameter("codeUrn", codeUrn);
         queryUpdate.setParameter("codelistVersion", codelistVersion.getId());
         queryUpdate.executeUpdate();
+    }
+    
+    private void updateCodeColumnToLeafCodes(List<CodeMetamac> codes) throws MetamacException {
+        for (CodeMetamac code : codes) {
+            getEntityManager().merge(code);
+        }
     }
     
     private void updateCodeColumnToLeafCodes(CodelistVersionMetamac codelistVersion, String columnToUpdated) throws MetamacException {

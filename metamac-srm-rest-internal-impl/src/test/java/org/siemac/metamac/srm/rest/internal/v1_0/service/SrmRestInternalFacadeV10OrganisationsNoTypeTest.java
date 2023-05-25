@@ -343,7 +343,7 @@ public class SrmRestInternalFacadeV10OrganisationsNoTypeTest extends SrmRestInte
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id\tparent\turn\tname#es\tname#en", iterator.next());
+        assertEquals("code\tparent\turn\tname#es\tname#en", iterator.next());
         assertTrue(lines.contains("item1\t\turn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item1\tname-item1 en Español\tname-item1 in English"));
         assertTrue(lines.contains("item2\t\turn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item2\tname-item2 en Español\tname-item2 in English"));
 
@@ -367,7 +367,7 @@ public class SrmRestInternalFacadeV10OrganisationsNoTypeTest extends SrmRestInte
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id,parent,urn,name#es,name#en", iterator.next());
+        assertEquals("code,parent,urn,name#es,name#en", iterator.next());
         assertTrue(lines.contains("item1,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item1,name-item1 en Español,name-item1 in English"));
         assertTrue(lines.contains("item2,,urn:sdmx:org.sdmx.infomodel.base.Agency=agency1:itemScheme1(01.000).item2,name-item2 en Español,name-item2 in English"));
     }

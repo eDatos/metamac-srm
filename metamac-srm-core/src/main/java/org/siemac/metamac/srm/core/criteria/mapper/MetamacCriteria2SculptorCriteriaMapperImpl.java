@@ -1,7 +1,6 @@
 package org.siemac.metamac.srm.core.criteria.mapper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.domain.LeafProperty;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
@@ -844,6 +843,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
         public SculptorPropertyCriteria retrieveProperty(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {
             CodelistVersionMetamacCriteriaPropertyEnum propertyEnum = CodelistVersionMetamacCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
             switch (propertyEnum) {
+                case ID:
+                    return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.id(), new ArrayList<>(propertyRestriction.getListLongValue()), propertyRestriction.getOperationType());
                 case CODE:
                     return new SculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case URN:

@@ -457,7 +457,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id\tparent\turn\tname#es\tname#en", iterator.next());
+        assertEquals("code\tparent\turn\tname#es\tname#en", iterator.next());
         assertTrue(lines.contains("code1\t\turn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code1\tname-code1 en Español\tname-code1 in English"));
         assertTrue(lines.contains("code2\t\turn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2\tname-code2 en Español\tname-code2 in English"));
 
@@ -481,7 +481,7 @@ public class SrmRestInternalFacadeV10CodesTest extends SrmRestInternalFacadeV10B
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("id,parent,urn,name#es,name#en", iterator.next());
+        assertEquals("code,parent,urn,name#es,name#en", iterator.next());
         assertTrue(lines.contains("code1,,urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code1,name-code1 en Español,name-code1 in English"));
         assertTrue(lines.contains("code2,,urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2,name-code2 en Español,name-code2 in English"));
     }

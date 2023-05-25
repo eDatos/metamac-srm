@@ -5,7 +5,6 @@ import org.siemac.metamac.srm.web.category.presenter.CategoryPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemeListPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemePresenter;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
-import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter;
 import org.siemac.metamac.srm.web.client.admin.AdminPresenter;
 import org.siemac.metamac.srm.web.client.presenter.ErrorPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
@@ -101,5 +100,5 @@ public interface MetamacSrmWebGinjector extends MetamacWebGinjector {
 
     // Admin
     AsyncProvider<AdminPresenter> getAdminPresenter();
-    AsyncProvider<AdminAnnotationTypeTabPresenter> getAdminAnnotationTypeTabPresenter();
+    // AsyncProvider<AdminAnnotationTypeTabPresenter> getAdminAnnotationTypeTabPresenter();
 }

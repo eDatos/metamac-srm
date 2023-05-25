@@ -27,6 +27,7 @@ public class ToolStripPresenterWidget extends PresenterWidget<ToolStripPresenter
         HasClickHandlers getOrganisationSchemesButton();
         HasClickHandlers getCategorySchemesButton();
         HasClickHandlers getCodelistButton();
+        HasClickHandlers getAnnotationTypesButton();
     }
 
     @Inject
@@ -96,6 +97,18 @@ public class ToolStripPresenterWidget extends PresenterWidget<ToolStripPresenter
             public void onClick(ClickEvent event) {
                 PlaceRequest resourcesRequest = new PlaceRequest(NameTokens.structuralResourcesPage);
                 PlaceRequest codelistListRequest = new PlaceRequest(NameTokens.codelistListPage);
+                List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
+                placeRequestHierarchy.add(resourcesRequest);
+                placeRequestHierarchy.add(codelistListRequest);
+                placeManager.revealPlaceHierarchy(placeRequestHierarchy);
+            }
+        }));
+        registerHandler(getView().getAnnotationTypesButton().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                PlaceRequest resourcesRequest = new PlaceRequest(NameTokens.structuralResourcesPage);
+                PlaceRequest codelistListRequest = new PlaceRequest(NameTokens.annotationTypePage);
                 List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
                 placeRequestHierarchy.add(resourcesRequest);
                 placeRequestHierarchy.add(codelistListRequest);

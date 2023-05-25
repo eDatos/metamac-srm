@@ -6,12 +6,13 @@ import java.util.Set;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.RecodedCodes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElementsGeoInfo;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
@@ -33,12 +34,14 @@ public interface CodesDo2RestMapperV10 {
             Integer limit);
     org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist toCodelist(CodelistVersionMetamac source) throws MetamacException;
     Resource toResource(CodelistVersion source);
+
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields);
+    List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException;
 
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended);
     RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources);
-    
+
     Code toCode(CodeMetamac source, Set<String> fields);
     ItemResource toResource(CodeMetamac source);
 

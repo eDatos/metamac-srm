@@ -108,7 +108,7 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
         target.setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         target.setSignificantDigits(Integer.valueOf(5));
         target.setDecimalPlaces(Integer.valueOf(2));
-        target.setUnitMultiplier(Integer.valueOf(10));
+        target.setUnitMultiplier(CodesMetamacDoMocks.mockCodeFixedValues("unitCode01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
         target.setMinimum(Integer.valueOf(1000));
         target.setMaximum(Integer.valueOf(2000));
         target.setNumerator(mockConceptSimpleFixedValues("numerator1", mockConceptSchemeFixedValues("agency01", "conceptScheme02", "01.000")));

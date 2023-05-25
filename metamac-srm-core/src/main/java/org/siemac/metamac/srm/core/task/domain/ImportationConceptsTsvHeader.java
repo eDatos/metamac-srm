@@ -2,13 +2,13 @@ package org.siemac.metamac.srm.core.task.domain;
 
 public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
 
-    private InternationalStringTsv         pluralName;
-    private InternationalStringTsv         acronym;
-    private InternationalStringTsv         descriptionSource;
-    private InternationalStringTsv         context;
-    private InternationalStringTsv         docMethod;
-    private InternationalStringTsv         derivation;
-    private InternationalStringTsv         legalActs;
+    private InternationalStringTsv pluralName;
+    private InternationalStringTsv acronym;
+    private InternationalStringTsv descriptionSource;
+    private InternationalStringTsv context;
+    private InternationalStringTsv docMethod;
+    private InternationalStringTsv derivation;
+    private InternationalStringTsv legalActs;
 
     private int                    conceptTypePosition;                   // Number of columns of TSV File
     private RepresentationsTsv     representation;
@@ -19,7 +19,8 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
     private int                    unitCodelistCodePosition;
     private int                    unitCodePosition;
     private int                    unitSymbolPositionPosition;
-    private int                    unitMultiplierPosition;
+    private int                    unitMultiplierCodelistCodePosition;
+    private int                    unitMultiplierCodePosition;
     private int                    significantDigitsPosition;
     private int                    decimalPlacesPosition;
     private int                    miminumPosition;
@@ -157,12 +158,20 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
         this.unitSymbolPositionPosition = unitSymbolPositionPosition;
     }
 
-    public int getUnitMultiplierPosition() {
-        return unitMultiplierPosition;
+    public int getUnitMultiplierCodelistCodePosition() {
+        return unitMultiplierCodelistCodePosition;
     }
 
-    public void setUnitMultiplierPosition(int unitMultiplierPosition) {
-        this.unitMultiplierPosition = unitMultiplierPosition;
+    public void setUnitMultiplierCodelistCodePosition(int unitMultiplierCodelistCodePosition) {
+        this.unitMultiplierCodelistCodePosition = unitMultiplierCodelistCodePosition;
+    }
+
+    public int getUnitMultiplierCodePosition() {
+        return unitMultiplierCodePosition;
+    }
+
+    public void setUnitMultiplierCodePosition(int unitMultiplierCodePosition) {
+        this.unitMultiplierCodePosition = unitMultiplierCodePosition;
     }
 
     public int getSignificantDigitsPosition() {

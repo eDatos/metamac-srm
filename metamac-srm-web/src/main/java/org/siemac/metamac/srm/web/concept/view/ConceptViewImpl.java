@@ -761,9 +761,23 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     }
 
     @Override
+    public void setCodelistsForQuantityUnitMultiplierFilter(List<RelatedResourceDto> codelistDtos, int firstResult, int totalResults) {
+        if (quantityEditionForm != null) {
+            quantityEditionForm.setCodelistsForQuantityUnitMultiplierFilter(codelistDtos, firstResult, totalResults);
+        }
+    }
+
+    @Override
     public void setCodeThatCanBeQuantityUnit(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults) {
         if (quantityEditionForm != null) {
             quantityEditionForm.setCodesForQuantityUnit(codesDtos, firstResult, totalResults);
+        }
+    }
+
+    @Override
+    public void setCodeThatCanBeQuantityUnitMultiplier(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults) {
+        if (quantityEditionForm != null) {
+            quantityEditionForm.setCodesForQuantityUnitMultiplier(codesDtos, firstResult, totalResults);
         }
     }
 

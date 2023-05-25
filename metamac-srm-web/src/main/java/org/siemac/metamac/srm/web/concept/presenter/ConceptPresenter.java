@@ -118,12 +118,14 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
 
         void setCodelistsOrConceptSchemesForEnumeratedRepresentation(GetRelatedResourcesResult result);
         void setCodelistsForQuantityUnitFilter(List<RelatedResourceDto> codelistDtos, int firstResult, int totalResults);
+        void setCodelistsForQuantityUnitMultiplierFilter(List<RelatedResourceDto> codelistDtos, int firstResult, int totalResults);
         void setCodelistsForQuantityBaseLocationFilter(List<RelatedResourceDto> codelistDtos, int firstResult, int totalResults);
         void setConceptSchemesForQuantityNumeratorFilter(List<RelatedResourceDto> conceptSchemesDtos, int firstResult, int totalResults);
         void setConceptSchemesForQuantityDenominatorFilter(List<RelatedResourceDto> conceptSchemesDtos, int firstResult, int totalResults);
         void setConceptSchemesForQuantityBaseFilter(List<RelatedResourceDto> conceptSchemesDtos, int firstResult, int totalResults);
 
         void setCodeThatCanBeQuantityUnit(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults);
+        void setCodeThatCanBeQuantityUnitMultiplier(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults);
         void setCodeThatCanBeQuantityBaseLocation(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults);
         void setConceptSchemesWithConceptsThatCanBeRole(List<RelatedResourceDto> conceptSchemes, int firstResult, int totalResults);
         void setConceptSchemesWithConceptsThatCanBeExtended(List<RelatedResourceDto> conceptSchemes, int firstResult, int totalResults);
@@ -490,6 +492,23 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
     }
 
     @Override
+    public void retrieveCodelistsForQuantityUnitMultiplierFilter(int firstResult, int maxResults, CodelistWebCriteria codelistWebCriteria) {
+        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CODELIST_WITH_QUANTITY_UNIT, firstResult, maxResults, codelistWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
+                    }
+
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setCodelistsForQuantityUnitMultiplierFilter(result.getRelatedResourceDtos(), result.getFirstResultOut(), result.getTotalResults());
+                    }
+                });
+    }
+
+    @Override
     public void retrieveCodesForQuantityUnit(int firstResult, int maxResults, CodeWebCriteria codeWebCriteria) {
         dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CODE_WITH_QUANTITY_UNIT, firstResult, maxResults, codeWebCriteria),
                 new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
@@ -502,6 +521,23 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
                     @Override
                     public void onWaitSuccess(GetRelatedResourcesResult result) {
                         getView().setCodeThatCanBeQuantityUnit(result.getRelatedResourceDtos(), result.getFirstResultOut(), result.getTotalResults());
+                    }
+                });
+    }
+
+    @Override
+    public void retrieveCodesForQuantityUnitMultiplier(int firstResult, int maxResults, CodeWebCriteria codeWebCriteria) {
+        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CODE_WITH_QUANTITY_UNIT, firstResult, maxResults, codeWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
+                    }
+
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setCodeThatCanBeQuantityUnitMultiplier(result.getRelatedResourceDtos(), result.getFirstResultOut(), result.getTotalResults());
                     }
                 });
     }

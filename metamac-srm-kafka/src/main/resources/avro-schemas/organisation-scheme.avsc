@@ -57,6 +57,10 @@
       "type": ["null", "ProcStatusEnumAvro"]
     },
     {
+      "name": "organisationSchemeType",
+      "type": ["null", "OrganisationSchemeTypeEnumAvro"]
+    },
+    {
       "name": "categorizations",
       "type": {
         "type": "array",

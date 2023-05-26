@@ -17,8 +17,8 @@
   
 * Esta versión requiere que se actualicen determinados topics de kafka del srm:
  Borrar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
-** "curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value"
-** "curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value"
+* **curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value**
+* **curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value**
 
 ## 4.0.0 a 5.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:

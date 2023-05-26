@@ -270,6 +270,16 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
     }
 
+    @Override
+    public Response findConceptsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findConceptsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
+    }
+
     private Response findConceptsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
@@ -394,6 +404,16 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    @Override
+    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findCategoriesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
     }
 
     private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -543,6 +563,16 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Override
     public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    @Override
+    public Response findOrganisationsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findOrganisationsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
     }
 
     private Response findOrganisationsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
@@ -988,6 +1018,18 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
         return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "csv");
+    }
+
+    @Override
+    public Response findCodesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xlsx");
+    }
+
+    @Override
+    public Response findCodesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xls");
     }
 
     private Response findCodesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness,
@@ -2161,7 +2203,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
     public static String getContentDisposition(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return "inline; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+        return "attachment; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {

@@ -632,7 +632,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"
+               "text/csv"  
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1096,7 +1096,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv" 
+               "text/csv"    
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1421,7 +1421,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv" 
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

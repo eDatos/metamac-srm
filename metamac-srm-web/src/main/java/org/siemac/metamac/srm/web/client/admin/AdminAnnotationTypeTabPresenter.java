@@ -5,7 +5,11 @@ import java.util.List;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
-import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
+import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
+import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListResult;
+import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.inject.Inject;
@@ -16,6 +20,7 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -33,6 +38,11 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
         void onAnnotationTypeCreated(AnnotationTypeDto dto);
         void onAnnotationUpdated(AnnotationTypeDto dto);
         void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults);
+    }
+
+    @TitleFunction
+    public static String getTranslatedTitle(PlaceRequest placeRequest) {
+        return PlaceRequestUtils.getMasterTablesBreadCrumbTitle(placeRequest);
     }
 
     @ProxyCodeSplit
@@ -66,7 +76,7 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     }
 
     private void reloadAnnotationTypes(int firstResult) {
-
+        retrieveAnnotationTypes(firstResult);
     }
 
     // ACTIONS
@@ -82,8 +92,22 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     }
 
     @Override
-    public void retrieveAnnotationType(AnnotationTypeCriteria criteria) {
-        // dispatcher.execute(new DeleteUnitMultipliersAction(uuids), new WaitingAsyncCallbackHandlingError<DeleteUnitMultipliersResult>(this) {
+    public void retrieveAnnotationTypes(final int firstResult) {
+        retrieveAnnotationTypesAndDoAction(firstResult, null);
+    }
+
+    private void retrieveAnnotationTypesAndDoAction(final int firstResult, final Action action) {
+        dispatcher.execute(new GetAnnotationTypesPaginatedListAction(SrmWebConstants.MAIN_LIST_MAX_RESULTS, firstResult),
+                new WaitingAsyncCallbackHandlingError<GetAnnotationTypesPaginatedListResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetAnnotationTypesPaginatedListResult result) {
+                        getView().setAnnotationTypes(firstResult, result.getDtos(), result.getTotalResults());
+                        if (action != null) {
+                            action.run();
+                        }
+                    }
+                });
     }
 
     private static interface Action {

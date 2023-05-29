@@ -49,8 +49,8 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
         codelistsButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().codelists());
         codelistsButton.setID(ToolStripButtonEnum.CODELISTS.getValue());
 
-        codelistsButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().actionCheckAll()); // TODO EDATOS-4082 CAMBIAR MENSAJE
-        codelistsButton.setID(ToolStripButtonEnum.ADMIN.getValue());
+        annotationTypeButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().admin());
+        annotationTypeButton.setID(ToolStripButtonEnum.ADMIN.getValue());
 
         toolStrip.addButton(conceptsButton);
         toolStrip.addButton(classificationsButton);

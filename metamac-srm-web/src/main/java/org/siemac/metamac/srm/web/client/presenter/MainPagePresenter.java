@@ -268,6 +268,11 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategorySchemesPlaceRequest());
     }
 
+    @Override
+    public void goToAdministration() {
+        placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteAnnotationTypePlaceRequest());
+    }
+
     private void loadMasterTablesLists() {
         retrieveEniSchemaCatalogs();
         retrieveAnnotationTypes();

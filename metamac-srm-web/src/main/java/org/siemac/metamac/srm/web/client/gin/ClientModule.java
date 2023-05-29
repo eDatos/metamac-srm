@@ -13,6 +13,12 @@ import org.siemac.metamac.srm.web.category.widgets.presenter.CategoriesToolStrip
 import org.siemac.metamac.srm.web.category.widgets.view.CategoriesToolStripViewImpl;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacPlaceManager;
+import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter;
+import org.siemac.metamac.srm.web.client.admin.AdminPresenter;
+import org.siemac.metamac.srm.web.client.admin.view.AdminAnnotationTypeTabViewImpl;
+import org.siemac.metamac.srm.web.client.admin.view.AdminViewImpl;
+import org.siemac.metamac.srm.web.client.admin.widgets.AdminToolStripPresenterWidget;
+import org.siemac.metamac.srm.web.client.admin.widgets.AdminToolStripViewImpl;
 import org.siemac.metamac.srm.web.client.presenter.ErrorPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.StructuralResourcesPresenter;
@@ -113,7 +119,7 @@ public class ClientModule extends AbstractPresenterModule {
         bindSingletonPresenterWidget(CategoriesToolStripPresenterWidget.class, CategoriesToolStripPresenterWidget.CategoriesToolStripView.class, CategoriesToolStripViewImpl.class);
         bindSingletonPresenterWidget(ConceptsToolStripPresenterWidget.class, ConceptsToolStripPresenterWidget.ConceptsToolStripView.class, ConceptsToolStripViewImpl.class);
         bindSingletonPresenterWidget(OrganisationsToolStripPresenterWidget.class, OrganisationsToolStripPresenterWidget.OrganisationsToolStripView.class, OrganisationsToolStripViewImpl.class);
-        // bindSingletonPresenterWidget(AdminToolStripPresenterWidget.class, AdminToolStripPresenterWidget.AdminToolStripView.class, AdminToolStripViewImpl.class);
+        bindSingletonPresenterWidget(AdminToolStripPresenterWidget.class, AdminToolStripPresenterWidget.AdminToolStripView.class, AdminToolStripViewImpl.class);
 
         // Gate keeper
         bind(LoggedInGatekeeper.class).in(Singleton.class);
@@ -178,8 +184,8 @@ public class ClientModule extends AbstractPresenterModule {
         bindPresenter(CodesPresenter.class, CodesPresenter.CodesView.class, CodesViewImpl.class, CodesPresenter.CodesProxy.class);
 
         // Admin
-        // bindPresenter(AdminAnnotationTypeTabPresenter.class, AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView.class, AdminAnnotationTypeTabViewImpl.class,
-        // AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabProxy.class);
-        // bindPresenter(AdminPresenter.class, AdminPresenter.AdminView.class, AdminViewImpl.class, AdminPresenter.AdminProxy.class);
+        bindPresenter(AdminAnnotationTypeTabPresenter.class, AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView.class, AdminAnnotationTypeTabViewImpl.class,
+                AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabProxy.class);
+        bindPresenter(AdminPresenter.class, AdminPresenter.AdminView.class, AdminViewImpl.class, AdminPresenter.AdminProxy.class);
     }
 }

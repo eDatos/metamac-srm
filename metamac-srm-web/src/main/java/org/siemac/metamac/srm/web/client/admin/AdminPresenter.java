@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminUiHandlers;
+import org.siemac.metamac.srm.web.client.admin.widgets.AdminToolStripPresenterWidget;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
-import org.siemac.metamac.srm.web.client.widgets.presenter.ToolStripPresenterWidget;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -39,7 +39,7 @@ public class AdminPresenter extends Presenter<AdminPresenter.AdminView, AdminPre
 
     private PlaceManager                              placeManager;
 
-    private ToolStripPresenterWidget                  toolStripPresenterWidget;
+    private AdminToolStripPresenterWidget             adminToolStripPresenterWidget;
 
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetContextAreaContentToolBar = new Type<RevealContentHandler<?>>();
@@ -59,12 +59,12 @@ public class AdminPresenter extends Presenter<AdminPresenter.AdminView, AdminPre
     }
 
     @Inject
-    public AdminPresenter(EventBus eventBus, AdminView view, AdminProxy proxy, PlaceManager placeManager, DispatchAsync dispatcher, ToolStripPresenterWidget toolStripPresenterWidget) {
+    public AdminPresenter(EventBus eventBus, AdminView view, AdminProxy proxy, PlaceManager placeManager, DispatchAsync dispatcher, AdminToolStripPresenterWidget adminToolStripPresenterWidget) {
         super(eventBus, view, proxy);
         this.dispatcher = dispatcher;
         this.placeManager = placeManager;
         getView().setUiHandlers(this);
-        this.toolStripPresenterWidget = toolStripPresenterWidget;
+        this.adminToolStripPresenterWidget = adminToolStripPresenterWidget;
     }
 
     @Override
@@ -83,13 +83,13 @@ public class AdminPresenter extends Presenter<AdminPresenter.AdminView, AdminPre
     @Override
     protected void onReset() {
         super.onReset();
-        SetTitleEvent.fire(AdminPresenter.this, getConstants().deleteAnnotation()); // TODO EDATOS-4082
+        SetTitleEvent.fire(AdminPresenter.this, getConstants().admin());
     }
 
     @Override
     protected void onReveal() {
         super.onReveal();
-        setInSlot(TYPE_SetContextAreaContentToolBar, toolStripPresenterWidget);
+        setInSlot(TYPE_SetContextAreaContentToolBar, adminToolStripPresenterWidget);
     }
 
     // NAVIGATION

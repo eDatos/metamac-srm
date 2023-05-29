@@ -30,7 +30,7 @@ public class AdminViewImpl extends ViewWithUiHandlers<AdminUiHandlers> implement
         adminLabel = new TitleLabel();
         adminLabel.setStyleName("sectionTitleLeftMargin");
 
-        annotationTypeTab = new Tab(getConstants().actionCopy()); // TODO EDATOS-4082 cambiar mensaje
+        annotationTypeTab = new Tab(getConstants().adminAnnotationType());
         annotationTypeTab.setPane((Canvas) annotationTypeView.asWidget());
 
         tabset = new TabSet();
@@ -48,7 +48,7 @@ public class AdminViewImpl extends ViewWithUiHandlers<AdminUiHandlers> implement
 
             @Override
             public void onTabSelected(TabSelectedEvent event) {
-                getUiHandlers().goToAnnotationTypeTab();;
+                getUiHandlers().goToAnnotationTypeTab();
             }
         });
     }

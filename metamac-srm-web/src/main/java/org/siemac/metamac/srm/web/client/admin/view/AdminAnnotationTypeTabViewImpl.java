@@ -13,7 +13,6 @@ import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.model.ds.AnnotationTypeDS;
 import org.siemac.metamac.srm.web.client.model.record.AnnotationTypeRecord;
 import org.siemac.metamac.srm.web.client.utils.RecordUtils;
-import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.web.common.client.widgets.ListGridToolStrip;
 import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
@@ -47,7 +46,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
     private ListGridToolStrip      toolStrip;
 
-    private UnitMultiplierPanel    unitMultiplierPanel;
+    private AnnotationTypePanel    annotationTypePanel;
 
     public AdminAnnotationTypeTabViewImpl() {
         super();
@@ -60,7 +59,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             @Override
             public void onClick(ClickEvent event) {
                 selectAnnotationType(new AnnotationTypeDto());
-                unitMultiplierPanel.setEditionMode();
+                annotationTypePanel.setEditionMode();
             }
 
         });
@@ -89,17 +88,15 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
-                AnnotationTypeCriteria criteria = new AnnotationTypeCriteria();
-                criteria.setFirstResult(firstResult); // TODO-EDATOS-4082 ver si añadir
-                getUiHandlers().retrieveAnnotationType(criteria);
+                getUiHandlers().retrieveAnnotationTypes(firstResult);
             }
         });
 
         listGrid.getListGrid().setAutoFitData(Autofit.VERTICAL);
         listGrid.getListGrid().setAutoFitMaxRecords(SrmWebConstants.MAIN_LIST_MAX_RESULTS);
-        ListGridField uuidField = new ListGridField(AnnotationTypeDS.UUID, "Code"); // TODO-EDATOS-4082 PONER CONSTANTE
-        ListGridField titleField = new ListGridField(AnnotationTypeDS.TITLE, "IndicatorsWeb.getConstants().unitMultiplierTitle()"); // TODO-EDATOS-4082 PONER CONSTANTE
-        ListGridField multiplierField = new ListGridField(AnnotationTypeDS.MULTIPLIER, "IndicatorsWeb.getConstants().unitMultiplierMultiplier()"); // TODO-EDATOS-4082 PONER CONSTANTE
+        ListGridField uuidField = new ListGridField(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
+        ListGridField titleField = new ListGridField(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
+        ListGridField multiplierField = new ListGridField(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
         listGrid.getListGrid().setFields(uuidField, titleField, multiplierField);
         // Show data source details when record clicked
         listGrid.getListGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
@@ -121,8 +118,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             }
         });
 
-        unitMultiplierPanel = new UnitMultiplierPanel();
-        unitMultiplierPanel.hide();
+        annotationTypePanel = new AnnotationTypePanel();
+        annotationTypePanel.hide();
 
         VLayout listPanel = new VLayout();
         listPanel.addMember(toolStrip);
@@ -134,7 +131,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         HLayout rightLayout = new HLayout();
         rightLayout.setWidth("50%");
-        rightLayout.addMember(unitMultiplierPanel);
+        rightLayout.addMember(annotationTypePanel);
 
         panel = new HLayout();
         panel.setMargin(15);
@@ -167,20 +164,20 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             listGrid.getListGrid().deselectAllRecords();
         }
 
-        unitMultiplierPanel.setAnnotationTypeDto(dto);
+        annotationTypePanel.setAnnotationTypeDto(dto);
     }
 
     private void deselectQuantityUnit() {
         toolStrip.getDeleteButton().hide();
 
-        unitMultiplierPanel.hide();
+        annotationTypePanel.hide();
     }
 
     // DATA
 
     @Override
     public void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults) {
-        unitMultiplierPanel.hide();
+        annotationTypePanel.hide();
 
         AnnotationTypeRecord[] records = new AnnotationTypeRecord[dtos.size()];
         int index = 0;
@@ -206,7 +203,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         return panel;
     }
 
-    public class UnitMultiplierPanel extends VLayout {
+    public class AnnotationTypePanel extends VLayout {
 
         private InternationalMainFormLayout mainFormLayout;
 
@@ -215,10 +212,10 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         private AnnotationTypeDto           annotationTypeDto;
 
-        public UnitMultiplierPanel() {
+        public AnnotationTypePanel() {
             mainFormLayout = new InternationalMainFormLayout(AdminClientSecurityUtils.canUpdateAnnotationType());
             mainFormLayout.setCanDelete(AdminClientSecurityUtils.canDeleteAnnotationType());
-            mainFormLayout.setTitleLabelContents(getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
+            mainFormLayout.setTitleLabelContents(getConstants().adminAnnotationType());
 
             // Edit: Add a custom handler to check indicator status before start editing
             mainFormLayout.getEditToolStripButton().addClickHandler(new ClickHandler() {
@@ -282,27 +279,27 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         }
 
         private void createViewForm() {
-            generalForm = new GroupDynamicForm(getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
+            generalForm = new GroupDynamicForm(getConstants().adminAnnotationType()); // TODO EDATOS-4082 ver qué va aquí
 
-            ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().actionEdit()); // TODO EDATOS-4082 cambiar mensaje
-            ViewMultiLanguageTextItem title = new ViewMultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().appTitle()); // TODO EDATOS-4082 cambiar mensaje
-            ViewTextItem multiplier = new ViewTextItem(AnnotationTypeDS.MULTIPLIER, getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
+            ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
+            ViewMultiLanguageTextItem title = new ViewMultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
+            ViewTextItem code = new ViewTextItem(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
 
-            generalForm.setFields(uuid, title, multiplier);
+            generalForm.setFields(uuid, title, code);
 
             mainFormLayout.addViewCanvas(generalForm);
         }
 
         private void createEditionForm() {
-            generalEditionForm = new GroupDynamicForm(getConstants().actionExportCategoriesTsv());// TODO EDATOS-4082 cambiar mensaje
+            generalEditionForm = new GroupDynamicForm(getConstants().adminAnnotationType());// TODO EDATOS-4082 cambiar mensaje
 
-            ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().actionEdit()); // TODO EDATOS-4082 cambiar mensaje
-            MultiLanguageTextItem title = new MultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().appTitle()); // TODO EDATOS-4082 cambiar mensaje
+            ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
+            MultiLanguageTextItem title = new MultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
             title.setRequired(true);
-            CustomIntegerItem multiplier = new CustomIntegerItem(AnnotationTypeDS.MULTIPLIER, getConstants().actionExportCategoriesTsv()); // TODO EDATOS-4082 cambiar mensaje
-            multiplier.setRequired(true);
+            CustomIntegerItem code = new CustomIntegerItem(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
+            code.setRequired(true);
 
-            generalEditionForm.setFields(uuid, title, multiplier);
+            generalEditionForm.setFields(uuid, title, code);
 
             mainFormLayout.addEditionCanvas(generalEditionForm);
         }
@@ -320,16 +317,16 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         private void fillViewForm(AnnotationTypeDto dto) {
             generalForm.setValue(AnnotationTypeDS.UUID, dto.getUuid());
-            generalForm.setValue(AnnotationTypeDS.MULTIPLIER, dto.getCode() != null ? dto.getCode() : null);
+            generalForm.setValue(AnnotationTypeDS.CODE, dto.getCode() != null ? dto.getCode() : null);
             generalForm.setValue(AnnotationTypeDS.TITLE, dto.getTitle());
         }
 
         private void fillEditForm(AnnotationTypeDto dto) {
             generalEditionForm.setValue(AnnotationTypeDS.UUID, dto.getUuid());
             if (dto.getCode() != null) {
-                generalEditionForm.setValue(AnnotationTypeDS.MULTIPLIER, dto.getCode());
+                generalEditionForm.setValue(AnnotationTypeDS.CODE, dto.getCode());
             } else {
-                generalEditionForm.clearValue(AnnotationTypeDS.MULTIPLIER);
+                generalEditionForm.clearValue(AnnotationTypeDS.CODE);
             }
             generalEditionForm.setValue(AnnotationTypeDS.TITLE, dto.getTitle());
         }
@@ -337,7 +334,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         private AnnotationTypeDto getAnnotationTypeDto() {
             annotationTypeDto.setTitle(generalEditionForm.getValueAsInternationalStringDto(AnnotationTypeDS.TITLE));
 
-            String annotationType = generalEditionForm.getValueAsString(AnnotationTypeDS.MULTIPLIER);
+            String annotationType = generalEditionForm.getValueAsString(AnnotationTypeDS.CODE);
             annotationTypeDto.setCode(annotationType);
 
             return annotationTypeDto;

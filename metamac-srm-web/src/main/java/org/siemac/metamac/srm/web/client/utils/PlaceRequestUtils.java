@@ -259,15 +259,6 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
 
     // Annotation type
 
-    public static String getAnnotationTypeParamFromUrl(PlaceManager placeManager) {
-        return getParamFromUrl(placeManager, NameTokens.annotationTypePage, PlaceRequestParams.annotationTypeParamId);
-    }
-
-    public static PlaceRequest buildRelativeAnnotationTypePlaceRequest(String annotationTypeCode) {
-        PlaceRequest placeRequest = new PlaceRequest(NameTokens.annotationTypePage).with(PlaceRequestParams.annotationTypeParamId, UrnUtils.removePrefix(annotationTypeCode));
-        return placeRequest;
-    }
-
     public static List<PlaceRequest> buildAbsoluteAnnotationTypePlaceRequest() {
         List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
         placeRequestHierarchy.add(new PlaceRequest(NameTokens.structuralResourcesPage));
@@ -275,19 +266,8 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
         return placeRequestHierarchy;
     }
 
-    public static List<PlaceRequest> buildAbsoluteAnnotationTypePlaceRequest(String urn) {
-        List<PlaceRequest> placeRequests = buildAbsoluteAnnotationTypePlaceRequest();
-        PlaceRequest annotationTypePlace = buildRelativeAnnotationTypePlaceRequest(urn);
-        placeRequests.add(annotationTypePlace);
-        return placeRequests;
-    }
-
-    public static String getAnnotationTypeBreadCrumbTitle(PlaceRequest placeRequest) {
-        String annotationTypeTripletIdentifier = getRequestParameter(placeRequest, PlaceRequestParams.annotationTypeParamId);
-        if (!StringUtils.isBlank(annotationTypeTripletIdentifier)) {
-            return UrnUtils.getItemSchemeCodeFromUrnWithoutPrefix(annotationTypeTripletIdentifier);
-        }
-        return getConstants().breadcrumbCategoryScheme(); // TODO EDATOS-4082 CAMBIAR
+    public static String getMasterTablesBreadCrumbTitle(PlaceRequest placeRequest) {
+        return getConstants().masterTablesBreadcrumb();
     }
 
     // ---------------------------------------------------------------------------

@@ -37,7 +37,7 @@ public class AdminToolStripPresenterWidget extends PresenterWidget<AdminToolStri
 
             @Override
             public void onClick(ClickEvent event) {
-                placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategorySchemesPlaceRequest());
+                placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteAnnotationTypePlaceRequest());
             }
         }));
 

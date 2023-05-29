@@ -29,7 +29,7 @@ public class AdminToolStripViewImpl implements AdminToolStripPresenterWidget.Adm
         toolStrip.setHeight(25);
         toolStrip.setAlign(Alignment.LEFT);
 
-        annotationTypeButton = new CustomToolStripButton(MetamacSrmWeb.getConstants().organisationSchemes()); // TODO EDATOS-4082 cambiar mensaje
+        annotationTypeButton = new CustomToolStripButton(MetamacSrmWeb.getConstants().adminMasterTables());
         annotationTypeButton.setID(AdminToolStripButtonEnum.ANNOTATION_TYPES.getValue());
         annotationTypeButton.setActionType(SelectionType.RADIO);
         annotationTypeButton.setRadioGroup(RADIO_GROUP);

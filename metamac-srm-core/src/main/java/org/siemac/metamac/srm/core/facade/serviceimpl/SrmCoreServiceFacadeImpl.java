@@ -89,6 +89,7 @@ import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDto2DoMapper;
 import org.siemac.metamac.srm.core.master.serviceapi.MasterTablesService;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
@@ -195,6 +196,9 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Autowired
     private MasterTablesDo2DtoMapper                   do2DtoMapper;
+
+    @Autowired
+    private MasterTablesDto2DoMapper                   masterTablesDto2DoMapper;
 
     @Autowired
     private MasterTablesService                        masterTablesService;
@@ -4124,6 +4128,50 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
             annotationTypesDto.add(do2DtoMapper.annotationTypeToDto(type));
         }
         return annotationTypesDto;
+    }
+
+    @Override
+    public MetamacCriteriaResult<AnnotationTypeDto> findAnnotationTypes(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getAnnotationTypeCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<AnnotationType> result = sdmxService.findAnnotationTypes(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        return sculptorCriteria2MetamacCriteriaMapper.pageResultAnnotationTypeToMetamacCriteriaResultRelatedResource(result, sculptorCriteria.getPageSize());
+    }
+
+    @Override
+    public AnnotationTypeDto createAnnotationType(ServiceContext ctx, AnnotationTypeDto annotationTypeDto) throws MetamacException {
+
+        // Transform to entity
+        AnnotationType annotationType = masterTablesDto2DoMapper.annotationTypeDtoToEntity(annotationTypeDto);
+
+        // Service call
+        annotationType = sdmxService.createAnnotationType(ctx, annotationType);
+
+        // Transform to Dto
+        return do2DtoMapper.annotationTypeToDto(annotationType);
+    }
+
+    @Override
+    public AnnotationTypeDto updateAnnotationType(ServiceContext ctx, AnnotationTypeDto annotationTypeDto) throws MetamacException {
+
+        // Transform to entity
+        AnnotationType annotationType = masterTablesDto2DoMapper.annotationTypeDtoToEntity(annotationTypeDto);
+
+        // Service call
+        annotationType = sdmxService.updateAnnotationType(ctx, annotationType);
+
+        // Transform to Dto
+        return do2DtoMapper.annotationTypeToDto(annotationType);
+    }
+
+    @Override
+    public void deleteAnnotationType(ServiceContext ctx, String annotationTypeUuid) throws MetamacException {
+        sdmxService.deleteAnnotationType(ctx, annotationTypeUuid);
     }
 
     public List<EniSchemaCatalogDto> findAllEniSchemaCatalogs(ServiceContext ctx) throws MetamacException {

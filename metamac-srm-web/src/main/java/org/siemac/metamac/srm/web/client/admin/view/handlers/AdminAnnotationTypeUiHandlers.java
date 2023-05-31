@@ -7,7 +7,7 @@ import com.gwtplatform.mvp.client.UiHandlers;
 
 public interface AdminAnnotationTypeUiHandlers extends UiHandlers {
 
-    void deleteAnnotationTypes(List<String> annotationTypesCodes);
+    void deleteAnnotationTypes(List<String> annotationTypesUuids, final int firstResult);
 
     void saveAnnotationType(int currentPage, AnnotationTypeDto annotationTypeDto);
 

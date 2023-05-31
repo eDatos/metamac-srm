@@ -7,8 +7,12 @@ import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListResult;
+import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeAction;
+import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeResult;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
@@ -36,7 +40,7 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     public interface AdminAnnotationTypeTabView extends View, HasUiHandlers<AdminAnnotationTypeUiHandlers> {
 
         void onAnnotationTypeCreated(AnnotationTypeDto dto);
-        void onAnnotationUpdated(AnnotationTypeDto dto);
+        void onAnnotationTypeUpdated(AnnotationTypeDto dto);
         void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults);
     }
 
@@ -82,13 +86,43 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     // ACTIONS
 
     @Override
-    public void deleteAnnotationTypes(List<String> annotationTypesCodes) {
-        // dispatcher.execute(new DeleteUnitMultipliersAction(uuids), new WaitingAsyncCallbackHandlingError<DeleteUnitMultipliersResult>(this) {
+    public void deleteAnnotationTypes(List<String> annotationTypesUuids, final int firstResult) {
+        dispatcher.execute(new DeleteAnnotationTypesAction(annotationTypesUuids), new WaitingAsyncCallbackHandlingError<DeleteAnnotationTypesResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                super.onWaitFailure(caught);
+                reloadAnnotationTypes(firstResult);
+            }
+
+            @Override
+            public void onWaitSuccess(DeleteAnnotationTypesResult result) {
+                reloadAnnotationTypes(firstResult);
+            }
+        });
     }
 
     @Override
-    public void saveAnnotationType(int currentPage, AnnotationTypeDto annotationTypeDto) {
-        // dispatcher.execute(new DeleteUnitMultipliersAction(uuids), new WaitingAsyncCallbackHandlingError<DeleteUnitMultipliersResult>(this) {
+    public void saveAnnotationType(final int currentPage, AnnotationTypeDto dto) {
+        final boolean creation = dto.getUuid() == null;
+
+        dispatcher.execute(new SaveAnnotationTypeAction(dto), new WaitingAsyncCallbackHandlingError<SaveAnnotationTypeResult>(this) {
+
+            @Override
+            public void onWaitSuccess(final SaveAnnotationTypeResult result) {
+                retrieveAnnotationTypesAndDoAction(currentPage, new Action() {
+
+                    @Override
+                    public void run() {
+                        if (creation) {
+                            getView().onAnnotationTypeCreated(result.getOutputDto());
+                        } else {
+                            getView().onAnnotationTypeUpdated(result.getOutputDto());
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override

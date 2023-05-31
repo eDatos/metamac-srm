@@ -78,7 +78,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().deleteAnnotationTypes(getSelectedAnnotationTypes());
+                getUiHandlers().deleteAnnotationTypes(getSelectedAnnotationTypes(), getFirstResultToReloadAfterDeletion(listGrid));
             }
         });
 
@@ -150,6 +150,14 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         return codes;
     }
 
+    public static int getFirstResultToReloadAfterDeletion(PaginatedCheckListGrid listGrid) {
+        int firstResult = 0;
+        if (listGrid.getListGrid().getRecords() != null && listGrid.getListGrid().getRecords().length > 1) {
+            firstResult = listGrid.getFirstResult();
+        }
+        return firstResult;
+    }
+
     private void showToolStripDeleteButton() {
         if (AdminClientSecurityUtils.canDeleteAnnotationType()) {
             toolStrip.getDeleteButton().show();
@@ -194,7 +202,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
     }
 
     @Override
-    public void onAnnotationUpdated(AnnotationTypeDto dto) {
+    public void onAnnotationTypeUpdated(AnnotationTypeDto dto) {
         selectAnnotationType(dto);
     }
 
@@ -242,7 +250,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 public void onClick(ClickEvent event) {
                     List<String> uuids = new ArrayList<String>();
                     uuids.add(annotationTypeDto.getUuid());
-                    getUiHandlers().deleteAnnotationTypes(uuids);
+                    getUiHandlers().deleteAnnotationTypes(uuids, getFirstResultToReloadAfterDeletion(listGrid));
                 }
             });
 

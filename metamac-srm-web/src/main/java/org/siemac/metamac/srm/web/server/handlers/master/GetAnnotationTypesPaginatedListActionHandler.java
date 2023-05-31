@@ -1,9 +1,8 @@
 package org.siemac.metamac.srm.web.server.handlers.master;
 
-import java.util.List;
-
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPaginator;
+import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
@@ -35,10 +34,8 @@ public class GetAnnotationTypesPaginatedListActionHandler extends SecurityAction
             criteria.getPaginator().setFirstResult(action.getFirstResult());
             criteria.getPaginator().setMaximumResultSize(action.getMaxResults());
             criteria.getPaginator().setCountTotalResults(true);
-            List<AnnotationTypeDto> annotationTypes = srmCoreServiceFacade.findAllAnnotationTypes(ServiceContextHolder.getCurrentServiceContext());
-            // return new GetAnnotationTypesResult(annotationTypes);
-            // TODO EDATOS-4082 COMPLETAR
-            return null;
+            MetamacCriteriaResult<AnnotationTypeDto> annotationTypes = srmCoreServiceFacade.findAnnotationTypes(ServiceContextHolder.getCurrentServiceContext(), criteria);
+            return new GetAnnotationTypesPaginatedListResult(annotationTypes.getResults(), annotationTypes.getPaginatorResult().getTotalResults());
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

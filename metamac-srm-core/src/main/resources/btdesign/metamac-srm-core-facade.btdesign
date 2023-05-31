@@ -800,6 +800,13 @@ Application SrmFacadeCore {
     		
     		"Annotation types"
     		List<@AnnotationTypeDto> findAllAnnotationTypes() throws MetamacException;
+    		MetamacCriteriaResult<@AnnotationTypeDto> findAnnotationTypes(MetamacCriteria criteria) throws MetamacException;
+    		"Create an annotation type"
+	    	@AnnotationTypeDto createAnnotationType(@AnnotationTypeDto annotationTypeDto) throws MetamacException;
+	    	"Update an annotation type"
+	    	@AnnotationTypeDto updateAnnotationType(@AnnotationTypeDto annotationTypeDto) throws MetamacException;
+	    	"Delete a an annotation type"
+	    	deleteAnnotationType(String annotationTypeUuid) throws MetamacException;
     	}
 
 		Service TasksMetamacServiceFacade {

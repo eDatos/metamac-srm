@@ -29,7 +29,8 @@ public class ViewQuantityForm extends BaseQuantityForm {
         ViewTextItem unitSymbol = new ViewTextItem(ConceptDS.QUANTITY_UNIT_SYMBOL_POSITION, getConstants().conceptQuantityUnitSymbolPosition());
         unitSymbol.setShowIfCondition(getShowIfAnyQuantityType());
 
-        ViewTextItem unitMultiplier = new ViewTextItem(ConceptDS.QUANTITY_UNIT_MULTIPLIER, getConstants().conceptQuantityUnitMultiplier());
+        RelatedResourceLinkItem unitMultiplier = new RelatedResourceLinkItem(ConceptDS.QUANTITY_UNIT_MULTIPLIER, getConstants().conceptQuantityUnitMultiplier(),
+                getCustomLinkItemNavigationClickHandler());
         unitMultiplier.setShowIfCondition(getShowIfAnyQuantityType());
 
         ViewTextItem sigDigits = new ViewTextItem(ConceptDS.QUANTITY_SIGNIFICANT_DIGITS, getConstants().conceptQuantitySignificantDigits());
@@ -44,7 +45,8 @@ public class ViewQuantityForm extends BaseQuantityForm {
         ViewTextItem max = new ViewTextItem(ConceptDS.QUANTITY_MAXIMUM, getConstants().conceptQuantityMaximum());
         max.setShowIfCondition(getMaxIfFunction());
 
-        RelatedResourceLinkItem denominator = new RelatedResourceLinkItem(ConceptDS.QUANTITY_DENOMINATOR, getConstants().conceptQuantityDenominatorConcept(), getCustomLinkItemNavigationClickHandler());
+        RelatedResourceLinkItem denominator = new RelatedResourceLinkItem(ConceptDS.QUANTITY_DENOMINATOR, getConstants().conceptQuantityDenominatorConcept(),
+                getCustomLinkItemNavigationClickHandler());
         denominator.setShowIfCondition(getDenominatorIfFunction());
 
         RelatedResourceLinkItem numerator = new RelatedResourceLinkItem(ConceptDS.QUANTITY_NUMERATOR, getConstants().conceptQuantityNumeratorConcept(), getCustomLinkItemNavigationClickHandler());
@@ -85,13 +87,14 @@ public class ViewQuantityForm extends BaseQuantityForm {
         clearValues();
         if (quantityDto != null) {
             setValue(ConceptDS.QUANTITY_TYPE, quantityDto.getQuantityType() != null ? quantityDto.getQuantityType().toString() : "");
-            setValue(ConceptDS.QUANTITY_TYPE_TEXT, quantityDto.getQuantityType() != null
-                    ? getCoreMessages().getString(getCoreMessages().quantityTypeEnum() + quantityDto.getQuantityType().toString())
-                    : "");
+            setValue(ConceptDS.QUANTITY_TYPE_TEXT,
+                    quantityDto.getQuantityType() != null ? getCoreMessages().getString(getCoreMessages().quantityTypeEnum() + quantityDto.getQuantityType().toString()) : "");
             setRelatedResourceDtoValue(ConceptDS.QUANTITY_UNIT, quantityDto.getUnitCode());
             setValue(ConceptDS.QUANTITY_UNIT_SYMBOL_POSITION,
-                    quantityDto.getUnitSymbolPosition() != null ? getCoreMessages().getString(getCoreMessages().quantityUnitSymbolPositionEnum() + quantityDto.getUnitSymbolPosition().toString()) : "");
-            setValue(ConceptDS.QUANTITY_UNIT_MULTIPLIER, quantityDto.getUnitMultiplier() != null ? quantityDto.getUnitMultiplier().toString() : "");
+                    quantityDto.getUnitSymbolPosition() != null
+                            ? getCoreMessages().getString(getCoreMessages().quantityUnitSymbolPositionEnum() + quantityDto.getUnitSymbolPosition().toString())
+                            : "");
+            setRelatedResourceDtoValue(ConceptDS.QUANTITY_UNIT_MULTIPLIER, quantityDto.getUnitMultiplier());
             setValue(ConceptDS.QUANTITY_SIGNIFICANT_DIGITS, quantityDto.getSignificantDigits() != null ? quantityDto.getSignificantDigits().toString() : "");
             setValue(ConceptDS.QUANTITY_DECIMAL_PLACES, quantityDto.getDecimalPlaces() != null ? quantityDto.getDecimalPlaces().toString() : "");
             setValue(ConceptDS.QUANTITY_MINIMUM, quantityDto.getMinimum() != null ? quantityDto.getMinimum().toString() : "");
@@ -101,8 +104,8 @@ public class ViewQuantityForm extends BaseQuantityForm {
             setRelatedResourceDtoValue(ConceptDS.QUANTITY_NUMERATOR, quantityDto.getNumerator());
 
             setValue(ConceptDS.QUANTITY_IS_PERCENTAGE, quantityDto.getIsPercentage() != null ? quantityDto.getIsPercentage() : false);
-            setValue(ConceptDS.QUANTITY_IS_PERCENTAGE_TEXT, quantityDto.getIsPercentage() != null ? (quantityDto.getIsPercentage() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon
-                    .getConstants().no()) : "");
+            setValue(ConceptDS.QUANTITY_IS_PERCENTAGE_TEXT,
+                    quantityDto.getIsPercentage() != null ? (quantityDto.getIsPercentage() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : "");
             QuantityIndexBaseTypeEnum baseType = getIndexBaseTypeEnum(quantityDto);
             setValue(ConceptDS.QUANTITY_INDEX_BASE_TYPE, baseType != null ? baseType.toString() : null);
             setValue(ConceptDS.QUANTITY_INDEX_BASE_TYPE_TEXT, getIndexBaseType(quantityDto));

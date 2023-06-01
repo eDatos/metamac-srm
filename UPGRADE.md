@@ -8,10 +8,16 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+
 ## 5.0.1 a 5.0.2-SNAPSHOT
 * Es necesario ejecutar los scripts SQL contenidos en la carpeta
   ```shell
   etc/changes-from-release/5.0.1/db/common-metadata/postgresql
+  ```
+* Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
+  ```shell
+  curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value
   ```
 
 ## 4.0.0 a 5.0.0
@@ -33,6 +39,7 @@ Se han realizado cambios a la base de datos, por ello se proveen una serie de sc
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_tb_sequence_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_foreign_key_to_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_insert_eni_schemas_values.sql  
+  etc/changes-from-release/4.0.0/db/srm/postgresql/20230404_drop_luna_views.sql  
   ```
 - Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. 
   Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db/common-metadata/postgresql/](etc/changes-from-release/4.0.0/db/common-metadata/postgresql)

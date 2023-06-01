@@ -84,7 +84,13 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description": "<%= queryDescriptionWithParams(id,urn,name,description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+            "description": "<%= queryDescriptionWithParams(id, urn, name, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+        },
+        "codelistCodesQueryParam": {
+        "name":"query",
+        "in":"query",
+        "type":"string",
+        "description": "<%= queryDescriptionWithParams(id, urn, name, parent, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
         },
         "codelistOrderByParam": {
           "name":"orderBy",
@@ -156,7 +162,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , description ,organisationSchemeUrn ,organisationSchemeLatest ,type) %>"
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,organisationSchemeUrn ,organisationSchemeLatest ,type) %>"
         },
         "organizationOrderByParam": {
           "name":"orderBy",
@@ -168,7 +174,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , description ,validFrom ,validTo ,lastUpdatedDate ,latest) %>"
+            "description":"<%= queryDescriptionWithParams(id, urn, name, description, validFrom, validTo, lastUpdatedDate, latest) %>"
         },
         "categorySchemeOrderByParam": {
             "name":"orderBy",
@@ -192,7 +198,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , description ,categorySchemeUrn ,categorySchemeLatest) %>"
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest) %>"
         },
         "categoryOrderByParam": {
           "name":"orderBy",

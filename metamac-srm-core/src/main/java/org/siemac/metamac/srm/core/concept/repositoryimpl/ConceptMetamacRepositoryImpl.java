@@ -54,29 +54,29 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEn
 public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
 
     @Autowired
-    private ItemRepository itemRepository;
+    private ItemRepository      itemRepository;
 
     @Autowired
-    private ConceptRepository conceptRepository;
+    private ConceptRepository   conceptRepository;
 
     @Autowired
-    private SrmConfiguration srmConfiguration;
+    private SrmConfiguration    srmConfiguration;
 
-    private static final String COLUMN_NAME_PLURAL_NAME = "PLURAL_NAME_FK";
-    private static final String COLUMN_NAME_ACRONYM = "ACRONYM_FK";
+    private static final String COLUMN_NAME_PLURAL_NAME        = "PLURAL_NAME_FK";
+    private static final String COLUMN_NAME_ACRONYM            = "ACRONYM_FK";
     private static final String COLUMN_NAME_DESCRIPTION_SOURCE = "DESCRIPTION_SOURCE_FK";
-    private static final String COLUMN_NAME_CONTEXT = "CONTEXT_FK";
-    private static final String COLUMN_NAME_DOC_METHOD = "DOC_METHOD_FK";
-    private static final String COLUMN_NAME_DERIVATION = "DERIVATION_FK";
-    private static final String COLUMN_NAME_LEGAL_ACTS = "LEGAL_ACTS_FK";
-    private static final String COLUMN_NAME_PERCENTAGE_OF = "PERCENTAGE_OF_FK";
+    private static final String COLUMN_NAME_CONTEXT            = "CONTEXT_FK";
+    private static final String COLUMN_NAME_DOC_METHOD         = "DOC_METHOD_FK";
+    private static final String COLUMN_NAME_DERIVATION         = "DERIVATION_FK";
+    private static final String COLUMN_NAME_LEGAL_ACTS         = "LEGAL_ACTS_FK";
+    private static final String COLUMN_NAME_PERCENTAGE_OF      = "PERCENTAGE_OF_FK";
 
     // This constant is used in the query destined to order concepts for a SQL Server database.
     // Specifically, it is used to compare sibling concepts at the same level and, because of the comparison must be done lexicographically, it is necessary to format the value of the order value by
     // completing with leading zeros.
     // Moreover, because of there are no padding functions in SQL Server, the format function should be used to complete the value with as many zeros as specified in the mask.
     // The current value is sufficient for a million concepts, if necessary it can be extended.
-    private static final String ORDER_VALUE_FORMAT_PATTERN = "000000";
+    private static final String ORDER_VALUE_FORMAT_PATTERN     = "000000";
 
     public ConceptMetamacRepositoryImpl() {
     }
@@ -180,7 +180,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             executeQueryRetrieveConceptRepresentation(conceptSchemeVersionId, mapConceptByItemId);
             executeQueryRetrieveConceptConceptExtends(conceptSchemeVersionId, mapConceptByItemId);
             executeQueryRetrieveConceptSdmxRelatedArtefact(conceptSchemeVersionId, mapConceptByItemId);
-            
+
             executeQueryRetrieveConceptQuantityType(conceptSchemeVersionId, mapConceptByItemId);
             executeQueryRetrieveQuantityConceptInternationalString(conceptSchemeVersionId, mapConceptByItemId, ConceptExtensionPointUtilities.PERCENTAGE_OF);
         } else if (resultSelection.isPluralName()) {
@@ -431,7 +431,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aisv2 ON aisv2.ID = isv2.MAINTAINABLE_ARTEFACT_FK ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb2 ON acb2.ID = cb2.NAMEABLE_ARTEFACT_FK ");
         sb.append("WHERE cb1.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
-        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase( true));
+        sb.append("AND aisv2.PUBLIC_LOGIC != " + booleanToBooleanDatabase(true));
 
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("itemSchemeVersionId", itemSchemeVersionId);
@@ -572,24 +572,26 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             internationalStringResultSqltoInternationalStringResult(resultSqlArray, extractor.getMetadata(target));
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     private void executeQueryRetrieveConceptQuantityType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) throws MetamacException {
         StringBuilder sqlQuery = new StringBuilder();
         sqlQuery.append("SELECT c.TB_CONCEPTS, ct.QUANTITY_TYPE, ausv.CODE as UNIT_CODELIST_CODE, acb.CODE as UNIT_CODE, "
-                + "ct.UNIT_SYMBOL_POSITION, ct.UNIT_MULTIPLIER, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
+                + "ct.UNIT_SYMBOL_POSITION, aumsv.CODE as UNIT_MULTIPLIER_CODELIST_CODE, macb.CODE as UNIT_MULTIPLIER_CODE, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
                 + " aicd.code as DENOMINATOR_CONCEPT_SCHEME_CODE, acd.code as DENOMINATOR_CONCEPT_CODE,"
-                + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE, ct.IS_PERCENTAGE,"
-                + " ct.BASE_VALUE, ct.BASE_TIME,"
-                + " aubl.CODE as LOCATION_BASE_CODELIST_CODE, abl.CODE  as LOCATION_BASE_CODE,"
-                + " aibq.code as BQ_SCHEME_CODE, abq.code as BQ_CODE ");
+                + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE, ct.IS_PERCENTAGE," + " ct.BASE_VALUE, ct.BASE_TIME,"
+                + " aubl.CODE as LOCATION_BASE_CODELIST_CODE, abl.CODE  as LOCATION_BASE_CODE," + " aibq.code as BQ_SCHEME_CODE, abq.code as BQ_CODE ");
         sqlQuery.append("FROM TB_M_CONCEPTS c ");
         sqlQuery.append("INNER JOIN TB_CONCEPTS cb on cb.ID = c.TB_CONCEPTS ");
         sqlQuery.append("INNER JOIN TB_M_QUANTITIES ct on ct.id = c.QUANTITY_FK ");
         sqlQuery.append("INNER JOIN TB_CODES unit on unit.ID = ct.UNIT_CODE_FK ");
         sqlQuery.append("INNER JOIN TB_ITEM_SCHEMES_VERSIONS usv ON usv.ID = unit.ITEM_SCHEME_VERSION_FK AND usv.ID != :itemSchemVersionId ");
         sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS ausv ON ausv.ID = usv.MAINTAINABLE_ARTEFACT_FK ");
+        sqlQuery.append("INNER JOIN TB_CODES multiplier on multiplier.ID = ct.UNIT_MULTIPLIER_FK ");
+        sqlQuery.append("INNER JOIN TB_ITEM_SCHEMES_VERSIONS umsv ON umsv.ID = multiplier.ITEM_SCHEME_VERSION_FK AND umsv.ID != :itemSchemVersionId ");
+        sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS aumsv ON aumsv.ID = umsv.MAINTAINABLE_ARTEFACT_FK ");
         sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS acb ON acb.ID = unit.NAMEABLE_ARTEFACT_FK ");
+        sqlQuery.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS macb ON macb.ID = multiplier.NAMEABLE_ARTEFACT_FK ");
         sqlQuery.append("LEFT OUTER JOIN TB_CONCEPTS cd ON cd.ID = ct.DENOMINATOR_FK ");
         sqlQuery.append("LEFT OUTER JOIN TB_ITEM_SCHEMES_VERSIONS icd ON icd.ID = cd.ITEM_SCHEME_VERSION_FK AND icd.ID != :itemSchemVersionId ");
         sqlQuery.append("LEFT OUTER JOIN TB_ANNOTABLE_ARTEFACTS aicd ON aicd.ID = icd.MAINTAINABLE_ARTEFACT_FK ");
@@ -618,23 +620,24 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             String quantityUnitCodelistCode = getString(resultSqlArray[2]);
             String quantityUnitCode = getString(resultSqlArray[3]);
             String quantityUnitSymbolPosition = getString(resultSqlArray[4]);
-            Integer quantityUnitMultiplier = getInteger(resultSqlArray[5]);
-            Integer quantitySignificantDigits = getInteger(resultSqlArray[6]);
-            Integer quantityDecimalPlaces = getInteger(resultSqlArray[7]);
-            Integer quantityMinimum = getInteger(resultSqlArray[8]);
-            Integer quantityMaximum = getInteger(resultSqlArray[9]);
-            String quantityDenominatorConceptScheme = getString(resultSqlArray[10]);
-            String quantityDenominatorConcept = getString(resultSqlArray[11]);
-            String quantityNumeratorConceptScheme = getString(resultSqlArray[12]);
-            String quantityNumeratorConcept = getString(resultSqlArray[13]);
-            Boolean quantityIsPercentage = getBoolean(resultSqlArray[14]);
-            Integer quantityIndexBaseValue = getInteger(resultSqlArray[15]);
-            String quantityIndexBaseTime = getString(resultSqlArray[16]);
-            String quantityIndexBaseLocationCodelistCode = getString(resultSqlArray[17]);
-            String quantityIndexBaseLocationCode = getString(resultSqlArray[18]);
-            String quantityBaseQuantityConceptScheme = getString(resultSqlArray[19]);
-            String quantityBaseQuantityConcept = getString(resultSqlArray[20]);
-            
+            String quantityUnitMultiplierCodelistCode = getString(resultSqlArray[5]);
+            String quantityUnitMultiplierCode = getString(resultSqlArray[6]);
+            Integer quantitySignificantDigits = getInteger(resultSqlArray[7]);
+            Integer quantityDecimalPlaces = getInteger(resultSqlArray[8]);
+            Integer quantityMinimum = getInteger(resultSqlArray[9]);
+            Integer quantityMaximum = getInteger(resultSqlArray[10]);
+            String quantityDenominatorConceptScheme = getString(resultSqlArray[11]);
+            String quantityDenominatorConcept = getString(resultSqlArray[12]);
+            String quantityNumeratorConceptScheme = getString(resultSqlArray[13]);
+            String quantityNumeratorConcept = getString(resultSqlArray[14]);
+            Boolean quantityIsPercentage = getBoolean(resultSqlArray[15]);
+            Integer quantityIndexBaseValue = getInteger(resultSqlArray[16]);
+            String quantityIndexBaseTime = getString(resultSqlArray[17]);
+            String quantityIndexBaseLocationCodelistCode = getString(resultSqlArray[18]);
+            String quantityIndexBaseLocationCode = getString(resultSqlArray[19]);
+            String quantityBaseQuantityConceptScheme = getString(resultSqlArray[20]);
+            String quantityBaseQuantityConcept = getString(resultSqlArray[21]);
+
             QuantityTypeEnum quantityType = QuantityTypeEnum.valueOf(quantityTypeIdentifier);
             QuantityUnitSymbolPositionEnum quantityUnitSymbolPositionType = QuantityUnitSymbolPositionEnum.valueOf(quantityUnitSymbolPosition);
 
@@ -645,7 +648,8 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             extensionEndpoint.setUnitCodelistCode(quantityUnitCodelistCode);
             extensionEndpoint.setUnitCode(quantityUnitCode);
             extensionEndpoint.setUnitSymbolPosition(quantityUnitSymbolPositionType);
-            extensionEndpoint.setUnitMultiplier(quantityUnitMultiplier);
+            extensionEndpoint.setUnitMultiplierCodelistCode(quantityUnitMultiplierCodelistCode);
+            extensionEndpoint.setUnitMultiplierCode(quantityUnitMultiplierCode);
             extensionEndpoint.setSignificantDigits(quantitySignificantDigits);
             extensionEndpoint.setDecimalPlaces(quantityDecimalPlaces);
             extensionEndpoint.setMiminum(quantityMinimum);
@@ -664,7 +668,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
 
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     private void executeQueryRetrieveConceptConceptType(Long itemSchemVersionId, Map<Long, ItemResult> mapItemByItemId) {
         StringBuilder sqlQuery = new StringBuilder();
@@ -845,96 +849,96 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             return (ConceptMetamacResultExtensionPoint) item.getExtensionPoint();
         }
 
-        public static ConceptExtensionPointUtility PLURAL_NAME = new ConceptExtensionPointUtility() {
+        public static ConceptExtensionPointUtility PLURAL_NAME        = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_PLURAL_NAME;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getPluralName();
-            }
-        };
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_PLURAL_NAME;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getPluralName();
+                                                                          }
+                                                                      };
 
-        public static ConceptExtensionPointUtility ACRONYM = new ConceptExtensionPointUtility() {
+        public static ConceptExtensionPointUtility ACRONYM            = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_ACRONYM;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getAcronym();
-            }
-        };
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_ACRONYM;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getAcronym();
+                                                                          }
+                                                                      };
 
         public static ConceptExtensionPointUtility DESCRIPTION_SOURCE = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_DESCRIPTION_SOURCE;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getDescriptionSource();
-            }
-        };
-        public static ConceptExtensionPointUtility CONTEXT = new ConceptExtensionPointUtility() {
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_DESCRIPTION_SOURCE;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getDescriptionSource();
+                                                                          }
+                                                                      };
+        public static ConceptExtensionPointUtility CONTEXT            = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_CONTEXT;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getContext();
-            }
-        };
-        public static ConceptExtensionPointUtility DOC_METHOD = new ConceptExtensionPointUtility() {
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_CONTEXT;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getContext();
+                                                                          }
+                                                                      };
+        public static ConceptExtensionPointUtility DOC_METHOD         = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_DOC_METHOD;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getDocMethod();
-            }
-        };
-        public static ConceptExtensionPointUtility DERIVATION = new ConceptExtensionPointUtility() {
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_DOC_METHOD;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getDocMethod();
+                                                                          }
+                                                                      };
+        public static ConceptExtensionPointUtility DERIVATION         = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_DERIVATION;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getDerivation();
-            }
-        };
-        public static ConceptExtensionPointUtility LEGAL_ACTS = new ConceptExtensionPointUtility() {
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_DERIVATION;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getDerivation();
+                                                                          }
+                                                                      };
+        public static ConceptExtensionPointUtility LEGAL_ACTS         = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_LEGAL_ACTS;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getLegalActs();
-            }
-        };
-        public static ConceptExtensionPointUtility PERCENTAGE_OF = new ConceptExtensionPointUtility() {
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_LEGAL_ACTS;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getLegalActs();
+                                                                          }
+                                                                      };
+        public static ConceptExtensionPointUtility PERCENTAGE_OF      = new ConceptExtensionPointUtility() {
 
-            @Override
-            public String getColumnName() {
-                return COLUMN_NAME_PERCENTAGE_OF;
-            };
-            @Override
-            public java.util.Map<String, String> getMetadata(ItemResult item) {
-                return getConceptExtensionPoint(item).getPercentageOf();
-            }
-        };
+                                                                          @Override
+                                                                          public String getColumnName() {
+                                                                              return COLUMN_NAME_PERCENTAGE_OF;
+                                                                          };
+                                                                          @Override
+                                                                          public java.util.Map<String, String> getMetadata(ItemResult item) {
+                                                                              return getConceptExtensionPoint(item).getPercentageOf();
+                                                                          }
+                                                                      };
     }
 
     private ConceptMetamacVisualisationResult itemResultSqlToConceptVisualisationResult(Object[] source) throws MetamacException {

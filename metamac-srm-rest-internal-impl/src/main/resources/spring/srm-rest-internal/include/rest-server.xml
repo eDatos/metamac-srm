@@ -26,12 +26,18 @@
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
+            <entry key="tsv" value="text/tab-separated-values" />
+        	<entry key="csv" value="text/csv" />
+        	<entry key="xlsx" value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        	<entry key="xls" value="application/vnd.ms-excel" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
             <ref bean="jsonProvider" />
             <ref bean="wadlGenerator" />
+            <ref bean="xstreamTsvProvider" />
+            <ref bean="xstreamXlsProvider" />
         </jaxrs:providers>
         
         <!-- JSONP -->
@@ -52,7 +58,9 @@
     </bean>
     
     <bean id="jsonProvider" class="org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider" />
-
+    <bean id="xstreamTsvProvider" class="org.siemac.metamac.rest.common.export.mappers.PlainTextMessageBodyWritter" />
+    <bean id="xstreamXlsProvider" class="org.siemac.metamac.rest.common.export.mappers.ExcelMessageBodyWritter" />
+ 
     <bean id="wadlGenerator" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
         <property name="namespacePrefix" value="ns" />
     </bean>

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.PersistenceException;
+
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.sdmx.resources.sdmxml.rest.schemas.v2_1.types.StructureParameterDetailEnum;
@@ -100,6 +102,7 @@ import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBas
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
 import org.siemac.metamac.srm.core.organisation.mapper.OrganisationsDo2DtoMapper;
 import org.siemac.metamac.srm.core.organisation.mapper.OrganisationsDto2DoMapper;
+import org.siemac.metamac.srm.core.security.AdministrationSecurityUtils;
 import org.siemac.metamac.srm.core.security.CategoriesSecurityUtils;
 import org.siemac.metamac.srm.core.security.CodesSecurityUtils;
 import org.siemac.metamac.srm.core.security.ConceptsSecurityUtils;
@@ -4121,6 +4124,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
     public List<AnnotationTypeDto> findAllAnnotationTypes(ServiceContext ctx) throws MetamacException {
+        AdministrationSecurityUtils.canRetrieveAnnotationType(ctx);
 
         List<AnnotationType> annotationTypes = sdmxService.findAllAnnotationtypes(ctx);
         List<AnnotationTypeDto> annotationTypesDto = new ArrayList<>();
@@ -4132,7 +4136,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
     public MetamacCriteriaResult<AnnotationTypeDto> findAnnotationTypes(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
-
+        AdministrationSecurityUtils.canRetrieveAnnotationType(ctx);
         // Transform
         SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getAnnotationTypeCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
 
@@ -4145,7 +4149,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
     public AnnotationTypeDto createAnnotationType(ServiceContext ctx, AnnotationTypeDto annotationTypeDto) throws MetamacException {
-
+        AdministrationSecurityUtils.canCreateAnnotationType(ctx);
         // Transform to entity
         AnnotationType annotationType = masterTablesDto2DoMapper.annotationTypeDtoToEntity(annotationTypeDto);
 
@@ -4158,6 +4162,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
     public AnnotationTypeDto updateAnnotationType(ServiceContext ctx, AnnotationTypeDto annotationTypeDto) throws MetamacException {
+        AdministrationSecurityUtils.canUpdateAnnotationType(ctx);
 
         // Transform to entity
         AnnotationType annotationType = masterTablesDto2DoMapper.annotationTypeDtoToEntity(annotationTypeDto);
@@ -4171,7 +4176,12 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
     public void deleteAnnotationType(ServiceContext ctx, String annotationTypeUuid) throws MetamacException {
-        sdmxService.deleteAnnotationType(ctx, annotationTypeUuid);
+        AdministrationSecurityUtils.canDeleteAnnotationType(ctx);
+        try {
+            sdmxService.deleteAnnotationType(ctx, annotationTypeUuid);
+        } catch (PersistenceException e) {
+            throw new MetamacException(e, ServiceExceptionType.ANNOTATION_TYPE_CAN_NOT_BE_REMOVED, annotationTypeUuid);
+        }
     }
 
     public List<EniSchemaCatalogDto> findAllEniSchemaCatalogs(ServiceContext ctx) throws MetamacException {

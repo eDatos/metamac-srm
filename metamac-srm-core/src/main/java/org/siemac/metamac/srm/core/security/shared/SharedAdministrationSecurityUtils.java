@@ -10,7 +10,7 @@ public class SharedAdministrationSecurityUtils extends SharedItemsSecurityUtils 
     //
 
     public static boolean canRetrieveAnnotationType(MetamacPrincipal metamacPrincipal) {
-        return isSrmRoleAllowed(metamacPrincipal, SrmRoleEnum.ADMINISTRADOR);
+        return isAnySrmRole(metamacPrincipal);
     }
 
     public static boolean canCreateAnnotationType(MetamacPrincipal metamacPrincipal) {

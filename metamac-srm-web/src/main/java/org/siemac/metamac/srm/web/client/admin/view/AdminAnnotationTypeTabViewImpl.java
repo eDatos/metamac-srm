@@ -95,10 +95,9 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         listGrid.getListGrid().setAutoFitData(Autofit.VERTICAL);
         listGrid.getListGrid().setAutoFitMaxRecords(SrmWebConstants.MAIN_LIST_MAX_RESULTS);
         ListGridField uuidField = new ListGridField(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
-        uuidField.setHidden(true);
         ListGridField titleField = new ListGridField(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
         ListGridField multiplierField = new ListGridField(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
-        listGrid.getListGrid().setFields(uuidField, titleField, multiplierField);
+        listGrid.getListGrid().setFields(titleField, multiplierField, uuidField);
         // Show data source details when record clicked
         listGrid.getListGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 

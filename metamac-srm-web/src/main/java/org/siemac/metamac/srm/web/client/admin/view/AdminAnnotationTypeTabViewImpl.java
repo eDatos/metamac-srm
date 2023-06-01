@@ -18,7 +18,7 @@ import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
@@ -53,7 +53,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         // ToolStrip
 
-        toolStrip = new ListGridToolStrip(getMessages().codelistOrderAlphabeticalInfoViewTitle(), getMessages().codelistOrderAlphabeticalInfoDeleteTitle());
+        toolStrip = new ListGridToolStrip(getMessages().annotationTypeDeleteTitle(), getMessages().annotationTypeConfirmDelete());
         toolStrip.getNewButton().addClickHandler(new ClickHandler() {
 
             @Override
@@ -95,6 +95,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         listGrid.getListGrid().setAutoFitData(Autofit.VERTICAL);
         listGrid.getListGrid().setAutoFitMaxRecords(SrmWebConstants.MAIN_LIST_MAX_RESULTS);
         ListGridField uuidField = new ListGridField(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
+        uuidField.setHidden(true);
         ListGridField titleField = new ListGridField(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
         ListGridField multiplierField = new ListGridField(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
         listGrid.getListGrid().setFields(uuidField, titleField, multiplierField);
@@ -109,7 +110,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                     selectAnnotationType(selected);
                 } else {
                     // No record selected
-                    deselectQuantityUnit();
+                    deselectAnnotationType();
                     if (listGrid.getListGrid().getSelectedRecords().length > 1) {
                         // Delete more than one dimension with one click
                         showToolStripDeleteButton();
@@ -175,7 +176,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         annotationTypePanel.setAnnotationTypeDto(dto);
     }
 
-    private void deselectQuantityUnit() {
+    private void deselectAnnotationType() {
         toolStrip.getDeleteButton().hide();
 
         annotationTypePanel.hide();
@@ -287,7 +288,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         }
 
         private void createViewForm() {
-            generalForm = new GroupDynamicForm(getConstants().adminAnnotationType()); // TODO EDATOS-4082 ver qué va aquí
+            generalForm = new GroupDynamicForm(getConstants().adminAnnotationType());
 
             ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
             ViewMultiLanguageTextItem title = new ViewMultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
@@ -299,12 +300,12 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         }
 
         private void createEditionForm() {
-            generalEditionForm = new GroupDynamicForm(getConstants().adminAnnotationType());// TODO EDATOS-4082 cambiar mensaje
+            generalEditionForm = new GroupDynamicForm(getConstants().adminAnnotationType());
 
             ViewTextItem uuid = new ViewTextItem(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
             MultiLanguageTextItem title = new MultiLanguageTextItem(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
             title.setRequired(true);
-            CustomIntegerItem code = new CustomIntegerItem(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
+            CustomTextItem code = new CustomTextItem(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
             code.setRequired(true);
 
             generalEditionForm.setFields(uuid, title, code);

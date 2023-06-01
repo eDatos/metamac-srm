@@ -1,24 +1,21 @@
 package org.siemac.metamac.srm.web.client.admin.utils;
 
-import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.srm.core.security.shared.SharedCategoriesSecurityUtils;
+import org.siemac.metamac.srm.core.security.shared.SharedAdministrationSecurityUtils;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 
 public class AdminClientSecurityUtils {
 
-    // CATEGORY SCHEMES
-
-    // TODO EDATOS-4082 PERMISOS PARA ESTOS PANELES
+    // ADMINISTRATION
 
     public static boolean canCreateAnnotationType() {
-        return SharedCategoriesSecurityUtils.canCreateCategoryScheme(MetamacSrmWeb.getCurrentUser());
+        return SharedAdministrationSecurityUtils.canCreateAnnotationType(MetamacSrmWeb.getCurrentUser());
     }
 
     public static boolean canUpdateAnnotationType() {
-        return SharedCategoriesSecurityUtils.canUpdateCategoryScheme(MetamacSrmWeb.getCurrentUser(), ProcStatusEnum.EXTERNALLY_PUBLISHED);
+        return SharedAdministrationSecurityUtils.canUpdateAnnotationType(MetamacSrmWeb.getCurrentUser());
     }
 
     public static boolean canDeleteAnnotationType() {
-        return SharedCategoriesSecurityUtils.canDeleteCategoryScheme(MetamacSrmWeb.getCurrentUser());
+        return SharedAdministrationSecurityUtils.canDeleteAnnotationType(MetamacSrmWeb.getCurrentUser());
     }
 }

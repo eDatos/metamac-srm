@@ -6,11 +6,14 @@ import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeAction;
 import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeResult;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -116,9 +119,11 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
                     public void run() {
                         if (creation) {
                             getView().onAnnotationTypeCreated(result.getOutputDto());
+
                         } else {
                             getView().onAnnotationTypeUpdated(result.getOutputDto());
                         }
+                        retrieveAnnotationTypes();
                     }
                 });
             }
@@ -142,6 +147,17 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
                         }
                     }
                 });
+    }
+
+    public void retrieveAnnotationTypes() {
+        dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetAnnotationTypesResult result) {
+                UpdateAnnotationTypeEvent.fire(AdminAnnotationTypeTabPresenter.this, result.getAnnotationTypes());
+
+            }
+        });
     }
 
     private static interface Action {

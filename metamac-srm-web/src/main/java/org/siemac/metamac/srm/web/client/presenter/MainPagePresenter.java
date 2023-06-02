@@ -237,6 +237,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     @Override
     public void sDMXResourceImportationSucceed(String successMessage) {
         ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, successMessage);
+        retrieveAnnotationTypes();
     }
 
     //

@@ -236,11 +236,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 public void onClick(ClickEvent event) {
                     mainFormLayout.setEditionMode();
                     CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
-                    if (annotationTypeDto != null && annotationTypeDto.isExternalResource()) {
-                        code.disable();
-                    } else {
-                        code.enable();;
-                    }
+                    code.setDisabled(annotationTypeDto != null && annotationTypeDto.isExternalResource());
                 }
             });
 

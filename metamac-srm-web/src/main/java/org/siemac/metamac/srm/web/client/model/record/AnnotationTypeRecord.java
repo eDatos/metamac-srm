@@ -7,10 +7,11 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class AnnotationTypeRecord extends ListGridRecord {
 
-    public AnnotationTypeRecord(String uuid, String title, String code, AnnotationTypeDto dto) {
+    public AnnotationTypeRecord(String uuid, String title, String code, boolean isExternal, AnnotationTypeDto dto) {
         setUuid(uuid);
         setTitle(title);
         setCode(code);
+        setExternal(isExternal);
         setDto(dto);
     }
 
@@ -36,6 +37,14 @@ public class AnnotationTypeRecord extends ListGridRecord {
 
     public String getCode() {
         return getAttributeAsString(AnnotationTypeDS.CODE);
+    }
+
+    public void setExternal(boolean isExternal) {
+        setAttribute(AnnotationTypeDS.EXTERNAL, isExternal ? "X" : "");
+    }
+
+    public String getExternal() {
+        return getAttributeAsString(AnnotationTypeDS.EXTERNAL);
     }
 
     public void setDto(AnnotationTypeDto dto) {

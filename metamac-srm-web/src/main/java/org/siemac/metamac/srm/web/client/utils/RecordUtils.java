@@ -115,7 +115,7 @@ public class RecordUtils {
     }
 
     public static AnnotationTypeRecord getAnnotationTypeRecord(AnnotationTypeDto dto) {
-        AnnotationTypeRecord record = new AnnotationTypeRecord(dto.getUuid(), getLocalisedString(dto.getTitle()), dto.getCode(), dto);
+        AnnotationTypeRecord record = new AnnotationTypeRecord(dto.getUuid(), getLocalisedString(dto.getTitle()), dto.getCode(), dto.isExternalResource(), dto);
         return record;
     }
 }

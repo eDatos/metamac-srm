@@ -26,6 +26,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Autofit;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -97,7 +98,10 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         ListGridField uuidField = new ListGridField(AnnotationTypeDS.UUID, getConstants().adminAnnotationTypeUuid());
         ListGridField titleField = new ListGridField(AnnotationTypeDS.TITLE, getConstants().adminAnnotationTypeTitle());
         ListGridField multiplierField = new ListGridField(AnnotationTypeDS.CODE, getConstants().adminAnnotationTypeType());
-        listGrid.getListGrid().setFields(titleField, multiplierField, uuidField);
+        ListGridField isExternal = new ListGridField(AnnotationTypeDS.EXTERNAL, getConstants().adminAnnotationTypeIsExternal());
+        isExternal.setAlign(Alignment.CENTER);
+
+        listGrid.getListGrid().setFields(titleField, multiplierField, uuidField, isExternal);
         // Show data source details when record clicked
         listGrid.getListGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 
@@ -231,6 +235,12 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 @Override
                 public void onClick(ClickEvent event) {
                     mainFormLayout.setEditionMode();
+                    CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
+                    if (annotationTypeDto != null && annotationTypeDto.isExternalResource()) {
+                        code.disable();
+                    } else {
+                        code.enable();;
+                    }
                 }
             });
 
@@ -337,6 +347,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 generalEditionForm.clearValue(AnnotationTypeDS.CODE);
             }
             generalEditionForm.setValue(AnnotationTypeDS.TITLE, dto.getTitle());
+
         }
 
         private AnnotationTypeDto getAnnotationTypeDto() {

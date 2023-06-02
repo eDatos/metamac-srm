@@ -7,10 +7,11 @@ import com.smartgwt.client.data.fields.DataSourceTextField;
 
 public class AnnotationTypeDS extends DataSource {
 
-    public static String UUID  = "annotation-type-uuid";
-    public static String TITLE = "annotation-type-title";
-    public static String CODE  = "annotation-type-code";
-    public static String DTO   = "annotation-type-dto";
+    public static String UUID     = "annotation-type-uuid";
+    public static String TITLE    = "annotation-type-title";
+    public static String CODE     = "annotation-type-code";
+    public static String EXTERNAL = "annotation-type-is-external";
+    public static String DTO      = "annotation-type-dto";
 
     public AnnotationTypeDS() {
         DataSourceTextField uuid = new DataSourceTextField(UUID, getConstants().adminAnnotationTypeUuid());

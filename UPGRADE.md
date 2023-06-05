@@ -16,8 +16,9 @@
   ```
 * Cambios en statistic-sdmx-srm. Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
   ```shell
-  etc/changes-from-release/3.3.0/db/postgresql/20230602_create-table-tbLisAnnotationTypes.sql
-  etc/changes-from-release/3.3.0/db/postgresql/20230602_drop-column-type-in-table-tbAnnotations.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230602_1_create-table-tbLisAnnotationTypes.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230602_2_annotation_type_adaptation_to_new_data_type.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230602_3_drop-column-type-in-table-tbAnnotations.sql
   ```
 * Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
   ```shell

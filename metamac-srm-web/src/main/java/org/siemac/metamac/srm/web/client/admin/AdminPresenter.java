@@ -23,6 +23,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -50,6 +51,11 @@ public class AdminPresenter extends Presenter<AdminPresenter.AdminView, AdminPre
     public interface AdminView extends View, HasUiHandlers<AdminUiHandlers> {
 
         void selectAnnotationTypeTab();
+    }
+
+    @TitleFunction
+    public static String getTranslatedTitle(PlaceRequest placeRequest) {
+        return PlaceRequestUtils.getMasterTablesBreadCrumbTitle(placeRequest);
     }
 
     @ProxyCodeSplit

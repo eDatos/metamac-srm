@@ -7,7 +7,6 @@ import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
@@ -27,7 +26,6 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
@@ -45,11 +43,6 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
         void onAnnotationTypeCreated(AnnotationTypeDto dto);
         void onAnnotationTypeUpdated(AnnotationTypeDto dto);
         void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults);
-    }
-
-    @TitleFunction
-    public static String getTranslatedTitle(PlaceRequest placeRequest) {
-        return PlaceRequestUtils.getMasterTablesBreadCrumbTitle(placeRequest);
     }
 
     @ProxyCodeSplit

@@ -82,5 +82,9 @@
 	<bean id="statisticalOperationsRestExternalFacade" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="org.siemac.metamac.srm.rest.external.invocation.StatisticalOperationsRestExternalFacade" />
     </bean>
+    
+    <bean id="annotationTypeRepository" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository" />
+    </bean>
 
 </beans>

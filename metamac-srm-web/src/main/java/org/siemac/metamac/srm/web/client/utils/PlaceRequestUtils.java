@@ -262,7 +262,7 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
     public static List<PlaceRequest> buildAbsoluteAnnotationTypePlaceRequest() {
         List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
         placeRequestHierarchy.add(new PlaceRequest(NameTokens.structuralResourcesPage));
-        placeRequestHierarchy.add(new PlaceRequest(NameTokens.annotationTypePage));
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.adminPage));
         return placeRequestHierarchy;
     }
 

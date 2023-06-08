@@ -41,8 +41,6 @@ Se han realizado cambios a la base de datos, por ello se proveen una serie de sc
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_insert_eni_schemas_values.sql  
   etc/changes-from-release/4.0.0/db/srm/postgresql/20230404_drop_luna_views.sql  
   ```
-- Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. 
-  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db/common-metadata/postgresql/](etc/changes-from-release/4.0.0/db/common-metadata/postgresql)
   
 ## 3.3.0 a 4.0.0
 * Rotura de la compatibilidad:

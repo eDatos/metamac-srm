@@ -15,6 +15,7 @@ public interface DsdDimensionsTabUiHandlers extends BaseUiHandlers {
 
     void createDefaultDimension(String dsdUrn, TypeDimensionComponent dimensionType, SpecialDimensionTypeEnum specialDimensionType);
     void saveDimension(DimensionComponentDto dimensionComponentDto);
+    void saveDimensions(List<DimensionComponentDto> dimensionComponentsDto);
     void deleteDimensions(List<DimensionComponentDto> dimensionComponentDtos);
 
     void retrieveConceptSchemes(TypeDimensionComponent dimensionType, SpecialDimensionTypeEnum specialDimensionTypeEnum, int firstResult, int maxResults,

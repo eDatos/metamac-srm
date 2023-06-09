@@ -229,6 +229,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                 return dimensionRecord.getConcept();
             }
         });
+
         // Show dimension details when record clicked
         dimensionsGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 
@@ -597,6 +598,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         mainFormLayout.setCanEdit(DsdClientSecurityUtils.canUpdateDimension(dataStructureDefinitionMetamacDto));
 
         dimensionsGrid.setData(DsdRecordUtils.getDimensionRecords(dimensionComponentDtos));
+
+        dimensionsGrid.setCanReorderRecords(DsdClientSecurityUtils.canAlterOrderDimension(dataStructureDefinitionMetamacDto));
     }
 
     @Override

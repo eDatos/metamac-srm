@@ -22,7 +22,7 @@
     <bean id="entityManagerFactoryCore" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="databasePlatform" value="${metamac.srm.db.dialect}" />
+                <property name="databasePlatform" value="org.hibernate.dialect.PostgreSQLDialect" />
             </bean>
         </property>
         <property name="persistenceUnitManager" ref="persistenceUnitManager"/>

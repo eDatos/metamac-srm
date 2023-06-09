@@ -16,7 +16,6 @@ public class SrmConfigurationConstants extends ConfigurationConstants {
     public static final String DB_URL                                         = "metamac.srm.db.url";
     public static final String DB_USERNAME                                    = "metamac.srm.db.username";
     public static final String DB_PASSWORD                                    = "metamac.srm.db.password";
-    public static final String DB_DIALECT                                     = "metamac.srm.db.dialect";
     public static final String DB_DRIVER_NAME                                 = "metamac.srm.db.driver_name";
     public static final String DB_DRIVER_NAME_POSTGRESQL                      = "org.postgresql.Driver";
 

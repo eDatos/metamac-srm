@@ -9,6 +9,13 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 
+## 5.0.2 a XXXX
+
+* Cambios en statistic-sdmx-srm. Se debe borrar campo deshabilitado en release anterior en TB_ANNOTATIONS "old_type" Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
+  ```shell
+    etc/changes-from-release/3.3.X/db/postgresql/XXXX_drop-column-type-in-table-tbAnnotations.sql 
+  ```shell
+
 ## 5.0.1 a 5.0.2-SNAPSHOT
 * Es necesario ejecutar los scripts SQL contenidos en la carpeta
   ```shell

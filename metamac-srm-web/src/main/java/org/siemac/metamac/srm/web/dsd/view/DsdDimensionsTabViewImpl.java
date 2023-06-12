@@ -71,7 +71,6 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.rpc.RPCManager;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -295,9 +294,6 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                     }
                     List<Integer> draggedIndices = Arrays.asList(draggedIndicesArr);
 
-                    // Start the queue.
-                    RPCManager.startQueue();
-
                     final LinkedList<Integer> deque = new LinkedList<Integer>();
 
                     // The purpose of `prevUserOrder` is to give each record a unique userOrder even
@@ -326,11 +322,9 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                         }
                         assert j == nonDraggedIndicesArr.length;
 
-                        res = updateOrderLogic(deque, prevUserOrder, targetIndex, maxIndex + 1, Arrays.asList(nonDraggedIndicesArr), recordsChanged);
-                        prevUserOrder = res.second;
+                        updateOrderLogic(deque, prevUserOrder, targetIndex, maxIndex + 1, Arrays.asList(nonDraggedIndicesArr), recordsChanged);
                     }
 
-                    RPCManager.sendQueue();
                     getUiHandlers().saveDimensions(dimensionsUpdated.isEmpty() ? recordsChanged : dimensionsUpdated);
                 }
             }

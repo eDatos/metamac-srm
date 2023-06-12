@@ -46,11 +46,13 @@ import org.siemac.metamac.srm.rest.internal.v1_0.dsd.utils.DataStructuresDoMocks
 
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersionRepository;
+import com.arte.statistic.sdmx.srm.core.structure.mapper.DataStructureDefinitionDo2DtoMapper;
 
 public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalFacadeV10BaseTest {
 
     private DataStructureDefinitionMetamacService dsdsService;
     private StructureVersionRepository            structureVersionRepository;
+    private DataStructureDefinitionDo2DtoMapper   dataStructureDefinitionDo2DtoMapper;
 
     @Test
     public void testJsonAcceptable() throws Exception {
@@ -328,8 +330,8 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
 
     @SuppressWarnings("unchecked")
     private void mockFindDataStructuresByCondition() throws MetamacException {
-        when(dsdsService.findDataStructureDefinitionsByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class))).thenAnswer(
-                new Answer<PagedResult<DataStructureDefinitionVersionMetamac>>() {
+        when(dsdsService.findDataStructureDefinitionsByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class)))
+                .thenAnswer(new Answer<PagedResult<DataStructureDefinitionVersionMetamac>>() {
 
                     @Override
                     public org.fornax.cartridges.sculptor.framework.domain.PagedResult<DataStructureDefinitionVersionMetamac> answer(InvocationOnMock invocation) throws Throwable {
@@ -373,6 +375,8 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
         reset(dsdsService);
         structureVersionRepository = applicationContext.getBean(StructureVersionRepository.class);
         reset(structureVersionRepository);
+        dataStructureDefinitionDo2DtoMapper = applicationContext.getBean(DataStructureDefinitionDo2DtoMapper.class);
+        reset(dataStructureDefinitionDo2DtoMapper);
 
         mockRetrieveStructureVersionByVersion();
         mockFindDataStructuresByCondition();

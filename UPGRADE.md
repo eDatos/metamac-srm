@@ -13,6 +13,10 @@
   ```shell
   etc/changes-from-release/5.0.1/db/common-metadata/postgresql
   ```
+* Es necesario ejecutar los scripts SQL contenidos en la carpeta
+  ```shell
+  etc/changes-from-release/5.0.1/db/srm/postgresql
+  ```
 * Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value

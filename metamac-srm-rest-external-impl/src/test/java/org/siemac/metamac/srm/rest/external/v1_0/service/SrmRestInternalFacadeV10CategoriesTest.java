@@ -8,6 +8,7 @@ import static org.siemac.metamac.rest.api.constants.RestApiConstants.WILDCARD_AL
 import static org.siemac.metamac.rest.api.constants.RestApiConstants.WILDCARD_LATEST;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.AGENCY_1;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.AGENCY_2;
+import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.FIELD_ENI_SCHEME;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.ITEM_1_CODE;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.ITEM_2_CODE;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.ITEM_SCHEME_1_CODE;
@@ -20,12 +21,12 @@ import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.QUERY_LATEST;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.VERSION_1;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.VERSION_2;
-import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.FIELD_ENI_SCHEME;
 
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -336,7 +337,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
         testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
         testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
-        
+
         // version
         testFindCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", null, null, null); // with pagination
         testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
@@ -351,6 +352,53 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         // Request and validate
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+
+    @Test
+    public void testFindCategoriesRetrieveTsv() throws Exception {
+
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        InputStream responseExpected = SrmRestInternalFacadeV10CategoriesTest.class.getResourceAsStream("/responses/categories/findCategoriesTSV.tsv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/tab-separated-values", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testFindCategoriesTsv() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        List<String> lines = getResponse(requestUri, "text/tab-separated-values");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("code\tparent\turn\tname#es\tname#en", iterator.next());
+        assertTrue(lines.contains("category1\t\turn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1\tname-category1 en Español\tname-category1 in English"));
+        assertTrue(lines.contains("category2\t\turn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2\tname-category2 en Español\tname-category2 in English"));
+
+    }
+
+    @Test
+    public void testFindCategoriesRetrieveCsv() throws Exception {
+
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        InputStream responseExpected = SrmRestInternalFacadeV10CategoriesTest.class.getResourceAsStream("/responses/categories/findCategoriesCSV.csv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/csv", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testFindCategoriesCsv() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null);
+        List<String> lines = getResponse(requestUri, "text/csv");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("code,parent,urn,name#es,name#en", iterator.next());
+        assertTrue(lines.contains("category1,,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1,name-category1 en Español,name-category1 in English"));
+        assertTrue(lines.contains("category2,,urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2,name-category2 en Español,name-category2 in English"));
     }
 
     @Test
@@ -533,7 +581,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
-        
+
         if (fields != null && fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             for (int i = 0; i < categories.getCategories().size(); i++) {
                 assertNotNull(categories.getCategories().get(i).getEniSchemeType());
@@ -543,7 +591,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
                 assertNull(categories.getCategories().get(i).getEniSchemeType());
             }
         }
-        
+
     }
 
     private void mockRetrieveItemSchemeVersionByVersion() throws MetamacException {

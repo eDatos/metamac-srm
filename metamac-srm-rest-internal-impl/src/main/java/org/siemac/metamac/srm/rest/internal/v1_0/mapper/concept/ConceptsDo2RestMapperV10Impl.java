@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.mapper.concept;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -42,6 +45,7 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.shared.QuantityUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
@@ -104,6 +108,39 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         }
         ResourceInternal target = new ResourceInternal();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CONCEPT_SCHEME, toConceptSchemeSelfLink(source), toConceptSchemeManagementApplicationLink(source), target);
+        return target;
+    }
+
+    @Override
+    public List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextResource> target = new ArrayList<>();
+
+        for (ConceptResourceInternal concept : source.getConcepts()) {
+            target.add(toFlattenConcept(concept, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextResource toFlattenConcept(ConceptResourceInternal source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
+        target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
+        target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
+        target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
+
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
+        }
+
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_PLURAL_NAME, source.getName(), languages));
+        }
+
         return target;
     }
 
@@ -372,7 +409,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
             target.setUnitSymbolPosition(toQuantityUnitSymbolPosition(source.getUnitSymbolPosition()));
             target.setSignificantDigits(source.getSignificantDigits());
             target.setDecimalPlaces(source.getDecimalPlaces());
-            target.setUnitMultiplier(source.getUnitMultiplier());
+            target.setUnitMultiplier(codesDo2RestMapper.toResource(source.getUnitMultiplier()));
         }
         if (QuantityUtils.isAmountOrExtension(source.getQuantityType())) {
             // nothing

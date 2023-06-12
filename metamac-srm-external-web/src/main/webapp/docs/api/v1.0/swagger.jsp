@@ -630,7 +630,9 @@
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories_findCategories_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"  
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1092,7 +1094,9 @@
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes_findCodes_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"    
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1100,7 +1104,7 @@
                 {"$ref":"#/components/parameters/versionParam"},
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
-                {"$ref":"#/components/parameters/codelistQueryParam"},
+                {"$ref":"#/components/parameters/codelistCodesQueryParam"},
                 {"$ref":"#/components/parameters/codelistOrderByParam"},
                {
                   "name":"openness",
@@ -1415,7 +1419,9 @@
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts_findConcepts_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -2560,7 +2566,9 @@
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations_findOrganisations_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

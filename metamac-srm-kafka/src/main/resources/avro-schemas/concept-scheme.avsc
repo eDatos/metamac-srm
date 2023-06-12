@@ -57,6 +57,14 @@
       "type": ["null", "ProcStatusEnumAvro"]
     },
     {
+      "name": "conceptSchemeType",
+      "type": ["null", "ConceptSchemeTypeEnumAvro"]
+    },
+    {
+      "name": "statisticalOperation",
+      "type": ["null", "ExternalItemAvro"]
+    },
+    {
       "name": "categorizations",
       "type": {
         "type": "array",

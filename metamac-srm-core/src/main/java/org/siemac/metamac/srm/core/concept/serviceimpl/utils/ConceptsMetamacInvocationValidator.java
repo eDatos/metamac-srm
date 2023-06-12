@@ -305,11 +305,7 @@ public class ConceptsMetamacInvocationValidator extends ConceptsInvocationValida
         ValidationUtils.checkMetadataRequired(quantity.getQuantityType(), ServiceExceptionParameters.CONCEPT_QUANTITY_TYPE, exceptions);
         ValidationUtils.checkMetadataRequired(quantity.getUnitCode(), ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_CODE, exceptions);
         ValidationUtils.checkMetadataRequired(quantity.getUnitSymbolPosition(), ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_SYMBOL_POSITION, exceptions);
-
-        // checks invalid quantity unit multiplier: must be 1, 10, 100...
-        if (ValidationUtils.isEmpty(quantity.getUnitMultiplier()) || !QuantityUtils.isPowerOfTen(quantity.getUnitMultiplier())) {
-            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_MULTIPLIER));
-        }
+        ValidationUtils.checkMetadataRequired(quantity.getUnitMultiplier(), ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_MULTIPLIER, exceptions);
 
         // required by quantity type
         if (QuantityUtils.isRatioOrExtension(quantity.getQuantityType())) {

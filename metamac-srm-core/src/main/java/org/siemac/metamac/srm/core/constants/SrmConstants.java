@@ -30,6 +30,7 @@ public class SrmConstants {
     public static final String             TSV_LINE_SEPARATOR                                                     = "\n";
     public static final String             TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR                              = "#";
     public static final String             TSV_HEADER_CODE                                                        = "code";
+    public static final String             TSV_HEADER_URN                                                         = "urn";
     public static final String             TSV_HEADER_PARENT                                                      = "parent";
     public static final String             TSV_HEADER_NAME                                                        = "name";
     public static final String             TSV_HEADER_DESCRIPTION                                                 = "description";
@@ -55,13 +56,14 @@ public class SrmConstants {
     public static final String             TSV_HEADER_REPRESENTATION_SUB_VALUE                                    = "value";
     public static final String             TSV_HEADER_CONCEPT_EXTENDS                                             = "concept_extends";
     public static final String             TSV_HEADER_SDMX_RELATED_ARTEFACT                                       = "sdmx_role";
-    
-    //QUANTITY 
+
+    // QUANTITY
     public static final String             TSV_HEADER_QUANTITY_TYPE                                               = "quantity_type";
     public static final String             TSV_HEADER_UNIT_CODELIST_CODE                                          = "unit_codelist_code";
     public static final String             TSV_HEADER_UNIT_CODE                                                   = "unit_code";
     public static final String             TSV_HEADER_UNIT_SYMBOL_POSITION                                        = "unit_symbol_position";
-    public static final String             TSV_HEADER_UNIT_MULTIPLIER                                             = "unit_multiplier";
+    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE                               = "unit_multiplier_codelist_code";
+    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODE                                        = "unit_multiplier_code";
     public static final String             TSV_HEADER_SIGNIFICANT_DIGITS                                          = "significant_digits";
     public static final String             TSV_HEADER_DECIMAL_PLACES                                              = "decimals_digits";
     public static final String             TSV_HEADER_MINIMUM                                                     = "minimum";
@@ -79,6 +81,8 @@ public class SrmConstants {
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME                                = "base_quantity_concept_scheme";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT                                       = "base_quantity_concept";
     public static final String             TSV_HEADER_ENI_SCHEME                                                  = "eni_scheme";
+    public static final String             TSV_HEADER_ENI_SCHEME_ID                                               = "eni_scheme_type_id";
+    public static final String             TSV_HEADER_ENI_SCHEME_NAME                                             = "eni_scheme_type_name";
 
     public static final String             TSV_EXPORTATION_ENCODING                                               = "UTF-8";
 

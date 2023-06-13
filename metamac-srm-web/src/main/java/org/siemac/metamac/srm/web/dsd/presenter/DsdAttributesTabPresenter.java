@@ -13,6 +13,8 @@ import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.dsd.enums.DsdTabTypeEnum;
 import org.siemac.metamac.srm.web.dsd.events.SelectViewDsdDescriptorEvent;
@@ -38,6 +40,7 @@ import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DataAttributeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
@@ -53,6 +56,7 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -64,7 +68,10 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.HasClickHandlers;
 
-public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresenter.DsdAttributesTabView, DsdAttributesTabPresenter.DsdAttributesTabProxy> implements DsdAttributesTabUiHandlers {
+public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresenter.DsdAttributesTabView, DsdAttributesTabPresenter.DsdAttributesTabProxy>
+        implements
+            DsdAttributesTabUiHandlers,
+            UpdateAnnotationTypeHandler {
 
     private final DispatchAsync               dispatcher;
     private final PlaceManager                placeManager;
@@ -109,6 +116,9 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
 
         HasClickHandlers getSave();
         HasClickHandlers getDelete();
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
     }
 
     @Inject
@@ -339,18 +349,19 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
 
     @Override
     public void retrieveConceptSchemesForEnumeratedRepresentation(int firstResult, int maxResults, ConceptSchemeWebCriteria conceptSchemeWebCriteria) {
-        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CONCEPT_SCHEME_WITH_DSD_MEASURE_ATTRIBUTE_ENUMERATED_REPRESENTATION, firstResult, maxResults,
-                conceptSchemeWebCriteria), new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+        dispatcher.execute(
+                new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CONCEPT_SCHEME_WITH_DSD_MEASURE_ATTRIBUTE_ENUMERATED_REPRESENTATION, firstResult, maxResults, conceptSchemeWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(GetRelatedResourcesResult result) {
-                getView().setConceptSchemesForEnumeratedRepresentation(result);
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setConceptSchemesForEnumeratedRepresentation(result);
+                    }
+                });
     }
 
     private void updateAttributeList(final boolean updateView) {
@@ -420,5 +431,11 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
         if (location != null && !location.isEmpty()) {
             placeManager.revealPlaceHierarchy(location);
         }
+    }
+
+    @ProxyEvent
+    @Override
+    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

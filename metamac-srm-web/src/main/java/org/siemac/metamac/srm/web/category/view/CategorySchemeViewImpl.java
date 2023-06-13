@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.web.category.view;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
@@ -47,6 +48,7 @@ import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavig
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -98,6 +100,8 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
     private final CategorySchemeCategorisationsPanel categorisationsPanel;
 
     private CategorySchemeMetamacDto                 categorySchemeDto;
+
+    private LinkedHashMap<String, String>            annotationTypes;
 
     @Inject
     public CategorySchemeViewImpl() {
@@ -565,14 +569,17 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         identifiersForm.setValue(CategorySchemeDS.VERSION_LOGIC, categorySchemeDto.getVersionLogic());
         identifiersForm.setValue(CategorySchemeDS.NAME, categorySchemeDto.getName());
         identifiersForm.getItem(CategorySchemeDS.PUBLICATION_STREAM_STATUS)
-                .setIcons(StreamMessageStatusEnum.PENDING.equals(categorySchemeDto.getStreamMessageStatus()) ? null : CommonSharedUtils.getPublicationStreamStatusIcon(categorySchemeDto.getStreamMessageStatus()));
+                .setIcons(StreamMessageStatusEnum.PENDING.equals(categorySchemeDto.getStreamMessageStatus())
+                        ? null
+                        : CommonSharedUtils.getPublicationStreamStatusIcon(categorySchemeDto.getStreamMessageStatus()));
 
         // Content descriptors
         contentDescriptorsForm.setValue(CategorySchemeDS.DESCRIPTION, categorySchemeDto.getDescription());
         contentDescriptorsForm.setValue(CategorySchemeDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(categorySchemeDto.getIsPartial()));
-        contentDescriptorsForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE, categorySchemeDto.getIsExternalReference() != null
-                ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE,
+                categorySchemeDto.getIsExternalReference() != null
+                        ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsForm.setValue(CategorySchemeDS.FINAL,
                 categorySchemeDto.getFinalLogic() != null ? (categorySchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : StringUtils.EMPTY);
 
@@ -629,9 +636,10 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         contentDescriptorsEditionForm.setValue(CategorySchemeDS.DESCRIPTION, categorySchemeDto.getDescription());
         contentDescriptorsEditionForm.setValue(CategorySchemeDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(categorySchemeDto.getIsPartial()));
-        contentDescriptorsEditionForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE, categorySchemeDto.getIsExternalReference() != null
-                ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsEditionForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE,
+                categorySchemeDto.getIsExternalReference() != null
+                        ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setValue(CategorySchemeDS.FINAL,
                 categorySchemeDto.getFinalLogic() != null ? (categorySchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
@@ -812,5 +820,11 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
 }

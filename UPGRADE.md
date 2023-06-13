@@ -14,11 +14,19 @@
   ```shell
   etc/changes-from-release/5.0.1/db/common-metadata/postgresql
   ```
+* Cambios en statistic-sdmx-srm. Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
+  ```shell
+  etc/changes-from-release/3.3.0/db/postgresql/20230602_1_create-table-tbLisAnnotationTypes.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230602_2_annotation_type_adaptation_to_new_data_type.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230602_3_deprecate-column-type-in-table-tbAnnotations.sql
+  ```
 * Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value
   ```
+  
+    ```
 
 ## 4.0.0 a 5.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:

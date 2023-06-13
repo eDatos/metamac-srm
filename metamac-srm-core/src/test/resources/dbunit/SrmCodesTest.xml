@@ -761,25 +761,25 @@
             <TB_ANNOTATIONS
                 ID="991211"
                 CODE="ANNOTATION211"
-                TITLE="title-annotation211"
-                TYPE="type-annotation211"    
+                TITLE="title-annotation211" 
                 URL="http://annotation211"
                 UUID="annotation-991211"
                 VERSION="1"
                 TEXT_FK="97"
                 ANNOTABLE_ARTEFACT_FK="99121"
+                TYPE_FK="1"
             />
             
             <TB_ANNOTATIONS
                 ID="991212"
                 CODE="ANNOTATION212"
-                TITLE="title-annotation212"
-                TYPE="type-annotation212"    
+                TITLE="title-annotation212" 
                 URL="http://annotation212"
                 UUID="annotation-991212"
                 VERSION="1"
                 TEXT_FK="98"
                 ANNOTABLE_ARTEFACT_FK="99121"
+                TYPE_FK="2"
             />
             
             
@@ -905,24 +905,24 @@
                 ID="9912211"
                 CODE="CODE0201_ANNOTATION211"
                 TITLE="title-annotation211"
-                TYPE="type-annotation211"    
                 URL="http://annotation211"
                 UUID="annotation-9912211"
                 VERSION="1"
                 TEXT_FK="111"
                 ANNOTABLE_ARTEFACT_FK="991221"
+                TYPE_FK="1"
             />
             
             <TB_ANNOTATIONS
                 ID="9912212"
                 CODE="CODE0201_ANNOTATION212"
                 TITLE="title-annotation212"
-                TYPE="type-annotation212"    
                 URL="http://annotation212"
                 UUID="annotation-99122112"
                 VERSION="1"
                 TEXT_FK="[null]"
                 ANNOTABLE_ARTEFACT_FK="991221"
+                TYPE_FK="2"
             />
             
         
@@ -5167,25 +5167,24 @@
             <TB_ANNOTATIONS
                 ID="991114"
                 CODE="ANNOTATION01"
-                TITLE="title-annotation991114"
-                TYPE="type-annotation991114"    
                 URL="http://annotation991114"
                 UUID="annotation-991114"
                 VERSION="1"
                 TEXT_FK="114"
                 ANNOTABLE_ARTEFACT_FK="99114"
+                TYPE_FK="1"
             />
             
             <TB_ANNOTATIONS
                 ID="991112"
                 CODE="ANNOTATION02"
-                TITLE="title-annotation991112"
-                TYPE="type-annotation991112"    
+                TITLE="title-annotation991112"   
                 URL="http://annotation991112"
                 UUID="annotation-991112"
                 VERSION="1"
                 TEXT_FK="115"
                 ANNOTABLE_ARTEFACT_FK="99114"
+                TYPE_FK="2"
             />          
             
                 <!-- ORDER VISUALISATIONS -->
@@ -5441,25 +5440,25 @@
                 <TB_ANNOTATIONS
                     ID="9914121"
                     CODE="ANNOTATION01"
-                    TITLE="title-annotation9914121"
-                    TYPE="type-annotation9914121"    
+                    TITLE="title-annotation9914121"    
                     URL="http://annotation9914121"
                     UUID="annotation-9914121"
                     VERSION="1"
                     TEXT_FK="126"
                     ANNOTABLE_ARTEFACT_FK="991412"
+                    TYPE_FK="1"
                 />
 
                 <TB_ANNOTATIONS
                     ID="9914122"
                     CODE="ANNOTATION02"
-                    TITLE="title-annotation9914122"
-                    TYPE="type-annotation9914122"    
+                    TITLE="title-annotation9914122" 
                     URL="http://annotation9914122"
                     UUID="annotation-9914122"
                     VERSION="1"
                     TEXT_FK="127"
                     ANNOTABLE_ARTEFACT_FK="991412"
+                    TYPE_FK="2"
                 />           
             
             <!-- CODE03 -->
@@ -5517,25 +5516,25 @@
                 <TB_ANNOTATIONS
                     ID="9914131"
                     CODE="ANNOTATION01"
-                    TITLE="title-annotation9914131"
-                    TYPE="type-annotation9914131"    
+                    TITLE="title-annotation9914131"  
                     URL="http://annotation9914131"
                     UUID="annotation-9914131"
                     VERSION="1"
                     TEXT_FK="128"
                     ANNOTABLE_ARTEFACT_FK="991413"
+                    TYPE_FK="1"
                 />
 
                 <TB_ANNOTATIONS
                     ID="9914132"
                     CODE="ANNOTATION02"
-                    TITLE="title-annotation9914132"
-                    TYPE="type-annotation9914132"    
+                    TITLE="title-annotation9914132" 
                     URL="http://annotation9914132"
                     UUID="annotation-9914132"
                     VERSION="1"
                     TEXT_FK="129"
                     ANNOTABLE_ARTEFACT_FK="991413"
+                    TYPE_FK="2"
                 />               
 
     <!-- ************************************************************************************** -->
@@ -10111,5 +10110,49 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="165"
     />                 
-                 
+    <!--FOR ANNOTATION TYPES -->
+    <TB_INTERNATIONAL_STRINGS
+        ID="166"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1661"
+        LABEL="SDMX-DESC-SPANISH-1-ANNOTATION_TYPE"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="166"
+    />          
+                                   
+    <TB_INTERNATIONAL_STRINGS
+        ID="167"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1671"
+        LABEL="SDMX-DESC-SPANISH-2-ANNOTATION_TYPE"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="167"
+    />          
+     <!-- ************************************************************************************** -->
+    <!-- TB_LIS_ANNOTATION_TYPES                                                             -->
+    <!-- *************************************************************************************  -->  
+      
+    <TB_LIS_ANNOTATION_TYPES
+    	ID="1"
+    	CODE='SDMX-ID1-ANNOTATION_TYPE'
+    	UUID="SDMX-UUID1-ANNOTATION_TYPE"
+    	VERSION="0"
+    	TITLE_FK= "166"
+    />  
+    
+     <TB_LIS_ANNOTATION_TYPES
+    	ID="2"
+    	CODE='SDMX-ID2-ANNOTATION_TYPE'
+    	UUID="SDMX-UUID2-ANNOTATION_TYPE"
+    	VERSION="0"
+    	TITLE_FK= "167"
+    />            
 </dataset>

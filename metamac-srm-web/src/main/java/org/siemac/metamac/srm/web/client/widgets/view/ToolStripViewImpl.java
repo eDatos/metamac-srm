@@ -22,6 +22,7 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
     private RadioToolStripButton classificationsButton;
     private RadioToolStripButton categoriesButton;
     private RadioToolStripButton codelistsButton;
+    private RadioToolStripButton annotationTypeButton;
 
     @Inject
     public ToolStripViewImpl() {
@@ -48,12 +49,16 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
         codelistsButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().codelists());
         codelistsButton.setID(ToolStripButtonEnum.CODELISTS.getValue());
 
+        annotationTypeButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().admin());
+        annotationTypeButton.setID(ToolStripButtonEnum.ADMIN.getValue());
+
         toolStrip.addButton(conceptsButton);
         toolStrip.addButton(classificationsButton);
         toolStrip.addButton(dsdListButton);
         toolStrip.addSeparator();
         toolStrip.addButton(organisationsButton);
         toolStrip.addButton(categoriesButton);
+        toolStrip.addButton(annotationTypeButton);
     }
 
     @Override
@@ -96,5 +101,10 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
     @Override
     public HasClickHandlers getCodelistButton() {
         return codelistsButton;
+    }
+
+    @Override
+    public HasClickHandlers getAnnotationTypesButton() {
+        return annotationTypeButton;
     }
 }

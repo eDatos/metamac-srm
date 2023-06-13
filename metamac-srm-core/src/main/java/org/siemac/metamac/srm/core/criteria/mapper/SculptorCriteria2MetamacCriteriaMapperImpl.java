@@ -34,6 +34,7 @@ import org.siemac.metamac.srm.core.concept.mapper.ConceptsDo2DtoMapper;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacBasicDto;
 import org.siemac.metamac.srm.core.dsd.mapper.DataStructureDefinitionDo2DtoMapper;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
@@ -42,11 +43,13 @@ import org.siemac.metamac.srm.core.organisation.mapper.OrganisationsDo2DtoMapper
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Contact;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;
 import com.arte.statistic.sdmx.srm.core.task.mapper.TasksDo2DtoMapper;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.task.TaskDto;
 
 @Component
@@ -69,6 +72,9 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
 
     @Autowired
     private CodesDo2DtoMapper                   codesDo2DtoMapper;
+
+    @Autowired
+    private MasterTablesDo2DtoMapper            masterTablesDo2DtoMapper;
 
     //
     // DATA STRUCTURE DEFINITION
@@ -161,7 +167,7 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
         }
         return target;
     }
-    
+
     @Override
     public MetamacCriteriaResult<OrganisationMetamacBasicDto> pageResultOrganisationToMetamacCriteriaResult(PagedResult<OrganisationMetamac> source, Integer pageSize) {
         MetamacCriteriaResult<OrganisationMetamacBasicDto> target = new MetamacCriteriaResult<OrganisationMetamacBasicDto>();
@@ -392,7 +398,8 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
     }
 
     @Override
-    public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOpennessVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOpennessVisualisation> source, Integer pageSize) {
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOpennessVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOpennessVisualisation> source,
+            Integer pageSize) {
         MetamacCriteriaResult<RelatedResourceDto> target = new MetamacCriteriaResult<RelatedResourceDto>();
         target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
         if (source.getValues() != null) {
@@ -415,6 +422,20 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
             target.setResults(new ArrayList<TaskDto>(source.getValues().size()));
             for (Task task : source.getValues()) {
                 target.getResults().add(tasksDo2DtoMapper.taskToDto(task));
+            }
+        }
+        return target;
+    }
+
+    // Annotation type
+    @Override
+    public MetamacCriteriaResult<AnnotationTypeDto> pageResultAnnotationTypeToMetamacCriteriaResultRelatedResource(PagedResult<AnnotationType> source, Integer pageSize) {
+        MetamacCriteriaResult<AnnotationTypeDto> target = new MetamacCriteriaResult<AnnotationTypeDto>();
+        target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
+        if (source.getValues() != null) {
+            target.setResults(new ArrayList<AnnotationTypeDto>(source.getValues().size()));
+            for (AnnotationType annotationType : source.getValues()) {
+                target.getResults().add(masterTablesDo2DtoMapper.annotationTypeToDto(annotationType));
             }
         }
         return target;

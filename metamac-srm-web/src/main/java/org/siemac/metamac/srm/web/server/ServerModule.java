@@ -130,6 +130,11 @@ import org.siemac.metamac.srm.web.server.handlers.dsd.SaveDescriptorForDsdAction
 import org.siemac.metamac.srm.web.server.handlers.dsd.SaveDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.UpdateDsdProcStatusActionHandlder;
 import org.siemac.metamac.srm.web.server.handlers.dsd.VersionDsdActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.DeleteAnnotationTypesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.GetAnnotationTypesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.GetAnnotationTypesPaginatedListActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.GetEniSchemaCatalogsActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.SaveAnnotationTypeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.CancelOrganisationSchemeValidityActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.CopyOrganisationSchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.CreateOrganisationSchemeTemporalVersionActionHandler;
@@ -149,7 +154,6 @@ import org.siemac.metamac.srm.web.server.handlers.organisation.SaveOrganisationA
 import org.siemac.metamac.srm.web.server.handlers.organisation.SaveOrganisationSchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.UpdateOrganisationSchemeProcStatusActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.VersionOrganisationSchemeActionHandler;
-import org.siemac.metamac.srm.web.server.handlers.master.GetEniSchemaCatalogsActionHandler;
 import org.siemac.metamac.srm.web.shared.ExportSDMXResourceAction;
 import org.siemac.metamac.srm.web.shared.GetHelpUrlAction;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesAction;
@@ -279,6 +283,11 @@ import org.siemac.metamac.srm.web.shared.dsd.SaveDescriptorForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusAction;
 import org.siemac.metamac.srm.web.shared.dsd.VersionDsdAction;
+import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
+import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
+import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeAction;
 import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityAction;
 import org.siemac.metamac.srm.web.shared.organisation.CopyOrganisationSchemeAction;
 import org.siemac.metamac.srm.web.shared.organisation.CreateOrganisationSchemeTemporalVersionAction;
@@ -298,7 +307,6 @@ import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationAction;
 import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationSchemeAction;
 import org.siemac.metamac.srm.web.shared.organisation.UpdateOrganisationSchemeProcStatusAction;
 import org.siemac.metamac.srm.web.shared.organisation.VersionOrganisationSchemeAction;
-import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
 import org.siemac.metamac.web.common.server.handlers.CloseSessionActionHandler;
 import org.siemac.metamac.web.common.server.handlers.GetLoginPageUrlActionHandler;
 import org.siemac.metamac.web.common.server.handlers.GetNavigationBarUrlActionHandler;
@@ -313,7 +321,6 @@ import org.siemac.metamac.web.common.shared.ValidateTicketAction;
 import org.springframework.stereotype.Component;
 
 import com.gwtplatform.dispatch.server.spring.HandlerModule;
-
 
 /**
  * Module which binds the handlers and configurations.
@@ -393,7 +400,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(CopyOrganisationSchemeAction.class, CopyOrganisationSchemeActionHandler.class);
         bindHandler(ExportOrganisationsAction.class, ExportOrganisationsActionHandler.class);
         bindHandler(ReSendOrganisationSchemeStreamMessageAction.class, ReSendOrganisationSchemeStreamMessageActionHandler.class);
-    
+
         // Categories
         bindHandler(GetCategorySchemesAction.class, GetCategorySchemesActionHandler.class);
         bindHandler(SaveCategorySchemeAction.class, SaveCategorySchemeActionHandler.class);
@@ -484,9 +491,13 @@ public class ServerModule extends HandlerModule {
         bindHandler(ExportCodesRestrictionAction.class, ExportCodesRestrictionActionHandler.class);
         bindHandler(ExportCodesOpennessAction.class, ExportCodesOpennessActionHandler.class);
 
-        //Master Tables
+        // Master Tables
         bindHandler(GetEniSchemaCatalogsAction.class, GetEniSchemaCatalogsActionHandler.class);
-        
+        bindHandler(GetAnnotationTypesAction.class, GetAnnotationTypesActionHandler.class);
+        bindHandler(GetAnnotationTypesPaginatedListAction.class, GetAnnotationTypesPaginatedListActionHandler.class);
+        bindHandler(SaveAnnotationTypeAction.class, SaveAnnotationTypeActionHandler.class);
+        bindHandler(DeleteAnnotationTypesAction.class, DeleteAnnotationTypesActionHandler.class);
+
         // Common
         bindHandler(GetHelpUrlAction.class, GetHelpUrlActionHandler.class);
         bindHandler(GetRelatedResourcesAction.class, GetRelatedResourcesActionHandler.class);

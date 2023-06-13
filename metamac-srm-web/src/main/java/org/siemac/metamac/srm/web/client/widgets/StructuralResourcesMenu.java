@@ -20,6 +20,7 @@ public class StructuralResourcesMenu extends ToolStrip {
     private RadioToolStripButton  organisationsButton;
     private RadioToolStripButton  categoriesButton;
     private RadioToolStripButton  codelistsButton;
+    private RadioToolStripButton  adminButton;
     private CustomToolStripButton importSDMXResourceButton;
 
     private MainPageUiHandlers    uiHandlers;
@@ -96,6 +97,21 @@ public class StructuralResourcesMenu extends ToolStrip {
         addButton(categoriesButton);
 
         addSeparator();
+
+        // ADMINISTRATION
+
+        adminButton = new RadioToolStripButton(getConstants().admin());
+        adminButton.setID(ToolStripButtonEnum.ADMIN.getValue());
+        adminButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().goToAdministration();
+            }
+        });
+        addButton(adminButton);
+
+        addSeparator();
         addSeparator();
 
         // IMPORTATION
@@ -104,8 +120,8 @@ public class StructuralResourcesMenu extends ToolStrip {
 
         // Button
 
-        importSDMXResourceButton = new CustomToolStripButton(getConstants().actionImportSDMXResource(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource()
-                .getURL());
+        importSDMXResourceButton = new CustomToolStripButton(getConstants().actionImportSDMXResource(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
         importSDMXResourceButton.setVisible(TasksClientSecurityUtils.canImportStructure());
         importSDMXResourceButton.addClickHandler(new ClickHandler() {
 

@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.Response.Status;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -43,6 +42,7 @@ import com.arte.statistic.sdmx.srm.core.base.domain.AnnotableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
+import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.srm.core.common.domain.IdentifiableArtefactResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
@@ -188,7 +188,7 @@ public abstract class BaseDo2RestMapperV10Impl {
     }
 
     private Annotation toAnnotation(AnnotationResult source) {
-        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getType(), source.getUrl(), toInternationalString(source.getText()));
+        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getAnnotationType().getCode(), source.getUrl(), toInternationalString(source.getText()));
     }
 
     protected Annotations toAnnotations(Set<com.arte.statistic.sdmx.srm.core.base.domain.Annotation> sources) {
@@ -205,7 +205,7 @@ public abstract class BaseDo2RestMapperV10Impl {
     }
 
     private Annotation toAnnotation(com.arte.statistic.sdmx.srm.core.base.domain.Annotation source) {
-        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getType(), source.getUrl(), toInternationalString(source.getText()));
+        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getAnnotationType().getCode(), source.getUrl(), toInternationalString(source.getText()));
     }
 
     private Annotation toAnnotation(String code, String title, String type, String url, InternationalString internationalString) {

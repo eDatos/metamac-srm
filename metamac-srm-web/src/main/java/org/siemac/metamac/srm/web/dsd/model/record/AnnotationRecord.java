@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.web.dsd.model.record;
 import org.siemac.metamac.srm.web.client.model.ds.AnnotationDS;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class AnnotationRecord extends ListGridRecord {
@@ -10,15 +11,23 @@ public class AnnotationRecord extends ListGridRecord {
     public AnnotationRecord() {
     }
 
-    public AnnotationRecord(Long id, String code, String title, String type, String url, String text, Boolean isTextEditable, AnnotationDto annotationDto) {
+    public AnnotationRecord(Long id, String code, String title, AnnotationTypeDto type, String url, String text, Boolean isTextEditable, AnnotationDto annotationDto, Long annotationTypeId) {
         setId(id);
         setCode(code);
         setTitle(title);
-        setType(type);
         setUrl(url);
         setText(text);
         setIsTextEditable(isTextEditable);
         setAnnotationDto(annotationDto);
+        setAnnotationTypeId(annotationTypeId);
+    }
+
+    public void setAnnotationTypeId(Long id) {
+        setAttribute(AnnotationDS.TYPE, id);
+    }
+
+    public Long setAnnotationTypeId() {
+        return getAttributeAsLong(AnnotationDS.TYPE);
     }
 
     public void setId(Long id) {
@@ -43,14 +52,6 @@ public class AnnotationRecord extends ListGridRecord {
 
     public String getTitle() {
         return getAttributeAsString(AnnotationDS.TITLE);
-    }
-
-    public void setType(String value) {
-        setAttribute(AnnotationDS.TYPE, value);
-    }
-
-    public String getType() {
-        return getAttributeAsString(AnnotationDS.TYPE);
     }
 
     public void setUrl(String value) {

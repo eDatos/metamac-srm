@@ -10,12 +10,14 @@ import org.siemac.metamac.srm.core.base.dto.LifeCycleDto;
 import org.siemac.metamac.srm.core.base.dto.NameableArtefactMetamacBasicDto;
 import org.siemac.metamac.srm.core.base.dto.StructureMetamacBasicDto;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 public interface BaseDo2DtoMapper {
@@ -29,5 +31,6 @@ public interface BaseDo2DtoMapper {
     public void itemDoToItemBasicDto(Item source, ItemMetamacBasicDto target);
 
     public ExternalItemDto externalItemStatisticalOperationsToExternalItemDto(TypeDozerCopyMode typeDozerCopyMode, ExternalItem source) throws MetamacException;
+    public AnnotationTypeDto annotationTypeToDto(AnnotationType source);
 
 }

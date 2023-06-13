@@ -112,8 +112,9 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      */
     public static InternationalAnnotationRecord getInternationalAnnotationRecord(AnnotationDto annotationDto) {
         InternationalAnnotationRecord record = new InternationalAnnotationRecord(annotationDto.getId().toString(), annotationDto.getId() + ApplicationEditionLanguages.getCurrentLocale(),
-                annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getType(), annotationDto.getUrl(), InternationalStringUtils.getLocalisedString(annotationDto.getText()),
-                ApplicationEditionLanguages.getCurrentLocale(), ((ImageResource) GlobalResources.RESOURCE.getResource(ApplicationEditionLanguages.getCurrentLocale())).getURL(), annotationDto);
+                annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto().getCode(), annotationDto.getUrl(),
+                InternationalStringUtils.getLocalisedString(annotationDto.getText()), ApplicationEditionLanguages.getCurrentLocale(),
+                ((ImageResource) GlobalResources.RESOURCE.getResource(ApplicationEditionLanguages.getCurrentLocale())).getURL(), annotationDto);
         return record;
     }
 
@@ -126,7 +127,7 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      */
     public static InternationalAnnotationRecord getInternationalAnnotationRecord(AnnotationDto annotationDto, String locale) {
         InternationalAnnotationRecord record = new InternationalAnnotationRecord(annotationDto.getId().toString(), annotationDto.getId() + locale, annotationDto.getCode(), annotationDto.getTitle(),
-                annotationDto.getType(), annotationDto.getUrl(), InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), locale,
+                annotationDto.getAnnotationTypeDto().getCode(), annotationDto.getUrl(), InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), locale,
                 ((ImageResource) GlobalResources.RESOURCE.getResource(locale)).getURL(), annotationDto);
         return record;
     }
@@ -143,8 +144,8 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
         // mark as modifiable, maybe the URL can not be edited. This is checked in the AnnotationsPanel.
         boolean isRecordEditable = InternationalStringUtils.isCurrentLocalisedStringModifiable(annotationDto.getText());
 
-        AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getType(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto);
+        AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
+                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto, annotationDto.getAnnotationTypeDto().getId());
         return record;
     }
 
@@ -160,8 +161,8 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
         // mark as modifiable, maybe the URL can not be edited. This is checked in the AnnotationsPanel.
         boolean isRecordEdiable = InternationalStringUtils.isLocalisedStringModifiable(annotationDto.getText(), locale);
 
-        AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getType(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto);
+        AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
+                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto, annotationDto.getAnnotationTypeDto().getId());
         return record;
     }
 }

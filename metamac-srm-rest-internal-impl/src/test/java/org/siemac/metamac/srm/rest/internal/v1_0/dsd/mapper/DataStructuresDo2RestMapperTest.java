@@ -47,6 +47,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.structure.domain.Dimension;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionDescriptor;
@@ -56,8 +58,26 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialDimensionType
 @ContextConfiguration(locations = {"classpath:spring/srm-rest-internal/applicationContext-test.xml"})
 public class DataStructuresDo2RestMapperTest {
 
+    // annotation type
+    public final static String             ANNOTATION_TYPE_CODE_1 = "SDMX-ID1-ANNOTATION_TYPE";
+
     @Autowired
     private DataStructuresDo2RestMapperV10 do2RestInternalMapper;
+
+    @Autowired
+    private AnnotationTypeRepository       annotationTypeRepository;
+
+    protected AnnotationType retrieveAnnotationType_1() {
+        return retrieveAnnotationType(ANNOTATION_TYPE_CODE_1);
+    }
+
+    private AnnotationType retrieveAnnotationType(String type) {
+        try {
+            return annotationTypeRepository.findByCode(type);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
 
     @Test
     public void testToDataStructures() {
@@ -105,7 +125,7 @@ public class DataStructuresDo2RestMapperTest {
     @Test
     public void testToDataStructure() throws MetamacException {
 
-        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123");
+        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123", retrieveAnnotationType_1());
         source.getStatisticalOperation().setCodeNested("codeNested");
 
         // Transform
@@ -163,8 +183,8 @@ public class DataStructuresDo2RestMapperTest {
 
         assertEquals("MeasureDescriptor", target.getDataStructureComponents().getMeasure().getId());
         assertEquals("OBS_VALUE", target.getDataStructureComponents().getMeasure().getPrimaryMeasure().getId());
-        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01", target.getDataStructureComponents().getMeasure().getPrimaryMeasure()
-                .getConceptIdentity().getUrn());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01",
+                target.getDataStructureComponents().getMeasure().getPrimaryMeasure().getConceptIdentity().getUrn());
 
         assertEquals("AttributeDescriptor", target.getDataStructureComponents().getAttributes().getId());
         assertEquals(1, target.getDataStructureComponents().getAttributes().getAttributes().size());
@@ -192,11 +212,11 @@ public class DataStructuresDo2RestMapperTest {
         assertNull(target.getStatisticalOperation().getName());
         // show decimals
         assertEquals(2, target.getShowDecimalsPrecisions().getTotal().intValue());
-        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01", target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(0).getConcept()
-                .getUrn());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01",
+                target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(0).getConcept().getUrn());
         assertEquals(2, target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(0).getShowDecimals());
-        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02", target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(1).getConcept()
-                .getUrn());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02",
+                target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(1).getConcept().getUrn());
         assertEquals(5, target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(1).getShowDecimals());
         // heading
         assertEquals(2, target.getHeading().getTotal().intValue());

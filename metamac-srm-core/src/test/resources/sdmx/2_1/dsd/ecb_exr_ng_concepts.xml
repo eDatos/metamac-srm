@@ -16,7 +16,7 @@
             <structure:Concept id="COLL_METHOD" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).COLL_METHOD">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">There are a number of data collection methods used for official statistics, including computer-aided personal or telephone interview CAPI/CATI, mailed questionnaires, electronic or internet questionnaires and direct observation. The data collection may be exclusively for statistical purposes, or primarily for non-statistical purposes. Descriptions of data collection methods should include the purpose for which the data were collected, the period the data refer to, the classifications and definitions used, and any constraints related to further use of these data.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -29,7 +29,7 @@
             <structure:Concept id="CONF" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).CONF">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Confidentiality refers to a property of data with respect to whether, for example, they are public or their disclosure is subject to restrictions. For instance, data allowing the identification of a physical or legal person, either directly or indirectly, may be characterised as confidential according to the relevant national or international legislation. Unauthorised disclosure of data that are restricted or confidential is not permitted and even legislative measures or other formal provisions may be used to prevent disclosure. Often, there are procedures in place to prevent disclosure of restricted or confidential data, including rules applying to staff, aggregation rules when disseminating data, provision of unit records, etc. Sensitivity (of information) is sometimes used as a synonym to confidentiality. This concept can be broken down into: Confidentiality - policy; Confidentiality - status; Confidentiality - data treatment.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -42,7 +42,7 @@
             <structure:Concept id="CONF_STATUS" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).CONF_STATUS">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">This concept is related to data and determines the exact status of the value. i.e. if a specific value is confidential or not. This concept is always coded, i.e. it takes its value from the respective code list. A list of ID broken down by attachment level is recommended: CONF_STATUS_DFL (dataflow), CONF_STATUS_DSET (dataset), CONF_STATUS_GRP (group), CONF_STATUS_TS (series) or CONF_STATUS_OBS (observation).</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -73,7 +73,7 @@
             <structure:Concept id="FREQ" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).FREQ">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">If a data series has a constant time interval between its observations, this interval determines the frequency of the series (e.g. monthly, quarterly, yearly). "Frequency" - also called "periodicity" - may refer to several stages in the production process, e.g. in data collection or in data dissemination. (e.g., a time series could be available at annual frequency but the underlying data are compiled monthly). Therefore, "Frequency" can be broken down into "Frequency - data collection" and "Frequency - data dissemination". For data messages, the frequency is represented through codes. Any additional detail needed (e.g. "weekly on Thursday") must be inserted as free text within "Frequency detail".</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -88,7 +88,7 @@
             <structure:Concept id="OBS_VALUE" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).OBS_VALUE">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">The "observation value" is the field which holds the data.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -101,7 +101,7 @@
             <structure:Concept id="OBS_STATUS" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).OBS_STATUS">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">This item is normally coded and uses codes providing information about the status of a value, with respect to events such as "break", "estimated value", "forecast", "missing value", or "provisional value". In some cases, there is more than one event that may have influenced the value (e.g. a break in methodology may be accompanied with the fact that an observation is an estimate). A textual comment providing more detailed information on important events related to an observation can be added via the attribute "Comment".</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -116,7 +116,7 @@
             <structure:Concept id="TIME_PERIOD" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).TIME_PERIOD">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">The measurement represented by each observation corresponds to a specific point in time (e.g. a single day) or a period (e.g. a month, a fiscal year, or a calendar year). This is used as a time stamp and is of particular importance for time series data. In cases where the actual time period of the data differs from the target reference period, "time period" refers to the actual period.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -129,7 +129,7 @@
             <structure:Concept id="TITLE" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).TITLE">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">"Title" is a short name describing and identifying a statistical object it is attached to. IN SDMX, a title can be referred, for example, to a time series as a "time series title", or to a group as a "group title". A list of ID broken down by attachment level is therefore needed: TITLE_TS, or TITLE_GRP.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -142,7 +142,7 @@
             <structure:Concept id="UNIT_MULT" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).UNIT_MULT">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">In some data bases, it is referred to as SCALE, MAGNITUDE or POWER., e.g. "UM=6" means that observations are in millions.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -157,7 +157,7 @@
             <structure:Concept id="UNIT_MEASURE" urn="urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).UNIT_MEASURE">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>CONTEXT</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID2-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">The unit of measure is a quantity or increment by which something is counted or described, such as kg, mm, Â°C, Â°F, monetary units such as Euro or US dollar, simple number counts or index numbers. The unit of measure has a type (e.g. currency) and, in connection with the unit multiplier, provides the level of detail for the value of the variable (e.g. Euro, 1000 Euro). For data messages, the concept is always represented by codes. Any additional detail needed must be inserted as free text within "unit of measure detail".</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>

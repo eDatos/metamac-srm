@@ -74,7 +74,7 @@ public class CodesMetamacRepositoryTest extends SrmBaseTest {
             {
                 AnnotationResult annotation = getAnnotationResult(code.getAnnotations(), "ANNOTATION211");
                 assertEquals("ANNOTATION211", annotation.getCode());
-                assertEquals("type-annotation211", annotation.getType());
+                assertEquals(ANNOTATION_TYPE_CODE_1, annotation.getAnnotationType().getCode());
                 assertEquals("title-annotation211", annotation.getTitle());
                 assertEquals("http://annotation211", annotation.getUrl());
                 CodesAsserts.assertEqualsInternationalString(annotation.getText(), "es", "Anotación 1 code01", "en", "Annotation 1 code01");
@@ -82,7 +82,7 @@ public class CodesMetamacRepositoryTest extends SrmBaseTest {
             {
                 AnnotationResult annotation = getAnnotationResult(code.getAnnotations(), "ANNOTATION212");
                 assertEquals("ANNOTATION212", annotation.getCode());
-                assertEquals("type-annotation212", annotation.getType());
+                assertEquals(ANNOTATION_TYPE_CODE_2, annotation.getAnnotationType().getCode());
                 assertEquals("title-annotation212", annotation.getTitle());
                 assertEquals("http://annotation212", annotation.getUrl());
                 CodesAsserts.assertEqualsInternationalString(annotation.getText(), "es", "Anotación 2 code01", null, null);

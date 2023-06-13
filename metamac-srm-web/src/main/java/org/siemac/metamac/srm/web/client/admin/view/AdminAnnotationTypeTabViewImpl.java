@@ -235,8 +235,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 @Override
                 public void onClick(ClickEvent event) {
                     mainFormLayout.setEditionMode();
-                    CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
-                    code.setDisabled(annotationTypeDto != null && annotationTypeDto.isExternalResource());
+                    disabledAnotationTypeCode();
+                    validateFields();
                 }
             });
 
@@ -266,6 +266,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 public void onClick(ClickEvent event) {
                     if (annotationTypeDto.getUuid() == null || (annotationTypeDto.getUuid() != null && annotationTypeDto.getUuid().isEmpty())) {
                         hide();
+                    } else {
+                        selectAnnotationType(annotationTypeDto);
                     }
                 }
             });
@@ -288,8 +290,21 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             addMember(mainFormLayout);
         }
 
+        private void validateFields() {
+            CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
+            code.validate();
+            MultiLanguageTextItem title = (MultiLanguageTextItem) generalEditionForm.getItem(AnnotationTypeDS.TITLE);
+            title.validate();
+        }
+
         public void setEditionMode() {
+            disabledAnotationTypeCode();
             mainFormLayout.setEditionMode();
+        }
+
+        private void disabledAnotationTypeCode() {
+            CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
+            code.setDisabled(annotationTypeDto != null && annotationTypeDto.isExternalResource());
         }
 
         private void createViewForm() {

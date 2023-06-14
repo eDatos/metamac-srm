@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.Pair;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
@@ -132,21 +133,6 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
     private NewDimensionWindow                   newDimensionWindow;
     private SearchRelatedResourcePaginatedWindow searchConceptSchemeForEnumeratedRepresentationWindow;
     private SearchRelatedResourcePaginatedWindow searchCodelistForEnumeratedRepresentationWindow;
-
-    private static class Pair<T1, T2> {
-
-        public static <T1, T2> Pair<T1, T2> makePair(T1 first, T2 second) {
-            return new Pair<T1, T2>(first, second);
-        }
-
-        public final T1 first;
-        public final T2 second;
-
-        public Pair(T1 first, T2 second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
 
     @Inject
     public DsdDimensionsTabViewImpl() {
@@ -310,8 +296,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                     List<DimensionComponentDto> recordsChanged = new ArrayList<DimensionComponentDto>();
 
                     Pair<Integer, Integer> res = updateOrderLogic(deque, prevUserOrder, minIndex, targetIndex, draggedIndices, recordsChanged);
-                    int numDraggedRecordsBeforeTargetIndex = res.first;
-                    prevUserOrder = res.second;
+                    int numDraggedRecordsBeforeTargetIndex = res.getFirst();
+                    prevUserOrder = res.getSecond();
 
                     if (draggedIndicesArr.length - numDraggedRecordsBeforeTargetIndex > 0) {
                         Integer[] nonDraggedIndicesArr = new Integer[maxIndex + 1 - targetIndex - (draggedIndicesArr.length - numDraggedRecordsBeforeTargetIndex)];
@@ -414,7 +400,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
             recordsChanged.add(recordDimension.getDimensionComponentDto());
         }
 
-        return Pair.makePair(numDraggedRecordsBeforeTargetIndex, prevUserOrder);
+        return new Pair<Integer, Integer>(numDraggedRecordsBeforeTargetIndex, prevUserOrder);
     }
 
     /**

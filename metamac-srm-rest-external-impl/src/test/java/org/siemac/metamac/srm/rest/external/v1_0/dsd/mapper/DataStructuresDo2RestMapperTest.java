@@ -52,8 +52,9 @@ import org.siemac.metamac.srm.rest.external.v1_0.mapper.dsd.DataStructuresDo2Res
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.structure.domain.Dimension;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionDescriptor;
@@ -66,10 +67,31 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 @ContextConfiguration(locations = {"classpath:spring/srm-rest-external/applicationContext-test.xml"})
 public class DataStructuresDo2RestMapperTest {
 
+    // annotation type
+    public final static String             ANNOTATION_TYPE_CODE_1 = "SDMX-ID1-ANNOTATION_TYPE";
+    public final static String             ANNOTATION_TYPE_CODE_2 = "SDMX-ID2-ANNOTATION_TYPE";
+
     @Autowired
     private DataStructuresDo2RestMapperV10 do2RestInternalMapper;
 
     @Autowired
+    private AnnotationTypeRepository       annotationTypeRepository;
+
+    protected AnnotationType retrieveAnnotationType_1() {
+        return retrieveAnnotationType(ANNOTATION_TYPE_CODE_1);
+    }
+
+    protected AnnotationType retrieveAnnotationType_2() {
+        return retrieveAnnotationType(ANNOTATION_TYPE_CODE_2);
+    }
+
+    private AnnotationType retrieveAnnotationType(String type) {
+        try {
+            return annotationTypeRepository.findByCode(type);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
     DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
 
     @Test
@@ -83,10 +105,10 @@ public class DataStructuresDo2RestMapperTest {
         Integer offset = Integer.valueOf(4);
 
         List<DataStructureDefinitionVersionMetamac> source = new ArrayList<DataStructureDefinitionVersionMetamac>();
-        source.add(mockDataStructure(AGENCY_1, ARTEFACT_1_CODE, VERSION_1));
-        source.add(mockDataStructure(AGENCY_1, ARTEFACT_2_CODE, VERSION_1));
-        source.add(mockDataStructure(AGENCY_1, ARTEFACT_2_CODE, VERSION_2));
-        source.add(mockDataStructure(AGENCY_2, ARTEFACT_3_CODE, VERSION_1));
+        source.add(mockDataStructure(AGENCY_1, ARTEFACT_1_CODE, VERSION_1, retrieveAnnotationType_1()));
+        source.add(mockDataStructure(AGENCY_1, ARTEFACT_2_CODE, VERSION_1, retrieveAnnotationType_1()));
+        source.add(mockDataStructure(AGENCY_1, ARTEFACT_2_CODE, VERSION_2, retrieveAnnotationType_1()));
+        source.add(mockDataStructure(AGENCY_2, ARTEFACT_3_CODE, VERSION_1, retrieveAnnotationType_1()));
 
         Integer totalRows = source.size() * 5;
         PagedResult<DataStructureDefinitionVersionMetamac> sources = new PagedResult<DataStructureDefinitionVersionMetamac>(source, offset, source.size(), limit, totalRows, 0);
@@ -133,7 +155,7 @@ public class DataStructuresDo2RestMapperTest {
     @Test
     public void testToDataStructure() throws MetamacException {
 
-        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123");
+        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123", retrieveAnnotationType_1());
         source.getStatisticalOperation().setCodeNested("codeNested");
 
         mockitoGetDimensionOrdered();
@@ -267,7 +289,7 @@ public class DataStructuresDo2RestMapperTest {
     @Test
     public void testToDataStructureImported() throws MetamacException {
 
-        DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123");
+        DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123", retrieveAnnotationType_1());
         source.getMaintainableArtefact().setIsImported(Boolean.TRUE);
         source.getMaintainableArtefact().setUrnProvider("urnProvider");
         source.getMaintainableArtefact().setUriProvider("uriProviderDb");
@@ -284,7 +306,7 @@ public class DataStructuresDo2RestMapperTest {
     @Test
     public void testToDataStructureWithDimensionsSpatial() throws MetamacException {
 
-        DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123");
+        DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123", retrieveAnnotationType_1());
         ComponentList dimensionDescriptor = new DimensionDescriptor();
         source.addGrouping(dimensionDescriptor);
 

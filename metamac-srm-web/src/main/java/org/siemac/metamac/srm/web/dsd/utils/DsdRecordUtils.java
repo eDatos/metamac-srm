@@ -29,12 +29,12 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      * @return
      */
     public static DsdRecord getDsdRecord(DataStructureDefinitionMetamacBasicDto dsd) {
-        DsdRecord record = new DsdRecord();
-        record = (DsdRecord) getStructureRecord(record, dsd, dsd.getLifeCycle());
-        record.setStatisticalOperation(dsd.getStatisticalOperation());
-        record.setDsdBasicDto(dsd);
-        record.setStreamMessageStatus(dsd.getStreamMessageStatus());
-        return record;
+        DsdRecord recordDsd = new DsdRecord();
+        recordDsd = (DsdRecord) getStructureRecord(recordDsd, dsd, dsd.getLifeCycle());
+        recordDsd.setStatisticalOperation(dsd.getStatisticalOperation());
+        recordDsd.setDsdBasicDto(dsd);
+        recordDsd.setStreamMessageStatus(dsd.getStreamMessageStatus());
+        return recordDsd;
     }
 
     /**
@@ -64,17 +64,17 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      * @return
      */
     public static DataAttributeRecord getAttributeRecord(DataAttributeDto dataAttributeDto) {
-        DataAttributeRecord record = new DataAttributeRecord();
-        record.setId(dataAttributeDto.getId());
-        record.setCode(dataAttributeDto.getCode());
-        record.setUsageStatus(CommonUtils.getUsageStatusName(dataAttributeDto.getUsageStatus()));
-        record.setConcept(dataAttributeDto.getCptIdRef());
-        record.setSpecialAttributeType(CommonUtils.getSpecialAttributeTypeName(dataAttributeDto.getSpecialAttributeType()));
+        DataAttributeRecord recordAttribute = new DataAttributeRecord();
+        recordAttribute.setId(dataAttributeDto.getId());
+        recordAttribute.setCode(dataAttributeDto.getCode());
+        recordAttribute.setUsageStatus(CommonUtils.getUsageStatusName(dataAttributeDto.getUsageStatus()));
+        recordAttribute.setConcept(dataAttributeDto.getCptIdRef());
+        recordAttribute.setSpecialAttributeType(CommonUtils.getSpecialAttributeTypeName(dataAttributeDto.getSpecialAttributeType()));
         if (dataAttributeDto.getRelateTo() != null) {
-            record.setRelatedTo(CommonUtils.getTypeRelationshipName(dataAttributeDto.getRelateTo().getTypeRelathionship()));
+            recordAttribute.setRelatedTo(CommonUtils.getTypeRelationshipName(dataAttributeDto.getRelateTo().getTypeRelathionship()));
         }
-        record.setDataAttributeDto(dataAttributeDto);
-        return record;
+        recordAttribute.setDataAttributeDto(dataAttributeDto);
+        return recordAttribute;
     }
 
     public static ListGridRecord[] getAttributeRecords(List<DataAttributeDto> dataAttributeDtos) {
@@ -92,8 +92,7 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      * @return
      */
     public static GroupKeysRecord getGroupKeysRecord(DescriptorDto groupKeys) {
-        GroupKeysRecord record = new GroupKeysRecord(groupKeys.getId(), groupKeys.getCode(), null, groupKeys);
-        return record;
+        return new GroupKeysRecord(groupKeys.getId(), groupKeys.getCode(), null, groupKeys);
     }
 
     public static ListGridRecord[] getGroupKeysRecords(List<DescriptorDto> groupKeys) {
@@ -111,10 +110,9 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      * @return
      */
     public static InternationalAnnotationRecord getInternationalAnnotationRecord(AnnotationDto annotationDto) {
-        InternationalAnnotationRecord record = new InternationalAnnotationRecord(annotationDto.getId().toString(), annotationDto.getId() + ApplicationEditionLanguages.getCurrentLocale(),
-                annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getType(), annotationDto.getUrl(), InternationalStringUtils.getLocalisedString(annotationDto.getText()),
+        return new InternationalAnnotationRecord(annotationDto.getId().toString(), annotationDto.getId() + ApplicationEditionLanguages.getCurrentLocale(), annotationDto.getCode(),
+                annotationDto.getTitle(), annotationDto.getAnnotationTypeDto().getCode(), annotationDto.getUrl(), InternationalStringUtils.getLocalisedString(annotationDto.getText()),
                 ApplicationEditionLanguages.getCurrentLocale(), ((ImageResource) GlobalResources.RESOURCE.getResource(ApplicationEditionLanguages.getCurrentLocale())).getURL(), annotationDto);
-        return record;
     }
 
     /**
@@ -125,10 +123,9 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      * @return
      */
     public static InternationalAnnotationRecord getInternationalAnnotationRecord(AnnotationDto annotationDto, String locale) {
-        InternationalAnnotationRecord record = new InternationalAnnotationRecord(annotationDto.getId().toString(), annotationDto.getId() + locale, annotationDto.getCode(), annotationDto.getTitle(),
-                annotationDto.getType(), annotationDto.getUrl(), InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), locale,
-                ((ImageResource) GlobalResources.RESOURCE.getResource(locale)).getURL(), annotationDto);
-        return record;
+        return new InternationalAnnotationRecord(annotationDto.getId().toString(), annotationDto.getId() + locale, annotationDto.getCode(), annotationDto.getTitle(),
+                annotationDto.getAnnotationTypeDto() != null ? annotationDto.getAnnotationTypeDto().getCode() : null, annotationDto.getUrl(),
+                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), locale, ((ImageResource) GlobalResources.RESOURCE.getResource(locale)).getURL(), annotationDto);
     }
 
     /**
@@ -143,9 +140,9 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
         // mark as modifiable, maybe the URL can not be edited. This is checked in the AnnotationsPanel.
         boolean isRecordEditable = InternationalStringUtils.isCurrentLocalisedStringModifiable(annotationDto.getText());
 
-        AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getType(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto);
-        return record;
+        return new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
+                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto,
+                annotationDto.getAnnotationTypeDto() != null ? annotationDto.getAnnotationTypeDto().getId() : null);
     }
 
     /**
@@ -160,8 +157,8 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
         // mark as modifiable, maybe the URL can not be edited. This is checked in the AnnotationsPanel.
         boolean isRecordEdiable = InternationalStringUtils.isLocalisedStringModifiable(annotationDto.getText(), locale);
 
-        AnnotationRecord record = new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getType(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto);
-        return record;
+        return new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
+                InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto,
+                annotationDto.getAnnotationTypeDto() != null ? annotationDto.getAnnotationTypeDto().getId() : null);
     }
 }

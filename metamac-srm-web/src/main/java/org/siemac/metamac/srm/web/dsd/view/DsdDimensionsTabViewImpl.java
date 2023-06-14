@@ -57,6 +57,7 @@ import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavig
 import org.siemac.metamac.web.common.client.widgets.handlers.ListRecordNavigationClickHandler;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.FacetDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.RepresentationDto;
@@ -1514,5 +1515,11 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.viewAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.editionAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
 }

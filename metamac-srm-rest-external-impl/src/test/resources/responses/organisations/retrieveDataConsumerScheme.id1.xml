@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sr:dataConsumerScheme xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain" xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" kind="structuralResources#dataConsumerScheme">
+<sr:dataConsumerScheme xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain" kind="structuralResources#dataConsumerScheme">
     <sr:annotations total="2">
         <sr:annotation>
             <sr:id>code2</sr:id>
             <sr:title>title-code2</sr:title>
-            <sr:type>type-code2</sr:type>
+            <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
             <sr:url>url-code2</sr:url>
             <sr:text>
                 <cdomain:text xml:lang="es">text-code2 en Español</cdomain:text>
@@ -14,7 +14,7 @@
         <sr:annotation>
             <sr:id>code1</sr:id>
             <sr:title>title-code1</sr:title>
-            <sr:type>type-code1</sr:type>
+            <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
             <sr:url>url-code1</sr:url>
             <sr:text>
                 <cdomain:text xml:lang="es">text-code1 en Español</cdomain:text>
@@ -31,8 +31,8 @@
         <cdomain:childLink kind="structuralResources#dataConsumers" href="http://data.istac.es/apis/structural-resources/v1.0/dataconsumerschemes/agency1/itemScheme1/01.000/dataconsumers"/>
     </sr:childLinks>
     <sr:name>
-        <cdomain:text xml:lang="en">name-itemScheme1v01.000 in English</cdomain:text>
         <cdomain:text xml:lang="es">name-itemScheme1v01.000 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">name-itemScheme1v01.000 in English</cdomain:text>
     </sr:name>
     <sr:description>
         <cdomain:text xml:lang="es">description-itemScheme1v01.000 en Español</cdomain:text>

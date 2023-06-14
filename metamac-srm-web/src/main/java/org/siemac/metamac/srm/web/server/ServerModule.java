@@ -131,7 +131,11 @@ import org.siemac.metamac.srm.web.server.handlers.dsd.SaveDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.SaveMultipleComponentsForDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.UpdateDsdProcStatusActionHandlder;
 import org.siemac.metamac.srm.web.server.handlers.dsd.VersionDsdActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.DeleteAnnotationTypesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.GetAnnotationTypesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.GetAnnotationTypesPaginatedListActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.master.GetEniSchemaCatalogsActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.master.SaveAnnotationTypeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.CancelOrganisationSchemeValidityActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.CopyOrganisationSchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.organisation.CreateOrganisationSchemeTemporalVersionActionHandler;
@@ -281,7 +285,11 @@ import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusAction;
 import org.siemac.metamac.srm.web.shared.dsd.VersionDsdAction;
+import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
 import org.siemac.metamac.srm.web.shared.master.GetEniSchemaCatalogsAction;
+import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeAction;
 import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityAction;
 import org.siemac.metamac.srm.web.shared.organisation.CopyOrganisationSchemeAction;
 import org.siemac.metamac.srm.web.shared.organisation.CreateOrganisationSchemeTemporalVersionAction;
@@ -488,6 +496,10 @@ public class ServerModule extends HandlerModule {
 
         // Master Tables
         bindHandler(GetEniSchemaCatalogsAction.class, GetEniSchemaCatalogsActionHandler.class);
+        bindHandler(GetAnnotationTypesAction.class, GetAnnotationTypesActionHandler.class);
+        bindHandler(GetAnnotationTypesPaginatedListAction.class, GetAnnotationTypesPaginatedListActionHandler.class);
+        bindHandler(SaveAnnotationTypeAction.class, SaveAnnotationTypeActionHandler.class);
+        bindHandler(DeleteAnnotationTypesAction.class, DeleteAnnotationTypesActionHandler.class);
 
         // Common
         bindHandler(GetHelpUrlAction.class, GetHelpUrlActionHandler.class);

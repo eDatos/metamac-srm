@@ -13,7 +13,7 @@
 	        <com:Annotations xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
 	          <com:Annotation id="ANNOT_01" xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">
 	            <com:AnnotationTitle xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">com:AnnotationTitle</com:AnnotationTitle>
-	            <com:AnnotationType xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">com:AnnotationType</com:AnnotationType>
+	            <com:AnnotationType xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">SDMX-ID1-ANNOTATION_TYPE</com:AnnotationType>
 	            <com:AnnotationURL xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">http://tempuri.org</com:AnnotationURL>
 	            <com:AnnotationText xml:lang="en" xmlns:com="http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common">com:AnnotationText</com:AnnotationText>
 	          </com:Annotation>

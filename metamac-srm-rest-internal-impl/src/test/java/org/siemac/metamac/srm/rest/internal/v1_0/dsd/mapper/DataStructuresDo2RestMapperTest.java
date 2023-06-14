@@ -55,6 +55,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.structure.domain.Dimension;
@@ -68,10 +70,25 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 @ContextConfiguration(locations = {"classpath:spring/srm-rest-internal/applicationContext-test.xml"})
 public class DataStructuresDo2RestMapperTest {
 
+    // annotation type
+    public final static String             ANNOTATION_TYPE_CODE_1 = "SDMX-ID1-ANNOTATION_TYPE";
+
     @Autowired
     private DataStructuresDo2RestMapperV10 do2RestInternalMapper;
 
     @Autowired
+    private AnnotationTypeRepository       annotationTypeRepository;
+
+    protected AnnotationType retrieveAnnotationType_1() {
+        return retrieveAnnotationType(ANNOTATION_TYPE_CODE_1);
+    }
+
+    private AnnotationType retrieveAnnotationType(String type) {
+        try {
+            return annotationTypeRepository.findByCode(type);
+        } catch (MetamacException e) {
+            return null;
+        }
     DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
 
     @Before
@@ -141,7 +158,8 @@ public class DataStructuresDo2RestMapperTest {
 
     @Test
     public void testToDataStructure() throws MetamacException {
-        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123");
+
+        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123", retrieveAnnotationType_1());
         source.getStatisticalOperation().setCodeNested("codeNested");
 
         mockitoGetDimensionOrdered();

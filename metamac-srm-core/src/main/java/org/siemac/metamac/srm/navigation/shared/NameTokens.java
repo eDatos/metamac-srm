@@ -57,4 +57,8 @@ public class NameTokens {
     public static final String contentConstraintListPage  = "contentConstraints";
     public static final String contentConstraintPage      = "contentConstraint";
 
+    // Admin
+    public static final String adminPage                  = "adminPage";
+    public static final String annotationTypePage         = "annotationType";
+
 }

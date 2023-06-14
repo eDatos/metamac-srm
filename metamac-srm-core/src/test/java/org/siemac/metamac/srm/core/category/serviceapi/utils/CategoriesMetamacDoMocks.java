@@ -1,7 +1,5 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
-import static org.siemac.metamac.common.test.utils.MetamacMocks.mockString;
-
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
@@ -9,18 +7,17 @@ import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesDoMocks;
-import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
-import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 
 public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
 
     public static String BASE_ENI_SCHEME_IDENTIFIER = "ID - ";
-    
-    public static CategorySchemeVersionMetamac mockCategoryScheme(OrganisationMetamac maintainer) {
+
+    public static CategorySchemeVersionMetamac mockCategoryScheme(OrganisationMetamac maintainer, AnnotationType annotationType) {
         CategorySchemeVersionMetamac categorySchemeVersion = new CategorySchemeVersionMetamac();
-        mockCategoryScheme(categorySchemeVersion, maintainer);
+        mockCategoryScheme(categorySchemeVersion, maintainer, annotationType);
         return categorySchemeVersion;
     }
 
@@ -33,9 +30,9 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         return target;
     }
 
-    public static CategoryMetamac mockCategory() {
+    public static CategoryMetamac mockCategory(AnnotationType annotationType) {
         CategoryMetamac category = new CategoryMetamac();
-        mockCategory(category);
+        mockCategory(category, annotationType);
         return category;
     }
 
@@ -44,7 +41,7 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         CategoriesDoMocks.mockCategoryFixedValues(target, resourceID, itemSchemeVersion, parent);
         return target;
     }
-    
+
     public static CategoryMetamacResultExtensionPoint mockCategoryMetamacResultFixedValues() {
         CategoryMetamacResultExtensionPoint target = new CategoryMetamacResultExtensionPoint();
         target.setEniSchemeCatalog(mockEniSchemeFixedValues("eniSchemeText"));
@@ -58,7 +55,7 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         eniSchemeType.setVersion(0L);
         return eniSchemeType;
     }
-    
+
     public static ItemResult mockCategoryResultFixedValuesWithExtraFields(String resourceID, ItemResult parent) {
         ItemResult itemResult = mockCategoryResultFixedValues(resourceID, parent);
         itemResult.setExtensionPoint(mockCategoryMetamacResultFixedValues());

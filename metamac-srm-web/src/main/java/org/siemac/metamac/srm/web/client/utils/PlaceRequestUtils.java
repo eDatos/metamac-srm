@@ -190,8 +190,8 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
     }
 
     public static PlaceRequest buildRelativeOrganisationSchemePlaceRequest(String organisationSchemeUrn, OrganisationSchemeTypeEnum organisationSchemeType) {
-        PlaceRequest placeRequest = new PlaceRequest(NameTokens.organisationSchemePage).with(PlaceRequestParams.organisationSchemeParamType, organisationSchemeType.name()).with(
-                PlaceRequestParams.organisationSchemeParamId, UrnUtils.removePrefix(organisationSchemeUrn));
+        PlaceRequest placeRequest = new PlaceRequest(NameTokens.organisationSchemePage).with(PlaceRequestParams.organisationSchemeParamType, organisationSchemeType.name())
+                .with(PlaceRequestParams.organisationSchemeParamId, UrnUtils.removePrefix(organisationSchemeUrn));
         return placeRequest;
     }
 
@@ -251,6 +251,23 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
             return organisationCode;
         }
         return getConstants().breadcrumbOrganisation();
+    }
+
+    // ---------------------------------------------------------------------------
+    // ADMIN
+    // ---------------------------------------------------------------------------
+
+    // Annotation type
+
+    public static List<PlaceRequest> buildAbsoluteAnnotationTypePlaceRequest() {
+        List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.structuralResourcesPage));
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.adminPage));
+        return placeRequestHierarchy;
+    }
+
+    public static String getMasterTablesBreadCrumbTitle(PlaceRequest placeRequest) {
+        return getConstants().masterTablesBreadcrumb();
     }
 
     // ---------------------------------------------------------------------------

@@ -31,6 +31,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
@@ -146,6 +148,7 @@ import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
@@ -159,6 +162,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -168,7 +172,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView, CodelistPresenter.CodelistProxy> implements CodelistUiHandlers {
+public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView, CodelistPresenter.CodelistProxy> implements CodelistUiHandlers, UpdateAnnotationTypeHandler {
 
     private final DispatchAsync           dispatcher;
     private final PlaceManager            placeManager;
@@ -176,7 +180,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     private CodelistMetamacDto            codelistMetamacDto;
 
     private CodesToolStripPresenterWidget codesToolStripPresenterWidget;
-    
+
     @TitleFunction
     public static String getTranslatedTitle(PlaceRequest placeRequest) {
         return PlaceRequestUtils.getCodelistBreadCrumbTitle(placeRequest);
@@ -215,7 +219,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         // Restrictions
         void setCodesWithRestrictions(List<CodeMetamacVisualisationResult> codes, CodelistVisualisationDto codelistRestrictionVisualisationDto);
         void setCodelistRestrictions(List<CodelistVisualisationDto> restrictions);
-        
+
         // Complex codelists
         void setCodelistsToCreateComplexCodelist(GetCodelistsResult result);
         void setCodesToCreateComplexCodelist(CodelistMetamacDto codelistDto, List<CodeMetamacVisualisationResult> codes);
@@ -230,11 +234,14 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         void setVariables(GetVariablesResult result);
         void setCodelistsToReplace(List<RelatedResourceDto> codelists, int firstResult, int totalResults);
 
-        //organization
-        void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto>  organisationSchemeMetamacDtos, int totalResultados, int firstResultOut);
+        // organization
+        void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto> organisationSchemeMetamacDtos, int totalResultados, int firstResultOut);
         void setOrganizations(List<OrganisationMetamacBasicDto> organisationMetamacDtos, int totalResultados, int firstResultOut);
-        
+
         void showInformationMessage(String title, String message);
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
     }
 
     @ContentSlot
@@ -243,7 +250,8 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     public static final Object                        TYPE_SetContextAreaContentCodesToolBar = new Object();
 
     @Inject
-    public CodelistPresenter(EventBus eventBus, CodelistView view, CodelistProxy proxy, DispatchAsync dispatcher, PlaceManager placeManager, CodesToolStripPresenterWidget codesToolStripPresenterWidget) {
+    public CodelistPresenter(EventBus eventBus, CodelistView view, CodelistProxy proxy, DispatchAsync dispatcher, PlaceManager placeManager,
+            CodesToolStripPresenterWidget codesToolStripPresenterWidget) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
@@ -505,21 +513,21 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void rejectValidation(String urn, ProcStatusEnum currentProcStatus) {
-        dispatcher.execute(new UpdateCodelistProcStatusAction(urn, ProcStatusEnum.VALIDATION_REJECTED, currentProcStatus, null), new WaitingAsyncCallbackHandlingError<UpdateCodelistProcStatusResult>(
-                this) {
+        dispatcher.execute(new UpdateCodelistProcStatusAction(urn, ProcStatusEnum.VALIDATION_REJECTED, currentProcStatus, null),
+                new WaitingAsyncCallbackHandlingError<UpdateCodelistProcStatusResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(UpdateCodelistProcStatusResult result) {
-                fireSuccessMessage(getMessages().codelistRejected());
-                codelistMetamacDto = result.getCodelistMetamacDto();
-                retrieveCodelistVersions(codelistMetamacDto.getUrn());
-                getView().setCodelist(codelistMetamacDto);
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(UpdateCodelistProcStatusResult result) {
+                        fireSuccessMessage(getMessages().codelistRejected());
+                        codelistMetamacDto = result.getCodelistMetamacDto();
+                        retrieveCodelistVersions(codelistMetamacDto.getUrn());
+                        getView().setCodelist(codelistMetamacDto);
+                    }
+                });
     }
 
     @Override
@@ -560,7 +568,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                     }
                 });
     }
-    
+
     @Override
     public void publishExternally(String urn, ProcStatusEnum currentProcStatus) {
         dispatcher.execute(new UpdateCodelistProcStatusAction(urn, ProcStatusEnum.EXTERNALLY_PUBLISHED, currentProcStatus, null),
@@ -860,7 +868,6 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 });
     }
 
-    
     @Override
     public void retrieveCodelistOpennessLevels(String codelistUrn) {
         dispatcher.execute(new GetCodelistOpennessLevelsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<GetCodelistOpennessLevelsResult>(this) {
@@ -878,22 +885,22 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void saveCodelistOpennessLevel(CodelistVisualisationDto codelistOpennessVisualisationDto) {
-        dispatcher.execute(new SaveCodelistOpennessLevelAction(codelistMetamacDto.getUrn(), codelistOpennessVisualisationDto), new WaitingAsyncCallbackHandlingError<SaveCodelistOpennessLevelResult>(
-                this) {
+        dispatcher.execute(new SaveCodelistOpennessLevelAction(codelistMetamacDto.getUrn(), codelistOpennessVisualisationDto),
+                new WaitingAsyncCallbackHandlingError<SaveCodelistOpennessLevelResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(SaveCodelistOpennessLevelResult result) {
-                fireSuccessMessage(getMessages().codelistOpennessLevelSaved());
-                retrieveCodelistOpennessLevels(codelistMetamacDto.getUrn());
-                retrieveCodesWithOpennessLevel(result.getCodelistOpennessVisualisationSaved().getUrn());
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(SaveCodelistOpennessLevelResult result) {
+                        fireSuccessMessage(getMessages().codelistOpennessLevelSaved());
+                        retrieveCodelistOpennessLevels(codelistMetamacDto.getUrn());
+                        retrieveCodesWithOpennessLevel(result.getCodelistOpennessVisualisationSaved().getUrn());
+                    }
+                });
     }
-    
+
     @Override
     public void deleteCodelistOpennessLevel(List<String> levelsUrns) {
         dispatcher.execute(new DeleteCodelistOpennessLevelsAction(levelsUrns), new WaitingAsyncCallbackHandlingError<DeleteCodelistOpennessLevelsResult>(this) {
@@ -925,11 +932,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
-    
-   //
-   // CODES RESTRICTIONS
-   //
-    
+    //
+    // CODES RESTRICTIONS
+    //
+
     @Override
     public void retrieveCodesWithRestrictions(String restrictionUrn) {
         dispatcher.execute(new GetCodesByCodelistAction(codelistMetamacDto.getUrn(), null, null, restrictionUrn, ApplicationEditionLanguages.getCurrentLocale()),
@@ -945,7 +951,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                     }
                 });
     }
-    
+
     @Override
     public void retrieveCodelistRestrictions(String codelistUrn) {
         dispatcher.execute(new GetCodelistRestrictionAction(codelistUrn), new WaitingAsyncCallbackHandlingError<GetCodelistRestrictionResult>(this) {
@@ -960,23 +966,23 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             }
         });
     }
-    
+
     @Override
     public void saveCodelistRestrictions(CodelistVisualisationDto codelistRestrictionVisualisationDto) {
-        dispatcher.execute(new SaveCodelistRestrictionAction(codelistMetamacDto.getUrn(), codelistRestrictionVisualisationDto), new WaitingAsyncCallbackHandlingError<SaveCodelistRestrictionResult>(
-                this) {
+        dispatcher.execute(new SaveCodelistRestrictionAction(codelistMetamacDto.getUrn(), codelistRestrictionVisualisationDto),
+                new WaitingAsyncCallbackHandlingError<SaveCodelistRestrictionResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(SaveCodelistRestrictionResult result) {
-                fireSuccessMessage(getMessages().codelistRestrictionSaved());
-                retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
-                retrieveCodesWithRestrictions(result.getCodelistRestrictionVisualisationSaved().getUrn());
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(SaveCodelistRestrictionResult result) {
+                        fireSuccessMessage(getMessages().codelistRestrictionSaved());
+                        retrieveCodelistRestrictions(codelistMetamacDto.getUrn());
+                        retrieveCodesWithRestrictions(result.getCodelistRestrictionVisualisationSaved().getUrn());
+                    }
+                });
     }
 
     @Override
@@ -1010,7 +1016,6 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
-   
     //
     // COMPLEX CODELISTS
     //
@@ -1269,7 +1274,6 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         });
     }
 
-    
     @Override
     public void addCodelistToFamily(final String codelistUrn, String familyUrn) {
         List<String> codelistUrns = new ArrayList<String>(1);
@@ -1358,7 +1362,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             }
         });
     }
-    
+
     @Override
     public void exportCodesRestrictions(String codelistUrn) {
         dispatcher.execute(new ExportCodesRestrictionAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesRestrictionResult>(this) {
@@ -1373,7 +1377,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             }
         });
     }
-    
+
     //
     // NAVIGATION
     //
@@ -1399,7 +1403,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     public void goToCode(String urn) {
         placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeCodePlaceRequest(urn));
     }
-            
+
     @Override
     public void retrieveOrganizationsSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria itemSchemeRestCriteria, OrganisationSchemeTypeEnum[] types) {
         dispatcher.execute(new GetOrganisationSchemesAction(firstResult, maxResults, OrganisationSearchUtils.getOrganisationSchemeWebCriteria(itemSchemeRestCriteria, types)),
@@ -1423,5 +1427,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                     }
                 });
     }
-    
+
+    @ProxyEvent
+    @Override
+    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
+    }
 }

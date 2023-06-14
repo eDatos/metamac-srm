@@ -48,7 +48,7 @@
             <structure:Code id="A">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">It is typically used for annual data. This can also serve cases of multi-annual data (data that appear once every two, three or, possibly, five years). Descriptive information on the multiannual characteristics (e.g. frequency of the series in practice and other methodological information can be provided at the dataflow level, as long as these characteristics are applicable for the entire dataflow).</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -57,7 +57,7 @@
             <structure:Code id="B">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Similar to "daily", however there are no observations for Saturday and Sunday (so, neither "missing values" nor "numeric values" should be provided for Saturday and Sunday). This treatment ("business") is one way to deal with such cases, but it is not the only option. Such a time series could alternatively be considered daily ("D"), thus, with missing values in the weekend.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -72,7 +72,7 @@
             <structure:Code id="N">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">While N denotes "minutely", usually, there may be no observations every minute (for several series the frequency is usually "irregular" within a day/days). And though observations may be sparse (not collected every minute), missing values do not need to be given for the minutes when no observations exist: in any case the time stamp determines when an observation is observed.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -94,7 +94,7 @@
             <structure:Code id="C">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Confidential statistical information (primary confidentiality) due to identifiable respondents. Measures also should be taken to prevent not only direct access, but also indirect deduction or calculation by other users and parties, probably by considering and treating additional observations as "confidential" (secondary confidentiality management).</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -103,7 +103,7 @@
             <structure:Code id="D">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Used by the sender of the data to flag (beyond the confidential statistical information) one or more additional observations of the dataset so that the receiver knows that he/she should suppress these observations in subsequent stages of processing (especially, dissemination) in order to prevent third parties to indirectly deduct (e.g. through accounting identities or other formulas) the observations that are genuinely flagged with "C".</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -112,7 +112,7 @@
             <structure:Code id="F">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">It is used for observations for observations for which there are no special sensitivity considerations and which can be freely shared. Please note: In some institutional environments the term "unclassified" is used in a sense that still denotes implied restrictions in the circulation of information. If this is the case, this organisation may probably consider that "free" (value F) is not the appropriate corresponding tag for this kind of "unclassified" category and it may be that "non-publishable / restricted" (value N) may be more appropriate. The focus of this code is not to describe and anticipate all potential permissible uses (e.g. permission to re-disseminate). Thus, the use of "F" does not allow safe assumptions with respect to the permission to "re-disseminate" (freely or at a price) the received or accessed information (e.g. on web or paper), especially on a massive and regular basis (legal and copyright constraints may apply). Usually, source organisations provide information and guidance on re-dissemination issues, either on their websites or on their paper publications.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -121,7 +121,7 @@
             <structure:Code id="N">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Used to denote observations that are restricted for internal use only within organisations.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -130,7 +130,7 @@
             <structure:Code id="S">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">If senders do not manage the secondary confidentiality in their data and/or there are also other countries' data involved (with the intention to eventually compile a regional-wide aggregate that is going to be published), the value "S" is used by the receiver to flag additional suppressed observations (within sender's data and/or within the datasets of other senders) in subsequent stages of processing (especially, dissemination) in order to prevent third parties to indirectly deduct the observations that were genuinely flagged with "C" by the sender.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -143,7 +143,7 @@
             <structure:Code id="A">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Normal is the default value (if no value is provided) and is used when no special coded qualification is assumed. Usually, in this case, it can be assumed that the source agency assigns sufficient confidence to the provided observation and/or the value is not expected to be dramatically revised.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -152,7 +152,7 @@
             <structure:Code id="B">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Break observations are characterised as such when different content exist or a different methodology has been applied to this observation as compared with the preceding one (the one given for the previous period).</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -161,7 +161,7 @@
             <structure:Code id="E">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Observation obtained through an estimation methodology (e.g. to produce back-casts) or based on the use of a limited amount of data or ad hoc sampling and through additional calculations (e.g. to produce a value at an early stage of the production stage while not all data are available). It may also be used in case of experimental data (e.g. in the context of a pilot ahead of a full scale production process) or in case of data of (anticipated/assessed) low quality. If needed, additional (uncoded) information can be provided through (free text) "comments" at the observation level or at a higher level.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -173,7 +173,7 @@
             <structure:Code id="I">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Observation imputed by international organisations to replace or fill gaps in national data series, in line with the recommendations of the Committee for the Coordination of Statistical Activities (CCSA).</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -182,7 +182,7 @@
             <structure:Code id="M">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">Data can be missing due to various reasons: data do not exist, are insignificant (or not collected because they are below a certain threshold), are unreliable, are not relevant for the period, or other reason not elsewhere specified.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -191,7 +191,7 @@
             <structure:Code id="P">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">An observation is characterised as "provisional" when the source agency - while it bases its calculations on its standard production methodology - considers that the data, almost certainly, are expected to be revised.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>
@@ -200,7 +200,7 @@
             <structure:Code id="S">
                <common:Annotations>
                   <common:Annotation>
-                     <common:AnnotationType>NOTE</common:AnnotationType>
+                     <common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
                      <common:AnnotationText xml:lang="en">A known strike that occurred in the corresponding period that may have affected the observation or caused a missing value.</common:AnnotationText>
                   </common:Annotation>
                </common:Annotations>

@@ -19,6 +19,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.organisation.enums.OrganisationsToolStripButtonEnum;
@@ -46,6 +48,7 @@ import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingEr
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -57,6 +60,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -66,7 +70,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class OrganisationPresenter extends Presenter<OrganisationPresenter.OrganisationView, OrganisationPresenter.OrganisationProxy> implements OrganisationUiHandlers {
+public class OrganisationPresenter extends Presenter<OrganisationPresenter.OrganisationView, OrganisationPresenter.OrganisationProxy> implements OrganisationUiHandlers, UpdateAnnotationTypeHandler {
 
     private final DispatchAsync                   dispatcher;
     private final PlaceManager                    placeManager;
@@ -94,6 +98,9 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
         void setContacts(List<ContactDto> contactDtos, Long contactToShowId);
         void setOrganisationList(OrganisationSchemeMetamacDto organisationSchemeMetamacDto, List<OrganisationMetamacVisualisationResult> itemVisualisationResults);
         void selectOrganisationTab();
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
     }
 
     @ContentSlot
@@ -258,14 +265,14 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
                     @Override
                     public void onWaitSuccess(GetOrganisationsBySchemeResult result) {
                         final List<OrganisationMetamacVisualisationResult> itemVisualisationResults = result.getOrganisations();
-                        dispatcher.execute(new GetOrganisationSchemeAction(OrganisationPresenter.this.organisationSchemeUrn), new WaitingAsyncCallbackHandlingError<GetOrganisationSchemeResult>(
-                                OrganisationPresenter.this) {
+                        dispatcher.execute(new GetOrganisationSchemeAction(OrganisationPresenter.this.organisationSchemeUrn),
+                                new WaitingAsyncCallbackHandlingError<GetOrganisationSchemeResult>(OrganisationPresenter.this) {
 
-                            @Override
-                            public void onWaitSuccess(GetOrganisationSchemeResult result) {
-                                getView().setOrganisationList(result.getOrganisationSchemeMetamacDto(), itemVisualisationResults);
-                            }
-                        });
+                                    @Override
+                                    public void onWaitSuccess(GetOrganisationSchemeResult result) {
+                                        getView().setOrganisationList(result.getOrganisationSchemeMetamacDto(), itemVisualisationResults);
+                                    }
+                                });
                     }
                 });
     }
@@ -326,5 +333,11 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
     @Override
     public void goToOrganisationScheme(String urn) {
         placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeOrganisationSchemePlaceRequest(urn, CommonUtils.getOrganisationSchemeTypeEnum(organisationMetamacDto.getType())), -2);
+    }
+
+    @ProxyEvent
+    @Override
+    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

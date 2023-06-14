@@ -75,6 +75,10 @@
         <constructor-arg value="com.arte.statistic.sdmx.srm.core.base.domain.AnnotationRepository" />
     </bean>
     
+    <bean id="annotationTypeRepository" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository" />
+    </bean>
+    
     <bean id="internationalStringRepository" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="com.arte.statistic.sdmx.srm.core.common.domain.InternationalStringRepository" />
     </bean> 

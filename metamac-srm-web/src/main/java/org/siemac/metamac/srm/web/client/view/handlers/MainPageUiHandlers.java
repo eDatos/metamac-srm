@@ -15,6 +15,7 @@ public interface MainPageUiHandlers extends UiHandlers {
     void goToDsds();
     void goToOrganisations();
     void goToCategories();
+    void goToAdministration();
 
     // Importation
     void sDMXResourceImportationFailed(String errorMessage);

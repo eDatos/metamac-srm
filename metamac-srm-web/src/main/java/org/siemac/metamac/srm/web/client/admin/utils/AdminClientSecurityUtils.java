@@ -18,4 +18,8 @@ public class AdminClientSecurityUtils {
     public static boolean canDeleteAnnotationType() {
         return SharedAdministrationSecurityUtils.canDeleteAnnotationType(MetamacSrmWeb.getCurrentUser());
     }
+
+    public static boolean canAdministrate() {
+        return SharedAdministrationSecurityUtils.canAdministrate(MetamacSrmWeb.getCurrentUser());
+    }
 }

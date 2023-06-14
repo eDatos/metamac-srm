@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.web.client.widgets.view;
 
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
+import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.widgets.presenter.ToolStripPresenterWidget;
 import org.siemac.metamac.web.common.client.widgets.RadioToolStripButton;
@@ -51,6 +52,10 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
 
         annotationTypeButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().admin());
         annotationTypeButton.setID(ToolStripButtonEnum.ADMIN.getValue());
+
+        if (!AdminClientSecurityUtils.canAdministrate()) {
+            annotationTypeButton.hide();
+        }
 
         toolStrip.addButton(conceptsButton);
         toolStrip.addButton(classificationsButton);

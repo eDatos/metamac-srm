@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.client.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.utils.TasksClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.view.handlers.MainPageUiHandlers;
@@ -109,6 +110,11 @@ public class StructuralResourcesMenu extends ToolStrip {
                 getUiHandlers().goToAdministration();
             }
         });
+
+        if (!AdminClientSecurityUtils.canAdministrate()) {
+            adminButton.hide();
+        }
+
         addButton(adminButton);
 
         addSeparator();

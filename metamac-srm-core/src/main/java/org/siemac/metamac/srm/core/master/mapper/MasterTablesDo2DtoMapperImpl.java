@@ -5,6 +5,8 @@ import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 @org.springframework.stereotype.Component("masterTablesDo2DtoMapper")
@@ -12,7 +14,7 @@ public class MasterTablesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
 
     @Autowired
     private com.arte.statistic.sdmx.srm.core.concept.mapper.ConceptsDo2DtoMapper do2DtoMapperSdmxSrm;
-    
+
     @Override
     public EniSchemaCatalogDto eniSchemaCatalogToDto(EniSchemaCatalog source) {
         if (source == null) {
@@ -23,11 +25,16 @@ public class MasterTablesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         target.setId(source.getId());
         target.setUuid(source.getUuid());
         target.setVersion(source.getVersion());
-        
-        //not sdmx fields
+
+        // not sdmx fields
         target.setIdentifier(source.getIdentifier());
         target.setDescription(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getDescription()));
 
         return target;
+    }
+
+    @Override
+    public AnnotationTypeDto annotationTypeToDto(AnnotationType source) {
+        return super.annotationTypeToDto(source);
     }
 }

@@ -4,20 +4,22 @@ import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMeta
 import org.siemac.metamac.srm.core.dsd.serviceapi.utils.DataStructureDefinitionMetamacDoMocks;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 
 public class DataStructuresDoMocks {
 
-    public static DataStructureDefinitionVersionMetamac mockDataStructure(String agencyID, String resourceID, String version) {
+    public static DataStructureDefinitionVersionMetamac mockDataStructure(String agencyID, String resourceID, String version, AnnotationType annotationType) {
         DataStructureDefinitionVersionMetamac target = DataStructureDefinitionMetamacDoMocks.mockDataStructureDefinitionVersionMetamacFixedValues(agencyID, resourceID, version);
         clearAnnotationsRemainingOne(target);
         return target;
     }
 
-    public static DataStructureDefinitionVersionMetamac mockDataStructureWithComponents(String agencyID, String resourceID, String version) {
-        DataStructureDefinitionVersionMetamac target = DataStructureDefinitionMetamacDoMocks.mockDataStructureDefinitionVersionMetamacFixedValuesWithComponents(agencyID, resourceID, version);
+    public static DataStructureDefinitionVersionMetamac mockDataStructureWithComponents(String agencyID, String resourceID, String version, AnnotationType annotationType) {
+        DataStructureDefinitionVersionMetamac target = DataStructureDefinitionMetamacDoMocks.mockDataStructureDefinitionVersionMetamacFixedValuesWithComponents(agencyID, resourceID, version,
+                annotationType);
         clearAnnotationsRemainingOne(target);
         return target;
     }

@@ -73,7 +73,6 @@ import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesDoMocks;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
-import com.arte.statistic.sdmx.srm.core.common.domain.ItemResultSelection;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
@@ -108,7 +107,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     public void testCreateCategoryScheme() throws Exception {
 
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CategorySchemeVersionMetamac categorySchemeVersion = CategoriesMetamacDoMocks.mockCategoryScheme(organisationMetamac);
+        CategorySchemeVersionMetamac categorySchemeVersion = CategoriesMetamacDoMocks.mockCategoryScheme(organisationMetamac, retrieveAnnotationType_1());
         ServiceContext ctx = getServiceContextAdministrador();
 
         // Create
@@ -137,7 +136,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Test
     public void testCreateCategorySchemeErrorMaintainerNotDefault() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
-        CategorySchemeVersionMetamac categorySchemeVersion = CategoriesMetamacDoMocks.mockCategoryScheme(organisationMetamac);
+        CategorySchemeVersionMetamac categorySchemeVersion = CategoriesMetamacDoMocks.mockCategoryScheme(organisationMetamac, retrieveAnnotationType_1());
 
         try {
             categoriesService.createCategoryScheme(getServiceContextAdministrador(), categorySchemeVersion);
@@ -262,8 +261,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategorySchemeVersionMetamac.class)
                     .orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().code()).orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().urn()).build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-            PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categoriesService
-                    .findCategorySchemesByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
+            PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categoriesService.findCategorySchemesByCondition(getServiceContextAdministrador(), conditions,
+                    pagingParameter);
 
             // Validate
             assertEquals(10, categorySchemeVersionPagedResult.getTotalRows());
@@ -287,8 +286,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                     .withProperty(CategorySchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).eq(ProcStatusEnum.INTERNALLY_PUBLISHED)
                     .orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().urn()).build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-            PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categoriesService
-                    .findCategorySchemesByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
+            PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categoriesService.findCategorySchemesByCondition(getServiceContextAdministrador(), conditions,
+                    pagingParameter);
 
             // Validate
             assertEquals(3, categorySchemeVersionPagedResult.getTotalRows());
@@ -305,8 +304,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                     .withProperty(CategorySchemeVersionMetamacProperties.maintainableArtefact().isLastVersion()).eq(Boolean.TRUE)
                     .orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().code()).orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().urn()).build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-            PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categoriesService
-                    .findCategorySchemesByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
+            PagedResult<CategorySchemeVersionMetamac> categorySchemeVersionPagedResult = categoriesService.findCategorySchemesByCondition(getServiceContextAdministrador(), conditions,
+                    pagingParameter);
 
             // Validate
             assertEquals(8, categorySchemeVersionPagedResult.getTotalRows());
@@ -328,8 +327,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategorySchemeVersionMetamac.class).orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().code())
                 .orderBy(CategorySchemeVersionMetamacProperties.maintainableArtefact().urn()).build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-        PagedResult<CategorySchemeVersionMetamac> categorySchemesPagedResult = categoriesService.findCategorySchemesWithCategoriesCanBeCategorisationCategoryByCondition(
-                getServiceContextAdministrador(), conditions, pagingParameter);
+        PagedResult<CategorySchemeVersionMetamac> categorySchemesPagedResult = categoriesService
+                .findCategorySchemesWithCategoriesCanBeCategorisationCategoryByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
         // Validate
         assertEquals(4, categorySchemesPagedResult.getTotalRows());
@@ -542,8 +541,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, urn);
                 // children
                 assertEquals(1, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME}, exceptionItem
-                        .getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME},
+                        exceptionItem.getExceptionItems().get(0));
             }
             // Categories
             {
@@ -552,8 +551,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, CATEGORY_SCHEME_2_V1_CATEGORY_1);
                 // children
                 assertEquals(1, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_DESCRIPTION}, exceptionItem
-                        .getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_DESCRIPTION},
+                        exceptionItem.getExceptionItems().get(0));
             }
             {
                 // Category02
@@ -561,8 +560,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, CATEGORY_SCHEME_2_V1_CATEGORY_2);
                 // children
                 assertEquals(1, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_COMMENT}, exceptionItem
-                        .getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_COMMENT},
+                        exceptionItem.getExceptionItems().get(0));
             }
             assertEquals(e.getExceptionItems().size(), i);
         }
@@ -949,8 +948,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, urn);
                 // children
                 assertEquals(2, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_DESCRIPTION}, exceptionItem
-                        .getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_DESCRIPTION},
+                        exceptionItem.getExceptionItems().get(0));
                 assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.ANNOTATION},
                         exceptionItem.getExceptionItems().get(1));
             }
@@ -961,10 +960,10 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, CATEGORY_SCHEME_8_V1_CATEGORY_1);
                 // children
                 assertEquals(2, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME}, exceptionItem
-                        .getExceptionItems().get(0));
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_COMMENT}, exceptionItem
-                        .getExceptionItems().get(1));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME},
+                        exceptionItem.getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_COMMENT},
+                        exceptionItem.getExceptionItems().get(1));
             }
             {
                 // Category0101
@@ -972,8 +971,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, CATEGORY_SCHEME_8_V1_CATEGORY_1_1);
                 // children
                 assertEquals(2, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_DESCRIPTION}, exceptionItem
-                        .getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_DESCRIPTION},
+                        exceptionItem.getExceptionItems().get(0));
                 assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.ANNOTATION},
                         exceptionItem.getExceptionItems().get(1));
             }
@@ -983,8 +982,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA, CATEGORY_SCHEME_8_V1_CATEGORY_2);
                 // children
                 assertEquals(2, exceptionItem.getExceptionItems().size());
-                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME}, exceptionItem
-                        .getExceptionItems().get(0));
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME},
+                        exceptionItem.getExceptionItems().get(0));
                 assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.ANNOTATION},
                         exceptionItem.getExceptionItems().get(1));
             }
@@ -1416,8 +1415,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertFalse(categorySchemeVersionLast.getMaintainableArtefact().getIsLastVersion());
 
             // All versions
-            List<CategorySchemeVersionMetamac> allVersions = categoriesService.retrieveCategorySchemeVersions(getServiceContextAdministrador(), categorySchemeVersionNewVersion
-                    .getMaintainableArtefact().getUrn());
+            List<CategorySchemeVersionMetamac> allVersions = categoriesService.retrieveCategorySchemeVersions(getServiceContextAdministrador(),
+                    categorySchemeVersionNewVersion.getMaintainableArtefact().getUrn());
             assertEquals(3, allVersions.size());
             assertEquals(urnToCopy, allVersions.get(0).getMaintainableArtefact().getUrn());
             assertEquals(urnLastVersion, allVersions.get(1).getMaintainableArtefact().getUrn());
@@ -1631,10 +1630,10 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             }
 
             // Merge
-            categorySchemeVersionTemporal = categoriesService.sendCategorySchemeToProductionValidation(getServiceContextAdministrador(), categorySchemeVersionTemporal.getMaintainableArtefact()
-                    .getUrn());
-            categorySchemeVersionTemporal = categoriesService.sendCategorySchemeToDiffusionValidation(getServiceContextAdministrador(), categorySchemeVersionTemporal.getMaintainableArtefact()
-                    .getUrn());
+            categorySchemeVersionTemporal = categoriesService.sendCategorySchemeToProductionValidation(getServiceContextAdministrador(),
+                    categorySchemeVersionTemporal.getMaintainableArtefact().getUrn());
+            categorySchemeVersionTemporal = categoriesService.sendCategorySchemeToDiffusionValidation(getServiceContextAdministrador(),
+                    categorySchemeVersionTemporal.getMaintainableArtefact().getUrn());
             CategorySchemeVersionMetamac categorySchemeVersionMetamac = categoriesService.mergeTemporalVersion(getServiceContextAdministrador(), categorySchemeVersionTemporal);
 
             // Assert **************************************
@@ -1709,7 +1708,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Test
     public void testCreateCategory() throws Exception {
 
-        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory();
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
         category.setParent(null);
         String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
 
@@ -1735,7 +1734,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Test
     public void testCreateCategorySubcategory() throws Exception {
 
-        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory();
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
         CategoryMetamac categoryParent = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_1);
         category.setParent(categoryParent);
         String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
@@ -1759,7 +1758,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
     @Test
     public void testCreateCategoryErrorCategoryImported() throws Exception {
-        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory();
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
         String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
 
         CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
@@ -2106,15 +2105,18 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         }
         assertEquals(8, lines.size());
 
-        assertTrue(lines.contains("CATEGORY01\t\tSRM-ID2-ENI-SCHEME\tNombre categoryScheme-1-v2-category-1\t\tName categoryScheme-1-v2-category-1\t\tDescripción categoryScheme-1-v2-category-1\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains(
+                "CATEGORY01\t\tSRM-ID2-ENI-SCHEME\tNombre categoryScheme-1-v2-category-1\t\tName categoryScheme-1-v2-category-1\t\tDescripción categoryScheme-1-v2-category-1\t\t\t\t\t\t\t"));
         assertTrue(lines.contains("CATEGORY02\t\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2\t\t\t\t\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY0201\tCATEGORY02\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1\t\tName categoryScheme-1-v2-category-2-1\t\tDescripción cat2-1\t\tDescription cat2-1\t\t\t\t\t"));
-        assertTrue(lines
-                .contains("CATEGORY020101\tCATEGORY02.CATEGORY0201\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1-1\t\t\t\tDescripción cat2-1-1\t\t\t\tComment categoryScheme-1-v2-category-2-1-1\t\t\t"));
+        assertTrue(lines.contains(
+                "CATEGORY0201\tCATEGORY02\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1\t\tName categoryScheme-1-v2-category-2-1\t\tDescripción cat2-1\t\tDescription cat2-1\t\t\t\t\t"));
+        assertTrue(lines.contains(
+                "CATEGORY020101\tCATEGORY02.CATEGORY0201\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1-1\t\t\t\tDescripción cat2-1-1\t\t\t\tComment categoryScheme-1-v2-category-2-1-1\t\t\t"));
         assertTrue(lines.contains("CATEGORY03\t\tSRM-ID2-ENI-SCHEME\tnombre category-3\t\tname category-3\t\t\t\t\t\t\t\t\t"));
         assertTrue(lines.contains("CATEGORY04\t\tSRM-ID1-ENI-SCHEME\tnombre category-4\t\t\t\t\t\t\t\t\t\t\t"));
         assertTrue(lines.contains("CATEGORY0401\tCATEGORY04\tSRM-ID2-ENI-SCHEME\tnombre category 4-1\t\t\t\t\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY040101\tCATEGORY04.CATEGORY0401\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-4-1-1\t\tName categoryScheme-1-v2-category-4-1-1\t\t\t\t\t\t\t\t\t"));
+        assertTrue(
+                lines.contains("CATEGORY040101\tCATEGORY04.CATEGORY0401\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-4-1-1\t\tName categoryScheme-1-v2-category-4-1-1\t\t\t\t\t\t\t\t\t"));
         bufferedReader.close();
     }
 

@@ -4,12 +4,14 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.web.client.model.ds.AnnotationDS;
 import org.siemac.metamac.srm.web.client.resources.GlobalResources;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
+import org.siemac.metamac.srm.web.client.utils.MasterTablesUtils;
 import org.siemac.metamac.srm.web.dsd.model.record.AnnotationRecord;
 import org.siemac.metamac.srm.web.dsd.utils.DsdRecordUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
@@ -19,6 +21,7 @@ import org.siemac.metamac.web.common.client.utils.ListGridUtils;
 import org.siemac.metamac.web.common.client.utils.UrlUtils;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.MaintainableArtefactDto;
 import com.google.gwt.resources.client.ImageResource;
 import com.smartgwt.client.data.Record;
@@ -63,6 +66,9 @@ public class AnnotationsPanel extends VLayout {
     private Img                     addAnnotationImg;
 
     private MaintainableArtefactDto maintainableArtefactDto;
+
+    List<AnnotationTypeDto>         annotationTypeDto;
+    ListGridField                   annotationTypeField;
 
     public AnnotationsPanel(boolean viewMode) {
         super();
@@ -158,6 +164,7 @@ public class AnnotationsPanel extends VLayout {
         listGrid.setRemoveIcon(org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.deleteListGrid().getURL());
         listGrid.setRemoveIconSize(14);
         listGrid.setShowHeaderContextMenu(false); // Do not show menu options (avoid to show remove field column)
+        listGrid.setShowAllRecords(true);
         listGrid.addEditCompleteHandler(new EditCompleteHandler() {
 
             @Override
@@ -200,7 +207,10 @@ public class AnnotationsPanel extends VLayout {
                 return record.getAttribute(AnnotationDS.TEXT);
             }
         });
-        textField.setWidth("75%");
+        textField.setWidth("50%");
+
+        annotationTypeField = new ListGridField(AnnotationDS.TYPE, getConstants().annotationType());
+        annotationTypeField.setWidth("25%");
 
         ListGridField urlField = new ListGridField(AnnotationDS.URL, getConstants().annotationUrl());
         urlField.setType(ListGridFieldType.LINK);
@@ -211,8 +221,7 @@ public class AnnotationsPanel extends VLayout {
         ListGridField removeField = new ListGridField(REMOVE_FIELD_NAME, getConstants().actionDelete());
         removeField.setIsRemoveField(true);
 
-        listGrid.setFields(textField, urlField, isTextEditable, removeField);
-
+        listGrid.setFields(textField, annotationTypeField, urlField, isTextEditable, removeField);
         // ListGrid style
 
         Canvas rollUnderCanvasProperties = new Canvas();
@@ -229,6 +238,13 @@ public class AnnotationsPanel extends VLayout {
         addMember(listGrid);
     }
 
+    public void updateAnnotationTypeValues(List<AnnotationTypeDto> annotationTypes) {
+        this.annotationTypeDto = annotationTypes;
+        if (annotationTypeField != null && annotationTypes != null) {
+            annotationTypeField.setValueMap(MasterTablesUtils.getAnnotationTypeHashMap(this.annotationTypeDto));
+        }
+    }
+
     public void setAnnotations(Set<AnnotationDto> annotations, MaintainableArtefactDto maintainableArtefactDto) {
         this.maintainableArtefactDto = maintainableArtefactDto;
 
@@ -236,7 +252,6 @@ public class AnnotationsPanel extends VLayout {
         listGrid.selectAllRecords();
         listGrid.removeSelectedData();
         listGrid.deselectAllRecords();
-
         String selectedLocale = ApplicationEditionLanguages.getCurrentLocale();
         if (selectItem.getValueAsString() != null && !selectItem.getValueAsString().isEmpty()) {
             selectedLocale = selectItem.getValueAsString();
@@ -257,9 +272,18 @@ public class AnnotationsPanel extends VLayout {
         ListGridRecord[] records = listGrid.getRecords();
         for (int i = 0; i < records.length; i++) {
             AnnotationDto annotationDto = (AnnotationDto) records[i].getAttributeAsObject(AnnotationDS.ANNOTATION_DTO);
+            annotationDto.setAnnotationTypeDto(getAnnotationTypeFromId(records[i]));
             annotations.add(annotationDto);
         }
         return annotations;
+    }
+
+    private AnnotationTypeDto getAnnotationTypeFromId(ListGridRecord annotationRecord) {
+        String annotationTypeId = annotationRecord.getAttribute(AnnotationDS.TYPE);
+        if (annotationTypeId != null) {
+            return MasterTablesUtils.getAnnotationTypeDto(annotationTypeId, annotationTypeDto);
+        }
+        return null;
     }
 
     public void setTranslationsShowed(boolean translationsShowed) {

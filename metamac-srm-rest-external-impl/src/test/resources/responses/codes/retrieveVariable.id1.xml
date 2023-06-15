@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sr:variable xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain" xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" kind="structuralResources#variable">
+<sr:variable xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain" kind="structuralResources#variable">
     <sr:annotations total="2">
-        <sr:annotation>
-            <sr:id>code2</sr:id>
-            <sr:title>title-code2</sr:title>
-            <sr:type>type-code2</sr:type>
-            <sr:url>url-code2</sr:url>
-            <sr:text>
-                <cdomain:text xml:lang="es">text-code2 en Español</cdomain:text>
-                <cdomain:text xml:lang="en">text-code2 in English</cdomain:text>
-            </sr:text>
-        </sr:annotation>
         <sr:annotation>
             <sr:id>code1</sr:id>
             <sr:title>title-code1</sr:title>
-            <sr:type>type-code1</sr:type>
+            <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
             <sr:url>url-code1</sr:url>
             <sr:text>
-                <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
                 <cdomain:text xml:lang="es">text-code1 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
+            </sr:text>
+        </sr:annotation>
+        <sr:annotation>
+            <sr:id>code2</sr:id>
+            <sr:title>title-code2</sr:title>
+            <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
+            <sr:url>url-code2</sr:url>
+            <sr:text>
+                <cdomain:text xml:lang="en">text-code2 in English</cdomain:text>
+                <cdomain:text xml:lang="es">text-code2 en Español</cdomain:text>
             </sr:text>
         </sr:annotation>
     </sr:annotations>
@@ -77,8 +77,8 @@
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily1</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#variableFamily" href="http://data.istac.es/apis/structural-resources/v1.0/variablefamilies/variableFamily1"/>
             <cdomain:name>
-                <cdomain:text xml:lang="en">name-variableFamily1 in English</cdomain:text>
                 <cdomain:text xml:lang="es">name-variableFamily1 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">name-variableFamily1 in English</cdomain:text>
             </cdomain:name>
         </sr:family>
         <sr:family kind="structuralResources#variableFamily">
@@ -86,8 +86,8 @@
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily2</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#variableFamily" href="http://data.istac.es/apis/structural-resources/v1.0/variablefamilies/variableFamily2"/>
             <cdomain:name>
-                <cdomain:text xml:lang="en">name-variableFamily2 in English</cdomain:text>
                 <cdomain:text xml:lang="es">name-variableFamily2 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">name-variableFamily2 in English</cdomain:text>
             </cdomain:name>
         </sr:family>
         <sr:family kind="structuralResources#variableFamily">
@@ -95,8 +95,8 @@
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableFamily=variableFamily3</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#variableFamily" href="http://data.istac.es/apis/structural-resources/v1.0/variablefamilies/variableFamily3"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">name-variableFamily3 en Español</cdomain:text>
                 <cdomain:text xml:lang="en">name-variableFamily3 in English</cdomain:text>
+                <cdomain:text xml:lang="es">name-variableFamily3 en Español</cdomain:text>
             </cdomain:name>
         </sr:family>
     </sr:families>

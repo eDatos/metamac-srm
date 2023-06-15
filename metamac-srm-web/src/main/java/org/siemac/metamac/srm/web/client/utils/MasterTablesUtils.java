@@ -6,6 +6,8 @@ import java.util.List;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
+
 public class MasterTablesUtils {
 
     private MasterTablesUtils() {
@@ -24,7 +26,7 @@ public class MasterTablesUtils {
         }
         return hashMap;
     }
-    
+
     /**
      * Returns {EniSchemaCatalogDto} from id
      * 
@@ -43,5 +45,37 @@ public class MasterTablesUtils {
         }
         return null;
     }
-    
+
+    /**
+     * Returns {@link LinkedHashMap} of {@link AnnotationTypeDto}
+     * 
+     * @return
+     */
+    public static LinkedHashMap<String, String> getAnnotationTypeHashMap(List<AnnotationTypeDto> list) {
+        LinkedHashMap<String, String> hashMap = new LinkedHashMap<String, String>();
+        hashMap.put("", "");
+        for (AnnotationTypeDto type : list) {
+            hashMap.put(type.getId().toString(), InternationalStringUtils.getLocalisedString(type.getTitle()));
+        }
+        return hashMap;
+    }
+
+    /**
+     * Returns {AnnotationTypeDto} from id
+     * 
+     * @param AnnotationTypeDto
+     * @param id
+     * @return
+     */
+    public static AnnotationTypeDto getAnnotationTypeDto(String id, List<AnnotationTypeDto> list) {
+        if (id != null && !id.isEmpty()) {
+            Long idType = Long.valueOf(id);
+            for (AnnotationTypeDto o : list) {
+                if (o.getId().compareTo(idType) == 0) {
+                    return o;
+                }
+            }
+        }
+        return null;
+    }
 }

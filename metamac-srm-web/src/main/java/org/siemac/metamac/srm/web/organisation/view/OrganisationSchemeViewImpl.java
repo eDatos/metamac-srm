@@ -48,6 +48,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
@@ -66,41 +67,41 @@ import com.smartgwt.client.widgets.tab.Tab;
 
 public class OrganisationSchemeViewImpl extends ViewWithUiHandlers<OrganisationSchemeUiHandlers> implements OrganisationSchemePresenter.OrganisationSchemeView {
 
-    private final TitleLabel titleLabel;
-    private final VLayout panel;
-    private final OrganisationSchemeMainFormLayout mainFormLayout;
+    private final TitleLabel                             titleLabel;
+    private final VLayout                                panel;
+    private final OrganisationSchemeMainFormLayout       mainFormLayout;
 
-    private final CustomTabSet tabSet;
-    private final Tab organisationSchemeTab;
+    private final CustomTabSet                           tabSet;
+    private final Tab                                    organisationSchemeTab;
 
     // View forms
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm diffusionDescriptorsForm;
-    private GroupDynamicForm versionResponsibilityForm;
-    private GroupDynamicForm commentsForm;
-    private AnnotationsPanel annotationsPanel;
+    private GroupDynamicForm                             identifiersForm;
+    private GroupDynamicForm                             contentDescriptorsForm;
+    private GroupDynamicForm                             productionDescriptorsForm;
+    private GroupDynamicForm                             diffusionDescriptorsForm;
+    private GroupDynamicForm                             versionResponsibilityForm;
+    private GroupDynamicForm                             commentsForm;
+    private AnnotationsPanel                             annotationsPanel;
 
     // Edition forms
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm diffusionDescriptorsEditionForm;
-    private GroupDynamicForm versionResponsibilityEditionForm;
-    private GroupDynamicForm commentsEditionForm;
-    private AnnotationsPanel annotationsEditionPanel;
+    private GroupDynamicForm                             identifiersEditionForm;
+    private GroupDynamicForm                             contentDescriptorsEditionForm;
+    private GroupDynamicForm                             productionDescriptorsEditionForm;
+    private GroupDynamicForm                             diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                             versionResponsibilityEditionForm;
+    private GroupDynamicForm                             commentsEditionForm;
+    private AnnotationsPanel                             annotationsEditionPanel;
 
     // Versions
     private final OrganisationSchemeVersionsSectionStack versionsSectionStack;
 
     // Organisation
-    private final OrganisationSchemeOrganisationsPanel organisationSchemeOrganisationsPanel;
+    private final OrganisationSchemeOrganisationsPanel   organisationSchemeOrganisationsPanel;
 
     // Categorisations
     private final OrganisationSchemeCategorisationsPanel categorisationsPanel;
 
-    private OrganisationSchemeMetamacDto organisationSchemeDto;
+    private OrganisationSchemeMetamacDto                 organisationSchemeDto;
 
     @Inject
     public OrganisationSchemeViewImpl() {
@@ -361,7 +362,7 @@ public class OrganisationSchemeViewImpl extends ViewWithUiHandlers<OrganisationS
         ViewTextItem publicationStreamStatus = new ViewTextItem(OrganisationSchemeDS.PUBLICATION_STREAM_STATUS, getConstants().lifeCycleStructuralResourceStreamMsgStatus());
         publicationStreamStatus.setWidth(20);
 
-        identifiersForm.setFields(code, name, uriProvider, urn, urnProvider, version,publicationStreamStatus);
+        identifiersForm.setFields(code, name, uriProvider, urn, urnProvider, version, publicationStreamStatus);
 
         // Content descriptors
         contentDescriptorsForm = new GroupDynamicForm(getConstants().formContentDescriptors());
@@ -579,18 +580,22 @@ public class OrganisationSchemeViewImpl extends ViewWithUiHandlers<OrganisationS
         identifiersForm.setValue(OrganisationSchemeDS.VERSION_LOGIC, organisationSchemeDto.getVersionLogic());
         identifiersForm.setValue(OrganisationSchemeDS.NAME, organisationSchemeDto.getName());
         identifiersForm.getItem(OrganisationSchemeDS.PUBLICATION_STREAM_STATUS)
-                .setIcons(StreamMessageStatusEnum.PENDING.equals(organisationSchemeDto.getStreamMessageStatus()) ? null : CommonSharedUtils.getPublicationStreamStatusIcon(organisationSchemeDto.getStreamMessageStatus()));
+                .setIcons(StreamMessageStatusEnum.PENDING.equals(organisationSchemeDto.getStreamMessageStatus())
+                        ? null
+                        : CommonSharedUtils.getPublicationStreamStatusIcon(organisationSchemeDto.getStreamMessageStatus()));
 
         // Content descriptors
         contentDescriptorsForm.setValue(OrganisationSchemeDS.TYPE, CommonUtils.getOrganisationSchemeTypeName(organisationSchemeDto.getType()));
         contentDescriptorsForm.setValue(OrganisationSchemeDS.DESCRIPTION, organisationSchemeDto.getDescription());
         contentDescriptorsForm.setValue(OrganisationSchemeDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(organisationSchemeDto.getIsPartial()));
-        contentDescriptorsForm.setValue(OrganisationSchemeDS.IS_EXTERNAL_REFERENCE, organisationSchemeDto.getIsExternalReference() != null
-                ? (organisationSchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
-        contentDescriptorsForm.setValue(OrganisationSchemeDS.FINAL, organisationSchemeDto.getFinalLogic() != null
-                ? (organisationSchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsForm.setValue(OrganisationSchemeDS.IS_EXTERNAL_REFERENCE,
+                organisationSchemeDto.getIsExternalReference() != null
+                        ? (organisationSchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
+        contentDescriptorsForm.setValue(OrganisationSchemeDS.FINAL,
+                organisationSchemeDto.getFinalLogic() != null
+                        ? (organisationSchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
 
         // Production descriptors
         ((RelatedResourceLinkItem) productionDescriptorsForm.getItem(OrganisationSchemeDS.MAINTAINER)).setRelatedResource(organisationSchemeDto.getMaintainer());
@@ -646,12 +651,14 @@ public class OrganisationSchemeViewImpl extends ViewWithUiHandlers<OrganisationS
         contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.TYPE, CommonUtils.getOrganisationSchemeTypeName(organisationSchemeDto.getType()));
         contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.DESCRIPTION, organisationSchemeDto.getDescription());
         contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(organisationSchemeDto.getIsPartial()));
-        contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.IS_EXTERNAL_REFERENCE, organisationSchemeDto.getIsExternalReference() != null
-                ? (organisationSchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
-        contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.FINAL, organisationSchemeDto.getFinalLogic() != null
-                ? (organisationSchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.IS_EXTERNAL_REFERENCE,
+                organisationSchemeDto.getIsExternalReference() != null
+                        ? (organisationSchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
+        contentDescriptorsEditionForm.setValue(OrganisationSchemeDS.FINAL,
+                organisationSchemeDto.getFinalLogic() != null
+                        ? (organisationSchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         contentDescriptorsEditionForm.markForRedraw();
 
@@ -820,5 +827,11 @@ public class OrganisationSchemeViewImpl extends ViewWithUiHandlers<OrganisationS
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
 }

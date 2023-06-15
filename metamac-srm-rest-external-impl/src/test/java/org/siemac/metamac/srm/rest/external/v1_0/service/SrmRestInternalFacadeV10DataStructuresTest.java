@@ -322,15 +322,15 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
             @Override
             public StructureVersion answer(InvocationOnMock invocation) throws Throwable {
                 String version = (String) invocation.getArguments()[1];
-                return DataStructuresDoMocks.mockDataStructure("agencyID", version, version);
+                return DataStructuresDoMocks.mockDataStructure("agencyID", version, version, null);
             };
         });
     }
 
     @SuppressWarnings("unchecked")
     private void mockFindDataStructuresByCondition() throws MetamacException {
-        when(dsdsService.findDataStructureDefinitionsByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class))).thenAnswer(
-                new Answer<PagedResult<DataStructureDefinitionVersionMetamac>>() {
+        when(dsdsService.findDataStructureDefinitionsByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class)))
+                .thenAnswer(new Answer<PagedResult<DataStructureDefinitionVersionMetamac>>() {
 
                     @Override
                     public org.fornax.cartridges.sculptor.framework.domain.PagedResult<DataStructureDefinitionVersionMetamac> answer(InvocationOnMock invocation) throws Throwable {
@@ -345,7 +345,7 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
                             if (NOT_EXISTS.equals(agencyID) || NOT_EXISTS.equals(resourceID) || NOT_EXISTS.equals(version)) {
                                 dataStructureDefinitionVersion = null;
                             } else if (AGENCY_1.equals(agencyID) && ARTEFACT_1_CODE.equals(resourceID) && (VERSION_1.equals(version) || Boolean.TRUE.equals(latest))) {
-                                dataStructureDefinitionVersion = DataStructuresDoMocks.mockDataStructureWithComponents(agencyID, resourceID, VERSION_1);
+                                dataStructureDefinitionVersion = DataStructuresDoMocks.mockDataStructureWithComponents(agencyID, resourceID, VERSION_1, null);
                             } else {
                                 fail();
                             }
@@ -357,10 +357,10 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
                         } else {
                             // any
                             List<DataStructureDefinitionVersionMetamac> dataStructures = new ArrayList<DataStructureDefinitionVersionMetamac>();
-                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_1, ARTEFACT_1_CODE, VERSION_1));
-                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_1, ARTEFACT_2_CODE, VERSION_1));
-                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_1, ARTEFACT_2_CODE, VERSION_2));
-                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_2, ARTEFACT_3_CODE, VERSION_1));
+                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_1, ARTEFACT_1_CODE, VERSION_1, null));
+                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_1, ARTEFACT_2_CODE, VERSION_1, null));
+                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_1, ARTEFACT_2_CODE, VERSION_2, null));
+                            dataStructures.add(DataStructuresDoMocks.mockDataStructureWithComponents(AGENCY_2, ARTEFACT_3_CODE, VERSION_1, null));
                             return new PagedResult<DataStructureDefinitionVersionMetamac>(dataStructures, dataStructures.size(), dataStructures.size(), dataStructures.size(),
                                     dataStructures.size() * 10, 0);
                         }

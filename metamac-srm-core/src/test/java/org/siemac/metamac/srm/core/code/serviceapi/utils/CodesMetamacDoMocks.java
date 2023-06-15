@@ -1,6 +1,5 @@
 package org.siemac.metamac.srm.core.code.serviceapi.utils;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +22,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
@@ -34,7 +34,7 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // CODELISTS
     // ------------------------------------------------------------------------------------
 
-    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer) {
+    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, AnnotationType annotationType) {
         CodelistVersionMetamac codelistVersion = new CodelistVersionMetamac();
 
         codelistVersion.setShortName(mockInternationalString());
@@ -42,17 +42,16 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         codelistVersion.setIsRecommended(Boolean.FALSE);
         codelistVersion.setAccessType(AccessTypeEnum.RESTRICTED);
         codelistVersion.setNormalizationType(NormalizationTypeEnum.STANDARDIZED);
-        mockCodelist(codelistVersion, maintainer);
+        mockCodelist(codelistVersion, maintainer, annotationType);
         return codelistVersion;
     }
 
-    
-    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, OrganisationMetamac sourceProviderOrganisation) {
-        CodelistVersionMetamac codelistVersion = mockCodelist(maintainer);
+    public static CodelistVersionMetamac mockCodelist(OrganisationMetamac maintainer, OrganisationMetamac sourceProviderOrganisation, AnnotationType annotationType) {
+        CodelistVersionMetamac codelistVersion = mockCodelist(maintainer, annotationType);
         codelistVersion.setSourceProvider(sourceProviderOrganisation);
         return codelistVersion;
     }
-    
+
     public static CodelistVersionMetamac mockCodelistFixedValues(String agencyID, String resourceID, String version) {
         CodelistVersionMetamac target = new CodelistVersionMetamac();
         CodesDoMocks.mockCodelistFixedValues(target, agencyID, resourceID, version);
@@ -73,22 +72,22 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
 
     public static List<RelatedCode> mockListRelatedCodeFixedValues() {
         List<RelatedCode> relatedCodes = new ArrayList<>();
-        
+
         relatedCodes.add(mockRelatedCodeFixedValues("codeID1", "recodedID1"));
         relatedCodes.add(mockRelatedCodeFixedValues("codeID2", "recodedID2"));
-        
+
         return relatedCodes;
     }
-  
+
     public static RelatedCode mockRelatedCodeFixedValues(String originId, String recodedId) {
         RelatedCode relatedCode = new RelatedCode();
 
         relatedCode.setOriginCode(originId);
         relatedCode.setRecodedCode(recodedId);
-        
+
         return relatedCode;
     }
-    
+
     public static CodelistVersionMetamac mockCodelistWithCodesFixedValues(String agencyID, String resourceID, String version) {
 
         CodelistVersionMetamac codelistVersion = mockCodelistFixedValues(agencyID, resourceID, version);
@@ -116,11 +115,11 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // CODES
     // ------------------------------------------------------------------------------------
 
-    public static CodeMetamac mockCode() {
+    public static CodeMetamac mockCode(AnnotationType annotationType) {
         CodeMetamac codeMetamac = new CodeMetamac();
         codeMetamac.setShortName(BaseDoMocks.mockInternationalString());
         codeMetamac.setIsExtended(false);
-        mockCode(codeMetamac);
+        mockCode(codeMetamac, annotationType);
         return codeMetamac;
     }
 
@@ -139,14 +138,14 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setIsExtended(extended);
         return target;
     }
-    
+
     // ------------------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ------------------------------------------------------------------------------------
 
-    public static CodelistFamily mockCodelistFamily() {
+    public static CodelistFamily mockCodelistFamily(AnnotationType annotationType) {
         CodelistFamily codelistFamily = new CodelistFamily();
-        codelistFamily.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        codelistFamily.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
         return codelistFamily;
     }
 
@@ -169,9 +168,9 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // VARIABLE FAMILIES
     // ------------------------------------------------------------------------------------
 
-    public static VariableFamily mockVariableFamily() {
+    public static VariableFamily mockVariableFamily(AnnotationType annotationType) {
         VariableFamily variableFamily = new VariableFamily();
-        variableFamily.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        variableFamily.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
         return variableFamily;
     }
 
@@ -195,9 +194,9 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // VARIABLES
     // ------------------------------------------------------------------------------------
 
-    public static Variable mockVariable() {
+    public static Variable mockVariable(AnnotationType annotationType) {
         Variable variable = new Variable();
-        variable.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        variable.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
         variable.setType(null);
         variable.setShortName(BaseDoMocks.mockInternationalString());
         variable.setValidFrom(new DateTime(2012, 10, 1, 10, 12, 13, 14));
@@ -229,10 +228,10 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // VARIABLE ELEMENTS
     // ------------------------------------------------------------------------------------
 
-    public static VariableElement mockVariableElement(Variable variable) {
+    public static VariableElement mockVariableElement(Variable variable, AnnotationType annotationType) {
         VariableElement variableElement = new VariableElement();
         variableElement.setIdentifiableArtefact(new IdentifiableArtefact());
-        mockIdentifiableArtefact(variableElement.getIdentifiableArtefact(), "code-" + MetamacMocks.mockString(5));
+        mockIdentifiableArtefact(variableElement.getIdentifiableArtefact(), "code-" + MetamacMocks.mockString(5), annotationType);
         variableElement.setShortName(BaseDoMocks.mockInternationalString());
         variableElement.setComment(BaseDoMocks.mockInternationalString());
         variableElement.setValidFrom(new DateTime(2012, 10, 1, 10, 12, 13, 14));
@@ -241,8 +240,8 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         return variableElement;
     }
 
-    public static VariableElement mockVariableElementGeographical(Variable variable, CodeMetamac geographicalGranularity) {
-        VariableElement variableElement = mockVariableElement(variable);
+    public static VariableElement mockVariableElementGeographical(Variable variable, CodeMetamac geographicalGranularity, AnnotationType annotationType) {
+        VariableElement variableElement = mockVariableElement(variable, annotationType);
         variableElement.setLatitude(Double.valueOf(1));
         variableElement.setLongitude(Double.valueOf(2));
         variableElement.setShapeWkt("shape1");
@@ -309,9 +308,9 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // CODELIST ORDER VISUALISATIONS
     // ------------------------------------------------------------------------------------
 
-    public static CodelistOrderVisualisation mockCodelistOrderVisualisation() {
+    public static CodelistOrderVisualisation mockCodelistOrderVisualisation(AnnotationType annotationType) {
         CodelistOrderVisualisation codelistOrderVisualisation = new CodelistOrderVisualisation();
-        codelistOrderVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        codelistOrderVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
         return codelistOrderVisualisation;
     }
 
@@ -333,9 +332,9 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
     // CODELIST OPENNESS VISUALISATIONS
     // ------------------------------------------------------------------------------------
 
-    public static CodelistOpennessVisualisation mockCodelistOpennessVisualisation() {
+    public static CodelistOpennessVisualisation mockCodelistOpennessVisualisation(AnnotationType annotationType) {
         CodelistOpennessVisualisation codelistOpennessVisualisation = new CodelistOpennessVisualisation();
-        codelistOpennessVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        codelistOpennessVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
         return codelistOpennessVisualisation;
     }
 
@@ -352,17 +351,17 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         mockNameableArtefactFixedValues(target.getNameableArtefact(), resourceID, null);
         return target;
     }
-    
- // ------------------------------------------------------------------------------------
+
+    // ------------------------------------------------------------------------------------
     // CODELIST RESTRICTION VISUALISATIONS
     // ------------------------------------------------------------------------------------
-    
-    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation() {
+
+    public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisation(AnnotationType annotationType) {
         CodelistRestrictionVisualisation codelistRestrictionVisualisation = new CodelistRestrictionVisualisation();
-        codelistRestrictionVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5)));
+        codelistRestrictionVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
         return codelistRestrictionVisualisation;
     }
-       
+
     public static CodelistRestrictionVisualisation mockCodelistRestrictionVisualisationFixedValues(String agencyID, String resourceID, String version, String visualization) {
         CodelistRestrictionVisualisation target = new CodelistRestrictionVisualisation();
         target.getUuid(); // generate uuid
@@ -372,12 +371,12 @@ public class CodesMetamacDoMocks extends CodesDoMocks {
         target.setLastUpdatedBy("userLastUpdated");
         target.setLastUpdated(new DateTime(2012, 11, 5, 10, 12, 13, 14));
         target.setUpdateDate(new DateTime(2012, 11, 5, 10, 12, 13, 14));
-        target.setNameableArtefact(new NameableArtefact());             
+        target.setNameableArtefact(new NameableArtefact());
         mockNameableArtefactFixedValues(target.getNameableArtefact(), visualization, version);
         String urn = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistRestriction=" + agencyID + ":" + resourceID + "(" + version + ")." + visualization;
         target.getNameableArtefact().setUrn(urn);
         target.getNameableArtefact().setUriProvider(urn);
-        
+
         return target;
     }
 }

@@ -11,11 +11,12 @@ public class DimensionRecord extends NavigableListGridRecord {
     public DimensionRecord() {
     }
 
-    public DimensionRecord(Long id, String idLogic, RelatedResourceDto concept, String type, DimensionComponentDto dimensionComponentDto) {
+    public DimensionRecord(Long id, String idLogic, RelatedResourceDto concept, String type, Integer orderLogic, DimensionComponentDto dimensionComponentDto) {
         setIdentifier(id);
         setCode(idLogic);
         setConcept(concept);
         setType(type);
+        setOrderLogic(orderLogic);
         setDimensionComponentDto(dimensionComponentDto);
     }
 
@@ -33,6 +34,10 @@ public class DimensionRecord extends NavigableListGridRecord {
 
     public void setType(String attribute) {
         setAttribute(DimensionDS.TYPE, attribute);
+    }
+
+    public void setOrderLogic(Integer orderLogic) {
+        setAttribute(DimensionDS.ORDER_LOGIC, orderLogic);
     }
 
     public void setDimensionComponentDto(DimensionComponentDto value) {
@@ -53,6 +58,10 @@ public class DimensionRecord extends NavigableListGridRecord {
 
     public String getType() {
         return getAttributeAsString(DimensionDS.TYPE);
+    }
+
+    public Integer getOrderLogic() {
+        return getAttributeAsInt(DimensionDS.ORDER_LOGIC);
     }
 
     public DimensionComponentDto getDimensionComponentDto() {

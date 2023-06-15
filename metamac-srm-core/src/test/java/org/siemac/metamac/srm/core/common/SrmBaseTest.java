@@ -337,7 +337,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static String       DSD_9_V1                                              = "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=SDMX01:DATASTRUCTUREDEFINITION09(01.000)";
 
     protected static String       DSD_6_V1_DIMENSION_1                                  = "urn:sdmx:org.sdmx.infomodel.datastructure.Dimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).dim-01";
-    protected static String       DSD_6_V1_TIME_DIMENSION_1                             = "urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).timeDimension-01";
+    protected static String       DSD_6_V1_TIME_DIMENSION_1                             = "urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).TIME_PERIOD";
     protected static String       DSD_6_V1_MEASURE_DIMENSION_1                          = "urn:sdmx:org.sdmx.infomodel.datastructure.MeasureDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).measureDimension-01";
 
     protected static String       DSD_7_V1_ATTRIBUTE_DESCRIPTOR                         = "urn:sdmx:org.sdmx.infomodel.datastructure.AttributeDescriptor=SDMX01:DATASTRUCTUREDEFINITION07(01.000).AttributeDescriptor";

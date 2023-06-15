@@ -128,6 +128,7 @@ import org.siemac.metamac.srm.web.server.handlers.dsd.ReSendDsdStreamMessageActi
 import org.siemac.metamac.srm.web.server.handlers.dsd.SaveComponentForDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.SaveDescriptorForDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.SaveDsdActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.dsd.SaveMultipleComponentsForDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.UpdateDsdProcStatusActionHandlder;
 import org.siemac.metamac.srm.web.server.handlers.dsd.VersionDsdActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.master.DeleteAnnotationTypesActionHandler;
@@ -281,6 +282,7 @@ import org.siemac.metamac.srm.web.shared.dsd.ReSendDsdStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDescriptorForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusAction;
 import org.siemac.metamac.srm.web.shared.dsd.VersionDsdAction;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
@@ -340,6 +342,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetDsdAndDescriptorsAction.class, GetDsdAndDescriptorsActionHandler.class);
         bindHandler(SaveDsdAction.class, SaveDsdActionHandler.class);
         bindHandler(SaveComponentForDsdAction.class, SaveComponentForDsdActionHandler.class);
+        bindHandler(SaveMultipleComponentsForDsdAction.class, SaveMultipleComponentsForDsdActionHandler.class);
         bindHandler(SaveDescriptorForDsdAction.class, SaveDescriptorForDsdActionHandler.class);
         bindHandler(DeleteDsdsAction.class, DeleteDsdsActionHandler.class);
         bindHandler(DeleteDimensionListForDsdAction.class, DeleteDimensionListForDsdActionHandler.class);

@@ -3744,8 +3744,8 @@
         
         CODE="TIME_PERIOD"
         URI_PROVIDER="[null]"
-        URN_PROVIDER="urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).timeDimension-01"
-        URN="urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).timeDimension-01"
+        URN_PROVIDER="urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).TIME_PERIOD"
+        URN="urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).TIME_PERIOD"
         REPLACED_BY_VERSION="[null]"
         REPLACE_TO_VERSION="[null]"
         

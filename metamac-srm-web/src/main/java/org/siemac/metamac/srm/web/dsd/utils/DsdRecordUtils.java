@@ -44,8 +44,9 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
      * @return
      */
     public static DimensionRecord getDimensionRecord(DimensionComponentDto dimensionComponentDto) {
-        return new DimensionRecord(dimensionComponentDto.getId(), dimensionComponentDto.getCode(), dimensionComponentDto.getCptIdRef(),
-                org.siemac.metamac.srm.web.dsd.utils.CommonUtils.getDimensionTypeName(dimensionComponentDto), dimensionComponentDto);
+        DimensionRecord dimensionRecord = new DimensionRecord(dimensionComponentDto.getId(), dimensionComponentDto.getCode(), dimensionComponentDto.getCptIdRef(),
+                org.siemac.metamac.srm.web.dsd.utils.CommonUtils.getDimensionTypeName(dimensionComponentDto), dimensionComponentDto.getOrderLogic(), dimensionComponentDto);
+        return dimensionRecord;
     }
 
     public static ListGridRecord[] getDimensionRecords(List<DimensionComponentDto> dimensionComponentDtos) {

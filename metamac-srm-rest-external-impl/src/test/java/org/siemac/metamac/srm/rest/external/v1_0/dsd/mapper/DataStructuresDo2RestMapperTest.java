@@ -52,9 +52,10 @@ import org.siemac.metamac.srm.rest.external.v1_0.mapper.dsd.DataStructuresDo2Res
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.arte.statistic.sdmx.srm.core.base.domain.Component;
+
 import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository;
+import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.structure.domain.Dimension;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionDescriptor;
@@ -77,6 +78,9 @@ public class DataStructuresDo2RestMapperTest {
     @Autowired
     private AnnotationTypeRepository       annotationTypeRepository;
 
+    @Autowired
+    DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
+
     protected AnnotationType retrieveAnnotationType_1() {
         return retrieveAnnotationType(ANNOTATION_TYPE_CODE_1);
     }
@@ -92,7 +96,6 @@ public class DataStructuresDo2RestMapperTest {
             return null;
         }
     }
-    DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
 
     @Test
     public void testToDataStructures() {

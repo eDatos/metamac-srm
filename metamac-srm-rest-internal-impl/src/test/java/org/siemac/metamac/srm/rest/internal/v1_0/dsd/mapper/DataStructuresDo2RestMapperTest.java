@@ -79,6 +79,9 @@ public class DataStructuresDo2RestMapperTest {
     @Autowired
     private AnnotationTypeRepository       annotationTypeRepository;
 
+    @Autowired
+    DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
+
     protected AnnotationType retrieveAnnotationType_1() {
         return retrieveAnnotationType(ANNOTATION_TYPE_CODE_1);
     }
@@ -89,7 +92,7 @@ public class DataStructuresDo2RestMapperTest {
         } catch (MetamacException e) {
             return null;
         }
-    DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
+    }
 
     @Before
     public void setUp() throws Exception {

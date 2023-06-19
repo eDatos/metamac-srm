@@ -138,7 +138,8 @@ public class DsdClientSecurityUtils {
     }
 
     public static boolean canAlterOrderDimension(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
-        return SharedDsdSecurityUtils.canUpdateDimensions(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), null);
+        return SharedDsdSecurityUtils.canUpdateDimensions(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), null)
+                && org.siemac.metamac.srm.web.client.utils.CommonUtils.canSdmxMetadataAndStructureBeModified(dataStructureDefinitionMetamacDto);
     }
 
     // ATTRIBUTES

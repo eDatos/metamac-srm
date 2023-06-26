@@ -14,10 +14,10 @@ import org.siemac.metamac.srm.web.category.utils.CategoriesClientSecurityUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementsUiHandlers;
 import org.siemac.metamac.srm.web.category.widgets.CategoryElementSearchSectionStack;
 import org.siemac.metamac.srm.web.category.widgets.NewCategoryElementWindow;
-import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
-import org.siemac.metamac.web.common.client.widgets.PaginatedListGrid;
+import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -42,7 +42,7 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
 
     private final CategoryElementSearchSectionStack searchSectionStack;
 
-    private final PaginatedListGrid                 categoryElementsListGrid;
+    private final PaginatedCheckListGrid            categoryElementsListGrid;
 
     private ToolStripButton                         deleteButton;
 
@@ -79,7 +79,7 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
 
         // Category elements
 
-        categoryElementsListGrid = new PaginatedListGrid(CategoryElementsPresenter.ELEMENT_LIST_MAX_RESULTS, new PaginatedAction() {
+        categoryElementsListGrid = new PaginatedCheckListGrid(CategoryElementsPresenter.ELEMENT_LIST_MAX_RESULTS, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
@@ -93,8 +93,10 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
 
             @Override
             public void onRecordClick(RecordClickEvent event) {
-                String categoryElementCode = ((CategoryElementRecord) event.getRecord()).getCode();
-                getUiHandlers().goToCategoryElement(categoryElementCode);
+                if (event.getFieldNum() != 0) { // Clicking checkBox will be ignored
+                    String categoryElementCode = ((CategoryElementRecord) event.getRecord()).getCode();
+                    getUiHandlers().goToCategoryElement(categoryElementCode);
+                }
             }
         });
 
@@ -192,13 +194,11 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
 
     private void showListGridDeleteButton(ListGridRecord[] records) {
         boolean allSelectedCategoryElementsCanBeDeleted = true;
-        for (ListGridRecord record : records) {
-            CategoryElementDto categoryElementDto = ((CategoryElementRecord) record).getCategoryElementDto();
-            if (!CategoriesClientSecurityUtils.canDeleteCategoryElement()) {
-                allSelectedCategoryElementsCanBeDeleted = false;
-                break;
-            }
+
+        if (!CategoriesClientSecurityUtils.canDeleteCategoryElement()) {
+            allSelectedCategoryElementsCanBeDeleted = false;
         }
+
         if (allSelectedCategoryElementsCanBeDeleted) {
             deleteButton.show();
         } else {
@@ -219,15 +219,23 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
         return urns;
     }
 
-    // TODO EDATOS-4150 CAMBIAR CUANDO SE RECUPERE
     @Override
-    public void setCategoryElements(GetVariableElementsResult result) {
-        // setCategoryElements(result.getCategoryElements());
-        // categoryElementsListGrid.refreshPaginationInfo(result.getFirstResultOut(), result.getCategoryElements().size(), result.getTotalResults());
+    public void setCategoryElements(GetCategoryElementsResult result) {
+        setCategoryElements(result.getCategoryElements());
+        categoryElementsListGrid.refreshPaginationInfo(result.getFirstResultOut(), result.getCategoryElements().size(), result.getTotalResults());
     }
 
     @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+    }
+
+    private void setCategoryElements(List<CategoryElementDto> categoryElementDtos) {
+        CategoryElementRecord[] records = new CategoryElementRecord[categoryElementDtos.size()];
+        int index = 0;
+        for (CategoryElementDto variableElement : categoryElementDtos) {
+            records[index++] = org.siemac.metamac.srm.web.category.utils.CategoriesRecordUtils.getCategoryElementRecord(variableElement);
+        }
+        categoryElementsListGrid.getListGrid().setData(records);
     }
 }

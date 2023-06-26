@@ -567,17 +567,16 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
         return getParamFromUrl(placeManager, NameTokens.categoryElementPage, PlaceRequestParams.categoryElementParamId);
     }
 
-    public static PlaceRequest buildRelativeCategoryElementPlaceRequest(String categoryElementUrn) {
-        String[] splitIdentifier = UrnUtils.splitUrnItem(categoryElementUrn);
-        PlaceRequest placeRequest = new PlaceRequest(NameTokens.categoryElementPage).with(PlaceRequestParams.categoryElementParamId, splitIdentifier[splitIdentifier.length - 1]);
+    public static PlaceRequest buildRelativeCategoryElementPlaceRequest(String categoryElementCode) {
+        PlaceRequest placeRequest = new PlaceRequest(NameTokens.categoryElementPage).with(PlaceRequestParams.categoryElementParamId, categoryElementCode);
         return placeRequest;
     }
 
-    public static List<PlaceRequest> buildAbsoluteCategoryElementPlaceRequest(String categoryElementUrn) {
+    public static List<PlaceRequest> buildAbsoluteCategoryElementPlaceRequest(String categoryElementCode) {
         List<PlaceRequest> placeRequests = new ArrayList<PlaceRequest>();
         placeRequests.add(new PlaceRequest(NameTokens.structuralResourcesPage));
         placeRequests.add(new PlaceRequest(NameTokens.categoryElementsPage));
-        PlaceRequest categoryElementPlace = buildRelativeCategoryPlaceRequest(categoryElementUrn);
+        PlaceRequest categoryElementPlace = buildRelativeCategoryElementPlaceRequest(categoryElementCode);
         placeRequests.add(categoryElementPlace);
         return placeRequests;
     }
@@ -618,7 +617,7 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
                 String categorySchemeUrn = SrmUrnParserUtils.getCategorySchemeUrnFromCategoryUrn(urn);
                 return buildAbsoluteCategoryPlaceRequest(categorySchemeUrn, urn);
             } else if (SrmUrnParserUtils.isCategoryElementUrn(urn)) {
-                return buildAbsoluteCategoryElementPlaceRequest(urn);
+                return buildAbsoluteCategoryElementPlaceRequest(relatedResourceDto.getCode());
             } else if (SrmUrnParserUtils.isConceptSchemeUrn(urn)) {
                 return buildAbsoluteConceptSchemePlaceRequest(urn);
             } else if (SrmUrnParserUtils.isConceptUrn(urn)) {

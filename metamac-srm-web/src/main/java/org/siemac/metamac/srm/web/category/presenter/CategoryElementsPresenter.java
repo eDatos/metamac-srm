@@ -16,9 +16,16 @@ import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
-import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsResult;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
+import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
+import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -67,7 +74,7 @@ public class CategoryElementsPresenter extends Presenter<CategoryElementsPresent
 
     public interface CategoryElementsView extends View, HasUiHandlers<CategoryElementsUiHandlers> {
 
-        void setCategoryElements(GetVariableElementsResult result);
+        void setCategoryElements(GetCategoryElementsResult result);
         void clearSearchSection();
     }
 
@@ -108,45 +115,47 @@ public class CategoryElementsPresenter extends Presenter<CategoryElementsPresent
 
     @Override
     public void retrieveCategoryElements(int firstResult, int maxResults, CategoryElementWebCriteria criteria) {
-        /*
-         * dispatcher.execute(new GetCategoryElementsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetCategoryElementsResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementsPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(GetCategoryElementsResult result) {
-         * getView().setCategoryElements(result);
-         * }
-         * });
-         */
+
+        dispatcher.execute(new GetCategoryElementsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetCategoryElementsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementsPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(GetCategoryElementsResult result) {
+                getView().setCategoryElements(result);
+            }
+        });
+
     }
 
     @Override
     public void deleteCategoryElements(List<String> urns) {
-        /*
-         * dispatcher.execute(new DeleteVariableElementsAction(urns), new WaitingAsyncCallbackHandlingError<DeleteVariableElementsResult>(this) {
-         * @Override
-         * public void onWaitSuccess(DeleteVariableElementsResult result) {
-         * retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
-         * fireSuccessMessage(MetamacSrmWeb.getMessages().variableElementDeleted());
-         * }
-         * });
-         */
+
+        dispatcher.execute(new DeleteCategoryElementsAction(urns), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(DeleteCategoryElementsResult result) {
+                retrieveCategoryElements(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null);
+                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementDeleted());
+            }
+        });
+
     }
 
     @Override
     public void createCategoryElement(CategoryElementDto categoryElementDto) {
-        /*
-         * dispatcher.execute(new SaveVariableElementAction(variableElementDto), new WaitingAsyncCallbackHandlingError<SaveVariableElementResult>(this) {
-         * @Override
-         * public void onWaitSuccess(SaveVariableElementResult result) {
-         * retrieveVariableByUrn(result.getSavedVariableElementDto().getVariable().getUrn()); // To update the metadata 'hasVariableElements'
-         * retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
-         * fireSuccessMessage(MetamacSrmWeb.getMessages().variableElementSaved());
-         * }
-         * });
-         */
+
+        dispatcher.execute(new SaveCategoryElementAction(categoryElementDto), new WaitingAsyncCallbackHandlingError<SaveCategoryElementResult>(this) {
+
+            @Override
+            public void onWaitSuccess(SaveCategoryElementResult result) {
+                retrieveCategoryElements(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null);
+                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementSaved());
+            }
+        });
+
     }
 
     @Override

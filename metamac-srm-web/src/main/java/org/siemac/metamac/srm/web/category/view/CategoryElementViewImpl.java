@@ -11,20 +11,18 @@ import org.siemac.metamac.srm.web.category.widgets.CategoryElementMainFormLayout
 import org.siemac.metamac.srm.web.resource.element.model.ds.ResourceElementDS;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
-import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
-import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
-import org.siemac.metamac.web.common.client.widgets.handlers.ListRecordNavigationClickHandler;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -60,6 +58,12 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         bindMainFormLayoutEvents();
         createViewForm();
         createEditionForm();
+
+        VLayout subPanel = new VLayout();
+        subPanel.setOverflow(Overflow.SCROLL);
+        subPanel.addMember(mainFormLayout);
+
+        panel.addMember(subPanel);
     }
 
     @Override
@@ -157,18 +161,18 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         // Identifiers Form
         identifiersForm = new GroupDynamicForm(getConstants().formIdentifiers());
         ViewTextItem code = new ViewTextItem(ResourceElementDS.CODE, getConstants().identifiableArtefactCode());
-        ViewMultiLanguageTextItem shortName = new ViewMultiLanguageTextItem(ResourceElementDS.SHORT_NAME, getConstants().variableElementShortName());
+        ViewMultiLanguageTextItem shortName = new ViewMultiLanguageTextItem(ResourceElementDS.SHORT_NAME, getConstants().categoryElementShortName());
         ViewTextItem urn = new ViewTextItem(ResourceElementDS.URN, getConstants().identifiableArtefactUrn());
         identifiersForm.setFields(code, shortName, urn);
 
         // Diffusion descriptors
         diffusionDescriptorsForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
-        ViewTextItem validFrom = new ViewTextItem(ResourceElementDS.VALID_FROM, getConstants().variableElementValidFrom());
-        ViewTextItem validTo = new ViewTextItem(ResourceElementDS.VALID_TO, getConstants().variableElementValidTo());
+        ViewTextItem validFrom = new ViewTextItem(ResourceElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
+        ViewTextItem validTo = new ViewTextItem(ResourceElementDS.VALID_TO, getConstants().categoryElementValidTo());
         diffusionDescriptorsForm.setFields(validFrom, validTo);
         // Annotations
         annotationsForm = new GroupDynamicForm(getConstants().formAnnotations());
-        ViewMultiLanguageTextItem comments = new ViewMultiLanguageTextItem(ResourceElementDS.COMMENTS, getConstants().variableElementComment());
+        ViewMultiLanguageTextItem comments = new ViewMultiLanguageTextItem(ResourceElementDS.COMMENTS, getConstants().categoryElementComment());
         annotationsForm.setFields(comments);
 
         mainFormLayout.addViewCanvas(identifiersForm);
@@ -180,20 +184,20 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         // Identifiers
         identifiersEditionForm = new GroupDynamicForm(getConstants().formIdentifiers());
         ViewTextItem code = new ViewTextItem(ResourceElementDS.CODE, getConstants().identifiableArtefactCode());
-        MultiLanguageTextItem shortName = new MultiLanguageTextItem(ResourceElementDS.SHORT_NAME, getConstants().variableElementShortName(), SrmConstants.METADATA_SHORT_NAME_MAXIMUM_LENGTH);
+        MultiLanguageTextItem shortName = new MultiLanguageTextItem(ResourceElementDS.SHORT_NAME, getConstants().categoryElementShortName(), SrmConstants.METADATA_SHORT_NAME_MAXIMUM_LENGTH);
         shortName.setRequired(true);
         ViewTextItem urn = new ViewTextItem(ResourceElementDS.URN, getConstants().identifiableArtefactUrn());
         identifiersEditionForm.setFields(code, shortName, urn);
 
         // Diffusion descriptors
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
-        CustomDateItem validFrom = new CustomDateItem(ResourceElementDS.VALID_FROM, getConstants().variableElementValidFrom());
-        CustomDateItem validTo = new CustomDateItem(ResourceElementDS.VALID_TO, getConstants().variableElementValidTo());
+        CustomDateItem validFrom = new CustomDateItem(ResourceElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
+        CustomDateItem validTo = new CustomDateItem(ResourceElementDS.VALID_TO, getConstants().categoryElementValidTo());
         diffusionDescriptorsEditionForm.setFields(validFrom, validTo);
 
         // Annotations
         annotationsEditionForm = new GroupDynamicForm(getConstants().formAnnotations());
-        MultiLanguageRichTextEditorItem comments = new MultiLanguageRichTextEditorItem(ResourceElementDS.COMMENTS, getConstants().variableElementComment());
+        MultiLanguageRichTextEditorItem comments = new MultiLanguageRichTextEditorItem(ResourceElementDS.COMMENTS, getConstants().categoryElementComment());
         annotationsEditionForm.setFields(comments);
 
         mainFormLayout.addEditionCanvas(identifiersEditionForm);
@@ -245,29 +249,5 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         categoryElementDto.setComment(annotationsEditionForm.getValueAsInternationalStringDto(ResourceElementDS.COMMENTS));
 
         return categoryElementDto;
-    }
-
-    // ------------------------------------------------------------------------------------------------------------
-    // CLICK HANDLERS
-    // ------------------------------------------------------------------------------------------------------------
-
-    private ListRecordNavigationClickHandler getListRecordNavigationClickHandler() {
-        return new ListRecordNavigationClickHandler() {
-
-            @Override
-            public BaseUiHandlers getBaseUiHandlers() {
-                return getUiHandlers();
-            }
-        };
-    }
-
-    private CustomLinkItemNavigationClickHandler getCustomLinkItemNavigationClickHandler() {
-        return new CustomLinkItemNavigationClickHandler() {
-
-            @Override
-            public BaseUiHandlers getBaseUiHandlers() {
-                return getUiHandlers();
-            }
-        };
     }
 }

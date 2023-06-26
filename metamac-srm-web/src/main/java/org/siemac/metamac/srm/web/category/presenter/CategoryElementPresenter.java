@@ -1,5 +1,8 @@
 package org.siemac.metamac.srm.web.category.presenter;
 
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
+
+import java.util.Arrays;
 import java.util.List;
 
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
@@ -15,7 +18,15 @@ import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsResult;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementResult;
+import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
+import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -59,9 +70,6 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     public interface CategoryElementView extends View, HasUiHandlers<CategoryElementUiHandlers> {
 
         void setCategoryElement(CategoryElementDto categoryElementDto);
-
-        // TODO EDATOS-4150 VER SEGRACIÓN
-        // void setResourceElementsForSegregation(GetVariableElementsResult result);
     }
 
     @ContentSlot
@@ -97,7 +105,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-        String elementIdentifier = PlaceRequestUtils.getVariableElementParamFromUrl(placeManager);
+        String elementIdentifier = PlaceRequestUtils.getCategoryElementParamFromUrl(placeManager);
         if (!StringUtils.isBlank(elementIdentifier)) {
             retrieveCategoryElement(elementIdentifier);
         } else {
@@ -108,65 +116,66 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     private void retrieveCategoryElement(String elementIdentifier) {
         String urn = UrnUtils.generateUrn(UrnConstants.URN_SIEMAC_CLASS_CATEGORY_ELEMENT_PREFIX, elementIdentifier);
         if (!StringUtils.isBlank(urn)) {
-            retrieveResourceElementByUrn(urn);
-            retrieveCategoryElementOperations(urn);
+            retrieveCategoryElementByUrn(urn);
         }
     }
 
-    private void retrieveResourceElementByUrn(String urn) {
-        /*
-         * dispatcher.execute(new GetCategoryElementAction(urn), new WaitingAsyncCallbackHandlingError<GetCategoryElementResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(GetCategoryElementResult result) {
-         * // TODO EDATOS-4150 RELLENAR
-         * // CategoryElementPresenter.this.resourceElementDto = result.getResourceElementDto();
-         * // getView().setResourceElement(result.getResourceElementDto());
-         * }
-         * });
-         */
+    private void retrieveCategoryElementByUrn(String urn) {
+
+        dispatcher.execute(new GetCategoryElementAction(urn), new WaitingAsyncCallbackHandlingError<GetCategoryElementResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(GetCategoryElementResult result) {
+                CategoryElementPresenter.this.categoryElementDto = result.getCategoryElementDto();
+                getView().setCategoryElement(result.getCategoryElementDto());
+            }
+        });
+
     }
 
     @Override
     public void saveCategoryElement(CategoryElementDto categoryElementDto) {
-        /*
-         * dispatcher.execute(new SaveCategoryElementAction(categoryElementDto), new WaitingAsyncCallbackHandlingError<SaveCategoryElementResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(SaveCategoryElementResult result) {
-         * CategoryElementPresenter.this.categoryElementDto = result.getSavedCategoryElementDto();
-         * fireSuccessMessage(getMessages().variableElementSaved());
-         * CategoryElementDto categoryElementDto = result.getSavedCategoryElementDto();
-         * getView().setCategoryElement(categoryElementDto);
-         * // Update URL
-         * PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeCategoryElementPlaceRequest(result.getSavedCategoryElementDto().getCode());
-         * placeManager.updateHistory(placeRequest, true);
-         * }
-         * });
-         */
+
+        dispatcher.execute(new SaveCategoryElementAction(categoryElementDto), new WaitingAsyncCallbackHandlingError<SaveCategoryElementResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(SaveCategoryElementResult result) {
+                CategoryElementPresenter.this.categoryElementDto = result.getSavedCategoryElementDto();
+                fireSuccessMessage(getMessages().categoryElementSaved());
+                CategoryElementDto categoryElementDto = result.getSavedCategoryElementDto();
+                getView().setCategoryElement(categoryElementDto);
+                // Update URL
+                PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeCategoryElementPlaceRequest(result.getSavedCategoryElementDto().getCode());
+                placeManager.updateHistory(placeRequest, true);
+            }
+        });
+
     }
 
     @Override
     public void deleteCategoryElement(String urn) {
-        /*
-         * dispatcher.execute(new DeleteCategoryElementsAction(Arrays.asList(urn)), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementsResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(DeleteCategoryElementsResult result) {
-         * fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementDeleted());
-         * placeManager.revealRelativePlace(-1);
-         * }
-         * });
-         */
+
+        dispatcher.execute(new DeleteCategoryElementsAction(Arrays.asList(urn)), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(DeleteCategoryElementsResult result) {
+                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementDeleted());
+                placeManager.revealRelativePlace(-1);
+            }
+        });
+
     }
 
     @Override

@@ -27,8 +27,10 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -4193,6 +4195,82 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         }
         return eniSchemaCatalogDtoList;
 
+    }
+
+    // ------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // ------------------------------------------------------------------------
+
+    @Override
+    public CategoryElementDto retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Retrieve
+        CategoryElement categoryElement = getCategoriesMetamacService().retrieveCategoryElementByUrn(ctx, urn);
+
+        // Transform
+        CategoryElementDto categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElement);
+        return categoryElementDto;
+    }
+
+    @Override
+    public CategoryElementDto createCategoryElement(ServiceContext ctx, CategoryElementDto categoryElementDto) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Transform
+        CategoryElement categoryElement = categoriesDto2DoMapper.categoryElementDtoToDo(categoryElementDto);
+
+        // Create
+        CategoryElement categoryElementCreated = getCategoriesMetamacService().createCategoryElement(ctx, categoryElement);
+
+        // Transform to DTO
+        categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElementCreated);
+        return categoryElementDto;
+    }
+
+    @Override
+    public CategoryElementDto updateCategoryElement(ServiceContext ctx, CategoryElementDto categoryElementDto) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Transform
+        CategoryElement categoryElementToUpdate = categoriesDto2DoMapper.categoryElementDtoToDo(categoryElementDto);
+
+        // Update
+        CategoryElement categoryElementUpdated = getCategoriesMetamacService().updateCategoryElement(ctx, categoryElementToUpdate);
+
+        // Transform to DTO
+        categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElementUpdated);
+        return categoryElementDto;
+    }
+
+    @Override
+    public void deleteCategoryElement(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Delete
+        getCategoriesMetamacService().deleteCategoryElement(ctx, urn);
+    }
+
+    @Override
+    public MetamacCriteriaResult<CategoryElementDto> findCategoryElementsByCondition(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCategoryElementCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<CategoryElement> result = getCategoriesMetamacService().findCategoryElementsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        MetamacCriteriaResult<CategoryElementDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCategoryElementToMetamacCriteriaResult(result,
+                sculptorCriteria.getPageSize());
+
+        return metamacCriteriaResult;
     }
 
 }

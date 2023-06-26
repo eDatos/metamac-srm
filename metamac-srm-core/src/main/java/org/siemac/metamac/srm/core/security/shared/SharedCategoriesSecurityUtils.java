@@ -138,4 +138,16 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
         return isSrmRoleAllowed(metamacPrincipal, TECNICO_APOYO_NORMALIZACION, TECNICO_NORMALIZACION, JEFE_NORMALIZACION);
     }
 
+    public static boolean canRetrieveOrFindCategoryElement(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
+    public static boolean canUpdateCodeCategoryElement(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(procStatus) || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(procStatus)) {
+            return isSrmRoleAllowed(metamacPrincipal, JEFE_NORMALIZACION);
+        } else {
+            return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
+        }
+    }
+
 }

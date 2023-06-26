@@ -1,7 +1,13 @@
 package org.siemac.metamac.srm.core.category.repositoryimpl;
 
-import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import java.util.List;
 
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,13 +15,22 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("categoryElementRepository")
 public class CategoryElementRepositoryImpl extends CategoryElementRepositoryBase {
+
     public CategoryElementRepositoryImpl() {
     }
 
     public CategoryElement findByUrn(String urn) {
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("findByUrn not implemented");
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).withProperty(CategoryElementProperties.identifiableArtefact().urn()).ignoreCaseEq(urn)
+                .distinctRoot().build();
 
+        PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1);
+        PagedResult<CategoryElement> categoryElement = findByCondition(conditions, pagingParameter);
+
+        if (categoryElement.getValues().size() == 1) {
+            return categoryElement.getValues().iterator().next();
+        }
+
+        return null;
     }
 }

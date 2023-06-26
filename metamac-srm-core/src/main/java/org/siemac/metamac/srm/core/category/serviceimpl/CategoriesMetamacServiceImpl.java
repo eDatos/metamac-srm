@@ -36,6 +36,7 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
@@ -50,6 +51,7 @@ import org.siemac.metamac.srm.core.common.SrmValidation;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
@@ -75,6 +77,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -95,7 +98,6 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResultSelection;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
-import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
@@ -106,71 +108,74 @@ import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 @Service("categoriesMetamacService")
 public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBase {
 
-    private static Logger logger = LoggerFactory.getLogger(CategoriesMetamacServiceImpl.class);
+    private static Logger                             logger = LoggerFactory.getLogger(CategoriesMetamacServiceImpl.class);
 
     @Autowired
-    private BaseService baseService;
+    private BaseService                               baseService;
 
     @Autowired
-    private CategoriesService categoriesService;
+    private CategoriesService                         categoriesService;
 
     @Autowired
-    private OrganisationsMetamacService organisationsService;
+    private OrganisationsMetamacService               organisationsService;
 
     @Autowired
     @Qualifier("categorySchemeLifeCycle")
-    private LifeCycle categorySchemeLifeCycle;
+    private LifeCycle                                 categorySchemeLifeCycle;
 
     @Autowired
-    private SrmValidation srmValidation;
+    private SrmValidation                             srmValidation;
 
     @Autowired
-    private SrmConfiguration srmConfiguration;
+    private SrmConfiguration                          srmConfiguration;
 
     @Autowired
     @Qualifier("categoriesVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback categoriesVersioningCallback;
+    private ItemSchemesCopyCallback                   categoriesVersioningCallback;
 
     @Autowired
     @Qualifier("categoriesDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback categoriesDummyVersioningCallback;
+    private ItemSchemesCopyCallback                   categoriesDummyVersioningCallback;
 
     @Autowired
     @Qualifier("categoriesCopyCallbackMetamac")
-    private ItemSchemesCopyCallback categoriesCopyCallback;
+    private ItemSchemesCopyCallback                   categoriesCopyCallback;
 
     @Autowired
     private CategorySchemeStreamMessagingCallbackImpl categorySchemeStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService streamMessagingService;
+    private StreamMessagingService                    streamMessagingService;
 
     @Autowired
-    private TasksMetamacService tasksMetamacService;
+    private TasksMetamacService                       tasksMetamacService;
 
     @Autowired
-    private MaintainableArtefactRepository maintainableArtefactRepository;
+    private MaintainableArtefactRepository            maintainableArtefactRepository;
 
     @Autowired
-    private ItemSchemeVersionRepository itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository               itemSchemeVersionRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryRepository                        categoryRepository;
 
     @Autowired
-    private CategorisationRepository categorisationRepository;
+    private CategorisationRepository                  categorisationRepository;
 
     @Autowired
-    private InternationalStringRepository internationalStringRepository;
+    private InternationalStringRepository             internationalStringRepository;
 
     @Autowired
-    private ItemSchemeRepository itemSchemeRepository;
+    private ItemSchemeRepository                      itemSchemeRepository;
 
     @Autowired
-    private EniSchemaCatalogRepository eniSchemaCatalogRepository;
+    private EniSchemaCatalogRepository                eniSchemaCatalogRepository;
+
+    @Autowired
+    private IdentifiableArtefactRepository            identifiableArtefactRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager entityManager;
+    protected EntityManager                           entityManager;
 
     public CategoriesMetamacServiceImpl() {
     }
@@ -983,5 +988,117 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             // update reference after save to assign to children
             categoriesToPersistByCodeFull.put(categoryMetamac.getNameableArtefact().getCodeFull(), categoryMetamac);
         }
+    }
+
+    public void deleteCategoryElement(ServiceContext ctx, String urn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkDeleteArtefact(urn);
+        CategoryElement categoryElementToDelete = retrieveCategoryElementByUrn(urn);
+        checkCategoryElementCanBeDeleted(categoryElementToDelete);
+
+        // Delete
+        getCategoryElementRepository().delete(categoryElementToDelete);
+    }
+
+    private void checkCategoryElementCanBeDeleted(CategoryElement categoryElementToDelete) throws MetamacException {
+        String categoryElementToDeleteUrn = categoryElementToDelete.getIdentifiableArtefact().getUrn();
+
+        // TODO EDATOS-4150 FALTA ESTE CHECK A CATEGORIAS
+        /*
+         * if (CollectionUtils.isNotEmpty(categoryElementToDelete.getCodes())) {
+         * throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_ELEMENT_WITH_RELATIONS)
+         * .withMessageParameters(variableElementToDeleteUrn, variableElementToDelete.getCodes().get(0).getNameableArtefact().getUrn()).build(); // say one
+         * }
+         */
+    }
+
+    public CategoryElement createCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkCreateCategoryElement(categoryElement, null);
+        checCategoryElementToCreateOrUpdate(ctx, categoryElement);
+
+        // Create
+        setCategoryElementUrnUnique(categoryElement, Boolean.TRUE);
+        categoryElement = getCategoryElementRepository().save(categoryElement);
+        return categoryElement;
+    }
+
+    public CategoryElement updateCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategoryElement(categoryElement, null);
+        checCategoryElementToCreateOrUpdate(ctx, categoryElement);
+
+        if (categoryElement.getIdentifiableArtefact().getIsCodeUpdated()) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_UNMODIFIABLE).withMessageParameters(ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE).build();
+        }
+        categoryElement.setUpdateDate(new DateTime()); // Optimistic locking: Update "update date" attribute to force update to root entity, to increase attribute "version"
+
+        // Update
+        return getCategoryElementRepository().save(categoryElement);
+    }
+
+    public CategoryElement retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkRetrieveByUrn(urn);
+
+        // Retrieve
+        CategoryElement categoryElement = retrieveCategoryElementByUrn(urn);
+        return categoryElement;
+    }
+
+    public PagedResult<CategoryElement> findCategoryElementsByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkFindByCondition(conditions, pagingParameter);
+
+        // Find
+        if (conditions == null) {
+            conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).distinctRoot().build();
+        }
+        PagedResult<CategoryElement> categoryElementPagedResult = getCategoryElementRepository().findByCondition(conditions, pagingParameter);
+        return categoryElementPagedResult;
+    }
+
+    private CategoryElement retrieveCategoryElementByUrn(String urn) throws MetamacException {
+        CategoryElement categoryElement = getCategoryElementRepository().findByUrn(urn);
+        if (categoryElement == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).build();
+        }
+        return categoryElement;
+    }
+
+    /**
+     * Common validations to create or update a variable element
+     */
+    private void checCategoryElementToCreateOrUpdate(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
+
+        // Check translations
+        String locale = srmConfiguration.retrieveLanguageDefault();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        SrmServiceUtils.checkInternationalStringTranslationsWithoutSql(categoryElement.getShortName(), ServiceExceptionParameters.CATEGORY_ELEMENT_SHORT_NAME, locale, exceptionItems);
+        if (exceptionItems.size() != 0) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(exceptionItems).build();
+        }
+    }
+
+    /**
+     * Generate urn, check it is unique and set to category element. Set also urnProvider
+     */
+    private void setCategoryElementUrnUnique(CategoryElement categoryElement, boolean checkUrnUnique) throws MetamacException {
+        String urn = GeneratorUrnUtils.generateCategoryElementUrn(categoryElement);
+        if (checkUrnUnique) {
+            // In import cases this verification isn't performed for performance. In BBDD this constraint is checked
+            identifiableArtefactRepository.checkUrnUnique(urn, categoryElement.getIdentifiableArtefact().getId());
+        }
+
+        categoryElement.getIdentifiableArtefact().setUrn(urn);
+        categoryElement.getIdentifiableArtefact().setUrnProvider(urn);
     }
 }

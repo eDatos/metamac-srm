@@ -3,9 +3,12 @@ package org.siemac.metamac.srm.core.category.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 @org.springframework.stereotype.Component("categoriesDo2DtoMapper")
 public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements CategoriesDo2DtoMapper {
@@ -24,8 +28,8 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
     private com.arte.statistic.sdmx.srm.core.category.mapper.CategoriesDo2DtoMapper do2DtoMapperSdmxSrm;
 
     @Autowired
-    private  MasterTablesDo2DtoMapper do2DtoMapper;
-    
+    private MasterTablesDo2DtoMapper                                                do2DtoMapper;
+
     @Override
     public CategorySchemeMetamacDto categorySchemeMetamacDoToDto(CategorySchemeVersionMetamac source) {
         if (source == null) {
@@ -77,7 +81,7 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         if (source.getEniSchema() != null) {
             target.setEniSchema(do2DtoMapper.eniSchemaCatalogToDto(source.getEniSchema()));
         }
-        
+
         do2DtoMapperSdmxSrm.categoryDoToDto(source, target);
         return target;
     }
@@ -120,4 +124,28 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         return target;
     }
 
+    @Override
+    public CategoryElementDto categoryElementDoToDto(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+        CategoryElementDto target = new CategoryElementDto();
+        target.setShortName(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
+        target.setComment(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getComment()));
+        target.setValidFrom(CoreCommonUtil.transformDateTimeToDate(source.getValidFrom()));
+        target.setValidTo(CoreCommonUtil.transformDateTimeToDate(source.getValidTo()));
+        do2DtoMapperSdmxSrm.identifiableArtefactToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getIdentifiableArtefact(), target);
+
+        // Overwrite these values in the final DTO (if not, these values are taken from the AnnotableArtefact entity)
+        target.setId(source.getId());
+        target.setUuid(source.getUuid());
+        target.setVersion(source.getVersion());
+        target.setCreatedDate(CoreCommonUtil.transformDateTimeToDate(source.getCreatedDate()));
+        target.setCreatedBy(source.getCreatedBy());
+        target.setLastUpdated(CoreCommonUtil.transformDateTimeToDate(source.getLastUpdated()));
+        target.setLastUpdatedBy(source.getLastUpdatedBy());
+        target.setVersionOptimisticLocking(source.getVersion());
+
+        return target;
+    }
 }

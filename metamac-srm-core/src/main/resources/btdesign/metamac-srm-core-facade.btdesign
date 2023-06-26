@@ -560,6 +560,17 @@ Application SrmFacadeCore {
     		"Ends the validity of a categorisation. ValidTo date is optional"
     		@CategorisationDto endCategorisationValidity(String urn, JAVADATE validTo) throws MetamacException;
     		
+    		// CATEGORY ELEMENTS
+    		"Deletes category element"
+    		deleteCategoryElement(String urn) throws MetamacException;
+			@CategoryElementDto createCategoryElement(@CategoryElementDto categoryElement) throws MetamacException;
+			"Updates category element"
+			@CategoryElementDto updateCategoryElement(@CategoryElementDto categoryElement) throws MetamacException;
+    		"Retrieves category element by urn"
+    		@CategoryElementDto retrieveCategoryElementByUrn(String urn) throws MetamacException;
+    		"Finds category elements by criteria"
+    		MetamacCriteriaResult<@CategoryElementDto> findCategoryElementsByCondition(MetamacCriteria criteria) throws MetamacException;   		
+    		
 	    	/**************************************************************************
 		     * CODES
 		     **************************************************************************/

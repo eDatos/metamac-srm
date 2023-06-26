@@ -172,4 +172,23 @@ public class CategoriesSecurityUtils extends CommonSecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
+
+    // CATEGORY ELEMENTS
+    public static void canRetrieveOrFindCategoryElement(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canRetrieveOrFindCategoryElement(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canCrudCategoryElement(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canCrudCategoryElement(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canUpdateCodeCategoryElement(ServiceContext ctx, ProcStatusEnum procStatus) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canUpdateCodeCategoryElement(getMetamacPrincipal(ctx), procStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
 }

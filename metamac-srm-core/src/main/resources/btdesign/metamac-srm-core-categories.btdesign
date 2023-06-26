@@ -21,6 +21,7 @@ Application CategoriesMetamac {
 			
 			> @CategorySchemeVersionMetamacRepository
 			> @CategoryMetamacRepository
+			> @CategoryElementRepository
 			
 			"Creates category scheme"
 			@CategorySchemeVersionMetamac createCategoryScheme(@CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException;
@@ -123,7 +124,18 @@ Application CategoriesMetamac {
     		PagedResult<@Categorisation> findCategorisationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Checks categorisations have related resources externally published"
     		checkCategorisationsWithRelatedResourcesExternallyPublished(String artefactCategorisedUrn, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
-		}
+    		
+    		//category elements
+    		"Deletes category element"
+    		deleteCategoryElement(String urn) throws MetamacException;
+    		@CategoryElement createCategoryElement(@CategoryElement categoryElement) throws MetamacException;
+			"Updates category element"
+			@CategoryElement updateCategoryElement(@CategoryElement categoryElement) throws MetamacException;
+    		"Retrieves variable element by urn"
+    		@CategoryElement retrieveCategoryElementByUrn(String urn) throws MetamacException;
+    		"Finds category elements by criteria"
+    		PagedResult<@CategoryElement> findCategoryElementsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+   		}
 
 		// ----------------------------------------------------------------
 		// 							ENTITIES
@@ -174,6 +186,7 @@ Application CategoriesMetamac {
 			
 			Repository CategoryElementRepository {
 				save;
+				delete;
 				findByQuery;
 				@CategoryElement findByUrn(String urn);
 				findByCondition(PagingParameter pagingParameter);

@@ -3,7 +3,6 @@ package org.siemac.metamac.srm.core.category.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
@@ -14,12 +13,12 @@ import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
+import org.siemac.metamac.srm.core.resource.element.mapper.ResourceElementDo2DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
-import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 @org.springframework.stereotype.Component("categoriesDo2DtoMapper")
 public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements CategoriesDo2DtoMapper {
@@ -29,6 +28,9 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
 
     @Autowired
     private MasterTablesDo2DtoMapper                                                do2DtoMapper;
+
+    @Autowired
+    private ResourceElementDo2DtoMapper                                             resourceElementDo2DtoMapper;
 
     @Override
     public CategorySchemeMetamacDto categorySchemeMetamacDoToDto(CategorySchemeVersionMetamac source) {
@@ -130,21 +132,8 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
             return null;
         }
         CategoryElementDto target = new CategoryElementDto();
-        target.setShortName(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
-        target.setComment(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getComment()));
-        target.setValidFrom(CoreCommonUtil.transformDateTimeToDate(source.getValidFrom()));
-        target.setValidTo(CoreCommonUtil.transformDateTimeToDate(source.getValidTo()));
-        do2DtoMapperSdmxSrm.identifiableArtefactToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getIdentifiableArtefact(), target);
 
-        // Overwrite these values in the final DTO (if not, these values are taken from the AnnotableArtefact entity)
-        target.setId(source.getId());
-        target.setUuid(source.getUuid());
-        target.setVersion(source.getVersion());
-        target.setCreatedDate(CoreCommonUtil.transformDateTimeToDate(source.getCreatedDate()));
-        target.setCreatedBy(source.getCreatedBy());
-        target.setLastUpdated(CoreCommonUtil.transformDateTimeToDate(source.getLastUpdated()));
-        target.setLastUpdatedBy(source.getLastUpdatedBy());
-        target.setVersionOptimisticLocking(source.getVersion());
+        resourceElementDo2DtoMapper.resourceElementDoToDto(source, target);
 
         return target;
     }

@@ -181,7 +181,7 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
     }
 
     private static void checkCategoryElement(CategoryElement categoryElement, List<MetamacExceptionItem> exceptions) {
-        ValidationUtils.checkParameterRequired(categoryElement, ServiceExceptionParameters.CATEGORY_ELEMENT, exceptions);
+        ValidationUtils.checkParameterRequired(categoryElement, ServiceExceptionParameters.RESOURCE_ELEMENT, exceptions);
         if (categoryElement == null) {
             return;
         }
@@ -191,14 +191,14 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
         if (categoryElement.getIdentifiableArtefact() != null) {
             SemanticIdentifierValidationUtils.checkCategoryElementSemanticIdentifier(categoryElement, exceptions);
         }
-        ValidationUtils.checkMetadataRequired(categoryElement.getShortName(), ServiceExceptionParameters.CATEGORY_ELEMENT_SHORT_NAME, exceptions);
-        ValidationUtils.checkInternationalStringMaximumLength(categoryElement.getShortName(), ServiceExceptionParameters.CATEGORY_ELEMENT_SHORT_NAME, SrmConstants.METADATA_SHORT_NAME_MAXIMUM_LENGTH,
+        ValidationUtils.checkMetadataRequired(categoryElement.getShortName(), ServiceExceptionParameters.RESOURCE_ELEMENT_SHORT_NAME, exceptions);
+        ValidationUtils.checkInternationalStringMaximumLength(categoryElement.getShortName(), ServiceExceptionParameters.RESOURCE_ELEMENT_SHORT_NAME, SrmConstants.METADATA_SHORT_NAME_MAXIMUM_LENGTH,
                 exceptions);
 
-        ValidationUtils.checkMetadataOptionalIsValid(categoryElement.getComment(), ServiceExceptionParameters.CATEGORY_ELEMENT_COMMENT, exceptions);
+        ValidationUtils.checkMetadataOptionalIsValid(categoryElement.getComment(), ServiceExceptionParameters.RESOURCE_ELEMENT_COMMENT, exceptions);
 
         // Check dates: validFrom value must be lower than validTo value
-        ValidationUtils.checkDateTimeBeforeDateTime(categoryElement.getValidFrom(), categoryElement.getValidTo(), ServiceExceptionParameters.CATEGORY_ELEMENT_VALID_TO, exceptions);
+        ValidationUtils.checkDateTimeBeforeDateTime(categoryElement.getValidFrom(), categoryElement.getValidTo(), ServiceExceptionParameters.RESOURCE_ELEMENT_VALID_TO, exceptions);
     }
 
     private static void checkCategoryScheme(CategorySchemeVersionMetamac categorySchemeVersion, List<MetamacExceptionItem> exceptions) {

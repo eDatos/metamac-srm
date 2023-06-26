@@ -1082,7 +1082,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         // Check translations
         String locale = srmConfiguration.retrieveLanguageDefault();
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
-        SrmServiceUtils.checkInternationalStringTranslationsWithoutSql(categoryElement.getShortName(), ServiceExceptionParameters.CATEGORY_ELEMENT_SHORT_NAME, locale, exceptionItems);
+        SrmServiceUtils.checkInternationalStringTranslationsWithoutSql(categoryElement.getShortName(), ServiceExceptionParameters.RESOURCE_ELEMENT_SHORT_NAME, locale, exceptionItems);
         if (exceptionItems.size() != 0) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(exceptionItems).build();
         }

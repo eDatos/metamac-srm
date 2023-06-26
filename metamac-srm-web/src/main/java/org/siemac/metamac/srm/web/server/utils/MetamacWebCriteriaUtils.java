@@ -7,6 +7,7 @@ import org.siemac.metamac.core.common.criteria.MetamacCriteriaDisjunctionRestric
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction.OperationType;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaRestriction;
+import org.siemac.metamac.srm.core.criteria.CategoryElementCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategorySchemeVersionMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CodeMetamacCriteriaPropertyEnum;
@@ -19,6 +20,7 @@ import org.siemac.metamac.srm.core.criteria.OrganisationMetamacCriteriaPropertyE
 import org.siemac.metamac.srm.core.criteria.OrganisationSchemeVersionMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.VariableCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.VariableElementCriteriaPropertyEnum;
+import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
@@ -598,6 +600,48 @@ public class MetamacWebCriteriaUtils {
                         .add(new MetamacCriteriaPropertyRestriction(CategoryMetamacCriteriaPropertyEnum.CATEGORY_SCHEME_LATEST_FINAL.name(), criteria.getIsLatestFinal(), OperationType.EQ));
             }
 
+        }
+
+        return conjunctionRestriction;
+    }
+
+    public static MetamacCriteriaConjunctionRestriction getCategoryElementCriteriaRestriction(CategoryElementWebCriteria criteria) {
+        MetamacCriteriaConjunctionRestriction conjunctionRestriction = new MetamacCriteriaConjunctionRestriction();
+
+        if (criteria != null) {
+
+            // General criteria
+
+            if (StringUtils.isNotBlank(criteria.getCriteria())) {
+                MetamacCriteriaDisjunctionRestriction categoryElementCriteriaDisjunction = new MetamacCriteriaDisjunctionRestriction();
+                categoryElementCriteriaDisjunction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.CODE.name(), criteria.getCriteria(), OperationType.ILIKE));
+                categoryElementCriteriaDisjunction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.URN.name(), criteria.getCriteria(), OperationType.ILIKE));
+                categoryElementCriteriaDisjunction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.SHORT_NAME.name(), criteria.getCriteria(), OperationType.ILIKE));
+                conjunctionRestriction.getRestrictions().add(categoryElementCriteriaDisjunction);
+            }
+
+            // Specific criteria
+
+            if (StringUtils.isNotBlank(criteria.getCode())) {
+                conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.CODE.name(), criteria.getCode(), OperationType.ILIKE));
+            }
+            if (StringUtils.isNotBlank(criteria.getCodeEQ())) {
+                conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.CODE.name(), criteria.getCodeEQ(), OperationType.EQ));
+            }
+            if (StringUtils.isNotBlank(criteria.getUrn())) {
+                conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.URN.name(), criteria.getUrn(), OperationType.ILIKE));
+            }
+            if (criteria.getValidFromDate() != null) {
+                conjunctionRestriction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(VariableElementCriteriaPropertyEnum.VALID_FROM_DATE.name(), criteria.getValidFromDate(), OperationType.EQ));
+            }
+            if (criteria.getValidToDate() != null) {
+                conjunctionRestriction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(VariableElementCriteriaPropertyEnum.VALID_TO_DATE.name(), criteria.getValidToDate(), OperationType.EQ));
+            }
         }
 
         return conjunctionRestriction;

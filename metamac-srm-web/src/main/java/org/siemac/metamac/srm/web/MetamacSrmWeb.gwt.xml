@@ -55,8 +55,7 @@
     <source path='code' />
     <source path='category' />
     <source path='shared' />
-    <source path='master' />
-    <source path='resource' />
+
     <stylesheet src="MetamacSrmWeb.css" />
 
     <!-- Languages -->
@@ -73,7 +72,7 @@
 
     <!-- Generate code in compilation time only for gecko-based/safari browsers -->
     <!-- <set-property name="user.agent" value="gecko1_8" /> -->
-     <set-property name="user.agent" value="safari" /> 
+    <!-- <set-property name="user.agent" value="safari" /> -->
 
     <set-property name="ClientBundle.enableInlining" value="false" />
 

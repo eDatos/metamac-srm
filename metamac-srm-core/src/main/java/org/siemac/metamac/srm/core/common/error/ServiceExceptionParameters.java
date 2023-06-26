@@ -164,13 +164,13 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  MISC_VALUE_NAME                                            = createCode(MISC_VALUE_PREFIX, "name");
     public static final String  MISC_VALUE_VALUE                                           = createCode(MISC_VALUE_PREFIX, "value");
 
-    // CATEGORY ELEMENT
-    private static final String CATEGORY_ELEMENT_PREFIX                                    = "category_element";
-    public static final String  CATEGORY_ELEMENT                                           = createCode(CATEGORY_ELEMENT_PREFIX);
-    public static final String  CATEGORY_ELEMENT_SHORT_NAME                                = createCode(CATEGORY_ELEMENT_PREFIX, "short_name");
-    public static final String  CATEGORY_ELEMENT_COMMENT                                   = createCode(CATEGORY_ELEMENT_PREFIX, "comment");
-    public static final String  CATEGORY_ELEMENT_VALID_FROM                                = createCode(CATEGORY_ELEMENT_PREFIX, "valid_from");
-    public static final String  CATEGORY_ELEMENT_VALID_TO                                  = createCode(CATEGORY_ELEMENT_PREFIX, "valid_to");
+    // RESOURCE ELEMENT
+    private static final String RESOURCE_ELEMENT_PREFIX                                    = "resource_element";
+    public static final String  RESOURCE_ELEMENT                                           = createCode(RESOURCE_ELEMENT_PREFIX);
+    public static final String  RESOURCE_ELEMENT_SHORT_NAME                                = createCode(RESOURCE_ELEMENT_PREFIX, "short_name");
+    public static final String  RESOURCE_ELEMENT_COMMENT                                   = createCode(RESOURCE_ELEMENT_PREFIX, "comment");
+    public static final String  RESOURCE_ELEMENT_VALID_FROM                                = createCode(RESOURCE_ELEMENT_PREFIX, "valid_from");
+    public static final String  RESOURCE_ELEMENT_VALID_TO                                  = createCode(RESOURCE_ELEMENT_PREFIX, "valid_to");
 
     private static String createCode(String fieldCode) {
         return PREFIX_PARAMETER_SRM + "." + fieldCode;

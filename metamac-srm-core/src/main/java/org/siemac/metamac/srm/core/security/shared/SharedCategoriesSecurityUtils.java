@@ -1,5 +1,9 @@
 package org.siemac.metamac.srm.core.security.shared;
 
+import static org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum.JEFE_NORMALIZACION;
+import static org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum.TECNICO_APOYO_NORMALIZACION;
+import static org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum.TECNICO_NORMALIZACION;
+
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 
@@ -122,4 +126,16 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
     public static boolean canImportCategoriesTsv(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
         return canModifyCategoryFromCategoryScheme(metamacPrincipal, procStatus);
     }
+
+    /**
+     * Determines if items from an category scheme can be created, deleted or updated
+     */
+    public static boolean canModifyCategoryElementFromCategoryScheme(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canModifyCategoryElement(metamacPrincipal, procStatus);
+    }
+
+    public static boolean canCrudCategoryElement(MetamacPrincipal metamacPrincipal) {
+        return isSrmRoleAllowed(metamacPrincipal, TECNICO_APOYO_NORMALIZACION, TECNICO_NORMALIZACION, JEFE_NORMALIZACION);
+    }
+
 }

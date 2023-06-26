@@ -187,6 +187,18 @@ public class CategoriesClientSecurityUtils {
         return SharedCategoriesSecurityUtils.canImportCategoriesTsv(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
     }
 
+    public static boolean canCreateCategoryElement() {
+        return SharedCategoriesSecurityUtils.canCrudCategoryElement(MetamacSrmWeb.getCurrentUser());
+    }
+
+    public static boolean canUpdateCategoryElement() {
+        return SharedCategoriesSecurityUtils.canCrudCategoryElement(MetamacSrmWeb.getCurrentUser());
+    }
+
+    public static boolean canDeleteCategoryElement() {
+        return SharedCategoriesSecurityUtils.canCrudCategoryElement(MetamacSrmWeb.getCurrentUser());
+    }
+
     //
     // PRIVATE METHODS
     //

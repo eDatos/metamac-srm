@@ -4,7 +4,7 @@ import com.smartgwt.client.types.ValueEnum;
 
 public enum CategoriesToolStripButtonEnum implements ValueEnum {
 
-    CATEGORY_SCHEMES("cat_scheme_button"), CATEGORIES("cat_button");
+    CATEGORY_SCHEMES("cat_scheme_button"), CATEGORIES("cat_button"), CATEGORY_ELEMENTS("cat_elements_button");
 
     private String value;
 

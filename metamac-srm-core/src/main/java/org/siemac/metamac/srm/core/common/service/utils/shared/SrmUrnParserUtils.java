@@ -1,10 +1,11 @@
 package org.siemac.metamac.srm.core.common.service.utils.shared;
 
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.EQUAL;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_FAMILY_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_VARIABLE_ELEMENT_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_VARIABLE_FAMILY_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_VARIABLE_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.EQUAL;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CATEGORY_ELEMENT_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_FAMILY_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_VARIABLE_ELEMENT_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_VARIABLE_FAMILY_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CODELIST_VARIABLE_PREFIX;
 
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 
@@ -41,5 +42,10 @@ public class SrmUrnParserUtils extends SdmxSrmUrnParserUtils {
 
     public static String getVariableElementCodeFromVariableElementUrn(String variableElementUrn) {
         return UrnUtils.splitUrnByDots(UrnUtils.removePrefix(variableElementUrn))[1];
+    }
+
+    // no sdmx element
+    public static boolean isCategoryElementUrn(String urn) {
+        return matches(URN_SIEMAC_CLASS_CATEGORY_ELEMENT_PREFIX, UrnUtils.extractPrefix(urn));
     }
 }

@@ -167,5 +167,18 @@ Application CategoriesMetamac {
 				checkCategoryTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 			}
 		}
+				
+		Entity CategoryElement extends @ResourceElement {
+			databaseTable="TB_CAT_RESOURCE_ELEMENTS"
+			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"	
+			
+			Repository CategoryElementRepository {
+				save;
+				findByQuery;
+				@CategoryElement findByUrn(String urn);
+				findByCondition(PagingParameter pagingParameter);
+
+			}
+		}
 	}
 }

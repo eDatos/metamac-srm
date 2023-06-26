@@ -26,7 +26,7 @@ public class NewCategoryWindow extends CustomWindow {
         setAutoSize(true);
 
         RequiredTextItem codeItem = new RequiredTextItem(CategoryDS.CODE, getConstants().identifiableArtefactCode());
-        codeItem.setValidators(SemanticIdentifiersUtils.getCategoryIdentifierCustomValidator());
+        codeItem.setValidators(SemanticIdentifiersUtils.getResourceElementIdentifierCustomValidator());
         codeItem.setWidth(FORM_ITEM_CUSTOM_WIDTH);
 
         RequiredTextItem nameItem = new RequiredTextItem(CategoryDS.NAME, getConstants().nameableArtefactName());

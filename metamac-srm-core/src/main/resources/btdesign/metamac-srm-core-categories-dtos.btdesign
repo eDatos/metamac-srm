@@ -33,5 +33,9 @@ Application DtosMetamacCategoryDomain {
 		"Dto for CategoryMetamac"
 		DataTransferObject CategoryMetamacBasicDto extends @ItemMetamacBasicDto {
 		}
+		
+		"Dto for CategoryElementDto"		
+		DataTransferObject CategoryElementDto extends @ResourceElementDto {
+		}	
 	}
 }

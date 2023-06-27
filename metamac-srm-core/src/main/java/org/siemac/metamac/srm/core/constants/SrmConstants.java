@@ -104,10 +104,10 @@ public class SrmConstants {
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_GEO_IMPORTATION            = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION               = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_OPENNESS_LEVES_IMPORTATION             = 1000000;
-    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CATEGORY_ELEMENTS_IMPORTATION                = 150000;
+    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_RESOURCE_ELEMENTS_IMPORTATION                = 150000;
 
     public static final int                VARIABLE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
-    public static final int                CATEGORY_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
+    public static final int                RESOURCE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
 
     // Misc
     public static final int                METADATA_SHORT_NAME_MAXIMUM_LENGTH                                     = 100;

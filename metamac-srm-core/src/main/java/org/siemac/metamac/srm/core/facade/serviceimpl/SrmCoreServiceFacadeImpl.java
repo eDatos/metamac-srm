@@ -4273,4 +4273,12 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         return metamacCriteriaResult;
     }
 
+    @Override
+    public String exportCategoryElementsTsv(ServiceContext ctx, List<String> categoryElementUrns) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canExportCategoryElements(ctx);
+
+        return getCategoriesMetamacService().exportCategoryElementsTsv(ctx, categoryElementUrns);
+    }
+
 }

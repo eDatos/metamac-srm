@@ -150,4 +150,12 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
         }
     }
 
+    public static boolean canExportCategoryElementsTsv(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
+    public static boolean canImportCategoryElements(MetamacPrincipal metamacPrincipal) {
+        return canCrudCategoryElement(metamacPrincipal);
+    }
+
 }

@@ -135,6 +135,8 @@ Application CategoriesMetamac {
     		@CategoryElement retrieveCategoryElementByUrn(String urn) throws MetamacException;
     		"Finds category elements by criteria"
     		PagedResult<@CategoryElement> findCategoryElementsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+    		"Exports category elements in tsv format"
+    		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;
    		}
 
 		// ----------------------------------------------------------------
@@ -189,6 +191,7 @@ Application CategoriesMetamac {
 				delete;
 				findByQuery;
 				@CategoryElement findByUrn(String urn);
+				List<@CategoryElement> findByUrnIn(List<String> urns);
 				findByCondition(PagingParameter pagingParameter);
 
 			}

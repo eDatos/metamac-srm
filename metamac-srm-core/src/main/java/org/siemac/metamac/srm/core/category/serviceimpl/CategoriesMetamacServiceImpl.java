@@ -830,6 +830,21 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
     }
 
+    // ------------------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // ------------------------------------------------------------------------------------
+
+    @Override
+    public String exportCategoryElementsTsv(ServiceContext ctx, List<String> categoryElementUrns) throws MetamacException {
+
+        CategoriesMetamacInvocationValidator.checkExportCategoryElementsTsv(categoryElementUrns, null);
+
+        List<CategoryElement> elementsToExport = getCategoryElementRepository().findByUrnIn(categoryElementUrns);
+
+        List<String> languages = srmConfiguration.retrieveLanguages();
+        return TsvExportationUtils.exportCategoryElements(elementsToExport, languages);
+    }
+
     /**
      * Typecast to Metamac type
      */

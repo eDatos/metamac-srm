@@ -12,4 +12,5 @@ public interface CategoryElementsUiHandlers extends BaseUiHandlers {
     void retrieveCategoryElements(int firstResult, int maxResults, CategoryElementWebCriteria criteria);
     void createCategoryElement(CategoryElementDto categoryElementDto);
     void deleteCategoryElements(List<String> urns);
+    void exportCategoryElements(List<String> urns);
 }

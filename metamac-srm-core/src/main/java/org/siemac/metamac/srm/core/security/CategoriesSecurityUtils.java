@@ -191,4 +191,16 @@ public class CategoriesSecurityUtils extends CommonSecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
+
+    public static void canExportCategoryElements(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canExportCategoryElementsTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canImportCategoryElements(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canImportCategoryElements(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
 }

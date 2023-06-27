@@ -569,7 +569,9 @@ Application SrmFacadeCore {
     		"Retrieves category element by urn"
     		@CategoryElementDto retrieveCategoryElementByUrn(String urn) throws MetamacException;
     		"Finds category elements by criteria"
-    		MetamacCriteriaResult<@CategoryElementDto> findCategoryElementsByCondition(MetamacCriteria criteria) throws MetamacException;   		
+    		MetamacCriteriaResult<@CategoryElementDto> findCategoryElementsByCondition(MetamacCriteria criteria) throws MetamacException;   
+    		"Exports category elements in tsv format"
+    		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;		
     		
 	    	/**************************************************************************
 		     * CODES

@@ -15,9 +15,12 @@ import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsResult;
+import org.siemac.metamac.srm.web.shared.category.ExportCategoryElementsAction;
+import org.siemac.metamac.srm.web.shared.category.ExportCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
@@ -139,6 +142,24 @@ public class CategoryElementsPresenter extends Presenter<CategoryElementsPresent
             public void onWaitSuccess(DeleteCategoryElementsResult result) {
                 retrieveCategoryElements(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null);
                 fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementDeleted());
+            }
+        });
+
+    }
+
+    @Override
+    public void exportCategoryElements(List<String> urns) {
+
+        dispatcher.execute(new ExportCategoryElementsAction(urns), new WaitingAsyncCallbackHandlingError<ExportCategoryElementsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementsPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(ExportCategoryElementsResult result) {
+                CommonUtils.downloadFile(result.getFileName());
             }
         });
 

@@ -33,4 +33,14 @@ public class CategoryElementRepositoryImpl extends CategoryElementRepositoryBase
 
         return null;
     }
+
+    public List<CategoryElement> findByUrnIn(List<String> urns) {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).withProperty(CategoryElementProperties.identifiableArtefact().urn()).in(urns)
+                .distinctRoot().build();
+
+        PagingParameter pagingParameter = PagingParameter.noLimits();
+        PagedResult<CategoryElement> categoryElement = findByCondition(conditions, pagingParameter);
+
+        return categoryElement.getValues();
+    }
 }

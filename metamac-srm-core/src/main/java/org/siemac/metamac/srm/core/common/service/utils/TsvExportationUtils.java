@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
+import org.siemac.metamac.srm.core.base.domain.ResourceElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
@@ -21,6 +24,7 @@ import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
+import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 
 public class TsvExportationUtils {
 
@@ -756,5 +760,65 @@ public class TsvExportationUtils {
         if (renderingColor != null) {
             writer.write(renderingColor);
         }
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // ---------------------------------------------------------------------------------------------------------------
+
+    public static String exportCategoryElements(List<CategoryElement> categoryElements, List<String> languages) throws MetamacException {
+
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+        try {
+            File file = File.createTempFile("category_elements", ".tsv");
+            outputStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
+            writeResourceElementsHeader(writer, languages);
+            for (CategoryElement categoryElement : categoryElements) {
+                writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+                writeResourceElementCode(writer, categoryElement);
+                writeResourceElementShortName(writer, categoryElement, languages);
+            }
+            writer.flush();
+            return file.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(writer);
+        }
+    }
+
+    private static void writeResourceElementsHeader(OutputStreamWriter writer, List<String> languages) throws IOException {
+        writer.write(SrmConstants.TSV_HEADER_CODE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        for (String language : languages) {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_SHORT_NAME + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
+        }
+    }
+
+    private static void writeResourceElementCode(OutputStreamWriter writer, ResourceElement resourceElement) throws IOException {
+        writer.write(resourceElement.getIdentifiableArtefact().getCode());
+    }
+
+    private static void writeResourceElementShortName(OutputStreamWriter writer, ResourceElement resourceElement, List<String> languages) throws IOException {
+        for (String language : languages) {
+            String nameInLocale = getLocalisedStringFormattedByLang(resourceElement.getShortName().getTexts(), language);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            if (nameInLocale != null) {
+                writer.write(nameInLocale);
+            }
+        }
+    }
+
+    private static String getLocalisedStringFormattedByLang(Set<LocalisedString> source, String language) {
+        for (LocalisedString loc : source) {
+            if (language.equals(loc.getLocale())) {
+                return removeUnsupportedCharaters(loc.getLabel());
+            }
+        }
+        return null;
     }
 }

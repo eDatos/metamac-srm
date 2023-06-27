@@ -71,8 +71,11 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
             }
         });
 
+        CustomToolStripButton customExportButton = createExportCategoryElementsButton();
+
         toolStrip.addButton(createCategoryElementButton);
         toolStrip.addButton(deleteButton);
+        toolStrip.addButton(customExportButton);
 
         // Search
         searchSectionStack = new CategoryElementSearchSectionStack();
@@ -175,6 +178,23 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
             }
         });
         return createButton;
+    }
+
+    private CustomToolStripButton createExportCategoryElementsButton() {
+        CustomToolStripButton exportButton = new CustomToolStripButton(getConstants().actionExportCategoryElements(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+        exportButton.setVisible(CategoriesClientSecurityUtils.canExportCategoryElementsTsv());
+        exportButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                List<String> categoryElementUrnsSelected = getUrnsFromSelectedCategoryElements();
+                if (!categoryElementUrnsSelected.isEmpty()) {
+                    getUiHandlers().exportCategoryElements(categoryElementUrnsSelected);
+                }
+            }
+        });
+        return exportButton;
     }
 
     private void showNewCategoryElementWindow() {

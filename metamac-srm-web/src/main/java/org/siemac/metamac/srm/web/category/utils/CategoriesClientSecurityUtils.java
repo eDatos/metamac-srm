@@ -199,6 +199,14 @@ public class CategoriesClientSecurityUtils {
         return SharedCategoriesSecurityUtils.canCrudCategoryElement(MetamacSrmWeb.getCurrentUser());
     }
 
+    public static boolean canExportCategoryElementsTsv() {
+        return SharedCategoriesSecurityUtils.canExportCategoryElementsTsv(MetamacSrmWeb.getCurrentUser());
+    }
+
+    public static boolean canImportCategoryElements() {
+        return SharedCategoriesSecurityUtils.canImportCategoryElements(MetamacSrmWeb.getCurrentUser());
+    }
+
     //
     // PRIVATE METHODS
     //

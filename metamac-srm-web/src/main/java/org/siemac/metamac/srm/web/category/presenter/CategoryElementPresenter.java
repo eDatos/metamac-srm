@@ -178,61 +178,6 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
 
     }
 
-    @Override
-    public void createSegregation(String categoryElementUrn, List<String> categoryElementUrns) {
-        /*
-         * dispatcher.execute(new CreateCategoryElementOperationAction(VariableElementOperationTypeEnum.SEGREGATION, categoryElementUrns, categoryElementUrn),
-         * new WaitingAsyncCallbackHandlingError<CreateCategoryElementOperationResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(CreateCategoryElementOperationResult result) {
-         * fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementSegregated());
-         * retrieveCategoryElementOperations(categoryElementDto.getUrn());
-         * }
-         * });
-         */
-    }
-
-    @Override
-    public void createFusion(List<String> variableElementUrn, String variableElementUrns) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void deleteCategoryElementOperations(List<String> codes) {
-        /*
-         * dispatcher.execute(new DeleteCategoryElementOperationsAction(codes), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementOperationsResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(DeleteCategoryElementOperationsResult result) {
-         * retrieveCategoryElementOperations(categoryElementDto.getUrn());
-         * }
-         * });
-         */
-    }
-
-    private void retrieveCategoryElementOperations(String categoryElementUrn) {
-        /*
-         * dispatcher.execute(new GetCategoryElementOperationsByCategoryElementAction(categoryElementUrn),
-         * new WaitingAsyncCallbackHandlingError<GetCategoryElementOperationsByVariableElementResult>(this) {
-         * @Override
-         * public void onWaitFailure(Throwable caught) {
-         * ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
-         * }
-         * @Override
-         * public void onWaitSuccess(GetCategoryElementOperationsByVariableElementResult result) {
-         * getView().setCategoryElementOperations(result.getOperations());
-         * }
-         * });
-         */
-    }
-
     //
     // NAVIGATION
     //

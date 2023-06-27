@@ -13,8 +13,10 @@ import org.siemac.metamac.srm.web.category.presenter.CategoryElementsPresenter;
 import org.siemac.metamac.srm.web.category.utils.CategoriesClientSecurityUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementsUiHandlers;
 import org.siemac.metamac.srm.web.category.widgets.CategoryElementSearchSectionStack;
+import org.siemac.metamac.srm.web.category.widgets.ImportCategoryElementsWindow;
 import org.siemac.metamac.srm.web.category.widgets.NewCategoryElementWindow;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
+import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
@@ -49,6 +51,7 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
     private DeleteConfirmationWindow                deleteConfirmationWindow;
     private final CustomToolStripButton             createCategoryElementButton;
     private NewCategoryElementWindow                newCategoryElementWindow;
+    private final ImportCategoryElementsWindow      importCategoryElementsWindow;
 
     @Inject
     public CategoryElementsViewImpl() {
@@ -71,11 +74,15 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
             }
         });
 
-        CustomToolStripButton customExportButton = createExportCategoryElementsButton();
+        CustomToolStripButton exportCategoryElementButton = createExportCategoryElementsButton();
+
+        importCategoryElementsWindow = createImportVariableElementsWindow();
+        CustomToolStripButton importCategoryElementButton = createImportVariableElementsButton();
 
         toolStrip.addButton(createCategoryElementButton);
         toolStrip.addButton(deleteButton);
-        toolStrip.addButton(customExportButton);
+        toolStrip.addButton(importCategoryElementButton);
+        toolStrip.addButton(exportCategoryElementButton);
 
         // Search
         searchSectionStack = new CategoryElementSearchSectionStack();
@@ -195,6 +202,40 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
             }
         });
         return exportButton;
+    }
+
+    private CustomToolStripButton createImportVariableElementsButton() {
+        CustomToolStripButton importButton = new CustomToolStripButton(getConstants().actionImportCategoryElements(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
+        importButton.setVisible(CategoriesClientSecurityUtils.canImportCategoryElements());
+
+        importButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                importCategoryElementsWindow.show();
+            }
+        });
+        return importButton;
+    }
+
+    private ImportCategoryElementsWindow createImportVariableElementsWindow() {
+        ImportCategoryElementsWindow importCategoryElementsWindow = new ImportCategoryElementsWindow();
+        importCategoryElementsWindow.setUploadListener(new UploadListener() {
+
+            @Override
+            public void uploadFailed(String errorMessage) {
+                getUiHandlers().resourceImportationFailed(errorMessage);
+            }
+
+            @Override
+            public void uploadComplete(String fileName) {
+                getUiHandlers().resourceImportationSucceed(fileName);
+            }
+
+        });
+
+        return importCategoryElementsWindow;
     }
 
     private void showNewCategoryElementWindow() {

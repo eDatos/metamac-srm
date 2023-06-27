@@ -190,6 +190,19 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
         ExceptionUtils.throwIfException(exceptions);
     }
 
+    public static void checkImportCategoryElementsTsv(File file, String fileName, Boolean updateAlreadyExisting, Boolean canBeBackground, List<MetamacExceptionItem> exceptions)
+            throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
+        ValidationUtils.checkParameterRequired(canBeBackground, ServiceExceptionParameters.CAN_BE_BACKGROUND, exceptions);
+        ValidationUtils.checkParameterRequired(updateAlreadyExisting, ServiceExceptionParameters.IMPORTATION_TSV_UPDATE_ALREADY_EXISTING, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
     private static void checkCategoryElement(CategoryElement categoryElement, List<MetamacExceptionItem> exceptions) {
         ValidationUtils.checkParameterRequired(categoryElement, ServiceExceptionParameters.RESOURCE_ELEMENT, exceptions);
         if (categoryElement == null) {

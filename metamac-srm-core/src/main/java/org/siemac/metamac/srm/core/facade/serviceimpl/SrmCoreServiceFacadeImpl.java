@@ -4281,4 +4281,14 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         return getCategoriesMetamacService().exportCategoryElementsTsv(ctx, categoryElementUrns);
     }
 
+    @Override
+    public TaskImportationInfo importCategoryElementsTsv(ServiceContext ctx, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canImportVariableElements(ctx);
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCategoriesMetamacService().importCategoryElementsTsv(ctx, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+    }
+
 }

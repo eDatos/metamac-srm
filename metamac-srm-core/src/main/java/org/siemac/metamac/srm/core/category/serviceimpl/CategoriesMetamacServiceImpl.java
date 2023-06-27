@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils.a
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
+import org.siemac.metamac.srm.core.common.service.utils.SemanticIdentifierValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
@@ -69,6 +71,7 @@ import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
+import org.siemac.metamac.srm.core.task.domain.ImportationCategoryElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
 import org.siemac.metamac.srm.core.util.UtilsMap;
 import org.slf4j.Logger;
@@ -77,6 +80,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeRepository;
@@ -1116,4 +1120,199 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         categoryElement.getIdentifiableArtefact().setUrn(urn);
         categoryElement.getIdentifiableArtefact().setUrnProvider(urn);
     }
+
+    @Override
+    public TaskImportationInfo importCategoryElementsTsv(ServiceContext ctx, File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException {
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkImportCategoryElementsTsv(file, fileName, updateAlreadyExisting, canBeBackground, null);
+
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORY_ELEMENTS_IMPORTATION);
+
+        // Plannify task if background
+        if (executeInBackground) {
+            String jobKey = tasksMetamacService.plannifyImportCategoryElementsTsvInBackground(ctx, file, fileName, updateAlreadyExisting);
+            return new TaskImportationInfo(Boolean.TRUE, jobKey);
+        }
+
+        // Import
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        Map<String, CategoryElement> categoryElementsToPersistByCode = null;
+        try {
+            InputStream stream = new FileInputStream(file);
+            String charset = FileUtils.guessCharset(file);
+            inputStreamReader = new InputStreamReader(stream, charset);
+            bufferedReader = new BufferedReader(inputStreamReader);
+
+            // Header
+            String line = bufferedReader.readLine();
+            ImportationCategoryElementsTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportCategoryElements(line, exceptionItems);
+
+            // Category elements
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                categoryElementsToPersistByCode = new HashMap<String, CategoryElement>();
+
+                List<String> fileLines = new ArrayList<>();
+                int lineNumber = 2;
+
+                line = bufferedReader.readLine();
+                boolean allFileHasBeenProcessed = line == null;
+
+                while (!allFileHasBeenProcessed) {
+                    if (line != null) {
+                        fileLines.add(line);
+                    }
+
+                    if (fileLines.size() >= SrmConstants.CATEGORY_ELEMENT_CACHE_SIZE_TSV_IMPORT || line == null) {
+                        Map<String, CategoryElement> categoryElementCache = getCategoryElementCache(fileLines, header);
+
+                        for (String fileLine : fileLines) {
+                            if (StringUtils.isNotBlank(fileLine)) {
+                                String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(fileLine), SrmConstants.TSV_SEPARATOR);
+                                if (columns.length != header.getColumnsSize()) {
+                                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                                } else {
+                                    // Transform variable element and add to list to persist
+                                    CategoryElement categoryElement = tsvLineToCategoryElement(header, columns, lineNumber, categoryElementCache, updateAlreadyExisting,
+                                            categoryElementsToPersistByCode, exceptionItems, informationItems);
+                                    if (categoryElement != null) {
+                                        categoryElementsToPersistByCode.put(categoryElement.getIdentifiableArtefact().getCode(), categoryElement);
+                                    }
+                                }
+                            }
+                            lineNumber++;
+                        }
+
+                        fileLines.clear();
+                    }
+                    line = bufferedReader.readLine();
+                    allFileHasBeenProcessed = line == null && fileLines.isEmpty();
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error importing tsv category elements file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } finally {
+            try {
+                inputStreamReader.close();
+                bufferedReader.close();
+            } catch (IOException e) {
+                // do not relaunch error
+                logger.error("Error closing streams", e);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+        // Persist
+        for (CategoryElement categoryElement : categoryElementsToPersistByCode.values()) {
+            getCategoryElementRepository().save(categoryElement);
+        }
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    private Map<String, CategoryElement> getCategoryElementCache(List<String> filePartition, ImportationCategoryElementsTsvHeader header) {
+
+        List<String> categoryElementCodes = new ArrayList<>();
+
+        logger.debug("Number of lines from file partition {}", filePartition.size());
+
+        for (String fileLine : filePartition) {
+            String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(fileLine), SrmConstants.TSV_SEPARATOR);
+            if (columns.length == header.getColumnsSize()) {
+                String codeIdentifier = columns[header.getCodePosition()];
+                if (!StringUtils.isBlank(codeIdentifier) && SemanticIdentifierValidationUtils.isResourceElementSemanticIdentifier(codeIdentifier)) {
+                    categoryElementCodes.add(codeIdentifier);
+                }
+            }
+        }
+
+        logger.debug("Number of extracted codes from file partition: {}", categoryElementCodes.size());
+        logger.trace("Extracted codes from file partition: {}", categoryElementCodes);
+
+        List<CategoryElement> categoryElements = getCategoryElementRepository().findByCodeIn(categoryElementCodes);
+
+        Map<String, CategoryElement> categoryElementsCache = new HashMap<>();
+        for (CategoryElement categoryElement : categoryElements) {
+            categoryElementsCache.put(categoryElement.getIdentifiableArtefact().getCode(), categoryElement);
+        }
+
+        logger.debug("Number of codes in cache: {}", categoryElementsCache.size());
+        logger.trace("Codes in cache: {}", categoryElementsCache.keySet());
+
+        return categoryElementsCache;
+    }
+
+    /**
+     * Transforms tsv line to CategoryElement. IMPORTANT: Do not execute save or update operation
+     */
+    private CategoryElement tsvLineToCategoryElement(ImportationCategoryElementsTsvHeader header, String[] columns, int lineNumber, Map<String, CategoryElement> categoryElementCache,
+            boolean updateAlreadyExisting, Map<String, CategoryElement> categoryElementsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
+            throws MetamacException {
+
+        // semantic identifier
+        String codeIdentifier = columns[header.getCodePosition()];
+        if (StringUtils.isBlank(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null; // do not add more errors in this line
+        }
+        if (categoryElementsToPersistByCode.containsKey(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_RESOURCE_DUPLICATED, codeIdentifier, lineNumber));
+            return null;
+        }
+        if (!SemanticIdentifierValidationUtils.isVariableElementSemanticIdentifier(codeIdentifier)) {
+            exceptionItems
+                    .add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT_SEMANTIC_IDENTIFIER, codeIdentifier, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE));
+            return null;
+        }
+        // init variable element
+        CategoryElement categoryElement = categoryElementCache.get(codeIdentifier);
+        if (categoryElement == null) {
+            categoryElement = new CategoryElement();
+            categoryElement.setIdentifiableArtefact(new IdentifiableArtefact());
+            categoryElement.getIdentifiableArtefact().setCode(codeIdentifier);
+            setCategoryElementUrnUnique(categoryElement, Boolean.FALSE);
+        } else {
+            if (!updateAlreadyExisting) {
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED, categoryElement.getIdentifiableArtefact().getCode()));
+                return null;
+            } else {
+                categoryElement.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
+                categoryElement.setUpdateDate(new DateTime());
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, categoryElement.getIdentifiableArtefact().getCode()));
+            }
+        }
+        // short name
+        categoryElement.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, categoryElement.getShortName()));
+        if (categoryElement.getShortName() == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, categoryElement.getIdentifiableArtefact().getCode(),
+                    ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
+        }
+
+        // Do not persist if any error ocurrs
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+
+        try {
+            // extra validation to avoid save an incorrect variable element
+            if (categoryElement.getId() == null) {
+                CategoriesMetamacInvocationValidator.checkCreateCategoryElement(categoryElement, null);
+            } else {
+                CategoriesMetamacInvocationValidator.checkUpdateCategoryElement(categoryElement, null);
+            }
+        } catch (MetamacException metamacException) {
+            logger.error("Error importing category element from tsv file", metamacException);
+            MetamacExceptionItem metamacExceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
+            metamacExceptionItem.setExceptionItems(metamacException.getExceptionItems());
+            exceptionItems.add(metamacExceptionItem);
+        }
+        return categoryElement;
+    }
+
 }

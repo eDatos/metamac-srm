@@ -137,6 +137,8 @@ Application CategoriesMetamac {
     		PagedResult<@CategoryElement> findCategoryElementsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
     		"Exports category elements in tsv format"
     		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;
+    		"Imports category elements in tsv format"
+    		TaskImportationInfo importCategoryElementsTsv(java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
    		}
 
 		// ----------------------------------------------------------------
@@ -192,6 +194,7 @@ Application CategoriesMetamac {
 				findByQuery;
 				@CategoryElement findByUrn(String urn);
 				List<@CategoryElement> findByUrnIn(List<String> urns);
+				List<@CategoryElement> findByCodeIn(List<String> codes);
 				findByCondition(PagingParameter pagingParameter);
 
 			}

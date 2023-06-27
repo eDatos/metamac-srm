@@ -43,4 +43,14 @@ public class CategoryElementRepositoryImpl extends CategoryElementRepositoryBase
 
         return categoryElement.getValues();
     }
+
+    public List<CategoryElement> findByCodeIn(List<String> codes) {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).withProperty(CategoryElementProperties.identifiableArtefact().code()).in(codes)
+                .distinctRoot().build();
+
+        PagingParameter pagingParameter = PagingParameter.noLimits();
+        PagedResult<CategoryElement> categoryElement = findByCondition(conditions, pagingParameter);
+
+        return categoryElement.getValues();
+    }
 }

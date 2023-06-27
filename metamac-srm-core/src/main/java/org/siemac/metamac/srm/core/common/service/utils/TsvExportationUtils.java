@@ -792,7 +792,6 @@ public class TsvExportationUtils {
 
     private static void writeResourceElementsHeader(OutputStreamWriter writer, List<String> languages) throws IOException {
         writer.write(SrmConstants.TSV_HEADER_CODE);
-        writer.write(SrmConstants.TSV_SEPARATOR);
         for (String language : languages) {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_HEADER_SHORT_NAME + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);

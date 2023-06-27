@@ -32,6 +32,10 @@ public class SemanticIdentifierValidationUtils extends com.arte.statistic.sdmx.s
     }
 
     public static boolean isVariableElementSemanticIdentifier(String code) {
+        return isResourceElementSemanticIdentifier(code);
+    }
+
+    public static boolean isResourceElementSemanticIdentifier(String code) {
         return CoreCommonUtil.matchMetamacID(code);
     }
 

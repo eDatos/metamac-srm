@@ -26,6 +26,7 @@ import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
+import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -146,6 +147,32 @@ public class CategoryElementsPresenter extends Presenter<CategoryElementsPresent
         });
 
     }
+
+    //
+    // IMPORTATION
+    //
+
+    @Override
+    public void resourceImportationSucceed(String successMessage) {
+        ShowMessageEvent.fireSuccessMessage(CategoryElementsPresenter.this, successMessage);
+        retrieveCategoryElements(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null);
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void resourceImportationFailed(String errorMessage) {
+        ShowMessageEvent.fireErrorMessage(CategoryElementsPresenter.this, errorMessage);
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void showWaitPopup() {
+        ChangeWaitPopupVisibilityEvent.fire(this, true);
+    }
+
+    //
+    // EXPORTATION
+    //
 
     @Override
     public void exportCategoryElements(List<String> urns) {

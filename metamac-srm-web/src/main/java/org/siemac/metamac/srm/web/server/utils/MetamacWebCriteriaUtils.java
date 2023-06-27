@@ -636,11 +636,11 @@ public class MetamacWebCriteriaUtils {
             }
             if (criteria.getValidFromDate() != null) {
                 conjunctionRestriction.getRestrictions()
-                        .add(new MetamacCriteriaPropertyRestriction(VariableElementCriteriaPropertyEnum.VALID_FROM_DATE.name(), criteria.getValidFromDate(), OperationType.EQ));
+                        .add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.VALID_FROM_DATE.name(), criteria.getValidFromDate(), OperationType.GE));
             }
             if (criteria.getValidToDate() != null) {
                 conjunctionRestriction.getRestrictions()
-                        .add(new MetamacCriteriaPropertyRestriction(VariableElementCriteriaPropertyEnum.VALID_TO_DATE.name(), criteria.getValidToDate(), OperationType.EQ));
+                        .add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.VALID_TO_DATE.name(), criteria.getValidToDate(), OperationType.LE));
             }
         }
 

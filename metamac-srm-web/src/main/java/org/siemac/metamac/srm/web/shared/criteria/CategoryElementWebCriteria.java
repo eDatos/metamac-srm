@@ -6,7 +6,6 @@ public class CategoryElementWebCriteria extends NameableArtefactWebCriteria {
 
     private static final long serialVersionUID = 1L;
 
-    private String            categorySchemeUrn;
     private Date              validFromDate;
     private Date              validToDate;
 
@@ -31,13 +30,5 @@ public class CategoryElementWebCriteria extends NameableArtefactWebCriteria {
 
     public void setValidToDate(Date validToDate) {
         this.validToDate = validToDate;
-    }
-
-    public String getCategorySchemeUrn() {
-        return categorySchemeUrn;
-    }
-
-    public void setCategorySchemeUrn(String categorySchemeUrn) {
-        this.categorySchemeUrn = categorySchemeUrn;
     }
 }

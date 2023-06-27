@@ -8,7 +8,6 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.web.category.model.ds.CategoryElementDS;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementsUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
-import org.siemac.metamac.srm.web.code.model.ds.VariableElementDS;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
@@ -39,8 +38,8 @@ public class CategoryElementSearchSectionStack extends BaseAdvancedSearchSection
         advancedSearchForm.setMargin(5);
         advancedSearchForm.setVisible(false);
 
-        CustomDateItem validFrom = new CustomDateItem(VariableElementDS.VALID_FROM, getConstants().variableElementValidFrom());
-        CustomDateItem validTo = new CustomDateItem(VariableElementDS.VALID_TO, getConstants().variableElementValidTo());
+        CustomDateItem validFrom = new CustomDateItem(CategoryElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
+        CustomDateItem validTo = new CustomDateItem(CategoryElementDS.VALID_TO, getConstants().categoryElementValidTo());
 
         CustomButtonItem searchItem = new CustomButtonItem(ADVANCED_SEARCH_ITEM_NAME, MetamacWebCommon.getConstants().search());
         searchItem.setColSpan(4);

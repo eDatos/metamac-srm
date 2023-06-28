@@ -64,6 +64,7 @@ public interface SculptorCriteria2MetamacCriteriaMapper {
     public MetamacCriteriaResult<CategoryMetamacBasicDto> pageResultCategoryToMetamacCriteriaResult(PagedResult<CategoryMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCategoryToMetamacCriteriaResultRelatedResource(PagedResult<CategoryMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<CategoryElementDto> pageResultCategoryElementToMetamacCriteriaResult(PagedResult<CategoryElement> source, Integer pageSize);
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultCategoryElementToMetamacCriteriaResultRelatedResource(PagedResult<CategoryElement> source, Integer pageSize);
 
     public MetamacCriteriaResult<CodelistMetamacBasicDto> pageResultCodelistVersionToMetamacCriteriaResult(PagedResult<CodelistVersionMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistVersionToMetamacCriteriaResultRelatedResource(PagedResult<CodelistVersionMetamac> source, Integer pageSize);

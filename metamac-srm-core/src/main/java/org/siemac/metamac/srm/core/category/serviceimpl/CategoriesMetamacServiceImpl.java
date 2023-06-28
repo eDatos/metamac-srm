@@ -1022,13 +1022,11 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     private void checkCategoryElementCanBeDeleted(CategoryElement categoryElementToDelete) throws MetamacException {
         String categoryElementToDeleteUrn = categoryElementToDelete.getIdentifiableArtefact().getUrn();
 
-        // TODO EDATOS-4150 FALTA ESTE CHECK A CATEGORIAS
-        /*
-         * if (CollectionUtils.isNotEmpty(categoryElementToDelete.getCodes())) {
-         * throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_ELEMENT_WITH_RELATIONS)
-         * .withMessageParameters(variableElementToDeleteUrn, variableElementToDelete.getCodes().get(0).getNameableArtefact().getUrn()).build(); // say one
-         * }
-         */
+        if (CollectionUtils.isNotEmpty(categoryElementToDelete.getCodes())) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.CATEGORY_ELEMENT_WITH_RELATIONS)
+                    .withMessageParameters(categoryElementToDeleteUrn, categoryElementToDelete.getCodes().get(0).getNameableArtefact().getUrn()).build(); // say one
+        }
+
     }
 
     public CategoryElement createCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
@@ -1325,6 +1323,31 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             exceptionItems.add(metamacExceptionItem);
         }
         return categoryElement;
+    }
+
+    @Override
+    public CategoryMetamac updateCategoryElementOfCategory(ServiceContext ctx, String categoryUrn, String categoryElementUrn) throws MetamacException {
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategoryElementOfCategory(categoryUrn, categoryElementUrn, null);
+
+        CategoryMetamac category = retrieveCategoryByUrn(ctx, categoryUrn);
+        if (categoryElementUrn == null) {
+            // Delete
+            if (category.getCategoryElement() != null) {
+                category.getCategoryElement().removeCode(category);
+            }
+        } else {
+            // Add
+            CategoryElement categoryElement = retrieveCategoryElementByUrn(categoryElementUrn);
+
+            if (category.getCategoryElement() != null) {
+                category.getCategoryElement().removeCode(category);
+            }
+            categoryElement.addCode(category);
+        }
+        baseService.updateItemSchemeLastUpdated(ctx, category.getItemSchemeVersion());
+        return getCategoryMetamacRepository().save(category);
     }
 
 }

@@ -92,6 +92,12 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
         }
 
         // Modifiable attributes
+        if (source.getCategoryElement() != null) {
+            target.setCategoryElement(retrieveCategoryElement(source.getCategoryElement().getUrn()));
+        } else {
+            target.setCategoryElement(null);
+        }
+
         target.setEniSchema(source.getEniSchema() != null ? masterTablesDto2DoMapper.eniSchemaCatalogDtoToEntity(source.getEniSchema()) : null);
 
         // Sdmx

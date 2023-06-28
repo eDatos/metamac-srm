@@ -29,6 +29,7 @@ import org.siemac.metamac.srm.web.server.handlers.category.ReSendCategorySchemeS
 import org.siemac.metamac.srm.web.server.handlers.category.SaveCategoryActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.SaveCategoryElementActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.SaveCategorySchemeActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.UpdateCategoryElementOfCategoryActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.UpdateCategorySchemeProcStatusActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.VersionCategorySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.AddCodelistsToCodelistFamilyActionHandler;
@@ -187,6 +188,7 @@ import org.siemac.metamac.srm.web.shared.category.ReSendCategorySchemeStreamMess
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusAction;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.code.AddCodelistsToCodelistFamilyAction;
@@ -443,6 +445,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(SaveCategoryElementAction.class, SaveCategoryElementActionHandler.class);
         bindHandler(DeleteCategoryElementsAction.class, DeleteCategoryElementsActionHandler.class);
         bindHandler(ExportCategoryElementsAction.class, ExportCategoryElementsActionHandler.class);
+        bindHandler(UpdateCategoryElementOfCategoryAction.class, UpdateCategoryElementOfCategoryActionHandler.class);
 
         // Codes
         bindHandler(DeleteCodelistsAction.class, DeleteCodelistsActionHandler.class);

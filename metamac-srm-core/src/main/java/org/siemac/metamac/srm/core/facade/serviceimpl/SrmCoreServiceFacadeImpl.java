@@ -4291,4 +4291,35 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         return getCategoriesMetamacService().importCategoryElementsTsv(ctx, file, fileName, updateAlreadyExisting, Boolean.TRUE);
     }
 
+    public MetamacCriteriaResult<RelatedResourceDto> findCategoryElementsForCategoriesByCondition(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCategoryElementCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<CategoryElement> result = getCategoriesMetamacService().findCategoryElementsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        MetamacCriteriaResult<RelatedResourceDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCategoryElementToMetamacCriteriaResultRelatedResource(result,
+                sculptorCriteria.getPageSize());
+
+        return metamacCriteriaResult;
+    }
+
+    @Override
+    public CategoryMetamacDto updateCategoryElementOfCategory(ServiceContext ctx, String categoryUrn, String categoryElementUrn) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        CategoriesSecurityUtils.canUpdateCategoryCategoryElement(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update
+        CategoryMetamac categoryUpdated = getCategoriesMetamacService().updateCategoryElementOfCategory(ctx, categoryUrn, categoryElementUrn);
+
+        // Transform to DTO
+        CategoryMetamacDto categoryDto = categoriesDo2DtoMapper.categoryMetamacDoToDto(categoryUpdated);
+        return categoryDto;
+    }
+
 }

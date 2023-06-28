@@ -3,6 +3,7 @@ import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-categories.btdesign"
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base-dtos.btdesign"
 import "classpath:/btdesign/metamac-srm-core-master-tables-dtos.btdesign"
+import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-common.btdesign"
 
 Application DtosMetamacCategoryDomain {
 	basePackage=unused
@@ -28,6 +29,8 @@ Application DtosMetamacCategoryDomain {
 		DataTransferObject CategoryMetamacDto extends @CategoryDto {
 		    "ENI Schema"
 			- @EniSchemaCatalogDto eniSchema nullable;
+			"Category element"
+			- @RelatedResourceDto categoryElement nullable;
 		}
 		
 		"Dto for CategoryMetamac"

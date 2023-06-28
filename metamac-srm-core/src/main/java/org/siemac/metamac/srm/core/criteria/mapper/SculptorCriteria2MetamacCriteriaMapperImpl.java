@@ -455,4 +455,18 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
         }
         return target;
     }
+
+    // Category element
+    @Override
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultCategoryElementToMetamacCriteriaResultRelatedResource(PagedResult<CategoryElement> source, Integer pageSize) {
+        MetamacCriteriaResult<RelatedResourceDto> target = new MetamacCriteriaResult<RelatedResourceDto>();
+        target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
+        if (source.getValues() != null) {
+            target.setResults(new ArrayList<RelatedResourceDto>(source.getValues().size()));
+            for (CategoryElement scheme : source.getValues()) {
+                target.getResults().add(categoriesDo2DtoMapper.categoryElementDoToRelatedResourceDto(scheme));
+            }
+        }
+        return target;
+    }
 }

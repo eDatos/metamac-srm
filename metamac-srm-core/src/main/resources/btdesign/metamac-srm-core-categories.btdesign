@@ -139,6 +139,8 @@ Application CategoriesMetamac {
     		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;
     		"Imports category elements in tsv format"
     		TaskImportationInfo importCategoryElementsTsv(java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
+    		"Change category element of category"
+			@CategoryMetamac updateCategoryElementOfCategory(String categoryUrn, String categoryElementUrn) throws MetamacException;
    		}
 
 		// ----------------------------------------------------------------
@@ -169,6 +171,7 @@ Application CategoriesMetamac {
 
 			"Metadata ENI SCHEMA"
 			- @EniSchemaCatalog eniSchema nullable cascade="none" databaseColumn="ENI_SCHEMA_FK";
+			- @CategoryElement categoryElement nullable cascade="none" fetch="lazy" databaseColumn="CATEGORY_ELEMENT_FK"  <-> codes;
 			
 			Repository CategoryMetamacRepository {
 				save;
@@ -187,6 +190,8 @@ Application CategoriesMetamac {
 		Entity CategoryElement extends @ResourceElement {
 			databaseTable="TB_CAT_RESOURCE_ELEMENTS"
 			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"	
+			
+			- Bag<@CategoryMetamac> codes cascade="none" fetch="lazy" <-> categoryElement;
 			
 			Repository CategoryElementRepository {
 				save;

@@ -142,7 +142,7 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
         return canRetrieveOrFindResource(metamacPrincipal);
     }
 
-    public static boolean canUpdateCodeCategoryElement(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+    public static boolean canUpdateCategoryCategoryElement(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
         if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(procStatus) || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(procStatus)) {
             return isSrmRoleAllowed(metamacPrincipal, JEFE_NORMALIZACION);
         } else {

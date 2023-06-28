@@ -6,6 +6,7 @@ import org.siemac.metamac.srm.core.base.dto.ResourceElementDto;
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 @org.springframework.stereotype.Component("resourceElementDo2DtoMapper")
@@ -35,5 +36,19 @@ public class ResourceElementDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implem
         target.setLastUpdated(CoreCommonUtil.transformDateTimeToDate(source.getLastUpdated()));
         target.setLastUpdatedBy(source.getLastUpdatedBy());
         target.setVersionOptimisticLocking(source.getVersion());
+    }
+
+    @Override
+    public void resourceElementDoToRelatedResourceDto(ResourceElement source, RelatedResourceDto target) {
+        if (source == null) {
+            return;
+        }
+        target.setId(source.getId()); // Database id. Only to efficient save operations
+        target.setCode(source.getIdentifiableArtefact().getCode());
+        target.setTitle(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
+        target.setUrn(source.getIdentifiableArtefact().getUrn());
+        target.setUrnProvider(source.getIdentifiableArtefact().getUrnProvider());
+
+        target.setType(null);
     }
 }

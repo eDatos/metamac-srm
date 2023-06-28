@@ -27,6 +27,9 @@ import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent.UpdateEniSchemaCatalogHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesAction;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
+import org.siemac.metamac.srm.web.shared.StructuralResourcesRelationEnum;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoriesBySchemeAction;
@@ -37,9 +40,13 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryResult;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategoryAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategoryResult;
+import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
@@ -97,6 +104,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<ItemVisualisationResult> itemVisualisationResults);
         void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto);
 
+        void setCategoryElements(GetRelatedResourcesResult result);
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
 
@@ -205,6 +213,39 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
                 } else {
                     goToCategoryScheme(categorySchemeUrn);
                 }
+            }
+        });
+    }
+
+    @Override
+    public void retrieveCategoryElements(int firstResult, int maxResults, String criteria) {
+        CategoryElementWebCriteria categoryElementWebCriteria = new CategoryElementWebCriteria(criteria);
+        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CATEGORY_ELEMENT_WITH_CODE, firstResult, maxResults, categoryElementWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategoryPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setCategoryElements(result);
+                    }
+                });
+    }
+
+    @Override
+    public void updateCategoryElement(final String categoryUrn, String categoryElementUrn) {
+        dispatcher.execute(new UpdateCategoryElementOfCategoryAction(categoryUrn, categoryElementUrn), new WaitingAsyncCallbackHandlingError<UpdateCategoryElementOfCategoryResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(UpdateCategoryElementOfCategoryResult result) {
+                fireSuccessMessage(getMessages().categoryCategoryElementUpdated());
+                retrieveCategory(categoryUrn);
             }
         });
     }

@@ -138,6 +138,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     // Categories
     public static final CommonServiceExceptionType CATEGORY_NOT_EXTERNALLY_PUBLISHED                                                     = create(
             "exception.srm.categories.category_not_externally_published");
+    public static final CommonServiceExceptionType CATEGORY_ELEMENT_WITH_RELATIONS                                                       = create(
+            "exception.srm.codelists.category_element.with_relations");
 
     // Codes miscellaneous
     public static final CommonServiceExceptionType CODES_VARIABLE_ELEMENTS_NORMALISATION_ERROR                                           = create(

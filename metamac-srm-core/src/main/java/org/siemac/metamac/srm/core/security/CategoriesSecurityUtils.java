@@ -186,8 +186,8 @@ public class CategoriesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
-    public static void canUpdateCodeCategoryElement(ServiceContext ctx, ProcStatusEnum procStatus) throws MetamacException {
-        if (!SharedCategoriesSecurityUtils.canUpdateCodeCategoryElement(getMetamacPrincipal(ctx), procStatus)) {
+    public static void canUpdateCategoryCategoryElement(ServiceContext ctx, ProcStatusEnum procStatus) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canUpdateCategoryCategoryElement(getMetamacPrincipal(ctx), procStatus)) {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }

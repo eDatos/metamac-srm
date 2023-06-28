@@ -80,6 +80,7 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
             return null;
         }
         CategoryMetamacDto target = new CategoryMetamacDto();
+        target.setCategoryElement(categoryElementDoToRelatedResourceDto(source.getCategoryElement()));
         if (source.getEniSchema() != null) {
             target.setEniSchema(do2DtoMapper.eniSchemaCatalogToDto(source.getEniSchema()));
         }
@@ -134,6 +135,19 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         CategoryElementDto target = new CategoryElementDto();
 
         resourceElementDo2DtoMapper.resourceElementDoToDto(source, target);
+
+        return target;
+    }
+
+    @Override
+    public RelatedResourceDto categoryElementDoToRelatedResourceDto(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        RelatedResourceDto target = new RelatedResourceDto();
+
+        resourceElementDo2DtoMapper.resourceElementDoToRelatedResourceDto(source, target);
 
         return target;
     }

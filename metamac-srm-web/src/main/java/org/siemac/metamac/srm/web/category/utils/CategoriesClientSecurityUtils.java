@@ -207,6 +207,13 @@ public class CategoriesClientSecurityUtils {
         return SharedCategoriesSecurityUtils.canImportCategoryElements(MetamacSrmWeb.getCurrentUser());
     }
 
+    public static boolean canUpdateCategoryCategoryElement(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCategoriesSecurityUtils.canUpdateCategoryCategoryElement(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
     //
     // PRIVATE METHODS
     //

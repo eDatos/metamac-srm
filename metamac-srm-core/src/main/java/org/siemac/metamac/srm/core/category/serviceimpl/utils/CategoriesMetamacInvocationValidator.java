@@ -158,12 +158,12 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkUpdateCodeCategoryElement(String codeUrn, String categoryElementUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
+    public static void checkUpdateCategoryElementOfCategory(String categoryUrn, String categoryElementUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
 
-        ValidationUtils.checkParameterRequired(codeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(categoryUrn, ServiceExceptionParameters.URN, exceptions);
         // categoryElementUrn is optional
 
         ExceptionUtils.throwIfException(exceptions);

@@ -35,4 +35,5 @@ public interface CategoriesDo2DtoMapper {
 
     // Category element
     public CategoryElementDto categoryElementDoToDto(CategoryElement source);
+    public RelatedResourceDto categoryElementDoToRelatedResourceDto(CategoryElement source);
 }

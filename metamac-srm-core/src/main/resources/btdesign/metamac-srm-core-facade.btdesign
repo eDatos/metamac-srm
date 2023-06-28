@@ -573,7 +573,11 @@ Application SrmFacadeCore {
     		"Exports category elements in tsv format"
     		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;	
     		"Imports category elements in tsv format"
-    		TaskImportationInfo importCategoryElementsTsv(InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;	
+    		TaskImportationInfo importCategoryElementsTsv(InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
+    		"Find category elements can be for categories of category schemes"
+    		MetamacCriteriaResult<@RelatedResourceDto> findCategoryElementsForCategoriesByCondition(MetamacCriteria criteria) throws MetamacException;	
+    		"Change category element of category"
+			@CategoryMetamacDto updateCategoryElementOfCategory(String categoryrn, String categoryElementUrn) throws MetamacException;
     		    		
 	    	/**************************************************************************
 		     * CODES

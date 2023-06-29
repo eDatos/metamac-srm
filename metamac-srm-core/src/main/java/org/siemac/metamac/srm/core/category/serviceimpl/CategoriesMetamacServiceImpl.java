@@ -573,6 +573,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
                 LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
 
+                // store categoryElement found in each iteration for more efficient importation.
+                Map<String, CategoryElement> categoryElementsByCode = new HashMap<String, CategoryElement>();
+
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -587,6 +590,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
                     if (category != null) {
+                        tsvLineToItemCategoryCategoryElement(category, categoryElementsByCode, header, columns, informationItems);
                         TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                         categtoriesToPersist.add(category);
                         categoriesToPersistByCode.put(category.getNameableArtefact().getCodeFull(), category);
@@ -615,8 +619,33 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
-    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
-        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
+    public void tsvLineToItemCategoryCategoryElement(CategoryMetamac category, Map<String, CategoryElement> categoryElementsByCode, ImportationCategoriesTsvHeader header, String[] columns,
+            List<MetamacExceptionItem> infoItems) {
+        // category element field
+        String categoryElementCodeToImport = TsvImportationUtils.getCategoryElementCode(header, columns);
+        if (!StringUtils.isBlank(categoryElementCodeToImport)) {
+            CategoryElement categoryElement = retrieveCategoryElementImportedByCode(categoryElementsByCode, categoryElementCodeToImport);
+            if (categoryElement == null) {
+                // do not abort importation. Only inform about this
+                String categoryIdentifier = columns[header.getCodePosition()];
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_CATEGORY_ELEMENT_NOT_FOUND, categoryElementCodeToImport, categoryIdentifier));
+            } else {
+                category.setCategoryElement(categoryElement);
+                categoryElementsByCode.put(categoryElementCodeToImport, categoryElement);
+            }
+        } else {
+            category.setCategoryElement(null);
+        }
+    }
+
+    public CategoryElement retrieveCategoryElementImportedByCode(Map<String, CategoryElement> categoryElementsByCode, String categoryElementCode) {
+        // category element field
+
+        if (categoryElementsByCode.containsKey(categoryElementCode)) {
+            return categoryElementsByCode.get(categoryElementCode);
+        } else {
+            return getCategoryElementRepository().findByCode(categoryElementCode);
+        }
     }
 
     @Override

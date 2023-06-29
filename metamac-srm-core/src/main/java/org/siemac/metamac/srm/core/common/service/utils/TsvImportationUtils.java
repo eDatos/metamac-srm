@@ -411,8 +411,8 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     public static ImportationCategoriesTsvHeader parseTsvHeaderToImportCategories(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_ENI_SCHEME, SrmConstants.TSV_HEADER_NAME,
-                SrmConstants.TSV_HEADER_DESCRIPTION, SrmConstants.TSV_HEADER_COMMENT);
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_PARENT, SrmConstants.TSV_HEADER_CATEGORY_ELEMENT, SrmConstants.TSV_HEADER_ENI_SCHEME,
+                SrmConstants.TSV_HEADER_NAME, SrmConstants.TSV_HEADER_DESCRIPTION, SrmConstants.TSV_HEADER_COMMENT);
         return (ImportationCategoriesTsvHeader) parseTsvHeaderToImportItems(line, exceptions, new ImportationCategoriesTsvHeader(), headersExpected);
     }
 
@@ -437,6 +437,10 @@ public class TsvImportationUtils {
         } else {
             category.setEniSchema(null);
         }
+    }
+
+    public static String getCategoryElementCode(ImportationCategoriesTsvHeader header, String[] columns) {
+        return columns[header.getCategoryElementPosition()];
     }
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -920,6 +924,9 @@ public class TsvImportationUtils {
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_PARENT.equals(columnName)) {
                 header.setParentPosition(i);
+                headerExpectedIndex++;
+            } else if (SrmConstants.TSV_HEADER_CATEGORY_ELEMENT.equals(columnName)) {
+                ((ImportationCategoriesTsvHeader) header).setCategoryElementPosition(i);
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_ENI_SCHEME.equals(columnName)) {
                 ((ImportationCategoriesTsvHeader) header).setEniSchemePosition(i);

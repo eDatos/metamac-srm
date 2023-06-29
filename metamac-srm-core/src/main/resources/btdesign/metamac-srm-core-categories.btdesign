@@ -198,6 +198,7 @@ Application CategoriesMetamac {
 				delete;
 				findByQuery;
 				@CategoryElement findByUrn(String urn);
+				@CategoryElement findByCode(String code);
 				List<@CategoryElement> findByUrnIn(List<String> urns);
 				List<@CategoryElement> findByCodeIn(List<String> codes);
 				findByCondition(PagingParameter pagingParameter);

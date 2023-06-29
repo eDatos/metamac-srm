@@ -216,6 +216,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.concept_scheme.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY_NOT_FOUND             = create(
             "exception.srm.importation.tsv.error.variable_element.geographical_granularity.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_CATEGORY_ELEMENT_NOT_FOUND                                       = create(
+            "info.srm.importation.tsv.error.category_element.not_found");
     public static final CommonServiceExceptionType EXPORTATION_TSV_ERROR                                                                 = create("exception.srm.exportation.tsv.error");
 
     // Notices

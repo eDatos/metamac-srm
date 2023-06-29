@@ -34,6 +34,21 @@ public class CategoryElementRepositoryImpl extends CategoryElementRepositoryBase
         return null;
     }
 
+    public CategoryElement findByCode(String code) {
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).withProperty(CategoryElementProperties.identifiableArtefact().code()).ignoreCaseEq(code)
+                .distinctRoot().build();
+
+        PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1);
+        PagedResult<CategoryElement> categoryElement = findByCondition(conditions, pagingParameter);
+
+        if (categoryElement.getValues().size() == 1) {
+            return categoryElement.getValues().iterator().next();
+        }
+
+        return null;
+    }
+
     public List<CategoryElement> findByUrnIn(List<String> urns) {
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).withProperty(CategoryElementProperties.identifiableArtefact().urn()).in(urns)
                 .distinctRoot().build();

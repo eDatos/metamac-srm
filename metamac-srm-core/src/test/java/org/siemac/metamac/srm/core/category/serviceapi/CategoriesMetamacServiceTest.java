@@ -932,6 +932,54 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     }
 
     @Test
+    @Override
+    public void testDeleteCategoryElement() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testCreateCategoryElement() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testUpdateCategoryElement() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testRetrieveCategoryElementByUrn() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testFindCategoryElementsByCondition() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testImportCategoryElementsTsv() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testUpdateCategoryElementOfCategory() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
+    @Override
+    public void testExportCategoryElementsTsv() throws Exception {
+        // TODO EDATOS-4150
+    }
+
+    @Test
     public void testPublishInternallyCategorySchemeCheckTranslations() throws Exception {
         String urn = CATEGORY_SCHEME_8_V1;
 
@@ -2123,7 +2171,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Test
     public void testRetrieveCategoriesOrderedInDepthByCategorySchemeUrn() throws Exception {
 
-        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), new CategoryMetamacResultSelection(true, true, true, true));
+        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), new CategoryMetamacResultSelection(true, true, true, true, false, true));
 
         assertEquals(8, categories.size());
 

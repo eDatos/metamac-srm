@@ -317,6 +317,7 @@ public class TsvExportationUtils {
                 writer.write(SrmConstants.TSV_LINE_SEPARATOR);
                 writeItemCode(writer, itemResult);
                 writeParentCodeFull(writer, itemResult);
+                writeCategoryElementByCategory(writer, itemResult);
                 writeItemExtensionPointEniSchemeIdentifier(writer, itemResult);
                 writeItemName(writer, itemResult, languages);
                 writeItemDescription(writer, itemResult, languages);
@@ -337,6 +338,8 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_PARENT);
         writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_CATEGORY_ELEMENT);
+        writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_ENI_SCHEME);
         for (String language : languages) {
             writer.write(SrmConstants.TSV_SEPARATOR);
@@ -349,6 +352,14 @@ public class TsvExportationUtils {
         for (String language : languages) {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_HEADER_COMMENT + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
+        }
+    }
+
+    private static void writeCategoryElementByCategory(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        String categoryElement = SrmServiceUtils.getCategoryItemResultCategoryElementCode(itemResult);
+        if (categoryElement != null) {
+            writer.write(categoryElement);
         }
     }
 

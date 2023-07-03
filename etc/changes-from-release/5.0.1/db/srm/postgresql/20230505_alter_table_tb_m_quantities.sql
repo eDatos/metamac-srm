@@ -8,7 +8,7 @@
 
 -- Nuevo campo
 alter table tb_m_quantities 
-add column unit_multiplier_fk int8 ;
+add column unit_multiplier_fk bigint ;
 
 alter table tb_m_quantities 
 add constraint fk_tb_m_quantities_unit_multiplier_fk

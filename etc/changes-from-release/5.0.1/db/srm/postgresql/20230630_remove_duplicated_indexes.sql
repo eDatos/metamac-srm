@@ -13,7 +13,7 @@
 -- Se mantiene el índice: tb_m_codelists_versions_pkey
 DROP INDEX IF EXISTS ix_tb_m_codelists_v_fk;
 
--- Tabla: tb_concept_schemes_versions
+-- Tabla: tb_m_concept_schemes_versions
 -- Columna: tb_concept_schemes_versions
 -- Indices duplicados: ix_tb_m_concepts_schemes_v_fk y tb_m_concept_schemes_versions_pkey
 -- Se mantiene el índice: tb_m_concept_schemes_versions_pkey

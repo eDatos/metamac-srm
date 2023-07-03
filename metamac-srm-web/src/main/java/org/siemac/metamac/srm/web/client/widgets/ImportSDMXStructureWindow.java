@@ -188,7 +188,6 @@ public abstract class ImportSDMXStructureWindow extends UploadResourceWithPrevie
             uploadItem = new UploadItem("file-name");
             uploadItem.setTitle(getConstants().sDMXResource());
             uploadItem.setWidth(300);
-            uploadItem.setRequired(true);
             uploadItem.setTitleStyle("requiredFormLabel");
 
             uploadItem.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
@@ -200,6 +199,7 @@ public abstract class ImportSDMXStructureWindow extends UploadResourceWithPrevie
                         @Override
                         public void execute() {
                             submitPreviewIfValid();
+                            warningLabel.hide();
                         }
                     });
                 }

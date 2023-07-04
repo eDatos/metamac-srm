@@ -9,10 +9,12 @@ import java.util.List;
 import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView;
 import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
+import org.siemac.metamac.srm.web.client.admin.widgets.AnnotationTypeSearchSectionStack;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.model.ds.AnnotationTypeDS;
 import org.siemac.metamac.srm.web.client.model.record.AnnotationTypeRecord;
 import org.siemac.metamac.srm.web.client.utils.RecordUtils;
+import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.web.common.client.widgets.ListGridToolStrip;
 import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
@@ -41,13 +43,15 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnnotationTypeUiHandlers> implements AdminAnnotationTypeTabView {
 
-    private Layout                 panel;
+    private Layout                           panel;
 
-    private PaginatedCheckListGrid listGrid;
+    private PaginatedCheckListGrid           listGrid;
 
-    private ListGridToolStrip      toolStrip;
+    private ListGridToolStrip                toolStrip;
 
-    private AnnotationTypePanel    annotationTypePanel;
+    private AnnotationTypePanel              annotationTypePanel;
+
+    private AnnotationTypeSearchSectionStack searchSectionStack;
 
     public AdminAnnotationTypeTabViewImpl() {
         super();
@@ -83,13 +87,18 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             }
         });
 
+        searchSectionStack = new AnnotationTypeSearchSectionStack();
+
         // ListGrid
 
         listGrid = new PaginatedCheckListGrid(SrmWebConstants.MAIN_LIST_MAX_RESULTS, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
-                getUiHandlers().retrieveAnnotationTypes(firstResult);
+                AnnotationTypeCriteria criteria = new AnnotationTypeCriteria();
+                criteria.setFirstResult(firstResult);
+                criteria.setMaxResults(maxResults);
+                getUiHandlers().retrieveAnnotationTypes(criteria);
             }
         });
 
@@ -127,6 +136,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         VLayout listPanel = new VLayout();
         listPanel.addMember(toolStrip);
+        listPanel.addMember(searchSectionStack);
         listPanel.addMember(listGrid);
 
         HLayout leftLayout = new HLayout();
@@ -369,5 +379,21 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
             return annotationTypeDto;
         }
+    }
+
+    @Override
+    public void setUiHandlers(AdminAnnotationTypeUiHandlers uiHandlers) {
+        super.setUiHandlers(uiHandlers);
+        searchSectionStack.setUiHandlers(uiHandlers);
+    }
+
+    @Override
+    public void clearSearchSection() {
+        searchSectionStack.clearSearchSection();
+    }
+
+    @Override
+    public AnnotationTypeCriteria getAnnotationTypeCriteria() {
+        return searchSectionStack.getAnnotationTypesCriteria();
     }
 }

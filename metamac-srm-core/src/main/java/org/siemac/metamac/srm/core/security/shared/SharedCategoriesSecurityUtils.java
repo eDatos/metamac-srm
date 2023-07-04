@@ -158,4 +158,8 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
         return canCrudCategoryElement(metamacPrincipal);
     }
 
+    public static boolean canNormaliseCategoryElementsToCategories(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
 }

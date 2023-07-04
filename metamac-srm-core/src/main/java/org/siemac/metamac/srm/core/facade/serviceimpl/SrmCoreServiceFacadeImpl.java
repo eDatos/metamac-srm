@@ -30,6 +30,8 @@ import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
@@ -127,7 +129,6 @@ import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.io.serviceapi.ExportService;
@@ -3906,7 +3907,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
         // Security
         CategoriesSecurityUtils.canRetrieveCategoriesByCategorySchemeUrn(ctx);
 
@@ -4320,6 +4321,26 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Transform to DTO
         CategoryMetamacDto categoryDto = categoriesDo2DtoMapper.categoryMetamacDoToDto(categoryUpdated);
         return categoryDto;
+    }
+
+    @Override
+    public void updateCodesCategoryElements(ServiceContext ctx, String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        CategoriesSecurityUtils.canUpdateCategoryCategoryElement(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update
+        getCategoriesMetamacService().updateCodesCategoryElements(ctx, categorySchemeUrn, categoryElementsIdByCodeId);
+    }
+
+    @Override
+    public List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(ServiceContext ctx, String categorySchemeUrn, String locale, boolean proposeOnlyWithoutCategoryElement)
+            throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canNormaliseCategoryElementsToCategories(ctx);
+
+        // Normalise
+        return getCategoriesMetamacService().normaliseCategoryElementsToCategories(ctx, categorySchemeUrn, locale, proposeOnlyWithoutCategoryElement);
     }
 
 }

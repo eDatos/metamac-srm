@@ -25,12 +25,14 @@ import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementsAc
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemeVersionsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.NormaliseCategoryElementsToCategoriesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.ReSendCategorySchemeStreamMessageActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.SaveCategoryActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.SaveCategoryElementActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.SaveCategorySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.UpdateCategoryElementOfCategoryActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.UpdateCategorySchemeProcStatusActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.UpdateCodesCategoryElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.VersionCategorySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.AddCodelistsToCodelistFamilyActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.AddVariableElementsToVariableActionHandler;
@@ -184,12 +186,14 @@ import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemesAction;
+import org.siemac.metamac.srm.web.shared.category.NormaliseCategoryElementsToCategoriesAction;
 import org.siemac.metamac.srm.web.shared.category.ReSendCategorySchemeStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.code.AddCodelistsToCodelistFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.AddVariableElementsToVariableAction;
@@ -446,6 +450,8 @@ public class ServerModule extends HandlerModule {
         bindHandler(DeleteCategoryElementsAction.class, DeleteCategoryElementsActionHandler.class);
         bindHandler(ExportCategoryElementsAction.class, ExportCategoryElementsActionHandler.class);
         bindHandler(UpdateCategoryElementOfCategoryAction.class, UpdateCategoryElementOfCategoryActionHandler.class);
+        bindHandler(UpdateCodesCategoryElementsAction.class, UpdateCodesCategoryElementsActionHandler.class);
+        bindHandler(NormaliseCategoryElementsToCategoriesAction.class, NormaliseCategoryElementsToCategoriesActionHandler.class);
 
         // Codes
         bindHandler(DeleteCodelistsAction.class, DeleteCodelistsActionHandler.class);

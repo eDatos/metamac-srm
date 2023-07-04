@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
@@ -36,7 +37,6 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguag
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.core.client.Scheduler;
@@ -182,8 +182,8 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
     }
 
     @Override
-    public void setCategoryList(CategorySchemeMetamacDto categorySchemeDto, List<ItemVisualisationResult> itemVisualisationResults) {
-        categoriesTreeGrid.setCategories(categorySchemeDto, itemVisualisationResults);
+    public void setCategoryList(CategorySchemeMetamacDto categorySchemeDto, List<CategoryMetamacVisualisationResult> categoryVisualisationResults) {
+        categoriesTreeGrid.setCategories(categorySchemeDto, categoryVisualisationResults);
         categoriesTreeGrid.selectItem(categoryDto.getUrn());
     }
 

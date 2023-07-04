@@ -89,7 +89,7 @@ Application CategoriesMetamac {
 			"Deletes category"
     		deleteCategory(String urn) throws MetamacException;
     		"Retrieves categories by category scheme in locale requested"
-    		List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
+    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
     		"Retrieves categories by category scheme unordered"
     		List<ItemResult> retrieveCategoriesByCategorySchemeUrnUnordered(String categorySchemeUrn, ItemResultSelection itemResultSelection) throws MetamacException;
     		"Imports categories in TSV format"
@@ -141,6 +141,12 @@ Application CategoriesMetamac {
     		TaskImportationInfo importCategoryElementsTsv(java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
     		"Change category element of category"
 			@CategoryMetamac updateCategoryElementOfCategory(String categoryUrn, String categoryElementUrn) throws MetamacException;
+			"Change category elements to codes"
+			updateCodesCategoryElements(String categorySchemeUrn, Map<Long,Long> categoryElementsIdByCodeId) throws MetamacException;
+			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
+	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
+	   		
+			
    		}
 
 		// ----------------------------------------------------------------
@@ -181,8 +187,9 @@ Application CategoriesMetamac {
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findCategoriesByCategorySchemeUnordered(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
 				List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException;
-				
+				List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException;
+				updateCodesCategoryElements(Map<Long,Long> categoryElementsByCodes, Long categorySchemeId) throws MetamacException;
+
 				checkCategoryTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 			}
 		}
@@ -196,6 +203,7 @@ Application CategoriesMetamac {
 			Repository CategoryElementRepository {
 				save;
 				delete;
+				findAll;
 				findByQuery;
 				@CategoryElement findByUrn(String urn);
 				@CategoryElement findByCode(String code);

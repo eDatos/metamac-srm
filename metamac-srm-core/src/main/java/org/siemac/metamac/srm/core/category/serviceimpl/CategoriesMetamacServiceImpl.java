@@ -44,6 +44,9 @@ import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensio
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryElementVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategoriesMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategorisationsUtils;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
@@ -64,6 +67,8 @@ import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
+import org.siemac.metamac.srm.core.normalisation.DiceLuceneRamAproxStringMatch;
+import org.siemac.metamac.srm.core.normalisation.MatchResult;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -73,6 +78,7 @@ import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoryElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
+import org.siemac.metamac.srm.core.util.InternationalStringUtils;
 import org.siemac.metamac.srm.core.util.UtilsMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +106,6 @@ import com.arte.statistic.sdmx.srm.core.category.serviceimpl.utils.CategoriesInv
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalStringRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResultSelection;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
@@ -663,7 +668,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     }
 
     @Override
-    public List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
         // Validation
         CategoriesMetamacInvocationValidator.checkRetrieveCategoriesByCategorySchemeUrn(categorySchemeUrn, locale, null);
 
@@ -1377,6 +1382,87 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
         baseService.updateItemSchemeLastUpdated(ctx, category.getItemSchemeVersion());
         return getCategoryMetamacRepository().save(category);
+    }
+
+    @Override
+    public void updateCodesCategoryElements(ServiceContext ctx, String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCodesCategoryElements(categorySchemeUrn, categoryElementsIdByCodeId, null);
+
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+
+        // Update all
+        getCategoryMetamacRepository().updateCodesCategoryElements(categoryElementsIdByCodeId, categorySchemeVersion.getId());
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+    }
+
+    @Override
+    public List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(ServiceContext ctx, String categorySchemeUrn, String locale, boolean proposeOnlyWithoutCategoryElement)
+            throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkNormaliseCategoryElementsToCategories(categorySchemeUrn, locale, null);
+
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+
+        // Find codes and category elements
+        List<CategoryMetamacVisualisationResult> codes = retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, locale);
+        List<CategoryElementVisualisationResult> categoryElements = retrieveCategoryElementsAll(locale);
+        Map<String, CategoryElementVisualisationResult> categoryElementsByUrn = new HashMap<>(categoryElements.size());
+        for (CategoryElementVisualisationResult categoryElement : categoryElements) {
+            categoryElementsByUrn.put(categoryElement.getUrn(), categoryElement);
+        }
+
+        // Init dictionary with category elements
+        Map<String, String> dictionary = new HashMap<>(categoryElements.size());
+        for (CategoryElementVisualisationResult categoryElement : categoryElements) {
+            if (categoryElement.getShortName() != null) {
+                dictionary.put(categoryElement.getUrn(), categoryElement.getShortName());
+            }
+        }
+        DiceLuceneRamAproxStringMatch luceneMatch = new DiceLuceneRamAproxStringMatch(dictionary);
+
+        // Get suggestions or mantain actual category element
+        List<CodeCategoryElementNormalisationResult> results = new ArrayList<>(codes.size());
+        for (CategoryMetamacVisualisationResult code : codes) {
+            CodeCategoryElementNormalisationResult result = new CodeCategoryElementNormalisationResult();
+            result.setCode(code);
+            if (proposeOnlyWithoutCategoryElement && code.getCategoryElement() != null) {
+                // maintain actual
+                result.setCategoryElementProposed(code.getCategoryElement());
+            } else {
+                // propose by lucene
+                String name = code.getName();
+                if (name != null) {
+                    List<MatchResult> suggestedCategoryElements = luceneMatch.getSuggestedWords(name, 1);
+                    if (suggestedCategoryElements.size() != 0) {
+                        CategoryElementVisualisationResult categoryElement = categoryElementsByUrn.get(suggestedCategoryElements.get(0).getDictionaryKey());
+                        result.setCategoryElementProposed(categoryElement);
+                    }
+                }
+            }
+            results.add(result);
+        }
+
+        luceneMatch.shutdown();
+        return results;
+    }
+
+    private List<CategoryElementVisualisationResult> retrieveCategoryElementsAll(String locale) throws MetamacException {
+        List<CategoryElement> categoryElements = getCategoryElementRepository().findAll();
+        return categoryElementToCategoryElementVisualisationResult(locale, categoryElements);
+    }
+
+    private List<CategoryElementVisualisationResult> categoryElementToCategoryElementVisualisationResult(String locale, List<CategoryElement> categoryElements) {
+        List<CategoryElementVisualisationResult> categoryElementVisualisationResult = new ArrayList<CategoryElementVisualisationResult>();
+        for (CategoryElement categoryElement : categoryElements) {
+            CategoryElementVisualisationResult categoryElementVisualisation = new CategoryElementVisualisationResult();
+            categoryElementVisualisation.setIdDatabase(categoryElement.getId());
+            categoryElementVisualisation.setUrn(categoryElement.getIdentifiableArtefact().getUrn());
+            categoryElementVisualisation.setCode(categoryElement.getIdentifiableArtefact().getCode());
+            categoryElementVisualisation.setShortName(InternationalStringUtils.getLocalisedString(categoryElement.getShortName(), locale));
+            categoryElementVisualisationResult.add(categoryElementVisualisation);
+        }
+        return categoryElementVisualisationResult;
     }
 
 }

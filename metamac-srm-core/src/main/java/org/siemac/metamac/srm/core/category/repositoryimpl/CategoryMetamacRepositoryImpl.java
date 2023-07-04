@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.core.category.repositoryimpl;
 
+import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getDate;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getLong;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getString;
 
@@ -16,6 +17,8 @@ import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryElementVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
@@ -26,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemRepository;
-import com.arte.statistic.sdmx.srm.core.category.domain.Category;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategoryRepository;
+import com.arte.statistic.sdmx.srm.core.code.domain.Code;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 
@@ -128,7 +131,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
 
         if (resultSelection instanceof CategoryMetamacResultSelection) {
             CategoryMetamacResultSelection categoryResultSelection = (CategoryMetamacResultSelection) resultSelection;
-            // Category element. Execute one independent query to retrieve variable elements is more efficient than do a global query
+            // Category element. Execute one independent query to retrieve category elements is more efficient than do a global query
             if (categoryResultSelection.isCategoryElementCode()) {
                 executeQueryCategoryElementAndUpdateCategoryMetamacResult(itemSchemeVersionId, mapCategoriesByItemId);
             } else if (categoryResultSelection.isCategoryElementFull()) {
@@ -169,8 +172,94 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
     }
 
     @Override
-    public List<ItemVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException {
-        return itemRepository.findItemsByItemSchemeUnorderedToVisualisation(itemSchemeVersionId, Category.class, locale);
+    public List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException {
+
+        // Find. NOTE: this query return null label if locale not exits for a code
+        StringBuilder sbCategories = new StringBuilder();
+        sbCategories.append("SELECT cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, ls.LABEL ");
+        sbCategories.append("FROM TB_M_CATEGORIES c ");
+        sbCategories.append("INNER JOIN TB_CATEGORIES cb on cb.ID = c.TB_CATEGORIES ");
+        sbCategories.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS a on cb.NAMEABLE_ARTEFACT_FK = a.ID ");
+        sbCategories.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = a.NAME_FK and ls.locale = :locale ");
+        sbCategories.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion");
+        Query queryCategories = getEntityManager().createNativeQuery(sbCategories.toString());
+        queryCategories.setParameter("categorySchemeVersion", itemSchemeVersionId);
+        queryCategories.setParameter("locale", locale);
+        List categoriesResultSql = queryCategories.getResultList();
+
+        // Transform object[] results
+        List<CategoryMetamacVisualisationResult> targets = new ArrayList<CategoryMetamacVisualisationResult>(categoriesResultSql.size());
+        Map<Long, ItemVisualisationResult> mapCodeByItemId = new HashMap<Long, ItemVisualisationResult>(categoriesResultSql.size());
+        for (Object categoryResultSql : categoriesResultSql) {
+            Object[] categoryResultSqlArray = (Object[]) categoryResultSql;
+            CategoryMetamacVisualisationResult target = categoryResultSqlToCategoryResult(categoryResultSqlArray, null);
+            targets.add(target);
+            mapCodeByItemId.put(target.getItemIdDatabase(), target);
+        }
+
+        // Add description. Execute one independent query to retrieve it is more efficient than do a global query
+        itemRepository.executeQueryFillItemDescription(itemSchemeVersionId, Code.class, locale, mapCodeByItemId);
+
+        List categoryElementsResultSql = getCategoryElementByCategoryScheme(itemSchemeVersionId, locale);
+        for (Object categoryElementResultSql : categoryElementsResultSql) {
+            Object[] categoryElementResultSqlArray = (Object[]) categoryElementResultSql;
+            Long actualItemId = getLong(categoryElementResultSqlArray[0]);
+            CategoryMetamacVisualisationResult target = (CategoryMetamacVisualisationResult) mapCodeByItemId.get(actualItemId);
+            CategoryElementVisualisationResult categoryElement = categoryElementResultSqlToCategoryElementVisualisationResult(categoryElementResultSqlArray);
+            target.setCategoryElement(categoryElement);
+        }
+
+        // Parent: fill manually with java code
+        for (ItemVisualisationResult target : targets) {
+            if (target.getParentIdDatabase() != null) {
+                ItemVisualisationResult parent = mapCodeByItemId.get(target.getParentIdDatabase());
+                target.setParent(parent);
+            }
+        }
+        return targets;
+    }
+
+    private List getCategoryElementByCategoryScheme(Long itemSchemeVersionId, String locale) {
+        // Category element. Execute one independent query to retrieve category elements is more efficient than do a global query
+        StringBuilder sbCategoryElements = new StringBuilder();
+        sbCategoryElements.append("SELECT cb.ID as ITEM_ID, ve.ID as VE_ID, ave.URN as VE_URN, ave.CODE as VE_CODE, ls.LABEL as VE_SHORT_NAME_FK  ");
+        sbCategoryElements.append("FROM TB_M_CATEGORIES c ");
+        sbCategoryElements.append("INNER JOIN TB_CATEGORIES cb on c.TB_CATEGORIES = cb.ID ");
+        sbCategoryElements.append("INNER JOIN TB_CAT_RESOURCE_ELEMENTS cve on cve.tb_resource_elements = c.CATEGORY_ELEMENT_FK ");
+        sbCategoryElements.append("INNER JOIN TB_RESOURCE_ELEMENTS ve on ve.ID = cve.tb_resource_elements ");
+        sbCategoryElements.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS ave on ve.IDENTIFIABLE_ARTEFACT_FK = ave.ID ");
+        sbCategoryElements.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = ve.SHORT_NAME_FK and ls.locale = :locale ");
+        sbCategoryElements.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
+        Query queryCategoryElements = getEntityManager().createNativeQuery(sbCategoryElements.toString());
+        queryCategoryElements.setParameter("itemSchemeVersionId", itemSchemeVersionId);
+        queryCategoryElements.setParameter("locale", locale);
+        return queryCategoryElements.getResultList();
+    }
+
+    private CategoryElementVisualisationResult categoryElementResultSqlToCategoryElementVisualisationResult(Object[] source) {
+        CategoryElementVisualisationResult target = new CategoryElementVisualisationResult();
+        int i = 0;
+        i++; // itemId
+        target.setIdDatabase(getLong(source[i++]));
+        target.setUrn(getString(source[i++]));
+        target.setCode(getString(source[i++]));
+        target.setShortName(getString(source[i++]));
+        return target;
+    }
+
+    private CategoryMetamacVisualisationResult categoryResultSqlToCategoryResult(Object[] source, CategoryMetamacVisualisationResult target) throws MetamacException {
+        if (target == null) {
+            target = new CategoryMetamacVisualisationResult();
+        }
+        int i = 0;
+        target.setItemIdDatabase(getLong(source[i++]));
+        target.setCreatedDate(getDate(source[i++], source[i++]));
+        target.setUrn(getString(source[i++]));
+        target.setCode(getString(source[i++]));
+        target.setParentIdDatabase(getLong(source[i++]));
+        target.setName(getString(source[i++]));
+
+        return target;
     }
 
     @Override
@@ -180,7 +269,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
     }
 
     /**
-     * Variable element. Execute one independent query to retrieve variable elements is more efficient than do a global query
+     * Category element. Execute one independent query to retrieve category elements is more efficient than do a global query
      */
     @SuppressWarnings("rawtypes")
     private void executeQueryCategoryElementAndUpdateCategoryMetamacResult(Long itemSchemeVersionId, Map<Long, ItemResult> mapCodeByItemId) {
@@ -242,5 +331,62 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
                 categoryElementResult.getShortName().put(locale, label);
             }
         }
+    }
+
+    @Override
+    public void updateCodesCategoryElements(Map<Long, Long> categoryElementsByCodes, Long categorySchemeVersionId) throws MetamacException {
+
+        String sqlUpdateWithCategoryElement = buildQueryUpdateCodeCategoryElement(true);
+        String sqlUpdateWithoutCategoryElement = buildQueryUpdateCodeCategoryElement(false);
+
+        for (Long categoryId : categoryElementsByCodes.keySet()) {
+            Long categoryElementId = categoryElementsByCodes.get(categoryId);
+
+            // Update
+            String sql = categoryElementId != null ? sqlUpdateWithCategoryElement : sqlUpdateWithoutCategoryElement;
+            Query queryUpdate = getEntityManager().createNativeQuery(sql);
+            queryUpdate.setParameter("categorySchemeVersionId", categorySchemeVersionId);
+            queryUpdate.setParameter("categoryId", categoryId);
+            if (categoryElementId != null) {
+                queryUpdate.setParameter("categoryElementId", categoryElementId);
+            }
+            int updateResult = queryUpdate.executeUpdate();
+
+            if (updateResult > 1) {
+                throw new MetamacException(ServiceExceptionType.UNKNOWN,
+                        "Update result can not be more than one when updating category element of code: code = " + categoryId + "; categoryElementId = " + categoryElementId);
+            } else if (updateResult == 0) {
+                throw new MetamacException(ServiceExceptionType.UNKNOWN, "Code or category element incorrect: code = " + categoryId + "; categoryElementId = " + categoryElementId);
+            }
+
+        }
+    }
+
+    private String buildQueryUpdateCodeCategoryElement(boolean categoryElementNotNull) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE TB_M_CATEGORIES SET ");
+        if (categoryElementNotNull) {
+            sb.append("CATEGORY_ELEMENT_FK = :categoryElementId ");
+        } else {
+            sb.append("CATEGORY_ELEMENT_FK = null ");
+        }
+        sb.append("WHERE ");
+        sb.append("    TB_CATEGORIES = :categoryId ");
+        sb.append("   AND ");
+        // Check code belongs to category scheme
+        sb.append("    TB_CATEGORIES = ");
+        sb.append("   (SELECT cb.ID ");
+        sb.append("    FROM TB_CATEGORIES cb ");
+        sb.append("    WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersionId ");
+        sb.append("    AND cb.ID = :categoryId) ");
+        // Check id is a category element
+        if (categoryElementNotNull) {
+            sb.append("   AND ");
+            sb.append("   :categoryElementId = ");
+            sb.append("   (SELECT ve.TB_RESOURCE_ELEMENTS ");
+            sb.append("   FROM TB_CAT_RESOURCE_ELEMENTS ve ");
+            sb.append("   WHERE ve.TB_RESOURCE_ELEMENTS = :categoryElementId) ");
+        }
+        return sb.toString();
     }
 }

@@ -203,4 +203,10 @@ public class CategoriesSecurityUtils extends CommonSecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
+
+    public static void canNormaliseCategoryElementsToCategories(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canNormaliseCategoryElementsToCategories(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
 }

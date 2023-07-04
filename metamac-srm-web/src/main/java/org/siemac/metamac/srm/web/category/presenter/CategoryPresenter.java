@@ -8,6 +8,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
@@ -101,7 +102,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
 
         void setCategory(CategoryMetamacDto categoryDto);
         void setCategory(CategoryMetamacDto categoryDto, CategorySchemeMetamacDto categorySchemeMetamacDto);
-        void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<ItemVisualisationResult> itemVisualisationResults);
+        void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<CategoryMetamacVisualisationResult> itemVisualisationResults);
         void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto);
 
         void setCategoryElements(GetRelatedResourcesResult result);
@@ -257,13 +258,13 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
 
                     @Override
                     public void onWaitSuccess(GetCategoriesBySchemeResult result) {
-                        final List<ItemVisualisationResult> itemVisualisationResults = result.getCategories();
+                        final List<CategoryMetamacVisualisationResult> categoryVisualisationResults = result.getCategories();
                         dispatcher.execute(new GetCategorySchemeAction(CategoryPresenter.this.categorySchemeUrn),
                                 new WaitingAsyncCallbackHandlingError<GetCategorySchemeResult>(CategoryPresenter.this) {
 
                                     @Override
                                     public void onWaitSuccess(GetCategorySchemeResult result) {
-                                        getView().setCategoryList(result.getCategorySchemeMetamacDto(), itemVisualisationResults);
+                                        getView().setCategoryList(result.getCategorySchemeMetamacDto(), categoryVisualisationResults);
                                     }
                                 });
                     }

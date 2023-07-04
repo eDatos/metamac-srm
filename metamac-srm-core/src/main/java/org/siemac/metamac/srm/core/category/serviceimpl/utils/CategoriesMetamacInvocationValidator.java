@@ -133,7 +133,7 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
     }
 
     // ---------------------------------------------------------------------------
-    // VARIABLE ELEMENTS
+    // CATEGORY ELEMENTS
     // ---------------------------------------------------------------------------
 
     public static void checkCreateCategoryElement(CategoryElement categoryElement, List<MetamacExceptionItem> exceptions) throws MetamacException {
@@ -222,6 +222,17 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
 
         // Check dates: validFrom value must be lower than validTo value
         ValidationUtils.checkDateTimeBeforeDateTime(categoryElement.getValidFrom(), categoryElement.getValidTo(), ServiceExceptionParameters.RESOURCE_ELEMENT_VALID_TO, exceptions);
+    }
+
+    public static void checkNormaliseCategoryElementsToCategories(String categorySchemeVersionUrn, String locale, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categorySchemeVersionUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(locale, ServiceExceptionParameters.LOCALE, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
     }
 
     private static void checkCategoryScheme(CategorySchemeVersionMetamac categorySchemeVersion, List<MetamacExceptionItem> exceptions) {

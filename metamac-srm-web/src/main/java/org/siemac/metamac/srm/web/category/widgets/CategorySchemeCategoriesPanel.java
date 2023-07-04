@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.web.category.utils.CategoriesClientSecurityUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategorySchemeUiHandlers;
@@ -12,7 +13,6 @@ import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -49,18 +49,21 @@ public class CategorySchemeCategoriesPanel extends VLayout {
 
         toolStrip = new ToolStrip();
 
-        importCategoriesButton = new CustomToolStripButton(getConstants().actionImportCategoriesTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
+        importCategoriesButton = new CustomToolStripButton(getConstants().actionImportCategoriesTsv(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
         importCategoriesButton.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                importCategoriesWindow.initImportWindow(CommonUtils.isDefaultMaintainer(categorySchemeMetamacDto.getMaintainer()), VersionUtil.isTemporalVersion(categorySchemeMetamacDto.getVersionLogic()));
+                importCategoriesWindow.initImportWindow(CommonUtils.isDefaultMaintainer(categorySchemeMetamacDto.getMaintainer()),
+                        VersionUtil.isTemporalVersion(categorySchemeMetamacDto.getVersionLogic()));
                 importCategoriesWindow.show();
             }
         });
         toolStrip.addButton(importCategoriesButton);
 
-        exportCategoriesButton = new CustomToolStripButton(getConstants().actionExportCategoriesTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+        exportCategoriesButton = new CustomToolStripButton(getConstants().actionExportCategoriesTsv(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
         exportCategoriesButton.addClickHandler(new ClickHandler() {
 
             @Override
@@ -88,7 +91,7 @@ public class CategorySchemeCategoriesPanel extends VLayout {
         importCategoriesWindow.setCategorycheme(categorySchemeMetamacDto);
     }
 
-    public void setCategories(List<ItemVisualisationResult> categoryDtos) {
+    public void setCategories(List<CategoryMetamacVisualisationResult> categoryDtos) {
         // Category hierarchy
         categoriesTreeGrid.setUiHandlers(getUiHandlers()); // UiHandlers cannot be set in constructor because is still null
         categoriesTreeGrid.setCategories(categorySchemeMetamacDto, categoryDtos);

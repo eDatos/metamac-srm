@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -27,28 +28,29 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.Organisatio
 
 public class InternalWebApplicationNavigation {
 
-    private static final String      PATH_STRUCTURAL_RESOURCES = "#" + NameTokens.structuralResourcesPage;
-    private static final String      SEPARATOR                 = "/";
-    private static final String      ITEM_SCHEME_PARAMETER     = "itemSchemeParam";
-    private static final String      RESOURCE_ID_PARAMETER     = "resourceParam";
-    private static final String      RESOURCE_TYPE_PARAMETER   = "resourceTypeParam";
-    private static final String      VARIABLE_PARAMETER        = "variableParam";
+    private static final String PATH_STRUCTURAL_RESOURCES = "#" + NameTokens.structuralResourcesPage;
+    private static final String SEPARATOR                 = "/";
+    private static final String ITEM_SCHEME_PARAMETER     = "itemSchemeParam";
+    private static final String RESOURCE_ID_PARAMETER     = "resourceParam";
+    private static final String RESOURCE_TYPE_PARAMETER   = "resourceTypeParam";
+    private static final String VARIABLE_PARAMETER        = "variableParam";
 
-    private final UriTemplate dataStructureTemplate;
-    private final UriTemplate organisationSchemeTemplate;
-    private final UriTemplate organisationTemplate;
-    private final UriTemplate categorySchemeTemplate;
-    private final UriTemplate categoryTemplate;
-    private final UriTemplate conceptSchemeTemplate;
-    private final UriTemplate conceptTemplate;
-    private final UriTemplate codelistTemplate;
-    private final UriTemplate codeTemplate;
-    private final UriTemplate restrictionTemplate;
-    private final UriTemplate variableTemplate;
-    private final UriTemplate variableElementTemplate;
-    private final UriTemplate variableFamilyTemplate;
-    private final UriTemplate codelistFamilyTemplate;
-    private final UriTemplate contentConstraintTemplate;
+    private final UriTemplate   dataStructureTemplate;
+    private final UriTemplate   organisationSchemeTemplate;
+    private final UriTemplate   organisationTemplate;
+    private final UriTemplate   categorySchemeTemplate;
+    private final UriTemplate   categoryTemplate;
+    private final UriTemplate   conceptSchemeTemplate;
+    private final UriTemplate   conceptTemplate;
+    private final UriTemplate   codelistTemplate;
+    private final UriTemplate   codeTemplate;
+    private final UriTemplate   restrictionTemplate;
+    private final UriTemplate   variableTemplate;
+    private final UriTemplate   variableElementTemplate;
+    private final UriTemplate   variableFamilyTemplate;
+    private final UriTemplate   codelistFamilyTemplate;
+    private final UriTemplate   contentConstraintTemplate;
+    private final UriTemplate   categoryElementTemplate;
 
     public InternalWebApplicationNavigation(String webApplicationPath) {
         // Dsd
@@ -89,12 +91,17 @@ public class InternalWebApplicationNavigation {
                 + PlaceRequestParams.variableParamId + "=" + "{" + VARIABLE_PARAMETER + "}" + SEPARATOR + NameTokens.variableElementPage + ";" + PlaceRequestParams.variableElementParamId + "=" + "{"
                 + RESOURCE_ID_PARAMETER + "}");
 
-        restrictionTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.codelistListPage + SEPARATOR + NameTokens.codelistPage + ";"
-                + PlaceRequestParams.codelistParamId + "=" + "{" + ITEM_SCHEME_PARAMETER + "}/" + NameTokens.restrictionListPage + ";" + PlaceRequestParams.restrictionParamId + "={" + RESOURCE_ID_PARAMETER + "}");
-        
+        restrictionTemplate = new UriTemplate(
+                webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.codelistListPage + SEPARATOR + NameTokens.codelistPage + ";" + PlaceRequestParams.codelistParamId
+                        + "=" + "{" + ITEM_SCHEME_PARAMETER + "}/" + NameTokens.restrictionListPage + ";" + PlaceRequestParams.restrictionParamId + "={" + RESOURCE_ID_PARAMETER + "}");
+
+        categoryElementTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.categoryElementPage + ";"
+                + PlaceRequestParams.categoryElementParamId + "=" + "{" + RESOURCE_ID_PARAMETER + "}");
+
         // Constraints
         contentConstraintTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.contentConstraintListPage + SEPARATOR
                 + NameTokens.contentConstraintPage + ";" + PlaceRequestParams.contentConstraintElementParamId + "=" + "{" + RESOURCE_ID_PARAMETER + "}");
+
     }
 
     public String buildContentConstraintUrl(ContentConstraint contentConstraint) {
@@ -192,7 +199,7 @@ public class InternalWebApplicationNavigation {
     public String buildCodelistUrl(CodelistVersion codelist) {
         return buildCodelistUrl(codelist.getMaintainableArtefact().getUrn());
     }
-    
+
     public String buildCodelistUrl(String urn) {
         Map<String, String> parameters = new HashMap<>(1);
         String codelistUrlPart = UrnUtils.removePrefix(urn);
@@ -221,7 +228,7 @@ public class InternalWebApplicationNavigation {
         parameters.put(RESOURCE_ID_PARAMETER, codeUrlPart);
         return restrictionTemplate.expand(parameters).toString();
     }
-    
+
     public String buildVariableFamilyUrl(VariableFamily variableFamily) {
         Map<String, String> parameters = new HashMap<>(1);
         parameters.put(RESOURCE_ID_PARAMETER, variableFamily.getNameableArtefact().getCode());
@@ -248,5 +255,16 @@ public class InternalWebApplicationNavigation {
         parameters.put(VARIABLE_PARAMETER, variableID);
         parameters.put(RESOURCE_ID_PARAMETER, variableElementID);
         return variableElementTemplate.expand(parameters).toString();
+    }
+
+    public String buildCategoryElementUrl(CategoryElement categoryElement) {
+        return buildCategoryElementUrl(categoryElement.getIdentifiableArtefact().getCode());
+    }
+
+    public String buildCategoryElementUrl(String codeCategoryElement) {
+        Map<String, String> parameters = new HashMap<>(1);
+        parameters.put(RESOURCE_ID_PARAMETER, codeCategoryElement);
+        return categoryElementTemplate.expand(parameters).toString();
+
     }
 }

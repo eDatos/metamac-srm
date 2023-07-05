@@ -4,6 +4,7 @@ import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 
 public class CategoryMetamacResultSelection extends ItemMetamacResultSelection {
 
+    public static final CategoryMetamacResultSelection API                 = new CategoryMetamacResultSelection(false, false, false, false, false, true);
     public static final CategoryMetamacResultSelection EXPORT              = new CategoryMetamacResultSelection(true, true, true, true, true, false);
 
     private boolean                                    categoryElementFull = false;

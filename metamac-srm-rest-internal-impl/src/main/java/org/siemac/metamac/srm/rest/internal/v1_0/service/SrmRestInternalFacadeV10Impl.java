@@ -10,11 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -95,6 +90,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variabl
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -423,7 +419,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             // Retrieve all categories of categoryScheme, without pagination
             CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
 
-            ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+            ItemMetamacResultSelection itemMetamacResultSelection = CategoryMetamacResultSelection.API;
             itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
             List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
@@ -2369,6 +2365,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
         return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
     }
 }

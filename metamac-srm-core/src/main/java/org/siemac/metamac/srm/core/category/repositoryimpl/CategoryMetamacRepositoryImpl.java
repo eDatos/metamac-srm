@@ -70,50 +70,8 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
     @Override
     public List<ItemResult> findCategoriesByCategorySchemeUnordered(Long categorySchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException {
         // Find items
-        List<ItemResult> categories = categoryRepository.findCategoriesByCategorySchemeUnordered(categorySchemeVersionId, resultSelection);
 
-        // eniScheme extension point
-        executeQueryCategoryEniSchemeAndUpdateCodeMetamacResult(categorySchemeVersionId, categories);
-
-        return categories;
-    }
-
-    private void executeQueryCategoryEniSchemeAndUpdateCodeMetamacResult(Long categorySchemeVersionId, List<ItemResult> categories) throws MetamacException {
-        Map<Long, ItemResult> mapCategoriesByItemId = new HashMap<Long, ItemResult>(categories.size());
-
-        for (ItemResult itemResult : categories) {
-            itemResult.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
-            mapCategoriesByItemId.put(itemResult.getItemIdDatabase(), itemResult);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("   SELECT c.ID, eni.ID as ID_ENI_SCHEME");
-        sb.append("    FROM TB_CATEGORIES AS c");
-        sb.append("    INNER JOIN TB_M_CATEGORIES AS mc ON mc.TB_CATEGORIES = c.ID ");
-        sb.append("    LEFT OUTER JOIN TB_LIS_ENI_SCHEMA_CATALOGS AS eni ON mc.ENI_SCHEMA_FK = eni.ID ");
-        sb.append("    WHERE ITEM_SCHEME_VERSION_FK = :categorySchemeVersion and mc.ENI_SCHEMA_FK is not null ");
-
-        Query query = getEntityManager().createNativeQuery(sb.toString());
-        query.setParameter("categorySchemeVersion", categorySchemeVersionId);
-        List eniSchemeResultsSql = query.getResultList();
-        for (Object eniSchemeResultSql : eniSchemeResultsSql) {
-            Long eniSchemeId = 0L;
-            try {
-                Object[] eniSchemeResultSqlArray = (Object[]) eniSchemeResultSql;
-                Long categoryId = getLong(eniSchemeResultSqlArray[0]);
-                ItemResult category = mapCategoriesByItemId.get(categoryId);
-                eniSchemeId = getLong(eniSchemeResultSqlArray[1]);
-
-                EniSchemaCatalog eniSchemeCatalog = null;
-                eniSchemeCatalog = eniSchemeCatalogMetamacRepository.findById(eniSchemeId);
-                category.setExtensionPoint(new CategoryMetamacResultExtensionPoint());
-                ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeCatalog(eniSchemeCatalog);
-                ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeIdentifier(eniSchemeCatalog.getIdentifier());
-
-            } catch (EniSchemaCatalogNotFoundException e) {
-                throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOG_NOT_FOUND, eniSchemeId);
-            }
-        }
+        return findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersionId, resultSelection);
 
     }
 
@@ -140,19 +98,19 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("WITH RECURSIVE parents(ID, ENI_SCHEME_IDENTIFIER) AS ");
-        sb.append("   (SELECT c.ID, eni.IDENTIFIER as ENI_SCHEME_IDENTIFIER");
+        sb.append("WITH RECURSIVE parents(ID, ID_ENI_SCHEME) AS ");
+        sb.append("   (SELECT c.ID, eni.ID as ID_ENI_SCHEME");
         sb.append("    FROM TB_CATEGORIES AS c");
         sb.append("    INNER JOIN TB_M_CATEGORIES AS mc ON mc.TB_CATEGORIES = c.ID ");
         sb.append("    LEFT OUTER JOIN TB_LIS_ENI_SCHEMA_CATALOGS AS eni ON mc.ENI_SCHEMA_FK = eni.ID ");
         sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
         sb.append("        UNION ALL ");
-        sb.append("    SELECT c2.ID, eni2.IDENTIFIER as ENI_SCHEME_IDENTIFIER");
+        sb.append("    SELECT c2.ID, eni2.ID as ID_ENI_SCHEME");
         sb.append("    FROM TB_CATEGORIES AS c2");
         sb.append("    INNER JOIN PARENTS AS p ON p.ID = c2.PARENT_FK ");
         sb.append("    INNER JOIN TB_M_CATEGORIES AS mc2 ON mc2.TB_CATEGORIES = c2.ID ");
         sb.append("    LEFT OUTER JOIN TB_LIS_ENI_SCHEMA_CATALOGS AS eni2 ON mc2.ENI_SCHEMA_FK = eni2.ID) ");
-        sb.append("SELECT ID, ENI_SCHEME_IDENTIFIER FROM parents ");
+        sb.append("SELECT ID, ID_ENI_SCHEME FROM parents ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("categorySchemeVersion", itemSchemeVersionId);
         @SuppressWarnings("rawtypes")
@@ -161,12 +119,23 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         // Order previous result list thanks to ordered list of items id
         List<ItemResult> ordered = new ArrayList<ItemResult>(categories.size());
         for (Object resultOrder : resultsOrder) {
-            Object[] resultOrderArray = (Object[]) resultOrder;
-            Long categoryId = getLong(resultOrderArray[0]);
-            ItemResult category = mapCategoriesByItemId.get(categoryId);
-            String eniScheme = (String) resultOrderArray[1];
-            ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeIdentifier(eniScheme);
-            ordered.add(category);
+            Long eniSchemeId = 0L;
+            try {
+                Object[] resultOrderArray = (Object[]) resultOrder;
+                Long categoryId = getLong(resultOrderArray[0]);
+                ItemResult category = mapCategoriesByItemId.get(categoryId);
+                eniSchemeId = getLong(resultOrderArray[1]);
+                if (eniSchemeId != null) {
+                    EniSchemaCatalog eniSchemeCatalog = eniSchemeCatalogMetamacRepository.findById(eniSchemeId);
+                    if (eniSchemeCatalog != null) {
+                        ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeCatalog(eniSchemeCatalog);
+                        ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setEniSchemeIdentifier(eniSchemeCatalog.getIdentifier());
+                    }
+                }
+                ordered.add(category);
+            } catch (EniSchemaCatalogNotFoundException e) {
+                throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOG_NOT_FOUND, eniSchemeId);
+            }
         }
         return ordered;
     }

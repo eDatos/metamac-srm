@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -89,6 +90,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -448,7 +450,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Retrieve all categories of categoryScheme, without pagination
             CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
 
-            ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+            ItemMetamacResultSelection itemMetamacResultSelection = CategoryMetamacResultSelection.API;
             itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
             List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
 
@@ -458,8 +460,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Category retrieveCategory(String agencyID, String resourceID, String version, String categoryID) {
+    public Category retrieveCategory(String agencyID, String resourceID, String version, String categoryID, String fields) {
         try {
+
+            Set<String> validFields = new HashSet<>();
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
+
             checkParameterNotWildcardRetrieveItem(agencyID, resourceID, version, categoryID, SrmRestConstants.PARAMETER_CATEGORY_ID);
 
             // Find one
@@ -471,7 +478,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             }
 
             // Transform
-            return categoriesDo2RestMapper.toCategory(entitiesPagedResult.getValues().get(0));
+            return categoriesDo2RestMapper.toCategory(entitiesPagedResult.getValues().get(0), fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -2211,6 +2218,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
         return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
     }
 

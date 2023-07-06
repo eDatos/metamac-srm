@@ -38,6 +38,14 @@
     <TB_SEQUENCES SEQUENCE_NAME="M_ORGANISATIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODELISTS_VERSIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODES" SEQUENCE_NEXT_VALUE="100000000" />
+    <TB_SEQUENCES SEQUENCE_NAME="RESOURCE_ELEMENTS" SEQUENCE_NEXT_VALUE="100000000" />
+
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="1" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="2" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="3" />
     
      <!-- ************************************************************************************** -->
     <!-- TB_LIS_ENI_SCHEMA_CATALOGS                                                             -->
@@ -386,6 +394,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="111"
                 ENI_SCHEMA_FK="1"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -436,6 +445,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="112"
                 ENI_SCHEMA_FK="1"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -582,6 +592,7 @@
 	        <TB_M_CATEGORIES
                 TB_CATEGORIES="121"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="2"
             />
             
             <TB_CATEGORIES
@@ -632,6 +643,8 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="122"
                 ENI_SCHEMA_FK="3"
+                CATEGORY_ELEMENT_FK="3"
+                
             />
             
             <TB_CATEGORIES
@@ -682,6 +695,7 @@
                 <TB_M_CATEGORIES
                     TB_CATEGORIES="1221"
                     ENI_SCHEMA_FK="1"
+                    CATEGORY_ELEMENT_FK="1"
                 />
                 
                 <TB_CATEGORIES
@@ -733,6 +747,7 @@
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="12211"
                         ENI_SCHEMA_FK="1"
+                        CATEGORY_ELEMENT_FK="1"
                     />
                     
                     <TB_CATEGORIES
@@ -783,6 +798,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="123"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="2"
             />
             
             <TB_CATEGORIES
@@ -833,6 +849,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="124"
                 ENI_SCHEMA_FK="1"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -883,6 +900,7 @@
                 <TB_M_CATEGORIES
                     TB_CATEGORIES="1241"
                     ENI_SCHEMA_FK="2"
+                    CATEGORY_ELEMENT_FK="2"
                 />
                 
                 <TB_CATEGORIES
@@ -1087,6 +1105,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="211"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="2"
             />
             
             <TB_CATEGORIES
@@ -1137,6 +1156,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="212"
                 ENI_SCHEMA_FK="1"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -1529,6 +1549,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="312"
                 ENI_SCHEMA_FK="1"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -1579,6 +1600,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="3121"
                 ENI_SCHEMA_FK="1"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -1629,6 +1651,7 @@
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="31211"
                         ENI_SCHEMA_FK="2"
+                        CATEGORY_ELEMENT_FK="2" 
                     />
                     
                     <TB_CATEGORIES
@@ -1678,6 +1701,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="3122"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="[null]"    
             />
             
             <TB_CATEGORIES
@@ -1831,6 +1855,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="411"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="1"
             />
             
             <TB_CATEGORIES
@@ -1985,6 +2010,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="511"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="2"       
             />
             
             <TB_CATEGORIES
@@ -2138,6 +2164,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="611"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="2"
             />
             
             <TB_CATEGORIES
@@ -2376,6 +2403,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="721"
                 ENI_SCHEMA_FK="2"
+                CATEGORY_ELEMENT_FK="[null]"
             />
             
             <TB_CATEGORIES
@@ -2798,6 +2826,144 @@
                     TYPE_FK="1"
                 />                
 
+
+    <!-- ************************************************************************************** -->
+    <!-- CATEGORY ELEMENTS                                                                      -->
+    <!-- *************************************************************************************  -->    
+            <TB_RESOURCE_ELEMENTS
+                ID="1"
+                IDENTIFIABLE_ARTEFACT_FK="99991"
+                
+                SHORT_NAME_FK="110"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-1"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
+
+            />
+            
+               <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99991"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_01"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_01"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_01"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99991"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                 <TB_RESOURCE_ELEMENTS
+                ID="2"
+                IDENTIFIABLE_ARTEFACT_FK="99992"
+                
+                SHORT_NAME_FK="111"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-2"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
+
+            />
+            
+               <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99992"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_02"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_02"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99992"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                 <TB_RESOURCE_ELEMENTS
+                ID="3"
+                IDENTIFIABLE_ARTEFACT_FK="99993"
+                
+                SHORT_NAME_FK="112"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-3"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
+
+            />
+            
+               <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99993"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_03"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_03"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_03"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99993"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+  
+
     <!-- ************************************************************************************** -->
     <!-- EXTERNAL ITEMS                                                                         -->
     <!-- *************************************************************************************  -->    
@@ -3092,7 +3258,7 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="17"
     />
-    
+      
     <TB_INTERNATIONAL_STRINGS
         ID="22"
         VERSION="1"
@@ -3655,6 +3821,44 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="104"
     />          
+    
+       <!--FOR CATEGORY ELEMENTS -->
+     <TB_INTERNATIONAL_STRINGS
+        ID="110"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="610"
+        LABEL="shortName category_element-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="110"
+    />
+         <TB_INTERNATIONAL_STRINGS
+        ID="111"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="611"
+        LABEL="shortName category_element-2"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="111"
+    />  
+         <TB_INTERNATIONAL_STRINGS
+        ID="112"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="612"
+        LABEL="shortName category_element-2"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="112"
+    />            
         <!-- ************************************************************************************** -->
     <!-- TB_LIS_ANNOTATION_TYPES                                                             -->
     <!-- *************************************************************************************  -->  

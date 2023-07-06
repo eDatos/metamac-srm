@@ -44,6 +44,7 @@ import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensio
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
@@ -74,7 +75,6 @@ import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesDoMo
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -2013,7 +2013,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
         // Validate categories
 
-        List<ItemVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
+        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
         assertEquals(result.size(), 16);
 
         String categorySchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME02(01.000).";
@@ -2071,7 +2071,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals(false, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
 
         // Validate categories
-        List<ItemVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
+        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
         assertEquals(result.size(), 42);
         String categorySchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME02(01.000).";
         assertEqualsImportedCategory(categorySchemeUrnPart + "cat2", null, "cat2", "Estadísticas económicas", "Economic statistics");
@@ -2143,7 +2143,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         FileInputStream fileInputStream = new FileInputStream(file);
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        assertEquals("code\tparent\teni_scheme\tname#es\tname#pt\tname#en\tname#ca\tdescription#es\tdescription#pt\tdescription#en\tdescription#ca\tcomment#es\tcomment#pt\tcomment#en\tcomment#ca",
+        assertEquals(
+                "code\tparent\tcategory_element\teni_scheme\tname#es\tname#pt\tname#en\tname#ca\tdescription#es\tdescription#pt\tdescription#en\tdescription#ca\tcomment#es\tcomment#pt\tcomment#en\tcomment#ca",
                 bufferedReader.readLine());
         Set<String> lines = new HashSet<String>();
         String line = null;
@@ -2154,17 +2155,17 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals(8, lines.size());
 
         assertTrue(lines.contains(
-                "CATEGORY01\t\tSRM-ID2-ENI-SCHEME\tNombre categoryScheme-1-v2-category-1\t\tName categoryScheme-1-v2-category-1\t\tDescripción categoryScheme-1-v2-category-1\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY02\t\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2\t\t\t\t\t\t\t\t\t\t\t"));
+                "CATEGORY01\t\tCATEGORY_ELEMENT_02\tSRM-ID2-ENI-SCHEME\tNombre categoryScheme-1-v2-category-1\t\tName categoryScheme-1-v2-category-1\t\tDescripción categoryScheme-1-v2-category-1\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY02\t\tCATEGORY_ELEMENT_03\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2\t\t\t\t\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY03\t\tCATEGORY_ELEMENT_02\tSRM-ID2-ENI-SCHEME\tnombre category-3\t\tname category-3\t\t\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY04\t\tCATEGORY_ELEMENT_01\tSRM-ID1-ENI-SCHEME\tnombre category-4\t\t\t\t\t\t\t\t\t\t\t"));
         assertTrue(lines.contains(
-                "CATEGORY0201\tCATEGORY02\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1\t\tName categoryScheme-1-v2-category-2-1\t\tDescripción cat2-1\t\tDescription cat2-1\t\t\t\t\t"));
+                "CATEGORY0201\tCATEGORY02\tCATEGORY_ELEMENT_01\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1\t\tName categoryScheme-1-v2-category-2-1\t\tDescripción cat2-1\t\tDescription cat2-1\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY0401\tCATEGORY04\tCATEGORY_ELEMENT_02\tSRM-ID2-ENI-SCHEME\tnombre category 4-1\t\t\t\t\t\t\t\t\t\t\t"));
         assertTrue(lines.contains(
-                "CATEGORY020101\tCATEGORY02.CATEGORY0201\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1-1\t\t\t\tDescripción cat2-1-1\t\t\t\tComment categoryScheme-1-v2-category-2-1-1\t\t\t"));
-        assertTrue(lines.contains("CATEGORY03\t\tSRM-ID2-ENI-SCHEME\tnombre category-3\t\tname category-3\t\t\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY04\t\tSRM-ID1-ENI-SCHEME\tnombre category-4\t\t\t\t\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY0401\tCATEGORY04\tSRM-ID2-ENI-SCHEME\tnombre category 4-1\t\t\t\t\t\t\t\t\t\t\t"));
-        assertTrue(
-                lines.contains("CATEGORY040101\tCATEGORY04.CATEGORY0401\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-4-1-1\t\tName categoryScheme-1-v2-category-4-1-1\t\t\t\t\t\t\t\t\t"));
+                "CATEGORY020101\tCATEGORY02.CATEGORY0201\tCATEGORY_ELEMENT_01\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1-1\t\t\t\tDescripción cat2-1-1\t\t\t\tComment categoryScheme-1-v2-category-2-1-1\t\t\t"));
+        assertTrue(lines
+                .contains("CATEGORY040101\tCATEGORY04.CATEGORY0401\t\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-4-1-1\t\tName categoryScheme-1-v2-category-4-1-1\t\t\t\t\t\t\t\t\t"));
         bufferedReader.close();
     }
 
@@ -2204,13 +2205,13 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // LOCALE = 'es'
         {
             String locale = "es";
-            List<ItemVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
 
             // Validate
             assertEquals(8, categories.size());
             {
                 // Category 01 (validate all metadata)
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_1, category.getUrn());
                 assertEquals("CATEGORY01", category.getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-1", category.getName());
@@ -2218,113 +2219,121 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 assertEquals(Long.valueOf(121), category.getItemIdDatabase());
                 assertEquals(null, category.getParent());
                 assertEquals(null, category.getParentIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
                 MetamacAsserts.assertEqualsDate("2011-01-01 01:02:03", category.getCreatedDate());
             }
             {
                 // Category 02
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2, category.getUrn());
                 assertEquals("CATEGORY02", category.getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-2", category.getName());
                 assertEquals(null, category.getDescription());
+                assertEquals(CATEGORY_ELEMENT_03, category.getCategoryElement().getCode());
                 MetamacAsserts.assertEqualsDate("2011-03-02 04:05:06", category.getCreatedDate());
             }
             {
                 // Category 02 01 (validate parent)
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2_1, category.getUrn());
                 assertEquals("CATEGORY02", category.getParent().getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-2-1", category.getName());
                 assertEquals("Descripción cat2-1", category.getDescription());
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2, category.getParent().getUrn());
                 assertEquals(Long.valueOf("122"), category.getParentIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
             }
             {
                 // Category 02 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1, category.getUrn());
                 assertEquals("CATEGORY0201", category.getParent().getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-2-1-1", category.getName());
                 assertEquals("Descripción cat2-1-1", category.getDescription());
                 assertEquals(Long.valueOf("1221"), category.getParentIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
             }
             {
                 // Category 03
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_3, category.getUrn());
                 assertEquals("nombre category-3", category.getName());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
             }
             {
                 // Category 04
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4, category.getUrn());
                 assertEquals("nombre category-4", category.getName());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
             }
             {
                 // Category 04 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getUrn());
                 assertEquals("nombre category 4-1", category.getName());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
             }
             {
                 // Category 04 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1, category.getUrn());
                 assertEquals("CATEGORY0401", category.getParent().getCode());
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getParent().getUrn());
                 assertEquals("Nombre categoryScheme-1-v2-category-4-1-1", category.getName());
+                assertEquals(null, category.getCategoryElement());
             }
         }
 
         // LOCALE = 'en'
         {
             String locale = "en";
-            List<ItemVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
 
             // Validate
             assertEquals(8, categories.size());
             {
                 // Category 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
                 assertEquals("Name categoryScheme-1-v2-category-1", category.getName());
                 assertEquals(null, category.getDescription());
             }
             {
                 // Category 02
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
                 assertEquals(null, category.getName());
                 assertEquals(null, category.getDescription());
             }
             {
                 // Category 02 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
                 assertEquals("Name categoryScheme-1-v2-category-2-1", category.getName());
                 assertEquals("Description cat2-1", category.getDescription());
             }
             {
                 // Category 02 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
                 assertEquals(null, category.getName());
                 assertEquals(null, category.getDescription());
             }
             {
                 // Category 03
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
                 assertEquals("name category-3", category.getName());
             }
             {
                 // Category 04
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
                 assertEquals(null, category.getName());
             }
             {
                 // Category 04 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
                 assertEquals(null, category.getName());
             }
             {
                 // Category 04 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
                 assertEquals("Name categoryScheme-1-v2-category-4-1-1", category.getName());
             }
         }
@@ -2649,6 +2658,13 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Override
     public void testCreateVersionFromTemporalCategorisations() throws Exception {
         // in services of categorised artefacts
+    }
+    @Override
+    public void testNormaliseCategoryElementsToCategories() throws Exception {
+        // TODO EDATOS-4150
+    }
+    public void testUpdateCodesCategoryElements() throws Exception {
+        // TODO EDATOS-4150
     }
 
     @Override

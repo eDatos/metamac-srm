@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemRepository;
+import com.arte.statistic.sdmx.srm.core.category.domain.Category;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategoryRepository;
-import com.arte.statistic.sdmx.srm.core.code.domain.Code;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 
@@ -167,7 +167,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         }
 
         // Add description. Execute one independent query to retrieve it is more efficient than do a global query
-        itemRepository.executeQueryFillItemDescription(itemSchemeVersionId, Code.class, locale, mapCodeByItemId);
+        itemRepository.executeQueryFillItemDescription(itemSchemeVersionId, Category.class, locale, mapCodeByItemId);
 
         List categoryElementsResultSql = getCategoryElementByCategoryScheme(itemSchemeVersionId, locale);
         for (Object categoryElementResultSql : categoryElementsResultSql) {

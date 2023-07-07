@@ -354,6 +354,18 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static String       CATEGORY_ELEMENT_01                                   = "CATEGORY_ELEMENT_01";
     protected static String       CATEGORY_ELEMENT_02                                   = "CATEGORY_ELEMENT_02";
     protected static String       CATEGORY_ELEMENT_03                                   = "CATEGORY_ELEMENT_03";
+    protected static String       CATEGORY_ELEMENT_04                                   = "CATEGORY_ELEMENT_04";
+    protected static String       CATEGORY_ELEMENT_05                                   = "CATEGORY_ELEMENT_05";
+    protected static String       CATEGORY_ELEMENT_06                                   = "CATEGORY_ELEMENT_06";
+    protected static String       CATEGORY_ELEMENT_07                                   = "CATEGORY_ELEMENT_07";
+    protected static final String BASE_URN_CATEGORY_ELEMENT                             = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=";
+    protected static final String CATEGORY_ELEMENT_1_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_01";
+    protected static final String CATEGORY_ELEMENT_2_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_02";
+    protected static final String CATEGORY_ELEMENT_3_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_03";
+    protected static final String CATEGORY_ELEMENT_4_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_04";
+    protected static final String CATEGORY_ELEMENT_5_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_05";
+    protected static final String CATEGORY_ELEMENT_6_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_06";
+    protected static final String CATEGORY_ELEMENT_7_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_07";
 
     // Other
     protected static final String NOT_EXISTS                                            = "not-exists";

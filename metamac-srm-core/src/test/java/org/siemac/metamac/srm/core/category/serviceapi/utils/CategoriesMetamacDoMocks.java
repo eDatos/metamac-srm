@@ -1,9 +1,11 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.common.SrmResourceElementMock;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
@@ -60,5 +62,16 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         ItemResult itemResult = mockCategoryResultFixedValues(resourceID, parent);
         itemResult.setExtensionPoint(mockCategoryMetamacResultFixedValues());
         return itemResult;
+    }
+
+    public static CategoryElement mockCategoryElementGeographical(AnnotationType annotationType) {
+        CategoryElement categoryElement = mockCategoryElement(annotationType);
+        return categoryElement;
+    }
+
+    public static CategoryElement mockCategoryElement(AnnotationType annotationType) {
+        CategoryElement categoryElement = new CategoryElement();
+        SrmResourceElementMock.mockResourceElement(categoryElement, annotationType);
+        return categoryElement;
     }
 }

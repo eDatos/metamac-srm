@@ -1,0 +1,9 @@
+code	short_name#es	short_name#en	short_name#it
+categoryElement1	Nombre corto 1	Short name 1	Nombre corto it 1
+categoryElement2	Nombre corto 2
+categoryElement3	Nombre corto 3	Short name 3	
+categoryElement4WithoutShortName			
+#categoryElementNotSemanticCode			Nombre corto it 5
+categoryElement6	Nombre corto 6	Short name 6	Nombre corto it 6
+	Nombre corto 6	Short name 6	Nombre corto it 6
+categoryElementIncorrectColumns	nombre		

@@ -38,15 +38,8 @@
     <TB_SEQUENCES SEQUENCE_NAME="M_ORGANISATIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODELISTS_VERSIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODES" SEQUENCE_NEXT_VALUE="100000000" />
-    <TB_SEQUENCES SEQUENCE_NAME="RESOURCE_ELEMENTS" SEQUENCE_NEXT_VALUE="100000000" />
-
-	<TB_CAT_RESOURCE_ELEMENTS
-		TB_RESOURCE_ELEMENTS="1" />
-	<TB_CAT_RESOURCE_ELEMENTS
-		TB_RESOURCE_ELEMENTS="2" />
-	<TB_CAT_RESOURCE_ELEMENTS
-		TB_RESOURCE_ELEMENTS="3" />
-    
+    <TB_SEQUENCES SEQUENCE_NAME="M_RESOURCE_ELEMENTS" SEQUENCE_NEXT_VALUE="100000000" />
+ 
      <!-- ************************************************************************************** -->
     <!-- TB_LIS_ENI_SCHEMA_CATALOGS                                                             -->
     <!-- *************************************************************************************  -->  
@@ -2963,7 +2956,200 @@
                     LAST_UPDATED_TZ="Europe/London"
                 /> 
   
+  				<TB_RESOURCE_ELEMENTS
+                ID="4"
+                IDENTIFIABLE_ARTEFACT_FK="99994"
+                
+                SHORT_NAME_FK="113"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-4"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
 
+         	   />
+            
+               <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99994"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_04"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_04"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_04"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99994"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+
+
+ 				<TB_RESOURCE_ELEMENTS
+                ID="5"
+                IDENTIFIABLE_ARTEFACT_FK="99995"
+                
+                SHORT_NAME_FK="114"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-5"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
+
+            />
+            
+           <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99995"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_05"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_05"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_05"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99995"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+             /> 
+                
+             <TB_RESOURCE_ELEMENTS
+                ID="6"
+                IDENTIFIABLE_ARTEFACT_FK="99996"
+                
+                SHORT_NAME_FK="115"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-6"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
+
+            />
+            
+            <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99996"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_06"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_06"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_06"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99996"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />   
+               <TB_RESOURCE_ELEMENTS
+                ID="7"
+                IDENTIFIABLE_ARTEFACT_FK="99997"
+                
+                SHORT_NAME_FK="116"
+                COMMENT_FK="[null]"
+                VALID_FROM_TZ="Europe/London"
+                VALID_FROM="2023-01-02 02:02:04" 
+                VALID_TO_TZ="Europe/London"
+                VALID_TO="2025-01-02 02:02:04"
+                                
+                UUID="category-element-7"
+                CREATED_DATE_TZ="Europe/London"
+                CREATED_DATE="2023-01-01 01:02:03"
+                CREATED_BY="user1"
+                LAST_UPDATED_TZ="Europe/London"
+                LAST_UPDATED="2023-02-01 01:02:03"
+                LAST_UPDATED_BY="user2"
+                VERSION="1"
+
+            />
+            
+            <TB_ANNOTABLE_ARTEFACTS 
+                    ID="99997"
+                    ANNOTABLE_ARTEFACT_TYPE="IDENTIFIABLE_ARTEFACT"
+                    
+                    CODE="CATEGORY_ELEMENT_07"
+                    CODE_FULL="[null]"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_07"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_07"
+                    
+                    NAME_FK="[null]"
+                    DESCRIPTION_FK="[null]"
+                    
+                    UUID="annotableArtefact-99997"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2041-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2000-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />   
+                
+      <TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="1" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="2" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="3" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="4" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="5" />
+	<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="6" />	
+		<TB_CAT_RESOURCE_ELEMENTS
+		TB_RESOURCE_ELEMENTS="7" />	
     <!-- ************************************************************************************** -->
     <!-- EXTERNAL ITEMS                                                                         -->
     <!-- *************************************************************************************  -->    
@@ -3629,7 +3815,7 @@
     
     <TB_LOCALISED_STRINGS
         ID="511"
-        LABEL="nombre category-4"
+        LABEL="Lanzarote"
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="51"
@@ -3642,7 +3828,7 @@
     
     <TB_LOCALISED_STRINGS
         ID="521"
-        LABEL="nombre category 4-1"
+        LABEL="La Gomera"
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="52"
@@ -3655,7 +3841,7 @@
     
     <TB_LOCALISED_STRINGS
         ID="531"
-        LABEL="Nombre categoryScheme-1-v2-category-4-1-1"
+        LABEL="Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife"
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="53"
@@ -3854,11 +4040,59 @@
     
     <TB_LOCALISED_STRINGS
         ID="612"
-        LABEL="shortName category_element-2"
+        LABEL="shortName category_element-3"
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="112"
     />            
+          <TB_INTERNATIONAL_STRINGS
+        ID="113"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="613"
+        LABEL="shortname-at-element categoryScheme-1-v2-category-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="113"
+    />            
+    <TB_INTERNATIONAL_STRINGS
+        ID="114"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="614"
+        LABEL="shortname-at-element categoryScheme-1-v2-category-2"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="114"
+    />            
+          <TB_INTERNATIONAL_STRINGS
+        ID="115"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="615"
+        LABEL="shortname-at-element categoryScheme-1-v2-category-3"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="115"
+    />                      
+    <TB_INTERNATIONAL_STRINGS
+        ID="116"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="616"
+        LABEL="Santa Cruz de Tenerife"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="116"
+    />                      
         <!-- ************************************************************************************** -->
     <!-- TB_LIS_ANNOTATION_TYPES                                                             -->
     <!-- *************************************************************************************  -->  

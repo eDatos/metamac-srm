@@ -1,6 +1,9 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
@@ -47,6 +50,10 @@ public class CategoriesMetamacAsserts extends CategoriesAsserts {
     public static void assertEqualsCategory(CategoryMetamac expected, CategoryMetamac actual) {
 
         // Metamac
+        assertEqualsNullability(expected.getCategoryElement(), actual.getCategoryElement());
+        if (expected.getCategoryElement() != null) {
+            assertEquals(expected.getCategoryElement().getIdentifiableArtefact().getUrn(), actual.getCategoryElement().getIdentifiableArtefact().getUrn());
+        }
 
         // Sdmx
         CategoriesAsserts.assertEqualsCategory(expected, actual);
@@ -55,6 +62,7 @@ public class CategoriesMetamacAsserts extends CategoriesAsserts {
     public static void assertEqualsCategoryDto(CategoryMetamacDto expected, CategoryMetamacDto actual) {
 
         // Metamac
+        BaseAsserts.assertEqualsRelatedResourceDto(expected.getCategoryElement(), actual.getCategoryElement());
 
         // Sdmx
         CategoriesAsserts.assertEqualsCategoryDto(expected, actual);
@@ -88,8 +96,26 @@ public class CategoriesMetamacAsserts extends CategoriesAsserts {
     private static void assertEqualsCategory(CategoryMetamac entity, CategoryMetamacDto dto, MapperEnum mapperEnum) {
 
         // Metamac
+        assertEqualsNullability(entity.getCategoryElement(), dto.getCategoryElement());
+        if (entity.getCategoryElement() != null) {
+            assertEquals(entity.getCategoryElement().getIdentifiableArtefact().getUrn(), dto.getCategoryElement().getUrn());
+        }
 
         // Sdmx
         CategoriesAsserts.assertEqualsCategory(entity, dto, mapperEnum);
+    }
+
+    public static void assertEqualsCategoryeElement(CategoryElement expected, CategoryElement actual) {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        assertEqualsInternationalString(expected.getShortName(), actual.getShortName());
+        assertEqualsInternationalString(expected.getComment(), actual.getComment());
+        assertEqualsDate(expected.getValidFrom(), actual.getValidFrom());
+        assertEqualsDate(expected.getValidTo(), actual.getValidTo());
+
+        // other artefacts
+        assertEqualsIdentifiableArtefact(expected.getIdentifiableArtefact(), actual.getIdentifiableArtefact());
     }
 }

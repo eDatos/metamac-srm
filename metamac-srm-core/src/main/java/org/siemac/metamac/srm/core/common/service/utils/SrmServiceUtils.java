@@ -18,6 +18,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItemBuilder;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
@@ -587,6 +588,14 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         }
         CodeMetamacResultExtensionPoint extensionPoint = (CodeMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         return extensionPoint.getVariableElement();
+    }
+
+    public static CategoryElementResult getCategoryItemResultCategoryElementFull(ItemResult itemResult) {
+        if (itemResult.getExtensionPoint() == null) {
+            return null;
+        }
+        CategoryMetamacResultExtensionPoint extensionPoint = (CategoryMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        return extensionPoint.getCategoryElement();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -23,4 +23,8 @@ public class CategoryMetamacResultSelection extends ItemMetamacResultSelection {
     public boolean isCategoryElementFull() {
         return categoryElementFull;
     }
+
+    public void setCategoryElementFull(boolean categoryElementFull) {
+        this.categoryElementFull = categoryElementFull;
+    }
 }

@@ -2071,7 +2071,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     public void testCreateCategoryElement() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CategoryElement categoryElement = CategoriesMetamacDoMocks.mockCategoryElement(retrieveAnnotationType_1());
+        CategoryElement categoryElement = CategoriesMetamacDoMocks.mockCategoryElement();
 
         // Create
         CategoryElement categoryElementCreated = categoriesService.createCategoryElement(ctx, categoryElement);

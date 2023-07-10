@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -450,9 +449,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Retrieve all categories of categoryScheme, without pagination
             CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
 
-            ItemMetamacResultSelection itemMetamacResultSelection = CategoryMetamacResultSelection.API;
-            itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
+            CategoryMetamacResultSelection categoryMetamacResultSelection = CategoryMetamacResultSelection.API;
+
+            categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
 
             // Transform
             return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);

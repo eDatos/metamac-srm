@@ -1,11 +1,15 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -118,4 +122,44 @@ public class CategoriesMetamacAsserts extends CategoriesAsserts {
         // other artefacts
         assertEqualsIdentifiableArtefact(expected.getIdentifiableArtefact(), actual.getIdentifiableArtefact());
     }
+
+    public static void assertEqualsCategoryElement(CategoryElement expected, CategoryElementDto actual) {
+        assertEqualsCategoryElement(expected, actual, MapperEnum.DO2DTO);
+    }
+
+    private static void assertEqualsCategoryElement(CategoryElement entity, CategoryElementDto dto, MapperEnum mapperEnum) {
+        if (MapperEnum.DO2DTO.equals(mapperEnum)) {
+            assertEquals(entity.getId(), dto.getId());
+
+            assertNotNull(entity.getUuid());
+            assertEquals(entity.getUuid(), dto.getUuid());
+
+            assertNotNull(entity.getCreatedBy());
+            assertEquals(entity.getCreatedBy(), dto.getCreatedBy());
+
+            assertNotNull(entity.getCreatedDate());
+            assertTrue(DateUtils.isSameInstant(entity.getCreatedDate().toDate(), dto.getCreatedDate()));
+
+            assertNotNull(entity.getLastUpdatedBy());
+            assertEquals(entity.getLastUpdatedBy(), dto.getLastUpdatedBy());
+
+            assertNotNull(entity.getLastUpdated());
+            assertTrue(DateUtils.isSameInstant(entity.getLastUpdated().toDate(), dto.getLastUpdated()));
+
+            assertNotNull(entity.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersionOptimisticLocking());
+        }
+
+        assertEqualsInternationalString(entity.getShortName(), dto.getShortName());
+        assertEqualsInternationalString(entity.getComment(), dto.getComment());
+
+        // other artefacts
+        assertEqualsIdentifiableArtefact(entity.getIdentifiableArtefact(), dto, mapperEnum);
+    }
+
+    public static void assertEqualsCategoryElement(CategoryElementDto actual, CategoryElement expected) {
+        assertEqualsCategoryElement(expected, actual, MapperEnum.DTO2DO);
+    }
+
 }

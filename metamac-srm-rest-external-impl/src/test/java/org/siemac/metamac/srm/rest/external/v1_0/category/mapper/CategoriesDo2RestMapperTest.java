@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.rest.api.constants.RestApiConstants.WILDCARD_ALL;
+import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesAsserts.assertEqualsCategoryElementResult;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesAsserts.assertEqualsResource;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategorisation;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategory;
@@ -12,6 +13,7 @@ import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.Categorie
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategoryScheme;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategorySchemeWithCategories;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategoryWithEniScheme;
+import static org.siemac.metamac.srm.rest.external.v1_0.utils.Asserts.assertEqualsInternationalString;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.AGENCY_1;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.AGENCY_2;
 import static org.siemac.metamac.srm.rest.external.v1_0.utils.RestTestConstants.ITEM_1_CODE;
@@ -209,7 +211,7 @@ public class CategoriesDo2RestMapperTest {
         String version = WILDCARD_ALL;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
-        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemeType"));
+        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemeType", "+categoryElement"));
 
         CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
         List<CategoryMetamac> source = new ArrayList<CategoryMetamac>();
@@ -245,6 +247,7 @@ public class CategoriesDo2RestMapperTest {
         assertEquals(source.size(), target.getCategories().size());
         for (int i = 0; i < source.size(); i++) {
             assertEquals(source.get(i).getEniSchema().getIdentifier(), target.getCategories().get(i).getEniSchemeType().getId());
+            assertEqualsCategoryElementResult(source.get(i).getCategoryElement(), target.getCategories().get(i).getCategoryElement());
         }
     }
 
@@ -323,12 +326,31 @@ public class CategoriesDo2RestMapperTest {
 
     @Test
     public void testToCategory() {
+        Category target = testToCategoryCommon(null);
+        assertEquals(null, target.getCategoryElement());
+    }
+
+    @Test
+    public void testToCategoryWithCategoryElement() {
+        String codeCategory = "category2";
+        Set<String> fields = new HashSet<>(Arrays.asList("+categoryElement"));
+
+        Category target = testToCategoryCommon(fields);
+
+        String categoryElementBase = "categoryElement-" + codeCategory;
+        assertEquals(categoryElementBase, target.getCategoryElement().getId());
+        assertEqualsInternationalString("es", "shortName-" + categoryElementBase + " en Español", "en", "shortName-" + categoryElementBase + " in English", target.getCategoryElement().getName());
+
+    }
+
+    private Category testToCategoryCommon(Set<String> fields) {
+        String codeCategory = "category2";
         CategorySchemeVersionMetamac categoryScheme = mockCategoryScheme("agencyID1", "resourceID1", "01.123");
         CategoryMetamac parent = mockCategory("categoryParent1", categoryScheme, null);
-        CategoryMetamac source = mockCategory("category2", categoryScheme, parent);
+        CategoryMetamac source = mockCategory(codeCategory, categoryScheme, parent);
 
         // Transform
-        Category target = do2RestInternalMapper.toCategory(source, null);
+        Category target = do2RestInternalMapper.toCategory(source, fields);
 
         // Validate (only Metamac metadata and some SDMX). Note: check with concrete values (not doing "getter" of source)
         assertEquals(SrmRestConstants.KIND_CATEGORY, target.getKind());
@@ -347,6 +369,8 @@ public class CategoriesDo2RestMapperTest {
         assertNull(target.getManagementAppLink());
 
         assertEquals("urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agencyID1:resourceID1(01.123).categoryParent1", target.getParent());
+
+        return target;
     }
 
     @Test

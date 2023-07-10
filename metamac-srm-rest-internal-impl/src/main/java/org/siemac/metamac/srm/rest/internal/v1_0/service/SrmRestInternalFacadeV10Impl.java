@@ -419,9 +419,11 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             // Retrieve all categories of categoryScheme, without pagination
             CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
 
-            ItemMetamacResultSelection itemMetamacResultSelection = CategoryMetamacResultSelection.API;
-            itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
+            CategoryMetamacResultSelection categoryMetamacResultSelection = CategoryMetamacResultSelection.API;
+
+            categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
 
             // Transform
             return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);

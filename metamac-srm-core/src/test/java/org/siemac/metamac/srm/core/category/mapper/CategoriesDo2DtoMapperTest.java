@@ -2,8 +2,10 @@ package org.siemac.metamac.srm.core.category.mapper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -64,9 +66,22 @@ public class CategoriesDo2DtoMapperTest extends SrmBaseTest {
         return entity;
     }
 
+    @Test
+    public void testCategoryElementDoToDto() {
+        CategoryElement entity = mockCategoryElementWithAllMetadata();
+        mockCategoryElementWithAllMetadata();
+
+        CategoryElementDto dto = categoriesDo2DtoMapper.categoryElementDoToDto(entity);
+        CategoriesMetamacAsserts.assertEqualsCategoryElement(entity, dto);
+    }
+
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmCategoriesTest.xml";
+    }
+
+    private CategoryElement mockCategoryElementWithAllMetadata() {
+        return CategoriesMetamacDoMocks.mockCategoryElementFixedValues("categoryElement01");
     }
 
 }

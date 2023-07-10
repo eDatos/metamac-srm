@@ -89,14 +89,7 @@ Application BaseCore {
 
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
-			
-			Repository ResourceElementRepository {
-				save;
-				delete;
-				findByQuery(String query, Map<String, Object> parameters, int maxResult);
-				findByCondition(PagingParameter pagingParameter);
-				@ResourceElement findByUrn(String urn);
-			}
+
 		}	  			  	
 	}
 }

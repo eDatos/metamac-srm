@@ -390,6 +390,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
 
+            category.setCategoryElement(categoryTemp.getCategoryElement());
+
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
         }
 

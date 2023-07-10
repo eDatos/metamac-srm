@@ -16,6 +16,7 @@ import static com.arte.statistic.sdmx.srm.core.constants.SemanticIdentifierConst
 import static com.arte.statistic.sdmx.srm.core.constants.SemanticIdentifierConstants.PRIMARY_MEASURE_COMPONENT_CODE_PATTERN;
 import static org.siemac.metamac.srm.core.constants.SemanticIdentifierConstants.CODELIST_FAMILY_CODE_PATTERN;
 import static org.siemac.metamac.srm.core.constants.SemanticIdentifierConstants.CODELIST_VISUALISATION_CODE_PATTERN;
+import static org.siemac.metamac.srm.core.constants.SemanticIdentifierConstants.RESOURCE_ELEMENT_CODE_PATTERN;
 import static org.siemac.metamac.srm.core.constants.SemanticIdentifierConstants.VARIABLE_CODE_PATTERN;
 import static org.siemac.metamac.srm.core.constants.SemanticIdentifierConstants.VARIABLE_ELEMENT_CODE_PATTERN;
 import static org.siemac.metamac.srm.core.constants.SemanticIdentifierConstants.VARIABLE_FAMILY_CODE_PATTERN;
@@ -387,4 +388,22 @@ public class SemanticIdentifiersUtils {
         validator.setErrorMessage(MetamacWebCommon.getMessages().errorSemanticIdentifierFormat());
         return validator;
     }
+
+    // Resource element
+    public static CustomValidator getResourceElementIdentifierCustomValidator() {
+        CustomValidator validator = new CustomValidator() {
+
+            @Override
+            protected boolean condition(Object value) {
+                return value != null ? isResourceElementIdentifier(value.toString()) : false;
+            }
+        };
+        validator.setErrorMessage(MetamacWebCommon.getMessages().errorSemanticIdentifierFormat());
+        return validator;
+    }
+
+    private static boolean isResourceElementIdentifier(String value) {
+        return value != null ? value.matches(RESOURCE_ELEMENT_CODE_PATTERN) : false;
+    }
+
 }

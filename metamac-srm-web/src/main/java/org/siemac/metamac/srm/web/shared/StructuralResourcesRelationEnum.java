@@ -54,7 +54,8 @@ public enum StructuralResourcesRelationEnum implements Serializable {
     CONCEPT_WITH_QUANTITY_NUMERATOR,
     CONCEPTS_WITH_CONCEPT_ROLE,
     CONCEPTS_WITH_DSD_ROLES,
-    VARIABLE_ELEMENT_WITH_CODE;
+    VARIABLE_ELEMENT_WITH_CODE,
+    CATEGORY_ELEMENT_WITH_CODE;
 
     private StructuralResourcesRelationEnum() {
     }

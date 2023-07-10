@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils.a
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -36,12 +37,16 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryElementVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategoriesMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategorisationsUtils;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
@@ -50,6 +55,8 @@ import org.siemac.metamac.srm.core.common.SrmValidation;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
+import org.siemac.metamac.srm.core.common.service.utils.SemanticIdentifierValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
@@ -60,6 +67,8 @@ import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalogRepository;
+import org.siemac.metamac.srm.core.normalisation.DiceLuceneRamAproxStringMatch;
+import org.siemac.metamac.srm.core.normalisation.MatchResult;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
@@ -67,7 +76,9 @@ import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
+import org.siemac.metamac.srm.core.task.domain.ImportationCategoryElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
+import org.siemac.metamac.srm.core.util.InternationalStringUtils;
 import org.siemac.metamac.srm.core.util.UtilsMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +86,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
+import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -93,9 +106,7 @@ import com.arte.statistic.sdmx.srm.core.category.serviceimpl.utils.CategoriesInv
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalStringRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResultSelection;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
-import com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
@@ -106,71 +117,74 @@ import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 @Service("categoriesMetamacService")
 public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBase {
 
-    private static Logger logger = LoggerFactory.getLogger(CategoriesMetamacServiceImpl.class);
+    private static Logger                             logger = LoggerFactory.getLogger(CategoriesMetamacServiceImpl.class);
 
     @Autowired
-    private BaseService baseService;
+    private BaseService                               baseService;
 
     @Autowired
-    private CategoriesService categoriesService;
+    private CategoriesService                         categoriesService;
 
     @Autowired
-    private OrganisationsMetamacService organisationsService;
+    private OrganisationsMetamacService               organisationsService;
 
     @Autowired
     @Qualifier("categorySchemeLifeCycle")
-    private LifeCycle categorySchemeLifeCycle;
+    private LifeCycle                                 categorySchemeLifeCycle;
 
     @Autowired
-    private SrmValidation srmValidation;
+    private SrmValidation                             srmValidation;
 
     @Autowired
-    private SrmConfiguration srmConfiguration;
+    private SrmConfiguration                          srmConfiguration;
 
     @Autowired
     @Qualifier("categoriesVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback categoriesVersioningCallback;
+    private ItemSchemesCopyCallback                   categoriesVersioningCallback;
 
     @Autowired
     @Qualifier("categoriesDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback categoriesDummyVersioningCallback;
+    private ItemSchemesCopyCallback                   categoriesDummyVersioningCallback;
 
     @Autowired
     @Qualifier("categoriesCopyCallbackMetamac")
-    private ItemSchemesCopyCallback categoriesCopyCallback;
+    private ItemSchemesCopyCallback                   categoriesCopyCallback;
 
     @Autowired
     private CategorySchemeStreamMessagingCallbackImpl categorySchemeStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService streamMessagingService;
+    private StreamMessagingService                    streamMessagingService;
 
     @Autowired
-    private TasksMetamacService tasksMetamacService;
+    private TasksMetamacService                       tasksMetamacService;
 
     @Autowired
-    private MaintainableArtefactRepository maintainableArtefactRepository;
+    private MaintainableArtefactRepository            maintainableArtefactRepository;
 
     @Autowired
-    private ItemSchemeVersionRepository itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository               itemSchemeVersionRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryRepository                        categoryRepository;
 
     @Autowired
-    private CategorisationRepository categorisationRepository;
+    private CategorisationRepository                  categorisationRepository;
 
     @Autowired
-    private InternationalStringRepository internationalStringRepository;
+    private InternationalStringRepository             internationalStringRepository;
 
     @Autowired
-    private ItemSchemeRepository itemSchemeRepository;
+    private ItemSchemeRepository                      itemSchemeRepository;
 
     @Autowired
-    private EniSchemaCatalogRepository eniSchemaCatalogRepository;
+    private EniSchemaCatalogRepository                eniSchemaCatalogRepository;
+
+    @Autowired
+    private IdentifiableArtefactRepository            identifiableArtefactRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager entityManager;
+    protected EntityManager                           entityManager;
 
     public CategoriesMetamacServiceImpl() {
     }
@@ -376,6 +390,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
 
+            category.setCategoryElement(categoryTemp.getCategoryElement());
+
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
         }
 
@@ -564,6 +580,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
                 LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap = (LinkedHashMap<String, EniSchemaCatalog>) UtilsMap.getMapFromEniScheme(eniSchemaCatalogRepository.findAll());
 
+                // store categoryElement found in each iteration for more efficient importation.
+                Map<String, CategoryElement> categoryElementsByCode = new HashMap<String, CategoryElement>();
+
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -578,6 +597,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                     CategoryMetamac category = TsvImportationUtils.tsvLineToCategory(header, columns, lineNumber, categorySchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
                     if (category != null) {
+                        tsvLineToItemCategoryCategoryElement(category, categoryElementsByCode, header, columns, informationItems);
                         TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
                         categtoriesToPersist.add(category);
                         categoriesToPersistByCode.put(category.getNameableArtefact().getCodeFull(), category);
@@ -606,8 +626,33 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
-    private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
-        return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
+    public void tsvLineToItemCategoryCategoryElement(CategoryMetamac category, Map<String, CategoryElement> categoryElementsByCode, ImportationCategoriesTsvHeader header, String[] columns,
+            List<MetamacExceptionItem> infoItems) {
+        // category element field
+        String categoryElementCodeToImport = TsvImportationUtils.getCategoryElementCode(header, columns);
+        if (!StringUtils.isBlank(categoryElementCodeToImport)) {
+            CategoryElement categoryElement = retrieveCategoryElementImportedByCode(categoryElementsByCode, categoryElementCodeToImport);
+            if (categoryElement == null) {
+                // do not abort importation. Only inform about this
+                String categoryIdentifier = columns[header.getCodePosition()];
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_CATEGORY_ELEMENT_NOT_FOUND, categoryElementCodeToImport, categoryIdentifier));
+            } else {
+                category.setCategoryElement(categoryElement);
+                categoryElementsByCode.put(categoryElementCodeToImport, categoryElement);
+            }
+        } else {
+            category.setCategoryElement(null);
+        }
+    }
+
+    public CategoryElement retrieveCategoryElementImportedByCode(Map<String, CategoryElement> categoryElementsByCode, String categoryElementCode) {
+        // category element field
+
+        if (categoryElementsByCode.containsKey(categoryElementCode)) {
+            return categoryElementsByCode.get(categoryElementCode);
+        } else {
+            return getCategoryElementRepository().findByCode(categoryElementCode);
+        }
     }
 
     @Override
@@ -625,7 +670,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     }
 
     @Override
-    public List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
         // Validation
         CategoriesMetamacInvocationValidator.checkRetrieveCategoriesByCategorySchemeUrn(categorySchemeUrn, locale, null);
 
@@ -825,6 +870,21 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
     }
 
+    // ------------------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // ------------------------------------------------------------------------------------
+
+    @Override
+    public String exportCategoryElementsTsv(ServiceContext ctx, List<String> categoryElementUrns) throws MetamacException {
+
+        CategoriesMetamacInvocationValidator.checkExportCategoryElementsTsv(categoryElementUrns, null);
+
+        List<CategoryElement> elementsToExport = getCategoryElementRepository().findByUrnIn(categoryElementUrns);
+
+        List<String> languages = srmConfiguration.retrieveLanguages();
+        return TsvExportationUtils.exportCategoryElements(elementsToExport, languages);
+    }
+
     /**
      * Typecast to Metamac type
      */
@@ -984,4 +1044,427 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             categoriesToPersistByCodeFull.put(categoryMetamac.getNameableArtefact().getCodeFull(), categoryMetamac);
         }
     }
+
+    public void deleteCategoryElement(ServiceContext ctx, String urn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkDeleteArtefact(urn);
+        CategoryElement categoryElementToDelete = retrieveCategoryElementByUrn(urn);
+        checkCategoryElementCanBeDeleted(categoryElementToDelete);
+
+        // Delete
+        getCategoryElementRepository().delete(categoryElementToDelete);
+    }
+
+    private void checkCategoryElementCanBeDeleted(CategoryElement categoryElementToDelete) throws MetamacException {
+        String categoryElementToDeleteUrn = categoryElementToDelete.getIdentifiableArtefact().getUrn();
+
+        if (CollectionUtils.isNotEmpty(categoryElementToDelete.getCodes())) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.CATEGORY_ELEMENT_WITH_RELATIONS)
+                    .withMessageParameters(categoryElementToDeleteUrn, categoryElementToDelete.getCodes().get(0).getNameableArtefact().getUrn()).build(); // say one
+        }
+
+    }
+
+    public CategoryElement createCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkCreateCategoryElement(categoryElement, null);
+        checCategoryElementToCreateOrUpdate(ctx, categoryElement);
+
+        // Create
+        setCategoryElementUrnUnique(categoryElement, Boolean.TRUE);
+        categoryElement = getCategoryElementRepository().save(categoryElement);
+        return categoryElement;
+    }
+
+    public CategoryElement updateCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
+        // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategoryElement(categoryElement, null);
+        checCategoryElementToCreateOrUpdate(ctx, categoryElement);
+
+        if (categoryElement.getIdentifiableArtefact().getIsCodeUpdated()) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_UNMODIFIABLE).withMessageParameters(ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE).build();
+        }
+        categoryElement.setUpdateDate(new DateTime()); // Optimistic locking: Update "update date" attribute to force update to root entity, to increase attribute "version"
+
+        // Update
+        return getCategoryElementRepository().save(categoryElement);
+    }
+
+    public CategoryElement retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkRetrieveByUrn(urn);
+
+        // Retrieve
+        CategoryElement categoryElement = retrieveCategoryElementByUrn(urn);
+        return categoryElement;
+    }
+
+    public PagedResult<CategoryElement> findCategoryElementsByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkFindByCondition(conditions, pagingParameter);
+
+        // Find
+        if (conditions == null) {
+            conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).distinctRoot().build();
+        }
+        PagedResult<CategoryElement> categoryElementPagedResult = getCategoryElementRepository().findByCondition(conditions, pagingParameter);
+        return categoryElementPagedResult;
+    }
+
+    private CategoryElement retrieveCategoryElementByUrn(String urn) throws MetamacException {
+        CategoryElement categoryElement = getCategoryElementRepository().findByUrn(urn);
+        if (categoryElement == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).build();
+        }
+        return categoryElement;
+    }
+
+    /**
+     * Common validations to create or update a variable element
+     */
+    private void checCategoryElementToCreateOrUpdate(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
+
+        // Check translations
+        String locale = srmConfiguration.retrieveLanguageDefault();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        SrmServiceUtils.checkInternationalStringTranslationsWithoutSql(categoryElement.getShortName(), ServiceExceptionParameters.RESOURCE_ELEMENT_SHORT_NAME, locale, exceptionItems);
+        if (exceptionItems.size() != 0) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(exceptionItems).build();
+        }
+    }
+
+    /**
+     * Generate urn, check it is unique and set to category element. Set also urnProvider
+     */
+    private void setCategoryElementUrnUnique(CategoryElement categoryElement, boolean checkUrnUnique) throws MetamacException {
+        String urn = GeneratorUrnUtils.generateCategoryElementUrn(categoryElement);
+        if (checkUrnUnique) {
+            // In import cases this verification isn't performed for performance. In BBDD this constraint is checked
+            identifiableArtefactRepository.checkUrnUnique(urn, categoryElement.getIdentifiableArtefact().getId());
+        }
+
+        categoryElement.getIdentifiableArtefact().setUrn(urn);
+        categoryElement.getIdentifiableArtefact().setUrnProvider(urn);
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementsTsv(ServiceContext ctx, File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException {
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkImportCategoryElementsTsv(file, fileName, updateAlreadyExisting, canBeBackground, null);
+
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_RESOURCE_ELEMENTS_IMPORTATION);
+
+        // Plannify task if background
+        if (executeInBackground) {
+            String jobKey = tasksMetamacService.plannifyImportCategoryElementsTsvInBackground(ctx, file, fileName, updateAlreadyExisting);
+            return new TaskImportationInfo(Boolean.TRUE, jobKey);
+        }
+
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+        Map<String, CategoryElement> categoryElementsToPersistByCode = doImportCategoryElementTsv(file, updateAlreadyExisting, exceptionItems, informationItems);
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+        // Persist
+        for (CategoryElement categoryElement : categoryElementsToPersistByCode.values()) {
+            getCategoryElementRepository().save(categoryElement);
+        }
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    private Map<String, CategoryElement> doImportCategoryElementTsv(File file, boolean updateAlreadyExisting, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> informationItems) {
+        // Import
+
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        Map<String, CategoryElement> categoryElementsToPersistByCode = null;
+        try {
+            InputStream stream = new FileInputStream(file);
+            String charset = FileUtils.guessCharset(file);
+            inputStreamReader = new InputStreamReader(stream, charset);
+            bufferedReader = new BufferedReader(inputStreamReader);
+
+            // Header
+            String line = bufferedReader.readLine();
+            ImportationCategoryElementsTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportCategoryElements(line, exceptionItems);
+
+            // Category elements
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                categoryElementsToPersistByCode = new HashMap<String, CategoryElement>();
+
+                List<String> fileLines = new ArrayList<>();
+                int lineNumber = 2;
+
+                line = bufferedReader.readLine();
+                boolean allFileHasBeenProcessed = line == null;
+
+                while (!allFileHasBeenProcessed) {
+                    if (line != null) {
+                        fileLines.add(line);
+                    }
+
+                    doImportLineCategoryElementTsv(updateAlreadyExisting, lineNumber, header, fileLines, line, categoryElementsToPersistByCode, exceptionItems, informationItems);
+                    line = bufferedReader.readLine();
+                    allFileHasBeenProcessed = line == null && fileLines.isEmpty();
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error importing tsv category elements file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } finally {
+            try {
+                inputStreamReader.close();
+                bufferedReader.close();
+            } catch (IOException e) {
+                // do not relaunch error
+                logger.error("Error closing streams", e);
+            }
+        }
+
+        return categoryElementsToPersistByCode;
+    }
+
+    private void doImportLineCategoryElementTsv(boolean updateAlreadyExisting, int lineNumber, ImportationCategoryElementsTsvHeader header, List<String> fileLines, String line,
+            Map<String, CategoryElement> categoryElementsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> informationItems) throws MetamacException {
+        if (fileLines.size() >= SrmConstants.RESOURCE_ELEMENT_CACHE_SIZE_TSV_IMPORT || line == null) {
+            Map<String, CategoryElement> categoryElementCache = getCategoryElementCache(fileLines, header);
+
+            for (String fileLine : fileLines) {
+                if (StringUtils.isNotBlank(fileLine)) {
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(fileLine), SrmConstants.TSV_SEPARATOR);
+                    if (columns.length != header.getColumnsSize()) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                    } else {
+                        // Transform category element and add to list to persist
+                        CategoryElement categoryElement = tsvLineToCategoryElement(header, columns, lineNumber, categoryElementCache, updateAlreadyExisting, categoryElementsToPersistByCode,
+                                exceptionItems, informationItems);
+                        if (categoryElement != null) {
+                            categoryElementsToPersistByCode.put(categoryElement.getIdentifiableArtefact().getCode(), categoryElement);
+                        }
+                    }
+                }
+                lineNumber++;
+            }
+
+            fileLines.clear();
+        }
+    }
+
+    private Map<String, CategoryElement> getCategoryElementCache(List<String> filePartition, ImportationCategoryElementsTsvHeader header) {
+
+        List<String> categoryElementCodes = new ArrayList<>();
+
+        logger.debug("Number of lines from file partition {}", filePartition.size());
+
+        for (String fileLine : filePartition) {
+            String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(fileLine), SrmConstants.TSV_SEPARATOR);
+            if (columns.length == header.getColumnsSize()) {
+                String codeIdentifier = columns[header.getCodePosition()];
+                if (!StringUtils.isBlank(codeIdentifier) && SemanticIdentifierValidationUtils.isResourceElementSemanticIdentifier(codeIdentifier)) {
+                    categoryElementCodes.add(codeIdentifier);
+                }
+            }
+        }
+
+        logger.debug("Number of extracted codes from file partition: {}", categoryElementCodes.size());
+        logger.trace("Extracted codes from file partition: {}", categoryElementCodes);
+
+        List<CategoryElement> categoryElements = getCategoryElementRepository().findByCodeIn(categoryElementCodes);
+
+        Map<String, CategoryElement> categoryElementsCache = new HashMap<>();
+        for (CategoryElement categoryElement : categoryElements) {
+            categoryElementsCache.put(categoryElement.getIdentifiableArtefact().getCode(), categoryElement);
+        }
+
+        logger.debug("Number of codes in cache: {}", categoryElementsCache.size());
+        logger.trace("Codes in cache: {}", categoryElementsCache.keySet());
+
+        return categoryElementsCache;
+    }
+
+    /**
+     * Transforms tsv line to CategoryElement. IMPORTANT: Do not execute save or update operation
+     */
+    private CategoryElement tsvLineToCategoryElement(ImportationCategoryElementsTsvHeader header, String[] columns, int lineNumber, Map<String, CategoryElement> categoryElementCache,
+            boolean updateAlreadyExisting, Map<String, CategoryElement> categoryElementsToPersistByCode, List<MetamacExceptionItem> exceptionItems, List<MetamacExceptionItem> infoItems)
+            throws MetamacException {
+
+        // semantic identifier
+        String codeIdentifier = columns[header.getCodePosition()];
+        if (StringUtils.isBlank(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null; // do not add more errors in this line
+        }
+        if (categoryElementsToPersistByCode.containsKey(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_RESOURCE_DUPLICATED, codeIdentifier, lineNumber));
+            return null;
+        }
+        if (!SemanticIdentifierValidationUtils.isResourceElementSemanticIdentifier(codeIdentifier)) {
+            exceptionItems
+                    .add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT_SEMANTIC_IDENTIFIER, codeIdentifier, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE));
+            return null;
+        }
+        // init variable element
+        CategoryElement categoryElement = categoryElementCache.get(codeIdentifier);
+        if (categoryElement == null) {
+            categoryElement = new CategoryElement();
+            categoryElement.setIdentifiableArtefact(new IdentifiableArtefact());
+            categoryElement.getIdentifiableArtefact().setCode(codeIdentifier);
+            setCategoryElementUrnUnique(categoryElement, Boolean.FALSE);
+        } else {
+            if (!updateAlreadyExisting) {
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_NOT_UPDATED, categoryElement.getIdentifiableArtefact().getCode()));
+                return null;
+            } else {
+                categoryElement.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
+                categoryElement.setUpdateDate(new DateTime());
+                infoItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, categoryElement.getIdentifiableArtefact().getCode()));
+            }
+        }
+        // short name
+        categoryElement.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, categoryElement.getShortName()));
+        if (categoryElement.getShortName() == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, categoryElement.getIdentifiableArtefact().getCode(),
+                    ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
+        }
+
+        // Do not persist if any error ocurrs
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+
+        try {
+            // extra validation to avoid save an incorrect variable element
+            if (categoryElement.getId() == null) {
+                CategoriesMetamacInvocationValidator.checkCreateCategoryElement(categoryElement, null);
+            } else {
+                CategoriesMetamacInvocationValidator.checkUpdateCategoryElement(categoryElement, null);
+            }
+        } catch (MetamacException metamacException) {
+            logger.error("Error importing category element from tsv file", metamacException);
+            MetamacExceptionItem metamacExceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
+            metamacExceptionItem.setExceptionItems(metamacException.getExceptionItems());
+            exceptionItems.add(metamacExceptionItem);
+        }
+        return categoryElement;
+    }
+
+    @Override
+    public CategoryMetamac updateCategoryElementOfCategory(ServiceContext ctx, String categoryUrn, String categoryElementUrn) throws MetamacException {
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategoryElementOfCategory(categoryUrn, categoryElementUrn, null);
+
+        CategoryMetamac category = retrieveCategoryByUrn(ctx, categoryUrn);
+        if (categoryElementUrn == null) {
+            // Delete
+            if (category.getCategoryElement() != null) {
+                category.getCategoryElement().removeCode(category);
+            }
+        } else {
+            // Add
+            CategoryElement categoryElement = retrieveCategoryElementByUrn(categoryElementUrn);
+
+            if (category.getCategoryElement() != null) {
+                category.getCategoryElement().removeCode(category);
+            }
+            categoryElement.addCode(category);
+        }
+        baseService.updateItemSchemeLastUpdated(ctx, category.getItemSchemeVersion());
+        return getCategoryMetamacRepository().save(category);
+    }
+
+    @Override
+    public void updateCodesCategoryElements(ServiceContext ctx, String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCodesCategoryElements(categorySchemeUrn, categoryElementsIdByCodeId, null);
+
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+
+        // Update all
+        getCategoryMetamacRepository().updateCodesCategoryElements(categoryElementsIdByCodeId, categorySchemeVersion.getId());
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+    }
+
+    @Override
+    public List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(ServiceContext ctx, String categorySchemeUrn, String locale, boolean proposeOnlyWithoutCategoryElement)
+            throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkNormaliseCategoryElementsToCategories(categorySchemeUrn, locale, null);
+
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+
+        // Find codes and category elements
+        List<CategoryMetamacVisualisationResult> codes = retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, locale);
+        List<CategoryElementVisualisationResult> categoryElements = retrieveCategoryElementsAll(locale);
+        Map<String, CategoryElementVisualisationResult> categoryElementsByUrn = new HashMap<>(categoryElements.size());
+        for (CategoryElementVisualisationResult categoryElement : categoryElements) {
+            categoryElementsByUrn.put(categoryElement.getUrn(), categoryElement);
+        }
+
+        // Init dictionary with category elements
+        Map<String, String> dictionary = new HashMap<>(categoryElements.size());
+        for (CategoryElementVisualisationResult categoryElement : categoryElements) {
+            if (categoryElement.getShortName() != null) {
+                dictionary.put(categoryElement.getUrn(), categoryElement.getShortName());
+            }
+        }
+        DiceLuceneRamAproxStringMatch luceneMatch = new DiceLuceneRamAproxStringMatch(dictionary);
+
+        // Get suggestions or mantain actual category element
+        List<CodeCategoryElementNormalisationResult> results = new ArrayList<>(codes.size());
+        for (CategoryMetamacVisualisationResult code : codes) {
+            CodeCategoryElementNormalisationResult result = new CodeCategoryElementNormalisationResult();
+            result.setCode(code);
+            if (proposeOnlyWithoutCategoryElement && code.getCategoryElement() != null) {
+                // maintain actual
+                result.setCategoryElementProposed(code.getCategoryElement());
+            } else {
+                // propose by lucene
+                String name = code.getName();
+                if (name != null) {
+                    List<MatchResult> suggestedCategoryElements = luceneMatch.getSuggestedWords(name, 1);
+                    if (suggestedCategoryElements.size() != 0) {
+                        CategoryElementVisualisationResult categoryElement = categoryElementsByUrn.get(suggestedCategoryElements.get(0).getDictionaryKey());
+                        result.setCategoryElementProposed(categoryElement);
+                    }
+                }
+            }
+            results.add(result);
+        }
+
+        luceneMatch.shutdown();
+        return results;
+    }
+
+    private List<CategoryElementVisualisationResult> retrieveCategoryElementsAll(String locale) throws MetamacException {
+        List<CategoryElement> categoryElements = getCategoryElementRepository().findAll();
+        return categoryElementToCategoryElementVisualisationResult(locale, categoryElements);
+    }
+
+    private List<CategoryElementVisualisationResult> categoryElementToCategoryElementVisualisationResult(String locale, List<CategoryElement> categoryElements) {
+        List<CategoryElementVisualisationResult> categoryElementVisualisationResult = new ArrayList<CategoryElementVisualisationResult>();
+        for (CategoryElement categoryElement : categoryElements) {
+            CategoryElementVisualisationResult categoryElementVisualisation = new CategoryElementVisualisationResult();
+            categoryElementVisualisation.setIdDatabase(categoryElement.getId());
+            categoryElementVisualisation.setUrn(categoryElement.getIdentifiableArtefact().getUrn());
+            categoryElementVisualisation.setCode(categoryElement.getIdentifiableArtefact().getCode());
+            categoryElementVisualisation.setShortName(InternationalStringUtils.getLocalisedString(categoryElement.getShortName(), locale));
+            categoryElementVisualisationResult.add(categoryElementVisualisation);
+        }
+        return categoryElementVisualisationResult;
+    }
+
 }

@@ -13,6 +13,7 @@ public class PlaceRequestParams {
 
     public static final String categorySchemeParamId           = "id";
     public static final String categoryParamId                 = "id";
+    public static final String categoryElementParamId          = "id";
 
     public static final String annotationTypeParamId           = "id";
 

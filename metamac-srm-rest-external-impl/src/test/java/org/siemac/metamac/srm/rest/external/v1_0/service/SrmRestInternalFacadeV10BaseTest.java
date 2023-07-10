@@ -130,6 +130,10 @@ public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTe
         return getUriItems(agencyID, resourceID, version, null, null, null, null) + "/" + itemID;
     }
 
+    protected String[] getRequestUri(String requestBase, String fields) {
+        return new String[]{requestBase + "?" + fields, requestBase + ".xml" + "?" + fields, requestBase + "?_type=xml" + "&" + fields};
+    }
+
     @SuppressWarnings("rawtypes")
     protected String getAgencyIdFromConditionalCriteria(List<ConditionalCriteria> conditions, MaintainableArtefactProperty maintainableArtefactProperty) {
         ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal, maintainableArtefactProperty.maintainer().idAsMaintainer());

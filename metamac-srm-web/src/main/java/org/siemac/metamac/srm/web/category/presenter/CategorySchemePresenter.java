@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
@@ -62,6 +65,8 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsActio
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemesAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemesResult;
+import org.siemac.metamac.srm.web.shared.category.NormaliseCategoryElementsToCategoriesAction;
+import org.siemac.metamac.srm.web.shared.category.NormaliseCategoryElementsToCategoriesResult;
 import org.siemac.metamac.srm.web.shared.category.ReSendCategorySchemeStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.category.ReSendCategorySchemeStreamMessageResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
@@ -70,10 +75,13 @@ import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusAction;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusResult;
+import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeResult;
+import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
@@ -135,10 +143,13 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
         void setCategoryScheme(CategorySchemeMetamacDto categorySchemeMetamacDto);
         void setCategorySchemeVersions(List<CategorySchemeMetamacBasicDto> categorySchemeMetamacDtos);
-        void setCategories(List<ItemVisualisationResult> categoryDtos);
+        void setCategories(List<CategoryMetamacVisualisationResult> categoryDtos);
         void startCategorySchemeEdition();
         void setLatestCategorySchemeForInternalPublication(GetCategorySchemesResult result);
         void selectCategorySchemeTab();
+
+        void setCodesCategoryElementsNormalised(List<CodeCategoryElementNormalisationResult> codeCategoryElementNormalisationResults);
+        void setCategoryElementsForManualNormalisation(GetRelatedResourcesResult categoryElementsRelatedResult);
 
         // Categorisations
 
@@ -616,6 +627,81 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                         getView().setCategoriesForCategorisations(result);
                     }
                 });
+    }
+
+    @Override
+    public void retrieveCategories() {
+        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeMetamacDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale()),
+                new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetCategoriesBySchemeResult result) {
+                        getView().setCategories(result.getCategories());
+                    }
+                });
+    }
+
+    //
+    // NORMALISATION (CATEGORY ELEMENTS AND CODES)
+    //
+
+    @Override
+    public void normaliseCategoryElementsToCodes(String categorySchemeUrn, String locale, boolean onlyNormaliseCategoriesWithoutCategoryElement) {
+
+        dispatcher.execute(new NormaliseCategoryElementsToCategoriesAction(categorySchemeUrn, locale, onlyNormaliseCategoriesWithoutCategoryElement),
+                new WaitingAsyncCallbackHandlingError<NormaliseCategoryElementsToCategoriesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(NormaliseCategoryElementsToCategoriesResult result) {
+                        getView().setCodesCategoryElementsNormalised(result.getCodeCategoryElementNormalisationResults());
+                    }
+                });
+
+    }
+
+    @Override
+    public void updateCodesCategoryElements(String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) {
+
+        dispatcher.execute(new UpdateCodesCategoryElementsAction(categorySchemeUrn, categoryElementsIdByCodeId), new WaitingAsyncCallbackHandlingError<UpdateCodesCategoryElementsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(UpdateCodesCategoryElementsResult result) {
+                retrieveCategories();
+            }
+        });
+
+    }
+
+    @Override
+    public void retrieveCategoryElementsForManualNormalisation(int firstResult, int maxResults, String criteria) {
+
+        CategoryElementWebCriteria categoryElementWebCriteria = new CategoryElementWebCriteria(criteria);
+
+        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CATEGORY_ELEMENT_WITH_CODE, firstResult, maxResults, categoryElementWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setCategoryElementsForManualNormalisation(result);
+                    }
+                });
+
     }
 
     //

@@ -554,6 +554,41 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
         return getConstants().breadcrumbVariableElement();
     }
 
+    // Category elements
+
+    public static List<PlaceRequest> buildAbsoluteCategoryElementsPlaceRequest() {
+        List<PlaceRequest> placeRequestHierarchy = new ArrayList<PlaceRequest>();
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.structuralResourcesPage));
+        placeRequestHierarchy.add(new PlaceRequest(NameTokens.categoryElementsPage));
+        return placeRequestHierarchy;
+    }
+
+    public static String getCategoryElementParamFromUrl(PlaceManager placeManager) {
+        return getParamFromUrl(placeManager, NameTokens.categoryElementPage, PlaceRequestParams.categoryElementParamId);
+    }
+
+    public static PlaceRequest buildRelativeCategoryElementPlaceRequest(String categoryElementCode) {
+        PlaceRequest placeRequest = new PlaceRequest(NameTokens.categoryElementPage).with(PlaceRequestParams.categoryElementParamId, categoryElementCode);
+        return placeRequest;
+    }
+
+    public static List<PlaceRequest> buildAbsoluteCategoryElementPlaceRequest(String categoryElementCode) {
+        List<PlaceRequest> placeRequests = new ArrayList<PlaceRequest>();
+        placeRequests.add(new PlaceRequest(NameTokens.structuralResourcesPage));
+        placeRequests.add(new PlaceRequest(NameTokens.categoryElementsPage));
+        PlaceRequest categoryElementPlace = buildRelativeCategoryElementPlaceRequest(categoryElementCode);
+        placeRequests.add(categoryElementPlace);
+        return placeRequests;
+    }
+
+    public static String getCategoryElementBreadCrumbTitle(PlaceRequest placeRequest) {
+        String categoryElementCode = getRequestParameter(placeRequest, PlaceRequestParams.categoryElementParamId);
+        if (!StringUtils.isBlank(categoryElementCode)) {
+            return categoryElementCode;
+        }
+        return getConstants().breadcrumbCategoryElement();
+    }
+
     // ---------------------------------------------------------------------------
     // GENERIC METHODS
     // ---------------------------------------------------------------------------
@@ -581,6 +616,8 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
             } else if (SrmUrnParserUtils.isCategoryUrn(urn)) {
                 String categorySchemeUrn = SrmUrnParserUtils.getCategorySchemeUrnFromCategoryUrn(urn);
                 return buildAbsoluteCategoryPlaceRequest(categorySchemeUrn, urn);
+            } else if (SrmUrnParserUtils.isCategoryElementUrn(urn)) {
+                return buildAbsoluteCategoryElementPlaceRequest(relatedResourceDto.getCode());
             } else if (SrmUrnParserUtils.isConceptSchemeUrn(urn)) {
                 return buildAbsoluteConceptSchemePlaceRequest(urn);
             } else if (SrmUrnParserUtils.isConceptUrn(urn)) {

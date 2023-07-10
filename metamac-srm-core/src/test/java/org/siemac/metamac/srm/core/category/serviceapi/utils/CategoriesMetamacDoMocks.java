@@ -1,9 +1,12 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.common.SrmResourceElementMock;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
@@ -45,6 +48,7 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
     public static CategoryMetamacResultExtensionPoint mockCategoryMetamacResultFixedValues() {
         CategoryMetamacResultExtensionPoint target = new CategoryMetamacResultExtensionPoint();
         target.setEniSchemeCatalog(mockEniSchemeFixedValues("eniSchemeText"));
+        target.setCategoryElement(mockCategoryElementResultFixedValues("categoryElement1"));
         target.setEniSchemeIdentifier(target.getEniSchemeCatalog().getIdentifier());
         return target;
     }
@@ -56,9 +60,31 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         return eniSchemeType;
     }
 
+    public static CategoryElementResult mockCategoryElementResultFixedValues(String baseCategoryElement) {
+        CategoryElementResult categoryElementResult = new CategoryElementResult();
+        CategoryElement categoryElement = mockCategoryElementFixedValues("categoryElement1");
+        categoryElementResult.setAnnotableArtefactIdDatabase(categoryElement.getIdentifiableArtefact().getId());
+        categoryElementResult.setCode(categoryElement.getIdentifiableArtefact().getCode());
+        categoryElementResult.setUrn(categoryElement.getIdentifiableArtefact().getUrn());
+        categoryElementResult.setUrnProvider(categoryElement.getIdentifiableArtefact().getUrnProvider());
+        return categoryElementResult;
+    }
+
     public static ItemResult mockCategoryResultFixedValuesWithExtraFields(String resourceID, ItemResult parent) {
         ItemResult itemResult = mockCategoryResultFixedValues(resourceID, parent);
         itemResult.setExtensionPoint(mockCategoryMetamacResultFixedValues());
         return itemResult;
+    }
+
+    public static CategoryElement mockCategoryElement() {
+        CategoryElement categoryElement = new CategoryElement();
+        SrmResourceElementMock.mockResourceElement(categoryElement);
+        return categoryElement;
+    }
+
+    public static CategoryElement mockCategoryElementFixedValues(String codeCategoryElement) {
+        CategoryElement categoryElement = new CategoryElement();
+        SrmResourceElementMock.mockResourceElementAllMetadata(categoryElement, codeCategoryElement);
+        return categoryElement;
     }
 }

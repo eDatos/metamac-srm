@@ -24,7 +24,7 @@ public interface CategoriesDo2RestMapperV10 {
             Set<String> fields);
     public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields);
     List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException;
-    public Category toCategory(CategoryMetamac source);
+    public Category toCategory(CategoryMetamac source, Set<String> fields);
 
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations toCategorisations(PagedResult<Categorisation> sources, String agencyID, String resourceID, String query,
             String orderBy, Integer limit);

@@ -10,6 +10,9 @@
 
 
 ## 5.0.1 a 5.0.2-SNAPSHOT
+**BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:
+  * **categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}**
+
 * Es necesario ejecutar los scripts SQL contenidos en la carpeta
   ```shell
   etc/changes-from-release/5.0.1/db/common-metadata/postgresql

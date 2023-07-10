@@ -1251,6 +1251,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
+                      "categoryElement":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Resource"
+                  },
                      "description":"",
                      "$ref":"#/definitions/Item"
                   },
@@ -1425,7 +1432,14 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/Item"
-                  }
+                  },
+                "categoryElement":{
+                    "xml":{
+                       "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                    },
+                    "description":"",
+                    "$ref":"#/definitions/Resource"
+                  },
                }
             }
          ],

@@ -55,6 +55,7 @@
     <source path='code' />
     <source path='category' />
     <source path='shared' />
+    <source path='master' />
 	<source path='resource' />
     <stylesheet src="MetamacSrmWeb.css" />
 

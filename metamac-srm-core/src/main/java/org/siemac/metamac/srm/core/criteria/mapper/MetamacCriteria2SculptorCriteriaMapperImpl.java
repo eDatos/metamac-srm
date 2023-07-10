@@ -1261,6 +1261,9 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                     return new SculptorPropertyCriteria(AnnotationTypeProperties.code(), propertyRestriction.getIntegerValue(), propertyRestriction.getOperationType());
                 case TITLE:
                     return new SculptorPropertyCriteria(AnnotationTypeProperties.title().texts().label(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case UUID:
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.uuid(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+
                 default:
                     throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
             }

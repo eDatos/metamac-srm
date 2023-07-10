@@ -9,6 +9,7 @@ public class AnnotationDS extends DataSource {
     public static final String CODE                = "an-code";
     public static final String TITLE               = "an-title";
     public static final String TYPE                = "an-type";
+    public static final String TYPE_ORDERED        = "an-type-ordered";
     public static final String URL                 = "an-url";
     public static final String TEXT                = "an-text";
     public static final String IS_TEXT_EDITABLE    = "an-text-edition";

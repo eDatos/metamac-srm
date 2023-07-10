@@ -69,8 +69,6 @@ public class StructuralResourcesMenu extends ToolStrip {
         });
         addButton(dsdListButton);
 
-        addSeparator();
-
         // ORGANISATIONS
 
         organisationsButton = new RadioToolStripButton(getConstants().organisations());
@@ -97,8 +95,6 @@ public class StructuralResourcesMenu extends ToolStrip {
         });
         addButton(categoriesButton);
 
-        addSeparator();
-
         // ADMINISTRATION
 
         adminButton = new RadioToolStripButton(getConstants().admin());
@@ -116,9 +112,6 @@ public class StructuralResourcesMenu extends ToolStrip {
         }
 
         addButton(adminButton);
-
-        addSeparator();
-        addSeparator();
 
         // IMPORTATION
 

@@ -23,7 +23,7 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
     private RadioToolStripButton classificationsButton;
     private RadioToolStripButton categoriesButton;
     private RadioToolStripButton codelistsButton;
-    private RadioToolStripButton annotationTypeButton;
+    private RadioToolStripButton adminButtonButton;
 
     @Inject
     public ToolStripViewImpl() {
@@ -50,11 +50,11 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
         codelistsButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().codelists());
         codelistsButton.setID(ToolStripButtonEnum.CODELISTS.getValue());
 
-        annotationTypeButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().admin());
-        annotationTypeButton.setID(ToolStripButtonEnum.ADMIN.getValue());
+        adminButtonButton = new RadioToolStripButton(MetamacSrmWeb.getConstants().admin());
+        adminButtonButton.setID(ToolStripButtonEnum.ADMIN.getValue());
 
         if (!AdminClientSecurityUtils.canAdministrate()) {
-            annotationTypeButton.hide();
+            adminButtonButton.hide();
         }
 
         toolStrip.addButton(conceptsButton);
@@ -63,7 +63,7 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
         toolStrip.addSeparator();
         toolStrip.addButton(organisationsButton);
         toolStrip.addButton(categoriesButton);
-        toolStrip.addButton(annotationTypeButton);
+        toolStrip.addButton(adminButtonButton);
     }
 
     @Override
@@ -110,6 +110,6 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
 
     @Override
     public HasClickHandlers getAnnotationTypesButton() {
-        return annotationTypeButton;
+        return adminButtonButton;
     }
 }

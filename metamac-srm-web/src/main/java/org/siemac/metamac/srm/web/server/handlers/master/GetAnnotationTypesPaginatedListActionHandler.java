@@ -1,10 +1,12 @@
 package org.siemac.metamac.srm.web.server.handlers.master;
 
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
+import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPaginator;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.web.server.utils.MetamacWebCriteriaUtils;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListResult;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
@@ -30,9 +32,15 @@ public class GetAnnotationTypesPaginatedListActionHandler extends SecurityAction
     public GetAnnotationTypesPaginatedListResult executeSecurityAction(GetAnnotationTypesPaginatedListAction action) throws ActionException {
         try {
             MetamacCriteria criteria = new MetamacCriteria();
+
+            // Criteria
+            MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
+            restriction.getRestrictions().add(MetamacWebCriteriaUtils.buildMetamacCriteriaFromWebcriteria(action.getCriteria()));
+            criteria.setRestriction(restriction);
+
             criteria.setPaginator(new MetamacCriteriaPaginator());
-            criteria.getPaginator().setFirstResult(action.getFirstResult());
-            criteria.getPaginator().setMaximumResultSize(action.getMaxResults());
+            criteria.getPaginator().setFirstResult(action.getCriteria().getFirstResult());
+            criteria.getPaginator().setMaximumResultSize(action.getCriteria().getMaxResults());
             criteria.getPaginator().setCountTotalResults(true);
             MetamacCriteriaResult<AnnotationTypeDto> annotationTypes = srmCoreServiceFacade.findAnnotationTypes(ServiceContextHolder.getCurrentServiceContext(), criteria);
             return new GetAnnotationTypesPaginatedListResult(annotationTypes.getResults(), annotationTypes.getPaginatorResult().getTotalResults());

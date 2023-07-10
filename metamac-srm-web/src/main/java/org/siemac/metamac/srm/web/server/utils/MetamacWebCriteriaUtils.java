@@ -7,6 +7,7 @@ import org.siemac.metamac.core.common.criteria.MetamacCriteriaDisjunctionRestric
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction.OperationType;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaRestriction;
+import org.siemac.metamac.srm.core.criteria.AnnotationTypeCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryElementCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategorySchemeVersionMetamacCriteriaPropertyEnum;
@@ -20,6 +21,7 @@ import org.siemac.metamac.srm.core.criteria.OrganisationMetamacCriteriaPropertyE
 import org.siemac.metamac.srm.core.criteria.OrganisationSchemeVersionMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.VariableCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.VariableElementCriteriaPropertyEnum;
+import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
@@ -962,6 +964,28 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions()
                         .add(new MetamacCriteriaPropertyRestriction(OrganisationContactCriteriaPropertyEnum.RESPONSIBILITY.name(), criteria.getResponsibility(), OperationType.ILIKE));
             }
+        }
+
+        return conjunctionRestriction;
+    }
+
+    public static MetamacCriteriaRestriction buildMetamacCriteriaFromWebcriteria(AnnotationTypeCriteria criteria) {
+        MetamacCriteriaConjunctionRestriction conjunctionRestriction = new MetamacCriteriaConjunctionRestriction();
+
+        if (criteria != null) {
+
+            // General criteria
+
+            MetamacCriteriaDisjunctionRestriction annotationTypeCriteriaDisjuction = new MetamacCriteriaDisjunctionRestriction();
+            if (StringUtils.isNotBlank(criteria.getCriteria())) {
+                annotationTypeCriteriaDisjuction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(AnnotationTypeCriteriaPropertyEnum.UUID.name(), criteria.getCriteria(), OperationType.ILIKE));
+                annotationTypeCriteriaDisjuction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(AnnotationTypeCriteriaPropertyEnum.CODE.name(), criteria.getCriteria(), OperationType.ILIKE));
+                annotationTypeCriteriaDisjuction.getRestrictions()
+                        .add(new MetamacCriteriaPropertyRestriction(AnnotationTypeCriteriaPropertyEnum.TITLE.name(), criteria.getCriteria(), OperationType.ILIKE));
+            }
+            conjunctionRestriction.getRestrictions().add(annotationTypeCriteriaDisjuction);
         }
 
         return conjunctionRestriction;

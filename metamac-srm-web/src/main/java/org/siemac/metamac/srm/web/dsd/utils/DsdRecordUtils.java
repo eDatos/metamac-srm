@@ -129,29 +129,12 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
     }
 
     /**
-     * Returns {@link AnnotationRecord} from {@link AnnotationDto}
-     * 
-     * @param annotationDto
-     * @return
-     */
-    public static AnnotationRecord getAnnotationRecord(AnnotationDto annotationDto) {
-
-        // Mark the whole record as unmodifiable when the text (localisedString) is unmodifiable. This is possible because in the annotations list only the text and the URL are shown. If the record is
-        // mark as modifiable, maybe the URL can not be edited. This is checked in the AnnotationsPanel.
-        boolean isRecordEditable = InternationalStringUtils.isCurrentLocalisedStringModifiable(annotationDto.getText());
-
-        return new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
-                InternationalStringUtils.getLocalisedString(annotationDto.getText()), isRecordEditable, annotationDto,
-                annotationDto.getAnnotationTypeDto() != null ? annotationDto.getAnnotationTypeDto().getId() : null);
-    }
-
-    /**
      * Returns {@link AnnotationRecord} from {@link AnnotationDto} given a locale
      * 
      * @param annotationDto
      * @return
      */
-    public static AnnotationRecord getAnnotationRecord(AnnotationDto annotationDto, String locale) {
+    public static AnnotationRecord getAnnotationRecord(AnnotationDto annotationDto, String annotationTypeOrdered, String locale) {
 
         // Mark the whole record as unmodifiable when the text (localisedString) is unmodifiable. This is possible because in the annotations list only the text and the URL are shown. If the record is
         // mark as modifiable, maybe the URL can not be edited. This is checked in the AnnotationsPanel.
@@ -159,6 +142,6 @@ public class DsdRecordUtils extends org.siemac.metamac.srm.web.client.utils.Reco
 
         return new AnnotationRecord(annotationDto.getId(), annotationDto.getCode(), annotationDto.getTitle(), annotationDto.getAnnotationTypeDto(), annotationDto.getUrl(),
                 InternationalStringUtils.getLocalisedString(annotationDto.getText(), locale), isRecordEdiable, annotationDto,
-                annotationDto.getAnnotationTypeDto() != null ? annotationDto.getAnnotationTypeDto().getId() : null);
+                annotationDto.getAnnotationTypeDto() != null ? annotationDto.getAnnotationTypeDto().getId() : null, annotationTypeOrdered);
     }
 }

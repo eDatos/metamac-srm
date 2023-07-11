@@ -22,6 +22,8 @@
   etc/changes-from-release/3.3.0/db/postgresql/20230602_1_create-table-tbLisAnnotationTypes.sql
   etc/changes-from-release/3.3.0/db/postgresql/20230602_2_annotation_type_adaptation_to_new_data_type.sql
   etc/changes-from-release/3.3.0/db/postgresql/20230602_3_deprecate-column-type-in-table-tbAnnotations.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230711_add_columns_latest_version_number_to_maintainable_artefacts.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230630_remove_duplicated_indexes.sql  
   ```
 * Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
   ```shell

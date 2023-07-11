@@ -181,13 +181,7 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
     }
 
     public static void checkExportCategoryElementsTsv(List<String> categoryElementUrns, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        if (exceptions == null) {
-            exceptions = new ArrayList<MetamacExceptionItem>();
-        }
-
-        ValidationUtils.checkParameterRequired(categoryElementUrns, ServiceExceptionParameters.URN, exceptions);
-
-        ExceptionUtils.throwIfException(exceptions);
+        // no check required.
     }
 
     public static void checkImportCategoryElementsTsv(File file, String fileName, Boolean updateAlreadyExisting, Boolean canBeBackground, List<MetamacExceptionItem> exceptions)

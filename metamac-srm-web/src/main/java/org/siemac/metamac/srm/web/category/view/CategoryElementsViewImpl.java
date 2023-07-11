@@ -196,9 +196,7 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
             @Override
             public void onClick(ClickEvent event) {
                 List<String> categoryElementUrnsSelected = getUrnsFromSelectedCategoryElements();
-                if (!categoryElementUrnsSelected.isEmpty()) {
-                    getUiHandlers().exportCategoryElements(categoryElementUrnsSelected);
-                }
+                getUiHandlers().exportCategoryElements(categoryElementUrnsSelected);
             }
         });
         return exportButton;

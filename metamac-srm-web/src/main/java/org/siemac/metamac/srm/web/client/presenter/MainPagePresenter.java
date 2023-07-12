@@ -8,6 +8,7 @@ import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent.SelectMenuButtonHandler;
 import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.client.view.handlers.MainPageUiHandlers;
@@ -237,7 +238,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     @Override
     public void sDMXResourceImportationSucceed(String successMessage) {
         ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, successMessage);
-        retrieveAnnotationTypes();
+        retrieveAnnotationRefreshNewTypes();
     }
 
     //
@@ -296,6 +297,17 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
             @Override
             public void onWaitSuccess(GetAnnotationTypesResult result) {
                 UpdateAnnotationTypeEvent.fire(MainPagePresenter.this, result.getAnnotationTypes());
+
+            }
+        });
+    }
+
+    public void retrieveAnnotationRefreshNewTypes() {
+        dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetAnnotationTypesResult result) {
+                UpdateAnnotationTypeRefreshEvent.fire(MainPagePresenter.this, result.getAnnotationTypes());
 
             }
         });

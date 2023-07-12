@@ -20,8 +20,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent.UpdateAnnotationTypeRefreshHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.concept.enums.ConceptsToolStripButtonEnum;
@@ -86,7 +86,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, ConceptPresenter.ConceptProxy> implements ConceptUiHandlers, UpdateAnnotationTypeHandler {
+public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, ConceptPresenter.ConceptProxy> implements ConceptUiHandlers, UpdateAnnotationTypeRefreshHandler {
 
     private final DispatchAsync              dispatcher;
     private final PlaceManager               placeManager;
@@ -779,7 +779,7 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
 
     @ProxyEvent
     @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+    public void onUpdateAnnotationUpdateNewType(UpdateAnnotationTypeRefreshEvent event) {
         getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

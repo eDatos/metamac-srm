@@ -22,8 +22,8 @@ import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent.UpdateAnnotationTypeRefreshHandler;
 import org.siemac.metamac.srm.web.client.events.UpdateMaintainableArtefactEvent;
 import org.siemac.metamac.srm.web.client.events.UpdateMaintainableArtefactVersionsEvent;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
@@ -92,7 +92,7 @@ import com.smartgwt.client.widgets.events.HasClickHandlers;
 public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.DsdGeneralTabView, DsdGeneralTabPresenter.DsdGeneralTabProxy>
         implements
             DsdGeneralTabUiHandlers,
-            UpdateAnnotationTypeHandler {
+            UpdateAnnotationTypeRefreshHandler {
 
     private final DispatchAsync dispatcher;
     private final PlaceManager  placeManager;
@@ -551,7 +551,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
 
     @ProxyEvent
     @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+    public void onUpdateAnnotationUpdateNewType(UpdateAnnotationTypeRefreshEvent event) {
         getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

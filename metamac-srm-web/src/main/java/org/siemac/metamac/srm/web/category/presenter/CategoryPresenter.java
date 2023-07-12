@@ -22,8 +22,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent.UpdateAnnotationTypeRefreshHandler;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent.UpdateEniSchemaCatalogHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
@@ -77,7 +77,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         implements
             CategoryUiHandlers,
             UpdateEniSchemaCatalogHandler,
-            UpdateAnnotationTypeHandler {
+            UpdateAnnotationTypeRefreshHandler {
 
     private final DispatchAsync                dispatcher;
     private final PlaceManager                 placeManager;
@@ -335,7 +335,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
 
     @ProxyEvent
     @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
+    public void onUpdateAnnotationUpdateNewType(UpdateAnnotationTypeRefreshEvent event) {
         getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

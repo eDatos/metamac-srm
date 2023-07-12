@@ -6,7 +6,7 @@ import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
 import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesResult;
@@ -155,7 +155,7 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
 
             @Override
             public void onWaitSuccess(GetAnnotationTypesResult result) {
-                UpdateAnnotationTypeEvent.fire(AdminAnnotationTypeTabPresenter.this, result.getAnnotationTypes());
+                UpdateAnnotationTypeRefreshEvent.fire(AdminAnnotationTypeTabPresenter.this, result.getAnnotationTypes());
 
             }
         });

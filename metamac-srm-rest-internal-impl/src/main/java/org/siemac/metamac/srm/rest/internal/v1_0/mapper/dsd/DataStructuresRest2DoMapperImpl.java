@@ -4,7 +4,6 @@ import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
 import org.siemac.metamac.rest.common.query.domain.OperationTypeEnum;
-import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteria;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaConjunction;
@@ -69,19 +68,20 @@ public class DataStructuresRest2DoMapperImpl extends BaseRest2DoMapperV10Impl im
                 case EXTERNAL_PUBLICATION_USER:
                     return buildSculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().externalPublicationUser(), PropertyTypeEnum.STRING, propertyRestriction);
                 case LATEST:
-                    return buildSculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.maintainableArtefact().latestVersionNumberFinal(), PropertyTypeEnum.BOOLEAN,
+                            propertyRestriction);
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.statisticalOperation().urn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case DIMENSION_CONCEPT_URN: {
-                    SculptorPropertyCriteriaDisjunction propertyCriteria1 = buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DataStructureDefinitionVersionMetamacProperties
-                            .grouping().components().cptIdRef().nameableArtefact());
+                    SculptorPropertyCriteriaDisjunction propertyCriteria1 = buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction,
+                            DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact());
                     SculptorPropertyCriteria propertyCriteria2 = new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().componentType(),
                             TypeComponent.DIMENSION_COMPONENT, OperationTypeEnum.EQ);
                     return new SculptorPropertyCriteriaConjunction(propertyCriteria1, propertyCriteria2);
                 }
                 case ATTRIBUTE_CONCEPT_URN: {
-                    SculptorPropertyCriteriaDisjunction propertyCriteria1 = buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DataStructureDefinitionVersionMetamacProperties
-                            .grouping().components().cptIdRef().nameableArtefact());
+                    SculptorPropertyCriteriaDisjunction propertyCriteria1 = buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction,
+                            DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact());
                     SculptorPropertyCriteria propertyCriteria2 = new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().componentType(),
                             TypeComponent.DATA_ATTRIBUTE, OperationTypeEnum.EQ);
                     return new SculptorPropertyCriteriaConjunction(propertyCriteria1, propertyCriteria2);

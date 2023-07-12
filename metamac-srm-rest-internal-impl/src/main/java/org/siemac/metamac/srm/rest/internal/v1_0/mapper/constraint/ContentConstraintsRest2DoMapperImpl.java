@@ -8,7 +8,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
-import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteria;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaDisjunction;
@@ -62,8 +61,8 @@ public class ContentConstraintsRest2DoMapperImpl extends BaseRest2DoMapperV10Imp
 
     public ContentConstraintsRest2DoMapperImpl() {
         super();
-        contentConstraintCriteriaMapper = new RestCriteria2SculptorCriteria<>(ContentConstraint.class, ContentConstraintCriteriaPropertyOrder.class,
-                ContentConstraintCriteriaPropertyRestriction.class, new ContentConstraintCriteriaCallback());
+        contentConstraintCriteriaMapper = new RestCriteria2SculptorCriteria<>(ContentConstraint.class, ContentConstraintCriteriaPropertyOrder.class, ContentConstraintCriteriaPropertyRestriction.class,
+                new ContentConstraintCriteriaCallback());
     }
 
     @Override
@@ -87,7 +86,7 @@ public class ContentConstraintsRest2DoMapperImpl extends BaseRest2DoMapperV10Imp
                 case ARTEFACT_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForArtefactConstrainedUrnProperty(propertyRestriction, ContentConstraintProperties.constraintAttachment());
                 case LATEST:
-                    return buildSculptorPropertyCriteria(ContentConstraintProperties.maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(ContentConstraintProperties.maintainableArtefact().latestVersionNumberFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case PROC_STATUS:
                     if (ProcStatus.INTERNALLY_PUBLISHED.toString().equals(propertyRestriction.getValue())) {
                         propertyRestriction.setValue(BooleanUtils.toStringTrueFalse(true));

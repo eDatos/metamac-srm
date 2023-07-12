@@ -3,7 +3,6 @@ package org.siemac.metamac.srm.rest.internal.v1_0.mapper.organisation;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
-import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
@@ -27,8 +26,8 @@ public class OrganisationsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
     public OrganisationsRest2DoMapperImpl() {
         organisationSchemeCriteriaMapper = new RestCriteria2SculptorCriteria<>(OrganisationSchemeVersionMetamac.class, OrganisationSchemeCriteriaPropertyOrder.class,
                 OrganisationSchemeCriteriaPropertyRestriction.class, new OrganisationSchemeCriteriaCallback());
-        organisationCriteriaMapper = new RestCriteria2SculptorCriteria<>(OrganisationMetamac.class, OrganisationCriteriaPropertyOrder.class,
-                OrganisationCriteriaPropertyRestriction.class, new OrganisationCriteriaCallback());
+        organisationCriteriaMapper = new RestCriteria2SculptorCriteria<>(OrganisationMetamac.class, OrganisationCriteriaPropertyOrder.class, OrganisationCriteriaPropertyRestriction.class,
+                new OrganisationCriteriaCallback());
     }
 
     @Override
@@ -75,7 +74,7 @@ public class OrganisationsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
                     return buildSculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.lifeCycleMetadata().externalPublicationUser(), PropertyTypeEnum.STRING, propertyRestriction);
                 case LATEST:
                     // Note: AgencyScheme, DataProvider... are note marked as final, but they are marked as latest when published.
-                    return buildSculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.maintainableArtefact().latestVersionNumberFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case TYPE:
                     return buildSculptorPropertyCriteria(OrganisationSchemeVersionMetamacProperties.organisationSchemeType(), PropertyTypeEnum.ORGANISATION_SCHEME_TYPE, propertyRestriction);
                 default:
@@ -122,7 +121,8 @@ public class OrganisationsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
                     return buildSculptorPropertyCriteria(OrganisationMetamacProperties.itemSchemeVersion().maintainableArtefact().publicLogic(), PropertyTypeEnum.PROC_STATUS_ITEM_SCHEME_FROM_ITEM,
                             propertyRestriction);
                 case ORGANISATION_SCHEME_LATEST:
-                    return buildSculptorPropertyCriteria(OrganisationMetamacProperties.itemSchemeVersion().maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(OrganisationMetamacProperties.itemSchemeVersion().maintainableArtefact().latestVersionNumberFinal(), PropertyTypeEnum.BOOLEAN,
+                            propertyRestriction);
                 case TYPE:
                     return buildSculptorPropertyCriteria(OrganisationMetamacProperties.organisationType(), PropertyTypeEnum.ORGANISATION_TYPE, propertyRestriction);
                 case PARENT:

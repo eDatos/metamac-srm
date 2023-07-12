@@ -12,11 +12,19 @@
 ## 5.0.1 a 5.0.2-SNAPSHOT
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:
   * **categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}**
+  * La obtención de la última versión de los diferentes recursos se hará por el último número de versión publicada interna/externamente y no por la última versión publicada como hasta ahora.
 
 * Es necesario ejecutar los scripts SQL contenidos en la carpeta
   ```shell
   etc/changes-from-release/5.0.1/db/common-metadata/postgresql
   ```
+ * Es necesario ejecutar los scripts SQL contenidos en la carpeta
+  ```shell
+  etc/changes-from-release/5.0.1/db/srm/postgresql
+  ```
+  Uno de los scripts anteriores es un script de adecuación para los diferentes recursos del srm para permitir conocer el último número de versión publicada interna o externamente. Seguir los pasos indicados en el script 20230712_resources_latest_version_new_columns_update.sql para su ejecución.
+  
+  
 * Cambios en statistic-sdmx-srm. Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
   ```shell
   etc/changes-from-release/3.3.0/db/postgresql/20230602_1_create-table-tbLisAnnotationTypes.sql

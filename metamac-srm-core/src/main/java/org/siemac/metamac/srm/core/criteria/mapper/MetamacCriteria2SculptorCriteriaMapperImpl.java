@@ -1258,7 +1258,7 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
             AnnotationTypeCriteriaPropertyEnum propertyNameCriteria = AnnotationTypeCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
             switch (propertyNameCriteria) {
                 case CODE:
-                    return new SculptorPropertyCriteria(AnnotationTypeProperties.code(), propertyRestriction.getIntegerValue(), propertyRestriction.getOperationType());
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case TITLE:
                     return new SculptorPropertyCriteria(AnnotationTypeProperties.title().texts().label(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case UUID:

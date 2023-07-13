@@ -33,7 +33,7 @@
   etc/changes-from-release/3.3.0/db/postgresql/20230711_add_columns_latest_version_number_to_maintainable_artefacts.sql
   etc/changes-from-release/3.3.0/db/postgresql/20230630_remove_duplicated_indexes.sql  
   ```
-* Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
+* Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value, CODELIST_PUBLICATIONS-value, CATEGORY_SCHEME_PUBLICATIONS-value, DATA_STRUCTURE_DEFINITION_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value

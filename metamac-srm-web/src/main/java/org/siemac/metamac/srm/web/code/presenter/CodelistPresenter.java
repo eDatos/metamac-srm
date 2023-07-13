@@ -31,8 +31,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent.UpdateAnnotationTypeRefreshHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
@@ -172,7 +172,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView, CodelistPresenter.CodelistProxy> implements CodelistUiHandlers, UpdateAnnotationTypeRefreshHandler {
+public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView, CodelistPresenter.CodelistProxy> implements CodelistUiHandlers, UpdateAnnotationTypeHandler {
 
     private final DispatchAsync           dispatcher;
     private final PlaceManager            placeManager;
@@ -1430,7 +1430,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @ProxyEvent
     @Override
-    public void onUpdateAnnotationUpdateNewType(UpdateAnnotationTypeRefreshEvent event) {
+    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
         getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

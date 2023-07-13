@@ -19,8 +19,8 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeRefreshEvent.UpdateAnnotationTypeRefreshHandler;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.organisation.enums.OrganisationsToolStripButtonEnum;
@@ -70,10 +70,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class OrganisationPresenter extends Presenter<OrganisationPresenter.OrganisationView, OrganisationPresenter.OrganisationProxy>
-        implements
-            OrganisationUiHandlers,
-            UpdateAnnotationTypeRefreshHandler {
+public class OrganisationPresenter extends Presenter<OrganisationPresenter.OrganisationView, OrganisationPresenter.OrganisationProxy> implements OrganisationUiHandlers, UpdateAnnotationTypeHandler {
 
     private final DispatchAsync                   dispatcher;
     private final PlaceManager                    placeManager;
@@ -340,7 +337,7 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
 
     @ProxyEvent
     @Override
-    public void onUpdateAnnotationUpdateNewType(UpdateAnnotationTypeRefreshEvent event) {
+    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
         getView().setAnnotationTypeList(event.getAnnotationTypeDto());
     }
 }

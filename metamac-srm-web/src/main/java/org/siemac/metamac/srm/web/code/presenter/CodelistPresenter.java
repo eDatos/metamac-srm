@@ -279,13 +279,13 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getCodelistParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(identifier)) {
-            retrieveCompleteCodelistbyIdentifier(identifier);
+            retrieveResources(identifier);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
         getView().selectCodelistTab();
+
     }
 
     //
@@ -1429,7 +1429,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 });
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String identifier) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -1437,8 +1437,11 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteCodelistbyIdentifier(identifier);
                 }
             });
+        } else {
+            retrieveCompleteCodelistbyIdentifier(identifier);
         }
     }
 }

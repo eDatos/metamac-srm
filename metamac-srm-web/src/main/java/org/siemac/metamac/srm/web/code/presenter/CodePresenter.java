@@ -143,11 +143,10 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
         super.prepareFromRequest(request);
         String schemeParam = PlaceRequestUtils.getCodelistParamFromUrl(placeManager);
         String codeCode = PlaceRequestUtils.getCodeParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(codeCode)) {
             // this.codelistUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CODELIST_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CODE_PREFIX, schemeParam, codeCode);
-            retrieveCode(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -426,7 +425,7 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
         goTo(PlaceRequestUtils.buildAbsoluteCodelistPlaceRequest(urn));
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String urn) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -434,8 +433,11 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCode(urn);
                 }
             });
+        } else {
+            retrieveCode(urn);
         }
     }
 }

@@ -184,11 +184,10 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
         super.prepareFromRequest(request);
         String schemeParam = PlaceRequestUtils.getConceptSchemeParamFromUrl(placeManager);
         String conceptCode = PlaceRequestUtils.getConceptParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(conceptCode)) {
             this.conceptSchemeUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CONCEPTSCHEME_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CONCEPT_PREFIX, schemeParam, conceptCode);
-            retrieveConcept(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -778,7 +777,7 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
         });
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String urn) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -786,8 +785,11 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveConcept(urn);
                 }
             });
+        } else {
+            retrieveConcept(urn);
         }
     }
 }

@@ -191,9 +191,8 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String param = PlaceRequestUtils.getCategorySchemeParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(param)) {
-            retrieveCompleteCategorySchemeByIdentifier(param);
+            retrieveResources(param);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -730,7 +729,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         placeManager.updateHistory(placeRequest, true);
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String param) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -738,8 +737,11 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteCategorySchemeByIdentifier(param);
                 }
             });
+        } else {
+            retrieveCompleteCategorySchemeByIdentifier(param);
         }
     }
 

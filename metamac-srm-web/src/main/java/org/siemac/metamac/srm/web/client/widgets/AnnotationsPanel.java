@@ -267,12 +267,22 @@ public class AnnotationsPanel extends VLayout {
 
         // Set annotations in the selected locale
         for (AnnotationDto annotationDto : annotations) {
+            addNewAnnotationType(annotationDto);
             AnnotationRecord record = DsdRecordUtils.getAnnotationRecord(annotationDto, getAnnotationTypeOrdered(annotationDto), selectedLocale);
             listGrid.addData(record);
         }
 
         // Show/hide Add and Remove icons
         setCanAddOrRemoveAnnotations(viewMode, maintainableArtefactDto);
+    }
+
+    private void addNewAnnotationType(AnnotationDto annotationDto) {
+        if (this.annotationTypeDto != null && annotationDto.getAnnotationTypeDto() != null && annotationDto.getAnnotationTypeDto().getId() != null
+                && annotationTypeOrderedById.get(annotationDto.getAnnotationTypeDto().getId().toString()) == null) {
+            this.annotationTypeDto.add(annotationDto.getAnnotationTypeDto());
+            annotationTypeField.setValueMap(MasterTablesUtils.getAnnotationTypeHashMap(this.annotationTypeDto, annotationTypeOrderedById));
+        }
+
     }
 
     private String getAnnotationTypeOrdered(AnnotationDto annotation) {

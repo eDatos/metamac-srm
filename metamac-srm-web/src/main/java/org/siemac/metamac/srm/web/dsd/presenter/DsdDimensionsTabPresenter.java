@@ -137,9 +137,8 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(dsdIdentifier)) {
-            retrieveDimensions(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
+            retrieveResources(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
         }
     }
 
@@ -457,7 +456,7 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
         }
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String urn) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -465,8 +464,11 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveDimensions(urn);
                 }
             });
+        } else {
+            retrieveDimensions(urn);
         }
     }
 }

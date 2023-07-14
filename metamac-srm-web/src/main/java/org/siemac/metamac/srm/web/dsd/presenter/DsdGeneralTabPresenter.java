@@ -144,10 +144,9 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(dsdIdentifier)) {
             String dsdUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier);
-            retrieveCompleteDsd(dsdUrn);
+            retrieveResources(dsdUrn);
         }
     }
 
@@ -547,7 +546,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
         UpdateMaintainableArtefactEvent.fire(this, dsdUrn);
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String urn) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -555,8 +554,11 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteDsd(urn);
                 }
             });
+        } else {
+            retrieveCompleteDsd(urn);
         }
     }
 }

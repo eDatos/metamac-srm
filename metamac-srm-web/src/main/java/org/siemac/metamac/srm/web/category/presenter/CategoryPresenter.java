@@ -144,11 +144,11 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         super.prepareFromRequest(request);
         String schemeParam = PlaceRequestUtils.getCategorySchemeParamFromUrl(placeManager);
         String categoryIdentifier = PlaceRequestUtils.getCategoryParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
+
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(categoryIdentifier)) {
             this.categorySchemeUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORYSCHEME_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORY_PREFIX, schemeParam, categoryIdentifier);
-            retrieveCategory(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -325,7 +325,13 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         goTo(PlaceRequestUtils.buildAbsoluteCategorySchemePlaceRequest(urn));
     }
 
-    public void retrieveAnnotationTypes() {
+    @ProxyEvent
+    @Override
+    public void onUpdateEniSchemaCatalog(UpdateEniSchemaCatalogEvent event) {
+        getView().setEniSchemaCatalogList(event.getEniSchemaCatalogDto());
+    }
+
+    private void retrieveResources(final String urn) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -333,15 +339,11 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCategory(urn);
                 }
             });
+        } else {
+            retrieveCategory(urn);
         }
     }
-
-    @ProxyEvent
-    @Override
-    public void onUpdateEniSchemaCatalog(UpdateEniSchemaCatalogEvent event) {
-        getView().setEniSchemaCatalogList(event.getEniSchemaCatalogDto());
-    }
-
 }

@@ -128,9 +128,8 @@ public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
-        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(dsdIdentifier)) {
-            retrieveGroupKeys(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
+            retrieveResources(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
         }
     }
 
@@ -218,7 +217,7 @@ public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter
         });
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String urn) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -226,8 +225,11 @@ public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveGroupKeys(urn);
                 }
             });
+        } else {
+            retrieveGroupKeys(urn);
         }
     }
 }

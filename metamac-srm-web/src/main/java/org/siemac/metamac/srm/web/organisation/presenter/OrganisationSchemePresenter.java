@@ -187,11 +187,10 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getOrganisationSchemeIdParamFromUrl(placeManager);
         String typeParam = PlaceRequestUtils.getOrganisationSchemeTypeParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
         try {
             OrganisationSchemeTypeEnum type = !StringUtils.isBlank(typeParam) ? OrganisationSchemeTypeEnum.valueOf(typeParam) : null;
             if (!StringUtils.isBlank(identifier) && type != null) {
-                retrieveOrganisationScheme(identifier, type);
+                retrieveResources(identifier, type);
             } else {
                 MetamacSrmWeb.showErrorPage();
             }
@@ -698,7 +697,7 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
         ChangeWaitPopupVisibilityEvent.fire(this, true);
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String identifier, final OrganisationSchemeTypeEnum type) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -706,8 +705,11 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveOrganisationScheme(identifier, type);
                 }
             });
+        } else {
+            retrieveOrganisationScheme(identifier, type);
         }
     }
 }

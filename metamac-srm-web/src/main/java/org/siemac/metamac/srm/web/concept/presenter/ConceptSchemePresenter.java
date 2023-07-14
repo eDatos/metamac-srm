@@ -191,9 +191,8 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getConceptSchemeParamFromUrl(placeManager);
-        retrieveAnnotationTypes();
         if (identifier != null) {
-            retrieveCompleteConceptSchemeByIdentifier(identifier);
+            retrieveResources(identifier);
         }
         getView().selectConceptSchemeTab();
     }
@@ -804,7 +803,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
         });
     }
 
-    public void retrieveAnnotationTypes() {
+    private void retrieveResources(final String identifier) {
         // list is cached in the first access to the page.
         if (getView().mustFillAnnotationTypeList()) {
             dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
@@ -812,8 +811,11 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
                 @Override
                 public void onWaitSuccess(GetAnnotationTypesResult result) {
                     getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteConceptSchemeByIdentifier(identifier);
                 }
             });
+        } else {
+            retrieveCompleteConceptSchemeByIdentifier(identifier);
         }
     }
 }

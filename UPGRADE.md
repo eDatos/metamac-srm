@@ -37,6 +37,9 @@
   ```shell
   curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/CODELIST_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/CATEGORY_SCHEME_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/DATA_STRUCTURE_DEFINITION_PUBLICATIONS-value
   ```
   
     ```

@@ -49,6 +49,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
@@ -103,6 +105,7 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
         void setCodelistsToCreateComplexCodelist(GetCodelistsResult result);
         void setCodesToCreateComplexCodelist(CodelistMetamacDto codelistDto, List<CodeMetamacVisualisationResult> codes);
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -140,6 +143,7 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
         super.prepareFromRequest(request);
         String schemeParam = PlaceRequestUtils.getCodelistParamFromUrl(placeManager);
         String codeCode = PlaceRequestUtils.getCodeParamFromUrl(placeManager);
+        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(codeCode)) {
             // this.codelistUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CODELIST_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CODE_PREFIX, schemeParam, codeCode);
@@ -420,5 +424,18 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
     @Override
     public void goToCodelist(String urn) {
         goTo(PlaceRequestUtils.buildAbsoluteCodelistPlaceRequest(urn));
+    }
+
+    public void retrieveAnnotationTypes() {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                }
+            });
+        }
     }
 }

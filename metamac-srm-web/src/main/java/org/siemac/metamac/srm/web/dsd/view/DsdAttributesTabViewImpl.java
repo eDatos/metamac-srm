@@ -1651,4 +1651,9 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         this.viewAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.editionAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.viewAnnotationsPanel.isAnnotationTypeFieldFill() || !this.editionAnnotationsPanel.isAnnotationTypeFieldFill();
+    }
 }

@@ -249,6 +249,10 @@ public class AnnotationsPanel extends VLayout {
         }
     }
 
+    public boolean isAnnotationTypeFieldFill() {
+        return annotationTypeDto != null && !annotationTypeDto.isEmpty();
+    }
+
     public void setAnnotations(Set<AnnotationDto> annotations, MaintainableArtefactDto maintainableArtefactDto) {
         this.maintainableArtefactDto = maintainableArtefactDto;
 

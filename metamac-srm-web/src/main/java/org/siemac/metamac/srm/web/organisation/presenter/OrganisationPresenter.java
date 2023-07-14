@@ -28,6 +28,8 @@ import org.siemac.metamac.srm.web.organisation.widgets.presenter.OrganisationsTo
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationContactWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsAction;
 import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationAction;
@@ -98,6 +100,7 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -137,6 +140,7 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
         String schemeParam = PlaceRequestUtils.getOrganisationSchemeIdParamFromUrl(placeManager);
         String schemeType = PlaceRequestUtils.getOrganisationSchemeTypeParamFromUrl(placeManager);
         String organisationCode = PlaceRequestUtils.getOrganisationParamFromUrl(placeManager);
+        retrieveAnnotationTypes();
         try {
             OrganisationSchemeTypeEnum type = schemeType != null ? OrganisationSchemeTypeEnum.valueOf(schemeType) : null;
             if (!StringUtils.isBlank(schemeParam) && type != null && !StringUtils.isBlank(organisationCode)) {
@@ -330,5 +334,18 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
     @Override
     public void goToOrganisationScheme(String urn) {
         placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeOrganisationSchemePlaceRequest(urn, CommonUtils.getOrganisationSchemeTypeEnum(organisationMetamacDto.getType())), -2);
+    }
+
+    public void retrieveAnnotationTypes() {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                }
+            });
+        }
     }
 }

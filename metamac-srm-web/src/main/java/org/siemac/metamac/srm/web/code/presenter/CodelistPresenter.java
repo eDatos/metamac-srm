@@ -130,6 +130,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesAction;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsAction;
@@ -239,6 +241,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -276,6 +279,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getCodelistParamFromUrl(placeManager);
+        retrieveAnnotationTypes();
         if (!StringUtils.isBlank(identifier)) {
             retrieveCompleteCodelistbyIdentifier(identifier);
         } else {
@@ -1423,5 +1427,18 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                         getView().setOrganizations(result.getOrganisations(), result.getTotalResults(), result.getFirstResultOut());
                     }
                 });
+    }
+
+    public void retrieveAnnotationTypes() {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                }
+            });
+        }
     }
 }

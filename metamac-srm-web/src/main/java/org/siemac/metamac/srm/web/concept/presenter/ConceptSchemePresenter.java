@@ -81,6 +81,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.StatisticalOperationWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
@@ -112,9 +114,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.ConceptSchemeView, ConceptSchemePresenter.ConceptSchemeProxy>
-        implements
-            ConceptSchemeUiHandlers {
+public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.ConceptSchemeView, ConceptSchemePresenter.ConceptSchemeProxy> implements ConceptSchemeUiHandlers {
 
     private final DispatchAsync              dispatcher;
     private final PlaceManager               placeManager;
@@ -153,6 +153,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -190,6 +191,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getConceptSchemeParamFromUrl(placeManager);
+        retrieveAnnotationTypes();
         if (identifier != null) {
             retrieveCompleteConceptSchemeByIdentifier(identifier);
         }
@@ -800,5 +802,18 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
                 retrieveConceptsByScheme(conceptSchemeDto.getUrn());
             }
         });
+    }
+
+    public void retrieveAnnotationTypes() {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                }
+            });
+        }
     }
 }

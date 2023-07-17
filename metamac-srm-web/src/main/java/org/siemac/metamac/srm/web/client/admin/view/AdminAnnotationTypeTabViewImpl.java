@@ -6,10 +6,10 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView;
 import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
-import org.siemac.metamac.srm.web.client.admin.widgets.AnnotationTypeSearchSectionStack;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.model.ds.AnnotationTypeDS;
 import org.siemac.metamac.srm.web.client.model.record.AnnotationTypeRecord;
@@ -17,6 +17,7 @@ import org.siemac.metamac.srm.web.client.utils.RecordUtils;
 import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.web.common.client.widgets.ListGridToolStrip;
 import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
+import org.siemac.metamac.web.common.client.widgets.SearchSectionStack;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
@@ -33,6 +34,10 @@ import com.smartgwt.client.types.Autofit;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -43,15 +48,15 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnnotationTypeUiHandlers> implements AdminAnnotationTypeTabView {
 
-    private Layout                           panel;
+    private Layout                 panel;
 
-    private PaginatedCheckListGrid           listGrid;
+    private PaginatedCheckListGrid listGrid;
 
-    private ListGridToolStrip                toolStrip;
+    private ListGridToolStrip      toolStrip;
 
-    private AnnotationTypePanel              annotationTypePanel;
+    private AnnotationTypePanel    annotationTypePanel;
 
-    private AnnotationTypeSearchSectionStack searchSectionStack;
+    private SearchSectionStack     searchSectionStack;
 
     public AdminAnnotationTypeTabViewImpl() {
         super();
@@ -87,7 +92,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             }
         });
 
-        searchSectionStack = new AnnotationTypeSearchSectionStack();
+        createSearchSectionStack();
 
         // ListGrid
 
@@ -153,6 +158,27 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         panel.addMember(leftLayout);
         panel.addMember(rightLayout);
 
+    }
+
+    private void createSearchSectionStack() {
+        searchSectionStack = new SearchSectionStack();
+        searchSectionStack.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                getUiHandlers().retrieveAnnotationTypes(getAnnotationTypeCriteria());
+            }
+        });
+
+        searchSectionStack.addSearchItemKeyPressHandler(new KeyPressHandler() {
+
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                if (StringUtils.equalsIgnoreCase(event.getKeyName(), SrmWebConstants.ENTER_KEY)) {
+                    getUiHandlers().retrieveAnnotationTypes(getAnnotationTypeCriteria());
+                }
+            }
+        });
     }
 
     // UTILS
@@ -384,16 +410,17 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
     @Override
     public void setUiHandlers(AdminAnnotationTypeUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
-        searchSectionStack.setUiHandlers(uiHandlers);
     }
 
     @Override
     public void clearSearchSection() {
-        searchSectionStack.clearSearchSection();
+        searchSectionStack.reset();
     }
 
     @Override
     public AnnotationTypeCriteria getAnnotationTypeCriteria() {
-        return searchSectionStack.getAnnotationTypesCriteria();
+        AnnotationTypeCriteria criteria = new AnnotationTypeCriteria();
+        criteria.setCriteria(searchSectionStack.getSearchCriteria());
+        return criteria;
     }
 }

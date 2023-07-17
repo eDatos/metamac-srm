@@ -507,4 +507,9 @@ public class DsdGroupKeysTabViewImpl extends ViewWithUiHandlers<DsdGroupKeysTabU
         this.viewAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.editionAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.viewAnnotationsPanel.isAnnotationTypeFieldFill() || !this.editionAnnotationsPanel.isAnnotationTypeFieldFill();
+    }
 }

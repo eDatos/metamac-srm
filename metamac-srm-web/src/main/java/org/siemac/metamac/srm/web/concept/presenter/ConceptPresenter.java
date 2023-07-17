@@ -55,6 +55,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
@@ -137,6 +139,7 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
 
     }
 
@@ -184,7 +187,7 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(conceptCode)) {
             this.conceptSchemeUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CONCEPTSCHEME_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CONCEPT_PREFIX, schemeParam, conceptCode);
-            retrieveConcept(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -772,5 +775,21 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
                 retrieveConcept(conceptUrn);
             }
         });
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveConcept(urn);
+                }
+            });
+        } else {
+            retrieveConcept(urn);
+        }
     }
 }

@@ -44,6 +44,8 @@ import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategor
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
@@ -71,10 +73,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView, CategoryPresenter.CategoryProxy>
-        implements
-            CategoryUiHandlers,
-            UpdateEniSchemaCatalogHandler{
+public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView, CategoryPresenter.CategoryProxy> implements CategoryUiHandlers, UpdateEniSchemaCatalogHandler {
 
     private final DispatchAsync                dispatcher;
     private final PlaceManager                 placeManager;
@@ -105,6 +104,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         void setCategoryElements(GetRelatedResourcesResult result);
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
 
     }
 
@@ -144,10 +144,11 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         super.prepareFromRequest(request);
         String schemeParam = PlaceRequestUtils.getCategorySchemeParamFromUrl(placeManager);
         String categoryIdentifier = PlaceRequestUtils.getCategoryParamFromUrl(placeManager);
+
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(categoryIdentifier)) {
             this.categorySchemeUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORYSCHEME_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORY_PREFIX, schemeParam, categoryIdentifier);
-            retrieveCategory(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -328,5 +329,21 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
     @Override
     public void onUpdateEniSchemaCatalog(UpdateEniSchemaCatalogEvent event) {
         getView().setEniSchemaCatalogList(event.getEniSchemaCatalogDto());
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCategory(urn);
+                }
+            });
+        } else {
+            retrieveCategory(urn);
+        }
     }
 }

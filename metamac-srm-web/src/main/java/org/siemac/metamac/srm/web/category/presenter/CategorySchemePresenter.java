@@ -82,6 +82,8 @@ import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
@@ -113,9 +115,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.CategorySchemeView, CategorySchemePresenter.CategorySchemeProxy>
-        implements
-            CategorySchemeUiHandlers {
+public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.CategorySchemeView, CategorySchemePresenter.CategorySchemeProxy> implements CategorySchemeUiHandlers {
 
     private final DispatchAsync                      dispatcher;
     private final PlaceManager                       placeManager;
@@ -153,6 +153,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         void setCategorySchemesForCategorisations(GetRelatedResourcesResult result);
         void setCategoriesForCategorisations(GetRelatedResourcesResult result);
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -191,7 +192,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         super.prepareFromRequest(request);
         String param = PlaceRequestUtils.getCategorySchemeParamFromUrl(placeManager);
         if (!StringUtils.isBlank(param)) {
-            retrieveCompleteCategorySchemeByIdentifier(param);
+            retrieveResources(param);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -727,4 +728,21 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeCategorySchemePlaceRequest(categorySchemeMetamacDto.getUrn());
         placeManager.updateHistory(placeRequest, true);
     }
+
+    private void retrieveResources(final String param) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteCategorySchemeByIdentifier(param);
+                }
+            });
+        } else {
+            retrieveCompleteCategorySchemeByIdentifier(param);
+        }
+    }
+
 }

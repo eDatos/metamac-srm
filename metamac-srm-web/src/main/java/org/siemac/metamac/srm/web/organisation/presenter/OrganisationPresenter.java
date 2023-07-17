@@ -28,6 +28,8 @@ import org.siemac.metamac.srm.web.organisation.widgets.presenter.OrganisationsTo
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationContactWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsAction;
 import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationAction;
@@ -98,6 +100,7 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -142,7 +145,7 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
             if (!StringUtils.isBlank(schemeParam) && type != null && !StringUtils.isBlank(organisationCode)) {
                 this.organisationSchemeUrn = CommonUtils.generateOrganisationSchemeUrn(schemeParam, type);
                 String urn = CommonUtils.generateOrganisationUrn(schemeParam, type, organisationCode);
-                retrieveOrganisation(urn);
+                retrieveResources(urn);
             } else {
                 MetamacSrmWeb.showErrorPage();
             }
@@ -330,5 +333,21 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
     @Override
     public void goToOrganisationScheme(String urn) {
         placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeOrganisationSchemePlaceRequest(urn, CommonUtils.getOrganisationSchemeTypeEnum(organisationMetamacDto.getType())), -2);
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveOrganisation(urn);
+                }
+            });
+        } else {
+            retrieveOrganisation(urn);
+        }
     }
 }

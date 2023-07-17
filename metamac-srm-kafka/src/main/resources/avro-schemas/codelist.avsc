@@ -73,6 +73,14 @@
         "type": ["null", "boolean"]
       },
       {
+      "name": "latestVersionNumberFinal",
+      "type": ["null", "boolean"]
+      },
+      {
+      "name": "latestVersionNumberPublic",
+      "type": ["null", "boolean"]
+      },
+      {
         "name": "maintainer",
         "type": ["null", "RelatedResourceAvro"]
       },

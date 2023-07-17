@@ -154,7 +154,7 @@ public abstract class SrmRestInternalFacadeV10BaseTest extends MetamacRestBaseTe
 
     @SuppressWarnings("rawtypes")
     protected Boolean getVersionLatestFromConditionalCriteria(List<ConditionalCriteria> conditions, MaintainableArtefactProperty maintainableArtefactProperty) {
-        ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal, maintainableArtefactProperty.latestPublic());
+        ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal, maintainableArtefactProperty.latestVersionNumberPublic());
         return conditionalCriteria != null ? (Boolean) conditionalCriteria.getFirstOperant() : null;
     }
 

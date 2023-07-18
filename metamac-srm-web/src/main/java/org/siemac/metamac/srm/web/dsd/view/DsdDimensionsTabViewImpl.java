@@ -738,6 +738,29 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         return maxOrder + 1;
     }
 
+    private RecordList getDatagridRecordsInOrdered(DimensionComponentDto dimensionComponentDto, DimensionRecord record) {
+        RecordList dimensions = dimensionsGrid.getDataAsRecordList();
+        boolean isUpdatedDimension = false;
+        RecordList reorderDimensions = new RecordList();
+
+        for (Record generalRecord : dimensions.toArray()) {
+            DimensionRecord dimensionRecord = (DimensionRecord) generalRecord;
+            if (dimensionRecord.getIdentifier().equals(dimensionComponentDto.getId())) {
+                reorderDimensions.add(record);
+                isUpdatedDimension = true;
+            } else {
+                reorderDimensions.add(generalRecord);
+            }
+        }
+
+        if (!isUpdatedDimension) {
+            reorderDimensions.add(record);
+        }
+
+        return reorderDimensions;
+
+    }
+
     private List<DimensionComponentDto> updateDimensionsOrderLogic() {
         RecordList dimensions = dimensionsGrid.getDataAsRecordList();
         List<DimensionComponentDto> dimensionsUpdated = new ArrayList<DimensionComponentDto>();
@@ -968,10 +991,11 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
     @Override
     public void onDimensionSaved(DimensionComponentDto dimensionComponentDto) {
         this.dimensionComponentDto = dimensionComponentDto;
-        dimensionsGrid.removeSelectedData();
-        DimensionRecord record = DsdRecordUtils.getDimensionRecord(dimensionComponentDto);
-        dimensionsGrid.addData(record);
-        dimensionsGrid.selectRecord(record);
+        DimensionRecord dimensionChanged = DsdRecordUtils.getDimensionRecord(dimensionComponentDto);
+        RecordList allDimensionsOrdered = getDatagridRecordsInOrdered(dimensionComponentDto, dimensionChanged);
+        dimensionsGrid.setData(allDimensionsOrdered);
+        dimensionsGrid.selectRecord(dimensionChanged);
+
         mainFormLayout.setViewMode();
     }
 

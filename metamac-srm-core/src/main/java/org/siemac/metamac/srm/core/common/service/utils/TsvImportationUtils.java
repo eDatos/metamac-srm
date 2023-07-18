@@ -72,7 +72,7 @@ public class TsvImportationUtils {
             SrmConstants.TSV_HEADER_PERCENTAGE_OF};
     protected static final String[] fieldForIndexQuantityType      = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME,
             SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE,
-            SrmConstants.TSV_HEADER_PERCENTAGE_OF, SrmConstants.TSV_HEADER_INDEX_BASE_VALUE, SrmConstants.TSV_HEADER_INDEX_BASE_TIME, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE,
+            SrmConstants.TSV_HEADER_PERCENTAGE_OF, SrmConstants.TSV_HEADER_INDEX_BASE_VALUE, SrmConstants.TSV_HEADER_INDEX_BASE_TIME, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_URN,
             SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE};
     protected static final String[] fieldForChangeRateQuantityType = {SrmConstants.TSV_HEADER_MINIMUM, SrmConstants.TSV_HEADER_MAXIMUM, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME,
             SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE,
@@ -170,11 +170,11 @@ public class TsvImportationUtils {
                 SrmConstants.TSV_HEADER_COMMENT, SrmConstants.TSV_HEADER_PLURAL_NAME, SrmConstants.TSV_HEADER_ACRONYM, SrmConstants.TSV_HEADER_DESCRIPTION_SOURCE, SrmConstants.TSV_HEADER_CONTEXT,
                 SrmConstants.TSV_HEADER_DOC_METHOD, SrmConstants.TSV_HEADER_DERIVATION, SrmConstants.TSV_HEADER_LEGAL_ACTS, SrmConstants.TSV_HEADER_CONCEPT_TYPE,
                 SrmConstants.TSV_HEADER_REPRESENTATION, SrmConstants.TSV_HEADER_CONCEPT_EXTENDS, SrmConstants.TSV_HEADER_SDMX_RELATED_ARTEFACT, SrmConstants.TSV_HEADER_QUANTITY_TYPE,
-                SrmConstants.TSV_HEADER_UNIT_CODELIST_CODE, SrmConstants.TSV_HEADER_UNIT_CODE, SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION, SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE,
+                SrmConstants.TSV_HEADER_UNIT_CODELIST_URN, SrmConstants.TSV_HEADER_UNIT_CODE, SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION, SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_URN,
                 SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODE, SrmConstants.TSV_HEADER_SIGNIFICANT_DIGITS, SrmConstants.TSV_HEADER_DECIMAL_PLACES, SrmConstants.TSV_HEADER_MINIMUM,
                 SrmConstants.TSV_HEADER_MAXIMUM, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_DENOMINATOR_CONCEPT, SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT_SCHEME,
                 SrmConstants.TSV_HEADER_NUMERATOR_CONCEPT, SrmConstants.TSV_HEADER_IS_PERCENTAGE, SrmConstants.TSV_HEADER_PERCENTAGE_OF, SrmConstants.TSV_HEADER_INDEX_BASE_VALUE,
-                SrmConstants.TSV_HEADER_INDEX_BASE_TIME, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE,
+                SrmConstants.TSV_HEADER_INDEX_BASE_TIME, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_URN, SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE,
                 SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME, SrmConstants.TSV_HEADER_BASE_QUANTITY_CONCEPT);
 
         String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
@@ -298,8 +298,8 @@ public class TsvImportationUtils {
             } else if (SrmConstants.TSV_HEADER_QUANTITY_TYPE.equals(columnName)) {
                 header.setQuantityTypePosition(i);
                 headerExpectedIndex++;
-            } else if (SrmConstants.TSV_HEADER_UNIT_CODELIST_CODE.equals(columnName)) {
-                header.setUnitCodelistCodePosition(i);
+            } else if (SrmConstants.TSV_HEADER_UNIT_CODELIST_URN.equals(columnName)) {
+                header.setUnitCodelistUrnPosition(i);
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_UNIT_CODE.equals(columnName)) {
                 header.setUnitCodePosition(i);
@@ -307,8 +307,8 @@ public class TsvImportationUtils {
             } else if (SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION.equals(columnName)) {
                 header.setUnitSymbolPositionPosition(i);
                 headerExpectedIndex++;
-            } else if (SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE.equals(columnName)) {
-                header.setUnitMultiplierCodelistCodePosition(i);
+            } else if (SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_URN.equals(columnName)) {
+                header.setUnitMultiplierCodelistUrnPosition(i);
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODE.equals(columnName)) {
                 header.setUnitMultiplierCodePosition(i);
@@ -354,8 +354,8 @@ public class TsvImportationUtils {
             } else if (SrmConstants.TSV_HEADER_INDEX_BASE_TIME.equals(columnName)) {
                 header.setIndexBaseTimePosition(i);
                 headerExpectedIndex++;
-            } else if (SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE.equals(columnName)) {
-                header.setIndexBaseLocationCodelistCodePosition(i);
+            } else if (SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_URN.equals(columnName)) {
+                header.setIndexBaseLocationCodelistUrnPosition(i);
                 headerExpectedIndex++;
             } else if (SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE.equals(columnName)) {
                 header.setIndexBaseLocationCodePosition(i);

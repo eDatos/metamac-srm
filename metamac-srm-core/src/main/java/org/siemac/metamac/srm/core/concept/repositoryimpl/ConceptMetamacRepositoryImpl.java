@@ -32,7 +32,6 @@ import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisa
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
-import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +58,6 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     @Autowired
     private ConceptRepository   conceptRepository;
 
-    @Autowired
-    private SrmConfiguration    srmConfiguration;
-
     private static final String COLUMN_NAME_PLURAL_NAME        = "PLURAL_NAME_FK";
     private static final String COLUMN_NAME_ACRONYM            = "ACRONYM_FK";
     private static final String COLUMN_NAME_DESCRIPTION_SOURCE = "DESCRIPTION_SOURCE_FK";
@@ -70,13 +66,6 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     private static final String COLUMN_NAME_DERIVATION         = "DERIVATION_FK";
     private static final String COLUMN_NAME_LEGAL_ACTS         = "LEGAL_ACTS_FK";
     private static final String COLUMN_NAME_PERCENTAGE_OF      = "PERCENTAGE_OF_FK";
-
-    // This constant is used in the query destined to order concepts for a SQL Server database.
-    // Specifically, it is used to compare sibling concepts at the same level and, because of the comparison must be done lexicographically, it is necessary to format the value of the order value by
-    // completing with leading zeros.
-    // Moreover, because of there are no padding functions in SQL Server, the format function should be used to complete the value with as many zeros as specified in the mask.
-    // The current value is sufficient for a million concepts, if necessary it can be extended.
-    private static final String ORDER_VALUE_FORMAT_PATTERN     = "000000";
 
     public ConceptMetamacRepositoryImpl() {
     }
@@ -578,9 +567,9 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         StringBuilder sqlQuery = new StringBuilder();
         sqlQuery.append("SELECT c.TB_CONCEPTS, ct.QUANTITY_TYPE, ausv.URN as UNIT_CODELIST_URN, acb.CODE as UNIT_CODE, "
                 + "ct.UNIT_SYMBOL_POSITION, aumsv.URN as UNIT_MULTIPLIER_CODELIST_URN, macb.CODE as UNIT_MULTIPLIER_CODE, ct.SIGNIFICANT_DIGITS, ct.DECIMAL_PLACES, ct.MINIMUM, ct.MAXIMUM,"
-                + " aicd.code as DENOMINATOR_CONCEPT_SCHEME_CODE, acd.code as DENOMINATOR_CONCEPT_CODE,"
-                + " aicn.code as NUMERATOR_CONCEPT_SCHEME_CODE, acn.code as NUMERATOR_CONCEPT_CODE, ct.IS_PERCENTAGE," + " ct.BASE_VALUE, ct.BASE_TIME,"
-                + " aubl.URN as LOCATION_BASE_CODELIST_URN, abl.CODE  as LOCATION_BASE_CODE," + " aibq.code as BQ_SCHEME_CODE, abq.code as BQ_CODE ");
+                + " aicd.urn as DENOMINATOR_CONCEPT_SCHEME_URN, acd.code as DENOMINATOR_CONCEPT_CODE,"
+                + " aicn.urn as NUMERATOR_CONCEPT_SCHEME_URN, acn.code as NUMERATOR_CONCEPT_CODE, ct.IS_PERCENTAGE," + " ct.BASE_VALUE, ct.BASE_TIME,"
+                + " aubl.URN as LOCATION_BASE_CODELIST_URN, abl.CODE  as LOCATION_BASE_CODE," + " aibq.urn as BQ_SCHEME_URN, abq.code as BQ_CODE ");
         sqlQuery.append("FROM TB_M_CONCEPTS c ");
         sqlQuery.append("INNER JOIN TB_CONCEPTS cb on cb.ID = c.TB_CONCEPTS ");
         sqlQuery.append("INNER JOIN TB_M_QUANTITIES ct on ct.id = c.QUANTITY_FK ");

@@ -1021,7 +1021,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return null;
     }
 
-    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeCode, String conceptCodeInConceptScheme) throws MetamacException {
+    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeUrn, String conceptCodeInConceptScheme) throws MetamacException {
 
         PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1, false);
 
@@ -1029,11 +1029,9 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient())
                 .eq(Boolean.TRUE).buildSingle());
-        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(conceptSchemeCode)
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().urn()).eq(conceptSchemeUrn)
                 .buildSingle());
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.nameableArtefact().code()).eq(conceptCodeInConceptScheme).buildSingle());
-        conditions.add(
-                ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).orderBy(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().versionLogic()).descending().buildSingle());
 
         PagedResult<ConceptMetamac> result = findConceptsByCondition(ctx, conditions, pagingParameter);
         if (result.getValues() != null && result.getValues().size() == 1) {

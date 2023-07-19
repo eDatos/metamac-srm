@@ -998,7 +998,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         }
     }
 
-    private CodeMetamac findCodesByCodelistCodeByCondition(ServiceContext ctx, String codeListCode, String codeInCodelist) throws MetamacException {
+    private CodeMetamac findCodesByCodelistUrnByCondition(ServiceContext ctx, String codeListUrn, String codeInCodelist) throws MetamacException {
 
         // Prepare conditions
 
@@ -1009,7 +1009,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         // codelist internally or externally published
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient()).eq(Boolean.TRUE)
                 .buildSingle());
-        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(codeListCode).buildSingle());
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().urn()).eq(codeListUrn).buildSingle());
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.nameableArtefact().code()).eq(codeInCodelist).buildSingle());
 
         PagedResult<CodeMetamac> result = codesMetamacService.findCodesByCondition(ctx, conditions, pagingParameter);
@@ -1021,7 +1021,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return null;
     }
 
-    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeCode, String conceptCodeInConceptScheme) throws MetamacException {
+    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeUrn, String conceptCodeInConceptScheme) throws MetamacException {
 
         PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1, false);
 
@@ -1029,7 +1029,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient())
                 .eq(Boolean.TRUE).buildSingle());
-        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(conceptSchemeCode)
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().urn()).eq(conceptSchemeUrn)
                 .buildSingle());
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.nameableArtefact().code()).eq(conceptCodeInConceptScheme).buildSingle());
 
@@ -1142,10 +1142,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             exceptionItems.add(exceptionItem);
         }
 
-        String unitCodeList = columns[header.getUnitCodelistCodePosition()];
+        String unitCodelistUrn = columns[header.getUnitCodelistUrnPosition()];
         String unitCode = columns[header.getUnitCodePosition()];
-        if (unitCodeList != null && unitCode != null) {
-            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, unitCodeList, unitCode);
+        if (unitCodelistUrn != null && unitCode != null) {
+            CodeMetamac code = findCodesByCodelistUrnByCondition(ctx, unitCodelistUrn, unitCode);
             quantity.setUnitCode(code);
         }
 
@@ -1153,10 +1153,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         QuantityUnitSymbolPositionEnum unitSymbolPositionEnum = QuantityUnitSymbolPositionEnum.valueOf(unitSymbolPosition);
         quantity.setUnitSymbolPosition(unitSymbolPositionEnum);
 
-        String unitMultiplierCodeList = columns[header.getUnitMultiplierCodelistCodePosition()];
+        String unitMultiplierCodelistUrn = columns[header.getUnitMultiplierCodelistUrnPosition()];
         String unitMultiplierCode = columns[header.getUnitMultiplierCodePosition()];
-        if (unitMultiplierCodeList != null && unitMultiplierCode != null) {
-            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, unitMultiplierCodeList, unitMultiplierCode);
+        if (unitMultiplierCodelistUrn != null && unitMultiplierCode != null) {
+            CodeMetamac code = findCodesByCodelistUrnByCondition(ctx, unitMultiplierCodelistUrn, unitMultiplierCode);
             quantity.setUnitMultiplier(code);
         }
 
@@ -1216,10 +1216,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             quantity.setBaseTime(null);
         }
 
-        String indexBaseLocationCodeList = columns[header.getIndexBaseLocationCodelistCodePosition()];
+        String indexBaseLocationCodelistUrn = columns[header.getIndexBaseLocationCodelistUrnPosition()];
         String indexBaseLocationCode = columns[header.getIndexBaseLocationCodePosition()];
-        if (indexBaseLocationCodeList != null && indexBaseLocationCode != null) {
-            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, indexBaseLocationCodeList, indexBaseLocationCode);
+        if (indexBaseLocationCodelistUrn != null && indexBaseLocationCode != null) {
+            CodeMetamac code = findCodesByCodelistUrnByCondition(ctx, indexBaseLocationCodelistUrn, indexBaseLocationCode);
             quantity.setBaseLocation(code);
         } else {
             quantity.setBaseLocation(null);

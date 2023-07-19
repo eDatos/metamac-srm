@@ -204,13 +204,13 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_QUANTITY_TYPE);
         writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_UNIT_CODELIST_CODE);
+        writer.write(SrmConstants.TSV_HEADER_UNIT_CODELIST_URN);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_UNIT_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_UNIT_SYMBOL_POSITION);
         writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE);
+        writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODELIST_URN);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_UNIT_MULTIPLIER_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -240,7 +240,7 @@ public class TsvExportationUtils {
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_TIME);
         writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE);
+        writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_URN);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_INDEX_BASE_LOCATION_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
@@ -598,8 +598,8 @@ public class TsvExportationUtils {
 
         writer.write(SrmConstants.TSV_SEPARATOR);
 
-        if (!StringUtils.isBlank(extensionPoint.getUnitCode()) && !StringUtils.isBlank(extensionPoint.getUnitCodelistCode())) {
-            writer.write(extensionPoint.getUnitCodelistCode());
+        if (!StringUtils.isBlank(extensionPoint.getUnitCode()) && !StringUtils.isBlank(extensionPoint.getUnitCodelistUrn())) {
+            writer.write(extensionPoint.getUnitCodelistUrn());
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(extensionPoint.getUnitCode());
         } else {
@@ -612,8 +612,8 @@ public class TsvExportationUtils {
         }
 
         writer.write(SrmConstants.TSV_SEPARATOR);
-        if (!StringUtils.isBlank(extensionPoint.getUnitMultiplierCode()) && !StringUtils.isBlank(extensionPoint.getUnitMultiplierCodelistCode())) {
-            writer.write(extensionPoint.getUnitMultiplierCodelistCode());
+        if (!StringUtils.isBlank(extensionPoint.getUnitMultiplierCode()) && !StringUtils.isBlank(extensionPoint.getUnitMultiplierCodelistUrn())) {
+            writer.write(extensionPoint.getUnitMultiplierCodelistUrn());
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(extensionPoint.getUnitMultiplierCode());
         } else {
@@ -678,10 +678,10 @@ public class TsvExportationUtils {
             writer.write(extensionPoint.getIndexBaseTime());
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_SEPARATOR);
-        } else if (!StringUtils.isBlank(extensionPoint.getIndexBaseLocationCode()) && !StringUtils.isBlank(extensionPoint.getIndexBaseLocationCodelistCode())) {
+        } else if (!StringUtils.isBlank(extensionPoint.getIndexBaseLocationCode()) && !StringUtils.isBlank(extensionPoint.getIndexBaseLocationCodelistUrn())) {
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(SrmConstants.TSV_SEPARATOR);
-            writer.write(extensionPoint.getIndexBaseLocationCodelistCode());
+            writer.write(extensionPoint.getIndexBaseLocationCodelistUrn());
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(extensionPoint.getIndexBaseLocationCode());
         } else {

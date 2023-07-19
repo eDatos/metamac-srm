@@ -60,10 +60,10 @@ public class SrmConstants {
 
     // QUANTITY
     public static final String             TSV_HEADER_QUANTITY_TYPE                                               = "quantity_type";
-    public static final String             TSV_HEADER_UNIT_CODELIST_CODE                                          = "unit_codelist_code";
+    public static final String             TSV_HEADER_UNIT_CODELIST_URN                                           = "unit_codelist_urn";
     public static final String             TSV_HEADER_UNIT_CODE                                                   = "unit_code";
     public static final String             TSV_HEADER_UNIT_SYMBOL_POSITION                                        = "unit_symbol_position";
-    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE                               = "unit_multiplier_codelist_code";
+    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODELIST_URN                                = "unit_multiplier_codelist_urn";
     public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODE                                        = "unit_multiplier_code";
     public static final String             TSV_HEADER_SIGNIFICANT_DIGITS                                          = "significant_digits";
     public static final String             TSV_HEADER_DECIMAL_PLACES                                              = "decimals_digits";
@@ -77,7 +77,7 @@ public class SrmConstants {
     public static final String             TSV_HEADER_PERCENTAGE_OF                                               = "percentage_of";
     public static final String             TSV_HEADER_INDEX_BASE_VALUE                                            = "index_base_value";
     public static final String             TSV_HEADER_INDEX_BASE_TIME                                             = "index_base_time";
-    public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE                           = "index_base_location_codelist_code";
+    public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_URN                            = "index_base_location_codelist_urn";
     public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODE                                    = "index_base_location_code";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME                                = "base_quantity_concept_scheme";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT                                       = "base_quantity_concept";

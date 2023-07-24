@@ -11,6 +11,8 @@
 <%! String latest = "LATEST: es último"; %>
 <%! String variableUrn = "VARIABLE_URN: URN de variable"; %>
 <%! String variableFamilyUrn = "VARIABLE_FAMILY_URN: URN de la familia de variables"; %>
+<%! String codelistUrn = "CODELIST_URN: URN de la clasificación"; %>
+<%! String codelistLatest = "CODELIST_LATEST: última clasificación"; %>
 <%! String statisticalOperationUrn = "STATISTICAL_OPERATION_URN: URN de operación estadística"; %>
 <%! String conceptSchemeLatest = "CONCEPT_SCHEME_LATEST: Último esquema de concepto"; %>
 <%! String acronym = "ACRONYM: Acrónimo"; %>
@@ -90,7 +92,7 @@
         "name":"query",
         "in":"query",
         "type":"string",
-        "description": "<%= queryDescriptionWithParams(id, urn, name, parent, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+        "description": "<%= queryDescriptionWithParams(id, urn, name, shortName, parent, description, codelistUrn, codelistLatest, geographicalGranularityUrn) %>"
         },
         "codelistOrderByParam": {
           "name":"orderBy",

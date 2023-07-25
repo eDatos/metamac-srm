@@ -136,7 +136,7 @@ public class CodesCategoryElementsAssignmentTreeGrid extends BaseCategoriesTreeG
                     Record record = event.getRecord();
                     if (record instanceof CategoryTreeNode) {
                         String categoryElementUrn = ((CategoryTreeNode) record).getCategoryElementUrn();
-                        uiHandlers.goTo(PlaceRequestUtils.buildAbsoluteCategoryElementPlaceRequest(categoryElementUrn));
+                        uiHandlers.goTo(PlaceRequestUtils.buildAbsoluteCategoryElementByUrnPlaceRequest(categoryElementUrn));
                     }
                 }
             }

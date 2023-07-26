@@ -215,7 +215,8 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
         ValidationUtils.checkMetadataOptionalIsValid(categoryElement.getComment(), ServiceExceptionParameters.RESOURCE_ELEMENT_COMMENT, exceptions);
 
         // Check dates: validFrom value must be lower than validTo value
-        ValidationUtils.checkDateTimeBeforeDateTime(categoryElement.getValidFrom(), categoryElement.getValidTo(), ServiceExceptionParameters.RESOURCE_ELEMENT_VALID_TO, exceptions);
+        ValidationUtils.checkDateTimeBeforeDateTime(categoryElement.getValidFrom(), categoryElement.getValidTo(), ServiceExceptionParameters.RESOURCE_ELEMENT_VALID_FROM,
+                ServiceExceptionParameters.RESOURCE_ELEMENT_VALID_TO, exceptions);
     }
 
     public static void checkNormaliseCategoryElementsToCategories(String categorySchemeVersionUrn, String locale, List<MetamacExceptionItem> exceptions) throws MetamacException {

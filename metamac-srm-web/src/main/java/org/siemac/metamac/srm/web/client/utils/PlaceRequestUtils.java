@@ -573,9 +573,15 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
     }
 
     public static List<PlaceRequest> buildAbsoluteCategoryElementPlaceRequest(String categoryElementCode) {
-        List<PlaceRequest> placeRequests = new ArrayList<PlaceRequest>();
-        placeRequests.add(new PlaceRequest(NameTokens.structuralResourcesPage));
-        placeRequests.add(new PlaceRequest(NameTokens.categoryElementsPage));
+        List<PlaceRequest> placeRequests = buildAbsoluteCategoryElementsPlaceRequest();
+        PlaceRequest categoryElementPlace = buildRelativeCategoryElementPlaceRequest(categoryElementCode);
+        placeRequests.add(categoryElementPlace);
+        return placeRequests;
+    }
+
+    public static List<PlaceRequest> buildAbsoluteCategoryElementByUrnPlaceRequest(String categoryElementUrn) {
+        List<PlaceRequest> placeRequests = buildAbsoluteCategoryElementsPlaceRequest();
+        String categoryElementCode = SrmUrnParserUtils.getCategoryElementCodeFromCategoryElementUrn(categoryElementUrn);
         PlaceRequest categoryElementPlace = buildRelativeCategoryElementPlaceRequest(categoryElementCode);
         placeRequests.add(categoryElementPlace);
         return placeRequests;

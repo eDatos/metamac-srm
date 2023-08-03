@@ -244,6 +244,18 @@
           "type":"string",
           "description":"<%= orderByDescription %><br>Campos válidos<ul><li>ID</li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
         },
+         "categoryElementQueryParam": {
+            "name":"query",
+            "in":"query",
+            "type":"string",
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name)%>"
+        },
+        "categoryElementOrderByParam": {
+          "name":"orderBy",
+          "in":"query",
+          "type":"string",
+          "description":"<%= orderByDescription %><br>Campos válidos<ul><li>ID</li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+        },
         
     }
 },

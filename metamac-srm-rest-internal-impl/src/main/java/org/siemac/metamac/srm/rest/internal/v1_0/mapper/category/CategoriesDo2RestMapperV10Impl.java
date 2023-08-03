@@ -459,9 +459,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         toResource(source.getIdentifiableArtefact(), SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getIdentifiableArtefact().getCode()),
                 toCategoryElementManagementApplicationLink(source), target, false);
         target.setName(toInternationalString(source.getShortName()));
-        // target.setValidTo(toDate(source.getValidTo()));
-        // target.setValidFrom(toDate(source.getValidFrom()));
-        // target.setCategoryScheme(toResourceInternal(source.)); TODO EDATOS-4185 añadir category scheme cuando mezcle EDATOS-4177
+        target.setValidTo(toDate(source.getValidTo()));
+        target.setValidFrom(toDate(source.getValidFrom()));
 
         return target;
     }

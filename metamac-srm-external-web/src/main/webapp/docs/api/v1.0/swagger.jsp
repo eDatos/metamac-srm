@@ -3273,6 +3273,47 @@
                }
             }
          }
+      },
+       "/v1.0/categoryelements":{
+         "get":{
+            "tags":[
+              "Recursos auxiliares"
+            ],
+            "description":"",
+            "operationId":"resource__v1.0_categoryElements_findCategoryElements_GET",
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "parameters":[              
+                {"$ref":"#/components/parameters/limitParam"},
+                {"$ref":"#/components/parameters/offsetParam"},
+                {"$ref":"#/components/parameters/categoryElementQueryParam"},
+                {"$ref":"#/components/parameters/categoryElementOrderByParam"},
+            ],
+            "responses":{
+               "200":{
+               	  "schema":{
+                     "description":"",
+                     "$ref":"#/definitions/CategoryElements"
+                  },                
+                  "headers":{
+
+                  },
+                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+               },
+               "406":{
+                  "description":"No aceptable. El formato solicitado no es válido"
+               },
+               "500":{
+                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+               },
+               "503":{
+                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+               }
+            }
+         }
       }
+      
    }
 }

@@ -62,7 +62,11 @@ public class MasterTablesUtils {
     public static LinkedHashMap<String, String> getAnnotationTypeHashMap(List<AnnotationTypeDto> list, Map<String, String> annotationTypeOrderedRelatedById) {
         LinkedHashMap<String, String> hashMap = new LinkedHashMap<String, String>();
         for (AnnotationTypeDto type : list) {
-            hashMap.put(type.getId().toString(), InternationalStringUtils.getLocalisedString(type.getTitle()));
+            String description = InternationalStringUtils.getLocalisedString(type.getTitle());
+            if (description == null) {
+                description = type.getCode();
+            }
+            hashMap.put(type.getId().toString(), description);
         }
 
         return annotationTypeOrderByValue(hashMap, true, annotationTypeOrderedRelatedById);

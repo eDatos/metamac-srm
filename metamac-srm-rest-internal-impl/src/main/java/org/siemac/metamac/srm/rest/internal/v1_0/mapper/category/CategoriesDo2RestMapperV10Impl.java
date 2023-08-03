@@ -15,6 +15,8 @@ import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCrite
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryElementResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryElements;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
@@ -226,6 +228,24 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
+    public CategoryElements toCategoryElements(PagedResult<CategoryElement> sourcesPagedResult, String query, String orderBy, Integer limit) {
+
+        CategoryElements targets = new CategoryElements();
+        targets.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENTS);
+
+        // Pagination
+        String baseLink = toCategoryElementsLink();
+        SculptorCriteria2RestCriteria.toPagedResult(sourcesPagedResult, targets, query, orderBy, limit, baseLink);
+
+        // Values
+        for (CategoryElement source : sourcesPagedResult.getValues()) {
+            CategoryElementResourceInternal target = toCategoryElementResourceInternal(source);
+            targets.getCategoryElements().add(target);
+        }
+        return targets;
+    }
+
+    @Override
     protected boolean canItemSchemeVersionBeProvidedByApi(ItemSchemeVersion source) {
         return true; // no additional conditions
     }
@@ -430,6 +450,22 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
+    private CategoryElementResourceInternal toCategoryElementResourceInternal(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        CategoryElementResourceInternal target = new CategoryElementResourceInternal();
+        toResource(source.getIdentifiableArtefact(), SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getIdentifiableArtefact().getCode()),
+                toCategoryElementManagementApplicationLink(source), target, false);
+        target.setName(toInternationalString(source.getShortName()));
+        // target.setValidTo(toDate(source.getValidTo()));
+        // target.setValidFrom(toDate(source.getValidFrom()));
+        // target.setCategoryScheme(toResourceInternal(source.)); TODO EDATOS-4185 añadir category scheme cuando mezcle EDATOS-4177
+
+        return target;
+    }
+
     private ResourceLink toCategoryElementSelfLink(String codeCategoryElement) {
         ResourceLink target = new ResourceLink();
         target.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENT);
@@ -448,6 +484,11 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
     private String toCategoryElementManagementApplicationLink(CategoryElementResult source) {
         return getInternalWebApplicationNavigation().buildCategoryElementUrl(source.getCode());
+    }
+
+    // API/categoryElements
+    private String toCategoryElementsLink() {
+        return RestUtils.createLink(getSrmApiInternalEndpointV10(), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENTS);
     }
 
 }

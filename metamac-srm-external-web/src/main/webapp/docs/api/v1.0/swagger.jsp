@@ -33,7 +33,7 @@
          "description":""
       },
       {
-         "name":"Variables",
+         "name":"Recursos auxiliares",
          "description":""
       }
    ],
@@ -2919,7 +2919,7 @@
       "/v1.0/variablefamilies":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variablefamilies_findVariableFamilies_GET",
@@ -2959,7 +2959,7 @@
       "/v1.0/variablefamilies/{id}":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variablefamilies__id__retrieveVariableFamilyById_GET",
@@ -3001,7 +3001,7 @@
       "/v1.0/variablefamilies/{id}/variables":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variablefamilies__id__variables_findVariablesByFamily_GET",
@@ -3047,7 +3047,7 @@
       "/v1.0/variables":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables_findVariables_GET",
@@ -3087,7 +3087,7 @@
       "/v1.0/variables/{id}":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__id__retrieveVariableById_GET",
@@ -3129,7 +3129,7 @@
       "/v1.0/variables/{variableID}/variableelements":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__variableID__variableelements_findVariableElements_GET",
@@ -3181,7 +3181,7 @@
       "/v1.0/variables/{variableID}/variableelements/{resourceID}":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__retrieveVariableElementById_GET",
@@ -3224,7 +3224,7 @@
       "/v1.0/variables/{variableID}/variableelements/{resourceID}/geoinfo":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__geoinfo_findVariableElementsGeoInfoXml_GET",

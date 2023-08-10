@@ -15,6 +15,8 @@ import org.siemac.metamac.core.common.criteria.mapper.MetamacCriteria2SculptorCr
 import org.siemac.metamac.core.common.criteria.shared.MetamacCriteriaOrder;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
@@ -37,6 +39,8 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.criteria.AnnotationTypeCriteriaOrderEnum;
 import org.siemac.metamac.srm.core.criteria.AnnotationTypeCriteriaPropertyEnum;
+import org.siemac.metamac.srm.core.criteria.CategoryElementCriteriaOrderEnum;
+import org.siemac.metamac.srm.core.criteria.CategoryElementCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaOrderEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategorySchemeVersionMetamacCriteriaOrderEnum;
@@ -101,6 +105,7 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
     private MetamacCriteria2SculptorCriteria<Contact>                               organisationContactCriteriaMapper       = null;
     private MetamacCriteria2SculptorCriteria<CategorySchemeVersionMetamac>          categorySchemeMetamacCriteriaMapper     = null;
     private MetamacCriteria2SculptorCriteria<CategoryMetamac>                       categoryMetamacCriteriaMapper           = null;
+    private MetamacCriteria2SculptorCriteria<CategoryElement>                       categoryElementCriteriaMapper           = null;
     private MetamacCriteria2SculptorCriteria<CodelistVersionMetamac>                codelistMetamacCriteriaMapper           = null;
     private MetamacCriteria2SculptorCriteria<CodeMetamac>                           codeMetamacCriteriaMapper               = null;
     private MetamacCriteria2SculptorCriteria<CodelistFamily>                        codelistFamilyCriteriaMapper            = null;
@@ -138,6 +143,9 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
 
         categoryMetamacCriteriaMapper = new MetamacCriteria2SculptorCriteria<CategoryMetamac>(CategoryMetamac.class, CategoryMetamacCriteriaOrderEnum.class, CategoryMetamacCriteriaPropertyEnum.class,
                 new CategoryMetamacCriteriaCallback());
+
+        categoryElementCriteriaMapper = new MetamacCriteria2SculptorCriteria<CategoryElement>(CategoryElement.class, CategoryElementCriteriaOrderEnum.class, CategoryElementCriteriaPropertyEnum.class,
+                new CategoryElementCriteriaCallback());
 
         codelistMetamacCriteriaMapper = new MetamacCriteria2SculptorCriteria<CodelistVersionMetamac>(CodelistVersionMetamac.class, CodelistVersionMetamacCriteriaOrderEnum.class,
                 CodelistVersionMetamacCriteriaPropertyEnum.class, new CodelistVersionMetamacCriteriaCallback());
@@ -203,6 +211,11 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
     @Override
     public MetamacCriteria2SculptorCriteria<CategoryMetamac> getCategoryMetamacCriteriaMapper() {
         return categoryMetamacCriteriaMapper;
+    }
+
+    @Override
+    public MetamacCriteria2SculptorCriteria<CategoryElement> getCategoryElementCriteriaMapper() {
+        return categoryElementCriteriaMapper;
     }
 
     @Override
@@ -846,6 +859,51 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
         }
     }
 
+    private class CategoryElementCriteriaCallback implements CriteriaCallback {
+
+        @Override
+        public SculptorPropertyCriteria retrieveProperty(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {
+            CategoryElementCriteriaPropertyEnum propertyEnum = CategoryElementCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
+            switch (propertyEnum) {
+                case CODE:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.identifiableArtefact().code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case URN:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.identifiableArtefact().urn(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case SHORT_NAME:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.shortName().texts().label(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case VALID_FROM_DATE:
+                    return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(CategoryElementProperties.validFrom(), CategoryElement.class), propertyRestriction.getDateValue(),
+                            propertyRestriction.getOperationType());
+                case VALID_TO_DATE:
+                    return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(CategoryElementProperties.validTo(), CategoryElement.class), propertyRestriction.getDateValue(),
+                            propertyRestriction.getOperationType());
+                default:
+                    throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Property<CategoryElement> retrievePropertyOrder(MetamacCriteriaOrder order) throws MetamacException {
+            CategoryElementCriteriaOrderEnum propertyOrderEnum = CategoryElementCriteriaOrderEnum.fromValue(order.getPropertyName());
+            switch (propertyOrderEnum) {
+                case CODE:
+                    return CategoryElementProperties.identifiableArtefact().code();
+                case URN:
+                    return CategoryElementProperties.identifiableArtefact().urn();
+                case LAST_UPDATED:
+                    return getLastUpdatedLeafProperty(CategoryElementProperties.identifiableArtefact(), CategoryElement.class);
+                default:
+                    throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, order.getPropertyName());
+            }
+        }
+
+        @Override
+        public Property<VariableElement> retrievePropertyOrderDefault() throws MetamacException {
+            return VariableElementProperties.id();
+        }
+    }
+
     //
     // CODES
     //
@@ -1200,9 +1258,12 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
             AnnotationTypeCriteriaPropertyEnum propertyNameCriteria = AnnotationTypeCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
             switch (propertyNameCriteria) {
                 case CODE:
-                    return new SculptorPropertyCriteria(AnnotationTypeProperties.code(), propertyRestriction.getIntegerValue(), propertyRestriction.getOperationType());
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case TITLE:
                     return new SculptorPropertyCriteria(AnnotationTypeProperties.title().texts().label(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case UUID:
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.uuid(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+
                 default:
                     throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
             }

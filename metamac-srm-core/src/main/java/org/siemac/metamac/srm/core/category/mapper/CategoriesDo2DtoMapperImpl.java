@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
+import org.siemac.metamac.srm.core.resource.element.mapper.ResourceElementDo2DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
@@ -24,8 +27,11 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
     private com.arte.statistic.sdmx.srm.core.category.mapper.CategoriesDo2DtoMapper do2DtoMapperSdmxSrm;
 
     @Autowired
-    private  MasterTablesDo2DtoMapper do2DtoMapper;
-    
+    private MasterTablesDo2DtoMapper                                                do2DtoMapper;
+
+    @Autowired
+    private ResourceElementDo2DtoMapper                                             resourceElementDo2DtoMapper;
+
     @Override
     public CategorySchemeMetamacDto categorySchemeMetamacDoToDto(CategorySchemeVersionMetamac source) {
         if (source == null) {
@@ -74,10 +80,11 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
             return null;
         }
         CategoryMetamacDto target = new CategoryMetamacDto();
+        target.setCategoryElement(categoryElementDoToRelatedResourceDto(source.getCategoryElement()));
         if (source.getEniSchema() != null) {
             target.setEniSchema(do2DtoMapper.eniSchemaCatalogToDto(source.getEniSchema()));
         }
-        
+
         do2DtoMapperSdmxSrm.categoryDoToDto(source, target);
         return target;
     }
@@ -120,4 +127,28 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         return target;
     }
 
+    @Override
+    public CategoryElementDto categoryElementDoToDto(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+        CategoryElementDto target = new CategoryElementDto();
+
+        resourceElementDo2DtoMapper.resourceElementDoToDto(source, target);
+
+        return target;
+    }
+
+    @Override
+    public RelatedResourceDto categoryElementDoToRelatedResourceDto(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        RelatedResourceDto target = new RelatedResourceDto();
+
+        resourceElementDo2DtoMapper.resourceElementDoToRelatedResourceDto(source, target);
+
+        return target;
+    }
 }

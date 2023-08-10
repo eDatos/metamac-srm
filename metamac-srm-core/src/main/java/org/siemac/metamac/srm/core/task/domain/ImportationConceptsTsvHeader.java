@@ -16,10 +16,10 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
     private Integer                sdmxRelatedArtefactPosition = null;
 
     private int                    quantityTypePosition;
-    private int                    unitCodelistCodePosition;
+    private int                    unitCodelistUrnPosition;
     private int                    unitCodePosition;
     private int                    unitSymbolPositionPosition;
-    private int                    unitMultiplierCodelistCodePosition;
+    private int                    unitMultiplierCodelistUrnPosition;
     private int                    unitMultiplierCodePosition;
     private int                    significantDigitsPosition;
     private int                    decimalPlacesPosition;
@@ -33,7 +33,7 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
     private InternationalStringTsv percentageOf;
     private int                    indexBaseValuePosition;
     private int                    indexBaseTimePosition;
-    private int                    indexBaseLocationCodelistCodePosition;
+    private int                    indexBaseLocationCodelistUrnPosition;
     private int                    indexBaseLocationCodePosition;
     private int                    indexBaseQuantityConceptSchemePosition;
     private int                    indexBaseQuantityConceptPosition;
@@ -134,14 +134,6 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
         this.quantityTypePosition = quantityTypePosition;
     }
 
-    public int getUnitCodelistCodePosition() {
-        return unitCodelistCodePosition;
-    }
-
-    public void setUnitCodelistCodePosition(int unitCodelistCodePosition) {
-        this.unitCodelistCodePosition = unitCodelistCodePosition;
-    }
-
     public int getUnitCodePosition() {
         return unitCodePosition;
     }
@@ -156,14 +148,6 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
 
     public void setUnitSymbolPositionPosition(int unitSymbolPositionPosition) {
         this.unitSymbolPositionPosition = unitSymbolPositionPosition;
-    }
-
-    public int getUnitMultiplierCodelistCodePosition() {
-        return unitMultiplierCodelistCodePosition;
-    }
-
-    public void setUnitMultiplierCodelistCodePosition(int unitMultiplierCodelistCodePosition) {
-        this.unitMultiplierCodelistCodePosition = unitMultiplierCodelistCodePosition;
     }
 
     public int getUnitMultiplierCodePosition() {
@@ -262,14 +246,6 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
         this.indexBaseTimePosition = indexBaseTimePosition;
     }
 
-    public int getIndexBaseLocationCodelistCodePosition() {
-        return indexBaseLocationCodelistCodePosition;
-    }
-
-    public void setIndexBaseLocationCodelistCodePosition(int indexBaseLocationCodelistCodePosition) {
-        this.indexBaseLocationCodelistCodePosition = indexBaseLocationCodelistCodePosition;
-    }
-
     public int getIndexBaseLocationCodePosition() {
         return indexBaseLocationCodePosition;
     }
@@ -300,6 +276,30 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
 
     public void setPercentageOf(InternationalStringTsv percentageOf) {
         this.percentageOf = percentageOf;
+    }
+
+    public int getUnitMultiplierCodelistUrnPosition() {
+        return unitMultiplierCodelistUrnPosition;
+    }
+
+    public void setUnitMultiplierCodelistUrnPosition(int unitMultiplierCodelistUrnPosition) {
+        this.unitMultiplierCodelistUrnPosition = unitMultiplierCodelistUrnPosition;
+    }
+
+    public int getUnitCodelistUrnPosition() {
+        return unitCodelistUrnPosition;
+    }
+
+    public void setUnitCodelistUrnPosition(int unitCodelistUrnPosition) {
+        this.unitCodelistUrnPosition = unitCodelistUrnPosition;
+    }
+
+    public int getIndexBaseLocationCodelistUrnPosition() {
+        return indexBaseLocationCodelistUrnPosition;
+    }
+
+    public void setIndexBaseLocationCodelistUrnPosition(int indexBaseLocationCodelistUrnPosition) {
+        this.indexBaseLocationCodelistUrnPosition = indexBaseLocationCodelistUrnPosition;
     }
 
 }

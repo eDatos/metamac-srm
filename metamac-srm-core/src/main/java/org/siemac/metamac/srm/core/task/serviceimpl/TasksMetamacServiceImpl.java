@@ -114,6 +114,24 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase {
     }
 
     @Override
+    public String plannifyImportCategoryElementsTsvInBackground(ServiceContext ctx, File file, String fileName, boolean updateAlreadyExisting) throws MetamacException {
+
+        return plannifyImportResourceElementsTsvInBackground(ctx, file, fileName, updateAlreadyExisting, ImportationTsvJob.OPERATION_IMPORT_CATEGORY_ELEMENTS);
+    }
+
+    private String plannifyImportResourceElementsTsvInBackground(ServiceContext ctx, File file, String fileName, boolean updateAlreadyExisting, String importationTsvJob) throws MetamacException {
+
+        // Validation
+        TasksMetamacInvocationValidator.checkImportResourceElementsTsvInBackground(file, fileName, updateAlreadyExisting, null);
+
+        // Plan job
+        JobDataMap jobDataAdditional = new JobDataMap();
+        jobDataAdditional.put(ImportationTsvJob.UPDATE_ALREADY_EXISTING, updateAlreadyExisting);
+        jobDataAdditional.put(ImportationTsvJob.OPERATION, importationTsvJob);
+        return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
+    }
+
+    @Override
     public String plannifyImportCodesTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName, boolean updateAlreadyExisting) throws MetamacException {
         // Validation
         TasksMetamacInvocationValidator.checkImportCodesTsvInBackground(codelistUrn, file, fileName, updateAlreadyExisting, null);
@@ -149,7 +167,7 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase {
         jobDataAdditional.put(ImportationTsvJob.OPERATION, ImportationTsvJob.OPERATION_IMPORT_CODE_RESTRICTIONS);
         return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
     }
-    
+
     @Override
     public String plannifyImportCodeOpennessLevelsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
         // Validation
@@ -161,7 +179,7 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase {
         jobDataAdditional.put(ImportationTsvJob.OPERATION, ImportationTsvJob.OPERATION_IMPORT_CODE_OPENNESS_LEVELS);
         return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
     }
-    
+
     @Override
     public String plannifyImportVariableElementsTsvInBackground(ServiceContext ctx, String variableUrn, File file, String fileName, boolean updateAlreadyExisting) throws MetamacException {
 

@@ -1459,4 +1459,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
+    }
+
 }

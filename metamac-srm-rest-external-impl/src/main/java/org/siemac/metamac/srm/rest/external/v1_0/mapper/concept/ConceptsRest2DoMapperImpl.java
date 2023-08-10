@@ -4,7 +4,6 @@ import org.fornax.cartridges.sculptor.framework.domain.LeafProperty;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
-import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
@@ -26,10 +25,9 @@ public class ConceptsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
     private RestCriteria2SculptorCriteria<ConceptMetamac>              conceptCriteriaMapper       = null;
 
     public ConceptsRest2DoMapperImpl() {
-        conceptSchemeCriteriaMapper = new RestCriteria2SculptorCriteria<>(ConceptSchemeVersionMetamac.class, ConceptSchemeCriteriaPropertyOrder.class,
-                ConceptSchemeCriteriaPropertyRestriction.class, new ConceptSchemeCriteriaCallback());
-        conceptCriteriaMapper = new RestCriteria2SculptorCriteria<>(ConceptMetamac.class, ConceptCriteriaPropertyOrder.class, ConceptCriteriaPropertyRestriction.class,
-                new ConceptCriteriaCallback());
+        conceptSchemeCriteriaMapper = new RestCriteria2SculptorCriteria<>(ConceptSchemeVersionMetamac.class, ConceptSchemeCriteriaPropertyOrder.class, ConceptSchemeCriteriaPropertyRestriction.class,
+                new ConceptSchemeCriteriaCallback());
+        conceptCriteriaMapper = new RestCriteria2SculptorCriteria<>(ConceptMetamac.class, ConceptCriteriaPropertyOrder.class, ConceptCriteriaPropertyRestriction.class, new ConceptCriteriaCallback());
     }
 
     @Override
@@ -70,7 +68,7 @@ public class ConceptsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, ConceptSchemeVersionMetamacProperties.lifeCycleMetadata().externalPublicationDate(),
                             ConceptSchemeVersionMetamac.class, true);
                 case LATEST:
-                    return buildSculptorPropertyCriteria(ConceptSchemeVersionMetamacProperties.maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(ConceptSchemeVersionMetamacProperties.maintainableArtefact().latestVersionNumberPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -120,13 +118,14 @@ public class ConceptsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                 case CONCEPT_SCHEME_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact());
                 case CONCEPT_SCHEME_TYPE:
-                    return buildSculptorPropertyCriteria(new LeafProperty<ConceptMetamac>(ConceptMetamacProperties.itemSchemeVersion().getName(), ConceptSchemeVersionMetamacProperties.type()
-                            .getName(), false, ConceptMetamac.class), PropertyTypeEnum.CONCEPT_SCHEME_TYPE, propertyRestriction);
+                    return buildSculptorPropertyCriteria(new LeafProperty<ConceptMetamac>(ConceptMetamacProperties.itemSchemeVersion().getName(),
+                            ConceptSchemeVersionMetamacProperties.type().getName(), false, ConceptMetamac.class), PropertyTypeEnum.CONCEPT_SCHEME_TYPE, propertyRestriction);
                 case CONCEPT_SCHEME_STATISTICAL_OPERATION_URN:
-                    return buildSculptorPropertyCriteria(new LeafProperty<ConceptMetamac>(ConceptMetamacProperties.itemSchemeVersion().getName(), ConceptSchemeVersionMetamacProperties
-                            .relatedOperation().urn().getName(), false, ConceptMetamac.class), PropertyTypeEnum.STRING, propertyRestriction);
+                    return buildSculptorPropertyCriteria(new LeafProperty<ConceptMetamac>(ConceptMetamacProperties.itemSchemeVersion().getName(),
+                            ConceptSchemeVersionMetamacProperties.relatedOperation().urn().getName(), false, ConceptMetamac.class), PropertyTypeEnum.STRING, propertyRestriction);
                 case CONCEPT_SCHEME_LATEST:
-                    return buildSculptorPropertyCriteria(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().latestVersionNumberPublic(), PropertyTypeEnum.BOOLEAN,
+                            propertyRestriction);
                 case PARENT:
                     return buildSculptorPropertyCriteria(ConceptMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:

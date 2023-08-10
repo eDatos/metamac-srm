@@ -962,4 +962,9 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
+    }
 }

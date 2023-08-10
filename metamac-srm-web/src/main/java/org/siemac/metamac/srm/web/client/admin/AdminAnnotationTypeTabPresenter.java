@@ -6,13 +6,11 @@ import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
+import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesResult;
-import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListResult;
-import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeAction;
 import org.siemac.metamac.srm.web.shared.master.SaveAnnotationTypeResult;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -43,6 +41,8 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
         void onAnnotationTypeCreated(AnnotationTypeDto dto);
         void onAnnotationTypeUpdated(AnnotationTypeDto dto);
         void setAnnotationTypes(int firstResult, List<AnnotationTypeDto> dtos, int totalResults);
+        void clearSearchSection();
+        AnnotationTypeCriteria getAnnotationTypeCriteria();
     }
 
     @ProxyCodeSplit
@@ -71,12 +71,14 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-
+        getView().clearSearchSection();
         reloadAnnotationTypes(0);
     }
 
     private void reloadAnnotationTypes(int firstResult) {
-        retrieveAnnotationTypes(firstResult);
+        AnnotationTypeCriteria criteria = getView().getAnnotationTypeCriteria();
+        criteria.setFirstResult(firstResult);
+        retrieveAnnotationTypes(criteria);
     }
 
     // ACTIONS
@@ -106,7 +108,10 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
 
             @Override
             public void onWaitSuccess(final SaveAnnotationTypeResult result) {
-                retrieveAnnotationTypesAndDoAction(currentPage, new Action() {
+                AnnotationTypeCriteria criteria = getView().getAnnotationTypeCriteria();
+                criteria.setFirstResult(currentPage);
+
+                retrieveAnnotationTypesAndDoAction(criteria, new Action() {
 
                     @Override
                     public void run() {
@@ -116,7 +121,6 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
                         } else {
                             getView().onAnnotationTypeUpdated(result.getOutputDto());
                         }
-                        retrieveAnnotationTypes();
                     }
                 });
             }
@@ -124,31 +128,20 @@ public class AdminAnnotationTypeTabPresenter extends Presenter<AdminAnnotationTy
     }
 
     @Override
-    public void retrieveAnnotationTypes(final int firstResult) {
-        retrieveAnnotationTypesAndDoAction(firstResult, null);
+    public void retrieveAnnotationTypes(final AnnotationTypeCriteria criteria) {
+        retrieveAnnotationTypesAndDoAction(criteria, null);
     }
 
-    private void retrieveAnnotationTypesAndDoAction(final int firstResult, final Action action) {
-        dispatcher.execute(new GetAnnotationTypesPaginatedListAction(SrmWebConstants.MAIN_LIST_MAX_RESULTS, firstResult),
-                new WaitingAsyncCallbackHandlingError<GetAnnotationTypesPaginatedListResult>(this) {
-
-                    @Override
-                    public void onWaitSuccess(GetAnnotationTypesPaginatedListResult result) {
-                        getView().setAnnotationTypes(firstResult, result.getDtos(), result.getTotalResults());
-                        if (action != null) {
-                            action.run();
-                        }
-                    }
-                });
-    }
-
-    public void retrieveAnnotationTypes() {
-        dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+    private void retrieveAnnotationTypesAndDoAction(final AnnotationTypeCriteria criteria, final Action action) {
+        criteria.setMaxResults(SrmWebConstants.MAIN_LIST_MAX_RESULTS);
+        dispatcher.execute(new GetAnnotationTypesPaginatedListAction(criteria), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesPaginatedListResult>(this) {
 
             @Override
-            public void onWaitSuccess(GetAnnotationTypesResult result) {
-                UpdateAnnotationTypeEvent.fire(AdminAnnotationTypeTabPresenter.this, result.getAnnotationTypes());
-
+            public void onWaitSuccess(GetAnnotationTypesPaginatedListResult result) {
+                getView().setAnnotationTypes(criteria.getFirstResult(), result.getDtos(), result.getTotalResults());
+                if (action != null) {
+                    action.run();
+                }
             }
         });
     }

@@ -190,13 +190,13 @@ public class SrmRestInternalUtils {
             if (OrganisationSchemeVersionMetamac.class.equals(entity)) {
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).lbrace().withProperty(OrganisationSchemeVersionProperties.organisationSchemeType())
                         .in(OrganisationSchemeTypeEnum.AGENCY_SCHEME, OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME).or()
-                        .withProperty(maintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
+                        .withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
             } else if (OrganisationMetamac.class.equals(entity)) {
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).lbrace().withProperty(OrganisationProperties.organisationType())
-                        .in(OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER).or().withProperty(maintainableArtefactProperty.latestFinal())
-                        .eq(Boolean.TRUE).rbrace().buildSingle());
+                        .in(OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER).or()
+                        .withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
             } else {
-                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).withProperty(maintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).buildSingle());
+                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).buildSingle());
             }
         } else if (version != null && !SrmRestConstants.WILDCARD_ALL.equals(version)) {
             conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).withProperty(maintainableArtefactProperty.versionLogic()).eq(version).buildSingle());
@@ -211,7 +211,7 @@ public class SrmRestInternalUtils {
     }
 
     private static final String SPACE = " ";
-    private static final String PLUS = "+";
+    private static final String PLUS  = "+";
 
     public static Set<String> parseFieldsParameter(String fieldsParam) {
         Set<String> validFields = new HashSet<>();

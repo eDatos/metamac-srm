@@ -345,6 +345,29 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     }
 
     @Test
+    public void testFindCategoriesWithCategoryElementExplicit() throws Exception {
+        resetMocks();
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, "+categoryElement");
+        assertNotNull(categories.getCategories().get(0).getCategoryElement());
+    }
+
+    @Test
+    public void testFindCategoriesWithoutCategoryElementExplicit() throws Exception {
+        resetMocks();
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null);
+        assertNull(categories.getCategories().get(0).getCategoryElement());
+    }
+
+    @Test
+    public void testFindCategoriesWithCategoryElementXml() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", "+categoryElement");
+        InputStream responseExpected = SrmRestInternalFacadeV10CodesTest.class.getResourceAsStream("/responses/categories/findCategoriesWithCategoryElements.xml");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+
+    @Test
     public void testFindCategoriesXml() throws Exception {
         String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", null);
         InputStream responseExpected = SrmRestInternalFacadeV10CategoriesTest.class.getResourceAsStream("/responses/categories/findCategories.xml");

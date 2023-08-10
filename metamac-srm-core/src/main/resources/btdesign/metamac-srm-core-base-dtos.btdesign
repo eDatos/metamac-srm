@@ -1,6 +1,7 @@
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/metamac-core-common-dtos.btdesign"
 import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-common.btdesign"
+import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-core.btdesign"
 
 Application SrmDtosBaseCore {
     basePackage=unused
@@ -73,6 +74,21 @@ Application SrmDtosBaseCore {
 			JAVADATE externalPublicationDate nullable;
 			"User who published externally"
 			String externalPublicationUser nullable;
-		}    	
+		}    
+		
+		"Dto for ResourceElementDto"		
+		DataTransferObject ResourceElementDto extends @IdentifiableArtefactDto {
+			"Short name"
+			- @InternationalStringDto shortName nullable;
+			"Comment"
+			- @InternationalStringDto comment nullable;
+            "Date from which the resource element is valid"
+            JAVADATE validFrom nullable;
+            "Date from which resource element is superceded"
+            JAVADATE validTo nullable;
+			"Version to optimistic locking"
+			Long versionOptimisticLocking;
+		}	
+	}	
 	}
 }

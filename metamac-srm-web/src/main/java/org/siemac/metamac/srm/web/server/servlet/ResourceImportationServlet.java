@@ -175,8 +175,11 @@ public class ResourceImportationServlet extends HttpServlet {
 
                 TaskImportationInfo taskImportationInfo = importCategories(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
-            }
+            } else if (ImportableResourceTypeEnum.CATEGORY_ELEMENTS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
+                TaskImportationInfo taskImportationInfo = importCategoryElements(srmCoreServiceFacade, fileName, inputStream, args);
+                successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+            }
             sendSuccessImportationResponse(response, successMessage);
 
         } catch (Exception e) {
@@ -224,7 +227,7 @@ public class ResourceImportationServlet extends HttpServlet {
         }
         return updateSuccessMessage(successMessage, taskImportationInfo);
     }
-    
+
     private boolean isImportResultsWithError(List<MetamacExceptionItem> infoItems) {
         for (MetamacExceptionItem info : infoItems) {
             if (!info.getExceptionItems().isEmpty()) {
@@ -233,7 +236,7 @@ public class ResourceImportationServlet extends HttpServlet {
         }
         return false;
     }
-    
+
     private String updateSuccessMessage(String successMessage, Boolean isPlannedInBackground) {
         if (BooleanUtils.isFalse(isPlannedInBackground)) {
             // Synchronous importation
@@ -299,6 +302,15 @@ public class ResourceImportationServlet extends HttpServlet {
         return srmCoreServiceFacade.importOrganisationsTsv(ServiceContextHolder.getCurrentServiceContext(), organisationSchemeUrn, inputStream, fileName, updateAlreadyExisting);
     }
 
+    // Category elements
+
+    private TaskImportationInfo importCategoryElements(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
+
+        Boolean updateAlreadyExisting = Boolean.parseBoolean(args.get(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING));
+
+        return srmCoreServiceFacade.importCategoryElementsTsv(ServiceContextHolder.getCurrentServiceContext(), inputStream, fileName, updateAlreadyExisting);
+    }
+
     // Concepts
 
     private TaskImportationInfo importConcepts(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
@@ -336,8 +348,8 @@ public class ResourceImportationServlet extends HttpServlet {
 
         return srmCoreServiceFacade.importCodeRestrictionsTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName);
     }
-    
- // Code openness levels
+
+    // Code openness levels
 
     private TaskImportationInfo importCodeOpennessLevels(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
 
@@ -345,7 +357,7 @@ public class ResourceImportationServlet extends HttpServlet {
 
         return srmCoreServiceFacade.importCodeOpennessLevelsTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName);
     }
-    
+
     // Variable elements
 
     private TaskImportationInfo importVariableElements(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {

@@ -12,8 +12,6 @@ import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.dsd.enums.DsdTabTypeEnum;
 import org.siemac.metamac.srm.web.dsd.events.SelectViewDsdDescriptorEvent;
@@ -25,6 +23,8 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
 import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDescriptorForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveDescriptorForDsdResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
@@ -40,7 +40,6 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -52,10 +51,7 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.HasClickHandlers;
 
-public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter.DsdGroupKeysTabView, DsdGroupKeysTabPresenter.DsdGroupKeysTabProxy>
-        implements
-            DsdGroupKeysTabUiHandlers,
-            UpdateAnnotationTypeHandler {
+public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter.DsdGroupKeysTabView, DsdGroupKeysTabPresenter.DsdGroupKeysTabProxy> implements DsdGroupKeysTabUiHandlers {
 
     private final DispatchAsync               dispatcher;
     private final PlaceManager                placeManager;
@@ -88,6 +84,7 @@ public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @Inject
@@ -132,7 +129,7 @@ public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
         if (!StringUtils.isBlank(dsdIdentifier)) {
-            retrieveGroupKeys(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
+            retrieveResources(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
         }
     }
 
@@ -220,9 +217,19 @@ public class DsdGroupKeysTabPresenter extends Presenter<DsdGroupKeysTabPresenter
         });
     }
 
-    @ProxyEvent
-    @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
-        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveGroupKeys(urn);
+                }
+            });
+        } else {
+            retrieveGroupKeys(urn);
+        }
     }
 }

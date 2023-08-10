@@ -70,7 +70,7 @@ public abstract class SrmRestInternalFacadeV10OrganisationsTest extends SrmRestI
     @SuppressWarnings("rawtypes")
     @Override
     protected Boolean getVersionLatestFromConditionalCriteria(List<ConditionalCriteria> conditions, MaintainableArtefactProperty maintainableArtefactProperty) {
-        ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Or, maintainableArtefactProperty.latestFinal());
+        ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Or, maintainableArtefactProperty.latestVersionNumberFinal());
         return conditionalCriteria != null ? (Boolean) conditionalCriteria.getFirstOperant() : null;
     }
 
@@ -87,8 +87,8 @@ public abstract class SrmRestInternalFacadeV10OrganisationsTest extends SrmRestI
 
     @SuppressWarnings("unchecked")
     private void mockFindOrganisationSchemesByCondition() throws MetamacException {
-        when(organisationsService.findOrganisationSchemesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class))).thenAnswer(
-                new Answer<PagedResult<OrganisationSchemeVersionMetamac>>() {
+        when(organisationsService.findOrganisationSchemesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class)))
+                .thenAnswer(new Answer<PagedResult<OrganisationSchemeVersionMetamac>>() {
 
                     @Override
                     public org.fornax.cartridges.sculptor.framework.domain.PagedResult<OrganisationSchemeVersionMetamac> answer(InvocationOnMock invocation) throws Throwable {
@@ -232,20 +232,18 @@ public abstract class SrmRestInternalFacadeV10OrganisationsTest extends SrmRestI
     }
 
     protected void mockRetrieveOrganisationsByOrganisationScheme(final OrganisationTypeEnum organisationType) throws MetamacException {
-        when(organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(any(ServiceContext.class), any(String.class), any(ItemResultSelection.class))).thenAnswer(
-                new Answer<List<ItemResult>>() {
+        when(organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(any(ServiceContext.class), any(String.class), any(ItemResultSelection.class)))
+                .thenAnswer(new Answer<List<ItemResult>>() {
 
                     @Override
                     public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
                         // any
                         ItemResult organisation1 = OrganisationsDoMocks.mockOrganisationItemResult("organisation1", null, organisationType);
                         ItemResult organisation2 = OrganisationsDoMocks.mockOrganisationItemResult("organisation2", null, organisationType);
-                        ItemResult organisation2A = OrganisationsDoMocks.mockOrganisationItemResult("organisation2A", OrganisationTypeEnum.ORGANISATION_UNIT.equals(organisationType)
-                                ? organisation2
-                                : null, organisationType);
-                        ItemResult organisation2B = OrganisationsDoMocks.mockOrganisationItemResult("organisation2B", OrganisationTypeEnum.ORGANISATION_UNIT.equals(organisationType)
-                                ? organisation2
-                                : null, organisationType);
+                        ItemResult organisation2A = OrganisationsDoMocks.mockOrganisationItemResult("organisation2A",
+                                OrganisationTypeEnum.ORGANISATION_UNIT.equals(organisationType) ? organisation2 : null, organisationType);
+                        ItemResult organisation2B = OrganisationsDoMocks.mockOrganisationItemResult("organisation2B",
+                                OrganisationTypeEnum.ORGANISATION_UNIT.equals(organisationType) ? organisation2 : null, organisationType);
                         return Arrays.asList(organisation1, organisation2, organisation2A, organisation2B);
                     };
                 });

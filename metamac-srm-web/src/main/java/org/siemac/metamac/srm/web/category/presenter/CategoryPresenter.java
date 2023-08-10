@@ -8,6 +8,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
@@ -21,12 +22,13 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent;
 import org.siemac.metamac.srm.web.client.events.UpdateEniSchemaCatalogEvent.UpdateEniSchemaCatalogHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesAction;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
+import org.siemac.metamac.srm.web.shared.StructuralResourcesRelationEnum;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoriesBySchemeAction;
@@ -37,9 +39,15 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryResult;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategoryAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryElementOfCategoryResult;
+import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
@@ -65,11 +73,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView, CategoryPresenter.CategoryProxy>
-        implements
-            CategoryUiHandlers,
-            UpdateEniSchemaCatalogHandler,
-            UpdateAnnotationTypeHandler {
+public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView, CategoryPresenter.CategoryProxy> implements CategoryUiHandlers, UpdateEniSchemaCatalogHandler {
 
     private final DispatchAsync                dispatcher;
     private final PlaceManager                 placeManager;
@@ -94,11 +98,13 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
 
         void setCategory(CategoryMetamacDto categoryDto);
         void setCategory(CategoryMetamacDto categoryDto, CategorySchemeMetamacDto categorySchemeMetamacDto);
-        void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<ItemVisualisationResult> itemVisualisationResults);
+        void setCategoryList(CategorySchemeMetamacDto categorySchemeMetamacDto, List<CategoryMetamacVisualisationResult> itemVisualisationResults);
         void setEniSchemaCatalogList(List<EniSchemaCatalogDto> eniSchemaCatalogDto);
 
+        void setCategoryElements(GetRelatedResourcesResult result);
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
 
     }
 
@@ -138,10 +144,11 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         super.prepareFromRequest(request);
         String schemeParam = PlaceRequestUtils.getCategorySchemeParamFromUrl(placeManager);
         String categoryIdentifier = PlaceRequestUtils.getCategoryParamFromUrl(placeManager);
+
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(categoryIdentifier)) {
             this.categorySchemeUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORYSCHEME_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CATEGORY_PREFIX, schemeParam, categoryIdentifier);
-            retrieveCategory(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -210,19 +217,52 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
     }
 
     @Override
+    public void retrieveCategoryElements(int firstResult, int maxResults, String criteria) {
+        CategoryElementWebCriteria categoryElementWebCriteria = new CategoryElementWebCriteria(criteria);
+        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CATEGORY_ELEMENT_WITH_CODE, firstResult, maxResults, categoryElementWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategoryPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setCategoryElements(result);
+                    }
+                });
+    }
+
+    @Override
+    public void updateCategoryElement(final String categoryUrn, String categoryElementUrn) {
+        dispatcher.execute(new UpdateCategoryElementOfCategoryAction(categoryUrn, categoryElementUrn), new WaitingAsyncCallbackHandlingError<UpdateCategoryElementOfCategoryResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(UpdateCategoryElementOfCategoryResult result) {
+                fireSuccessMessage(getMessages().categoryCategoryElementUpdated());
+                retrieveCategory(categoryUrn);
+            }
+        });
+    }
+
+    @Override
     public void retrieveCategoryListByScheme(String categorySchemeUrn) {
         dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
                 new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
 
                     @Override
                     public void onWaitSuccess(GetCategoriesBySchemeResult result) {
-                        final List<ItemVisualisationResult> itemVisualisationResults = result.getCategories();
+                        final List<CategoryMetamacVisualisationResult> categoryVisualisationResults = result.getCategories();
                         dispatcher.execute(new GetCategorySchemeAction(CategoryPresenter.this.categorySchemeUrn),
                                 new WaitingAsyncCallbackHandlingError<GetCategorySchemeResult>(CategoryPresenter.this) {
 
                                     @Override
                                     public void onWaitSuccess(GetCategorySchemeResult result) {
-                                        getView().setCategoryList(result.getCategorySchemeMetamacDto(), itemVisualisationResults);
+                                        getView().setCategoryList(result.getCategorySchemeMetamacDto(), categoryVisualisationResults);
                                     }
                                 });
                     }
@@ -291,9 +331,19 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
         getView().setEniSchemaCatalogList(event.getEniSchemaCatalogDto());
     }
 
-    @ProxyEvent
-    @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
-        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCategory(urn);
+                }
+            });
+        } else {
+            retrieveCategory(urn);
+        }
     }
 }

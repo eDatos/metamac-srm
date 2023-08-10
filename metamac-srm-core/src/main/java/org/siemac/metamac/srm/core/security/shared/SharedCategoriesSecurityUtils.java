@@ -1,5 +1,9 @@
 package org.siemac.metamac.srm.core.security.shared;
 
+import static org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum.JEFE_NORMALIZACION;
+import static org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum.TECNICO_APOYO_NORMALIZACION;
+import static org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum.TECNICO_NORMALIZACION;
+
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 
@@ -122,4 +126,40 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
     public static boolean canImportCategoriesTsv(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
         return canModifyCategoryFromCategoryScheme(metamacPrincipal, procStatus);
     }
+
+    /**
+     * Determines if items from an category scheme can be created, deleted or updated
+     */
+    public static boolean canModifyCategoryElementFromCategoryScheme(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canModifyCategoryElement(metamacPrincipal, procStatus);
+    }
+
+    public static boolean canCrudCategoryElement(MetamacPrincipal metamacPrincipal) {
+        return isSrmRoleAllowed(metamacPrincipal, TECNICO_APOYO_NORMALIZACION, TECNICO_NORMALIZACION, JEFE_NORMALIZACION);
+    }
+
+    public static boolean canRetrieveOrFindCategoryElement(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
+    public static boolean canUpdateCategoryCategoryElement(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(procStatus) || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(procStatus)) {
+            return isSrmRoleAllowed(metamacPrincipal, JEFE_NORMALIZACION);
+        } else {
+            return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
+        }
+    }
+
+    public static boolean canExportCategoryElementsTsv(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
+    public static boolean canImportCategoryElements(MetamacPrincipal metamacPrincipal) {
+        return canCrudCategoryElement(metamacPrincipal);
+    }
+
+    public static boolean canNormaliseCategoryElementsToCategories(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
 }

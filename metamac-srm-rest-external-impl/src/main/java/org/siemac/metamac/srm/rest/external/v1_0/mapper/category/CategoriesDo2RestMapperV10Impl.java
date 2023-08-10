@@ -19,6 +19,9 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
+import org.siemac.metamac.rest.utils.RestUtils;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
@@ -111,7 +114,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Category toCategory(CategoryMetamac source) {
+    public Category toCategory(CategoryMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
@@ -125,6 +128,10 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         toItem(source, target);
 
         target.setNestedId(source.getNameableArtefact().getCodeFull());
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT)) {
+            target.setCategoryElement(toResource(source.getCategoryElement()));
+        }
 
         if (source.getEniSchema() != null) {
             target.setEniSchemeType(toItem(source.getEniSchema()));
@@ -349,12 +356,57 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             target.setEniSchemeType(toItem(source.getEniSchema()));
         }
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT)) {
+            target.setCategoryElement(toResource(source.getCategoryElement()));
+        }
+
     }
 
     private void setVisibleCategoryFields(ItemResult source, CategoryResource target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME) && source.getExtensionPoint() != null) {
             target.setEniSchemeType(toItem(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getEniSchemeCatalog()));
         }
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT) && source.getExtensionPoint() != null) {
+            target.setCategoryElement(toResource(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getCategoryElement()));
+        }
     }
 
+    private Resource toResource(CategoryElementResult source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        Resource target = new Resource();
+        toResource(source, SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getCode()), target, false);
+        target.setName(toInternationalString(source.getShortName()));
+
+        return target;
+    }
+
+    private Resource toResource(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        Resource target = new Resource();
+        toResource(source.getIdentifiableArtefact(), SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getIdentifiableArtefact().getCode()), target, false);
+        target.setName(toInternationalString(source.getShortName()));
+
+        return target;
+    }
+
+    private ResourceLink toCategoryElementSelfLink(String codeCategoryElement) {
+        ResourceLink target = new ResourceLink();
+        target.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENT);
+        target.setHref(toCategoryElementLink(codeCategoryElement));
+        return target;
+    }
+
+    private String toCategoryElementLink(String codeCategoryElement) {
+        String link = RestUtils.createLink(getSrmApiExternalEndpointV10(), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENTS);
+        return RestUtils.createLink(link, codeCategoryElement);
+    }
 }

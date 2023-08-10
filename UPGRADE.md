@@ -8,7 +8,6 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-
 ## 5.0.1 a 5.0.2-SNAPSHOT
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:
   * **categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}**
@@ -41,8 +40,6 @@
   curl -X DELETE http://localhost:8081/subjects/CATEGORY_SCHEME_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/DATA_STRUCTURE_DEFINITION_PUBLICATIONS-value
   ```
-  
-    ```
 
 ## 4.0.0 a 5.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:
@@ -64,7 +61,7 @@ Se han realizado cambios a la base de datos, por ello se proveen una serie de sc
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_foreign_key_to_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_insert_eni_schemas_values.sql  
   ```
-  
+
 ## 3.3.0 a 4.0.0
 * Rotura de la compatibilidad:
 ** Se eliminan los servicios soap

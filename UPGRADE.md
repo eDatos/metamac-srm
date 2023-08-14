@@ -8,6 +8,13 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+
+## 5.0.2 a 5.0.3-SNAPSHOT
+ * Es necesario ejecutar los scripts SQL contenidos en la carpeta
+  ```shell
+  etc/changes-from-release/5.0.2/db/srm/postgresql
+  ```
+
 ## 5.0.1 a 5.0.2-SNAPSHOT
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:
   * **categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}**

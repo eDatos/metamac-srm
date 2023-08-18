@@ -49,11 +49,14 @@ import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -101,6 +104,8 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
         // Complex codelists
         void setCodelistsToCreateComplexCodelist(GetCodelistsResult result);
         void setCodesToCreateComplexCodelist(CodelistMetamacDto codelistDto, List<CodeMetamacVisualisationResult> codes);
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -141,7 +146,7 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
         if (!StringUtils.isBlank(schemeParam) && !StringUtils.isBlank(codeCode)) {
             // this.codelistUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CODELIST_PREFIX, schemeParam);
             String urn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_CODE_PREFIX, schemeParam, codeCode);
-            retrieveCode(urn);
+            retrieveResources(urn);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -418,5 +423,21 @@ public class CodePresenter extends Presenter<CodePresenter.CodeView, CodePresent
     @Override
     public void goToCodelist(String urn) {
         goTo(PlaceRequestUtils.buildAbsoluteCodelistPlaceRequest(urn));
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCode(urn);
+                }
+            });
+        } else {
+            retrieveCode(urn);
+        }
     }
 }

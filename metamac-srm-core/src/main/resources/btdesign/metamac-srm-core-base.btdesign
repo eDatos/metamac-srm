@@ -1,4 +1,6 @@
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-common.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-base.btdesign"
 
 Application BaseCore {
     basePackage=unused
@@ -68,6 +70,26 @@ Application BaseCore {
 				findByQuery(String query, Map<String, Object> parameters, int maxResult);
 				@MiscValue findByName(String name);
 			}
-		}		  	
+		}
+		
+		abstract Entity ResourceElement {
+			databaseTable="TB_RESOURCE_ELEMENTS"
+			hint="idSequence=M_RESOURCE_ELEMENTS"
+						
+			"Identifiable artefact"
+			- @IdentifiableArtefact identifiableArtefact databaseColumn="IDENTIFIABLE_ARTEFACT_FK" not nullable cascade="all";
+			"Short name"
+			- @InternationalString shortName not nullable cascade="all" fetch="lazy" databaseColumn="SHORT_NAME_FK";
+			"A multi-lingual comment"
+			- @InternationalString comment nullable cascade="all" fetch="lazy" databaseColumn="COMMENT_FK";
+			"Date from which the resource element is valid"
+			DateTimeTZ validFrom nullable;
+			"Date from which resource element is superceded"
+			DateTimeTZ validTo nullable;
+
+			"Last update to optimistic locking"
+			DateTimeTZ updateDate nullable;
+
+		}	  			  	
 	}
 }

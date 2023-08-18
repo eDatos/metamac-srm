@@ -16,7 +16,6 @@ import org.siemac.metamac.srm.web.client.widgets.RelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
 import org.siemac.metamac.srm.web.code.model.ds.CodeDS;
-import org.siemac.metamac.srm.web.code.model.ds.CodelistDS;
 import org.siemac.metamac.srm.web.code.presenter.CodePresenter;
 import org.siemac.metamac.srm.web.code.utils.CodesFormUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodeUiHandlers;
@@ -40,6 +39,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -57,29 +57,29 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements CodePresenter.CodeView {
 
-    private VLayout panel;
-    private CodeMainFormLayout mainFormLayout;
+    private VLayout                              panel;
+    private CodeMainFormLayout                   mainFormLayout;
 
-    private CodesTreeGrid codesTreeGrid;
+    private CodesTreeGrid                        codesTreeGrid;
 
     // View forms
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm commentsForm;
-    private AnnotationsPanel annotationsPanel;
+    private GroupDynamicForm                     identifiersForm;
+    private GroupDynamicForm                     productionDescriptorsForm;
+    private GroupDynamicForm                     contentDescriptorsForm;
+    private GroupDynamicForm                     commentsForm;
+    private AnnotationsPanel                     annotationsPanel;
 
     // Edition forms
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private GroupDynamicForm commentsEditionForm;
-    private AnnotationsPanel annotationsEditionPanel;
+    private GroupDynamicForm                     identifiersEditionForm;
+    private GroupDynamicForm                     productionDescriptorsEditionForm;
+    private GroupDynamicForm                     contentDescriptorsEditionForm;
+    private GroupDynamicForm                     commentsEditionForm;
+    private AnnotationsPanel                     annotationsEditionPanel;
 
     private SearchRelatedResourcePaginatedWindow searchVariableElementWindow;
 
-    private CodelistMetamacDto codelistMetamacDto;
-    private CodeMetamacDto codeDto;
+    private CodelistMetamacDto                   codelistMetamacDto;
+    private CodeMetamacDto                       codeDto;
 
     @Inject
     public CodeViewImpl() {
@@ -281,7 +281,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         SearchRelatedResourceLinkItem variableElement = createVariableElementItem(CodeDS.VARIABLE_ELEMENT, getConstants().variableElement());
         BooleanSelectItem isExtended = new BooleanSelectItem(CodeDS.IS_EXTENDED, getConstants().codeIsExtended());
         contentDescriptorsEditionForm.setFields(description, variableElement, isExtended);
-                
+
         // COMMENTS
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
         MultiLanguageRichTextEditorItem comments = new MultiLanguageRichTextEditorItem(CodeDS.COMMENTS, getConstants().nameableArtefactComments());
@@ -363,7 +363,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         identifiersForm.setValue(CodeDS.URI, codeDto.getUriProvider());
         identifiersForm.setValue(CodeDS.URN, codeDto.getUrn());
         identifiersForm.setValue(CodeDS.URN_PROVIDER, codeDto.getUrnProvider());
-        
+
         // Production descriptors form
         productionDescriptorsForm.setValue(CodeDS.CREATION_DATE, codeDto.getCreatedDate());
 
@@ -373,7 +373,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         contentDescriptorsForm.markForRedraw();
 
         contentDescriptorsForm.setValue(CodeDS.IS_EXTENDED, BooleanWebUtils.getBooleanLabel(codeDto.getIsExtended()));
-        
+
         // Comments
         commentsForm.setValue(CodeDS.COMMENTS, codeDto.getComment());
 
@@ -390,7 +390,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         identifiersEditionForm.setValue(CodeDS.URI, codeDto.getUriProvider());
         identifiersEditionForm.setValue(CodeDS.URN, codeDto.getUrn());
         identifiersEditionForm.setValue(CodeDS.URN_PROVIDER, codeDto.getUrnProvider());
-       
+
         // Production descriptors form
         productionDescriptorsEditionForm.setValue(CodeDS.CREATION_DATE, codeDto.getCreatedDate());
 
@@ -398,7 +398,7 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
         contentDescriptorsEditionForm.setValue(CodeDS.DESCRIPTION, codeDto.getDescription());
         ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodeDS.VARIABLE_ELEMENT)).setRelatedResource(codeDto.getVariableElement());
         contentDescriptorsEditionForm.setValue(CodeDS.IS_EXTENDED, BooleanWebUtils.getBooleanLabel(codeDto.getIsExtended()));
-        
+
         // Comments
         commentsEditionForm.setValue(CodeDS.COMMENTS, codeDto.getComment());
 
@@ -532,5 +532,16 @@ public class CodeViewImpl extends ViewWithUiHandlers<CodeUiHandlers> implements 
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
     }
 }

@@ -123,74 +123,74 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEn
 @Service("conceptsMetamacService")
 public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
-    private static Logger logger = LoggerFactory.getLogger(ConceptsMetamacServiceImpl.class);
+    private static Logger                            logger = LoggerFactory.getLogger(ConceptsMetamacServiceImpl.class);
 
     @Autowired
-    private BaseService baseService;
+    private BaseService                              baseService;
 
     @Autowired
-    private ConceptsService conceptsService;
+    private ConceptsService                          conceptsService;
 
     @Autowired
-    private CategoriesMetamacService categoriesMetamacService;
+    private CategoriesMetamacService                 categoriesMetamacService;
 
     @Autowired
-    private CodesMetamacService codesMetamacService;
+    private CodesMetamacService                      codesMetamacService;
 
     @Autowired
-    private ItemSchemeVersionRepository itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository              itemSchemeVersionRepository;
 
     @Autowired
-    private ConceptRepository conceptRepository;
+    private ConceptRepository                        conceptRepository;
 
     @Autowired
-    private ItemSchemeRepository itemSchemeRepository;
+    private ItemSchemeRepository                     itemSchemeRepository;
 
     @Autowired
     @Qualifier("conceptSchemeLifeCycle")
-    private LifeCycle conceptSchemeLifeCycle;
+    private LifeCycle                                conceptSchemeLifeCycle;
 
     @Autowired
-    private SrmConfiguration srmConfiguration;
+    private SrmConfiguration                         srmConfiguration;
 
     @Autowired
-    private SrmValidation srmValidation;
+    private SrmValidation                            srmValidation;
 
     @Autowired
-    private CodelistVersionMetamacRepository codelistVersionMetamacRepository;
+    private CodelistVersionMetamacRepository         codelistVersionMetamacRepository;
 
     @Autowired
-    private ConceptSchemeVersionMetamacRepository conceptSchemeVersionMetamacRepository;
+    private ConceptSchemeVersionMetamacRepository    conceptSchemeVersionMetamacRepository;
 
     @Autowired
     @Qualifier("conceptsVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback conceptsVersioningCallback;
+    private ItemSchemesCopyCallback                  conceptsVersioningCallback;
 
     @Autowired
     @Qualifier("conceptsCopyCallbackMetamac")
-    private ItemSchemesCopyCallback conceptsCopyCallback;
+    private ItemSchemesCopyCallback                  conceptsCopyCallback;
 
     @Autowired
     @Qualifier("conceptsDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback conceptsDummyVersioningCallback;
+    private ItemSchemesCopyCallback                  conceptsDummyVersioningCallback;
 
     @Autowired
     private ConceptSchemeStreamMessagingCallbackImpl conceptSchemeStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService streamMessagingService;
+    private StreamMessagingService                   streamMessagingService;
 
     @Autowired
-    private TasksMetamacService tasksMetamacService;
+    private TasksMetamacService                      tasksMetamacService;
 
     @Autowired
-    private InternationalStringRepository internationalStringRepository;
+    private InternationalStringRepository            internationalStringRepository;
 
     @Autowired
-    private ExternalItemRepository externalItemRepository;
+    private ExternalItemRepository                   externalItemRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager entityManager;
+    protected EntityManager                          entityManager;
 
     public ConceptsMetamacServiceImpl() {
     }
@@ -998,7 +998,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         }
     }
 
-    private CodeMetamac findCodesByCodelistCodeByCondition(ServiceContext ctx, String codeListCode, String codeInCodelist) throws MetamacException {
+    private CodeMetamac findCodesByCodelistUrnByCondition(ServiceContext ctx, String codeListUrn, String codeInCodelist) throws MetamacException {
 
         // Prepare conditions
 
@@ -1009,7 +1009,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         // codelist internally or externally published
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient()).eq(Boolean.TRUE)
                 .buildSingle());
-        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(codeListCode).buildSingle());
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().urn()).eq(codeListUrn).buildSingle());
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(CodeMetamac.class).withProperty(CodeMetamacProperties.nameableArtefact().code()).eq(codeInCodelist).buildSingle());
 
         PagedResult<CodeMetamac> result = codesMetamacService.findCodesByCondition(ctx, conditions, pagingParameter);
@@ -1021,7 +1021,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return null;
     }
 
-    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeCode, String conceptCodeInConceptScheme) throws MetamacException {
+    private ConceptMetamac findConceptsByConceptSchemesCodeByCondiction(ServiceContext ctx, String conceptSchemeUrn, String conceptCodeInConceptScheme) throws MetamacException {
 
         PagingParameter pagingParameter = PagingParameter.pageAccess(1, 1, false);
 
@@ -1029,7 +1029,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().finalLogicClient())
                 .eq(Boolean.TRUE).buildSingle());
-        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().code()).eq(conceptSchemeCode)
+        conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.itemSchemeVersion().maintainableArtefact().urn()).eq(conceptSchemeUrn)
                 .buildSingle());
         conditions.add(ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class).withProperty(ConceptMetamacProperties.nameableArtefact().code()).eq(conceptCodeInConceptScheme).buildSingle());
 
@@ -1142,10 +1142,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             exceptionItems.add(exceptionItem);
         }
 
-        String unitCodeList = columns[header.getUnitCodelistCodePosition()];
+        String unitCodelistUrn = columns[header.getUnitCodelistUrnPosition()];
         String unitCode = columns[header.getUnitCodePosition()];
-        if (unitCodeList != null && unitCode != null) {
-            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, unitCodeList, unitCode);
+        if (unitCodelistUrn != null && unitCode != null) {
+            CodeMetamac code = findCodesByCodelistUrnByCondition(ctx, unitCodelistUrn, unitCode);
             quantity.setUnitCode(code);
         }
 
@@ -1153,21 +1153,14 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         QuantityUnitSymbolPositionEnum unitSymbolPositionEnum = QuantityUnitSymbolPositionEnum.valueOf(unitSymbolPosition);
         quantity.setUnitSymbolPosition(unitSymbolPositionEnum);
 
-        String intValue = columns[header.getUnitMultiplierPosition()];
-        if (!StringUtils.isBlank(intValue)) {
-            try {
-                quantity.setUnitMultiplier(Integer.valueOf(intValue));
-            } catch (IllegalArgumentException e) {
-                quantity.setUnitMultiplier(null);
-                MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
-                exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, ServiceExceptionParameters.CONCEPT_QUANTITY_UNIT_MULTIPLIER));
-                exceptionItems.add(exceptionItem);
-            }
-        } else {
-            quantity.setUnitMultiplier(null);
+        String unitMultiplierCodelistUrn = columns[header.getUnitMultiplierCodelistUrnPosition()];
+        String unitMultiplierCode = columns[header.getUnitMultiplierCodePosition()];
+        if (unitMultiplierCodelistUrn != null && unitMultiplierCode != null) {
+            CodeMetamac code = findCodesByCodelistUrnByCondition(ctx, unitMultiplierCodelistUrn, unitMultiplierCode);
+            quantity.setUnitMultiplier(code);
         }
 
-        intValue = columns[header.getSignificantDigitsPosition()];
+        String intValue = columns[header.getSignificantDigitsPosition()];
         if (!StringUtils.isBlank(intValue)) {
             try {
                 quantity.setSignificantDigits(Integer.valueOf(intValue));
@@ -1223,10 +1216,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             quantity.setBaseTime(null);
         }
 
-        String indexBaseLocationCodeList = columns[header.getIndexBaseLocationCodelistCodePosition()];
+        String indexBaseLocationCodelistUrn = columns[header.getIndexBaseLocationCodelistUrnPosition()];
         String indexBaseLocationCode = columns[header.getIndexBaseLocationCodePosition()];
-        if (indexBaseLocationCodeList != null && indexBaseLocationCode != null) {
-            CodeMetamac code = findCodesByCodelistCodeByCondition(ctx, indexBaseLocationCodeList, indexBaseLocationCode);
+        if (indexBaseLocationCodelistUrn != null && indexBaseLocationCode != null) {
+            CodeMetamac code = findCodesByCodelistUrnByCondition(ctx, indexBaseLocationCodelistUrn, indexBaseLocationCode);
             quantity.setBaseLocation(code);
         } else {
             quantity.setBaseLocation(null);
@@ -1400,7 +1393,8 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return null;
     }
 
-    private InternationalString tsvLineToPluralName(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, boolean isDefaultMaintainer, ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptMetamac concept, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+    private InternationalString tsvLineToPluralName(ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, boolean isDefaultMaintainer, ConceptSchemeVersionMetamac conceptSchemeVersion,
+            ConceptMetamac concept, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         try {
             InternationalString pluralName = TsvImportationUtils.tsvLineToInternationalStringBase(conceptTsvHeader.getPluralName(), columns, concept.getPluralName(), isDefaultMaintainer);
             checkConceptPluralName(conceptSchemeVersion.getType(), pluralName);

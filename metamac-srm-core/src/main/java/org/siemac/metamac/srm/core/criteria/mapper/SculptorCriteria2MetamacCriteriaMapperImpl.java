@@ -6,8 +6,10 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.criteria.mapper.SculptorCriteria2MetamacCriteria;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.mapper.CategoriesDo2DtoMapper;
@@ -34,6 +36,7 @@ import org.siemac.metamac.srm.core.concept.mapper.ConceptsDo2DtoMapper;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacBasicDto;
 import org.siemac.metamac.srm.core.dsd.mapper.DataStructureDefinitionDo2DtoMapper;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
@@ -42,11 +45,13 @@ import org.siemac.metamac.srm.core.organisation.mapper.OrganisationsDo2DtoMapper
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Contact;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;
 import com.arte.statistic.sdmx.srm.core.task.mapper.TasksDo2DtoMapper;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.task.TaskDto;
 
 @Component
@@ -69,6 +74,9 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
 
     @Autowired
     private CodesDo2DtoMapper                   codesDo2DtoMapper;
+
+    @Autowired
+    private MasterTablesDo2DtoMapper            masterTablesDo2DtoMapper;
 
     //
     // DATA STRUCTURE DEFINITION
@@ -161,7 +169,7 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
         }
         return target;
     }
-    
+
     @Override
     public MetamacCriteriaResult<OrganisationMetamacBasicDto> pageResultOrganisationToMetamacCriteriaResult(PagedResult<OrganisationMetamac> source, Integer pageSize) {
         MetamacCriteriaResult<OrganisationMetamacBasicDto> target = new MetamacCriteriaResult<OrganisationMetamacBasicDto>();
@@ -252,6 +260,19 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
             target.setResults(new ArrayList<RelatedResourceDto>(source.getValues().size()));
             for (CategoryMetamac scheme : source.getValues()) {
                 target.getResults().add(categoriesDo2DtoMapper.categoryMetamacDoToRelatedResourceDto(scheme));
+            }
+        }
+        return target;
+    }
+
+    @Override
+    public MetamacCriteriaResult<CategoryElementDto> pageResultCategoryElementToMetamacCriteriaResult(PagedResult<CategoryElement> source, Integer pageSize) {
+        MetamacCriteriaResult<CategoryElementDto> target = new MetamacCriteriaResult<CategoryElementDto>();
+        target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
+        if (source.getValues() != null) {
+            target.setResults(new ArrayList<CategoryElementDto>(source.getValues().size()));
+            for (CategoryElement scheme : source.getValues()) {
+                target.getResults().add(categoriesDo2DtoMapper.categoryElementDoToDto(scheme));
             }
         }
         return target;
@@ -392,7 +413,8 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
     }
 
     @Override
-    public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOpennessVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOpennessVisualisation> source, Integer pageSize) {
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOpennessVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOpennessVisualisation> source,
+            Integer pageSize) {
         MetamacCriteriaResult<RelatedResourceDto> target = new MetamacCriteriaResult<RelatedResourceDto>();
         target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
         if (source.getValues() != null) {
@@ -415,6 +437,34 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
             target.setResults(new ArrayList<TaskDto>(source.getValues().size()));
             for (Task task : source.getValues()) {
                 target.getResults().add(tasksDo2DtoMapper.taskToDto(task));
+            }
+        }
+        return target;
+    }
+
+    // Annotation type
+    @Override
+    public MetamacCriteriaResult<AnnotationTypeDto> pageResultAnnotationTypeToMetamacCriteriaResultRelatedResource(PagedResult<AnnotationType> source, Integer pageSize) {
+        MetamacCriteriaResult<AnnotationTypeDto> target = new MetamacCriteriaResult<AnnotationTypeDto>();
+        target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
+        if (source.getValues() != null) {
+            target.setResults(new ArrayList<AnnotationTypeDto>(source.getValues().size()));
+            for (AnnotationType annotationType : source.getValues()) {
+                target.getResults().add(masterTablesDo2DtoMapper.annotationTypeToDto(annotationType));
+            }
+        }
+        return target;
+    }
+
+    // Category element
+    @Override
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultCategoryElementToMetamacCriteriaResultRelatedResource(PagedResult<CategoryElement> source, Integer pageSize) {
+        MetamacCriteriaResult<RelatedResourceDto> target = new MetamacCriteriaResult<RelatedResourceDto>();
+        target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
+        if (source.getValues() != null) {
+            target.setResults(new ArrayList<RelatedResourceDto>(source.getValues().size()));
+            for (CategoryElement scheme : source.getValues()) {
+                target.getResults().add(categoriesDo2DtoMapper.categoryElementDoToRelatedResourceDto(scheme));
             }
         }
         return target;

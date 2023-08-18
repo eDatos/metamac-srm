@@ -8,6 +8,7 @@ import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.web.server.utils.MetamacWebCriteriaUtils;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesAction;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
+import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
@@ -275,6 +276,12 @@ public class GetRelatedResourcesActionHandler extends SecurityActionHandler<GetR
                     CategoryWebCriteria categoryWebCriteria = (CategoryWebCriteria) action.getCriteria();
                     criteria.setRestriction(MetamacWebCriteriaUtils.getCategoryCriteriaRestriction(categoryWebCriteria));
                     result = srmCoreServiceFacade.findCategoriesCanBeCategorisationCategoryByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria);
+                    break;
+                }
+                case CATEGORY_ELEMENT_WITH_CODE: {
+                    CategoryElementWebCriteria categoryElementWebCriteria = (CategoryElementWebCriteria) action.getCriteria();
+                    criteria.setRestriction(MetamacWebCriteriaUtils.getCategoryElementCriteriaRestriction(categoryElementWebCriteria));
+                    result = srmCoreServiceFacade.findCategoryElementsForCategoriesByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria);
                     break;
                 }
                 case CODELIST_WITH_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY: {

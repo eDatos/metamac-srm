@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.core.criteria.mapper;
 
 import org.siemac.metamac.core.common.criteria.mapper.MetamacCriteria2SculptorCriteria;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -15,6 +16,7 @@ import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMeta
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Contact;
 
 public interface MetamacCriteria2SculptorCriteriaMapper {
@@ -30,6 +32,7 @@ public interface MetamacCriteria2SculptorCriteriaMapper {
 
     public MetamacCriteria2SculptorCriteria<CategorySchemeVersionMetamac> getCategorySchemeMetamacCriteriaMapper();
     public MetamacCriteria2SculptorCriteria<CategoryMetamac> getCategoryMetamacCriteriaMapper();
+    public MetamacCriteria2SculptorCriteria<CategoryElement> getCategoryElementCriteriaMapper();
 
     public MetamacCriteria2SculptorCriteria<CodelistVersionMetamac> getCodelistMetamacCriteriaMapper();
     public MetamacCriteria2SculptorCriteria<CodeMetamac> getCodeMetamacCriteriaMapper();
@@ -37,4 +40,5 @@ public interface MetamacCriteria2SculptorCriteriaMapper {
     public MetamacCriteria2SculptorCriteria<VariableFamily> getVariableFamilyCriteriaMapper();
     public MetamacCriteria2SculptorCriteria<Variable> getVariableCriteriaMapper();
     public MetamacCriteria2SculptorCriteria<VariableElement> getVariableElementCriteriaMapper();
+    public MetamacCriteria2SculptorCriteria<AnnotationType> getAnnotationTypeCriteriaMapper();
 }

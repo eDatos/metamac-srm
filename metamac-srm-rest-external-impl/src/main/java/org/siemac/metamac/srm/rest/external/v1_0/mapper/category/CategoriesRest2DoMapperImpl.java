@@ -3,7 +3,6 @@ package org.siemac.metamac.srm.rest.external.v1_0.mapper.category;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
-import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
@@ -36,8 +35,8 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
                 CategorySchemeCriteriaPropertyRestriction.class, new CategorySchemeCriteriaCallback());
         categoryCriteriaMapper = new RestCriteria2SculptorCriteria<>(CategoryMetamac.class, CategoryCriteriaPropertyOrder.class, CategoryCriteriaPropertyRestriction.class,
                 new CategoryCriteriaCallback());
-        categorisationCriteriaMapper = new RestCriteria2SculptorCriteria<>(Categorisation.class, CategorisationCriteriaPropertyOrder.class,
-                CategorisationCriteriaPropertyRestriction.class, new CategorisationCriteriaCallback());
+        categorisationCriteriaMapper = new RestCriteria2SculptorCriteria<>(Categorisation.class, CategorisationCriteriaPropertyOrder.class, CategorisationCriteriaPropertyRestriction.class,
+                new CategorisationCriteriaCallback());
     }
 
     @Override
@@ -79,7 +78,7 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, CategorySchemeVersionMetamacProperties.lifeCycleMetadata().externalPublicationDate(),
                             CategorySchemeVersionMetamac.class, true);
                 case LATEST:
-                    return buildSculptorPropertyCriteria(CategorySchemeVersionMetamacProperties.maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(CategorySchemeVersionMetamacProperties.maintainableArtefact().latestVersionNumberPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -121,7 +120,10 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
                 case CATEGORY_SCHEME_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact());
                 case CATEGORY_SCHEME_LATEST:
-                    return buildSculptorPropertyCriteria(CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact().latestVersionNumberPublic(), PropertyTypeEnum.BOOLEAN,
+                            propertyRestriction);
+                case PARENT:
+                    return buildSculptorPropertyCriteria(CategoryMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -163,7 +165,7 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
                 case CATEGORY_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, CategorisationProperties.category().nameableArtefact());
                 case LATEST:
-                    return buildSculptorPropertyCriteria(CategorisationProperties.maintainableArtefact().latestPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(CategorisationProperties.maintainableArtefact().latestVersionNumberPublic(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

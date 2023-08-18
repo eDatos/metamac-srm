@@ -1,0 +1,12 @@
+{
+  "type": "enum",
+  "name": "ConceptSchemeTypeEnumAvro",
+  "namespace": "org.siemac.metamac.srm.core.stream.message",
+  "symbols": [
+    "GLOSSARY",
+    "TRANSVERSAL",
+    "OPERATION",
+    "ROLE",
+    "MEASURE"
+  ]
+}

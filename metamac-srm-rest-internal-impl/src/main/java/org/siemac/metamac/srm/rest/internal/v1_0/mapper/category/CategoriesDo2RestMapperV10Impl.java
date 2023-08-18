@@ -1,10 +1,13 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.mapper.category;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -16,9 +19,13 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.utils.RestUtils;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
@@ -71,7 +78,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields) {
+    public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields) {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -82,7 +90,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
         // Values
         for (CategoryMetamac source : sourcesPagedResult.getValues()) {
-            
+
             CategoryResourceInternal target = toResource(source, fields);
             targets.getCategories().add(target);
         }
@@ -124,10 +132,47 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
         target.setNestedId(source.getNameableArtefact().getCodeFull());
 
+        target.setCategoryElement(toResource(source.getCategoryElement()));
+
         if (source.getEniSchema() != null) {
             target.setEniSchemeType(toItem(source.getEniSchema()));
         }
-        
+
+        return target;
+    }
+
+    @Override
+    public List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields) throws MetamacException {
+        if (source == null) {
+            return new ArrayList<>();
+        }
+
+        List<PlainTextResource> target = new ArrayList<>();
+
+        for (CategoryResourceInternal category : source.getCategories()) {
+            target.add(toFlattenCategory(category, languages, fields));
+        }
+
+        return target;
+    }
+
+    private PlainTextResource toFlattenCategory(CategoryResourceInternal source, List<String> languages, Set<String> fields) {
+        PlainTextResource target = new PlainTextResource();
+        target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
+        target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
+        target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
+
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
+        }
+
+        if (fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
+            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, source.getEniSchemeType() != null ? source.getEniSchemeType().getId() : null);
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_ENI_SCHEME_NAME,
+                    source.getEniSchemeType() != null ? source.getEniSchemeType().getName() : null, languages));
+        }
+
         return target;
     }
 
@@ -140,7 +185,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setName(toInternationalString(source.getDescription()));
         return target;
     }
-    
+
     @Override
     public Categorisations toCategorisations(PagedResult<Categorisation> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
@@ -263,9 +308,9 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         toResource(source, SrmRestConstants.KIND_CATEGORY, toCategorySelfLink(source, categorySchemeVersion), toCategoryManagementApplicationLink(categorySchemeVersion, source), target,
                 categorySchemeVersion.getMaintainableArtefact().getIsImported(), fields);
         target.setNestedId(source.getCodeFull());
-   
+
         setVisibleCategoryFields(source, target, fields);
-        
+
         return target;
     }
 
@@ -344,11 +389,65 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             target.setEniSchemeType(toItem(source.getEniSchema()));
         }
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT)) {
+            target.setCategoryElement(toResource(source.getCategoryElement()));
+        }
     }
 
     private void setVisibleCategoryFields(ItemResult source, CategoryResourceInternal target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME) && source.getExtensionPoint() != null) {
             target.setEniSchemeType(toItem(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getEniSchemeCatalog()));
         }
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT) && source.getExtensionPoint() != null) {
+            target.setCategoryElement(toResource(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getCategoryElement()));
+        }
     }
+
+    private ResourceInternal toResource(CategoryElementResult source) {
+
+        if (source == null) {
+            return null;
+        }
+
+        ResourceInternal target = new ResourceInternal();
+        toResource(source, SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getCode()), toCategoryElementManagementApplicationLink(source), target, false);
+        target.setName(toInternationalString(source.getShortName()));
+
+        return target;
+    }
+
+    private ResourceInternal toResource(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        ResourceInternal target = new ResourceInternal();
+        toResource(source.getIdentifiableArtefact(), SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getIdentifiableArtefact().getCode()),
+                toCategoryElementManagementApplicationLink(source), target, false);
+        target.setName(toInternationalString(source.getShortName()));
+
+        return target;
+    }
+
+    private ResourceLink toCategoryElementSelfLink(String codeCategoryElement) {
+        ResourceLink target = new ResourceLink();
+        target.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENT);
+        target.setHref(toCategoryElementLink(codeCategoryElement));
+        return target;
+    }
+
+    private String toCategoryElementLink(String codeCategoryElement) {
+        String link = RestUtils.createLink(getSrmApiInternalEndpointV10(), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENTS);
+        return RestUtils.createLink(link, codeCategoryElement);
+    }
+
+    private String toCategoryElementManagementApplicationLink(CategoryElement source) {
+        return getInternalWebApplicationNavigation().buildCategoryElementUrl(source);
+    }
+
+    private String toCategoryElementManagementApplicationLink(CategoryElementResult source) {
+        return getInternalWebApplicationNavigation().buildCategoryElementUrl(source.getCode());
+    }
+
 }

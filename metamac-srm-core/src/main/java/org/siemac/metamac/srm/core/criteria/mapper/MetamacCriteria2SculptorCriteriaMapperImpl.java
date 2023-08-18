@@ -15,6 +15,8 @@ import org.siemac.metamac.core.common.criteria.mapper.MetamacCriteria2SculptorCr
 import org.siemac.metamac.core.common.criteria.shared.MetamacCriteriaOrder;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
@@ -35,6 +37,10 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacProperties;
+import org.siemac.metamac.srm.core.criteria.AnnotationTypeCriteriaOrderEnum;
+import org.siemac.metamac.srm.core.criteria.AnnotationTypeCriteriaPropertyEnum;
+import org.siemac.metamac.srm.core.criteria.CategoryElementCriteriaOrderEnum;
+import org.siemac.metamac.srm.core.criteria.CategoryElementCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaOrderEnum;
 import org.siemac.metamac.srm.core.criteria.CategoryMetamacCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.CategorySchemeVersionMetamacCriteriaOrderEnum;
@@ -71,6 +77,8 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamacProperties;
 import org.springframework.stereotype.Component;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeProperties;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactProperties.IdentifiableArtefactProperty;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeProperties.ItemSchemeProperty;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefactProperties.MaintainableArtefactProperty;
@@ -89,20 +97,22 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponent;
 @Component("metamacCriteria2SculptorCriteriaMapperSrm")
 public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriteria2SculptorCriteriaMapper {
 
-    private MetamacCriteria2SculptorCriteria<DataStructureDefinitionVersionMetamac> dataStructureMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<ConceptSchemeVersionMetamac> conceptSchemeMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<ConceptMetamac> conceptMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<OrganisationSchemeVersionMetamac> organisationSchemeMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<OrganisationMetamac> organisationMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<Contact> organisationContactCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<CategorySchemeVersionMetamac> categorySchemeMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<CategoryMetamac> categoryMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<CodelistVersionMetamac> codelistMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<CodeMetamac> codeMetamacCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<CodelistFamily> codelistFamilyCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<VariableFamily> variableFamilyCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<Variable> variableCriteriaMapper = null;
-    private MetamacCriteria2SculptorCriteria<VariableElement> variableElementCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<DataStructureDefinitionVersionMetamac> dataStructureMetamacCriteriaMapper      = null;
+    private MetamacCriteria2SculptorCriteria<ConceptSchemeVersionMetamac>           conceptSchemeMetamacCriteriaMapper      = null;
+    private MetamacCriteria2SculptorCriteria<ConceptMetamac>                        conceptMetamacCriteriaMapper            = null;
+    private MetamacCriteria2SculptorCriteria<OrganisationSchemeVersionMetamac>      organisationSchemeMetamacCriteriaMapper = null;
+    private MetamacCriteria2SculptorCriteria<OrganisationMetamac>                   organisationMetamacCriteriaMapper       = null;
+    private MetamacCriteria2SculptorCriteria<Contact>                               organisationContactCriteriaMapper       = null;
+    private MetamacCriteria2SculptorCriteria<CategorySchemeVersionMetamac>          categorySchemeMetamacCriteriaMapper     = null;
+    private MetamacCriteria2SculptorCriteria<CategoryMetamac>                       categoryMetamacCriteriaMapper           = null;
+    private MetamacCriteria2SculptorCriteria<CategoryElement>                       categoryElementCriteriaMapper           = null;
+    private MetamacCriteria2SculptorCriteria<CodelistVersionMetamac>                codelistMetamacCriteriaMapper           = null;
+    private MetamacCriteria2SculptorCriteria<CodeMetamac>                           codeMetamacCriteriaMapper               = null;
+    private MetamacCriteria2SculptorCriteria<CodelistFamily>                        codelistFamilyCriteriaMapper            = null;
+    private MetamacCriteria2SculptorCriteria<VariableFamily>                        variableFamilyCriteriaMapper            = null;
+    private MetamacCriteria2SculptorCriteria<Variable>                              variableCriteriaMapper                  = null;
+    private MetamacCriteria2SculptorCriteria<VariableElement>                       variableElementCriteriaMapper           = null;
+    private MetamacCriteria2SculptorCriteria<AnnotationType>                        annotationTypeCriteriaMapper            = null;
 
     /**************************************************************************
      * Constructor
@@ -134,6 +144,9 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
         categoryMetamacCriteriaMapper = new MetamacCriteria2SculptorCriteria<CategoryMetamac>(CategoryMetamac.class, CategoryMetamacCriteriaOrderEnum.class, CategoryMetamacCriteriaPropertyEnum.class,
                 new CategoryMetamacCriteriaCallback());
 
+        categoryElementCriteriaMapper = new MetamacCriteria2SculptorCriteria<CategoryElement>(CategoryElement.class, CategoryElementCriteriaOrderEnum.class, CategoryElementCriteriaPropertyEnum.class,
+                new CategoryElementCriteriaCallback());
+
         codelistMetamacCriteriaMapper = new MetamacCriteria2SculptorCriteria<CodelistVersionMetamac>(CodelistVersionMetamac.class, CodelistVersionMetamacCriteriaOrderEnum.class,
                 CodelistVersionMetamacCriteriaPropertyEnum.class, new CodelistVersionMetamacCriteriaCallback());
 
@@ -150,6 +163,9 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
 
         variableElementCriteriaMapper = new MetamacCriteria2SculptorCriteria<VariableElement>(VariableElement.class, VariableElementCriteriaOrderEnum.class, VariableElementCriteriaPropertyEnum.class,
                 new VariableElementCriteriaCallback());
+
+        annotationTypeCriteriaMapper = new MetamacCriteria2SculptorCriteria<AnnotationType>(AnnotationType.class, AnnotationTypeCriteriaOrderEnum.class, AnnotationTypeCriteriaPropertyEnum.class,
+                new AnnotationTypeCriteriaCallback());
 
     }
 
@@ -198,6 +214,11 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
     }
 
     @Override
+    public MetamacCriteria2SculptorCriteria<CategoryElement> getCategoryElementCriteriaMapper() {
+        return categoryElementCriteriaMapper;
+    }
+
+    @Override
     public MetamacCriteria2SculptorCriteria<CodelistVersionMetamac> getCodelistMetamacCriteriaMapper() {
         return codelistMetamacCriteriaMapper;
     }
@@ -225,6 +246,11 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
     @Override
     public MetamacCriteria2SculptorCriteria<VariableElement> getVariableElementCriteriaMapper() {
         return variableElementCriteriaMapper;
+    }
+
+    @Override
+    public MetamacCriteria2SculptorCriteria<AnnotationType> getAnnotationTypeCriteriaMapper() {
+        return annotationTypeCriteriaMapper;
     }
 
     /**************************************************************************
@@ -833,6 +859,51 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
         }
     }
 
+    private class CategoryElementCriteriaCallback implements CriteriaCallback {
+
+        @Override
+        public SculptorPropertyCriteria retrieveProperty(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {
+            CategoryElementCriteriaPropertyEnum propertyEnum = CategoryElementCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
+            switch (propertyEnum) {
+                case CODE:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.identifiableArtefact().code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case URN:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.identifiableArtefact().urn(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case SHORT_NAME:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.shortName().texts().label(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case VALID_FROM_DATE:
+                    return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(CategoryElementProperties.validFrom(), CategoryElement.class), propertyRestriction.getDateValue(),
+                            propertyRestriction.getOperationType());
+                case VALID_TO_DATE:
+                    return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(CategoryElementProperties.validTo(), CategoryElement.class), propertyRestriction.getDateValue(),
+                            propertyRestriction.getOperationType());
+                default:
+                    throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Property<CategoryElement> retrievePropertyOrder(MetamacCriteriaOrder order) throws MetamacException {
+            CategoryElementCriteriaOrderEnum propertyOrderEnum = CategoryElementCriteriaOrderEnum.fromValue(order.getPropertyName());
+            switch (propertyOrderEnum) {
+                case CODE:
+                    return CategoryElementProperties.identifiableArtefact().code();
+                case URN:
+                    return CategoryElementProperties.identifiableArtefact().urn();
+                case LAST_UPDATED:
+                    return getLastUpdatedLeafProperty(CategoryElementProperties.identifiableArtefact(), CategoryElement.class);
+                default:
+                    throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, order.getPropertyName());
+            }
+        }
+
+        @Override
+        public Property<VariableElement> retrievePropertyOrderDefault() throws MetamacException {
+            return VariableElementProperties.id();
+        }
+    }
+
     //
     // CODES
     //
@@ -1177,6 +1248,43 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
         @Override
         public Property<VariableElement> retrievePropertyOrderDefault() throws MetamacException {
             return VariableElementProperties.id();
+        }
+    }
+
+    private class AnnotationTypeCriteriaCallback implements CriteriaCallback {
+
+        @Override
+        public SculptorPropertyCriteria retrieveProperty(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {
+            AnnotationTypeCriteriaPropertyEnum propertyNameCriteria = AnnotationTypeCriteriaPropertyEnum.fromValue(propertyRestriction.getPropertyName());
+            switch (propertyNameCriteria) {
+                case CODE:
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.code(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case TITLE:
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.title().texts().label(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                case UUID:
+                    return new SculptorPropertyCriteria(AnnotationTypeProperties.uuid(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+
+                default:
+                    throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
+            }
+        }
+
+        @Override
+        public Property<AnnotationType> retrievePropertyOrder(MetamacCriteriaOrder order) throws MetamacException {
+            AnnotationTypeCriteriaOrderEnum propertyNameCriteria = AnnotationTypeCriteriaOrderEnum.fromValue(order.getPropertyName());
+            switch (propertyNameCriteria) {
+                case CODE:
+                    return AnnotationTypeProperties.code();
+                case TITLE:
+                    return AnnotationTypeProperties.title().texts().label();
+                default:
+                    throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, order.getPropertyName());
+            }
+        }
+
+        @Override
+        public Property<AnnotationType> retrievePropertyOrderDefault() throws MetamacException {
+            return AnnotationTypeProperties.id();
         }
     }
 

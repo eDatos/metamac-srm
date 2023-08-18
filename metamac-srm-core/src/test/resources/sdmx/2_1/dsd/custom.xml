@@ -20,7 +20,7 @@
 				<common:Annotations>
 					<common:Annotation id="ANO_01">
 						<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-						<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+						<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 						<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 						<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 					</common:Annotation>
@@ -33,7 +33,7 @@
 						<common:Annotations>
 							<common:Annotation id="ANO_02">
 								<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-								<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+								<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 								<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 								<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 							</common:Annotation>
@@ -43,7 +43,7 @@
 							<common:Annotations>
 								<common:Annotation id="ANO_03">
 									<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-									<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+									<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 									<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 									<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 								</common:Annotation>
@@ -68,7 +68,7 @@
 							<common:Annotations>
 								<common:Annotation id="ANO_03">
 									<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-									<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+									<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 									<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 									<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 								</common:Annotation>
@@ -89,7 +89,7 @@
 						<common:Annotations>
 							<common:Annotation id="ANO_04">
 								<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-								<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+								<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 								<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 								<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 							</common:Annotation>
@@ -105,7 +105,7 @@
 						<common:Annotations>
 							<common:Annotation id="ANO_05">
 								<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-								<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+								<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 								<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 								<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 							</common:Annotation>
@@ -115,7 +115,7 @@
 							<common:Annotations>
 								<common:Annotation id="ANO_06">
 									<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-									<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+									<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 									<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 									<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 								</common:Annotation>
@@ -144,7 +144,7 @@
 						<common:Annotations>
 							<common:Annotation id="ANO_07">
 								<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-								<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+								<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 								<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 								<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 							</common:Annotation>
@@ -154,7 +154,7 @@
 							<common:Annotations>
 								<common:Annotation id="ANO_08">
 									<common:AnnotationTitle>common:AnnotationTitle</common:AnnotationTitle>
-									<common:AnnotationType>common:AnnotationType</common:AnnotationType>
+									<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 									<common:AnnotationURL>http://tempuri.org</common:AnnotationURL>
 									<common:AnnotationText xml:lang="en">common:AnnotationText</common:AnnotationText>
 								</common:Annotation>

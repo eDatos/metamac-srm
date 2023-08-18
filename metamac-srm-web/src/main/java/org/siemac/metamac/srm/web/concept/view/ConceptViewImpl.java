@@ -35,8 +35,8 @@ import org.siemac.metamac.srm.web.concept.view.handlers.ConceptUiHandlers;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptFacetForm;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptMainFormLayout;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptsListItem;
-import org.siemac.metamac.srm.web.concept.widgets.ConceptsTreeWindow;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptsOrderTreeGrid;
+import org.siemac.metamac.srm.web.concept.widgets.ConceptsTreeWindow;
 import org.siemac.metamac.srm.web.concept.widgets.QuantityForm;
 import org.siemac.metamac.srm.web.concept.widgets.ViewQuantityForm;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
@@ -68,6 +68,7 @@ import org.siemac.metamac.web.common.client.widgets.handlers.ListRecordNavigatio
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.RepresentationDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEnum;
@@ -97,7 +98,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     private VLayout                                 panel;
     private ConceptMainFormLayout                   mainFormLayout;
 
-    private ConceptsOrderTreeGrid                  conceptsTreeGrid;
+    private ConceptsOrderTreeGrid                   conceptsTreeGrid;
 
     // View forms
     private GroupDynamicForm                        identifiersForm;
@@ -760,9 +761,23 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     }
 
     @Override
+    public void setCodelistsForQuantityUnitMultiplierFilter(List<RelatedResourceDto> codelistDtos, int firstResult, int totalResults) {
+        if (quantityEditionForm != null) {
+            quantityEditionForm.setCodelistsForQuantityUnitMultiplierFilter(codelistDtos, firstResult, totalResults);
+        }
+    }
+
+    @Override
     public void setCodeThatCanBeQuantityUnit(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults) {
         if (quantityEditionForm != null) {
             quantityEditionForm.setCodesForQuantityUnit(codesDtos, firstResult, totalResults);
+        }
+    }
+
+    @Override
+    public void setCodeThatCanBeQuantityUnitMultiplier(List<RelatedResourceDto> codesDtos, int firstResult, int totalResults) {
+        if (quantityEditionForm != null) {
+            quantityEditionForm.setCodesForQuantityUnitMultiplier(codesDtos, firstResult, totalResults);
         }
     }
 
@@ -1333,5 +1348,16 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
     }
 }

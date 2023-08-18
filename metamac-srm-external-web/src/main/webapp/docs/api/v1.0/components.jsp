@@ -11,6 +11,8 @@
 <%! String latest = "LATEST: es último"; %>
 <%! String variableUrn = "VARIABLE_URN: URN de variable"; %>
 <%! String variableFamilyUrn = "VARIABLE_FAMILY_URN: URN de la familia de variables"; %>
+<%! String codelistUrn = "CODELIST_URN: URN de la clasificación"; %>
+<%! String codelistLatest = "CODELIST_LATEST: última clasificación"; %>
 <%! String statisticalOperationUrn = "STATISTICAL_OPERATION_URN: URN de operación estadística"; %>
 <%! String conceptSchemeLatest = "CONCEPT_SCHEME_LATEST: Último esquema de concepto"; %>
 <%! String acronym = "ACRONYM: Acrónimo"; %>
@@ -84,7 +86,13 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description": "<%= queryDescriptionWithParams(id,urn,name,description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+            "description": "<%= queryDescriptionWithParams(id, urn, name, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn) %>"
+        },
+        "codelistCodesQueryParam": {
+        "name":"query",
+        "in":"query",
+        "type":"string",
+        "description": "<%= queryDescriptionWithParams(id, urn, name, shortName, parent, description, codelistUrn, codelistLatest, geographicalGranularityUrn) %>"
         },
         "codelistOrderByParam": {
           "name":"orderBy",
@@ -156,7 +164,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , description ,organisationSchemeUrn ,organisationSchemeLatest ,type) %>"
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,organisationSchemeUrn ,organisationSchemeLatest ,type) %>"
         },
         "organizationOrderByParam": {
           "name":"orderBy",
@@ -168,7 +176,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , description ,validFrom ,validTo ,lastUpdatedDate ,latest) %>"
+            "description":"<%= queryDescriptionWithParams(id, urn, name, description, validFrom, validTo, lastUpdatedDate, latest) %>"
         },
         "categorySchemeOrderByParam": {
             "name":"orderBy",
@@ -192,7 +200,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , description ,categorySchemeUrn ,categorySchemeLatest) %>"
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest) %>"
         },
         "categoryOrderByParam": {
           "name":"orderBy",

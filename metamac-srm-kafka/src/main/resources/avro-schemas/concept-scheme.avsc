@@ -49,12 +49,28 @@
       "type": ["null", "boolean"]
     },
     {
+      "name": "latestVersionNumberFinal",
+      "type": ["null", "boolean"]
+    },
+    {
+      "name": "latestVersionNumberPublic",
+      "type": ["null", "boolean"]
+    },
+    {
       "name": "maintainer",
       "type": ["null", "RelatedResourceAvro"]
     },
     {
       "name": "procStatus",
       "type": ["null", "ProcStatusEnumAvro"]
+    },
+    {
+      "name": "conceptSchemeType",
+      "type": ["null", "ConceptSchemeTypeEnumAvro"]
+    },
+    {
+      "name": "statisticalOperation",
+      "type": ["null", "ExternalItemAvro"]
     },
     {
       "name": "categorizations",

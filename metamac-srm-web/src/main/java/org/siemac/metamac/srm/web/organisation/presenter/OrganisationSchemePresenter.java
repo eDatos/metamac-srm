@@ -45,7 +45,38 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactRe
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
-import org.siemac.metamac.srm.web.shared.organisation.*;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
+import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityAction;
+import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityResult;
+import org.siemac.metamac.srm.web.shared.organisation.CopyOrganisationSchemeAction;
+import org.siemac.metamac.srm.web.shared.organisation.CopyOrganisationSchemeResult;
+import org.siemac.metamac.srm.web.shared.organisation.CreateOrganisationSchemeTemporalVersionAction;
+import org.siemac.metamac.srm.web.shared.organisation.CreateOrganisationSchemeTemporalVersionResult;
+import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationSchemeListAction;
+import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationSchemeListResult;
+import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsAction;
+import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsResult;
+import org.siemac.metamac.srm.web.shared.organisation.ExportOrganisationsAction;
+import org.siemac.metamac.srm.web.shared.organisation.ExportOrganisationsResult;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemeAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemeResult;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemeVersionsAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemeVersionsResult;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsBySchemeAction;
+import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsBySchemeResult;
+import org.siemac.metamac.srm.web.shared.organisation.ReSendOrganisationSchemeStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.organisation.ReSendOrganisationSchemeStreamMessageResult;
+import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationAction;
+import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationResult;
+import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationSchemeAction;
+import org.siemac.metamac.srm.web.shared.organisation.SaveOrganisationSchemeResult;
+import org.siemac.metamac.srm.web.shared.organisation.UpdateOrganisationSchemeProcStatusAction;
+import org.siemac.metamac.srm.web.shared.organisation.UpdateOrganisationSchemeProcStatusResult;
+import org.siemac.metamac.srm.web.shared.organisation.VersionOrganisationSchemeAction;
+import org.siemac.metamac.srm.web.shared.organisation.VersionOrganisationSchemeResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
@@ -56,6 +87,7 @@ import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -113,6 +145,10 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
         void setCategorisations(List<CategorisationDto> categorisationDtos);
         void setCategorySchemesForCategorisations(GetRelatedResourcesResult result);
         void setCategoriesForCategorisations(GetRelatedResourcesResult result);
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -154,7 +190,7 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
         try {
             OrganisationSchemeTypeEnum type = !StringUtils.isBlank(typeParam) ? OrganisationSchemeTypeEnum.valueOf(typeParam) : null;
             if (!StringUtils.isBlank(identifier) && type != null) {
-                retrieveOrganisationScheme(identifier, type);
+                retrieveResources(identifier, type);
             } else {
                 MetamacSrmWeb.showErrorPage();
             }
@@ -659,5 +695,21 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
     @Override
     public void showWaitPopup() {
         ChangeWaitPopupVisibilityEvent.fire(this, true);
+    }
+
+    private void retrieveResources(final String identifier, final OrganisationSchemeTypeEnum type) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveOrganisationScheme(identifier, type);
+                }
+            });
+        } else {
+            retrieveOrganisationScheme(identifier, type);
+        }
     }
 }

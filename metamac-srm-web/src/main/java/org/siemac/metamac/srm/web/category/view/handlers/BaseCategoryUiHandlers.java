@@ -8,7 +8,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationRe
 public interface BaseCategoryUiHandlers extends CategorisationUiHandlers {
 
     void saveCategory(CategoryMetamacDto categoryDto);
-    void deleteCategory(ItemVisualisationResult itemVisualisationResult);
+    void deleteCategory(ItemVisualisationResult ItemVisualisationResult);
     void goToCategoryScheme(String urn);
     void goToCategory(String urn);
 }

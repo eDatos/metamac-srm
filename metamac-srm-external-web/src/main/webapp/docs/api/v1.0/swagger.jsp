@@ -630,7 +630,9 @@
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories_findCategories_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"  
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -644,7 +646,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType\""
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType,+categoryElement\""
                 }
             ],
             "responses":{
@@ -690,8 +692,13 @@
                   "in":"path",
                   "type":"string",
                   "description":"Identificador de la categoría"
-               },
-              
+               },   
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+categoryElement\""
+               }           
             ],
             "responses":{
                "200":{
@@ -1092,7 +1099,9 @@
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes_findCodes_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"    
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1100,7 +1109,7 @@
                 {"$ref":"#/components/parameters/versionParam"},
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
-                {"$ref":"#/components/parameters/codelistQueryParam"},
+                {"$ref":"#/components/parameters/codelistCodesQueryParam"},
                 {"$ref":"#/components/parameters/codelistOrderByParam"},
                {
                   "name":"openness",
@@ -1415,7 +1424,9 @@
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts_findConcepts_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -2560,7 +2571,9 @@
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations_findOrganisations_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

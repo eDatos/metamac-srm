@@ -36,6 +36,8 @@ public class NameTokens {
     public static final String categorySchemePage         = "categoryScheme";
     public static final String categoryPage               = "category";
     public static final String categoriesPage             = "categories";
+    public static final String categoryElementPage        = "categoryElement";
+    public static final String categoryElementsPage       = "categoryElements";
 
     // Codes
     public static final String codelistListPage           = "codelists";
@@ -56,5 +58,9 @@ public class NameTokens {
     // Content Constraints
     public static final String contentConstraintListPage  = "contentConstraints";
     public static final String contentConstraintPage      = "contentConstraint";
+
+    // Admin
+    public static final String adminPage                  = "adminPage";
+    public static final String annotationTypePage         = "annotationType";
 
 }

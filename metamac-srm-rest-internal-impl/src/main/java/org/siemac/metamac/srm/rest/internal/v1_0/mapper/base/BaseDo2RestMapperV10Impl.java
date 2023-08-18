@@ -135,7 +135,8 @@ public abstract class BaseDo2RestMapperV10Impl {
         target.setVersion(source.getVersionLogic());
     }
 
-    public void toMaintainableArtefact(MaintainableArtefact source, SrmLifeCycleMetadata lifeCycleSource, org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.MaintainableArtefact target) {
+    public void toMaintainableArtefact(MaintainableArtefact source, SrmLifeCycleMetadata lifeCycleSource,
+            org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.MaintainableArtefact target) {
         if (source == null) {
             return;
         }
@@ -199,7 +200,12 @@ public abstract class BaseDo2RestMapperV10Impl {
     }
 
     private Annotation toAnnotation(AnnotationResult source) {
-        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getType(), source.getUrl(), toInternationalString(source.getText()));
+        if (source == null) {
+            return null;
+        }
+
+        String typeAnnotationCode = source.getAnnotationType() != null ? source.getAnnotationType().getCode() : null;
+        return toAnnotation(source.getCode(), source.getTitle(), typeAnnotationCode, source.getUrl(), toInternationalString(source.getText()));
     }
 
     protected Annotations toAnnotations(Set<com.arte.statistic.sdmx.srm.core.base.domain.Annotation> sources) {
@@ -216,7 +222,12 @@ public abstract class BaseDo2RestMapperV10Impl {
     }
 
     private Annotation toAnnotation(com.arte.statistic.sdmx.srm.core.base.domain.Annotation source) {
-        return source == null ? null : toAnnotation(source.getCode(), source.getTitle(), source.getType(), source.getUrl(), toInternationalString(source.getText()));
+        if (source == null) {
+            return null;
+        }
+
+        String typeAnnotationCode = source.getAnnotationType() != null ? source.getAnnotationType().getCode() : null;
+        return toAnnotation(source.getCode(), source.getTitle(), typeAnnotationCode, source.getUrl(), toInternationalString(source.getText()));
     }
 
     private Annotation toAnnotation(String code, String title, String type, String url, InternationalString internationalString) {

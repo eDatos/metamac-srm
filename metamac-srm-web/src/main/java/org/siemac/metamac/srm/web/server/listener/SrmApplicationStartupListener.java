@@ -53,7 +53,6 @@ public class SrmApplicationStartupListener extends InternalApplicationStartupLis
         checkRequiredProperty(SrmConfigurationConstants.DB_URL);
         checkRequiredProperty(SrmConfigurationConstants.DB_USERNAME);
         checkRequiredProperty(SrmConfigurationConstants.DB_PASSWORD);
-        checkRequiredProperty(SrmConfigurationConstants.DB_DIALECT);
     }
 
     @Override

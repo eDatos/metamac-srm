@@ -86,6 +86,7 @@ import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
 import com.google.gwt.core.client.Scheduler;
@@ -110,57 +111,57 @@ import com.smartgwt.client.widgets.tab.Tab;
 
 public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> implements CodelistPresenter.CodelistView {
 
-    private final TitleLabel titleLabel;
-    private final InformationLabel informationLabel;
-    private final VLayout panel;
-    private final CodelistMainFormLayout mainFormLayout;
+    private final TitleLabel                         titleLabel;
+    private final InformationLabel                   informationLabel;
+    private final VLayout                            panel;
+    private final CodelistMainFormLayout             mainFormLayout;
 
-    private final CustomTabSet tabSet;
-    private final Tab codelistTab;
+    private final CustomTabSet                       tabSet;
+    private final Tab                                codelistTab;
 
     // View forms
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm diffusionDescriptorsForm;
-    private GroupDynamicForm versionResponsibilityForm;
-    private GroupDynamicForm commentsForm;
-    private AnnotationsPanel annotationsPanel;
+    private GroupDynamicForm                         identifiersForm;
+    private GroupDynamicForm                         contentDescriptorsForm;
+    private GroupDynamicForm                         productionDescriptorsForm;
+    private GroupDynamicForm                         diffusionDescriptorsForm;
+    private GroupDynamicForm                         versionResponsibilityForm;
+    private GroupDynamicForm                         commentsForm;
+    private AnnotationsPanel                         annotationsPanel;
 
     // Edition forms
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm diffusionDescriptorsEditionForm;
-    private GroupDynamicForm versionResponsibilityEditionForm;
-    private GroupDynamicForm commentsEditionForm;
-    private AnnotationsPanel annotationsEditionPanel;
+    private GroupDynamicForm                         identifiersEditionForm;
+    private GroupDynamicForm                         contentDescriptorsEditionForm;
+    private GroupDynamicForm                         productionDescriptorsEditionForm;
+    private GroupDynamicForm                         diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                         versionResponsibilityEditionForm;
+    private GroupDynamicForm                         commentsEditionForm;
+    private AnnotationsPanel                         annotationsEditionPanel;
 
-    private SearchRelatedResourcePaginatedWindow searchFamilyWindow;
-    private SearchRelatedResourcePaginatedWindow searchVariableWindow;
-    
+    private SearchRelatedResourcePaginatedWindow     searchFamilyWindow;
+    private SearchRelatedResourcePaginatedWindow     searchVariableWindow;
+
     // Versions
-    private final CodelistVersionsSectionStack versionsSectionStack;
+    private final CodelistVersionsSectionStack       versionsSectionStack;
 
     // Codes
-    private final CodelistCodesPanel codelistCodesPanel;
+    private final CodelistCodesPanel                 codelistCodesPanel;
 
     // Variable elements assignment
     private final CodelistCodesVariableElementsPanel codelistCodesVariableElementsPanel;
 
     // Orders
-    private final CodelistOrdersPanel codelistOrdersPanel;
+    private final CodelistOrdersPanel                codelistOrdersPanel;
 
     // Openness levels
-    private final CodelistOpennesssLevelsPanel codelistOpennesssLevelsPanel;
+    private final CodelistOpennesssLevelsPanel       codelistOpennesssLevelsPanel;
 
     // Restrictions
-    private final CodelistRestrictionsPanel codelistRestrictionsPanel;
-    
-    // Categorisations
-    private final CodelistCategorisationsPanel categorisationsPanel;
+    private final CodelistRestrictionsPanel          codelistRestrictionsPanel;
 
-    private CodelistMetamacDto codelistDto;
+    // Categorisations
+    private final CodelistCategorisationsPanel       categorisationsPanel;
+
+    private CodelistMetamacDto                       codelistDto;
 
     @Inject
     public CodelistViewImpl() {
@@ -218,7 +219,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         //
 
         codelistRestrictionsPanel = new CodelistRestrictionsPanel();
-        
+
         //
         // CATEGORISATIONS
         //
@@ -262,7 +263,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         Tab opennessLevelsTab = new Tab(getConstants().codelistOpennessLevels());
         opennessLevelsTab.setPane(codelistOpennesssLevelsPanel);
         tabSet.addTab(opennessLevelsTab);
-        
+
         // Categorisations tab
         Tab categorisationsTab = new Tab(getConstants().categorisations());
         categorisationsTab.setPane(categorisationsPanel);
@@ -272,7 +273,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         Tab restrictionsTab = new Tab(getConstants().codelistRestrictions());
         restrictionsTab.setPane(codelistRestrictionsPanel);
         tabSet.addTab(restrictionsTab);
-        
+
         VLayout tabSubPanel = new VLayout();
         tabSubPanel.addMember(titleLabel);
         tabSubPanel.addMember(informationLabel);
@@ -345,7 +346,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
                         @Override
                         public void execute() {
-                            
+
                             getUiHandlers().saveCodelist(getCodelistDto());
                         }
                     });
@@ -457,6 +458,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
             }
         });
         mainFormLayout.getLifeCycleReSendStreamMessage().addClickHandler(new ClickHandler() {
+
             @Override
             public void onClick(ClickEvent event) {
                 getUiHandlers().reSendStreamMessageCodelist(codelistDto);
@@ -605,7 +607,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
     }
 
     //
-    // RESTRICTION 
+    // RESTRICTION
     //
 
     @Override
@@ -617,7 +619,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
     public void setCodelistRestrictions(List<CodelistVisualisationDto> restrictions) {
         codelistRestrictionsPanel.setRestrictions(restrictions);
     }
-    
+
     //
     // CATEGORISATIONS
     //
@@ -671,7 +673,6 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         }
     }
 
-    
     @Override
     public void setCodelistsToReplace(List<RelatedResourceDto> codelists, int firstResult, int totalResults) {
         ((SearchRelatedResourceListItemWithSchemeFilterItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).setResources(codelists, firstResult, totalResults);
@@ -714,9 +715,9 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateDate = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_DATE, getConstants().maintainableArtefactVersionLastUpdateDate());
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
-        
+
         ExternalItemLinkItem sourceProvider = new ExternalItemLinkItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider());
-    
+
         productionDescriptorsForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProvider);
 
         // DIFFUSION DESCRIPTORS
@@ -785,7 +786,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         identifiersEditionForm.setFields(code, staticCode, name, shortName, uriProvider, urn, urnProvider, version);
 
         // CONTENT DESCRIPTORS
-        
+
         contentDescriptorsEditionForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(CodelistDS.DESCRIPTION, getConstants().nameableArtefactDescription());
         MultiLanguageRichTextEditorItem descriptionSource = new MultiLanguageRichTextEditorItem(CodelistDS.DESCRIPTION_SOURCE, getConstants().codelistDescriptionSource());
@@ -799,11 +800,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         RelatedResourceLinkItem staticVariable = new RelatedResourceLinkItem(CodelistDS.VARIABLE_VIEW, getConstants().variable(), getCustomLinkItemNavigationClickHandler());
         staticVariable.setShowIfCondition(getStaticVariableFormItemIfFunction());
         CustomSelectItem normalizationType = new CustomSelectItem(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
-        normalizationType.setRequired(true);        
+        normalizationType.setRequired(true);
         normalizationType.setValueMap(CommonUtils.getNormalizationTypeHashMap());
         contentDescriptorsEditionForm.setFields(description, descriptionSource, partial, isExternalReference, isFinal, isRecommended, family, variable, staticVariable, normalizationType);
-        
-        
+
         // PRODUCTION DESCRIPTORS
         productionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formProductionDescriptors());
         RelatedResourceLinkItem agency = new RelatedResourceLinkItem(CodelistDS.MAINTAINER, getConstants().maintainableArtefactMaintainer(), getCustomLinkItemNavigationClickHandler());
@@ -813,7 +813,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         ViewTextItem lastUpdateDate = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_DATE, getConstants().maintainableArtefactVersionLastUpdateDate());
         ViewTextItem lastUpdateUser = new ViewTextItem(CodelistDS.VERSION_LAST_UPDATE_USER, getConstants().maintainableArtefactVersionLastUpdateUser());
         ViewTextItem resourceCreationDate = new ViewTextItem(CodelistDS.RESOURCE_CREATION_DATE, getConstants().maintainableArtefactResourceCreationDate());
-        SearchExternalItemLinkItem sourceProviderItem = createSourceProviderItem(CodelistDS.SOURCE_PROVIDER,  getConstants().codelistSourceProvider());
+        SearchExternalItemLinkItem sourceProviderItem = createSourceProviderItem(CodelistDS.SOURCE_PROVIDER, getConstants().codelistSourceProvider());
 
         productionDescriptorsEditionForm.setFields(agency, procStatus, creationDate, creationUser, lastUpdateDate, lastUpdateUser, resourceCreationDate, sourceProviderItem);
 
@@ -824,7 +824,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
                 getCustomLinkItemNavigationClickHandler());
         CustomSelectItem accessType = new CustomSelectItem(CodelistDS.ACCESS_TYPE, getConstants().codelistAccessType());
         accessType.setValueMap(CommonUtils.getAccessTypeHashMap());
-                
+
         CustomSelectItem defaultOrder = new CustomSelectItem(CodelistDS.DEFAULT_ORDER, getConstants().codelistDefaultOrder()); // ValueMap is set in setCodelistOrders method
         CustomSelectItem defaultOpennessLevel = new CustomSelectItem(CodelistDS.DEFAULT_OPENNESS_LEVEL, getConstants().codelistDefaultOpennessLevel()); // ValueMap is set in setCodelistOpennessLevel
                                                                                                                                                         // method
@@ -854,11 +854,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
         // ANNOTATIONS
         annotationsEditionPanel = new AnnotationsPanel(false);
-        
-        
-        //EVENTS
-        onChangeNormalizationType(normalizationType);    
-        
+
+        // EVENTS
+        onChangeNormalizationType(normalizationType);
+
         mainFormLayout.addEditionCanvas(identifiersEditionForm);
         mainFormLayout.addEditionCanvas(contentDescriptorsEditionForm);
         mainFormLayout.addEditionCanvas(productionDescriptorsEditionForm);
@@ -874,7 +873,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
             @Override
             public void onChange(ChangeEvent event) {
                 CustomSelectItem accessTypeEdit = (CustomSelectItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.ACCESS_TYPE);
-                
+
                 if (NormalizationTypeEnum.NOT_STANDARDIZED.getName().equals(event.getValue())) {
                     accessTypeEdit.setValue(AccessTypeEnum.RESTRICTED.getName());
                     accessTypeEdit.setCanEdit(false);
@@ -886,7 +885,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         });
 
     }
-    
+
     private void setCodelistViewMode(CodelistMetamacDto codelistDto) {
 
         // IDENTIFIERS
@@ -906,16 +905,17 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         contentDescriptorsForm.setValue(CodelistDS.DESCRIPTION, codelistDto.getDescription());
         contentDescriptorsForm.setValue(CodelistDS.DESCRIPTION_SOURCE, codelistDto.getDescriptionSource());
         contentDescriptorsForm.setValue(CodelistDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(codelistDto.getIsPartial()));
-        contentDescriptorsForm.setValue(CodelistDS.IS_EXTERNAL_REFERENCE, codelistDto.getIsExternalReference() != null
-                ? (codelistDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsForm.setValue(CodelistDS.IS_EXTERNAL_REFERENCE,
+                codelistDto.getIsExternalReference() != null
+                        ? (codelistDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsForm.setValue(CodelistDS.FINAL,
                 codelistDto.getFinalLogic() != null ? (codelistDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : StringUtils.EMPTY);
         contentDescriptorsForm.setValue(CodelistDS.IS_RECOMMENDED, BooleanWebUtils.getBooleanLabel(codelistDto.getIsRecommended()));
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CodelistDS.FAMILY)).setRelatedResource(codelistDto.getFamily());
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CodelistDS.VARIABLE)).setRelatedResource(codelistDto.getVariable());
         contentDescriptorsForm.setValue(CodelistDS.NORMALIZATION_TYPE, CommonUtils.getNormalizationTypeName(codelistDto.getNormalizationType()));
-        
+
         // PRODUCTION DESCRIPTORS
 
         ((RelatedResourceLinkItem) productionDescriptorsForm.getItem(CodelistDS.MAINTAINER)).setRelatedResource(codelistDto.getMaintainer());
@@ -926,7 +926,6 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         productionDescriptorsForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());
         productionDescriptorsForm.setValue(CodelistDS.RESOURCE_CREATION_DATE, codelistDto.getResourceCreatedDate());
         productionDescriptorsForm.setValue(CodelistDS.SOURCE_PROVIDER, OrganisationSearchUtils.getExternalItemDto(codelistDto.getSourceProvider()));
-        
 
         // DIFFUSION DESCRIPTORS
 
@@ -983,9 +982,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         contentDescriptorsEditionForm.setValue(CodelistDS.DESCRIPTION, codelistDto.getDescription());
         contentDescriptorsEditionForm.setValue(CodelistDS.DESCRIPTION_SOURCE, codelistDto.getDescriptionSource());
         contentDescriptorsEditionForm.setValue(CodelistDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(codelistDto.getIsPartial()));
-        contentDescriptorsEditionForm.setValue(CodelistDS.IS_EXTERNAL_REFERENCE, codelistDto.getIsExternalReference() != null
-                ? (codelistDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsEditionForm.setValue(CodelistDS.IS_EXTERNAL_REFERENCE,
+                codelistDto.getIsExternalReference() != null
+                        ? (codelistDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setValue(CodelistDS.FINAL,
                 codelistDto.getFinalLogic() != null ? (codelistDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : StringUtils.EMPTY);
         ((BooleanSelectItem) contentDescriptorsEditionForm.getItem(CodelistDS.IS_RECOMMENDED)).setBooleanValue(codelistDto.getIsRecommended());
@@ -996,10 +996,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         SearchRelatedResourceLinkItem variableEdit = ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE));
         variableEdit.setRelatedResource(codelistDto.getVariable());
         ((RelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE_VIEW)).setRelatedResource(codelistDto.getVariable());
-        
+
         contentDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         contentDescriptorsEditionForm.markForRedraw();
-                
+
         // PRODUCTION DESCRIPTORS
 
         ((RelatedResourceLinkItem) productionDescriptorsEditionForm.getItem(CodelistDS.MAINTAINER)).setRelatedResource(codelistDto.getMaintainer());
@@ -1007,10 +1007,10 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_CREATION_DATE, codelistDto.getCreatedDate());
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_CREATION_USER, codelistDto.getCreatedBy());
         productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_DATE, codelistDto.getLastUpdated());
-        productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());        
+        productionDescriptorsEditionForm.setValue(CodelistDS.VERSION_LAST_UPDATE_USER, codelistDto.getLastUpdatedBy());
         productionDescriptorsEditionForm.setValue(CodelistDS.RESOURCE_CREATION_DATE, codelistDto.getResourceCreatedDate());
         productionDescriptorsEditionForm.setValue(CodelistDS.SOURCE_PROVIDER, OrganisationSearchUtils.getExternalItemDto(codelistDto.getSourceProvider()));
-        
+
         productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
         productionDescriptorsEditionForm.markForRedraw();
 
@@ -1018,13 +1018,13 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
         ((RelatedResourceLinkItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACED_BY_CODELIST)).setRelatedResource(codelistDto.getReplacedByCodelist());
         ((RelatedResourceListItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).setRelatedResources(codelistDto.getReplaceToCodelists());
-       
+
         setInitialAccessType();
         diffusionDescriptorsEditionForm.setValue(CodelistDS.DEFAULT_ORDER,
                 codelistDto.getDefaultOrderVisualisation() != null ? codelistDto.getDefaultOrderVisualisation().getUrn() : StringUtils.EMPTY);
         diffusionDescriptorsEditionForm.setValue(CodelistDS.DEFAULT_OPENNESS_LEVEL,
                 codelistDto.getDefaultOpennessVisualisation() != null ? codelistDto.getDefaultOpennessVisualisation().getUrn() : StringUtils.EMPTY);
-        
+
         diffusionDescriptorsEditionForm.setValue(CodelistDS.REPLACED_BY_VERSION, codelistDto.getReplacedByVersion());
         diffusionDescriptorsEditionForm.setValue(CodelistDS.REPLACE_TO_VERSION, codelistDto.getReplaceToVersion());
         diffusionDescriptorsEditionForm.setValue(CodelistDS.VALID_FROM, DateUtils.getFormattedDate(codelistDto.getValidFrom()));
@@ -1052,7 +1052,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
 
         annotationsEditionPanel.setAnnotations(codelistDto.getAnnotations(), codelistDto);
     }
-        
+
     private void setRequiredVariableWhenNotStanddardizedNormalizationType() {
 
         SearchRelatedResourceLinkItem variableEdit = ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CodelistDS.VARIABLE));
@@ -1067,7 +1067,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         }
 
     }
-    
+
     private void setInitialAccessType() {
         String accessTypeValue = codelistDto.getAccessType() != null ? codelistDto.getAccessType().name() : StringUtils.EMPTY;
         if (NormalizationTypeEnum.NOT_STANDARDIZED.equals(codelistDto.getNormalizationType())) {
@@ -1077,7 +1077,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         }
         diffusionDescriptorsEditionForm.setValue(CodelistDS.ACCESS_TYPE, accessTypeValue);
     }
-    
+
     public CodelistMetamacDto getCodelistDto() {
         // Identifiers
         codelistDto.setCode(identifiersEditionForm.getValueAsString(CodelistDS.CODE));
@@ -1093,14 +1093,13 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         codelistDto.setNormalizationType(!StringUtils.isBlank(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
                 ? NormalizationTypeEnum.valueOf(contentDescriptorsEditionForm.getValueAsString(CodelistDS.NORMALIZATION_TYPE))
                 : null);
-        
-               
+
         // Diffusion descriptors
         codelistDto.getReplaceToCodelists().clear();
         codelistDto.getReplaceToCodelists().addAll(((RelatedResourceListItem) diffusionDescriptorsEditionForm.getItem(CodelistDS.REPLACE_TO_CODELISTS)).getSelectedRelatedResources());
-        
+
         setCodeListAccessType();
-        
+
         codelistDto.setDefaultOrderVisualisation(!StringUtils.isBlank(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.DEFAULT_ORDER))
                 ? RelatedResourceUtils.createRelatedResourceDto(diffusionDescriptorsEditionForm.getValueAsString(CodelistDS.DEFAULT_ORDER))
                 : null);
@@ -1109,8 +1108,8 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
                 : null);
 
         // Production descriptors
-        codelistDto.setSourceProvider(OrganisationSearchUtils.getRelatedResourceDtoFromExternalItemDto(productionDescriptorsEditionForm.getValueAsExternalItemDto(CodelistDS.SOURCE_PROVIDER)));      
-    
+        codelistDto.setSourceProvider(OrganisationSearchUtils.getRelatedResourceDtoFromExternalItemDto(productionDescriptorsEditionForm.getValueAsExternalItemDto(CodelistDS.SOURCE_PROVIDER)));
+
         // Comments
         codelistDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(CodelistDS.COMMENTS));
 
@@ -1133,7 +1132,7 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         }
         codelistDto.setAccessType(accessType);
     }
-    
+
     private void publishCodelistInternally() {
         if (org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(codelistDto.getMaintainer())) {
             getUiHandlers().publishInternally(codelistDto.getUrn(), codelistDto.getLifeCycle().getProcStatus(), null);
@@ -1302,12 +1301,12 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         codelistWebCriteria.setIsLastVersion(isLastVersion);
         getUiHandlers().retrieveCodelistsThatCanBeReplaced(firstResult, maxResults, codelistWebCriteria);
     }
-    
+
     private SearchRelatedResourceLinkItem createVariableItem(String name, String title) {
         final int FIRST_RESULST = 0;
         final int MAX_RESULTS = 8;
         final SearchRelatedResourceLinkItem variableItem = new SearchRelatedResourceLinkItem(name, title, getCustomLinkItemNavigationClickHandler());
-        
+
         variableItem.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
 
             @Override
@@ -1399,7 +1398,6 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
         };
     }
 
-    
     // ------------------------------------------------------------------------------------------------------------
     // CLICK HANDLERS
     // ------------------------------------------------------------------------------------------------------------
@@ -1423,36 +1421,48 @@ public class CodelistViewImpl extends ViewWithUiHandlers<CodelistUiHandlers> imp
             }
         };
     }
-      
+
     // Organizations
     @Override
-    public void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto>  organisationSchemeMetamacDtos, int totalResultados, int firstResultOut) {
-        ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER))
-                .setFilterResources(OrganisationSearchUtils.organizationSchemeMetamacDtoToExternalItemDto(organisationSchemeMetamacDtos), firstResultOut, organisationSchemeMetamacDtos.size(), totalResultados);
+    public void setOrganizationSchemes(List<OrganisationSchemeMetamacBasicDto> organisationSchemeMetamacDtos, int totalResultados, int firstResultOut) {
+        ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER)).setFilterResources(
+                OrganisationSearchUtils.organizationSchemeMetamacDtoToExternalItemDto(organisationSchemeMetamacDtos), firstResultOut, organisationSchemeMetamacDtos.size(), totalResultados);
 
     }
-    
+
     @Override
     public void setOrganizations(List<OrganisationMetamacBasicDto> organisationMetamacBasicDtos, int totalResultados, int firstResultOut) {
         ((SearchSrmItemLinkItemWithSchemeFilterItem) productionDescriptorsEditionForm.getItem(CodelistDS.SOURCE_PROVIDER))
                 .setResources(OrganisationSearchUtils.organizationMetamacDtoToExternalItemDto(organisationMetamacBasicDtos), firstResultOut, organisationMetamacBasicDtos.size(), totalResultados);
     }
-    
+
     private SearchSrmItemLinkItemWithSchemeFilterItem createSourceProviderItem(final String name, String title) {
         final SearchSrmItemLinkItemWithSchemeFilterItem item = new SearchSrmItemLinkItemWithSchemeFilterItem(name, title, SrmWebConstants.FORM_LIST_MAX_RESULTS) {
 
             @Override
             protected void retrieveItems(int firstResult, int maxResults, SrmItemRestCriteria webCriteria) {
-                getUiHandlers().retrieveOrganizationsItems(firstResult, maxResults, webCriteria, new OrganisationTypeEnum[]{OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.ORGANISATION_UNIT,
-                        OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER});
+                getUiHandlers().retrieveOrganizationsItems(firstResult, maxResults, webCriteria,
+                        new OrganisationTypeEnum[]{OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.ORGANISATION_UNIT, OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER});
             }
 
             @Override
             protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
-                getUiHandlers().retrieveOrganizationsSchemes(firstResult, maxResults, webCriteria, new OrganisationSchemeTypeEnum[]{OrganisationSchemeTypeEnum.AGENCY_SCHEME, OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME,
-                        OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME});
+                getUiHandlers().retrieveOrganizationsSchemes(firstResult, maxResults, webCriteria, new OrganisationSchemeTypeEnum[]{OrganisationSchemeTypeEnum.AGENCY_SCHEME,
+                        OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME, OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME});
             }
         };
         return item;
-    }  
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
+    }
+
 }

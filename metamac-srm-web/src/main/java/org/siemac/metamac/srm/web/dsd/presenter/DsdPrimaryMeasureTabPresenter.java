@@ -25,8 +25,11 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
 import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponent;
@@ -78,6 +81,10 @@ public class DsdPrimaryMeasureTabPresenter extends Presenter<DsdPrimaryMeasureTa
 
         void setDsdPrimaryMeasure(DataStructureDefinitionMetamacDto dsd, ComponentDto componentDto);
         void onPrimaryMeasureSaved(DataStructureDefinitionMetamacDto dsd, ComponentDto componentDto);
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @Inject
@@ -99,7 +106,7 @@ public class DsdPrimaryMeasureTabPresenter extends Presenter<DsdPrimaryMeasureTa
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
         if (!StringUtils.isBlank(dsdIdentifier)) {
-            retrievePrimaryMeasure(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
+            retrieveResources(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
         }
     }
 
@@ -137,8 +144,9 @@ public class DsdPrimaryMeasureTabPresenter extends Presenter<DsdPrimaryMeasureTa
             public void onWaitSuccess(GetDsdAndDescriptorsResult result) {
                 dataStructureDefinitionDto = result.getDsd();
                 DescriptorDto primaryMeasureDescriptor = result.getPrimaryMeasure();
-                primaryMeasure = primaryMeasureDescriptor.getComponents().isEmpty() ? new ComponentDto(TypeComponent.PRIMARY_MEASURE, null) : primaryMeasureDescriptor.getComponents().iterator()
-                        .next();
+                primaryMeasure = primaryMeasureDescriptor.getComponents().isEmpty()
+                        ? new ComponentDto(TypeComponent.PRIMARY_MEASURE, null)
+                        : primaryMeasureDescriptor.getComponents().iterator().next();
                 getView().setDsdPrimaryMeasure(dataStructureDefinitionDto, primaryMeasure);
             }
         });
@@ -188,6 +196,22 @@ public class DsdPrimaryMeasureTabPresenter extends Presenter<DsdPrimaryMeasureTa
     public void goTo(List<PlaceRequest> location) {
         if (location != null && !location.isEmpty()) {
             placeManager.revealPlaceHierarchy(location);
+        }
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrievePrimaryMeasure(urn);
+                }
+            });
+        } else {
+            retrievePrimaryMeasure(urn);
         }
     }
 }

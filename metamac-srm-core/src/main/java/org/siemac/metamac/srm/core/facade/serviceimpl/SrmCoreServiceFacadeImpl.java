@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.PersistenceException;
+
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.sdmx.resources.sdmxml.rest.schemas.v2_1.types.StructureParameterDetailEnum;
@@ -25,8 +27,12 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -89,6 +95,7 @@ import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
+import org.siemac.metamac.srm.core.master.mapper.MasterTablesDto2DoMapper;
 import org.siemac.metamac.srm.core.master.serviceapi.MasterTablesService;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
@@ -99,6 +106,7 @@ import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBas
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacDto;
 import org.siemac.metamac.srm.core.organisation.mapper.OrganisationsDo2DtoMapper;
 import org.siemac.metamac.srm.core.organisation.mapper.OrganisationsDto2DoMapper;
+import org.siemac.metamac.srm.core.security.AdministrationSecurityUtils;
 import org.siemac.metamac.srm.core.security.CategoriesSecurityUtils;
 import org.siemac.metamac.srm.core.security.CodesSecurityUtils;
 import org.siemac.metamac.srm.core.security.ConceptsSecurityUtils;
@@ -112,14 +120,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
+import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.io.serviceapi.ExportService;
@@ -135,6 +144,7 @@ import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.ReferenceResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.task.ContentInputDto;
@@ -152,54 +162,60 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Autowired
-    private DataStructureDefinitionDo2DtoMapper dataStructureDefinitionDo2DtoMapper;
+    private DataStructureDefinitionDo2DtoMapper        dataStructureDefinitionDo2DtoMapper;
 
     @Autowired
-    private DataStructureDefinitionDto2DoMapper dataStructureDefinitionDto2DoMapperDto2DoMapper;
+    private DataStructureDefinitionDto2DoMapper        dataStructureDefinitionDto2DoMapperDto2DoMapper;
 
     @Autowired
-    private ConceptsDo2DtoMapper conceptsDo2DtoMapper;
+    private ConceptsDo2DtoMapper                       conceptsDo2DtoMapper;
 
     @Autowired
-    private ConceptsDto2DoMapper conceptsDto2DoMapper;
+    private ConceptsDto2DoMapper                       conceptsDto2DoMapper;
 
     @Autowired
-    private OrganisationsDo2DtoMapper organisationsDo2DtoMapper;
+    private OrganisationsDo2DtoMapper                  organisationsDo2DtoMapper;
 
     @Autowired
-    private OrganisationsDto2DoMapper organisationsDto2DoMapper;
+    private OrganisationsDto2DoMapper                  organisationsDto2DoMapper;
 
     @Autowired
-    private CategoriesDo2DtoMapper categoriesDo2DtoMapper;
+    private CategoriesDo2DtoMapper                     categoriesDo2DtoMapper;
 
     @Autowired
-    private CategoriesDto2DoMapper categoriesDto2DoMapper;
+    private CategoriesDto2DoMapper                     categoriesDto2DoMapper;
 
     @Autowired
-    private CodesDo2DtoMapper codesDo2DtoMapper;
+    private CodesDo2DtoMapper                          codesDo2DtoMapper;
 
     @Autowired
-    private CodesDto2DoMapper codesDto2DoMapper;
+    private CodesDto2DoMapper                          codesDto2DoMapper;
 
     @Autowired
-    private MetamacCriteria2SculptorCriteriaMapper metamacCriteria2SculptorCriteriaMapper;
+    private MetamacCriteria2SculptorCriteriaMapper     metamacCriteria2SculptorCriteriaMapper;
 
     @Autowired
-    private SculptorCriteria2MetamacCriteriaMapper sculptorCriteria2MetamacCriteriaMapper;
+    private SculptorCriteria2MetamacCriteriaMapper     sculptorCriteria2MetamacCriteriaMapper;
 
     @Autowired
-    private ExportService exportService;
+    private ExportService                              exportService;
 
     @Autowired
-    private MasterTablesDo2DtoMapper do2DtoMapper;
+    private MasterTablesDo2DtoMapper                   do2DtoMapper;
 
     @Autowired
-    private MasterTablesService masterTablesService;
+    private MasterTablesDto2DoMapper                   masterTablesDto2DoMapper;
+
+    @Autowired
+    private MasterTablesService                        masterTablesService;
+
+    @Autowired
+    private BaseService                                sdmxService;
 
     private final static Comparator<ItemSchemeVersion> ITEM_SCHEME_CREATED_DATE_DESC_COMPARATOR = new ItemSchemeCreatedDateDescComparator();
-    private final static Comparator<StructureVersion> STRUCTURE_CREATED_DATE_DESC_COMPARATOR = new StructureCreatedDateDescComparator();
+    private final static Comparator<StructureVersion>  STRUCTURE_CREATED_DATE_DESC_COMPARATOR   = new StructureCreatedDateDescComparator();
 
-    private static Logger logger = LoggerFactory.getLogger(SrmCoreServiceFacade.class);
+    private static Logger                              logger                                   = LoggerFactory.getLogger(SrmCoreServiceFacade.class);
 
     protected DataStructureDefinitionDo2DtoMapper getDo2DtoMapper() {
         return dataStructureDefinitionDo2DtoMapper;
@@ -3891,7 +3907,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
         // Security
         CategoriesSecurityUtils.canRetrieveCategoriesByCategorySchemeUrn(ctx);
 
@@ -4109,6 +4125,68 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         getConceptsMetamacService().updateConceptInOrder(ctx, conceptUrn, conceptSchemeUrn, newConceptIndex);
     }
 
+    @Override
+    public List<AnnotationTypeDto> findAllAnnotationTypes(ServiceContext ctx) throws MetamacException {
+        AdministrationSecurityUtils.canRetrieveAnnotationType(ctx);
+
+        List<AnnotationType> annotationTypes = sdmxService.findAllAnnotationtypes(ctx);
+        List<AnnotationTypeDto> annotationTypesDto = new ArrayList<>();
+        for (AnnotationType type : annotationTypes) {
+            annotationTypesDto.add(do2DtoMapper.annotationTypeToDto(type));
+        }
+        return annotationTypesDto;
+    }
+
+    @Override
+    public MetamacCriteriaResult<AnnotationTypeDto> findAnnotationTypes(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        AdministrationSecurityUtils.canRetrieveAnnotationType(ctx);
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getAnnotationTypeCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<AnnotationType> result = sdmxService.findAnnotationTypes(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        return sculptorCriteria2MetamacCriteriaMapper.pageResultAnnotationTypeToMetamacCriteriaResultRelatedResource(result, sculptorCriteria.getPageSize());
+    }
+
+    @Override
+    public AnnotationTypeDto createAnnotationType(ServiceContext ctx, AnnotationTypeDto annotationTypeDto) throws MetamacException {
+        AdministrationSecurityUtils.canCreateAnnotationType(ctx);
+        // Transform to entity
+        AnnotationType annotationType = masterTablesDto2DoMapper.annotationTypeDtoToEntity(annotationTypeDto);
+
+        // Service call
+        annotationType = sdmxService.createAnnotationType(ctx, annotationType);
+
+        // Transform to Dto
+        return do2DtoMapper.annotationTypeToDto(annotationType);
+    }
+
+    @Override
+    public AnnotationTypeDto updateAnnotationType(ServiceContext ctx, AnnotationTypeDto annotationTypeDto) throws MetamacException {
+        AdministrationSecurityUtils.canUpdateAnnotationType(ctx);
+
+        // Transform to entity
+        AnnotationType annotationType = masterTablesDto2DoMapper.annotationTypeDtoToEntity(annotationTypeDto);
+
+        // Service call
+        annotationType = sdmxService.updateAnnotationType(ctx, annotationType);
+
+        // Transform to Dto
+        return do2DtoMapper.annotationTypeToDto(annotationType);
+    }
+
+    @Override
+    public void deleteAnnotationType(ServiceContext ctx, String annotationTypeUuid) throws MetamacException {
+        AdministrationSecurityUtils.canDeleteAnnotationType(ctx);
+        try {
+            sdmxService.deleteAnnotationType(ctx, annotationTypeUuid);
+        } catch (PersistenceException e) {
+            throw new MetamacException(e, ServiceExceptionType.ANNOTATION_TYPE_CAN_NOT_BE_REMOVED, annotationTypeUuid);
+        }
+    }
+
     public List<EniSchemaCatalogDto> findAllEniSchemaCatalogs(ServiceContext ctx) throws MetamacException {
 
         List<EniSchemaCatalog> eniSchemaCatalogs = masterTablesService.findAllEniSchemaCatalogs(ctx);
@@ -4118,6 +4196,151 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         }
         return eniSchemaCatalogDtoList;
 
+    }
+
+    // ------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // ------------------------------------------------------------------------
+
+    @Override
+    public CategoryElementDto retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Retrieve
+        CategoryElement categoryElement = getCategoriesMetamacService().retrieveCategoryElementByUrn(ctx, urn);
+
+        // Transform
+        CategoryElementDto categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElement);
+        return categoryElementDto;
+    }
+
+    @Override
+    public CategoryElementDto createCategoryElement(ServiceContext ctx, CategoryElementDto categoryElementDto) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Transform
+        CategoryElement categoryElement = categoriesDto2DoMapper.categoryElementDtoToDo(categoryElementDto);
+
+        // Create
+        CategoryElement categoryElementCreated = getCategoriesMetamacService().createCategoryElement(ctx, categoryElement);
+
+        // Transform to DTO
+        categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElementCreated);
+        return categoryElementDto;
+    }
+
+    @Override
+    public CategoryElementDto updateCategoryElement(ServiceContext ctx, CategoryElementDto categoryElementDto) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Transform
+        CategoryElement categoryElementToUpdate = categoriesDto2DoMapper.categoryElementDtoToDo(categoryElementDto);
+
+        // Update
+        CategoryElement categoryElementUpdated = getCategoriesMetamacService().updateCategoryElement(ctx, categoryElementToUpdate);
+
+        // Transform to DTO
+        categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElementUpdated);
+        return categoryElementDto;
+    }
+
+    @Override
+    public void deleteCategoryElement(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Delete
+        getCategoriesMetamacService().deleteCategoryElement(ctx, urn);
+    }
+
+    @Override
+    public MetamacCriteriaResult<CategoryElementDto> findCategoryElementsByCondition(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCategoryElementCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<CategoryElement> result = getCategoriesMetamacService().findCategoryElementsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        MetamacCriteriaResult<CategoryElementDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCategoryElementToMetamacCriteriaResult(result,
+                sculptorCriteria.getPageSize());
+
+        return metamacCriteriaResult;
+    }
+
+    @Override
+    public String exportCategoryElementsTsv(ServiceContext ctx, List<String> categoryElementUrns) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canExportCategoryElements(ctx);
+
+        return getCategoriesMetamacService().exportCategoryElementsTsv(ctx, categoryElementUrns);
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementsTsv(ServiceContext ctx, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canImportVariableElements(ctx);
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCategoriesMetamacService().importCategoryElementsTsv(ctx, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+    }
+
+    public MetamacCriteriaResult<RelatedResourceDto> findCategoryElementsForCategoriesByCondition(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCategoryElementCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<CategoryElement> result = getCategoriesMetamacService().findCategoryElementsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        MetamacCriteriaResult<RelatedResourceDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCategoryElementToMetamacCriteriaResultRelatedResource(result,
+                sculptorCriteria.getPageSize());
+
+        return metamacCriteriaResult;
+    }
+
+    @Override
+    public CategoryMetamacDto updateCategoryElementOfCategory(ServiceContext ctx, String categoryUrn, String categoryElementUrn) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        CategoriesSecurityUtils.canUpdateCategoryCategoryElement(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update
+        CategoryMetamac categoryUpdated = getCategoriesMetamacService().updateCategoryElementOfCategory(ctx, categoryUrn, categoryElementUrn);
+
+        // Transform to DTO
+        CategoryMetamacDto categoryDto = categoriesDo2DtoMapper.categoryMetamacDoToDto(categoryUpdated);
+        return categoryDto;
+    }
+
+    @Override
+    public void updateCodesCategoryElements(ServiceContext ctx, String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        CategoriesSecurityUtils.canUpdateCategoryCategoryElement(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update
+        getCategoriesMetamacService().updateCodesCategoryElements(ctx, categorySchemeUrn, categoryElementsIdByCodeId);
+    }
+
+    @Override
+    public List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(ServiceContext ctx, String categorySchemeUrn, String locale, boolean proposeOnlyWithoutCategoryElement)
+            throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canNormaliseCategoryElementsToCategories(ctx);
+
+        // Normalise
+        return getCategoriesMetamacService().normaliseCategoryElementsToCategories(ctx, categorySchemeUrn, locale, proposeOnlyWithoutCategoryElement);
     }
 
 }

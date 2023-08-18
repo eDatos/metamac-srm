@@ -7,7 +7,9 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 
 @org.springframework.stereotype.Component("baseDto2DoMapper")
 public class BaseDto2DoMapperImpl implements org.siemac.metamac.srm.core.base.mapper.BaseDto2DoMapper {
@@ -39,5 +41,10 @@ public class BaseDto2DoMapperImpl implements org.siemac.metamac.srm.core.base.ma
 
     private String getStatisticalOperationsInternalApiUrlBase() throws MetamacException {
         return srmConfiguration.retrieveStatisticalOperationsInternalApiUrlBase();
+    }
+
+    @Override
+    public AnnotationType annotationTypeDtoToEntity(AnnotationTypeDto source) throws MetamacException {
+        return dto2DoMapperSdmxSrm.annotationTypeDtoToEntity(source);
     }
 }

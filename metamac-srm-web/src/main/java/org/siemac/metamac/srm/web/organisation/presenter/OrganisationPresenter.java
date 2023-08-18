@@ -28,6 +28,8 @@ import org.siemac.metamac.srm.web.organisation.widgets.presenter.OrganisationsTo
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationContactWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsAction;
 import org.siemac.metamac.srm.web.shared.organisation.DeleteOrganisationsResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationAction;
@@ -46,6 +48,7 @@ import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingEr
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -94,6 +97,10 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
         void setContacts(List<ContactDto> contactDtos, Long contactToShowId);
         void setOrganisationList(OrganisationSchemeMetamacDto organisationSchemeMetamacDto, List<OrganisationMetamacVisualisationResult> itemVisualisationResults);
         void selectOrganisationTab();
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -138,7 +145,7 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
             if (!StringUtils.isBlank(schemeParam) && type != null && !StringUtils.isBlank(organisationCode)) {
                 this.organisationSchemeUrn = CommonUtils.generateOrganisationSchemeUrn(schemeParam, type);
                 String urn = CommonUtils.generateOrganisationUrn(schemeParam, type, organisationCode);
-                retrieveOrganisation(urn);
+                retrieveResources(urn);
             } else {
                 MetamacSrmWeb.showErrorPage();
             }
@@ -258,14 +265,14 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
                     @Override
                     public void onWaitSuccess(GetOrganisationsBySchemeResult result) {
                         final List<OrganisationMetamacVisualisationResult> itemVisualisationResults = result.getOrganisations();
-                        dispatcher.execute(new GetOrganisationSchemeAction(OrganisationPresenter.this.organisationSchemeUrn), new WaitingAsyncCallbackHandlingError<GetOrganisationSchemeResult>(
-                                OrganisationPresenter.this) {
+                        dispatcher.execute(new GetOrganisationSchemeAction(OrganisationPresenter.this.organisationSchemeUrn),
+                                new WaitingAsyncCallbackHandlingError<GetOrganisationSchemeResult>(OrganisationPresenter.this) {
 
-                            @Override
-                            public void onWaitSuccess(GetOrganisationSchemeResult result) {
-                                getView().setOrganisationList(result.getOrganisationSchemeMetamacDto(), itemVisualisationResults);
-                            }
-                        });
+                                    @Override
+                                    public void onWaitSuccess(GetOrganisationSchemeResult result) {
+                                        getView().setOrganisationList(result.getOrganisationSchemeMetamacDto(), itemVisualisationResults);
+                                    }
+                                });
                     }
                 });
     }
@@ -326,5 +333,21 @@ public class OrganisationPresenter extends Presenter<OrganisationPresenter.Organ
     @Override
     public void goToOrganisationScheme(String urn) {
         placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeOrganisationSchemePlaceRequest(urn, CommonUtils.getOrganisationSchemeTypeEnum(organisationMetamacDto.getType())), -2);
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveOrganisation(urn);
+                }
+            });
+        } else {
+            retrieveOrganisation(urn);
+        }
     }
 }

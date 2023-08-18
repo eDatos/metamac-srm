@@ -3,8 +3,10 @@ package org.siemac.metamac.srm.core.criteria.mapper;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -32,10 +34,12 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersion
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacBasicDto;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationSchemeMetamacBasicDto;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Contact;
 import com.arte.statistic.sdmx.srm.core.task.domain.Task;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.organisation.ContactDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.task.TaskDto;
 
 public interface SculptorCriteria2MetamacCriteriaMapper {
@@ -59,6 +63,8 @@ public interface SculptorCriteria2MetamacCriteriaMapper {
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCategorySchemeVersionToMetamacCriteriaResultRelatedResource(PagedResult<CategorySchemeVersionMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<CategoryMetamacBasicDto> pageResultCategoryToMetamacCriteriaResult(PagedResult<CategoryMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCategoryToMetamacCriteriaResultRelatedResource(PagedResult<CategoryMetamac> source, Integer pageSize);
+    public MetamacCriteriaResult<CategoryElementDto> pageResultCategoryElementToMetamacCriteriaResult(PagedResult<CategoryElement> source, Integer pageSize);
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultCategoryElementToMetamacCriteriaResultRelatedResource(PagedResult<CategoryElement> source, Integer pageSize);
 
     public MetamacCriteriaResult<CodelistMetamacBasicDto> pageResultCodelistVersionToMetamacCriteriaResult(PagedResult<CodelistVersionMetamac> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistVersionToMetamacCriteriaResultRelatedResource(PagedResult<CodelistVersionMetamac> source, Integer pageSize);
@@ -72,4 +78,6 @@ public interface SculptorCriteria2MetamacCriteriaMapper {
     public MetamacCriteriaResult<RelatedResourceDto> pageResultVariableElementToMetamacCriteriaResultRelatedResource(PagedResult<VariableElement> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOrderVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOrderVisualisation> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOpennessVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOpennessVisualisation> source, Integer pageSize);
+
+    public MetamacCriteriaResult<AnnotationTypeDto> pageResultAnnotationTypeToMetamacCriteriaResultRelatedResource(PagedResult<AnnotationType> source, Integer pageSize);
 }

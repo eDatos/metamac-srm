@@ -3,9 +3,12 @@ package org.siemac.metamac.srm.web.category.view;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
@@ -45,8 +48,8 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguag
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -64,40 +67,45 @@ import com.smartgwt.client.widgets.tab.Tab;
 
 public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiHandlers> implements CategorySchemePresenter.CategorySchemeView {
 
-    private final TitleLabel                         titleLabel;
-    private final VLayout                            panel;
-    private final CategorySchemeMainFormLayout       mainFormLayout;
+    private final TitleLabel                           titleLabel;
+    private final VLayout                              panel;
+    private final CategorySchemeMainFormLayout         mainFormLayout;
 
-    private final CustomTabSet                       tabSet;
-    private final Tab                                categorySchemeTab;
+    private final CustomTabSet                         tabSet;
+    private final Tab                                  categorySchemeTab;
 
     // View forms
-    private GroupDynamicForm                         identifiersForm;
-    private GroupDynamicForm                         contentDescriptorsForm;
-    private GroupDynamicForm                         productionDescriptorsForm;
-    private GroupDynamicForm                         diffusionDescriptorsForm;
-    private GroupDynamicForm                         versionResponsibilityForm;
-    private GroupDynamicForm                         commentsForm;
-    private AnnotationsPanel                         annotationsPanel;
+    private GroupDynamicForm                           identifiersForm;
+    private GroupDynamicForm                           contentDescriptorsForm;
+    private GroupDynamicForm                           productionDescriptorsForm;
+    private GroupDynamicForm                           diffusionDescriptorsForm;
+    private GroupDynamicForm                           versionResponsibilityForm;
+    private GroupDynamicForm                           commentsForm;
+    private AnnotationsPanel                           annotationsPanel;
 
     // Edition forms
-    private GroupDynamicForm                         identifiersEditionForm;
-    private GroupDynamicForm                         contentDescriptorsEditionForm;
-    private GroupDynamicForm                         productionDescriptorsEditionForm;
-    private GroupDynamicForm                         diffusionDescriptorsEditionForm;
-    private GroupDynamicForm                         versionResponsibilityEditionForm;
-    private GroupDynamicForm                         commentsEditionForm;
-    private AnnotationsPanel                         annotationsEditionPanel;
+    private GroupDynamicForm                           identifiersEditionForm;
+    private GroupDynamicForm                           contentDescriptorsEditionForm;
+    private GroupDynamicForm                           productionDescriptorsEditionForm;
+    private GroupDynamicForm                           diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                           versionResponsibilityEditionForm;
+    private GroupDynamicForm                           commentsEditionForm;
+    private AnnotationsPanel                           annotationsEditionPanel;
 
     // Versions
-    private final CategorySchemeVersionsSectionStack versionsSectionStack;
+    private final CategorySchemeVersionsSectionStack   versionsSectionStack;
 
-    private final CategorySchemeCategoriesPanel      categoriesPanel;
+    private final CategorySchemeCategoriesPanel        categoriesPanel;
+
+    // Category elements assignment
+    private final CategoriesCodesCategoryElementsPanel categoriesCodesCategoryElementsPanel;
 
     // Categorisations
-    private final CategorySchemeCategorisationsPanel categorisationsPanel;
+    private final CategorySchemeCategorisationsPanel   categorisationsPanel;
 
-    private CategorySchemeMetamacDto                 categorySchemeDto;
+    private CategorySchemeMetamacDto                   categorySchemeDto;
+
+    private LinkedHashMap<String, String>              annotationTypes;
 
     @Inject
     public CategorySchemeViewImpl() {
@@ -134,6 +142,10 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         categoriesPanel = new CategorySchemeCategoriesPanel();
 
+        // CATEGORIES ELEMENTS ASSIGNMENT
+
+        categoriesCodesCategoryElementsPanel = new CategoriesCodesCategoryElementsPanel();
+
         //
         // CATEGORISATIONS
         //
@@ -161,6 +173,11 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         categoriesTab.setPane(categoriesPanel);
         tabSet.addTab(categoriesTab);
 
+        // Categories elements assignment
+        Tab categoryElementsAssignment = new Tab(getConstants().categoriesCategoryElementAssignment());
+        categoryElementsAssignment.setPane(categoriesCodesCategoryElementsPanel);
+        tabSet.addTab(categoryElementsAssignment);
+
         // Categorisations tab
         Tab categorisationsTab = new Tab(getConstants().categorisations());
         categorisationsTab.setPane(categorisationsPanel);
@@ -178,6 +195,7 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
     public void setUiHandlers(CategorySchemeUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         categoriesPanel.setUiHandlers(uiHandlers);
+        this.categoriesCodesCategoryElementsPanel.setUiHandlers(uiHandlers);
         categorisationsPanel.setUiHandlers(uiHandlers);
     }
 
@@ -534,6 +552,7 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         // Update category scheme in tree grid
         categoriesPanel.updateItemScheme(categorySchemeDto);
+        categoriesCodesCategoryElementsPanel.updateItemScheme(categorySchemeDto);
     }
 
     @Override
@@ -556,6 +575,16 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         categorisationsPanel.setCategories(result);
     }
 
+    @Override
+    public void setCodesCategoryElementsNormalised(List<CodeCategoryElementNormalisationResult> codeCategoryElementNormalisationResults) {
+        categoriesCodesCategoryElementsPanel.setCodesCategoryElementsNormalised(codeCategoryElementNormalisationResults);
+    }
+
+    @Override
+    public void setCategoryElementsForManualNormalisation(GetRelatedResourcesResult categoryElementsRelatedResult) {
+        categoriesCodesCategoryElementsPanel.setCategoryElementsForManualNormalisation(categoryElementsRelatedResult);
+    }
+
     public void setCategorySchemeViewMode(CategorySchemeMetamacDto categorySchemeDto) {
         // Identifiers
         identifiersForm.setValue(CategorySchemeDS.CODE, categorySchemeDto.getCode());
@@ -565,14 +594,17 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         identifiersForm.setValue(CategorySchemeDS.VERSION_LOGIC, categorySchemeDto.getVersionLogic());
         identifiersForm.setValue(CategorySchemeDS.NAME, categorySchemeDto.getName());
         identifiersForm.getItem(CategorySchemeDS.PUBLICATION_STREAM_STATUS)
-                .setIcons(StreamMessageStatusEnum.PENDING.equals(categorySchemeDto.getStreamMessageStatus()) ? null : CommonSharedUtils.getPublicationStreamStatusIcon(categorySchemeDto.getStreamMessageStatus()));
+                .setIcons(StreamMessageStatusEnum.PENDING.equals(categorySchemeDto.getStreamMessageStatus())
+                        ? null
+                        : CommonSharedUtils.getPublicationStreamStatusIcon(categorySchemeDto.getStreamMessageStatus()));
 
         // Content descriptors
         contentDescriptorsForm.setValue(CategorySchemeDS.DESCRIPTION, categorySchemeDto.getDescription());
         contentDescriptorsForm.setValue(CategorySchemeDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(categorySchemeDto.getIsPartial()));
-        contentDescriptorsForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE, categorySchemeDto.getIsExternalReference() != null
-                ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE,
+                categorySchemeDto.getIsExternalReference() != null
+                        ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsForm.setValue(CategorySchemeDS.FINAL,
                 categorySchemeDto.getFinalLogic() != null ? (categorySchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : StringUtils.EMPTY);
 
@@ -629,9 +661,10 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         contentDescriptorsEditionForm.setValue(CategorySchemeDS.DESCRIPTION, categorySchemeDto.getDescription());
         contentDescriptorsEditionForm.setValue(CategorySchemeDS.IS_PARTIAL, BooleanWebUtils.getBooleanLabel(categorySchemeDto.getIsPartial()));
-        contentDescriptorsEditionForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE, categorySchemeDto.getIsExternalReference() != null
-                ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
-                : StringUtils.EMPTY);
+        contentDescriptorsEditionForm.setValue(CategorySchemeDS.IS_EXTERNAL_REFERENCE,
+                categorySchemeDto.getIsExternalReference() != null
+                        ? (categorySchemeDto.getIsExternalReference() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no())
+                        : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setValue(CategorySchemeDS.FINAL,
                 categorySchemeDto.getFinalLogic() != null ? (categorySchemeDto.getFinalLogic() ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no()) : StringUtils.EMPTY);
         contentDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
@@ -686,7 +719,8 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
     }
 
     @Override
-    public void setCategories(List<ItemVisualisationResult> categoryDtos) {
+    public void setCategories(List<CategoryMetamacVisualisationResult> categoryDtos) {
+        categoriesCodesCategoryElementsPanel.setCodes(categorySchemeDto, categoryDtos);
         categoriesPanel.setCategories(categoryDtos);
     }
 
@@ -812,5 +846,16 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
     }
 }

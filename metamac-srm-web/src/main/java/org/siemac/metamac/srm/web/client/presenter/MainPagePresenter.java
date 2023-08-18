@@ -113,7 +113,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
         super.onBind();
         loadMasterTablesLists();
     }
-    
+
     @Override
     protected void onReset() {
         super.onReset();
@@ -264,7 +264,12 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     public void goToCategories() {
         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategorySchemesPlaceRequest());
     }
-    
+
+    @Override
+    public void goToAdministration() {
+        placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteAnnotationTypePlaceRequest());
+    }
+
     private void loadMasterTablesLists() {
         retrieveEniSchemaCatalogs();
     }

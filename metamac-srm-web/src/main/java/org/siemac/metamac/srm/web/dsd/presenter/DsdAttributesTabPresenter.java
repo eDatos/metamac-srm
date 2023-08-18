@@ -34,10 +34,13 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
 import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DataAttributeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
@@ -109,6 +112,10 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
 
         HasClickHandlers getSave();
         HasClickHandlers getDelete();
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @Inject
@@ -164,7 +171,7 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
         if (!StringUtils.isBlank(dsdIdentifier)) {
-            retrieveAttributes(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
+            retrieveResources(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
         }
     }
 
@@ -339,18 +346,19 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
 
     @Override
     public void retrieveConceptSchemesForEnumeratedRepresentation(int firstResult, int maxResults, ConceptSchemeWebCriteria conceptSchemeWebCriteria) {
-        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CONCEPT_SCHEME_WITH_DSD_MEASURE_ATTRIBUTE_ENUMERATED_REPRESENTATION, firstResult, maxResults,
-                conceptSchemeWebCriteria), new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+        dispatcher.execute(
+                new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CONCEPT_SCHEME_WITH_DSD_MEASURE_ATTRIBUTE_ENUMERATED_REPRESENTATION, firstResult, maxResults, conceptSchemeWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(GetRelatedResourcesResult result) {
-                getView().setConceptSchemesForEnumeratedRepresentation(result);
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setConceptSchemesForEnumeratedRepresentation(result);
+                    }
+                });
     }
 
     private void updateAttributeList(final boolean updateView) {
@@ -419,6 +427,22 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
     public void goTo(List<PlaceRequest> location) {
         if (location != null && !location.isEmpty()) {
             placeManager.revealPlaceHierarchy(location);
+        }
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveAttributes(urn);
+                }
+            });
+        } else {
+            retrieveAttributes(urn);
         }
     }
 }

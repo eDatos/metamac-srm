@@ -34,10 +34,16 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
 import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdResult;
+import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
@@ -101,12 +107,17 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
         DimensionComponentDto getDsdDimension();
         List<DimensionComponentDto> getSelectedDimensions();
         void onDimensionSaved(DimensionComponentDto dimensionComponentDto);
+        void onMultipleDimensionSaved();
         boolean validate();
 
         void setDefaultConceptSchemeEnumeratedRepresentation(RelatedResourceDto conceptScheme);
 
         HasClickHandlers getSave();
         HasClickHandlers getDelete();
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @Inject
@@ -127,7 +138,7 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
         super.prepareFromRequest(request);
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
         if (!StringUtils.isBlank(dsdIdentifier)) {
-            retrieveDimensions(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
+            retrieveResources(UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier));
         }
     }
 
@@ -177,6 +188,26 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
                         dataStructureDefinitionDto = result.getDataStructureDefinitionMetamacDto();
                         updateDimensionList(false); // Do no update the view!! The method onDimensionSaved updates the dimension list in the view
                         getView().onDimensionSaved((DimensionComponentDto) result.getComponentDtoSaved());
+                    }
+                });
+    }
+
+    @Override
+    public void saveDimensions(List<DimensionComponentDto> dimensionsToSave) {
+        dispatcher.execute(new SaveMultipleComponentsForDsdAction(dataStructureDefinitionDto.getUrn(), new ArrayList<ComponentDto>(dimensionsToSave), TypeComponentList.DIMENSION_DESCRIPTOR),
+                new WaitingAsyncCallbackHandlingError<SaveMultipleComponentsForDsdResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(DsdDimensionsTabPresenter.this, caught);
+                    }
+
+                    @Override
+                    public void onWaitSuccess(SaveMultipleComponentsForDsdResult result) {
+                        fireSuccessMessage(MetamacSrmWeb.getMessages().dsdDimensionSaved());
+                        dataStructureDefinitionDto = result.getDataStructureDefinitionMetamacDto();
+                        updateDimensionList(true);
+                        getView().onMultipleDimensionSaved();
                     }
                 });
     }
@@ -274,18 +305,19 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
 
     @Override
     public void retrieveConceptSchemesForMeasureDimensionEnumeratedRepresentation(int firstResult, int maxResults, ConceptSchemeWebCriteria conceptSchemeWebCriteria) {
-        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CONCEPT_SCHEME_WITH_DSD_MEASURE_DIMENSION_ENUMERATED_REPRESENTATION, firstResult, maxResults,
-                conceptSchemeWebCriteria), new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+        dispatcher.execute(
+                new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CONCEPT_SCHEME_WITH_DSD_MEASURE_DIMENSION_ENUMERATED_REPRESENTATION, firstResult, maxResults, conceptSchemeWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(DsdDimensionsTabPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(GetRelatedResourcesResult result) {
-                getView().setConceptSchemesForMeasureDimensionEnumeratedRepresentation(result);
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(DsdDimensionsTabPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setConceptSchemesForMeasureDimensionEnumeratedRepresentation(result);
+                    }
+                });
     }
 
     @Override
@@ -421,6 +453,22 @@ public class DsdDimensionsTabPresenter extends Presenter<DsdDimensionsTabPresent
     public void goTo(List<PlaceRequest> location) {
         if (location != null && !location.isEmpty()) {
             placeManager.revealPlaceHierarchy(location);
+        }
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveDimensions(urn);
+                }
+            });
+        } else {
+            retrieveDimensions(urn);
         }
     }
 }

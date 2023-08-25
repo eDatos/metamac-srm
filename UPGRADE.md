@@ -21,7 +21,7 @@
   ```shell
   etc/changes-from-release/5.0.1/db/srm/postgresql
   ```
-  Uno de los scripts anteriores es un script de adecuación para los diferentes recursos del srm para permitir conocer el último número de versión publicada interna o externamente. Seguir los pasos indicados en el script 20230712_resources_latest_version_new_columns_update.sql para su ejecución.
+  Uno de los scripts anteriores es un script de adecuación para los diferentes recursos del srm para permitir conocer el último número de versión publicada interna o externamente. Seguir los pasos indicados en el script 20230712_resources_latest_version_new_columns_update.sql para su ejecución. Antes de ejecutar este script ejecutar los cambios siguientes de statistic-sdmx-srm.
   
   
 * Cambios en statistic-sdmx-srm. Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:

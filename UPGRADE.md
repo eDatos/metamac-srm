@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 5.0.1 a 5.0.2-SNAPSHOT
+## 5.0.1 a 6.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:
   * **categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}**
   * La obtención de la última versión de los diferentes recursos se hará por el último número de versión publicada interna/externamente y no por la última versión publicada como hasta ahora.
@@ -21,7 +21,7 @@
   ```shell
   etc/changes-from-release/5.0.1/db/srm/postgresql
   ```
-  Uno de los scripts anteriores es un script de adecuación para los diferentes recursos del srm para permitir conocer el último número de versión publicada interna o externamente. Seguir los pasos indicados en el script 20230712_resources_latest_version_new_columns_update.sql para su ejecución.
+  Uno de los scripts anteriores es un script de adecuación para los diferentes recursos del srm para permitir conocer el último número de versión publicada interna o externamente. Seguir los pasos indicados en el script 20230712_resources_latest_version_new_columns_update.sql para su ejecución. Antes de ejecutar este script ejecutar los cambios siguientes de statistic-sdmx-srm.
   
   
 * Cambios en statistic-sdmx-srm. Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
@@ -53,7 +53,7 @@
 Se puede consultar la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto de aplicaciones 
 de eDatos que consuman la API de structural-resources a través de JAX-RS.
 
-Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
+Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db)
  ```shell
  ```shell
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_master_table_eni_schema_catalog.sql

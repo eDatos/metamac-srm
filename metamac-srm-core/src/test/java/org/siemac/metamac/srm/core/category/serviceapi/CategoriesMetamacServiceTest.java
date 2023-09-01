@@ -3266,4 +3266,10 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     protected String getDataSetFile() {
         return "dbunit/SrmCategoriesTest.xml";
     }
+
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyCategorySchemes() {
+        // No test. cron job process
+    }
 }

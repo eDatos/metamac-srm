@@ -9,6 +9,7 @@ import org.siemac.metamac.core.common.exception.utils.TranslateExceptions;
 import org.siemac.metamac.core.common.lang.LocaleUtil;
 import org.siemac.metamac.rest.notices.v1_0.domain.Notice;
 import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacApplicationsEnum;
+import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.NoticeBuilder;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionUtils;
@@ -84,9 +85,10 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
             String subject = LocaleUtil.getMessageForCode(actionCode, locale);
             String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES.getName();
-
+            Notice notification = null;
+            if (user != null) {
             // @formatter:off
-            Notice notification = NoticeBuilder.notification()
+             notification = NoticeBuilder.notification()
                                                 .withMessagesWithoutResources(message)
                                                 .withSendingApplication(sendingApp)
                                                 .withReceivers(user)
@@ -94,6 +96,16 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
                                                 .withSubject(subject)
                                                 .build();
             // @formatter:on
+            } else {
+             // @formatter:off
+                notification = NoticeBuilder.notification()
+                                                    .withMessagesWithoutResources(message)
+                                                    .withSendingApplication(sendingApp)
+                                                    .withRoles(MetamacRolesEnum.ADMINISTRADOR)
+                                                    .withSubject(subject)
+                                                    .build();
+                // @formatter:on
+            }
 
             restApiLocator.getNoticesRestInternalFacadeV10().createNotice(notification);
         } catch (Exception e) {

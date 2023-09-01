@@ -241,5 +241,13 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "stream_message.srm.exception.config.missing_settings");
     public static final CommonServiceExceptionType ENI_SCHEMA_CATALOG_NOT_FOUND                                                          = create("exception.srm.list.eni_schema_catalog.not_found");
     public static final CommonServiceExceptionType ANNOTATION_TYPE_CAN_NOT_BE_REMOVED                                                    = create("exception.srm.annotation_type.can_not_be_removed");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CODELIST_MESSAGE_ERROR                                        = create(
+            "stream_message.srm.exception.send_codelist_message.fails");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CATEGORY_SCHEME_MESSAGE_ERROR                                 = create(
+            "stream_message.srm.exception.send_category_scheme_message.fails");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_ORGANISATION_SCHEME_MESSAGE_ERROR                             = create(
+            "stream_message.srm.exception.send_organisation_scheme_message.fails");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CONCEPT_SCHEME_MESSAGE_ERROR                                  = create(
+            "stream_message.srm.exception.send_concept_scheme_message.fails");
 
 }

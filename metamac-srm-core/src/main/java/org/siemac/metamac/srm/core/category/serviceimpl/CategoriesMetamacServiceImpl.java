@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1471,4 +1472,47 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         return categoryElementVisualisationResult;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<MetamacExceptionItem> resendKafkaMessageExternallyCategorySchemes(ServiceContext ctx) throws MetamacException {
+        List<CategorySchemeVersionMetamac> categorySchemes = this.getCategorySchemeVersionMetamacRepository().retrieveCategorySchemesPublishedExternally();
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("resend all published last version category schemes kafka messages start at {} affected categories: {} ", new Date(), categorySchemes.size());
+
+        for (CategorySchemeVersionMetamac categoryScheme : categorySchemes) {
+
+            try {
+                ResourceVersionPublicationResult<CategorySchemeVersionMetamac> result = (ResourceVersionPublicationResult<CategorySchemeVersionMetamac>) categorySchemeLifeCycle.resendMessage(ctx,
+                        categoryScheme);
+
+                totalCount++;
+                partialCount++;
+
+                if (partialCount >= 50) {
+                    partialCount = 0;
+                    logger.info("processed category schemes {} at {}", totalCount, new Date());
+                }
+
+                if (!result.isOk()) {
+                    logger.info("error sending category schemes {} error status {} ", categoryScheme.getMaintainableArtefact().getUrn(),
+                            result.groupExceptions() != null ? result.groupExceptions().getMessage() : "");
+                    exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_CATEGORY_SCHEME_MESSAGE_ERROR, result.groupExceptions()));
+                }
+
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending category schemes {} ", categoryScheme.getMaintainableArtefact().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_CATEGORY_SCHEME_MESSAGE_ERROR, categoryScheme.getMaintainableArtefact().getUrn()));
+            }
+
+        }
+        logger.info("resend all published last version category schemes kafka messages end at {} ", new Date());
+
+        return exceptionsItems;
+
+    }
 }

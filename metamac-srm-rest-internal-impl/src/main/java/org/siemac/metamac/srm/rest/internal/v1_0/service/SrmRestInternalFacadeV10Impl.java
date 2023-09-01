@@ -2,10 +2,8 @@ package org.siemac.metamac.srm.rest.internal.v1_0.service;
 
 import static org.siemac.metamac.srm.rest.internal.v1_0.service.utils.SrmRestInternalUtils.hasField;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -322,7 +320,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             // Transform
             List<PlainTextResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow);
 
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CONCEPTS + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "concepts";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -460,7 +458,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             // Transform
             List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow);
 
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CATEGORIES + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "categories";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -617,7 +615,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
             // Transform
             List<PlainTextResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow);
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_ORGANISATIONS + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "organisations";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -1088,7 +1086,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             // Transform
             List<PlainTextResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
 
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODES + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "codes";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -2358,8 +2356,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     }
 
     public static String getContentDisposition(String fileNamePrefix, String format) {
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return "inline; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+        return "inline; filename=" + fileNamePrefix + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {

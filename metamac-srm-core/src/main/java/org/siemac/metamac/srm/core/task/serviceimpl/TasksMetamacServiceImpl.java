@@ -8,30 +8,49 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
 import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
 import org.quartz.SimpleTrigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.SchedulerRepository;
+import org.quartz.impl.StdSchedulerFactory;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.base.repositoryimpl.EntityToDeleteRepository;
+import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
+import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.srm.core.notices.serviceimpl.utils.NoticesCallbackMetamacImpl;
+import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
 import org.siemac.metamac.srm.core.task.utils.TasksMetamacInvocationValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
@@ -45,23 +64,73 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskStatusTypeEnum;
  * Implementation of ImportationMetamacService.
  */
 @Service("tasksMetamacService")
-public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase {
+public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase implements ApplicationListener<ContextRefreshedEvent> {
+
+    private static Logger               logger = LoggerFactory.getLogger(TasksMetamacServiceImpl.class);
 
     @Autowired
-    private TasksService               tasksService;
+    private TasksService                tasksService;
 
     @Autowired
-    private EntityToDeleteRepository   entityToDeleteRepository;
+    private EntityToDeleteRepository    entityToDeleteRepository;
 
     @Autowired
     @Qualifier("importationMetamacJaxb2DoCallback")
-    private ImportationJaxb2DoCallback importationJaxb2DoCallback;
+    private ImportationJaxb2DoCallback  importationJaxb2DoCallback;
 
     @Autowired
     @Qualifier(NoticesCallbackMetamacImpl.BEAN_ID)
-    private NoticesCallback            noticesCallbackMetamac;
+    private NoticesCallback             noticesCallbackMetamac;
+
+    @Autowired
+    private SrmConfiguration            srmConfiguration;
+
+    @Autowired
+    private CategoriesMetamacService    categoriesMetamacService;
+
+    @Autowired
+    private CodesMetamacService         codesMetamacService;
+
+    @Autowired
+    private ConceptsMetamacService      conceptsMetamacService;
+
+    @Autowired
+    private OrganisationsMetamacService organisationsMetamacService;
+
+    @Autowired
+    NoticesRestInternalService          noticesRestInternalService;
 
     public TasksMetamacServiceImpl() {
+    }
+
+    private SchedulerFactory schedulerFactory = null;
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (schedulerFactory != null) {
+            return;
+        }
+
+        // Quartz Properties
+        Properties quartzProps = new Properties();
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "StructuralResourcesScheduler");
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "structuralResourcesScheduler001");
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        quartzProps.put(StdSchedulerFactory.PROP_JOB_STORE_CLASS, "org.quartz.simpl.RAMJobStore");
+        quartzProps.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, "org.quartz.simpl.SimpleThreadPool");
+        quartzProps.put("org.quartz.threadPool.threadCount", "1");
+        quartzProps.put("org.quartz.threadPool.threadPriority", "5");
+
+        try {
+            schedulerFactory = new StdSchedulerFactory(quartzProps);
+            Scheduler sched = schedulerFactory.getScheduler();
+
+            // Start now
+            sched.start();
+        } catch (SchedulerException e) {
+            throw new IllegalStateException("An unexpected error has occurred during quartz initialization", e);
+        }
+
     }
 
     @Override
@@ -338,6 +407,45 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase {
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();
+        }
+    }
+
+    @Override
+    public void processResendKafkaResourcesMessageTask(ServiceContext ctx) throws MetamacException {
+
+        List<MetamacExceptionItem> exceptionItems = categoriesMetamacService.resendKafkaMessageExternallyCategorySchemes(ctx);
+        exceptionItems.addAll(organisationsMetamacService.resendKafkaMessageExternallyOrganisationSchemes(ctx));
+        exceptionItems.addAll(conceptsMetamacService.resendKafkaMessageExternallyConceptSchemes(ctx));
+        exceptionItems.addAll(codesMetamacService.resendKafkaMessageExternallyCodelist(ctx));
+
+        if (!exceptionItems.isEmpty()) {
+            try {
+                MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionItems).build();
+                noticesRestInternalService.createErrorBackgroundNotification(null, ServiceNoticeAction.STREAM_MESSAGE_RESEND_RESOURCES_MESSAGE_ERROR, exception);
+            } catch (Exception e) {
+                logger.info("ERROR to send and email error notification for process of resending all published last version dataset kafka messages at {} See log to details of each error. ",
+                        new Date());
+            }
+        }
+
+    }
+
+    @Override
+    public void scheduleResendKafkaResourcesMessageJob(ServiceContext ctx) {
+        try {
+
+            JobDetail job = newJob(ResendPublishedResourcesKafkaMessageJob.class).build();
+
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger()
+                    .withSchedule(CronScheduleBuilder.cronSchedule(srmConfiguration.retrieveCronExpressionForResendPublishedResourcesKafkaMessage()).withMisfireHandlingInstructionDoNothing()).build();
+
+            Scheduler sched = schedulerFactory.getScheduler();
+            sched.scheduleJob(job, cronTrigger);
+
+            logger.info("resend all published last version dataset kafka messages at {} ", new Date());
+
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
         }
     }
 }

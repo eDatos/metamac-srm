@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -2313,5 +2314,49 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             getConceptMetamacRepository().save(concept);
             baseService.updateItemSchemeLastUpdated(ctx, conceptSchemeVersionMetamac);
         }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<MetamacExceptionItem> resendKafkaMessageExternallyConceptSchemes(ServiceContext ctx) throws MetamacException {
+        List<ConceptSchemeVersionMetamac> conceptSchemes = this.getConceptSchemeVersionMetamacRepository().retrieveConceptsSchemesPublishedExternally();
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("resend all published last version concept schemes kafka messages start at {} affected categories: {} ", new Date(), conceptSchemes.size());
+
+        for (ConceptSchemeVersionMetamac conceptScheme : conceptSchemes) {
+
+            try {
+                ResourceVersionPublicationResult<ConceptSchemeVersionMetamac> result = (ResourceVersionPublicationResult<ConceptSchemeVersionMetamac>) conceptSchemeLifeCycle.resendMessage(ctx,
+                        conceptScheme);
+
+                totalCount++;
+                partialCount++;
+
+                if (partialCount >= 50) {
+                    partialCount = 0;
+                    logger.info("processed concept schemes {} at {}", totalCount, new Date());
+                }
+
+                if (!result.isOk()) {
+                    logger.info("error sending concept schemes {} error status {} ", conceptScheme.getMaintainableArtefact().getUrn(),
+                            result.groupExceptions() != null ? result.groupExceptions().getMessage() : "");
+                    exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_CONCEPT_SCHEME_MESSAGE_ERROR, result.groupExceptions()));
+                }
+
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending concept schemes {} ", conceptScheme.getMaintainableArtefact().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_CONCEPT_SCHEME_MESSAGE_ERROR, conceptScheme.getMaintainableArtefact().getUrn()));
+            }
+
+        }
+        logger.info("resend all published last version concept schemes kafka messages end at {} ", new Date());
+
+        return exceptionsItems;
+
     }
 }

@@ -194,4 +194,14 @@ public class CodelistVersionMetamacRepositoryImpl extends CodelistVersionMetamac
         return codeListIds;
 
     }
+
+    @Override
+    public List<CodelistVersionMetamac> retrieveCodelistPublishedExternally() throws MetamacException {
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("procStatus", ProcStatusEnum.EXTERNALLY_PUBLISHED);
+        return findByQuery("from CodelistVersionMetamac where maintainableArtefact.latestVersionNumberPublic is not null and lifeCycleMetadata.procStatus = :procStatus)", parameters,
+                Integer.MAX_VALUE);
+
+    }
 }

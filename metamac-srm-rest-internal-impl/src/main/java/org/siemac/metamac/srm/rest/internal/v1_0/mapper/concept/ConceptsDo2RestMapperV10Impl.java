@@ -112,7 +112,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields, List<String> quotedCharacters) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
@@ -120,25 +120,25 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         List<PlainTextResource> target = new ArrayList<>();
 
         for (ConceptResourceInternal concept : source.getConcepts()) {
-            target.add(toFlattenConcept(concept, languages, fields));
+            target.add(toFlattenConcept(concept, languages, fields, quotedCharacters));
         }
 
         return target;
     }
 
-    private PlainTextResource toFlattenConcept(ConceptResourceInternal source, List<String> languages, Set<String> fields) {
+    private PlainTextResource toFlattenConcept(ConceptResourceInternal source, List<String> languages, Set<String> fields, List<String> quotedCharacters) {
         PlainTextResource target = new PlainTextResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
-        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages, quotedCharacters));
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
-            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages, quotedCharacters));
         }
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME)) {
-            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_PLURAL_NAME, source.getName(), languages));
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_PLURAL_NAME, source.getName(), languages, quotedCharacters));
         }
 
         return target;

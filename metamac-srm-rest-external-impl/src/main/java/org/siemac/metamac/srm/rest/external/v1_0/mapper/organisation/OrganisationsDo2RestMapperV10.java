@@ -31,7 +31,7 @@ public interface OrganisationsDo2RestMapperV10 {
     public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
             Set<String> fields);
     public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
-    List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields, List<String> quotedCharacters) throws MetamacException;
     public Organisation toOrganisation(OrganisationMetamac source) throws MetamacException;
 
     // Agencies

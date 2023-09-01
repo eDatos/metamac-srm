@@ -30,7 +30,7 @@ public interface ConceptsDo2RestMapperV10 {
 
     public Concepts toConcepts(PagedResult<ConceptMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
     public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields);
-    List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields, List<String> quotedCharacters) throws MetamacException;
 
     public Concept toConcept(ConceptMetamac source);
     public ItemResourceInternal toResource(com.arte.statistic.sdmx.srm.core.concept.domain.Concept source);

@@ -252,7 +252,7 @@ public class SrmRestInternalUtils {
         return fields != null && fields.contains(field);
     }
 
-    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages) {
+    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages, List<String> quotedCharacters) {
         Map<String, String> target = new LinkedHashMap<>();
 
         InternationalString copySource = new InternationalString();
@@ -264,19 +264,29 @@ public class SrmRestInternalUtils {
         String header;
         for (String language : languages) {
             header = nameField + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
-            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language));
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language, quotedCharacters));
         }
 
         return target;
     }
 
-    private static String getLocalisedStringByLang(List<LocalisedString> source, String language) {
+    private static String getLocalisedStringByLang(List<LocalisedString> source, String language, List<String> quotedCharacters) {
         // in the api, lamba functions is not allowed. the search is done with a loop.
         for (LocalisedString loc : source) {
             if (language.equals(loc.getLang())) {
-                return TsvExportationUtils.removeUnsupportedCharaters(loc.getValue());
+                String value = TsvExportationUtils.removeUnsupportedCharaters(loc.getValue());
+                return quotedFields(value, quotedCharacters);
             }
         }
         return null;
+    }
+
+    public static String quotedFields(String value, List<String> excludedCharacter) {
+        for (String character : excludedCharacter) {
+            if (value.contains(character)) {
+                return "\"" + value + "\"";
+            }
+        }
+        return value;
     }
 }

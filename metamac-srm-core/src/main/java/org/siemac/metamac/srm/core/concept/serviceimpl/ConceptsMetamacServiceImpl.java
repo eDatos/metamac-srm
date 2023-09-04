@@ -2324,7 +2324,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         int totalCount = 0;
         int partialCount = 0;
-        logger.info("resend all published last version concept schemes kafka messages start at {} affected categories: {} ", new Date(), conceptSchemes.size());
+        logger.info("resend all published last version concept schemes kafka messages start at {} affected concepts: {} ", new Date(), conceptSchemes.size());
 
         for (ConceptSchemeVersionMetamac conceptScheme : conceptSchemes) {
 

@@ -17,6 +17,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.DateBuilder.IntervalUnit;
@@ -439,13 +440,22 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
             CronTrigger cronTrigger = TriggerBuilder.newTrigger()
                     .withSchedule(CronScheduleBuilder.cronSchedule(srmConfiguration.retrieveCronExpressionForResendPublishedResourcesKafkaMessage()).withMisfireHandlingInstructionDoNothing()).build();
 
+            CronExpression cronEx = new CronExpression(cronTrigger.getCronExpression());
+
+            if (cronEx.getNextValidTimeAfter(new Date()) == null) {
+                logger.info(
+                        "ATENTION!! Cron scheduler for resend all published last version srm resources kafka messages  is before actual date. For this reason the job has been aborted and it will not never executed ",
+                        new Date());
+                return;
+            }
+
             Scheduler sched = schedulerFactory.getScheduler();
             sched.scheduleJob(job, cronTrigger);
 
-            logger.info("resend all published last version dataset kafka messages at {} ", new Date());
+            logger.info("resend all published last version srm resources kafka messages at {} ", new Date());
 
         } catch (Exception e) {
-            logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
+            logger.error("An unexpected error has occurred scheduling resend all published last version srm resources kafka messages job", e);
         }
     }
 }

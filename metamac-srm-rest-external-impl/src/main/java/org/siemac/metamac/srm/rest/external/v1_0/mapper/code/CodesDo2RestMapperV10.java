@@ -37,7 +37,7 @@ public interface CodesDo2RestMapperV10 {
 
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields);
-    List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException;
+    List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields, List<String> quotedCharacters) throws MetamacException;
 
     Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended);
     RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources);

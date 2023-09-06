@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
@@ -249,7 +250,7 @@ public class SrmRestInternalUtils {
         return fields != null && fields.contains(field);
     }
 
-    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages, List<String> quotedCharacters) {
+    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages, String format) {
         Map<String, String> target = new LinkedHashMap<>();
 
         InternationalString copySource = new InternationalString();
@@ -261,29 +262,27 @@ public class SrmRestInternalUtils {
         String header;
         for (String language : languages) {
             header = nameField + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
-            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language, quotedCharacters));
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language, format));
         }
 
         return target;
     }
 
-    private static String getLocalisedStringByLang(List<LocalisedString> source, String language, List<String> quotedCharacters) {
+    private static String getLocalisedStringByLang(List<LocalisedString> source, String language, String format) {
         // in the api, lamba functions is not allowed. the search is done with a loop.
         for (LocalisedString loc : source) {
             if (language.equals(loc.getLang())) {
                 String value = TsvExportationUtils.removeUnsupportedCharaters(loc.getValue());
-                return quotedFields(value, quotedCharacters);
+                return formattedText(value, format);
             }
         }
         return null;
     }
 
-    public static String quotedFields(String value, List<String> excludedCharacter) {
-        for (String character : excludedCharacter) {
-            if (value.contains(character)) {
-                return "\"" + value + "\"";
-            }
+    private static String formattedText(String text, String format) {
+        if ("csv".equals(format)) {
+            text = StringEscapeUtils.escapeCsv(text);
         }
-        return value;
+        return text;
     }
 }

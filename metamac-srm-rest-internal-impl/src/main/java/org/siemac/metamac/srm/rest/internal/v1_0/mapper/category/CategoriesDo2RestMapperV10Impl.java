@@ -142,7 +142,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields, List<String> quotedCharacters) throws MetamacException {
+    public List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields, String format) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
@@ -150,27 +150,27 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         List<PlainTextResource> target = new ArrayList<>();
 
         for (CategoryResourceInternal category : source.getCategories()) {
-            target.add(toFlattenCategory(category, languages, fields, quotedCharacters));
+            target.add(toFlattenCategory(category, languages, fields, format));
         }
 
         return target;
     }
 
-    private PlainTextResource toFlattenCategory(CategoryResourceInternal source, List<String> languages, Set<String> fields, List<String> quotedCharacters) {
+    private PlainTextResource toFlattenCategory(CategoryResourceInternal source, List<String> languages, Set<String> fields, String format) {
         PlainTextResource target = new PlainTextResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
-        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages, quotedCharacters));
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages, format));
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
-            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages, quotedCharacters));
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages, format));
         }
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, source.getEniSchemeType() != null ? source.getEniSchemeType().getId() : null);
             target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_ENI_SCHEME_NAME,
-                    source.getEniSchemeType() != null ? source.getEniSchemeType().getName() : null, languages, quotedCharacters));
+                    source.getEniSchemeType() != null ? source.getEniSchemeType().getName() : null, languages, format));
         }
 
         return target;

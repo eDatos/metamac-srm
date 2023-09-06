@@ -285,7 +285,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Concepts concepts = findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow, getQuotedCharacters(format));
+            List<PlainTextResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow, format);
 
             String fileNamePrefix = "concepts";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
@@ -423,7 +423,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow, getQuotedCharacters(format));
+            List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow, format);
 
             String fileNamePrefix = "categories";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
@@ -587,8 +587,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Organisations organisations = findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow,
-                    getQuotedCharacters(format));
+            List<PlainTextResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow, format);
             String fileNamePrefix = "organisations";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
@@ -1046,7 +1045,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Codes codes = findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow, getQuotedCharacters(format));
+            List<PlainTextResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow, format);
 
             String fileNamePrefix = "codes";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
@@ -2220,13 +2219,4 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
         return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
     }
-
-    private List<String> getQuotedCharacters(String format) {
-        List<String> quotedCharacters = new ArrayList<String>();
-        if ("csv".equals(format)) {
-            quotedCharacters.add(",");
-        }
-        return quotedCharacters;
-    }
-
 }

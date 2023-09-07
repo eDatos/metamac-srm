@@ -11701,6 +11701,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 taskImportTsvInfo.getInformationItems().get(0));
     }
 
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyCodelist() {
+        // No test. cron job process
+    }
+
     private VariableElementOperation getVariableElementOperationByCode(List<VariableElementOperation> operations, String code) {
         for (VariableElementOperation variableElementOperation : operations) {
             if (code.equals(variableElementOperation.getCode())) {

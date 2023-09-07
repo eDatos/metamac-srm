@@ -113,4 +113,15 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     public void deleteEntitiesMarkedToDelete(ServiceContext ctx) throws MetamacException {
         getTasksMetamacService().deleteEntitiesMarkedToDelete(ctx);
     }
+
+    @Override
+    public void executeResendPublishedResourcesKafkaMessageTask(ServiceContext ctx) throws MetamacException {
+        getTasksMetamacService().processResendKafkaResourcesMessageTask(ctx);
+    }
+
+    @Override
+    public void scheduleResendKafkaResourcesMessageJob(ServiceContext ctx) {
+        getTasksMetamacService().scheduleResendKafkaResourcesMessageJob(ctx);
+
+    }
 }

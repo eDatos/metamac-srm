@@ -56,13 +56,14 @@ public class SrmConstants {
     public static final String             TSV_HEADER_REPRESENTATION_SUB_VALUE                                    = "value";
     public static final String             TSV_HEADER_CONCEPT_EXTENDS                                             = "concept_extends";
     public static final String             TSV_HEADER_SDMX_RELATED_ARTEFACT                                       = "sdmx_role";
+    public static final String             TSV_HEADER_CATEGORY_ELEMENT                                            = "category_element";
 
     // QUANTITY
     public static final String             TSV_HEADER_QUANTITY_TYPE                                               = "quantity_type";
-    public static final String             TSV_HEADER_UNIT_CODELIST_CODE                                          = "unit_codelist_code";
+    public static final String             TSV_HEADER_UNIT_CODELIST_URN                                           = "unit_codelist_urn";
     public static final String             TSV_HEADER_UNIT_CODE                                                   = "unit_code";
     public static final String             TSV_HEADER_UNIT_SYMBOL_POSITION                                        = "unit_symbol_position";
-    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODELIST_CODE                               = "unit_multiplier_codelist_code";
+    public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODELIST_URN                                = "unit_multiplier_codelist_urn";
     public static final String             TSV_HEADER_UNIT_MULTIPLIER_CODE                                        = "unit_multiplier_code";
     public static final String             TSV_HEADER_SIGNIFICANT_DIGITS                                          = "significant_digits";
     public static final String             TSV_HEADER_DECIMAL_PLACES                                              = "decimals_digits";
@@ -76,7 +77,7 @@ public class SrmConstants {
     public static final String             TSV_HEADER_PERCENTAGE_OF                                               = "percentage_of";
     public static final String             TSV_HEADER_INDEX_BASE_VALUE                                            = "index_base_value";
     public static final String             TSV_HEADER_INDEX_BASE_TIME                                             = "index_base_time";
-    public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_CODE                           = "index_base_location_codelist_code";
+    public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODELIST_URN                            = "index_base_location_codelist_urn";
     public static final String             TSV_HEADER_INDEX_BASE_LOCATION_CODE                                    = "index_base_location_code";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT_SCHEME                                = "base_quantity_concept_scheme";
     public static final String             TSV_HEADER_BASE_QUANTITY_CONCEPT                                       = "base_quantity_concept";
@@ -104,8 +105,10 @@ public class SrmConstants {
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_GEO_IMPORTATION            = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION               = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_OPENNESS_LEVES_IMPORTATION             = 1000000;
+    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_RESOURCE_ELEMENTS_IMPORTATION                = 150000;
 
     public static final int                VARIABLE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
+    public static final int                RESOURCE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
 
     // Misc
     public static final int                METADATA_SHORT_NAME_MAXIMUM_LENGTH                                     = 100;

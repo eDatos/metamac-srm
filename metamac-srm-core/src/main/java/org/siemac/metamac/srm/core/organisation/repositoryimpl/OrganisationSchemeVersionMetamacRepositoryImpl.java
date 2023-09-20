@@ -115,4 +115,14 @@ public class OrganisationSchemeVersionMetamacRepositoryImpl extends Organisation
         // no metadata specific in metamac
     }
 
+    @Override
+    public List<OrganisationSchemeVersionMetamac> retrieveOrganisationSchemesPublishedExternally() throws MetamacException {
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("procStatus", ProcStatusEnum.EXTERNALLY_PUBLISHED);
+        return findByQuery("from OrganisationSchemeVersionMetamac where maintainableArtefact.latestVersionNumberPublic is not null and lifeCycleMetadata.procStatus = :procStatus)", parameters,
+                Integer.MAX_VALUE);
+
+    }
+
 }

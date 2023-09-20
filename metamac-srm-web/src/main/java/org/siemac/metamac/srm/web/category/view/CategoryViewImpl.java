@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
@@ -18,8 +19,15 @@ import org.siemac.metamac.srm.web.client.utils.MasterTablesUtils;
 import org.siemac.metamac.srm.web.client.utils.SemanticIdentifiersUtils;
 import org.siemac.metamac.srm.web.client.widgets.AnnotationsPanel;
 import org.siemac.metamac.srm.web.client.widgets.CustomVLayout;
+import org.siemac.metamac.srm.web.client.widgets.RelatedResourceLinkItem;
+import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
+import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
+import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
+import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.CustomSectionStack;
+import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
+import org.siemac.metamac.web.common.client.widgets.actions.SearchPaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
@@ -27,46 +35,52 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTex
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
+import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
+import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> implements CategoryPresenter.CategoryView {
 
-    private VLayout                   panel;
-    private CategoryMainFormLayout    mainFormLayout;
+    private VLayout                              panel;
+    private CategoryMainFormLayout               mainFormLayout;
 
-    private CategoriesTreeGrid        categoriesTreeGrid;
+    private CategoriesTreeGrid                   categoriesTreeGrid;
 
     // View forms
-    private GroupDynamicForm          identifiersForm;
-    private GroupDynamicForm          productionDescriptorsForm;
-    private GroupDynamicForm          contentDescriptorsForm;
-    private GroupDynamicForm          commentsForm;
-    private AnnotationsPanel          annotationsPanel;
+    private GroupDynamicForm                     identifiersForm;
+    private GroupDynamicForm                     productionDescriptorsForm;
+    private GroupDynamicForm                     contentDescriptorsForm;
+    private GroupDynamicForm                     commentsForm;
+    private AnnotationsPanel                     annotationsPanel;
 
     // Edition forms
-    private GroupDynamicForm          identifiersEditionForm;
-    private GroupDynamicForm          productionDescriptorsEditionForm;
-    private GroupDynamicForm          contentDescriptorsEditionForm;
-    private CustomSelectItem          eniSchemaCatalog;
-    private GroupDynamicForm          commentsEditionForm;
-    private AnnotationsPanel          annotationsEditionPanel;
+    private GroupDynamicForm                     identifiersEditionForm;
+    private GroupDynamicForm                     productionDescriptorsEditionForm;
+    private GroupDynamicForm                     contentDescriptorsEditionForm;
+    private CustomSelectItem                     eniSchemaCatalog;
+    private GroupDynamicForm                     commentsEditionForm;
+    private AnnotationsPanel                     annotationsEditionPanel;
 
-    private CategorySchemeMetamacDto  categorySchemeDto;
-    private CategoryMetamacDto        categoryDto;
+    private CategorySchemeMetamacDto             categorySchemeDto;
+    private CategoryMetamacDto                   categoryDto;
 
-    private List<EniSchemaCatalogDto> eniSchemaCatalogDto;
+    private List<EniSchemaCatalogDto>            eniSchemaCatalogDto;
+
+    private SearchRelatedResourcePaginatedWindow searchCategoryElementWindow;
 
     public CategoryViewImpl() {
         super();
@@ -168,8 +182,8 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
     }
 
     @Override
-    public void setCategoryList(CategorySchemeMetamacDto categorySchemeDto, List<ItemVisualisationResult> itemVisualisationResults) {
-        categoriesTreeGrid.setCategories(categorySchemeDto, itemVisualisationResults);
+    public void setCategoryList(CategorySchemeMetamacDto categorySchemeDto, List<CategoryMetamacVisualisationResult> categoryVisualisationResults) {
+        categoriesTreeGrid.setCategories(categorySchemeDto, categoryVisualisationResults);
         categoriesTreeGrid.selectItem(categoryDto.getUrn());
     }
 
@@ -191,8 +205,9 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         // Content descriptors
         contentDescriptorsForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         ViewMultiLanguageTextItem description = new ViewMultiLanguageTextItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
+        RelatedResourceLinkItem categoryElement = new RelatedResourceLinkItem(CategoryDS.CATEGORY_ELEMENT, getConstants().categoryElement(), getCustomLinkItemNavigationClickHandler());
         ViewTextItem eniSchema = new ViewTextItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
-        contentDescriptorsForm.setFields(description, eniSchema);
+        contentDescriptorsForm.setFields(description, categoryElement, eniSchema);
 
         // Comments
         commentsForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -235,9 +250,10 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         // Content descriptors
         contentDescriptorsEditionForm = new GroupDynamicForm(getConstants().formContentDescriptors());
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
+        SearchRelatedResourceLinkItem categoryElement = createCategoryElementItem(CategoryDS.CATEGORY_ELEMENT, getConstants().categoryElement());
         eniSchemaCatalog = new CustomSelectItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
 
-        contentDescriptorsEditionForm.setFields(description, eniSchemaCatalog);
+        contentDescriptorsEditionForm.setFields(description, categoryElement, eniSchemaCatalog);
 
         // Comments
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -267,6 +283,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         contentDescriptorsForm.setValue(CategoryDS.DESCRIPTION, categoryDto.getDescription());
+        ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CategoryDS.CATEGORY_ELEMENT)).setRelatedResource(categoryDto.getCategoryElement());
 
         contentDescriptorsForm.setValue(CategoryDS.ENI_SCHEMA, categoryDto.getEniSchema() == null ? "" : InternationalStringUtils.getLocalisedString(categoryDto.getEniSchema().getDescription()));
 
@@ -291,6 +308,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         contentDescriptorsEditionForm.setValue(CategoryDS.DESCRIPTION, categoryDto.getDescription());
+        ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CategoryDS.CATEGORY_ELEMENT)).setRelatedResource(categoryDto.getCategoryElement());
         eniSchemaCatalog.setValue(categoryDto.getEniSchema() != null ? categoryDto.getEniSchema().getId() : null);
 
         // Comments
@@ -349,6 +367,23 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
                 }
             }
         });
+
+        // Update category element
+        mainFormLayout.getUpdateCategoryElement().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                showSearchCategoryElementWindow(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                        RelatedResourceDto selectedCategoryElement = searchCategoryElementWindow.getSelectedRelatedResource();
+                        searchCategoryElementWindow.markForDestroy();
+                        getUiHandlers().updateCategoryElement(categoryDto.getUrn(), selectedCategoryElement.getUrn());
+                    }
+                });
+            }
+        });
     }
 
     private boolean validateEditionForms() {
@@ -363,6 +398,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
 
         // Content descriptors
         categoryDto.setDescription(contentDescriptorsEditionForm.getValueAsInternationalStringDto(CategoryDS.DESCRIPTION));
+        categoryDto.setCategoryElement(((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CategoryDS.CATEGORY_ELEMENT)).getRelatedResourceDto());
         categoryDto.setEniSchema(MasterTablesUtils.geteniSchemaCatalogDto(eniSchemaCatalog.getValueAsString(), eniSchemaCatalogDto));
 
         // Comments
@@ -415,9 +451,82 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         };
     }
 
+    // ------------------------------------------------------------------------------------------------------------
+    // CLICK HANDLERS
+    // ------------------------------------------------------------------------------------------------------------
+
+    private CustomLinkItemNavigationClickHandler getCustomLinkItemNavigationClickHandler() {
+        return new CustomLinkItemNavigationClickHandler() {
+
+            @Override
+            public BaseUiHandlers getBaseUiHandlers() {
+                return getUiHandlers();
+            }
+        };
+    }
+
+    private SearchRelatedResourceLinkItem createCategoryElementItem(String name, String title) {
+        SearchRelatedResourceLinkItem categoryElementItem = new SearchRelatedResourceLinkItem(name, title, getCustomLinkItemNavigationClickHandler());
+        categoryElementItem.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                showSearchCategoryElementWindow(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent arg0) {
+                        RelatedResourceDto selectedCategoryElement = searchCategoryElementWindow.getSelectedRelatedResource();
+                        searchCategoryElementWindow.markForDestroy();
+                        // Set selected category element in form
+                        ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CategoryDS.CATEGORY_ELEMENT)).setRelatedResource(selectedCategoryElement);
+                    }
+                });
+            }
+        });
+        return categoryElementItem;
+    }
+
+    private void showSearchCategoryElementWindow(com.smartgwt.client.widgets.form.fields.events.ClickHandler acceptButtonClickHandler) {
+        final int FIRST_RESULST = 0;
+        final int MAX_RESULTS = 8;
+        searchCategoryElementWindow = new SearchRelatedResourcePaginatedWindow(getConstants().categoryElementSelection(), MAX_RESULTS, new PaginatedAction() {
+
+            @Override
+            public void retrieveResultSet(int firstResult, int maxResults) {
+                getUiHandlers().retrieveCategoryElements(firstResult, maxResults, searchCategoryElementWindow.getRelatedResourceCriteria());
+            }
+        });
+
+        // Load categories (to populate the selection window)
+        getUiHandlers().retrieveCategoryElements(FIRST_RESULST, MAX_RESULTS, null);
+
+        searchCategoryElementWindow.getListGridItem().getListGrid().setSelectionType(SelectionStyle.SINGLE);
+        searchCategoryElementWindow.getListGridItem().setSearchAction(new SearchPaginatedAction() {
+
+            @Override
+            public void retrieveResultSet(int firstResult, int maxResults, String criteria) {
+                getUiHandlers().retrieveCategoryElements(firstResult, maxResults, criteria);
+            }
+        });
+        searchCategoryElementWindow.getSave().addClickHandler(acceptButtonClickHandler);
+    }
+
+    @Override
+    public void setCategoryElements(GetRelatedResourcesResult result) {
+        if (searchCategoryElementWindow != null) {
+            searchCategoryElementWindow.setRelatedResources(result.getRelatedResourceDtos());
+            searchCategoryElementWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), result.getRelatedResourceDtos().size(), result.getTotalResults());
+        }
+    }
+
     @Override
     public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
         this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
     }
 }

@@ -23,8 +23,6 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.client.utils.WaitingAsyncCallbackHandlingExportResult;
@@ -47,6 +45,8 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactRe
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.OrganisationSchemeWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityAction;
 import org.siemac.metamac.srm.web.shared.organisation.CancelOrganisationSchemeValidityResult;
 import org.siemac.metamac.srm.web.shared.organisation.CopyOrganisationSchemeAction;
@@ -100,7 +100,6 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -112,8 +111,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePresenter.OrganisationSchemeView, OrganisationSchemePresenter.OrganisationSchemeProxy>
         implements
-            OrganisationSchemeUiHandlers,
-            UpdateAnnotationTypeHandler {
+            OrganisationSchemeUiHandlers {
 
     private final DispatchAsync                   dispatcher;
     private final PlaceManager                    placeManager;
@@ -150,6 +148,7 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -191,7 +190,7 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
         try {
             OrganisationSchemeTypeEnum type = !StringUtils.isBlank(typeParam) ? OrganisationSchemeTypeEnum.valueOf(typeParam) : null;
             if (!StringUtils.isBlank(identifier) && type != null) {
-                retrieveOrganisationScheme(identifier, type);
+                retrieveResources(identifier, type);
             } else {
                 MetamacSrmWeb.showErrorPage();
             }
@@ -698,9 +697,19 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
         ChangeWaitPopupVisibilityEvent.fire(this, true);
     }
 
-    @ProxyEvent
-    @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
-        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
+    private void retrieveResources(final String identifier, final OrganisationSchemeTypeEnum type) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveOrganisationScheme(identifier, type);
+                }
+            });
+        } else {
+            retrieveOrganisationScheme(identifier, type);
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.client.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.utils.TasksClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.view.handlers.MainPageUiHandlers;
@@ -68,8 +69,6 @@ public class StructuralResourcesMenu extends ToolStrip {
         });
         addButton(dsdListButton);
 
-        addSeparator();
-
         // ORGANISATIONS
 
         organisationsButton = new RadioToolStripButton(getConstants().organisations());
@@ -96,8 +95,6 @@ public class StructuralResourcesMenu extends ToolStrip {
         });
         addButton(categoriesButton);
 
-        addSeparator();
-
         // ADMINISTRATION
 
         adminButton = new RadioToolStripButton(getConstants().admin());
@@ -109,10 +106,12 @@ public class StructuralResourcesMenu extends ToolStrip {
                 getUiHandlers().goToAdministration();
             }
         });
-        addButton(adminButton);
 
-        addSeparator();
-        addSeparator();
+        if (!AdminClientSecurityUtils.canAdministrate()) {
+            adminButton.hide();
+        }
+
+        addButton(adminButton);
 
         // IMPORTATION
 

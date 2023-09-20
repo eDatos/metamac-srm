@@ -4133,8 +4133,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
         assertEquals(1, taskImportTsvInfo.getInformationItems().size());
-        assertEquals(5, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().size());
-        for (int i = 0; i < 5; i++) {
+        assertEquals(3, taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().size());
+        for (int i = 0; i < 3; i++) {
             assertEquals(ServiceExceptionType.METADATA_UNEXPECTED.getCode(), taskImportTsvInfo.getInformationItems().get(0).getExceptionItems().get(i).getCode());
         }
     }
@@ -4202,13 +4202,13 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         header.append("\t" + sdmxRelatedArtefact);
         String quantityType = "quantity_type";
         header.append("\t" + quantityType);
-        String unitCodelistCode = "unit_codelist_code";
+        String unitCodelistCode = "unit_codelist_urn";
         header.append("\t" + unitCodelistCode);
         String unitCode = "unit_code";
         header.append("\t" + unitCode);
         String unitSymbolPosition = "unit_symbol_position";
         header.append("\t" + unitSymbolPosition);
-        String unitMultiplierCodeListCode = "unit_multiplier_codelist_code";
+        String unitMultiplierCodeListCode = "unit_multiplier_codelist_urn";
         header.append("\t" + unitMultiplierCodeListCode);
         String unitMultiplierCode = "unit_multiplier_code";
         header.append("\t" + unitMultiplierCode);
@@ -4236,7 +4236,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         header.append("\t" + indexBaseValue);
         String indexBaseTime = "index_base_time";
         header.append("\t" + indexBaseTime);
-        String indexBaseLocationCodelistCode = "index_base_location_codelist_code";
+        String indexBaseLocationCodelistCode = "index_base_location_codelist_urn";
         header.append("\t" + indexBaseLocationCodelistCode);
         String indexBaseLocationCode = "index_base_location_code";
         header.append("\t" + indexBaseLocationCode);
@@ -6042,5 +6042,11 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmConceptsTest.xml";
+    }
+
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyConceptSchemes() {
+        // No test. cron job process
     }
 }

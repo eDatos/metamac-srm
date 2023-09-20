@@ -174,6 +174,7 @@ public class OrganisationSchemeLifeCycleImpl extends LifeCycleImpl {
             if (SdmxSrmValidationUtils.isOrganisationSchemeWithSpecialTreatment(organisationSchemeVersion)) {
                 // Do not mark as final in SDMX metadata. Only mark it is LatestFinal
                 organisationSchemeVersion.getMaintainableArtefact().setLatestFinal(Boolean.TRUE);
+                organisationSchemeVersion.getMaintainableArtefact().setLatestVersionNumberFinal(Boolean.TRUE); // only one version is allowed why is always de last number version.
                 updateSrmResource(ctx, organisationSchemeVersion);
             } else {
                 // Mark as final

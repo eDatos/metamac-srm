@@ -92,7 +92,7 @@ public class TasksMetamacInvocationValidator extends BaseInvocationValidator {
 
         ExceptionUtils.throwIfException(exceptions);
     }
-    
+
     public static void checkImportCodeOpennessTsvInBackground(String codelistUrn, File file, String fileName, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
@@ -104,7 +104,7 @@ public class TasksMetamacInvocationValidator extends BaseInvocationValidator {
 
         ExceptionUtils.throwIfException(exceptions);
     }
-    
+
     public static void checkImportVariableElementsTsvInBackground(String variableUrn, File file, String fileName, boolean updateAlreadyExisting, List<MetamacExceptionItem> exceptions)
             throws MetamacException {
         if (exceptions == null) {
@@ -112,6 +112,18 @@ public class TasksMetamacInvocationValidator extends BaseInvocationValidator {
         }
 
         ValidationUtils.checkParameterRequired(variableUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
+        ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.FILE_NAME, exceptions);
+        ValidationUtils.checkParameterRequired(updateAlreadyExisting, ServiceExceptionParameters.IMPORTATION_TSV_UPDATE_ALREADY_EXISTING, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkImportResourceElementsTsvInBackground(File file, String fileName, boolean updateAlreadyExisting, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
         ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
         ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.FILE_NAME, exceptions);
         ValidationUtils.checkParameterRequired(updateAlreadyExisting, ServiceExceptionParameters.IMPORTATION_TSV_UPDATE_ALREADY_EXISTING, exceptions);

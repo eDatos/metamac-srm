@@ -11,22 +11,22 @@ import org.springframework.stereotype.Component;
 public class ConceptSchemeDo2AvroMapper implements Do2AvroMapper<ConceptSchemeVersionMetamac, ConceptSchemeAvro> {
 
     @Autowired
-    private InternationalStringDo2AvroMapper internationalStringMapper;
+    private InternationalStringDo2AvroMapper   internationalStringMapper;
 
     @Autowired
-    private OrganisationDo2AvroMapper maintainerMapper;
+    private OrganisationDo2AvroMapper          maintainerMapper;
 
     @Autowired
-    private CategorisationDo2AvroMapper categorisationMapper;
+    private CategorisationDo2AvroMapper        categorisationMapper;
 
     @Autowired
-    private ProcStatusEnumDo2AvroMapper procStatusMapper;
+    private ProcStatusEnumDo2AvroMapper        procStatusMapper;
 
     @Autowired
     private ConceptSchemeTypeEnumDo2AvroMapper conceptSchemeTypeEnumDo2AvroMapper;
 
     @Autowired
-    private ExternalItemDo2AvroMapper externalItemDo2AvroMapper;
+    private ExternalItemDo2AvroMapper          externalItemDo2AvroMapper;
 
     @Override
     public ConceptSchemeAvro toAvro(ConceptSchemeVersionMetamac source) {
@@ -38,7 +38,9 @@ public class ConceptSchemeDo2AvroMapper implements Do2AvroMapper<ConceptSchemeVe
                 .setUrn(source.getMaintainableArtefact().getUrn()).setVersion(source.getVersion()).setUriProvider(source.getMaintainableArtefact().getUriProvider())
                 .setUrnProvider(source.getMaintainableArtefact().getUrnProvider()).setDescription(internationalStringMapper.toAvro(source.getMaintainableArtefact().getDescription()))
                 .setIsPartial(source.getIsPartial()).setFinalLogic(source.getMaintainableArtefact().getFinalLogic())
-                .setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer())).setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
+                .setLatestVersionNumberFinal(source.getMaintainableArtefact().getLatestVersionNumberFinal())
+                .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
+                .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
                 .setConceptSchemeType(conceptSchemeTypeEnumDo2AvroMapper.toAvro(source.getType())).setStatisticalOperation(externalItemDo2AvroMapper.do2Avro(source.getRelatedOperation())).build();
     }

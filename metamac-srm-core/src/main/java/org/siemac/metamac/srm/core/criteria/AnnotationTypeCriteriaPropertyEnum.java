@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public enum AnnotationTypeCriteriaPropertyEnum implements Serializable {
 
-    CODE, TITLE;
+    CODE, TITLE, UUID;
 
     private AnnotationTypeCriteriaPropertyEnum() {
     }

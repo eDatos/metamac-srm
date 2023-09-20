@@ -135,7 +135,7 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                 case EXTERNAL_PUBLICATION_USER:
                     return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.lifeCycleMetadata().externalPublicationUser(), PropertyTypeEnum.STRING, propertyRestriction);
                 case LATEST:
-                    return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.maintainableArtefact().latestVersionNumberFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case VARIABLE_FAMILY_URN:
                     return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.variable().families().nameableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case NORMALIZATION_TYPE:
@@ -189,7 +189,7 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                     return buildSculptorPropertyCriteria(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().publicLogic(), PropertyTypeEnum.PROC_STATUS_ITEM_SCHEME_FROM_ITEM,
                             propertyRestriction);
                 case CODELIST_LATEST:
-                    return buildSculptorPropertyCriteria(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().latestFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteria(CodeMetamacProperties.itemSchemeVersion().maintainableArtefact().latestVersionNumberFinal(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case DEFAULT_GEOGRAPHICAL_GRANULARITIES_CODELIST: {
                     MetamacRestQueryPropertyRestriction codelistPropertyRestriction = constructCodelistPropertyRestrictionForDefaultGeographicalGranularityCodelist(propertyRestriction);
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(codelistPropertyRestriction, CodeMetamacProperties.itemSchemeVersion().maintainableArtefact());

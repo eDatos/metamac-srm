@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.category.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -43,8 +44,8 @@ public class CategoriesAsserts extends Asserts {
         if (expected != null) {
             Asserts.assertEqualsResource(expected, SrmRestConstants.KIND_CATEGORY, expectedSelfLink, expectedManagementLink, actual);
         } else if (expectedItemResult != null) {
-            Asserts.assertEqualsResource(expectedItemResult, SrmRestConstants.KIND_CATEGORY, expectedSelfLink, expectedManagementLink, actual, itemSchemeVersion.getMaintainableArtefact()
-                    .getIsImported());
+            Asserts.assertEqualsResource(expectedItemResult, SrmRestConstants.KIND_CATEGORY, expectedSelfLink, expectedManagementLink, actual,
+                    itemSchemeVersion.getMaintainableArtefact().getIsImported());
         }
         assertEquals(codeFullExpected, actual.getNestedId());
     }
@@ -60,5 +61,14 @@ public class CategoriesAsserts extends Asserts {
         assertEquals(SrmRestConstants.KIND_CATEGORISATION, actual.getSelfLink().getKind());
         assertEquals(expectedSelfLink, actual.getSelfLink().getHref());
         assertEqualsInternationalString(expected.getMaintainableArtefact().getName(), actual.getName());
+    }
+
+    public static void assertEqualsCategoryElementResult(CategoryElement categoryElement, Resource categoryElementResult) {
+        String selfLinkHrefExpected = "http://data.istac.es/apis/structural-resources/v1.0/categoryelements/" + categoryElement.getIdentifiableArtefact().getCode();
+        String kindExpected = "structuralResources#categoryElement";
+        assertEquals(categoryElement.getIdentifiableArtefact().getCode(), categoryElementResult.getId());
+        assertEquals(categoryElement.getIdentifiableArtefact().getUrn(), categoryElementResult.getUrn());
+        assertEquals(kindExpected, categoryElementResult.getKind());
+        assertEquals(selfLinkHrefExpected, categoryElementResult.getSelfLink().getHref());
     }
 }

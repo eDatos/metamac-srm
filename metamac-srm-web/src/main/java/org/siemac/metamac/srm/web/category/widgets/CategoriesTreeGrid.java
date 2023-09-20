@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.category.widgets;
 
 import java.util.List;
 
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.web.category.utils.CategoriesClientSecurityUtils;
@@ -75,9 +76,9 @@ public class CategoriesTreeGrid extends ItemsTreeGrid {
         addItemsToContextMenu(createCategoryMenuItem, deleteCategoryMenuItem);
     }
 
-    public void setCategories(CategorySchemeMetamacDto categorySchemeMetamacDto, List<ItemVisualisationResult> itemVisualisationResults) {
+    public void setCategories(CategorySchemeMetamacDto categorySchemeMetamacDto, List<CategoryMetamacVisualisationResult> categoryVisualisationResults) {
         this.categorySchemeMetamacDto = categorySchemeMetamacDto;
-        super.setItems(categorySchemeMetamacDto, itemVisualisationResults);
+        super.setItems(categorySchemeMetamacDto, categoryVisualisationResults);
     }
 
     @Override

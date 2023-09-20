@@ -31,10 +31,11 @@ public class RestTestConstants {
     public static String QUERY_LATEST                         = "LATEST " + ComparisonOperator.EQ + " \"true\"";
 
     public static String ORDER_BY_ID_DESC                     = "ID " + OrderOperator.DESC;
-    
-    public static String BASE_ENI_SCHEME_IDENTIFIER                     = "ID - ";
-    
+
+    public static String BASE_ENI_SCHEME_IDENTIFIER           = "ID - ";
+
     public static String FIELD_ENI_SCHEME                     = "+eniSchemeType";
+    public static String FIELD_CATEGORY_ELEMENT               = "+categoryElement";
 
     public static String URI_MARK_TO_RECOGNISE_IS_IN_DATABASE = "db:";
 }

@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
@@ -26,8 +29,6 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
@@ -62,6 +63,8 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsActio
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemesAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemesResult;
+import org.siemac.metamac.srm.web.shared.category.NormaliseCategoryElementsToCategoriesAction;
+import org.siemac.metamac.srm.web.shared.category.NormaliseCategoryElementsToCategoriesResult;
 import org.siemac.metamac.srm.web.shared.category.ReSendCategorySchemeStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.category.ReSendCategorySchemeStreamMessageResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryAction;
@@ -70,12 +73,17 @@ import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusAction;
 import org.siemac.metamac.srm.web.shared.category.UpdateCategorySchemeProcStatusResult;
+import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeResult;
+import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
@@ -98,7 +106,6 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -108,10 +115,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.CategorySchemeView, CategorySchemePresenter.CategorySchemeProxy>
-        implements
-            CategorySchemeUiHandlers,
-            UpdateAnnotationTypeHandler {
+public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.CategorySchemeView, CategorySchemePresenter.CategorySchemeProxy> implements CategorySchemeUiHandlers {
 
     private final DispatchAsync                      dispatcher;
     private final PlaceManager                       placeManager;
@@ -135,10 +139,13 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
         void setCategoryScheme(CategorySchemeMetamacDto categorySchemeMetamacDto);
         void setCategorySchemeVersions(List<CategorySchemeMetamacBasicDto> categorySchemeMetamacDtos);
-        void setCategories(List<ItemVisualisationResult> categoryDtos);
+        void setCategories(List<CategoryMetamacVisualisationResult> categoryDtos);
         void startCategorySchemeEdition();
         void setLatestCategorySchemeForInternalPublication(GetCategorySchemesResult result);
         void selectCategorySchemeTab();
+
+        void setCodesCategoryElementsNormalised(List<CodeCategoryElementNormalisationResult> codeCategoryElementNormalisationResults);
+        void setCategoryElementsForManualNormalisation(GetRelatedResourcesResult categoryElementsRelatedResult);
 
         // Categorisations
 
@@ -146,6 +153,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         void setCategorySchemesForCategorisations(GetRelatedResourcesResult result);
         void setCategoriesForCategorisations(GetRelatedResourcesResult result);
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -184,7 +192,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         super.prepareFromRequest(request);
         String param = PlaceRequestUtils.getCategorySchemeParamFromUrl(placeManager);
         if (!StringUtils.isBlank(param)) {
-            retrieveCompleteCategorySchemeByIdentifier(param);
+            retrieveResources(param);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
@@ -618,6 +626,81 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                 });
     }
 
+    @Override
+    public void retrieveCategories() {
+        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeMetamacDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale()),
+                new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetCategoriesBySchemeResult result) {
+                        getView().setCategories(result.getCategories());
+                    }
+                });
+    }
+
+    //
+    // NORMALISATION (CATEGORY ELEMENTS AND CODES)
+    //
+
+    @Override
+    public void normaliseCategoryElementsToCodes(String categorySchemeUrn, String locale, boolean onlyNormaliseCategoriesWithoutCategoryElement) {
+
+        dispatcher.execute(new NormaliseCategoryElementsToCategoriesAction(categorySchemeUrn, locale, onlyNormaliseCategoriesWithoutCategoryElement),
+                new WaitingAsyncCallbackHandlingError<NormaliseCategoryElementsToCategoriesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(NormaliseCategoryElementsToCategoriesResult result) {
+                        getView().setCodesCategoryElementsNormalised(result.getCodeCategoryElementNormalisationResults());
+                    }
+                });
+
+    }
+
+    @Override
+    public void updateCodesCategoryElements(String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) {
+
+        dispatcher.execute(new UpdateCodesCategoryElementsAction(categorySchemeUrn, categoryElementsIdByCodeId), new WaitingAsyncCallbackHandlingError<UpdateCodesCategoryElementsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(UpdateCodesCategoryElementsResult result) {
+                retrieveCategories();
+            }
+        });
+
+    }
+
+    @Override
+    public void retrieveCategoryElementsForManualNormalisation(int firstResult, int maxResults, String criteria) {
+
+        CategoryElementWebCriteria categoryElementWebCriteria = new CategoryElementWebCriteria(criteria);
+
+        dispatcher.execute(new GetRelatedResourcesAction(StructuralResourcesRelationEnum.CATEGORY_ELEMENT_WITH_CODE, firstResult, maxResults, categoryElementWebCriteria),
+                new WaitingAsyncCallbackHandlingError<GetRelatedResourcesResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetRelatedResourcesResult result) {
+                        getView().setCategoryElementsForManualNormalisation(result);
+                    }
+                });
+
+    }
+
     //
     // NAVIGATION
     //
@@ -646,9 +729,20 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         placeManager.updateHistory(placeRequest, true);
     }
 
-    @ProxyEvent
-    @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
-        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
+    private void retrieveResources(final String param) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteCategorySchemeByIdentifier(param);
+                }
+            });
+        } else {
+            retrieveCompleteCategorySchemeByIdentifier(param);
+        }
     }
+
 }

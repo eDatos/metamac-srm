@@ -1,5 +1,9 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
+import java.util.Date;
+
+import org.siemac.metamac.common.test.utils.MetamacMocks;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.organisation.serviceapi.utils.OrganisationsMetamacDtoMocks;
@@ -28,5 +32,18 @@ public class CategoriesMetamacDtoMocks {
         CategoryMetamacDto categoryMetamacDto = new CategoryMetamacDto();
         CategoriesDtoMocks.mockCategoryDto(categoryMetamacDto);
         return categoryMetamacDto;
+    }
+
+    // -----------------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // -----------------------------------------------------------------------------------
+    public static CategoryElementDto mockCategoryElementDto() {
+        CategoryElementDto categoryElementDto = new CategoryElementDto();
+        categoryElementDto.setCode("code-" + MetamacMocks.mockString(10));
+        categoryElementDto.setShortName(MetamacMocks.mockInternationalStringDto("es", "shortName" + MetamacMocks.mockString(10)));
+        categoryElementDto.setComment(MetamacMocks.mockInternationalStringDto("es", "comment" + MetamacMocks.mockString(10)));
+        categoryElementDto.setValidFrom(new Date());
+        categoryElementDto.setValidTo(new Date());
+        return categoryElementDto;
     }
 }

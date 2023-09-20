@@ -175,7 +175,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields, String format) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
@@ -183,18 +183,18 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         List<PlainTextResource> target = new ArrayList<>();
 
         for (CodeResourceInternal code : source.getCodes()) {
-            target.add(toFlattenCode(code, languages, fields));
+            target.add(toFlattenCode(code, languages, fields, format));
         }
 
         return target;
     }
 
-    private PlainTextResource toFlattenCode(CodeResourceInternal source, List<String> languages, Set<String> fields) {
+    private PlainTextResource toFlattenCode(CodeResourceInternal source, List<String> languages, Set<String> fields, String format) {
         PlainTextResource target = new PlainTextResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
-        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages, format));
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE)) {
             target.getFields().put(SrmConstants.TSV_HEADER_IS_EXTENDED, source.isExtended() != null ? String.valueOf(source.isExtended()) : null);
@@ -205,7 +205,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
-            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages, format));
         }
 
         return target;

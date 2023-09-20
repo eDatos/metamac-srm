@@ -834,4 +834,9 @@ public class OrganisationSchemeViewImpl extends ViewWithUiHandlers<OrganisationS
         this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
     }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
+    }
 }

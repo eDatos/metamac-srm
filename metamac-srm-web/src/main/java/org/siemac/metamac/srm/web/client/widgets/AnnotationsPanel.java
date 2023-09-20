@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.client.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class AnnotationsPanel extends VLayout {
 
-    private static String           REMOVE_FIELD_NAME = "remove-field";
+    private static String           REMOVE_FIELD_NAME         = "remove-field";
 
     private AnnotationsListGrid     listGrid;
     private DynamicForm             form;
@@ -66,7 +67,7 @@ public class AnnotationsPanel extends VLayout {
     private Img                     addAnnotationImg;
 
     private MaintainableArtefactDto maintainableArtefactDto;
-
+    private HashMap<String, String> annotationTypeOrderedById = new HashMap<String, String>();
     List<AnnotationTypeDto>         annotationTypeDto;
     ListGridField                   annotationTypeField;
 
@@ -209,7 +210,7 @@ public class AnnotationsPanel extends VLayout {
         });
         textField.setWidth("50%");
 
-        annotationTypeField = new ListGridField(AnnotationDS.TYPE, getConstants().annotationType());
+        annotationTypeField = new ListGridField(AnnotationDS.TYPE_ORDERED, getConstants().annotationType());
         annotationTypeField.setWidth("25%");
 
         ListGridField urlField = new ListGridField(AnnotationDS.URL, getConstants().annotationUrl());
@@ -241,8 +242,15 @@ public class AnnotationsPanel extends VLayout {
     public void updateAnnotationTypeValues(List<AnnotationTypeDto> annotationTypes) {
         this.annotationTypeDto = annotationTypes;
         if (annotationTypeField != null && annotationTypes != null) {
-            annotationTypeField.setValueMap(MasterTablesUtils.getAnnotationTypeHashMap(this.annotationTypeDto));
+            // because this combo inside a listgrid can not be ordered by displayfield, the key map must be in order. Force the order
+            // Relations between id and order Id are in annotationTypeOrderedById
+            // key map is like "sequencialOrderByDisplayText#id"
+            annotationTypeField.setValueMap(MasterTablesUtils.getAnnotationTypeHashMap(this.annotationTypeDto, annotationTypeOrderedById));
         }
+    }
+
+    public boolean isAnnotationTypeFieldFill() {
+        return annotationTypeDto != null && !annotationTypeDto.isEmpty();
     }
 
     public void setAnnotations(Set<AnnotationDto> annotations, MaintainableArtefactDto maintainableArtefactDto) {
@@ -259,7 +267,8 @@ public class AnnotationsPanel extends VLayout {
 
         // Set annotations in the selected locale
         for (AnnotationDto annotationDto : annotations) {
-            AnnotationRecord record = DsdRecordUtils.getAnnotationRecord(annotationDto, selectedLocale);
+            addNewAnnotationType(annotationDto);
+            AnnotationRecord record = DsdRecordUtils.getAnnotationRecord(annotationDto, getAnnotationTypeOrdered(annotationDto), selectedLocale);
             listGrid.addData(record);
         }
 
@@ -267,19 +276,39 @@ public class AnnotationsPanel extends VLayout {
         setCanAddOrRemoveAnnotations(viewMode, maintainableArtefactDto);
     }
 
+    private void addNewAnnotationType(AnnotationDto annotationDto) {
+        if (this.annotationTypeDto != null && annotationDto.getAnnotationTypeDto() != null && annotationDto.getAnnotationTypeDto().getId() != null
+                && annotationTypeOrderedById.get(annotationDto.getAnnotationTypeDto().getId().toString()) == null) {
+            this.annotationTypeDto.add(annotationDto.getAnnotationTypeDto());
+            annotationTypeField.setValueMap(MasterTablesUtils.getAnnotationTypeHashMap(this.annotationTypeDto, annotationTypeOrderedById));
+        }
+
+    }
+
+    private String getAnnotationTypeOrdered(AnnotationDto annotation) {
+        if (annotation.getAnnotationTypeDto() != null && annotation.getAnnotationTypeDto().getId() != null) {
+            return annotationTypeOrderedById.get(annotation.getAnnotationTypeDto().getId().toString());
+        }
+        return null;
+    }
+
     public Set<AnnotationDto> getAnnotations() {
         Set<AnnotationDto> annotations = new HashSet<AnnotationDto>();
         ListGridRecord[] records = listGrid.getRecords();
         for (int i = 0; i < records.length; i++) {
             AnnotationDto annotationDto = (AnnotationDto) records[i].getAttributeAsObject(AnnotationDS.ANNOTATION_DTO);
-            annotationDto.setAnnotationTypeDto(getAnnotationTypeFromId(records[i]));
+            if (annotationDto != null) {
+                annotationDto.setAnnotationTypeDto(getAnnotationTypeFromId(records[i]));
+            } else {
+                annotationDto = new AnnotationDto();
+            }
             annotations.add(annotationDto);
         }
         return annotations;
     }
 
     private AnnotationTypeDto getAnnotationTypeFromId(ListGridRecord annotationRecord) {
-        String annotationTypeId = annotationRecord.getAttribute(AnnotationDS.TYPE);
+        String annotationTypeId = annotationRecord.getAttribute(AnnotationDS.TYPE_ORDERED);
         if (annotationTypeId != null) {
             return MasterTablesUtils.getAnnotationTypeDto(annotationTypeId, annotationTypeDto);
         }

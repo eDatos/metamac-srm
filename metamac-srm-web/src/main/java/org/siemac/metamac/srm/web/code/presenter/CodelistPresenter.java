@@ -31,8 +31,6 @@ import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent;
-import org.siemac.metamac.srm.web.client.events.UpdateAnnotationTypeEvent.UpdateAnnotationTypeHandler;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
@@ -132,6 +130,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesAction;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationSchemesResult;
 import org.siemac.metamac.srm.web.shared.organisation.GetOrganisationsAction;
@@ -162,7 +162,6 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
@@ -172,7 +171,7 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
-public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView, CodelistPresenter.CodelistProxy> implements CodelistUiHandlers, UpdateAnnotationTypeHandler {
+public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView, CodelistPresenter.CodelistProxy> implements CodelistUiHandlers {
 
     private final DispatchAsync           dispatcher;
     private final PlaceManager            placeManager;
@@ -242,6 +241,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -280,11 +280,12 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getCodelistParamFromUrl(placeManager);
         if (!StringUtils.isBlank(identifier)) {
-            retrieveCompleteCodelistbyIdentifier(identifier);
+            retrieveResources(identifier);
         } else {
             MetamacSrmWeb.showErrorPage();
         }
         getView().selectCodelistTab();
+
     }
 
     //
@@ -1428,9 +1429,19 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                 });
     }
 
-    @ProxyEvent
-    @Override
-    public void onUpdateAnnotationType(UpdateAnnotationTypeEvent event) {
-        getView().setAnnotationTypeList(event.getAnnotationTypeDto());
+    private void retrieveResources(final String identifier) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteCodelistbyIdentifier(identifier);
+                }
+            });
+        } else {
+            retrieveCompleteCodelistbyIdentifier(identifier);
+        }
     }
 }

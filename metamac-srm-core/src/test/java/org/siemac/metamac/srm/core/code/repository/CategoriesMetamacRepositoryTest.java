@@ -32,7 +32,7 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 @TransactionConfiguration(transactionManager = "txManagerCore", defaultRollback = true)
 @Transactional
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
-public class CodesMetamacRepositoryTest extends SrmBaseTest {
+public class CategoriesMetamacRepositoryTest extends SrmBaseTest {
 
     @Autowired
     protected CodeMetamacRepository codeMetamacRepository;

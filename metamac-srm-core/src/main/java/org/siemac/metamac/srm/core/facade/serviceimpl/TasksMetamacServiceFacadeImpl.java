@@ -40,9 +40,15 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     @Override
     public void processImportCategoriesTsv(ServiceContext ctx, String categorySchemeUrn, File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCategoriesMetamacService().importCategoriesTsv(ctx, categorySchemeUrn, tsvFile, fileName, updateAlreadyExisting, CAN_NOT_BE_BACKGROUND);
-        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());        
+        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
     }
-    
+
+    @Override
+    public void processImportCategoryElementsTsv(ServiceContext ctx, File file, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException {
+        TaskImportationInfo taskImportationInfo = getCategoriesMetamacService().importCategoryElementsTsv(ctx, file, fileName, updateAlreadyExisting, CAN_NOT_BE_BACKGROUND);
+        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
+    }
+
     @Override
     public void processImportCodesTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importCodesTsv(ctx, codelistUrn, file, fileName, updateAlreadyExisting, CAN_NOT_BE_BACKGROUND);
@@ -60,13 +66,13 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importCodeRestrictionsTsv(ctx, codelistUrn, file, fileName, CAN_NOT_BE_BACKGROUND);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
     }
-    
+
     @Override
     public void processImportCodeOpennessLevelsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, String jobKey) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importCodeOpennessLevelsTsv(ctx, codelistUrn, file, fileName, CAN_NOT_BE_BACKGROUND);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
     }
-    
+
     @Override
     public void processImportVariableElementsTsv(ServiceContext ctx, String variableUrn, File file, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importVariableElementsTsv(ctx, variableUrn, file, fileName, updateAlreadyExisting, CAN_NOT_BE_BACKGROUND);
@@ -106,5 +112,16 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     @Override
     public void deleteEntitiesMarkedToDelete(ServiceContext ctx) throws MetamacException {
         getTasksMetamacService().deleteEntitiesMarkedToDelete(ctx);
+    }
+
+    @Override
+    public void executeResendPublishedResourcesKafkaMessageTask(ServiceContext ctx) throws MetamacException {
+        getTasksMetamacService().processResendKafkaResourcesMessageTask(ctx);
+    }
+
+    @Override
+    public void scheduleResendKafkaResourcesMessageJob(ServiceContext ctx) {
+        getTasksMetamacService().scheduleResendKafkaResourcesMessageJob(ctx);
+
     }
 }

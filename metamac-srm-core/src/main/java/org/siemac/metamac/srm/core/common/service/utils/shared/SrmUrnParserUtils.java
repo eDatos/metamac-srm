@@ -48,4 +48,8 @@ public class SrmUrnParserUtils extends SdmxSrmUrnParserUtils {
     public static boolean isCategoryElementUrn(String urn) {
         return matches(URN_SIEMAC_CLASS_CATEGORY_ELEMENT_PREFIX, UrnUtils.extractPrefix(urn));
     }
+
+    public static String getCategoryElementCodeFromCategoryElementUrn(String categoryElementUrn) {
+        return UrnUtils.removePrefix(categoryElementUrn);
+    }
 }

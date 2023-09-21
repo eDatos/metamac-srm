@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -294,9 +295,8 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
         OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemeByUrn(ctx, GeneratorUrnUtils.makeUrnFromTemporal(urnToCopy));
 
         // Set the new version in the temporal artifact
-        organisationSchemeVersionTemporal.getMaintainableArtefact().setVersionLogic(
-                SdmxVersionUtils.createNextVersion(organisationSchemeVersion.getMaintainableArtefact().getVersionLogic(), organisationSchemeVersion.getItemScheme().getVersionPattern(),
-                        versionTypeEnum));
+        organisationSchemeVersionTemporal.getMaintainableArtefact().setVersionLogic(SdmxVersionUtils.createNextVersion(organisationSchemeVersion.getMaintainableArtefact().getVersionLogic(),
+                organisationSchemeVersion.getItemScheme().getVersionPattern(), versionTypeEnum));
 
         organisationSchemeVersionTemporal.getMaintainableArtefact().setIsCodeUpdated(Boolean.TRUE); // For calculates new urns
         organisationSchemeVersionTemporal.setIsTypeUpdated(Boolean.FALSE);
@@ -644,7 +644,7 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
                 if (!isDefaultMaintainer) {
                     updateAlreadyExisting = true;
                 }
-                
+
                 int lineNumber = 2;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (StringUtils.isBlank(line)) {
@@ -656,8 +656,8 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
                         continue;
                     }
                     // Transform organisation and add to list to persist
-                    OrganisationMetamac organisation = TsvImportationUtils.tsvLineToOrganisation(header, columns, lineNumber, organisationSchemeVersion, isDefaultMaintainer, isTemporalVersion, updateAlreadyExisting,
-                            organisationsPreviousInOrganisationSchemeByCode, organisationsToPersistByCode, exceptionItems, informationItems);
+                    OrganisationMetamac organisation = TsvImportationUtils.tsvLineToOrganisation(header, columns, lineNumber, organisationSchemeVersion, isDefaultMaintainer, isTemporalVersion,
+                            updateAlreadyExisting, organisationsPreviousInOrganisationSchemeByCode, organisationsToPersistByCode, exceptionItems, informationItems);
                     if (organisation != null) {
                         organisationsToPersist.add(organisation);
                         organisationsToPersistByCode.put(organisation.getNameableArtefact().getCode(), organisation);
@@ -689,8 +689,9 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
     private boolean isDefaultMaintainer(String maintainerUrn) throws MetamacException {
         return StringUtils.equals(maintainerUrn, srmConfiguration.retrieveMaintainerUrnDefault());
     }
-    
-    private void saveOrganisationsEfficiently(OrganisationSchemeTypeEnum organisationSchemeType, Collection<OrganisationMetamac> organisationsToPersist, Map<String, Item> organisationsToPersistByCode) {
+
+    private void saveOrganisationsEfficiently(OrganisationSchemeTypeEnum organisationSchemeType, Collection<OrganisationMetamac> organisationsToPersist,
+            Map<String, Item> organisationsToPersistByCode) {
         for (OrganisationMetamac organisationMetamac : organisationsToPersist) {
             if (organisationMetamac.getParent() != null) {
                 if (organisationsToPersistByCode.containsKey(organisationMetamac.getParent().getNameableArtefact().getCode())) {
@@ -859,4 +860,47 @@ public class OrganisationsMetamacServiceImpl extends OrganisationsMetamacService
         return organisationSchemeVersion;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<MetamacExceptionItem> resendKafkaMessageExternallyOrganisationSchemes(ServiceContext ctx) throws MetamacException {
+        List<OrganisationSchemeVersionMetamac> organisationSchemes = this.getOrganisationSchemeVersionMetamacRepository().retrieveOrganisationSchemesPublishedExternally();
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("resend all published last version organisation schemes kafka messages start at {} affected organisations: {} ", new Date(), organisationSchemes.size());
+
+        for (OrganisationSchemeVersionMetamac organisationScheme : organisationSchemes) {
+
+            try {
+                ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac> result = (ResourceVersionPublicationResult<OrganisationSchemeVersionMetamac>) organisationSchemeLifeCycle
+                        .resendMessage(ctx, organisationScheme);
+
+                totalCount++;
+                partialCount++;
+
+                if (partialCount >= 50) {
+                    partialCount = 0;
+                    logger.info("processed organisation schemes {} at {}", totalCount, new Date());
+                }
+
+                if (!result.isOk()) {
+                    logger.info("error sending organisation schemes {} error status {} ", organisationScheme.getMaintainableArtefact().getUrn(),
+                            result.groupExceptions() != null ? result.groupExceptions().getMessage() : "");
+                    exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_ORGANISATION_SCHEME_MESSAGE_ERROR, result.groupExceptions()));
+                }
+
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending organisation schemes {} ", organisationScheme.getMaintainableArtefact().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_ORGANISATION_SCHEME_MESSAGE_ERROR, organisationScheme.getMaintainableArtefact().getUrn()));
+            }
+
+        }
+        logger.info("resend all published last version organisation schemes kafka messages end at {} ", new Date());
+
+        return exceptionsItems;
+
+    }
 }

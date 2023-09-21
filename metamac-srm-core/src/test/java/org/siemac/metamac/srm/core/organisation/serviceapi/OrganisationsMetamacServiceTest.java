@@ -2977,4 +2977,10 @@ public class OrganisationsMetamacServiceTest extends SrmBaseTest implements Orga
     protected String getDataSetFile() {
         return "dbunit/SrmOrganisationsTest.xml";
     }
+
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyOrganisationSchemes() {
+        // No test. cron job process
+    }
 }

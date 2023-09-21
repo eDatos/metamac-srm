@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -165,75 +166,75 @@ import com.vividsolutions.jts.geom.Polygon;
 public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
-    private BaseService baseService;
+    private BaseService                         baseService;
 
     @Autowired
-    private CodesService codesService;
+    private CodesService                        codesService;
 
     @Autowired
-    private CategoriesMetamacService categoriesMetamacService;
+    private CategoriesMetamacService            categoriesMetamacService;
 
     @Autowired
-    private ItemSchemeVersionRepository itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository         itemSchemeVersionRepository;
 
     @Autowired
-    private CodeRepository codeRepository;
+    private CodeRepository                      codeRepository;
 
     @Autowired
-    private ItemSchemeRepository itemSchemeRepository;
+    private ItemSchemeRepository                itemSchemeRepository;
 
     @Autowired
-    private IdentifiableArtefactRepository identifiableArtefactRepository;
+    private IdentifiableArtefactRepository      identifiableArtefactRepository;
 
     @Autowired
     @Qualifier("codelistLifeCycle")
-    private LifeCycle codelistLifeCycle;
+    private LifeCycle                           codelistLifeCycle;
 
     @Autowired
-    private SrmValidation srmValidation;
+    private SrmValidation                       srmValidation;
 
     @Autowired
-    private SrmConfiguration srmConfiguration;
+    private SrmConfiguration                    srmConfiguration;
 
     @Autowired
     @Qualifier("codesVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback codesVersioningWithCodesCallback;
+    private ItemSchemesCopyCallback             codesVersioningWithCodesCallback;
 
     @Autowired
     @Qualifier("codesVersioningWithoutCodesCallbackMetamac")
-    private ItemSchemesCopyCallback codesVersioningWithoutCodesCallback;
+    private ItemSchemesCopyCallback             codesVersioningWithoutCodesCallback;
 
     @Autowired
     @Qualifier("codesDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback codesDummyVersioningCallbackMetamac;
+    private ItemSchemesCopyCallback             codesDummyVersioningCallbackMetamac;
 
     @Autowired
     @Qualifier("codesCopyCallbackMetamac")
-    private ItemSchemesCopyCallback codesCopyCallback;
+    private ItemSchemesCopyCallback             codesCopyCallback;
 
     @Autowired
     private CodelistStreamMessagingCallbackImpl codelistStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService streamMessagingService;
+    private StreamMessagingService              streamMessagingService;
 
     @Autowired
     @Qualifier(NoticesCallbackMetamacImpl.BEAN_ID)
-    private NoticesCallback noticesCallbackMetamac;
+    private NoticesCallback                     noticesCallbackMetamac;
 
     @Autowired
-    private TasksMetamacService tasksMetamacService;
+    private TasksMetamacService                 tasksMetamacService;
 
     @Autowired
-    private InternationalStringRepository internationalStringRepository;
+    private InternationalStringRepository       internationalStringRepository;
 
     @Autowired
-    private MiscMetamacService miscMetamacService;
+    private MiscMetamacService                  miscMetamacService;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager entityManager;
+    protected EntityManager                     entityManager;
 
-    private static Logger logger = LoggerFactory.getLogger(CodesMetamacService.class);
+    private static Logger                       logger = LoggerFactory.getLogger(CodesMetamacService.class);
 
     public CodesMetamacServiceImpl() {
         // without comment
@@ -4625,6 +4626,59 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             recodedCode.setRecodedCodeUrn(code2.getNameableArtefact().getUrn());
         }
         return recodedCode;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<MetamacExceptionItem> resendKafkaMessageExternallyCodelist(ServiceContext ctx) throws MetamacException {
+        List<CodelistVersionMetamac> codelists = this.getCodelistVersionMetamacRepository().retrieveCodelistPublishedExternally();
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("resend all published last version codelist kafka messages start at {} affected codelists: {} ", new Date(), codelists.size());
+
+        for (CodelistVersionMetamac codelist : codelists) {
+
+            try {
+                ResourceVersionPublicationResult<CodelistVersionMetamac> result = (ResourceVersionPublicationResult<CodelistVersionMetamac>) codelistLifeCycle.resendMessage(ctx, codelist);
+
+                totalCount++;
+                partialCount++;
+
+                if (partialCount >= 50) {
+                    partialCount = 0;
+                    logger.info("processed codelists {} at {}", totalCount, new Date());
+                }
+
+                if (!result.isOk()) {
+                    logger.info("error sending codelist {} error status {} ", codelist.getMaintainableArtefact().getUrn(),
+                            result.groupExceptions() != null ? result.groupExceptions().getMessage() : "");
+                    exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_CODELIST_MESSAGE_ERROR, result.groupExceptions()));
+                }
+
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending codelist {} ", codelist.getMaintainableArtefact().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_CODELIST_MESSAGE_ERROR, codelist.getMaintainableArtefact().getUrn()));
+            }
+
+        }
+        logger.info("resend all published last version codelist kafka messages end at {} ", new Date());
+
+        return exceptionsItems;
+
+    }
+
+    private List<CodelistVersionMetamac> retrievePublishedLastVersionCodelist(ServiceContext ctx) throws MetamacException {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.lifeCycleMetadata().procStatus())
+                .eq(ProcStatusEnum.EXTERNALLY_PUBLISHED).and().withProperty(CodelistVersionMetamacProperties.maintainableArtefact().latestVersionNumberPublic()).isNotNull().distinctRoot().build();
+
+        PagedResult<CodelistVersion> codelistVersionPagedResult = codesService.findCodelistsByCondition(ctx, criteria, PagingParameter.noLimits());
+        return codelistVersionsToCodelistVersionsMetamac(codelistVersionPagedResult.getValues());
+
     }
 
 }

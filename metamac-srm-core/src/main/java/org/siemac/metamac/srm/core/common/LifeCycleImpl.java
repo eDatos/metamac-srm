@@ -274,7 +274,8 @@ public abstract class LifeCycleImpl implements LifeCycle {
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
 
-    protected void addOrUpdateExceptionItemByResourceUrnWhenExceptionsNonZero(Map<String, MetamacExceptionItem> exceptionsByResourceUrn, String resourceUrn, List<MetamacExceptionItem> exceptionItems) {
+    protected void addOrUpdateExceptionItemByResourceUrnWhenExceptionsNonZero(Map<String, MetamacExceptionItem> exceptionsByResourceUrn, String resourceUrn,
+            List<MetamacExceptionItem> exceptionItems) {
         if (CollectionUtils.isEmpty(exceptionItems)) {
             return;
         }
@@ -471,5 +472,12 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Object mergeTemporal(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public SendStreamMessageResult notifyPublication(Object message);
+    }
+
+    @Override
+    public ResourceVersionPublicationResult<?> resendMessage(ServiceContext ctx, Object srmResourceVersion) throws MetamacException {
+
+        SendStreamMessageResult sendStreamMessageResult = callback.notifyPublication(srmResourceVersion);
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
 }

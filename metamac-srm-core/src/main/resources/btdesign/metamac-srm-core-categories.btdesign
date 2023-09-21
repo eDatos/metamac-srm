@@ -146,7 +146,8 @@ Application CategoriesMetamac {
 			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
 	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
 	   		
-			
+			// resend kafka message for the last number of version of published category.
+    		List<MetamacExceptionItem> resendKafkaMessageExternallyCategorySchemes() throws MetamacException;
    		}
 
 		// ----------------------------------------------------------------
@@ -168,6 +169,7 @@ Application CategoriesMetamac {
 				@CategorySchemeVersionMetamac retrieveCategorySchemeVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@CategorySchemeVersionMetamac findByCategory(String urn);
 				checkCategorySchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+				List<@CategorySchemeVersionMetamac> retrieveCategorySchemesPublishedExternally() throws MetamacException;
 			}			
 		}
 		

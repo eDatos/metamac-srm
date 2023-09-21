@@ -129,6 +129,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                     return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.variable().nameableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case VARIABLE_FAMILY_URN:
                     return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.variable().families().nameableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
+                case CODELIST_FAMILY_URN:
+                    return buildSculptorPropertyCriteria(CodelistVersionMetamacProperties.family().nameableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -180,6 +182,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                     MetamacRestQueryPropertyRestriction codelistPropertyRestriction = constructCodelistPropertyRestrictionForDefaultGeographicalGranularityCodelist(propertyRestriction);
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(codelistPropertyRestriction, CodeMetamacProperties.itemSchemeVersion().maintainableArtefact());
                 }
+                case VARIABLE_ELEMENT_URN:
+                    return buildSculptorPropertyCriteria(CodeMetamacProperties.variableElement().identifiableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case PARENT:
                     return buildSculptorPropertyCriteria(CodeMetamacProperties.parent().nameableArtefact().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:

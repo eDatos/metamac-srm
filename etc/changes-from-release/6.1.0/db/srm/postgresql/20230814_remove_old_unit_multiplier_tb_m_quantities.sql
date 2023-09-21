@@ -7,3 +7,5 @@
 -- Eliminar columna
 alter table tb_m_quantities 
 DROP old_unit_multiplier ;
+
+commit;

@@ -229,7 +229,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields) throws MetamacException {
+    public List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields, String format) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }
@@ -237,21 +237,21 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         List<PlainTextResource> target = new ArrayList<>();
 
         for (ItemResource organisation : source.getOrganisations()) {
-            target.add(toFlattenOrganisation(organisation, languages, fields));
+            target.add(toFlattenOrganisation(organisation, languages, fields, format));
         }
 
         return target;
     }
 
-    private PlainTextResource toFlattenOrganisation(ItemResource source, List<String> languages, Set<String> fields) {
+    private PlainTextResource toFlattenOrganisation(ItemResource source, List<String> languages, Set<String> fields, String format) {
         PlainTextResource target = new PlainTextResource();
         target.getFields().put(SrmConstants.TSV_HEADER_CODE, source.getId());
         target.getFields().put(SrmConstants.TSV_HEADER_PARENT, source.getParent());
         target.getFields().put(SrmConstants.TSV_HEADER_URN, source.getUrn());
-        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages));
+        target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_NAME, source.getName(), languages, format));
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION)) {
-            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages));
+            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_DESCRIPTION, source.getDescription(), languages, format));
         }
 
         return target;

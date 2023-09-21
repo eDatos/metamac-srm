@@ -862,6 +862,12 @@ Application SrmFacadeCore {
     		TaskImportationInfo processImportVariableElementsPoints(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
     		"Perform a merge with temporal codelist"
 			processPublishInternallyCodelist(String urnToCopy, boolean forceLatestFinal, String jobKey) throws MetamacException;
+			
+			// Schedule Job resend kafka messages for all resources
+    		scheduleResendKafkaResourcesMessageJob();  		
+    		// execute process of resending kafka messages for all resources
+    		executeResendPublishedResourcesKafkaMessageTask() throws MetamacException;    
+
 
     		"Marks job as failed"
     		markTaskAsFailed(String job, java.lang.Exception exception) throws MetamacException;

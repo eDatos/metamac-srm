@@ -1,0 +1,16 @@
+-- ---------------------------------------------------------------------------------------------------
+-- EDATOS-3460 - Publicador. Reenviar todo el histórico de recursos del srm al ckan
+    -- Se reenvía la última versión publicada externamente de todos los recursos del tipo: clasificaciones, conceptos, organizaciones y temas
+    -- "metamac.srm.resend_resources_kafka_message.cron_expression
+	--Programar para que se ejecute una sóla vez con la expresión '0 30 20 01 SEP ? 2023' que significa: 01 de septiembre de 2023 a las 20:30
+-- ---------------------------------------------------------------------------------------------------
+
+--ATENCIÓN!!! Programar el job para que se ejecute una sola vez. !!!!!!!  RELLENAR FILL-ME
+
+insert into TB_DATA_CONFIGURATIONS (ID,VERSION,SYSTEM_PROPERTY,CONF_KEY,CONF_VALUE,EXTERNALLY_PUBLISHED) values(GET_NEXT_SEQUENCE_VALUE('DATA_CONFIGURATIONS'),1,true,'metamac.srm.resend_resources_kafka_message.cron_expression',FILL-ME,false);
+UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = 'DATA_CONFIGURATIONS';
+
+commit;
+
+--Ejemplo:
+-- '0 30 20 01 SEP ? 2023' que significa: 01 de septiembre de 2023 a las 20:30

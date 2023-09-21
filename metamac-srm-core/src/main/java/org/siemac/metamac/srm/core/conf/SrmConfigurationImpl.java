@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.core.conf;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.constants.SrmConfigurationConstants;
+
 import com.arte.statistic.sdmx.srm.core.conf.SdmxSrmConfigurationImpl;
 
 public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements SrmConfiguration {
@@ -49,5 +50,10 @@ public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements Sr
     @Override
     public String retrieveDsdTimeDimensionOrAttributeDefaultConceptIdUrn() throws MetamacException {
         return retrieveProperty(SrmConfigurationConstants.DSD_TIME_DIMENSION_OR_ATTRIBUTE_DEFAULT_CONCEPT_ID_URN);
+    }
+
+    @Override
+    public String retrieveCronExpressionForResendPublishedResourcesKafkaMessage() throws MetamacException {
+        return retrieveProperty(SrmConfigurationConstants.CRON_EXPRESSION__RESEND_RESOURCES_KAFKA_MESSAGE);
     }
 }

@@ -288,6 +288,9 @@ Application CodesMetamac {
     		TaskImportationInfo importVariableElementsPoints(String variableUrn, URL shapeFileUrl, Boolean canBeBackground) throws MetamacException;
     		"Exports variable elements in tsv format"
     		String exportVariableElementsTsv(String variableUrn) throws MetamacException;
+    		
+    		// resend kafka message for the last number of version of published codelist.
+    		List<MetamacExceptionItem> resendKafkaMessageExternallyCodelist() throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------
@@ -355,6 +358,7 @@ Application CodesMetamac {
     						
 				checkCodelistVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkCodelistWithReplaceToExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+				List<@CodelistVersionMetamac> retrieveCodelistPublishedExternally() throws MetamacException
 
 			}			
 		}

@@ -854,7 +854,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                     // CODELIST
 
                     if (!TypeDimensionComponent.MEASUREDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
-                        ((RelatedResourceLinkItem) form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                        ((RelatedResourceLinkItem) form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST))
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST).show();
                     }
 
@@ -864,7 +865,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
 
                     if (TypeDimensionComponent.MEASUREDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
                         ((RelatedResourceLinkItem) form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME))
-                                .setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME).show();
                     }
                 }
@@ -929,9 +930,9 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
 
                     if (!TypeDimensionComponent.MEASUREDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
                         ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST))
-                                .setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                         ((RelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST_VIEW))
-                                .setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                     }
 
                 } else if (RelatedResourceTypeEnum.CONCEPT_SCHEME.equals(dimensionComponentDto.getLocalRepresentation().getEnumeration().getType())) {
@@ -969,8 +970,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
     }
 
     private void setConceptSchemeEnumerationRepresentationInEditionForm(RelatedResourceDto relatedResourceDto) {
-        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(relatedResourceDto);
-        ((RelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW)).setRelatedResource(relatedResourceDto);
+        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResourceWithVersion(relatedResourceDto);
+        ((RelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW)).setRelatedResourceWithVersion(relatedResourceDto);
     }
 
     @Override
@@ -1263,7 +1264,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                         RelatedResourceDto selectedConceptScheme = searchConceptSchemeForEnumeratedRepresentationWindow.getSelectedRelatedResource();
                         searchConceptSchemeForEnumeratedRepresentationWindow.markForDestroy();
                         // Set selected concept scheme in form
-                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(selectedConceptScheme);
+                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResourceWithVersion(selectedConceptScheme);
                         editionForm.validate(false);
                     }
                 });
@@ -1343,7 +1344,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                             RelatedResourceDto selectedCodelist = searchCodelistForEnumeratedRepresentationWindow.getSelectedRelatedResource();
                             searchCodelistForEnumeratedRepresentationWindow.markForDestroy();
                             // Set selected codelist in form
-                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(selectedCodelist);
+                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResourceWithVersion(selectedCodelist);
                             editionForm.validate(false);
                         }
                     });

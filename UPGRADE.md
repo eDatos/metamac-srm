@@ -7,33 +7,52 @@
 *EJEMPLO: Queremos actualizar desde la versión 1.0.0 a la 3.0.0 y existe un cambio en la base de datos en la actualización de la versión 1.0.0 a la 2.0.0.*
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
-
-
-## 5.0.2 a XXXX
+ 
+## 6.1.0 a 6.1.1-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.1.0/db](etc/changes-from-release/6.1.0/db) 
 
 * Cambios en statistic-sdmx-srm. Se debe borrar campo deshabilitado en release anterior en TB_ANNOTATIONS "old_type" Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
   ```shell
     etc/changes-from-release/3.3.X/db/postgresql/XXXX_drop-column-type-in-table-tbAnnotations.sql 
   ```shell
 
-## 5.0.1 a 5.0.2-SNAPSHOT
+## 6.0.0 a 6.1.0
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db) 
+
+## 5.0.1 a 6.0.0
+**BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:
+  * **categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}**
+  * La obtención de la última versión de los diferentes recursos se hará por el último número de versión publicada interna/externamente y no por la última versión publicada como hasta ahora.
+
 * Es necesario ejecutar los scripts SQL contenidos en la carpeta
   ```shell
-  etc/changes-from-release/5.0.1/db/common-metadata/postgresql/20221122_delete_metamac_srm_data_path.sql
+  etc/changes-from-release/5.0.1/db/common-metadata/postgresql
   ```
+ * Es necesario ejecutar los scripts SQL contenidos en la carpeta
+  ```shell
+  etc/changes-from-release/5.0.1/db/srm/postgresql
+  ```
+  Uno de los scripts anteriores es un script de adecuación para los diferentes recursos del srm para permitir conocer el último número de versión publicada interna o externamente. Seguir los pasos indicados en el script 20230712_resources_latest_version_new_columns_update.sql para su ejecución. Antes de ejecutar este script ejecutar los cambios siguientes de statistic-sdmx-srm.
+  
+  
 * Cambios en statistic-sdmx-srm. Se han realizado cambios a la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha situados dentro del proyecto statistic-sdmx-srm:
   ```shell
   etc/changes-from-release/3.3.0/db/postgresql/20230602_1_create-table-tbLisAnnotationTypes.sql
   etc/changes-from-release/3.3.0/db/postgresql/20230602_2_annotation_type_adaptation_to_new_data_type.sql
   etc/changes-from-release/3.3.0/db/postgresql/20230602_3_deprecate-column-type-in-table-tbAnnotations.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230711_add_columns_latest_version_number_to_maintainable_artefacts.sql
+  etc/changes-from-release/3.3.0/db/postgresql/20230630_remove_duplicated_indexes.sql  
   ```
-* Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
+* Esta versión requiere que se actualicen determinados topics de kafka del srm. Se deben borar los esquemas existentes para los topics  ORGANISATION_SCHEME_PUBLICATIONS-value, CONCEPT_SCHEME_PUBLICATIONS-value, CODELIST_PUBLICATIONS-value, CATEGORY_SCHEME_PUBLICATIONS-value, DATA_STRUCTURE_DEFINITION_PUBLICATIONS-value para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/ORGANISATION_SCHEME_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/CONCEPT_SCHEME_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/CODELIST_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/CATEGORY_SCHEME_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/DATA_STRUCTURE_DEFINITION_PUBLICATIONS-value
   ```
-  
-    ```
 
 ## 4.0.0 a 5.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` a los siguientes endpoints:
@@ -47,15 +66,15 @@
 Se puede consultar la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto de aplicaciones 
 de eDatos que consuman la API de structural-resources a través de JAX-RS.
 
-Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/3.1.0/db](etc/changes-from-release/3.1.0/db)
+Se han realizado cambios a la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db)
  ```shell
  ```shell
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_master_table_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_tb_sequence_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_create_foreign_key_to_eni_schema_catalog.sql
   etc/changes-from-release/4.0.0/db/srm/postgresql/20220523_insert_eni_schemas_values.sql  
-  etc/changes-from-release/4.0.0/db/srm/postgresql/20230404_drop_luna_views.sql  
   ```
+
 ## 3.3.0 a 4.0.0
 * Rotura de la compatibilidad:
 ** Se eliminan los servicios soap

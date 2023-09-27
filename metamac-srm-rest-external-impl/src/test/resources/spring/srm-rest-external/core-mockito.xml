@@ -87,4 +87,8 @@
         <constructor-arg value="com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository" />
     </bean>
 
+	 <bean id="dataStructureDefinitionDo2DtoMapper" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="com.arte.statistic.sdmx.srm.core.structure.mapper.DataStructureDefinitionDo2DtoMapper" />
+    </bean>    
+
 </beans>

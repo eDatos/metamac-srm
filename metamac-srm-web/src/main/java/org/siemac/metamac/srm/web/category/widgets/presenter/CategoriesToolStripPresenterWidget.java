@@ -20,6 +20,7 @@ public class CategoriesToolStripPresenterWidget extends PresenterWidget<Categori
 
         HasClickHandlers getCategorySchemesButton();
         HasClickHandlers getCategoriesButton();
+        HasClickHandlers getCategoryElementsButton();
 
         void selectButton(CategoriesToolStripButtonEnum button);
     }
@@ -47,6 +48,14 @@ public class CategoriesToolStripPresenterWidget extends PresenterWidget<Categori
             @Override
             public void onClick(ClickEvent event) {
                 placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategoriesPlaceRequest());
+            }
+        }));
+
+        registerHandler(getView().getCategoryElementsButton().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCategoryElementsPlaceRequest());
             }
         }));
     }

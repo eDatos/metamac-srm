@@ -9,14 +9,20 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
+import static org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts.assertEqualsCategoryeElement;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -30,20 +36,26 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
+import org.joda.time.tz.DateTimeZoneBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.common.test.utils.DirtyDatabase;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacRepository;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
@@ -74,7 +86,6 @@ import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesDoMo
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -1731,6 +1742,641 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertListCategoriesContainsCategory(categorySchemeVersion.getItemsFirstLevel(), categoryRetrieved.getNameableArtefact().getUrn());
     }
 
+    /*-------------------------*/
+    /* CATEGORY ELEMENTS TESTS */
+    /*-------------------------*/
+
+    @Test
+    public void testCreateCategoryWithCategoryElement() throws Exception {
+
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
+        category.setParent(null);
+        category.setCategoryElement(categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN));
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // Create
+        CategoryMetamac categorySchemeVersionCreated = categoriesService.createCategory(getServiceContextAdministrador(), categorySchemeUrn, category);
+        String urn = categorySchemeVersionCreated.getNameableArtefact().getUrn();
+
+        // Validate (only metadata in SRM Metamac; the others are checked in sdmx project)
+        CategoryMetamac categoryRetrieved = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), urn);
+        CategoriesMetamacAsserts.assertEqualsCategory(category, categoryRetrieved);
+
+    }
+
+    @Test
+    public void testUpdateCodesCategoryElements() throws Exception {
+        String categorySchemetUrn = CATEGORY_SCHEME_1_V2;
+
+        CategoryMetamac category1 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_1);
+        CategoryMetamac category2 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2);
+        CategoryMetamac category21 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+        CategoryMetamac category211 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+        CategoryMetamac category3 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_3);
+        CategoryMetamac category4 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_4);
+        CategoryMetamac category41 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+
+        CategoryElement categoryElement1 = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+        CategoryElement categoryElement2 = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_2_URN);
+        CategoryElement categoryElement3 = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_3_URN);
+
+        Map<Long, Long> categoryElementsIdByCodeId = new HashMap<Long, Long>();
+        categoryElementsIdByCodeId.put(category1.getId(), categoryElement1.getId());
+        categoryElementsIdByCodeId.put(category2.getId(), categoryElement1.getId());
+        categoryElementsIdByCodeId.put(category21.getId(), null);
+        categoryElementsIdByCodeId.put(category211.getId(), categoryElement3.getId());
+        categoryElementsIdByCodeId.put(category3.getId(), null);
+        categoryElementsIdByCodeId.put(category4.getId(), categoryElement3.getId());
+        categoryElementsIdByCodeId.put(category41.getId(), categoryElement2.getId());
+
+        categoriesService.updateCodesCategoryElements(getServiceContextAdministrador(), categorySchemetUrn, categoryElementsIdByCodeId);
+
+        entityManager.clear();
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category1.getNameableArtefact().getUrn());
+            assertEquals(categoryElement1.getIdentifiableArtefact().getUrn(), category.getCategoryElement().getIdentifiableArtefact().getUrn());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category2.getNameableArtefact().getUrn());
+            assertEquals(categoryElement1.getIdentifiableArtefact().getUrn(), category.getCategoryElement().getIdentifiableArtefact().getUrn());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category21.getNameableArtefact().getUrn());
+            assertNull(category.getCategoryElement());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category211.getNameableArtefact().getUrn());
+            assertEquals(categoryElement3.getIdentifiableArtefact().getUrn(), category.getCategoryElement().getIdentifiableArtefact().getUrn());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category3.getNameableArtefact().getUrn());
+            assertNull(category.getCategoryElement());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category4.getNameableArtefact().getUrn());
+            assertEquals(categoryElement3.getIdentifiableArtefact().getUrn(), category.getCategoryElement().getIdentifiableArtefact().getUrn());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), category41.getNameableArtefact().getUrn());
+            assertEquals(categoryElement2.getIdentifiableArtefact().getUrn(), category.getCategoryElement().getIdentifiableArtefact().getUrn());
+        }
+    }
+
+    @Test
+    public void testUpdateCodeCategoryElementInCategorySchemePublished() throws Exception {
+        String categoryUrn = CATEGORY_SCHEME_1_V1_CATEGORY_1;
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V1;
+
+        CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), categoryUrn);
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+        assertEquals(ProcStatusEnum.INTERNALLY_PUBLISHED, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+        assertEquals(CATEGORY_ELEMENT_1_URN, category.getCategoryElement().getIdentifiableArtefact().getUrn());
+
+        // Add category element
+        String categoryElementUrnNew = CATEGORY_ELEMENT_2_URN;
+        categoriesService.updateCategoryElementOfCategory(getServiceContextAdministrador(), category.getNameableArtefact().getUrn(), categoryElementUrnNew);
+        category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), categoryUrn);
+        assertEquals(categoryElementUrnNew, category.getCategoryElement().getIdentifiableArtefact().getUrn());
+    }
+
+    @Test
+    public void testRetrieveCategoryByUrnWithoutCategoryElement() throws Exception {
+        // Retrieve
+        String urn = CATEGORY_SCHEME_3_V1_CATEGORY_1;
+        CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), urn);
+
+        // Validate (only metadata in SRM Metamac; the others are checked in sdmx project)
+        assertEquals(urn, category.getNameableArtefact().getUrn());
+        assertNull(category.getCategoryElement());
+    }
+
+    @Test
+    public void testRetrieveCategoriesByCategorySchemeUrnCheckCategoryElements() throws Exception {
+
+        // Retrieve
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // LOCALE = 'es'
+        {
+            String locale = "es";
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+
+            // Validate
+            assertEquals(8, categories.size());
+            {
+                // Code 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                assertEquals(Long.valueOf(2), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_2_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-2", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 02
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                assertEquals(Long.valueOf(3), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_3_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_03, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-3", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 02 01 (validate parent)
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                assertEquals(Long.valueOf(1), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_1_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-1", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 02 01 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                assertEquals(Long.valueOf(1), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_1_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-1", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 03
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                assertEquals(Long.valueOf(2), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_2_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-2", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 04
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                assertEquals(Long.valueOf(1), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_1_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-1", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 04 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                assertEquals(Long.valueOf(2), category.getCategoryElement().getIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_2_URN, category.getCategoryElement().getUrn());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
+                assertEquals("shortName category_element-2", category.getCategoryElement().getShortName());
+            }
+            {
+                // Code 04 01 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                assertEquals(null, category.getCategoryElement());
+            }
+        }
+
+    }
+
+    @Test
+    public void testNormaliseCategoryElementsToCategories() throws Exception {
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        List<CodeCategoryElementNormalisationResult> results = categoriesService.normaliseCategoryElementsToCategories(getServiceContextAdministrador(), categorySchemeUrn, "es", false);
+        assertEquals(8, results.size());
+
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-1", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_4_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortname-at-element categoryScheme-1-v2-category-1", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_2;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-2", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_5_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortname-at-element categoryScheme-1-v2-category-2", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_2_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-2-1", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_5_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortname-at-element categoryScheme-1-v2-category-2", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-2-1-1", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_5_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortname-at-element categoryScheme-1-v2-category-2", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_3;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("nombre category-3", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_6_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortname-at-element categoryScheme-1-v2-category-3", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_4;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Lanzarote", result.getCode().getName());
+            assertEquals(null, result.getCategoryElementProposed());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_4_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("La Gomera", result.getCode().getName());
+            assertEquals(null, result.getCategoryElementProposed());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_7_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("Santa Cruz de Tenerife", result.getCategoryElementProposed().getShortName());
+        }
+    }
+
+    @Test
+    public void testNormaliseCategoryElementsToCategoriesOnlyWithoutCategoryElements() throws Exception {
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        List<CodeCategoryElementNormalisationResult> results = categoriesService.normaliseCategoryElementsToCategories(getServiceContextAdministrador(), categorySchemeUrn, "es", true);
+        assertEquals(8, results.size());
+
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-1", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_2_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-2", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_2;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-2", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_3_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-3", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_2_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-2-1", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_1_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-1", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-2-1-1", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_1_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-1", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_3;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("nombre category-3", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_2_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-2", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_4;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Lanzarote", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_1_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-1", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_4_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("La Gomera", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_2_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("shortName category_element-2", result.getCategoryElementProposed().getShortName());
+        }
+        {
+            String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1;
+            CodeCategoryElementNormalisationResult result = assertContainsCodeCategoryElementNormalisationResult(categoryUrn, results);
+            assertEquals("Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife", result.getCode().getName());
+            assertEquals(CATEGORY_ELEMENT_7_URN, result.getCategoryElementProposed().getUrn());
+            assertEquals("Santa Cruz de Tenerife", result.getCategoryElementProposed().getShortName());
+        }
+    }
+
+    private CodeCategoryElementNormalisationResult assertContainsCodeCategoryElementNormalisationResult(String categoryUrnExpected, List<CodeCategoryElementNormalisationResult> actuals) {
+        for (CodeCategoryElementNormalisationResult actual : actuals) {
+            if (actual.getCode().getUrn().equals(categoryUrnExpected)) {
+                return actual;
+            }
+        }
+        fail("not found");
+        return null;
+    }
+
+    @Test
+    @Override
+    public void testCreateCategoryElement() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CategoryElement categoryElement = CategoriesMetamacDoMocks.mockCategoryElement();
+
+        // Create
+        CategoryElement categoryElementCreated = categoriesService.createCategoryElement(ctx, categoryElement);
+        String urn = categoryElementCreated.getIdentifiableArtefact().getUrn();
+
+        // Validate
+        assertNotNull(urn);
+        CategoryElement categoryElementRetrieved = categoriesService.retrieveCategoryElementByUrn(ctx, urn);
+
+        assertEquals(getServiceContextAdministrador().getUserId(), categoryElementRetrieved.getCreatedBy());
+        assertTrue(DateUtils.isSameDay(new Date(), categoryElementRetrieved.getCreatedDate().toDate()));
+        assertEquals(getServiceContextAdministrador().getUserId(), categoryElementRetrieved.getLastUpdatedBy());
+        assertTrue(DateUtils.isSameDay(new Date(), categoryElementRetrieved.getLastUpdated().toDate()));
+
+        assertEqualsCategoryeElement(categoryElement, categoryElementRetrieved);
+
+    }
+
+    @Test
+    @Override
+    public void testUpdateCategoryElement() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        DateTime iniDate = new DateTime(2013, 10, 1, 10, 12, 13, 14);
+        DateTime endDate = new DateTime(2014, 10, 1, 10, 12, 13, 14);
+
+        CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+        categoryElement.setValidTo(endDate);
+        categoryElement.setValidFrom(iniDate);
+        categoryElement.getIdentifiableArtefact().setIsCodeUpdated(false);
+        // Create
+        CategoryElement categoryElementUpdated = categoriesService.updateCategoryElement(ctx, categoryElement);
+        assertEqualsDate(iniDate, categoryElementUpdated.getValidFrom());
+        assertEqualsDate(endDate, categoryElementUpdated.getValidTo());
+        // Validate
+
+        CategoryElement categoryElementRetrieved = categoriesService.retrieveCategoryElementByUrn(ctx, CATEGORY_ELEMENT_1_URN);
+        assertEqualsDate(iniDate, categoryElementRetrieved.getValidFrom());
+        assertEqualsDate(endDate, categoryElementRetrieved.getValidTo());
+
+    }
+
+    @Test
+    @Override
+    public void testRetrieveCategoryElementByUrn() throws Exception {
+        CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+
+        assertEquals(CATEGORY_ELEMENT_1_URN, categoryElement.getIdentifiableArtefact().getUrn());
+        assertEquals(CATEGORY_ELEMENT_01, categoryElement.getIdentifiableArtefact().getCode());
+        assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element-1", null, null);
+        assertEqualsDate(new DateTime(2023, 01, 02, 02, 02, 04, 0, new DateTimeZoneBuilder().toDateTimeZone("Europe/London", false)), categoryElement.getValidFrom());
+        assertEqualsDate(new DateTime(2025, 01, 02, 02, 02, 04, 0, new DateTimeZoneBuilder().toDateTimeZone("Europe/London", false)), categoryElement.getValidTo());
+
+        assertEquals("category-element-1", categoryElement.getUuid());
+        assertEquals("user1", categoryElement.getCreatedBy());
+        assertEquals("user2", categoryElement.getLastUpdatedBy());
+        assertEquals(Long.valueOf(1), categoryElement.getVersion());
+    }
+
+    @Test
+    @Override
+    public void testFindCategoryElementsByCondition() throws Exception {
+        // Find all
+        {
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).orderBy(CategoryElementProperties.identifiableArtefact().urn()).build();
+            PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+            PagedResult<CategoryElement> result = categoriesService.findCategoryElementsByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
+
+            assertEquals(7, result.getTotalRows());
+            int i = 0;
+
+            assertEquals(CATEGORY_ELEMENT_1_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(CATEGORY_ELEMENT_2_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(CATEGORY_ELEMENT_3_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(CATEGORY_ELEMENT_4_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(CATEGORY_ELEMENT_5_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(CATEGORY_ELEMENT_6_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+            assertEquals(CATEGORY_ELEMENT_7_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+        }
+        // Find by urn
+        {
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CategoryElement.class).withProperty(CategoryElementProperties.identifiableArtefact().urn())
+                    .like(CATEGORY_ELEMENT_4_URN).orderBy(CategoryElementProperties.identifiableArtefact().urn()).build();
+            PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+            PagedResult<CategoryElement> result = categoriesService.findCategoryElementsByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
+            assertEquals(1, result.getTotalRows());
+            int i = 0;
+            assertEquals(CATEGORY_ELEMENT_4_URN, result.getValues().get(i++).getIdentifiableArtefact().getUrn());
+        }
+    }
+
+    @Test
+    @Override
+    public void testUpdateCategoryElementOfCategory() throws Exception {
+        String urn = CATEGORY_SCHEME_1_V2_CATEGORY_1;
+        CategoryMetamac categoryMetamac = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), urn);
+        assertEquals(CATEGORY_ELEMENT_2_URN, categoryMetamac.getCategoryElement().getIdentifiableArtefact().getUrn());
+
+        // Change category element
+        String categoryElementUrnNew = CATEGORY_ELEMENT_3_URN;
+        categoriesService.updateCategoryElementOfCategory(getServiceContextAdministrador(), categoryMetamac.getNameableArtefact().getUrn(), categoryElementUrnNew);
+        categoryMetamac = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), urn);
+        assertEquals(categoryElementUrnNew, categoryMetamac.getCategoryElement().getIdentifiableArtefact().getUrn());
+
+        // Reset category element
+        categoriesService.updateCategoryElementOfCategory(getServiceContextAdministrador(), categoryMetamac.getNameableArtefact().getUrn(), null);
+        categoryMetamac = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), urn);
+        assertNull(categoryElementUrnNew, categoryMetamac.getCategoryElement());
+    }
+
+    @Test
+    @Override
+    public void testDeleteCategoryElement() throws Exception {
+        String categoryElementUrn = CATEGORY_ELEMENT_6_URN;
+        CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), categoryElementUrn);
+        categoriesService.deleteCategoryElement(getServiceContextAdministrador(), categoryElementUrn);
+
+        try {
+            categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), categoryElementUrn);
+            fail("categoryElement already deleted");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND, 1, new String[]{categoryElementUrn}, e.getExceptionItems().get(0));
+        }
+        // Try to delete again the deleted categoryElement
+        try {
+            categoriesService.deleteCategoryElement(getServiceContextAdministrador(), categoryElementUrn);
+            fail("categoryElement already deleted");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND, 1, new String[]{categoryElementUrn}, e.getExceptionItems().get(0));
+        }
+
+    }
+
+    @Test
+    @Override
+    public void testExportCategoryElementsTsv() throws Exception {
+        List<String> categoryElementUrn = new ArrayList<String>();
+        categoryElementUrn.add(CATEGORY_ELEMENT_1_URN);
+        categoryElementUrn.add(CATEGORY_ELEMENT_2_URN);
+        categoryElementUrn.add(CATEGORY_ELEMENT_3_URN);
+        categoryElementUrn.add(CATEGORY_ELEMENT_4_URN);
+
+        String fileName = categoriesService.exportCategoryElementsTsv(getServiceContextAdministrador(), categoryElementUrn);
+        assertNotNull(fileName);
+
+        // Validate
+        File file = new File(tempDirPath() + File.separatorChar + fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            System.out.println(line.replaceAll("\t", "\\\\t"));
+            lines.add(line);
+        }
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals("code\tshort_name#es\tshort_name#pt\tshort_name#en\tshort_name#ca", iterator.next());
+
+        assertTrue(lines.contains("CATEGORY_ELEMENT_01\tshortName category_element-1\t\t\t"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_02\tshortName category_element-2\t\t\t"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_03\tshortName category_element-3\t\t\t"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_04\tshortname-at-element categoryScheme-1-v2-category-1\t\t\t"));
+
+        bufferedReader.close();
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryElementsTsv() throws Exception {
+
+        String fileName = "importation-category-element-1.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = false;
+
+        TaskImportationInfo taskImportTsvInfo = categoriesService.importCategoryElementsTsv(getServiceContextAdministrador(), file, fileName, updateAlreadyExisting, Boolean.TRUE);
+
+        // Validate
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+        assertEquals(0, taskImportTsvInfo.getInformationItems().size());
+
+        // Validate category elements
+        {
+            String code = "CATEGORY_ELEMENT_IMP_01";
+            String urn = BASE_URN_CATEGORY_ELEMENT + code;
+            CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), urn);
+            assertEquals(code, categoryElement.getIdentifiableArtefact().getCode());
+            assertEquals(categoryElement.getIdentifiableArtefact().getUrn(), categoryElement.getIdentifiableArtefact().getUrnProvider());
+            assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element_imp_01 es", "en", "shortName category_element_imp_01 en", "ca",
+                    "shortName category_element_imp_01 ca");
+            assertEquals(null, categoryElement.getValidFrom());
+            assertEquals(null, categoryElement.getValidTo());
+            BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
+        }
+        {
+            String code = "CATEGORY_ELEMENT_IMP_02";
+            String urn = BASE_URN_CATEGORY_ELEMENT + code;
+            CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), urn);
+            assertEquals(code, categoryElement.getIdentifiableArtefact().getCode());
+            assertEquals(categoryElement.getIdentifiableArtefact().getUrn(), categoryElement.getIdentifiableArtefact().getUrnProvider());
+            assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element_imp_02 es", "en", "shortName category_element_imp_02 en", null, null);
+            assertEquals(null, categoryElement.getValidFrom());
+            assertEquals(null, categoryElement.getValidTo());
+            BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
+        }
+        {
+            String code = "CATEGORY_ELEMENT_IMP_03";
+            String urn = BASE_URN_CATEGORY_ELEMENT + code;
+            CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), urn);
+            assertEquals(code, categoryElement.getIdentifiableArtefact().getCode());
+            assertEquals(categoryElement.getIdentifiableArtefact().getUrn(), categoryElement.getIdentifiableArtefact().getUrnProvider());
+            assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element_imp_03 es", "en", "shortName category_element_imp_03 en", "ca",
+                    "shortName category_element_imp_03 ca");
+            assertEquals(null, categoryElement.getValidFrom());
+            assertEquals(null, categoryElement.getValidTo());
+            BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
+        }
+        {
+            String code = "CATEGORY_ELEMENT_IMP_04";
+            String urn = BASE_URN_CATEGORY_ELEMENT + code;
+            CategoryElement categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), urn);
+            assertEquals(code, categoryElement.getIdentifiableArtefact().getCode());
+            assertEquals(categoryElement.getIdentifiableArtefact().getUrn(), categoryElement.getIdentifiableArtefact().getUrnProvider());
+            assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element_imp_04 es", "en", "shortName category_element_imp_04 en", null, null);
+            assertEquals(null, categoryElement.getValidFrom());
+            assertEquals(null, categoryElement.getValidTo());
+            BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryElementsTsvErrorWithHeaderIncorrect() throws Exception {
+
+        final String fileName = "importation-category-element-2-errors-header.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        final boolean updateAlreadyExisting = false;
+
+        try {
+            categoriesService.importCategoryElementsTsv(getServiceContextAdministrador(), file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportVariableElementsTsvErrorWithBodyIncorrect() throws Exception {
+
+        // Import
+        final String fileName = "importation-category-element-3-errors-body.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        final boolean updateAlreadyExisting = false;
+
+        try {
+            categoriesService.importCategoryElementsTsv(getServiceContextAdministrador(), file, fileName, updateAlreadyExisting, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(4, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, 1, new Serializable[]{3}, e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"categoryElement4WithoutShortName", "parameter.srm.importation.short_name"},
+                    e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT_SEMANTIC_IDENTIFIER, 2,
+                    new Serializable[]{"#categoryElementNotSemanticCode", "parameter.srm.importation.code"}, e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, 1, new Serializable[]{8}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryElementsTsvUpdatingAlreadyExistingCodes() throws Exception {
+
+        final boolean updateAlreadyExisting = true;
+
+        final String fileName = "importation-category-element-4.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        TaskImportationInfo taskImportTsvInfo = categoriesService.importCategoryElementsTsv(getServiceContextAdministrador(), file, fileName, updateAlreadyExisting, Boolean.TRUE);
+
+        // Validate
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+        assertEquals(2, taskImportTsvInfo.getInformationItems().size());
+
+        int i = 0;
+        assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, 1, new Serializable[]{CATEGORY_ELEMENT_02}, taskImportTsvInfo.getInformationItems().get(i++));
+        assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_INFO_RESOURCE_UPDATED, 1, new Serializable[]{CATEGORY_ELEMENT_04}, taskImportTsvInfo.getInformationItems().get(i++));
+        assertEquals(taskImportTsvInfo.getInformationItems().size(), i);
+
+    }
+
     @Test
     public void testCreateCategorySubcategory() throws Exception {
 
@@ -1800,7 +2446,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals(urn, category.getNameableArtefact().getUrn());
 
         // Validate (only metadata in SRM Metamac; the others are checked in sdmx project)
-        // no metadata in Metamac
+        assertEquals(CATEGORY_ELEMENT_2_URN, category.getCategoryElement().getIdentifiableArtefact().getUrn());
+
     }
 
     @Test
@@ -1965,7 +2612,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
         // Validate categories
 
-        List<ItemVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
+        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
         assertEquals(result.size(), 16);
 
         String categorySchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME02(01.000).";
@@ -1979,6 +2626,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEqualsInternationalString(category.getNameableArtefact().getDescription(), "en", "description new 1", null, null);
             assertEqualsInternationalString(category.getNameableArtefact().getComment(), "es", "Comentario de categoría 1", null, null);
             BaseAsserts.assertEqualsDay(new DateTime(), category.getLastUpdated());
+            assertEquals(CATEGORY_ELEMENT_2_URN, category.getCategoryElement().getIdentifiableArtefact().getUrn());
         }
         {
             String semanticIdentifier = "impCATEGORY040102";
@@ -1989,6 +2637,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEqualsInternationalString(category.getNameableArtefact().getName(), "es", "Nombre CATEGORY040102", "en", "name CATEGORY040102", "it", "Nombre it CATEGORY040102");
             assertEqualsInternationalString(category.getNameableArtefact().getDescription(), "es", "Descripción CATEGORY040102", null, null);
             BaseAsserts.assertEqualsDay(new DateTime(), category.getLastUpdated());
+            assertEquals(CATEGORY_ELEMENT_1_URN, category.getCategoryElement().getIdentifiableArtefact().getUrn());
         }
         {
             String semanticIdentifier = "impCATEGORY0201";
@@ -1999,6 +2648,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEqualsInternationalString(category.getNameableArtefact().getName(), "es", "Nombre CATEGORY0201", "en", "name CATEGORY0201", "it", "Nombre it CATEGORY0201");
             assertEqualsInternationalString(category.getNameableArtefact().getDescription(), "es", "Descripción CATEGORY0201", null, null);
             BaseAsserts.assertEqualsDay(new DateTime(), category.getLastUpdated());
+            assertEquals(null, category.getCategoryElement());
         }
     }
 
@@ -2023,7 +2673,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals(false, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
 
         // Validate categories
-        List<ItemVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
+        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
         assertEquals(result.size(), 42);
         String categorySchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME02(01.000).";
         assertEqualsImportedCategory(categorySchemeUrnPart + "cat2", null, "cat2", "Estadísticas económicas", "Economic statistics");
@@ -2095,7 +2745,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         FileInputStream fileInputStream = new FileInputStream(file);
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        assertEquals("code\tparent\teni_scheme\tname#es\tname#pt\tname#en\tname#ca\tdescription#es\tdescription#pt\tdescription#en\tdescription#ca\tcomment#es\tcomment#pt\tcomment#en\tcomment#ca",
+        assertEquals(
+                "code\tparent\tcategory_element\teni_scheme\tname#es\tname#pt\tname#en\tname#ca\tdescription#es\tdescription#pt\tdescription#en\tdescription#ca\tcomment#es\tcomment#pt\tcomment#en\tcomment#ca",
                 bufferedReader.readLine());
         Set<String> lines = new HashSet<String>();
         String line = null;
@@ -2106,24 +2757,24 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals(8, lines.size());
 
         assertTrue(lines.contains(
-                "CATEGORY01\t\tSRM-ID2-ENI-SCHEME\tNombre categoryScheme-1-v2-category-1\t\tName categoryScheme-1-v2-category-1\t\tDescripción categoryScheme-1-v2-category-1\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY02\t\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2\t\t\t\t\t\t\t\t\t\t\t"));
+                "CATEGORY01\t\tCATEGORY_ELEMENT_02\tSRM-ID2-ENI-SCHEME\tNombre categoryScheme-1-v2-category-1\t\tName categoryScheme-1-v2-category-1\t\tDescripción categoryScheme-1-v2-category-1\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY02\t\tCATEGORY_ELEMENT_03\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2\t\t\t\t\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY03\t\tCATEGORY_ELEMENT_02\tSRM-ID2-ENI-SCHEME\tnombre category-3\t\tname category-3\t\t\t\t\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY04\t\tCATEGORY_ELEMENT_01\tSRM-ID1-ENI-SCHEME\tLanzarote\t\t\t\t\t\t\t\t\t\t\t"));
         assertTrue(lines.contains(
-                "CATEGORY0201\tCATEGORY02\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1\t\tName categoryScheme-1-v2-category-2-1\t\tDescripción cat2-1\t\tDescription cat2-1\t\t\t\t\t"));
+                "CATEGORY0201\tCATEGORY02\tCATEGORY_ELEMENT_01\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1\t\tName categoryScheme-1-v2-category-2-1\t\tDescripción cat2-1\t\tDescription cat2-1\t\t\t\t\t"));
+        assertTrue(lines.contains("CATEGORY0401\tCATEGORY04\tCATEGORY_ELEMENT_02\tSRM-ID2-ENI-SCHEME\tLa Gomera\t\t\t\t\t\t\t\t\t\t\t"));
         assertTrue(lines.contains(
-                "CATEGORY020101\tCATEGORY02.CATEGORY0201\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1-1\t\t\t\tDescripción cat2-1-1\t\t\t\tComment categoryScheme-1-v2-category-2-1-1\t\t\t"));
-        assertTrue(lines.contains("CATEGORY03\t\tSRM-ID2-ENI-SCHEME\tnombre category-3\t\tname category-3\t\t\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY04\t\tSRM-ID1-ENI-SCHEME\tnombre category-4\t\t\t\t\t\t\t\t\t\t\t"));
-        assertTrue(lines.contains("CATEGORY0401\tCATEGORY04\tSRM-ID2-ENI-SCHEME\tnombre category 4-1\t\t\t\t\t\t\t\t\t\t\t"));
-        assertTrue(
-                lines.contains("CATEGORY040101\tCATEGORY04.CATEGORY0401\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-4-1-1\t\tName categoryScheme-1-v2-category-4-1-1\t\t\t\t\t\t\t\t\t"));
+                "CATEGORY020101\tCATEGORY02.CATEGORY0201\tCATEGORY_ELEMENT_01\tSRM-ID1-ENI-SCHEME\tNombre categoryScheme-1-v2-category-2-1-1\t\t\t\tDescripción cat2-1-1\t\t\t\tComment categoryScheme-1-v2-category-2-1-1\t\t\t"));
+        assertTrue(lines.contains(
+                "CATEGORY040101\tCATEGORY04.CATEGORY0401\t\tSRM-ID3-ENI-SCHEME\tNombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife\t\tName categoryScheme-1-v2-category-4-1-1\t\t\t\t\t\t\t\t\t"));
         bufferedReader.close();
     }
 
     @Test
     public void testRetrieveCategoriesOrderedInDepthByCategorySchemeUrn() throws Exception {
 
-        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), new CategoryMetamacResultSelection(true, true, true, true));
+        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), new CategoryMetamacResultSelection(true, true, true, true, false, true));
 
         assertEquals(8, categories.size());
 
@@ -2156,13 +2807,13 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // LOCALE = 'es'
         {
             String locale = "es";
-            List<ItemVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
 
             // Validate
             assertEquals(8, categories.size());
             {
                 // Category 01 (validate all metadata)
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_1, category.getUrn());
                 assertEquals("CATEGORY01", category.getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-1", category.getName());
@@ -2170,113 +2821,121 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                 assertEquals(Long.valueOf(121), category.getItemIdDatabase());
                 assertEquals(null, category.getParent());
                 assertEquals(null, category.getParentIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
                 MetamacAsserts.assertEqualsDate("2011-01-01 01:02:03", category.getCreatedDate());
             }
             {
                 // Category 02
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2, category.getUrn());
                 assertEquals("CATEGORY02", category.getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-2", category.getName());
                 assertEquals(null, category.getDescription());
+                assertEquals(CATEGORY_ELEMENT_03, category.getCategoryElement().getCode());
                 MetamacAsserts.assertEqualsDate("2011-03-02 04:05:06", category.getCreatedDate());
             }
             {
                 // Category 02 01 (validate parent)
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2_1, category.getUrn());
                 assertEquals("CATEGORY02", category.getParent().getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-2-1", category.getName());
                 assertEquals("Descripción cat2-1", category.getDescription());
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2, category.getParent().getUrn());
                 assertEquals(Long.valueOf("122"), category.getParentIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
             }
             {
                 // Category 02 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1, category.getUrn());
                 assertEquals("CATEGORY0201", category.getParent().getCode());
                 assertEquals("Nombre categoryScheme-1-v2-category-2-1-1", category.getName());
                 assertEquals("Descripción cat2-1-1", category.getDescription());
                 assertEquals(Long.valueOf("1221"), category.getParentIdDatabase());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
             }
             {
                 // Category 03
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_3, category.getUrn());
                 assertEquals("nombre category-3", category.getName());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
             }
             {
                 // Category 04
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4, category.getUrn());
-                assertEquals("nombre category-4", category.getName());
+                assertEquals("Lanzarote", category.getName());
+                assertEquals(CATEGORY_ELEMENT_01, category.getCategoryElement().getCode());
             }
             {
                 // Category 04 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getUrn());
-                assertEquals("nombre category 4-1", category.getName());
+                assertEquals("La Gomera", category.getName());
+                assertEquals(CATEGORY_ELEMENT_02, category.getCategoryElement().getCode());
             }
             {
                 // Category 04 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1, category.getUrn());
                 assertEquals("CATEGORY0401", category.getParent().getCode());
                 assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getParent().getUrn());
-                assertEquals("Nombre categoryScheme-1-v2-category-4-1-1", category.getName());
+                assertEquals("Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife", category.getName());
+                assertEquals(null, category.getCategoryElement());
             }
         }
 
         // LOCALE = 'en'
         {
             String locale = "en";
-            List<ItemVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
 
             // Validate
             assertEquals(8, categories.size());
             {
                 // Category 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
                 assertEquals("Name categoryScheme-1-v2-category-1", category.getName());
                 assertEquals(null, category.getDescription());
             }
             {
                 // Category 02
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
                 assertEquals(null, category.getName());
                 assertEquals(null, category.getDescription());
             }
             {
                 // Category 02 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
                 assertEquals("Name categoryScheme-1-v2-category-2-1", category.getName());
                 assertEquals("Description cat2-1", category.getDescription());
             }
             {
                 // Category 02 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
                 assertEquals(null, category.getName());
                 assertEquals(null, category.getDescription());
             }
             {
                 // Category 03
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
                 assertEquals("name category-3", category.getName());
             }
             {
                 // Category 04
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
                 assertEquals(null, category.getName());
             }
             {
                 // Category 04 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
                 assertEquals(null, category.getName());
             }
             {
                 // Category 04 01 01
-                ItemVisualisationResult category = getItemVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
                 assertEquals("Name categoryScheme-1-v2-category-4-1-1", category.getName());
             }
         }
@@ -2352,14 +3011,14 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             // Category 04
             ItemResult category = getItemResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4, category.getUrn());
-            assertEquals("nombre category-4", category.getName().get("es"));
+            assertEquals("Lanzarote", category.getName().get("es"));
             assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
         }
         {
             // Category 04 01
             ItemResult category = getItemResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getUrn());
-            assertEquals("nombre category 4-1", category.getName().get("es"));
+            assertEquals("La Gomera", category.getName().get("es"));
             assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
         }
         {
@@ -2368,7 +3027,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1, category.getUrn());
             assertEquals("CATEGORY0401", category.getParent().getCode());
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getParent().getUrn());
-            assertEquals("Nombre categoryScheme-1-v2-category-4-1-1", category.getName().get("es"));
+            assertEquals("Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife", category.getName().get("es"));
             assertEquals("SRM-ID3-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
         }
     }
@@ -2606,5 +3265,11 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmCategoriesTest.xml";
+    }
+
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyCategorySchemes() {
+        // No test. cron job process
     }
 }

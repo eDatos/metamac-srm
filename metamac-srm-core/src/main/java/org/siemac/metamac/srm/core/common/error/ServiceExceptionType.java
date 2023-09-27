@@ -138,6 +138,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     // Categories
     public static final CommonServiceExceptionType CATEGORY_NOT_EXTERNALLY_PUBLISHED                                                     = create(
             "exception.srm.categories.category_not_externally_published");
+    public static final CommonServiceExceptionType CATEGORY_ELEMENT_WITH_RELATIONS                                                       = create(
+            "exception.srm.categories.category_element.with_relations");
 
     // Codes miscellaneous
     public static final CommonServiceExceptionType CODES_VARIABLE_ELEMENTS_NORMALISATION_ERROR                                           = create(
@@ -214,6 +216,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.concept_scheme.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_VARIABLE_ELEMENT_GEOGRAPHICAL_GRANULARITY_NOT_FOUND             = create(
             "exception.srm.importation.tsv.error.variable_element.geographical_granularity.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_CATEGORY_ELEMENT_NOT_FOUND                                       = create(
+            "info.srm.importation.tsv.error.category_element.not_found");
     public static final CommonServiceExceptionType EXPORTATION_TSV_ERROR                                                                 = create("exception.srm.exportation.tsv.error");
 
     // Notices
@@ -237,5 +241,13 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "stream_message.srm.exception.config.missing_settings");
     public static final CommonServiceExceptionType ENI_SCHEMA_CATALOG_NOT_FOUND                                                          = create("exception.srm.list.eni_schema_catalog.not_found");
     public static final CommonServiceExceptionType ANNOTATION_TYPE_CAN_NOT_BE_REMOVED                                                    = create("exception.srm.annotation_type.can_not_be_removed");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CODELIST_MESSAGE_ERROR                                        = create(
+            "stream_message.srm.exception.send_codelist_message.fails");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CATEGORY_SCHEME_MESSAGE_ERROR                                 = create(
+            "stream_message.srm.exception.send_category_scheme_message.fails");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_ORGANISATION_SCHEME_MESSAGE_ERROR                             = create(
+            "stream_message.srm.exception.send_organisation_scheme_message.fails");
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CONCEPT_SCHEME_MESSAGE_ERROR                                  = create(
+            "stream_message.srm.exception.send_concept_scheme_message.fails");
 
 }

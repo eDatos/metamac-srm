@@ -542,7 +542,7 @@ Application SrmFacadeCore {
 			"Deletes category"
             deleteCategory(String urn) throws MetamacException;
     		"Retrieves categories by category scheme in locale requested"
-    		List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
+    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
     		"Imports categories in tsv format"
     		TaskImportationInfo importCategoriesTsv(String categorySchemeUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
             "Exports categories in TSV format"
@@ -560,6 +560,28 @@ Application SrmFacadeCore {
     		"Ends the validity of a categorisation. ValidTo date is optional"
     		@CategorisationDto endCategorisationValidity(String urn, JAVADATE validTo) throws MetamacException;
     		
+    		// CATEGORY ELEMENTS
+    		"Deletes category element"
+    		deleteCategoryElement(String urn) throws MetamacException;
+			@CategoryElementDto createCategoryElement(@CategoryElementDto categoryElement) throws MetamacException;
+			"Updates category element"
+			@CategoryElementDto updateCategoryElement(@CategoryElementDto categoryElement) throws MetamacException;
+    		"Retrieves category element by urn"
+    		@CategoryElementDto retrieveCategoryElementByUrn(String urn) throws MetamacException;
+    		"Finds category elements by criteria"
+    		MetamacCriteriaResult<@CategoryElementDto> findCategoryElementsByCondition(MetamacCriteria criteria) throws MetamacException;   
+    		"Exports category elements in tsv format"
+    		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;	
+    		"Imports category elements in tsv format"
+    		TaskImportationInfo importCategoryElementsTsv(InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
+    		"Find category elements can be for categories of category schemes"
+    		MetamacCriteriaResult<@RelatedResourceDto> findCategoryElementsForCategoriesByCondition(MetamacCriteria criteria) throws MetamacException;	
+    		"Change category element of category"
+			@CategoryMetamacDto updateCategoryElementOfCategory(String categoryrn, String categoryElementUrn) throws MetamacException;
+			"Change category elements to codes"
+			updateCodesCategoryElements(String categorySchemeUrn, Map<Long,Long> categoryElementsIdByCodeId) throws MetamacException;
+   			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
+	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
 	    	/**************************************************************************
 		     * CODES
 		     **************************************************************************/
@@ -822,6 +844,8 @@ Application SrmFacadeCore {
     		processImportCategoriesTsv(String categorySchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;    		
     		"Imports organisations in tsv format"
     		processImportOrganisationsTsv(String organisationSchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
+    		"Imports category elements in tsv format"
+    		processImportCategoryElementsTsv(java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
     		"Imports codes in tsv format"
     		processImportCodesTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
@@ -838,6 +862,12 @@ Application SrmFacadeCore {
     		TaskImportationInfo processImportVariableElementsPoints(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
     		"Perform a merge with temporal codelist"
 			processPublishInternallyCodelist(String urnToCopy, boolean forceLatestFinal, String jobKey) throws MetamacException;
+			
+			// Schedule Job resend kafka messages for all resources
+    		scheduleResendKafkaResourcesMessageJob();  		
+    		// execute process of resending kafka messages for all resources
+    		executeResendPublishedResourcesKafkaMessageTask() throws MetamacException;    
+
 
     		"Marks job as failed"
     		markTaskAsFailed(String job, java.lang.Exception exception) throws MetamacException;

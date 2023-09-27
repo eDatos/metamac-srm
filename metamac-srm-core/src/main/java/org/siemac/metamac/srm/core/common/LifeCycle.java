@@ -15,4 +15,5 @@ public interface LifeCycle {
     public ResourceVersionPublicationResult<?> publishExternally(ServiceContext ctx, String urn) throws MetamacException;
 
     public Object prePublishResourceInInternallyPublished(ServiceContext ctx, String urn, ProcStatusEnum targetStatus) throws MetamacException;
+    public ResourceVersionPublicationResult<?> resendMessage(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
 }

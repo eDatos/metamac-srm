@@ -5,8 +5,12 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getCoreMessages;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.Pair;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
@@ -67,6 +71,8 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDimensionCompone
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -86,6 +92,8 @@ import com.smartgwt.client.widgets.grid.HoverCustomizer;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
+import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
+import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -172,10 +180,13 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         dimensionsGrid.setHeight(150);
         dimensionsGrid.setSelectionType(SelectionStyle.SIMPLE);
         dimensionsGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
+        dimensionsGrid.setCanReorderRecords(true);
+        dimensionsGrid.setCanSort(false);
         CustomListGridField codeField = new CustomListGridField(DimensionDS.CODE, getConstants().dsdDimensionsId());
         CustomListGridField typeField = new CustomListGridField(DimensionDS.TYPE, getConstants().dsdDimensionsType());
         CustomLinkListGridField conceptField = new CustomLinkListGridField(DimensionDS.CONCEPT, getConstants().concept());
         dimensionsGrid.setFields(codeField, typeField, conceptField);
+
         // ToolTip
         codeField.setShowHover(true);
         codeField.setHoverCustomizer(new HoverCustomizer() {
@@ -204,6 +215,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                 return dimensionRecord.getConcept();
             }
         });
+
         // Show dimension details when record clicked
         dimensionsGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 
@@ -230,6 +242,77 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                 if (event.getFieldNum() != 0) { // CheckBox is not clicked
                     dimensionsGrid.deselectAllRecords();
                     dimensionsGrid.selectRecord(event.getRecord());
+                }
+            }
+        });
+
+        dimensionsGrid.addRecordDropHandler(new RecordDropHandler() {
+
+            @Override
+            public void onRecordDrop(RecordDropEvent event) {
+                ListGridRecord[] draggedRecords = event.getDropRecords();
+
+                int targetIndex = event.getIndex();
+
+                if (event.getSourceWidget() == dimensionsGrid && draggedRecords.length != 0) {
+
+                    // dsd Dimensions created before
+                    List<DimensionComponentDto> dimensionsUpdated = updateDimensionsOrderLogic();
+
+                    Arrays.sort(draggedRecords, new Comparator<ListGridRecord>() {
+
+                        @Override
+                        public int compare(ListGridRecord lhs, ListGridRecord rhs) {
+                            return lhs.getAttributeAsInt(DimensionDS.ORDER_LOGIC) - rhs.getAttributeAsInt(DimensionDS.ORDER_LOGIC);
+                        }
+                    });
+
+                    RecordList data = dimensionsGrid.getDataAsRecordList();
+
+                    // Compute the range of records that need to be updated as all records at `minIndex`
+                    // through `maxIndex`, inclusive.
+                    Integer[] draggedIndicesArr = new Integer[draggedRecords.length];
+                    int minIndex = targetIndex;
+                    int maxIndex = targetIndex - 1;
+                    for (int i = 0; i < draggedIndicesArr.length; ++i) {
+                        draggedIndicesArr[i] = data.findIndex(DimensionDS.ID, draggedRecords[i].getAttributeAsInt(DimensionDS.ID));
+                        minIndex = Math.min(draggedIndicesArr[i], minIndex);
+                        maxIndex = Math.max(draggedIndicesArr[i], maxIndex);
+                    }
+                    List<Integer> draggedIndices = Arrays.asList(draggedIndicesArr);
+
+                    final LinkedList<Integer> deque = new LinkedList<Integer>();
+
+                    // The purpose of `prevUserOrder` is to give each record a unique userOrder even
+                    // if the assumption that records have unique userOrders does not hold.
+                    // Other Showcase samples utilize the employees.userOrder field and may break
+                    // this invariant.
+                    int prevUserOrder = -1;
+                    if (minIndex > 0) {
+                        DimensionRecord recordDimension = (DimensionRecord) data.get(minIndex - 1);
+                        prevUserOrder = recordDimension.getAttributeAsInt(DimensionDS.ORDER_LOGIC);
+                    }
+
+                    List<DimensionComponentDto> recordsChanged = new ArrayList<DimensionComponentDto>();
+
+                    Pair<Integer, Integer> res = updateOrderLogic(deque, prevUserOrder, minIndex, targetIndex, draggedIndices, recordsChanged);
+                    int numDraggedRecordsBeforeTargetIndex = res.getFirst();
+                    prevUserOrder = res.getSecond();
+
+                    if (draggedIndicesArr.length - numDraggedRecordsBeforeTargetIndex > 0) {
+                        Integer[] nonDraggedIndicesArr = new Integer[maxIndex + 1 - targetIndex - (draggedIndicesArr.length - numDraggedRecordsBeforeTargetIndex)];
+                        int j = 0;
+                        for (int i = targetIndex; i <= maxIndex; ++i) {
+                            if (!draggedIndices.contains(i)) {
+                                nonDraggedIndicesArr[j++] = i;
+                            }
+                        }
+                        assert j == nonDraggedIndicesArr.length;
+
+                        updateOrderLogic(deque, prevUserOrder, targetIndex, maxIndex + 1, Arrays.asList(nonDraggedIndicesArr), recordsChanged);
+                    }
+
+                    getUiHandlers().saveDimensions(dimensionsUpdated.isEmpty() ? recordsChanged : dimensionsUpdated);
                 }
             }
         });
@@ -275,6 +358,49 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
 
         panel.addMember(gridLayout);
         panel.addMember(selectedComponentLayout);
+    }
+
+    private Pair<Integer, Integer> updateOrderLogic(LinkedList<Integer> deque, int prevUserOrder, int minIndex, int targetIndex, List<Integer> draggedIndices,
+            List<DimensionComponentDto> recordsChanged) {
+        RecordList data = dimensionsGrid.getDataAsRecordList();
+
+        for (int i = minIndex; i < targetIndex; ++i) {
+            DimensionRecord recordSelection = (DimensionRecord) data.get(i);
+            deque.addLast(recordSelection.getAttributeAsInt(DimensionDS.ORDER_LOGIC));
+            if (!draggedIndices.contains(i)) {
+                DimensionRecord updates = new DimensionRecord();
+                updates.setAttribute(DimensionDS.ID, recordSelection.getAttributeAsInt(DimensionDS.ID));
+
+                int newUserOrder = Math.max(deque.removeFirst(), prevUserOrder + 1);
+                updates.setAttribute(DimensionDS.ORDER_LOGIC, newUserOrder);
+                recordSelection.setAttribute(DimensionDS.ORDER_LOGIC, newUserOrder); // Update the record's userOrder to
+                // what it will be set to.
+                prevUserOrder = newUserOrder;
+                recordSelection.getDimensionComponentDto().setOrderLogic(newUserOrder);
+                recordsChanged.add(recordSelection.getDimensionComponentDto());
+
+            }
+        }
+
+        // Empty the deque.
+        int numDraggedRecordsBeforeTargetIndex = deque.size();
+
+        for (int j = 0; !deque.isEmpty(); ++j) {
+            DimensionRecord recordDimension = (DimensionRecord) data.get(draggedIndices.get(j));
+
+            DimensionRecord updates = new DimensionRecord();
+            updates.setAttribute(DimensionDS.ID, recordDimension.getAttributeAsInt(DimensionDS.ID));
+
+            int newUserOrder = Math.max(deque.removeFirst(), prevUserOrder + 1);
+            updates.setAttribute(DimensionDS.ORDER_LOGIC, newUserOrder);
+            recordDimension.setAttribute(DimensionDS.ORDER_LOGIC, newUserOrder); // Update the record's userOrder to
+            // what it will be set to.
+            prevUserOrder = newUserOrder;
+            recordDimension.getDimensionComponentDto().setOrderLogic(newUserOrder);
+            recordsChanged.add(recordDimension.getDimensionComponentDto());
+        }
+
+        return new Pair<Integer, Integer>(numDraggedRecordsBeforeTargetIndex, prevUserOrder);
     }
 
     /**
@@ -453,6 +579,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         mainFormLayout.setCanEdit(DsdClientSecurityUtils.canUpdateDimension(dataStructureDefinitionMetamacDto));
 
         dimensionsGrid.setData(DsdRecordUtils.getDimensionRecords(dimensionComponentDtos));
+
+        dimensionsGrid.setCanReorderRecords(DsdClientSecurityUtils.canAlterOrderDimension(dataStructureDefinitionMetamacDto));
     }
 
     @Override
@@ -535,6 +663,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         // Concept
         dimensionComponentDto.setCptIdRef(((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.CONCEPT)).getRelatedResourceDto());
 
+        dimensionComponentDto.setSpecialDimensionType(getSpecialDimensionTypeFromEditionForm());
+
         // Role
         dimensionComponentDto.getRole().clear();
         if (!TypeDimensionComponent.TIMEDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
@@ -579,6 +709,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
 
         if (dimensionComponentDto.getId() == null) {
             dimensionComponentDto.setTypeComponent(TypeComponent.DIMENSION_COMPONENT);
+            dimensionComponentDto.setOrderLogic(getDimensionOrderLogic(dimensionComponentDto));
+
         }
 
         // Annotations
@@ -586,6 +718,71 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         dimensionComponentDto.getAnnotations().addAll(editionAnnotationsPanel.getAnnotations());
 
         return dimensionComponentDto;
+    }
+
+    private Integer getDimensionOrderLogic(DimensionComponentDto dimensionComponentDto) {
+        RecordList dimensions = dimensionsGrid.getDataAsRecordList();
+
+        Integer maxOrder = 0;
+        for (Record dimensionrecord : dimensions.toArray()) {
+            DimensionComponentDto dimensionDto = ((DimensionRecord) dimensionrecord).getDimensionComponentDto();
+            if (dimensionDto.getCode() != dimensionComponentDto.getCode()) {
+                if (dimensionDto.getOrderLogic() != null) {
+                    maxOrder = dimensionDto.getOrderLogic();
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        return maxOrder + 1;
+    }
+
+    private RecordList getDatagridRecordsInOrdered(DimensionComponentDto dimensionComponentDto, DimensionRecord record) {
+        RecordList dimensions = dimensionsGrid.getDataAsRecordList();
+        boolean isUpdatedDimension = false;
+        RecordList reorderDimensions = new RecordList();
+
+        for (Record generalRecord : dimensions.toArray()) {
+            DimensionRecord dimensionRecord = (DimensionRecord) generalRecord;
+            if (dimensionRecord.getIdentifier().equals(dimensionComponentDto.getId())) {
+                reorderDimensions.add(record);
+                isUpdatedDimension = true;
+            } else {
+                reorderDimensions.add(generalRecord);
+            }
+        }
+
+        if (!isUpdatedDimension) {
+            reorderDimensions.add(record);
+        }
+
+        return reorderDimensions;
+
+    }
+
+    private List<DimensionComponentDto> updateDimensionsOrderLogic() {
+        RecordList dimensions = dimensionsGrid.getDataAsRecordList();
+        List<DimensionComponentDto> dimensionsUpdated = new ArrayList<DimensionComponentDto>();
+        if (dimensions != null) {
+            if (!dimensions.isEmpty()) {
+                Integer order = ((DimensionRecord) dimensions.get(0)).getAttributeAsInt(DimensionDS.ORDER_LOGIC);
+                if (order != null) {
+                    // the list is ordered by the users it is not neccessary establish it.
+                    return new ArrayList<DimensionComponentDto>();
+                }
+            }
+
+            Integer order = 1;
+            for (Record dimensionrecord : dimensions.toArray()) {
+                DimensionComponentDto dimensionDto = ((DimensionRecord) dimensionrecord).getDimensionComponentDto();
+                dimensionDto.setOrderLogic(order);
+                dimensionrecord.setAttribute(DimensionDS.ORDER_LOGIC, order++); // Update the record's userOrder
+                dimensionsUpdated.add(dimensionDto);
+            }
+
+        }
+        return dimensionsUpdated;
     }
 
     private SpecialDimensionTypeEnum getSpecialDimensionTypeFromEditionForm() {
@@ -657,7 +854,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                     // CODELIST
 
                     if (!TypeDimensionComponent.MEASUREDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
-                        ((RelatedResourceLinkItem) form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                        ((RelatedResourceLinkItem) form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST))
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST).show();
                     }
 
@@ -667,7 +865,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
 
                     if (TypeDimensionComponent.MEASUREDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
                         ((RelatedResourceLinkItem) form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME))
-                                .setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME).show();
                     }
                 }
@@ -732,9 +930,9 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
 
                     if (!TypeDimensionComponent.MEASUREDIMENSION.equals(dimensionComponentDto.getTypeDimensionComponent())) {
                         ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST))
-                                .setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                         ((RelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST_VIEW))
-                                .setRelatedResource(dimensionComponentDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dimensionComponentDto.getLocalRepresentation().getEnumeration());
                     }
 
                 } else if (RelatedResourceTypeEnum.CONCEPT_SCHEME.equals(dimensionComponentDto.getLocalRepresentation().getEnumeration().getType())) {
@@ -772,8 +970,8 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
     }
 
     private void setConceptSchemeEnumerationRepresentationInEditionForm(RelatedResourceDto relatedResourceDto) {
-        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(relatedResourceDto);
-        ((RelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW)).setRelatedResource(relatedResourceDto);
+        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResourceWithVersion(relatedResourceDto);
+        ((RelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW)).setRelatedResourceWithVersion(relatedResourceDto);
     }
 
     @Override
@@ -794,11 +992,18 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
     @Override
     public void onDimensionSaved(DimensionComponentDto dimensionComponentDto) {
         this.dimensionComponentDto = dimensionComponentDto;
-        dimensionsGrid.removeSelectedData();
-        DimensionRecord record = DsdRecordUtils.getDimensionRecord(dimensionComponentDto);
-        dimensionsGrid.addData(record);
-        dimensionsGrid.selectRecord(record);
+        DimensionRecord dimensionChanged = DsdRecordUtils.getDimensionRecord(dimensionComponentDto);
+        RecordList allDimensionsOrdered = getDatagridRecordsInOrdered(dimensionComponentDto, dimensionChanged);
+        dimensionsGrid.setData(allDimensionsOrdered);
+        dimensionsGrid.selectRecord(dimensionChanged);
+
         mainFormLayout.setViewMode();
+    }
+
+    @Override
+    public void onMultipleDimensionSaved() {
+        this.dimensionComponentDto = null;
+        deselectDimension();
     }
 
     /**
@@ -1059,7 +1264,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                         RelatedResourceDto selectedConceptScheme = searchConceptSchemeForEnumeratedRepresentationWindow.getSelectedRelatedResource();
                         searchConceptSchemeForEnumeratedRepresentationWindow.markForDestroy();
                         // Set selected concept scheme in form
-                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(selectedConceptScheme);
+                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResourceWithVersion(selectedConceptScheme);
                         editionForm.validate(false);
                     }
                 });
@@ -1139,7 +1344,7 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
                             RelatedResourceDto selectedCodelist = searchCodelistForEnumeratedRepresentationWindow.getSelectedRelatedResource();
                             searchCodelistForEnumeratedRepresentationWindow.markForDestroy();
                             // Set selected codelist in form
-                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(selectedCodelist);
+                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DimensionDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResourceWithVersion(selectedCodelist);
                             editionForm.validate(false);
                         }
                     });
@@ -1327,5 +1532,10 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
     public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
         this.viewAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
         this.editionAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.viewAnnotationsPanel.isAnnotationTypeFieldFill() || !this.editionAnnotationsPanel.isAnnotationTypeFieldFill();
     }
 }

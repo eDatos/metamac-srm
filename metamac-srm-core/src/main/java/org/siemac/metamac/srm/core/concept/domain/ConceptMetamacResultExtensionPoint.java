@@ -26,10 +26,10 @@ public class ConceptMetamacResultExtensionPoint {
 
     // Quantity metadata
     private QuantityTypeEnum                     quantityType                   = null;
-    private String                               unitCodelistCode               = null;
+    private String                               unitCodelistUrn                = null;
     private String                               unitCode                       = null;
     private QuantityUnitSymbolPositionEnum       unitSymbolPosition             = null;
-    private String                               unitMultiplierCodelistCode     = null;
+    private String                               unitMultiplierCodelistUrn      = null;
     private String                               unitMultiplierCode             = null;
     private Integer                              significantDigits              = null;
     private Integer                              decimalPlaces                  = null;
@@ -43,7 +43,7 @@ public class ConceptMetamacResultExtensionPoint {
     private final Map<String, String>            percentageOf                   = new HashMap<String, String>();
     private Integer                              indexBaseValue                 = null;
     private String                               indexBaseTime                  = null;
-    private String                               indexBaseLocationCodelistCode  = null;
+    private String                               indexBaseLocationCodelistUrn   = null;
     private String                               indexBaseLocationCode          = null;
     private String                               indexBaseQuantityConceptScheme = null;
     private String                               indexBaseQuantityConcept       = null;
@@ -132,28 +132,12 @@ public class ConceptMetamacResultExtensionPoint {
         this.unitCode = unitCode;
     }
 
-    public String getUnitCodelistCode() {
-        return unitCodelistCode;
-    }
-
-    public void setUnitCodelistCode(String unitCodelistCode) {
-        this.unitCodelistCode = unitCodelistCode;
-    }
-
     public QuantityUnitSymbolPositionEnum getUnitSymbolPosition() {
         return unitSymbolPosition;
     }
 
     public void setUnitSymbolPosition(QuantityUnitSymbolPositionEnum unitSymbolPosition) {
         this.unitSymbolPosition = unitSymbolPosition;
-    }
-
-    public String getUnitMultiplierCodelistCode() {
-        return unitMultiplierCodelistCode;
-    }
-
-    public void setUnitMultiplierCodelistCode(String unitMultiplierCodelistCode) {
-        this.unitMultiplierCodelistCode = unitMultiplierCodelistCode;
     }
 
     public String getUnitMultiplierCode() {
@@ -256,14 +240,6 @@ public class ConceptMetamacResultExtensionPoint {
         this.indexBaseTime = indexBaseTime;
     }
 
-    public String getIndexBaseLocationCodelistCode() {
-        return indexBaseLocationCodelistCode;
-    }
-
-    public void setIndexBaseLocationCodelistCode(String indexBaseLocationCodelistCode) {
-        this.indexBaseLocationCodelistCode = indexBaseLocationCodelistCode;
-    }
-
     public String getIndexBaseLocationCode() {
         return indexBaseLocationCode;
     }
@@ -286,5 +262,29 @@ public class ConceptMetamacResultExtensionPoint {
 
     public void setIndexBaseQuantityConcept(String indexBaseQuantityConcept) {
         this.indexBaseQuantityConcept = indexBaseQuantityConcept;
+    }
+
+    public String getUnitCodelistUrn() {
+        return unitCodelistUrn;
+    }
+
+    public void setUnitCodelistUrn(String unitCodelistUrn) {
+        this.unitCodelistUrn = unitCodelistUrn;
+    }
+
+    public String getUnitMultiplierCodelistUrn() {
+        return unitMultiplierCodelistUrn;
+    }
+
+    public void setUnitMultiplierCodelistUrn(String unitMultiplierCodelistUrn) {
+        this.unitMultiplierCodelistUrn = unitMultiplierCodelistUrn;
+    }
+
+    public String getIndexBaseLocationCodelistUrn() {
+        return indexBaseLocationCodelistUrn;
+    }
+
+    public void setIndexBaseLocationCodelistUrn(String indexBaseLocationCodelistUrn) {
+        this.indexBaseLocationCodelistUrn = indexBaseLocationCodelistUrn;
     }
 }

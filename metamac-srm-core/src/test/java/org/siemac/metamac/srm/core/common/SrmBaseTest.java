@@ -23,6 +23,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.base.dto.ItemMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
@@ -337,7 +338,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static String       DSD_9_V1                                              = "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=SDMX01:DATASTRUCTUREDEFINITION09(01.000)";
 
     protected static String       DSD_6_V1_DIMENSION_1                                  = "urn:sdmx:org.sdmx.infomodel.datastructure.Dimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).dim-01";
-    protected static String       DSD_6_V1_TIME_DIMENSION_1                             = "urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).timeDimension-01";
+    protected static String       DSD_6_V1_TIME_DIMENSION_1                             = "urn:sdmx:org.sdmx.infomodel.datastructure.TimeDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).TIME_PERIOD";
     protected static String       DSD_6_V1_MEASURE_DIMENSION_1                          = "urn:sdmx:org.sdmx.infomodel.datastructure.MeasureDimension=SDMX02:DATASTRUCTUREDEFINITION06(01.000).measureDimension-01";
 
     protected static String       DSD_7_V1_ATTRIBUTE_DESCRIPTOR                         = "urn:sdmx:org.sdmx.infomodel.datastructure.AttributeDescriptor=SDMX01:DATASTRUCTUREDEFINITION07(01.000).AttributeDescriptor";
@@ -349,6 +350,22 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected static String       DSD_7_V1_DATA_ATTRIBUTE_1                             = "urn:sdmx:org.sdmx.infomodel.datastructure.DataAttribute=SDMX01:DATASTRUCTUREDEFINITION07(01.000).dataAttribute-01";
     protected static String       DSD_7_V1_DATA_ATTRIBUTE_3                             = "urn:sdmx:org.sdmx.infomodel.datastructure.DataAttribute=SDMX01:DATASTRUCTUREDEFINITION07(01.000).dataAttribute-03";
     protected static String       DSD_7_V1_PRIMARY_MEASURE                              = "urn:sdmx:org.sdmx.infomodel.datastructure.PrimaryMeasure=SDMX01:DATASTRUCTUREDEFINITION07(01.000).OBS_VALUE";
+
+    protected static String       CATEGORY_ELEMENT_01                                   = "CATEGORY_ELEMENT_01";
+    protected static String       CATEGORY_ELEMENT_02                                   = "CATEGORY_ELEMENT_02";
+    protected static String       CATEGORY_ELEMENT_03                                   = "CATEGORY_ELEMENT_03";
+    protected static String       CATEGORY_ELEMENT_04                                   = "CATEGORY_ELEMENT_04";
+    protected static String       CATEGORY_ELEMENT_05                                   = "CATEGORY_ELEMENT_05";
+    protected static String       CATEGORY_ELEMENT_06                                   = "CATEGORY_ELEMENT_06";
+    protected static String       CATEGORY_ELEMENT_07                                   = "CATEGORY_ELEMENT_07";
+    protected static final String BASE_URN_CATEGORY_ELEMENT                             = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=";
+    protected static final String CATEGORY_ELEMENT_1_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_01";
+    protected static final String CATEGORY_ELEMENT_2_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_02";
+    protected static final String CATEGORY_ELEMENT_3_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_03";
+    protected static final String CATEGORY_ELEMENT_4_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_04";
+    protected static final String CATEGORY_ELEMENT_5_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_05";
+    protected static final String CATEGORY_ELEMENT_6_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_06";
+    protected static final String CATEGORY_ELEMENT_7_URN                                = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=CATEGORY_ELEMENT_07";
 
     // Other
     protected static final String NOT_EXISTS                                            = "not-exists";
@@ -462,6 +479,8 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         List<String> tables = new ArrayList<String>();
         tables.addAll(super.getTableNamesOrderedByFKDependency());
         tables.add("TB_LIS_ENI_SCHEMA_CATALOGS");
+        tables.add("TB_RESOURCE_ELEMENTS");
+        tables.add("TB_CAT_RESOURCE_ELEMENTS");
         tables.add("TB_M_CATEGORIES");
         tables.add("TB_M_CAT_SCHEMES_VERSIONS");
         tables.add("TB_M_CODELIST_FAMILIES");
@@ -511,6 +530,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tablePrimaryKeys.put("TB_M_DATASTRUCTURE_VERSIONS", Arrays.asList("TB_DATASTRUCTURE_VERSIONS"));
         tablePrimaryKeys.put("TB_M_VAR_ELEM_OP_TARGETS", Arrays.asList("TARGET_FK", "OPERATION_FK"));
         tablePrimaryKeys.put("TB_M_VAR_ELEM_OP_SOURCES", Arrays.asList("SOURCE_FK", "OPERATION_FK"));
+        tablePrimaryKeys.put("TB_CAT_RESOURCE_ELEMENTS", Arrays.asList("TB_RESOURCE_ELEMENTS"));
         // It is necessary to specify the table name and the column name in upper and lower case for compatibility with the different database providers.
         Map<String, List<String>> primaryKeysInLowerCase = new HashMap<>();
         for (Entry<String, List<String>> primaryKey : tablePrimaryKeys.entrySet()) {
@@ -560,6 +580,16 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
 
     protected CodeMetamacVisualisationResult getCodeMetamacVisualisationResult(List<CodeMetamacVisualisationResult> actuals, String codeUrn) {
         for (CodeMetamacVisualisationResult actual : actuals) {
+            if (actual.getUrn().equals(codeUrn)) {
+                return actual;
+            }
+        }
+        fail("code not found");
+        return null;
+    }
+
+    protected CategoryMetamacVisualisationResult getCategoryMetamacVisualisationResult(List<CategoryMetamacVisualisationResult> actuals, String codeUrn) {
+        for (CategoryMetamacVisualisationResult actual : actuals) {
             if (actual.getUrn().equals(codeUrn)) {
                 return actual;
             }

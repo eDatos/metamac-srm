@@ -6,6 +6,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView;
 import org.siemac.metamac.srm.web.client.admin.utils.AdminClientSecurityUtils;
 import org.siemac.metamac.srm.web.client.admin.view.handlers.AdminAnnotationTypeUiHandlers;
@@ -13,8 +14,10 @@ import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.model.ds.AnnotationTypeDS;
 import org.siemac.metamac.srm.web.client.model.record.AnnotationTypeRecord;
 import org.siemac.metamac.srm.web.client.utils.RecordUtils;
+import org.siemac.metamac.srm.web.shared.criteria.AnnotationTypeCriteria;
 import org.siemac.metamac.web.common.client.widgets.ListGridToolStrip;
 import org.siemac.metamac.web.common.client.widgets.PaginatedCheckListGrid;
+import org.siemac.metamac.web.common.client.widgets.SearchSectionStack;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
@@ -31,6 +34,10 @@ import com.smartgwt.client.types.Autofit;
 import com.smartgwt.client.types.Visibility;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressEvent;
+import com.smartgwt.client.widgets.form.fields.events.KeyPressHandler;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
@@ -48,6 +55,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
     private ListGridToolStrip      toolStrip;
 
     private AnnotationTypePanel    annotationTypePanel;
+
+    private SearchSectionStack     searchSectionStack;
 
     public AdminAnnotationTypeTabViewImpl() {
         super();
@@ -83,13 +92,18 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             }
         });
 
+        createSearchSectionStack();
+
         // ListGrid
 
         listGrid = new PaginatedCheckListGrid(SrmWebConstants.MAIN_LIST_MAX_RESULTS, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
-                getUiHandlers().retrieveAnnotationTypes(firstResult);
+                AnnotationTypeCriteria criteria = new AnnotationTypeCriteria();
+                criteria.setFirstResult(firstResult);
+                criteria.setMaxResults(maxResults);
+                getUiHandlers().retrieveAnnotationTypes(criteria);
             }
         });
 
@@ -127,6 +141,7 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
         VLayout listPanel = new VLayout();
         listPanel.addMember(toolStrip);
+        listPanel.addMember(searchSectionStack);
         listPanel.addMember(listGrid);
 
         HLayout leftLayout = new HLayout();
@@ -143,6 +158,27 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
         panel.addMember(leftLayout);
         panel.addMember(rightLayout);
 
+    }
+
+    private void createSearchSectionStack() {
+        searchSectionStack = new SearchSectionStack();
+        searchSectionStack.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                getUiHandlers().retrieveAnnotationTypes(getAnnotationTypeCriteria());
+            }
+        });
+
+        searchSectionStack.addSearchItemKeyPressHandler(new KeyPressHandler() {
+
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                if (StringUtils.equalsIgnoreCase(event.getKeyName(), SrmWebConstants.ENTER_KEY)) {
+                    getUiHandlers().retrieveAnnotationTypes(getAnnotationTypeCriteria());
+                }
+            }
+        });
     }
 
     // UTILS
@@ -235,8 +271,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 @Override
                 public void onClick(ClickEvent event) {
                     mainFormLayout.setEditionMode();
-                    CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
-                    code.setDisabled(annotationTypeDto != null && annotationTypeDto.isExternalResource());
+                    disabledAnotationTypeCode();
+                    validateFields();
                 }
             });
 
@@ -266,6 +302,8 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
                 public void onClick(ClickEvent event) {
                     if (annotationTypeDto.getUuid() == null || (annotationTypeDto.getUuid() != null && annotationTypeDto.getUuid().isEmpty())) {
                         hide();
+                    } else {
+                        selectAnnotationType(annotationTypeDto);
                     }
                 }
             });
@@ -288,8 +326,21 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
             addMember(mainFormLayout);
         }
 
+        private void validateFields() {
+            CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
+            code.validate();
+            MultiLanguageTextItem title = (MultiLanguageTextItem) generalEditionForm.getItem(AnnotationTypeDS.TITLE);
+            title.validate();
+        }
+
         public void setEditionMode() {
+            disabledAnotationTypeCode();
             mainFormLayout.setEditionMode();
+        }
+
+        private void disabledAnotationTypeCode() {
+            CustomTextItem code = (CustomTextItem) generalEditionForm.getItem(AnnotationTypeDS.CODE);
+            code.setDisabled(annotationTypeDto != null && annotationTypeDto.isExternalResource());
         }
 
         private void createViewForm() {
@@ -354,5 +405,22 @@ public class AdminAnnotationTypeTabViewImpl extends ViewWithUiHandlers<AdminAnno
 
             return annotationTypeDto;
         }
+    }
+
+    @Override
+    public void setUiHandlers(AdminAnnotationTypeUiHandlers uiHandlers) {
+        super.setUiHandlers(uiHandlers);
+    }
+
+    @Override
+    public void clearSearchSection() {
+        searchSectionStack.reset();
+    }
+
+    @Override
+    public AnnotationTypeCriteria getAnnotationTypeCriteria() {
+        AnnotationTypeCriteria criteria = new AnnotationTypeCriteria();
+        criteria.setCriteria(searchSectionStack.getSearchCriteria());
+        return criteria;
     }
 }

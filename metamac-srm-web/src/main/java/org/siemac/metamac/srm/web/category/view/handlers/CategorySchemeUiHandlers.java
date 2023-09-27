@@ -1,5 +1,7 @@
 package org.siemac.metamac.srm.web.category.view.handlers;
 
+import java.util.Map;
+
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
@@ -19,6 +21,11 @@ public interface CategorySchemeUiHandlers extends BaseCategoryUiHandlers {
 
     // Categories
     void exportCategories(String categorySchemeUrn);
+    void retrieveCategories();
+
+    void normaliseCategoryElementsToCodes(String categorySchemeUrn, String locale, boolean onlyNormaliseCodesWithoutCategoryElement);
+    void updateCodesCategoryElements(String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId);
+    void retrieveCategoryElementsForManualNormalisation(int firstResult, int maxResults, String criteria);
 
     // Stream messages
     void reSendStreamMessageCategoryScheme(String urn);

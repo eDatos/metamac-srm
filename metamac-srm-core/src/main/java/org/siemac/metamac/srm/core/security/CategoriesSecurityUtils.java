@@ -172,4 +172,41 @@ public class CategoriesSecurityUtils extends CommonSecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
+
+    // CATEGORY ELEMENTS
+    public static void canRetrieveOrFindCategoryElement(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canRetrieveOrFindCategoryElement(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canCrudCategoryElement(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canCrudCategoryElement(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canUpdateCategoryCategoryElement(ServiceContext ctx, ProcStatusEnum procStatus) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canUpdateCategoryCategoryElement(getMetamacPrincipal(ctx), procStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canExportCategoryElements(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canExportCategoryElementsTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canImportCategoryElements(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canImportCategoryElements(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canNormaliseCategoryElementsToCategories(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canNormaliseCategoryElementsToCategories(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
 }

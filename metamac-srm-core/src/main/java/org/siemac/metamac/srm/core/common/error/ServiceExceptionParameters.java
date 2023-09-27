@@ -73,7 +73,7 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  CODELIST_OPENNESS_VISUALISATION                            = createCode(CODELIST_PREFIX, "codelist_openness_visualisation");
     public static final String  CODELIST_OPENNESS_VISUALISATION_EXPANDED                   = createCode(CODELIST_PREFIX, "codelist_openness_visualisation.expanded");
     public static final String  CODELIST_RESTRICTION_VISUALISATION                         = createCode(CODELIST_PREFIX, "codelist_restriction_visualisation");
-    
+
     // CODELIST FAMILY
     public static final String  CODELIST_FAMILY                                            = createCode("codelist_family");
 
@@ -149,7 +149,7 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  IMPORTATION_TSV_COLUMN_CONCEPTS_EXTENDS_VALUE              = createCode(IMPORTATION_PREFIX, "concepts_extends");
 
     public static final String  IMPORTATION_TSV_COLUMN_INDEX_BASE                          = createCode(IMPORTATION_PREFIX, "index_base_value");
-    
+
     // MISC
     public static final String  STREAM                                                     = createCode("stream");
     public static final String  FILE_URL                                                   = createCode("file_url");
@@ -163,6 +163,14 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  MISC_VALUE                                                 = createCode(MISC_VALUE_PREFIX);
     public static final String  MISC_VALUE_NAME                                            = createCode(MISC_VALUE_PREFIX, "name");
     public static final String  MISC_VALUE_VALUE                                           = createCode(MISC_VALUE_PREFIX, "value");
+
+    // RESOURCE ELEMENT
+    private static final String RESOURCE_ELEMENT_PREFIX                                    = "resource_element";
+    public static final String  RESOURCE_ELEMENT                                           = createCode(RESOURCE_ELEMENT_PREFIX);
+    public static final String  RESOURCE_ELEMENT_SHORT_NAME                                = createCode(RESOURCE_ELEMENT_PREFIX, "short_name");
+    public static final String  RESOURCE_ELEMENT_COMMENT                                   = createCode(RESOURCE_ELEMENT_PREFIX, "comment");
+    public static final String  RESOURCE_ELEMENT_VALID_FROM                                = createCode(RESOURCE_ELEMENT_PREFIX, "valid_from");
+    public static final String  RESOURCE_ELEMENT_VALID_TO                                  = createCode(RESOURCE_ELEMENT_PREFIX, "valid_to");
 
     private static String createCode(String fieldCode) {
         return PREFIX_PARAMETER_SRM + "." + fieldCode;

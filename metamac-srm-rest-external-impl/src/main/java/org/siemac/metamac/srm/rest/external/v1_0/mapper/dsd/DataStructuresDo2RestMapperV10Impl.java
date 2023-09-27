@@ -1,8 +1,6 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.dsd;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -67,9 +65,9 @@ import com.arte.statistic.sdmx.srm.core.structure.domain.GroupRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDescriptor;
 import com.arte.statistic.sdmx.srm.core.structure.domain.NoSpecifiedRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.PrimaryMeasureRelationship;
-import com.arte.statistic.sdmx.srm.core.structure.serviceimpl.utils.StructuresComparator;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialAttributeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialDimensionTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 
 @org.springframework.stereotype.Component
@@ -79,7 +77,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
     private ConceptsDo2RestMapperV10 conceptsDo2RestMapper;
 
     @Autowired
-    private ConceptsMetamacService conceptsService;
+    private ConceptsMetamacService   conceptsService;
 
     @Override
     public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
@@ -159,8 +157,8 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         toComponentList(source, target, isImported);
 
         // Dimensions must be returned in order
-        List<Component> componentsSorted = new ArrayList<>(source.getComponents());
-        Collections.sort(componentsSorted, StructuresComparator.STRUCTURE_COMPOENTN_ID_COMPARATOR);
+        List<Component> componentsSorted = getDimensionsOrdered(source.getComponents(), TypeComponentList.DIMENSION_DESCRIPTOR);
+
         for (Component component : componentsSorted) {
             if (component instanceof com.arte.statistic.sdmx.srm.core.structure.domain.Dimension) {
                 target.getDimensions().add(toDimension((com.arte.statistic.sdmx.srm.core.structure.domain.Dimension) component, isImported, fields));

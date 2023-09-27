@@ -2,7 +2,8 @@ package org.siemac.metamac.srm.web.shared.category;
 
 import java.util.List;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+
 import com.gwtplatform.dispatch.annotation.GenDispatch;
 import com.gwtplatform.dispatch.annotation.In;
 import com.gwtplatform.dispatch.annotation.Out;
@@ -11,11 +12,11 @@ import com.gwtplatform.dispatch.annotation.Out;
 public class GetCategoriesByScheme {
 
     @In(1)
-    String                        schemeUrn;
+    String                            schemeUrn;
 
     @In(2)
-    String                        locale;
+    String                            locale;
 
     @Out(1)
-    List<ItemVisualisationResult> categories;
+    List<CategoryMetamacVisualisationResult> categories;
 }

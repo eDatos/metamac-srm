@@ -14,16 +14,16 @@ import org.springframework.stereotype.Component;
 public class OrganisationSchemeDo2AvroMapper implements Do2AvroMapper<OrganisationSchemeVersionMetamac, OrganisationSchemeAvro> {
 
     @Autowired
-    private InternationalStringDo2AvroMapper internationalStringMapper;
+    private InternationalStringDo2AvroMapper        internationalStringMapper;
 
     @Autowired
-    private OrganisationDo2AvroMapper maintainerMapper;
+    private OrganisationDo2AvroMapper               maintainerMapper;
 
     @Autowired
-    private CategorisationDo2AvroMapper categorisationMapper;
+    private CategorisationDo2AvroMapper             categorisationMapper;
 
     @Autowired
-    private ProcStatusEnumDo2AvroMapper procStatusMapper;
+    private ProcStatusEnumDo2AvroMapper             procStatusMapper;
 
     @Autowired
     private OrganisationSchemeTypeEnumDo2AvroMapper organisationSchemeTypeEnumDo2AvroMapper;
@@ -37,7 +37,9 @@ public class OrganisationSchemeDo2AvroMapper implements Do2AvroMapper<Organisati
                 .setUrn(source.getMaintainableArtefact().getUrn()).setVersion(source.getVersion()).setUriProvider(source.getMaintainableArtefact().getUriProvider())
                 .setUrnProvider(source.getMaintainableArtefact().getUrnProvider()).setDescription(internationalStringMapper.toAvro(source.getMaintainableArtefact().getDescription()))
                 .setIsPartial(source.getIsPartial()).setFinalLogic(source.getMaintainableArtefact().getFinalLogic())
-                .setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer())).setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
+                .setLatestVersionNumberFinal(source.getMaintainableArtefact().getLatestVersionNumberFinal())
+                .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
+                .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
                 .setOrganisationSchemeType(organisationSchemeTypeEnumDo2AvroMapper.toAvro(source.getOrganisationSchemeType())).build();
     }

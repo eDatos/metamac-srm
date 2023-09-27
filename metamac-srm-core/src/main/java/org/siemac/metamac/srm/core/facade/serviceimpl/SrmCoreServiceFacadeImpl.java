@@ -27,8 +27,12 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -125,7 +129,6 @@ import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.TaskInfo;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.io.serviceapi.ExportService;
@@ -3904,7 +3907,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
         // Security
         CategoriesSecurityUtils.canRetrieveCategoriesByCategorySchemeUrn(ctx);
 
@@ -4193,6 +4196,151 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         }
         return eniSchemaCatalogDtoList;
 
+    }
+
+    // ------------------------------------------------------------------------
+    // CATEGORY ELEMENTS
+    // ------------------------------------------------------------------------
+
+    @Override
+    public CategoryElementDto retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Retrieve
+        CategoryElement categoryElement = getCategoriesMetamacService().retrieveCategoryElementByUrn(ctx, urn);
+
+        // Transform
+        CategoryElementDto categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElement);
+        return categoryElementDto;
+    }
+
+    @Override
+    public CategoryElementDto createCategoryElement(ServiceContext ctx, CategoryElementDto categoryElementDto) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Transform
+        CategoryElement categoryElement = categoriesDto2DoMapper.categoryElementDtoToDo(categoryElementDto);
+
+        // Create
+        CategoryElement categoryElementCreated = getCategoriesMetamacService().createCategoryElement(ctx, categoryElement);
+
+        // Transform to DTO
+        categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElementCreated);
+        return categoryElementDto;
+    }
+
+    @Override
+    public CategoryElementDto updateCategoryElement(ServiceContext ctx, CategoryElementDto categoryElementDto) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Transform
+        CategoryElement categoryElementToUpdate = categoriesDto2DoMapper.categoryElementDtoToDo(categoryElementDto);
+
+        // Update
+        CategoryElement categoryElementUpdated = getCategoriesMetamacService().updateCategoryElement(ctx, categoryElementToUpdate);
+
+        // Transform to DTO
+        categoryElementDto = categoriesDo2DtoMapper.categoryElementDoToDto(categoryElementUpdated);
+        return categoryElementDto;
+    }
+
+    @Override
+    public void deleteCategoryElement(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canCrudCategoryElement(ctx);
+
+        // Delete
+        getCategoriesMetamacService().deleteCategoryElement(ctx, urn);
+    }
+
+    @Override
+    public MetamacCriteriaResult<CategoryElementDto> findCategoryElementsByCondition(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCategoryElementCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<CategoryElement> result = getCategoriesMetamacService().findCategoryElementsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        MetamacCriteriaResult<CategoryElementDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCategoryElementToMetamacCriteriaResult(result,
+                sculptorCriteria.getPageSize());
+
+        return metamacCriteriaResult;
+    }
+
+    @Override
+    public String exportCategoryElementsTsv(ServiceContext ctx, List<String> categoryElementUrns) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canExportCategoryElements(ctx);
+
+        return getCategoriesMetamacService().exportCategoryElementsTsv(ctx, categoryElementUrns);
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementsTsv(ServiceContext ctx, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canImportVariableElements(ctx);
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCategoriesMetamacService().importCategoryElementsTsv(ctx, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+    }
+
+    public MetamacCriteriaResult<RelatedResourceDto> findCategoryElementsForCategoriesByCondition(ServiceContext ctx, MetamacCriteria criteria) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);
+
+        // Transform
+        SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCategoryElementCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
+
+        // Find
+        PagedResult<CategoryElement> result = getCategoriesMetamacService().findCategoryElementsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+        // Transform
+        MetamacCriteriaResult<RelatedResourceDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCategoryElementToMetamacCriteriaResultRelatedResource(result,
+                sculptorCriteria.getPageSize());
+
+        return metamacCriteriaResult;
+    }
+
+    @Override
+    public CategoryMetamacDto updateCategoryElementOfCategory(ServiceContext ctx, String categoryUrn, String categoryElementUrn) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        CategoriesSecurityUtils.canUpdateCategoryCategoryElement(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update
+        CategoryMetamac categoryUpdated = getCategoriesMetamacService().updateCategoryElementOfCategory(ctx, categoryUrn, categoryElementUrn);
+
+        // Transform to DTO
+        CategoryMetamacDto categoryDto = categoriesDo2DtoMapper.categoryMetamacDoToDto(categoryUpdated);
+        return categoryDto;
+    }
+
+    @Override
+    public void updateCodesCategoryElements(ServiceContext ctx, String categorySchemeUrn, Map<Long, Long> categoryElementsIdByCodeId) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        CategoriesSecurityUtils.canUpdateCategoryCategoryElement(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update
+        getCategoriesMetamacService().updateCodesCategoryElements(ctx, categorySchemeUrn, categoryElementsIdByCodeId);
+    }
+
+    @Override
+    public List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(ServiceContext ctx, String categorySchemeUrn, String locale, boolean proposeOnlyWithoutCategoryElement)
+            throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canNormaliseCategoryElementsToCategories(ctx);
+
+        // Normalise
+        return getCategoriesMetamacService().normaliseCategoryElementsToCategories(ctx, categorySchemeUrn, locale, proposeOnlyWithoutCategoryElement);
     }
 
 }

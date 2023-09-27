@@ -24,6 +24,8 @@ Application TaskMetamac {
     		String plannifyImportCategoriesTsvInBackground(String categorySchemeUrn, java.io.File file, String fileName, boolean updateAlreadyExisting) throws MetamacException;       		
 			"Prepares importation of organisations in tsv format"
     		String plannifyImportOrganisationsTsvInBackground(String organisationSchemeUrn, java.io.File file, String fileName, boolean updateAlreadyExisting) throws MetamacException;
+    		"Prepares importation of category elements in tsv format"
+    		String plannifyImportCategoryElementsTsvInBackground(java.io.File file, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Prepares importation of code orders in tsv format"
     		String plannifyImportCodeOrdersTsvInBackground(String codelistUrn, java.io.File file, String fileName) throws MetamacException;
     		"Prepares importation of code openness levels in tsv format"
@@ -39,6 +41,10 @@ Application TaskMetamac {
     		"Prepares a merge between codelists"
     		String plannifyPublicationInternallyCodelist(String urn, Boolean forceLatestFinal) throws MetamacException;
 
+			// Process of resending kafka messages for all resources
+			processResendKafkaResourcesMessageTask() throws MetamacException;
+			// Schedule Job resend kafka messages for all resources
+			scheduleResendKafkaResourcesMessageJob()
 			// TASKS
     		"Retrieves task"
     		@Task retrieveTaskByJob(String job) throws MetamacException;
@@ -52,6 +58,7 @@ Application TaskMetamac {
 			// MISC
 			"Delete entities marked to delete"
     		deleteEntitiesMarkedToDelete() throws MetamacException;
+    		
 		}
 	}
 }

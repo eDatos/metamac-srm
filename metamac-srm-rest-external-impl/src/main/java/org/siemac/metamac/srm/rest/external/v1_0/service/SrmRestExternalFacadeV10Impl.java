@@ -2,10 +2,8 @@ package org.siemac.metamac.srm.rest.external.v1_0.service;
 
 import static org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils.hasField;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -89,6 +87,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -286,9 +285,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Concepts concepts = findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow);
+            List<PlainTextResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow, format);
 
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CONCEPTS + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "concepts";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -424,9 +423,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow);
+            List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow, format);
 
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CATEGORIES + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "categories";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -448,9 +447,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Retrieve all categories of categoryScheme, without pagination
             CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
 
-            ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
-            itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
+            CategoryMetamacResultSelection categoryMetamacResultSelection = CategoryMetamacResultSelection.API;
+
+            categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
 
             // Transform
             return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
@@ -458,8 +459,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Category retrieveCategory(String agencyID, String resourceID, String version, String categoryID) {
+    public Category retrieveCategory(String agencyID, String resourceID, String version, String categoryID, String fields) {
         try {
+
+            Set<String> validFields = new HashSet<>();
+            validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
+
             checkParameterNotWildcardRetrieveItem(agencyID, resourceID, version, categoryID, SrmRestConstants.PARAMETER_CATEGORY_ID);
 
             // Find one
@@ -471,7 +477,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             }
 
             // Transform
-            return categoriesDo2RestMapper.toCategory(entitiesPagedResult.getValues().get(0));
+            return categoriesDo2RestMapper.toCategory(entitiesPagedResult.getValues().get(0), fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -581,8 +587,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Organisations organisations = findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow);
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_ORGANISATIONS + "-" + agencyID + "_" + resourceID + "_" + version;
+            List<PlainTextResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow, format);
+            String fileNamePrefix = "organisations";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -1039,9 +1045,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Codes codes = findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
 
             // Transform
-            List<PlainTextResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow);
+            List<PlainTextResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow, format);
 
-            String fileNamePrefix = SrmRestConstants.LINK_SUBPATH_CODES + "-" + agencyID + "_" + resourceID + "_" + version;
+            String fileNamePrefix = "codes";
             return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
@@ -2202,8 +2208,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     public static String getContentDisposition(String fileNamePrefix, String format) {
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return "attachment; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+        return "inline; filename=" + fileNamePrefix + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {
@@ -2211,7 +2216,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
         return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
     }
-
 }

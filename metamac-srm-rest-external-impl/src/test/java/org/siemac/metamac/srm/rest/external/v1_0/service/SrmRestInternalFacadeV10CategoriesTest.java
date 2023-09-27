@@ -319,6 +319,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
         testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
         testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
+        testFindCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
 
         // agency
         testFindCategories(AGENCY_1, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null); // without limits
@@ -343,6 +344,29 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         testFindCategories(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, null, null); // query
         testFindCategories(AGENCY_1, WILDCARD_ALL, VERSION_1, "2", "0", QUERY_ID_LIKE_1_NAME_LIKE_2, ORDER_BY_ID_DESC, null); // query and order
         testFindCategories(AGENCY_1, WILDCARD_ALL, VERSION_1, "2", "0", null, null, FIELD_ENI_SCHEME); // with eni scheme
+    }
+
+    @Test
+    public void testFindCategoriesWithCategoryElementExplicit() throws Exception {
+        resetMocks();
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, "+categoryElement");
+        assertNotNull(categories.getCategories().get(0).getCategoryElement());
+    }
+
+    @Test
+    public void testFindCategoriesWithoutCategoryElementExplicit() throws Exception {
+        resetMocks();
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null);
+        assertNull(categories.getCategories().get(0).getCategoryElement());
+    }
+
+    @Test
+    public void testFindCategoriesWithCategoryElementXml() throws Exception {
+        String requestUri = getUriItems(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, QUERY_ID_LIKE_1_NAME_LIKE_2, "4", "4", "+categoryElement");
+        InputStream responseExpected = SrmRestInternalFacadeV10CodesTest.class.getResourceAsStream("/responses/categories/findCategoriesWithCategoryElements.xml");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
     }
 
     @Test
@@ -437,7 +461,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         String resourceID = ITEM_SCHEME_1_CODE;
         String version = VERSION_1;
         String categoryID = ITEM_1_CODE;
-        Category category = getSrmRestInternalFacadeClientXml().retrieveCategory(agencyID, resourceID, version, categoryID);
+        Category category = getSrmRestInternalFacadeClientXml().retrieveCategory(agencyID, resourceID, version, categoryID, null);
 
         // Validation
         assertNotNull(category);
@@ -462,13 +486,25 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     }
 
     @Test
+    public void testRetrieveCategoryWithCategoryElementExplicit() throws Exception {
+        String fields = "fields=+categoryElement";
+        String requestBase = getUriItem(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE);
+        String[] requestUris = getRequestUri(requestBase, fields);
+        for (int i = 0; i < requestUris.length; i++) {
+            String requestUri = requestUris[i];
+            InputStream responseExpected = SrmRestInternalFacadeV10CategoriesTest.class.getResourceAsStream("/responses/categories/retrieveCategory.id2.xml");
+            testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+        }
+    }
+
+    @Test
     public void testRetrieveCategoryErrorNotExists() throws Exception {
         String agencyID = AGENCY_1;
         String resourceID = ITEM_SCHEME_1_CODE;
         String version = VERSION_1;
         String categoryID = NOT_EXISTS;
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCategory(agencyID, resourceID, version, categoryID);
+            getSrmRestInternalFacadeClientXml().retrieveCategory(agencyID, resourceID, version, categoryID, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.NOT_FOUND.getStatusCode(), e.getStatus());
 
@@ -500,7 +536,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         // AgencyID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCategory(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE);
+            getSrmRestInternalFacadeClientXml().retrieveCategory(WILDCARD_ALL, ITEM_SCHEME_1_CODE, VERSION_1, ITEM_1_CODE, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -514,7 +550,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         }
         // AgencyID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCategory(AGENCY_1, WILDCARD_ALL, VERSION_1, ITEM_1_CODE);
+            getSrmRestInternalFacadeClientXml().retrieveCategory(AGENCY_1, WILDCARD_ALL, VERSION_1, ITEM_1_CODE, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -529,7 +565,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         // AgencyID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCategory(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, ITEM_1_CODE);
+            getSrmRestInternalFacadeClientXml().retrieveCategory(AGENCY_1, ITEM_SCHEME_1_CODE, WILDCARD_ALL, ITEM_1_CODE, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 
@@ -544,7 +580,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         // ItemID
         try {
-            getSrmRestInternalFacadeClientXml().retrieveCategory(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, WILDCARD_ALL);
+            getSrmRestInternalFacadeClientXml().retrieveCategory(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, WILDCARD_ALL, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getStatus());
 

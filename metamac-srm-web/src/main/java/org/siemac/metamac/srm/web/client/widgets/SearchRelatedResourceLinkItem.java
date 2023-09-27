@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.client.widgets;
 
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.SearchRelatedResourceBaseLinkItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
@@ -18,5 +19,11 @@ public class SearchRelatedResourceLinkItem extends SearchRelatedResourceBaseLink
     @Override
     protected List<PlaceRequest> buildLocation(RelatedResourceDto relatedResourceDto) {
         return PlaceRequestUtils.buildAbsoluteResourcePlaceRequest(relatedResourceDto);
+    }
+
+    public void setRelatedResourceWithVersion(RelatedResourceDto relatedResourceDto) {
+        String[] params = UrnUtils.splitUrnItemScheme(relatedResourceDto.getUrn());
+        String version = params[2];
+        setRelatedResourceWithVersion(relatedResourceDto, version);
     }
 }

@@ -24,4 +24,8 @@ public class SharedAdministrationSecurityUtils extends SharedItemsSecurityUtils 
     public static boolean canDeleteAnnotationType(MetamacPrincipal metamacPrincipal) {
         return isSrmRoleAllowed(metamacPrincipal, SrmRoleEnum.ADMINISTRADOR);
     }
+
+    public static boolean canAdministrate(MetamacPrincipal metamacPrincipal) {
+        return isSrmRoleAllowed(metamacPrincipal, SrmRoleEnum.ADMINISTRADOR);
+    }
 }

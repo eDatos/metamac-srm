@@ -14,7 +14,7 @@
 
 * Cambios en statistic-sdmx-srm. Se debe borrar campo deshabilitado en release anterior en TB_ANNOTATIONS "old_type" Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
   ```shell
-    etc/changes-from-release/3.3.X/db/postgresql/XXXX_drop-column-type-in-table-tbAnnotations.sql 
+    etc/changes-from-release/3.3.1/db/postgresql/20232709_drop-column-type-in-table-tbAnnotations.sql
   ```shell
 
 ## 6.0.0 a 6.1.0

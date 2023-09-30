@@ -80,4 +80,14 @@ public class ConceptSchemeVersionMetamacRepositoryImpl extends ConceptSchemeVers
         // no metadata specific in metamac
     }
 
+    @Override
+    public List<ConceptSchemeVersionMetamac> retrieveConceptsSchemesPublishedExternally() throws MetamacException {
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("procStatus", ProcStatusEnum.EXTERNALLY_PUBLISHED);
+        return findByQuery("from ConceptSchemeVersionMetamac where maintainableArtefact.latestVersionNumberPublic is not null and lifeCycleMetadata.procStatus = :procStatus)", parameters,
+                Integer.MAX_VALUE);
+
+    }
+
 }

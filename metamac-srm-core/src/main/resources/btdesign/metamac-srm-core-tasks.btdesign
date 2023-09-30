@@ -41,6 +41,10 @@ Application TaskMetamac {
     		"Prepares a merge between codelists"
     		String plannifyPublicationInternallyCodelist(String urn, Boolean forceLatestFinal) throws MetamacException;
 
+			// Process of resending kafka messages for all resources
+			processResendKafkaResourcesMessageTask() throws MetamacException;
+			// Schedule Job resend kafka messages for all resources
+			scheduleResendKafkaResourcesMessageJob()
 			// TASKS
     		"Retrieves task"
     		@Task retrieveTaskByJob(String job) throws MetamacException;
@@ -54,6 +58,7 @@ Application TaskMetamac {
 			// MISC
 			"Delete entities marked to delete"
     		deleteEntitiesMarkedToDelete() throws MetamacException;
+    		
 		}
 	}
 }

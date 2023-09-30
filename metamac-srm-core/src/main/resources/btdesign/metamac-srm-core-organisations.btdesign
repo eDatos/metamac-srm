@@ -94,6 +94,9 @@ Application OrganisationsMetamac {
 
     		"Finds contacts by criteria"
     		PagedResult<@Contact> findOrganisationContactsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+    		
+    		// resend kafka message for the last number of version of published organisations.
+    		List<MetamacExceptionItem> resendKafkaMessageExternallyOrganisationSchemes() throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------
@@ -117,6 +120,7 @@ Application OrganisationsMetamac {
 				@OrganisationSchemeVersionMetamac retrieveOrganisationSchemeVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@OrganisationSchemeVersionMetamac findByOrganisation(String urn);
 				checkOrganisationSchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+				List<@OrganisationSchemeVersionMetamac> retrieveOrganisationSchemesPublishedExternally() throws MetamacException;
 			}			
 		}
 		

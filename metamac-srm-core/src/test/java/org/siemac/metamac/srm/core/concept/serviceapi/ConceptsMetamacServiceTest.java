@@ -6043,4 +6043,10 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     protected String getDataSetFile() {
         return "dbunit/SrmConceptsTest.xml";
     }
+
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyConceptSchemes() {
+        // No test. cron job process
+    }
 }

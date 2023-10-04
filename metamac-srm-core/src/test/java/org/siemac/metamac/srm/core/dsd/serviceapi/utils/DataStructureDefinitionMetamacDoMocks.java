@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
 import org.siemac.metamac.srm.core.dsd.domain.MeasureDimensionPrecision;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionComponent;
 import com.arte.statistic.sdmx.srm.core.structure.serviceapi.utils.DataStructureDefinitionDoMocks;
@@ -38,15 +39,16 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         return target;
     }
 
-    public static DataStructureDefinitionVersionMetamac mockDataStructureDefinitionVersionMetamacFixedValuesWithComponents(String agencyID, String resourceID, String version) {
+    public static DataStructureDefinitionVersionMetamac mockDataStructureDefinitionVersionMetamacFixedValuesWithComponents(String agencyID, String resourceID, String version,
+            AnnotationType annotationType) {
         DataStructureDefinitionVersionMetamac target = mockDataStructureDefinitionVersionMetamacFixedValues(agencyID, resourceID, version);
-        mockDataStructureDefinitionFixedValuesWithComponents(target, agencyID, resourceID, version);
+        mockDataStructureDefinitionFixedValuesWithComponents(target, agencyID, resourceID, version, annotationType);
 
-        target.addHeadingDimension(mockDimensionOrder(Integer.valueOf(0), mockDimensionFixedValues("dimension01")));
-        target.addHeadingDimension(mockDimensionOrder(Integer.valueOf(1), mockDimensionFixedValues("dimension02")));
-        target.addStubDimension(mockDimensionOrder(Integer.valueOf(0), mockDimensionFixedValues("dimension03")));
-        target.addStubDimension(mockDimensionOrder(Integer.valueOf(1), mockDimensionFixedValues("dimension04")));
-        target.addStubDimension(mockDimensionOrder(Integer.valueOf(2), mockDimensionFixedValues("dimension05")));
+        target.addHeadingDimension(mockDimensionOrder(Integer.valueOf(0), mockDimensionFixedValues("dimension01", annotationType)));
+        target.addHeadingDimension(mockDimensionOrder(Integer.valueOf(1), mockDimensionFixedValues("dimension02", annotationType)));
+        target.addStubDimension(mockDimensionOrder(Integer.valueOf(0), mockDimensionFixedValues("dimension03", annotationType)));
+        target.addStubDimension(mockDimensionOrder(Integer.valueOf(1), mockDimensionFixedValues("dimension04", annotationType)));
+        target.addStubDimension(mockDimensionOrder(Integer.valueOf(2), mockDimensionFixedValues("dimension05", annotationType)));
 
         ConceptSchemeVersionMetamac conceptSchemeVersion = ConceptsMetamacDoMocks.mockConceptSchemeFixedValues("agency01", "conceptScheme01", "01.000");
         target.addShowDecimalsPrecision(mockMeasureDimensionPrecision(Integer.valueOf(2), ConceptsMetamacDoMocks.mockConceptFixedValues("concept01", conceptSchemeVersion, null)));
@@ -84,17 +86,17 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         return target;
     }
 
-    public static DimensionVisualisationInfo mockDimensionVisualizationInfo(DimensionComponent dimension) {
+    public static DimensionVisualisationInfo mockDimensionVisualizationInfo(DimensionComponent dimension, AnnotationType annotationType) {
         DimensionVisualisationInfo target = new DimensionVisualisationInfo();
         target.setDimension(dimension);
-        target.setDisplayOrder(CodesMetamacDoMocks.mockCodelistOrderVisualisation());
-        target.setHierarchyLevelsOpen(CodesMetamacDoMocks.mockCodelistOpennessVisualisation());
+        target.setDisplayOrder(CodesMetamacDoMocks.mockCodelistOrderVisualisation(annotationType));
+        target.setHierarchyLevelsOpen(CodesMetamacDoMocks.mockCodelistOpennessVisualisation(annotationType));
         return target;
     }
 
     public static DimensionVisualisationInfo mockDimensionVisualisationInfoFixedValues(String dimensionId, String displayOrder, String hierarchyLevelsOpen) {
         DimensionVisualisationInfo target = new DimensionVisualisationInfo();
-        target.setDimension(mockDimensionFixedValues(dimensionId));
+        target.setDimension(mockDimensionFixedValues(dimensionId, null));
         target.setDisplayOrder(CodesMetamacDoMocks.mockCodelistOrderVisualisationFixedValues(displayOrder));
         target.setHierarchyLevelsOpen(CodesMetamacDoMocks.mockCodelistOpennessVisualisationFixedValues(hierarchyLevelsOpen));
         return target;

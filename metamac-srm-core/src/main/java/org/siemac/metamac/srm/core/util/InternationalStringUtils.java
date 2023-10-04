@@ -5,33 +5,24 @@ import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 
 public class InternationalStringUtils {
 
-   
-    public static InternationalString copy(InternationalString source) {
-        if (source == null) {
-            return null;
-        }
-        InternationalString target = new InternationalString();
+    private InternationalStringUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
-        for (LocalisedString sourceLocalisedString : source.getTexts()) {
-            LocalisedString targetLocalisedString = copy(sourceLocalisedString);
-            if (targetLocalisedString != null) {
-                target.addText(targetLocalisedString);
+    /**
+     * Returns a {@link String} from a {@link InternationalString} given a locale
+     * 
+     * @param internationalString
+     * @return
+     */
+    public static String getLocalisedString(InternationalString internationalString, String locale) {
+        if (internationalString != null && locale != null) {
+            for (LocalisedString localisedString : internationalString.getTexts()) {
+                if (locale.equals(localisedString.getLocale())) {
+                    return localisedString.getLabel();
+                }
             }
         }
-
-        return target;
+        return null;
     }
-
-    public static LocalisedString copy(LocalisedString source) {
-        if (source == null) {
-            return null;
-        }
-        LocalisedString target = new LocalisedString();
-        target.setLabel(source.getLabel());
-        target.setLocale(source.getLocale());
-        target.setIsUnmodifiable(source.getIsUnmodifiable());
-
-        return target;
-    }
-    
 }

@@ -60,7 +60,8 @@ public class MockitoVerify {
     @SuppressWarnings({"rawtypes"})
     public static List<ConditionalCriteria> buildExpectedConditionalCriteriaToFindStructures(String agencyID, String resourceID, String version, String query, String orderBy, Class entityClass,
             RestOperationEnum restOperation) {
-        return buildExpectedConditionalCriteriaToFindMaintainableArtefacts(agencyID, resourceID, version, query, orderBy, entityClass, StructureVersionProperties.maintainableArtefact(), restOperation);
+        return buildExpectedConditionalCriteriaToFindMaintainableArtefacts(agencyID, resourceID, version, query, orderBy, entityClass, StructureVersionProperties.maintainableArtefact(),
+                restOperation);
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -91,9 +92,9 @@ public class MockitoVerify {
             if (OrganisationMetamac.class.equals(entityClass)) {
                 expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).lbrace().withProperty(OrganisationProperties.organisationType())
                         .in(OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER).or()
-                        .withProperty(ItemSchemeVersionProperties.maintainableArtefact().latestFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
+                        .withProperty(ItemSchemeVersionProperties.maintainableArtefact().latestVersionNumberFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
             } else {
-                expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(itemSchemeVersionMaintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).buildSingle());
+                expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(itemSchemeVersionMaintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).buildSingle());
             }
         } else if (version != null && !SrmRestConstants.WILDCARD_ALL.equals(version)) {
             expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(itemSchemeVersionMaintainableArtefactProperty.versionLogic()).eq(version).buildSingle());
@@ -127,9 +128,9 @@ public class MockitoVerify {
             if (OrganisationSchemeVersionMetamac.class.equals(entityClass)) {
                 expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).lbrace().withProperty(OrganisationSchemeVersionProperties.organisationSchemeType())
                         .in(OrganisationSchemeTypeEnum.AGENCY_SCHEME, OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME).or()
-                        .withProperty(maintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
+                        .withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
             } else {
-                expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(maintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).buildSingle());
+                expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).buildSingle());
             }
         } else if (version != null && !SrmRestConstants.WILDCARD_ALL.equals(version)) {
             expected.add(ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(maintainableArtefactProperty.versionLogic()).eq(version).buildSingle());
@@ -231,7 +232,7 @@ public class MockitoVerify {
             return ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(ItemSchemeVersionProperties.maintainableArtefact().code()).like("%1%")
                     .withProperty(ItemSchemeVersionProperties.maintainableArtefact().name().texts().label()).like("%2%").build();
         } else if (QUERY_LATEST.equals(query)) {
-            return ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(ItemSchemeVersionProperties.maintainableArtefact().latestFinal()).eq(Boolean.TRUE).build();
+            return ConditionalCriteriaBuilder.criteriaFor(entityClass).withProperty(ItemSchemeVersionProperties.maintainableArtefact().latestVersionNumberFinal()).eq(Boolean.TRUE).build();
         }
         fail();
         return null;

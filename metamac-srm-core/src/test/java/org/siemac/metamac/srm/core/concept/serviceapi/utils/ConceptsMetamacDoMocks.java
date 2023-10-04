@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.srm.core.concept.serviceapi.utils.ConceptsDoMocks;
@@ -22,11 +23,11 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEn
 
 public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
 
-    public static ConceptSchemeVersionMetamac mockConceptScheme(OrganisationMetamac maintainer) {
+    public static ConceptSchemeVersionMetamac mockConceptScheme(OrganisationMetamac maintainer, AnnotationType annotationType) {
         ConceptSchemeVersionMetamac target = new ConceptSchemeVersionMetamac();
         target.setType(ConceptSchemeTypeEnum.OPERATION);
         target.setRelatedOperation(mockExternalItemOperation(UUID.randomUUID().toString()));
-        mockConceptScheme(target, maintainer);
+        mockConceptScheme(target, maintainer, annotationType);
         return target;
     }
 
@@ -39,7 +40,7 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
         return target;
     }
 
-    public static ConceptMetamac mockConcept(ConceptType conceptType, CodelistVersion coreRepresentation, ConceptRoleEnum sdmxRelatedArtefact) {
+    public static ConceptMetamac mockConcept(ConceptType conceptType, CodelistVersion coreRepresentation, ConceptRoleEnum sdmxRelatedArtefact, AnnotationType annotationType) {
         ConceptMetamac target = new ConceptMetamac();
         target.setPluralName(mockInternationalString("pluralName"));
         target.setAcronym(mockInternationalString("acronym"));
@@ -51,9 +52,9 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
         target.setDerivation(mockInternationalString("derivation"));
         target.setLegalActs(mockInternationalString("legalActs"));
         if (coreRepresentation != null) {
-            mockConcept(target, RepresentationTypeEnum.ENUMERATION, coreRepresentation);
+            mockConcept(target, RepresentationTypeEnum.ENUMERATION, coreRepresentation, annotationType);
         } else {
-            mockConcept(target, RepresentationTypeEnum.TEXT_FORMAT, null);
+            mockConcept(target, RepresentationTypeEnum.TEXT_FORMAT, null, annotationType);
         }
         return target;
     }
@@ -107,7 +108,7 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
         target.setUnitSymbolPosition(QuantityUnitSymbolPositionEnum.START);
         target.setSignificantDigits(Integer.valueOf(5));
         target.setDecimalPlaces(Integer.valueOf(2));
-        target.setUnitMultiplier(Integer.valueOf(10));
+        target.setUnitMultiplier(CodesMetamacDoMocks.mockCodeFixedValues("unitCode01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
         target.setMinimum(Integer.valueOf(1000));
         target.setMaximum(Integer.valueOf(2000));
         target.setNumerator(mockConceptSimpleFixedValues("numerator1", mockConceptSchemeFixedValues("agency01", "conceptScheme02", "01.000")));

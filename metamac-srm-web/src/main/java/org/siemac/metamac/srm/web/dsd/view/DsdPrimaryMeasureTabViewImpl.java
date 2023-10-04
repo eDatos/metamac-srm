@@ -3,6 +3,8 @@ package org.siemac.metamac.srm.web.dsd.view;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getCoreMessages;
 
+import java.util.List;
+
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.representation.widgets.StaticFacetForm;
@@ -35,6 +37,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.FacetDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.RepresentationDto;
@@ -57,25 +60,25 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class DsdPrimaryMeasureTabViewImpl extends ViewWithUiHandlers<DsdPrimaryMeasureTabUiHandlers> implements DsdPrimaryMeasureTabPresenter.DsdPrimaryMeasureTabView {
 
-    private VLayout panel;
+    private VLayout                              panel;
 
-    private InternationalMainFormLayout mainFormLayout;
+    private InternationalMainFormLayout          mainFormLayout;
 
     // VIEW FORM
-    private GroupDynamicForm form;
-    private StaticFacetForm facetForm;
-    private AnnotationsPanel viewAnnotationsPanel;
+    private GroupDynamicForm                     form;
+    private StaticFacetForm                      facetForm;
+    private AnnotationsPanel                     viewAnnotationsPanel;
 
     // EDITION FORM
-    private GroupDynamicForm editionForm;
-    private DsdFacetForm facetEditionForm;
-    private StaticFacetForm facetStaticEditionForm;
-    private AnnotationsPanel editionAnnotationsPanel;
+    private GroupDynamicForm                     editionForm;
+    private DsdFacetForm                         facetEditionForm;
+    private StaticFacetForm                      facetStaticEditionForm;
+    private AnnotationsPanel                     editionAnnotationsPanel;
 
     private SearchRelatedResourcePaginatedWindow searchCodelistForEnumeratedRepresentationWindow;
 
-    private DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto;
-    private ComponentDto primaryMeasure;
+    private DataStructureDefinitionMetamacDto    dataStructureDefinitionMetamacDto;
+    private ComponentDto                         primaryMeasure;
 
     @Inject
     public DsdPrimaryMeasureTabViewImpl() {
@@ -586,5 +589,16 @@ public class DsdPrimaryMeasureTabViewImpl extends ViewWithUiHandlers<DsdPrimaryM
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.viewAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.editionAnnotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.viewAnnotationsPanel.isAnnotationTypeFieldFill() || !this.editionAnnotationsPanel.isAnnotationTypeFieldFill();
     }
 }

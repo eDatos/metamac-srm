@@ -2,8 +2,10 @@ package org.siemac.metamac.srm.core.category.mapper;
 
 import java.util.List;
 
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
@@ -30,4 +32,8 @@ public interface CategoriesDo2DtoMapper {
     public CategorisationDto categorisationDoToDto(Categorisation source);
     public List<CategorisationDto> categorisationDoListToDtoList(List<Categorisation> sources);
     public RelatedResourceDto categorisationDoToRelatedResourceDto(Categorisation source);
+
+    // Category element
+    public CategoryElementDto categoryElementDoToDto(CategoryElement source);
+    public RelatedResourceDto categoryElementDoToRelatedResourceDto(CategoryElement source);
 }

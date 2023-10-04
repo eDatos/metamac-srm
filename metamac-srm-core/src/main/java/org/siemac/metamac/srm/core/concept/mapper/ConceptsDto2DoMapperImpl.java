@@ -76,8 +76,8 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
         target.setIsTypeUpdated(!ObjectUtils.equals(source.getType(), target.getType()));
         target.setIsTypeEmptyPreviously(target.getType() == null);
         target.setType(source.getType());
-        target.setRelatedOperation(externalItemDtoStatisticalOperationsToExternalItemDo(source.getRelatedOperation(), target.getRelatedOperation(),
-                ServiceExceptionParameters.CONCEPT_SCHEME_RELATED_OPERATION));
+        target.setRelatedOperation(
+                externalItemDtoStatisticalOperationsToExternalItemDo(source.getRelatedOperation(), target.getRelatedOperation(), ServiceExceptionParameters.CONCEPT_SCHEME_RELATED_OPERATION));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
 
         dto2DoMapperSdmxSrm.conceptSchemeDtoToDo(source, target);
@@ -103,7 +103,8 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
         // Modifiable attributes
         target.setPluralName(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getPluralName(), target.getPluralName(), ServiceExceptionParameters.CONCEPT_PLURAL_NAME));
         target.setAcronym(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getAcronym(), target.getAcronym(), ServiceExceptionParameters.CONCEPT_ACRONYM));
-        target.setDescriptionSource(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getDescriptionSource(), target.getDescriptionSource(), ServiceExceptionParameters.CONCEPT_DESCRIPTION_SOURCE));
+        target.setDescriptionSource(
+                dto2DoMapperSdmxSrm.internationalStringToEntity(source.getDescriptionSource(), target.getDescriptionSource(), ServiceExceptionParameters.CONCEPT_DESCRIPTION_SOURCE));
         target.setContext(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getContext(), target.getContext(), ServiceExceptionParameters.CONCEPT_CONTEXT));
         target.setDocMethod(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getDocMethod(), target.getDocMethod(), ServiceExceptionParameters.CONCEPT_DOC_METHOD));
         target.setSdmxRelatedArtefact(source.getSdmxRelatedArtefact());
@@ -158,7 +159,7 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
         target.setUnitSymbolPosition(source.getUnitSymbolPosition());
         target.setSignificantDigits(source.getSignificantDigits());
         target.setDecimalPlaces(source.getDecimalPlaces());
-        target.setUnitMultiplier(source.getUnitMultiplier());
+        target.setUnitMultiplier(toCodeRelation(source.getUnitMultiplier()));
         target.setMinimum(source.getMinimum());
         target.setMaximum(source.getMaximum());
         target.setNumerator(toConceptRelation(source.getNumerator()));

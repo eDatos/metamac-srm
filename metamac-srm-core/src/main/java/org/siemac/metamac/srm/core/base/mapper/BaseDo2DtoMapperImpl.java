@@ -16,6 +16,7 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -24,6 +25,7 @@ import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
@@ -106,6 +108,11 @@ public class BaseDo2DtoMapperImpl implements org.siemac.metamac.srm.core.base.ma
             target.setManagementAppUrl(CoreCommonUtil.externalItemUrlDoToUrlDto(getStatisticalOperationsInternalWebApplicationUrlBase(), target.getManagementAppUrl()));
         }
         return target;
+    }
+
+    @Override
+    public AnnotationTypeDto annotationTypeToDto(AnnotationType source) {
+        return do2DtoMapperSdmxSrm.annotationTypeToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source);
     }
 
     private void nameableArtefactDoToNameableArtefactBasicDto(Item source, NameableArtefactMetamacBasicDto target) {

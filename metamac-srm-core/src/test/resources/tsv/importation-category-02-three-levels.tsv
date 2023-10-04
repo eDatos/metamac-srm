@@ -1,41 +1,41 @@
-code	parent	eni_scheme	name#es	name#en	description#es	description#en
-cat2		SRM-ID2-ENI-SCHEME	Estadísticas económicas	Economic statistics		
-cat5	cat2	SRM-ID2-ENI-SCHEME	Finanzas públicas, fiscales y de estadísticas del sector público	Government finance, fiscal and public sector statistics		
-cat4	cat2	SRM-ID1-ENI-SCHEME	Estadísticas sectoriales	Sectoral statistics		
-cat5	cat2.cat4		Turismo	Tourism		
-cat2	cat2.cat4	SRM-ID2-ENI-SCHEME	Energía	Energy		
-cat1	cat2.cat4	SRM-ID3-ENI-SCHEME	Agricultura, silvicultura y pesca	Agriculture, forestry, fisheries		
-cat6	cat2.cat4	SRM-ID2-ENI-SCHEME	Banca, seguros y estadísticas financieras	Banking, insurance, financial statistics		
-cat3	cat2.cat4		Minería, manufactura y construcción	Mining, manufacturing, construction		
-cat4	cat2.cat4	SRM-ID2-ENI-SCHEME	Transporte	Transport		
-cat7	cat2	SRM-ID2-ENI-SCHEME	Precios	Prices		
-cat8	cat2	SRM-ID1-ENI-SCHEME	Coste laboral	Labor cost		
-cat1	cat2		Estadísticas macroeconómicas	Macroeconomic statistics		
-cat3	cat2		Estadísticas empresariales	Business statistics		
-cat9	cat2		Ciencia, tecnología e innovación	Science, technology and innovation		
-cat2	cat2		Cuentas económicas	Economic accounts		
-cat6	cat2		Comercio internacional y balanza de pagos	International trade and balance of payments		
-cat1		SRM-ID2-ENI-SCHEME	Estadísticas demográficas y sociales	Demographic and social statistics		
-cat3	cat1		Educación	Education		
-cat10	cat1		Política y otras actividades de la comunidad	Political and other community activities		
-cat4	cat1		Salud	Health		
-cat5	cat1		Ingresos y consumo	Income and consumption		
-cat9	cat1	SRM-ID2-ENI-SCHEME	Cultura	Culture		
-cat1	cat1	SRM-ID2-ENI-SCHEME	Población y migración	Population and migration		
-cat11	cat1	SRM-ID2-ENI-SCHEME	Ocio	Time use		
-cat6	cat1	SRM-ID2-ENI-SCHEME	Protección social	Social protection		
-cat7	cat1		Asentamientos y vivienda	Human settlements and housing		
-cat2	cat1	SRM-ID1-ENI-SCHEME	Trabajo	Labour		
-cat8	cat1	SRM-ID3-ENI-SCHEME	Justicia y crímenes	Justice and crime		
-cat3			Medio Ambiente y estadísticas multi-dominio	Environment and multi-domain statistics		
-cat3	cat3		Estadísticas e indicadores multi-dominio	Multi-domain statistics and indicators		
-cat7	cat3.cat3		Espíritu empresarial	Entrepreneurship		
-cat6	cat3.cat3	SRM-ID2-ENI-SCHEME	Desarrollo sostenible	Sustainable development		
-cat2	cat3.cat3	SRM-ID2-ENI-SCHEME	Género y grupos especiales de población	Gender and special population groups		
-cat3	cat3.cat3	SRM-ID1-ENI-SCHEME	Sociedad de la información	Information society		
-cat4	cat3.cat3	SRM-ID2-ENI-SCHEME	Globalización	Globalisation		
-cat5	cat3.cat3	SRM-ID1-ENI-SCHEME	Indicadores relacionados con los Objetivos de Desarrollo del Milenio	Indicators related to the Millennium Development Goals		
-cat1	cat3.cat3		Condiciones de vida, pobreza y cuestiones sociales transversales	Living conditions, poverty, and cross-cutting social issues		
-cat1	cat3	SRM-ID2-ENI-SCHEME	Medio Ambiente	Environment		
-cat2	cat3		Estadísticas regionales y en áreas pequeñas	Regional and small area statistics		
-cat4	cat3	SRM-ID2-ENI-SCHEME	Anuarios y recopilaciones similares	Yearbooks and similar compendia		
+code	parent	category_element	eni_scheme	name#es	name#en	description#es	description#en
+cat2		CATEGORY_ELEMENT_02	SRM-ID2-ENI-SCHEME	Estadísticas económicas	Economic statistics		
+cat5	cat2	CATEGORY_ELEMENT_01	SRM-ID2-ENI-SCHEME	Finanzas públicas, fiscales y de estadísticas del sector público	Government finance, fiscal and public sector statistics		
+cat4	cat2	CATEGORY_ELEMENT_01	SRM-ID1-ENI-SCHEME	Estadísticas sectoriales	Sectoral statistics		
+cat5	cat2.cat4	CATEGORY_ELEMENT_02		Turismo	Tourism		
+cat2	cat2.cat4	CATEGORY_ELEMENT_01	SRM-ID2-ENI-SCHEME	Energía	Energy		
+cat1	cat2.cat4	CATEGORY_ELEMENT_01	SRM-ID3-ENI-SCHEME	Agricultura, silvicultura y pesca	Agriculture, forestry, fisheries		
+cat6	cat2.cat4	CATEGORY_ELEMENT_03	SRM-ID2-ENI-SCHEME	Banca, seguros y estadísticas financieras	Banking, insurance, financial statistics		
+cat3	cat2.cat4	CATEGORY_ELEMENT_03		Minería, manufactura y construcción	Mining, manufacturing, construction		
+cat4	cat2.cat4	CATEGORY_ELEMENT_01	SRM-ID2-ENI-SCHEME	Transporte	Transport		
+cat7	cat2	CATEGORY_ELEMENT_02	SRM-ID2-ENI-SCHEME	Precios	Prices		
+cat8	cat2	CATEGORY_ELEMENT_01	SRM-ID1-ENI-SCHEME	Coste laboral	Labor cost		
+cat1	cat2			Estadísticas macroeconómicas	Macroeconomic statistics		
+cat3	cat2			Estadísticas empresariales	Business statistics		
+cat9	cat2			Ciencia, tecnología e innovación	Science, technology and innovation		
+cat2	cat2	CATEGORY_ELEMENT_02		Cuentas económicas	Economic accounts		
+cat6	cat2	CATEGORY_ELEMENT_02		Comercio internacional y balanza de pagos	International trade and balance of payments		
+cat1			SRM-ID2-ENI-SCHEME	Estadísticas demográficas y sociales	Demographic and social statistics		
+cat3	cat1	CATEGORY_ELEMENT_01		Educación	Education		
+cat10	cat1	CATEGORY_ELEMENT_02		Política y otras actividades de la comunidad	Political and other community activities		
+cat4	cat1			Salud	Health		
+cat5	cat1			Ingresos y consumo	Income and consumption		
+cat9	cat1	CATEGORY_ELEMENT_03	SRM-ID2-ENI-SCHEME	Cultura	Culture		
+cat1	cat1	CATEGORY_ELEMENT_02	SRM-ID2-ENI-SCHEME	Población y migración	Population and migration		
+cat11	cat1	CATEGORY_ELEMENT_01	SRM-ID2-ENI-SCHEME	Ocio	Time use		
+cat6	cat1	CATEGORY_ELEMENT_03	SRM-ID2-ENI-SCHEME	Protección social	Social protection		
+cat7	cat1	CATEGORY_ELEMENT_02		Asentamientos y vivienda	Human settlements and housing		
+cat2	cat1	CATEGORY_ELEMENT_02	SRM-ID1-ENI-SCHEME	Trabajo	Labour		
+cat8	cat1	CATEGORY_ELEMENT_03	SRM-ID3-ENI-SCHEME	Justicia y crímenes	Justice and crime		
+cat3				Medio Ambiente y estadísticas multi-dominio	Environment and multi-domain statistics		
+cat3	cat3			Estadísticas e indicadores multi-dominio	Multi-domain statistics and indicators		
+cat7	cat3.cat3			Espíritu empresarial	Entrepreneurship		
+cat6	cat3.cat3	CATEGORY_ELEMENT_01	SRM-ID2-ENI-SCHEME	Desarrollo sostenible	Sustainable development		
+cat2	cat3.cat3	CATEGORY_ELEMENT_01	SRM-ID2-ENI-SCHEME	Género y grupos especiales de población	Gender and special population groups		
+cat3	cat3.cat3	CATEGORY_ELEMENT_01	SRM-ID1-ENI-SCHEME	Sociedad de la información	Information society		
+cat4	cat3.cat3	CATEGORY_ELEMENT_02	SRM-ID2-ENI-SCHEME	Globalización	Globalisation		
+cat5	cat3.cat3	CATEGORY_ELEMENT_02	SRM-ID1-ENI-SCHEME	Indicadores relacionados con los Objetivos de Desarrollo del Milenio	Indicators related to the Millennium Development Goals		
+cat1	cat3.cat3			Condiciones de vida, pobreza y cuestiones sociales transversales	Living conditions, poverty, and cross-cutting social issues		
+cat1	cat3		SRM-ID2-ENI-SCHEME	Medio Ambiente	Environment		
+cat2	cat3			Estadísticas regionales y en áreas pequeñas	Regional and small area statistics		
+cat4	cat3		SRM-ID2-ENI-SCHEME	Anuarios y recopilaciones similares	Yearbooks and similar compendia		

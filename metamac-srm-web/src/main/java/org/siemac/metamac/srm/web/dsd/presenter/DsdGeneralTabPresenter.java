@@ -37,13 +37,37 @@ import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsAction;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsResult;
 import org.siemac.metamac.srm.web.shared.criteria.DataStructureDefinitionWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.StatisticalOperationWebCriteria;
-import org.siemac.metamac.srm.web.shared.dsd.*;
+import org.siemac.metamac.srm.web.shared.dsd.CancelDsdValidityAction;
+import org.siemac.metamac.srm.web.shared.dsd.CancelDsdValidityResult;
+import org.siemac.metamac.srm.web.shared.dsd.CopyDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.CopyDsdResult;
+import org.siemac.metamac.srm.web.shared.dsd.CreateDsdTemporalVersionAction;
+import org.siemac.metamac.srm.web.shared.dsd.CreateDsdTemporalVersionResult;
+import org.siemac.metamac.srm.web.shared.dsd.DeleteDsdsAction;
+import org.siemac.metamac.srm.web.shared.dsd.DeleteDsdsResult;
+import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
+import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
+import org.siemac.metamac.srm.web.shared.dsd.GetDsdDimensionsAndCandidateVisualisationsAction;
+import org.siemac.metamac.srm.web.shared.dsd.GetDsdDimensionsAndCandidateVisualisationsResult;
+import org.siemac.metamac.srm.web.shared.dsd.GetDsdsAction;
+import org.siemac.metamac.srm.web.shared.dsd.GetDsdsResult;
+import org.siemac.metamac.srm.web.shared.dsd.ReSendDsdStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.dsd.ReSendDsdStreamMessageResult;
+import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.SaveDsdResult;
+import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusAction;
+import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusResult;
+import org.siemac.metamac.srm.web.shared.dsd.VersionDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.VersionDsdResult;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
@@ -97,6 +121,10 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
                 Map<String, List<RelatedResourceDto>> candidateOpennessLevelVisualisations);
 
         void setOperations(GetStatisticalOperationsResult result);
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @Inject
@@ -118,7 +146,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
         String dsdIdentifier = PlaceRequestUtils.getDsdParamFromUrl(placeManager);// DSD identifier is the URN without the prefix
         if (!StringUtils.isBlank(dsdIdentifier)) {
             String dsdUrn = UrnUtils.generateUrn(UrnConstants.URN_SDMX_CLASS_DATASTRUCTURE_PREFIX, dsdIdentifier);
-            retrieveCompleteDsd(dsdUrn);
+            retrieveResources(dsdUrn);
         }
     }
 
@@ -446,18 +474,18 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
             @Override
             public void onWaitSuccess(GetConceptSchemeResult result) {
                 final ConceptSchemeMetamacDto conceptSchemeMetamacDto = result.getConceptSchemeDto();
-                dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale()), new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(
-                        DsdGeneralTabPresenter.this) {
+                dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
+                        new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(DsdGeneralTabPresenter.this) {
 
-                    @Override
-                    public void onWaitFailure(Throwable caught) {
-                        ShowMessageEvent.fireErrorMessage(DsdGeneralTabPresenter.this, caught);
-                    }
-                    @Override
-                    public void onWaitSuccess(GetConceptsBySchemeResult result) {
-                        getView().setConceptsForShowDecimalsPrecision(conceptSchemeMetamacDto, result.getItemVisualisationResults());
-                    }
-                });
+                            @Override
+                            public void onWaitFailure(Throwable caught) {
+                                ShowMessageEvent.fireErrorMessage(DsdGeneralTabPresenter.this, caught);
+                            }
+                            @Override
+                            public void onWaitSuccess(GetConceptsBySchemeResult result) {
+                                getView().setConceptsForShowDecimalsPrecision(conceptSchemeMetamacDto, result.getItemVisualisationResults());
+                            }
+                        });
 
             }
         });
@@ -465,7 +493,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
 
     private void setConceptSchemeOfTheMeasureDimension(List<DimensionComponentDto> dimensionComponentDtos) {
         String conceptSchemeUrn = CommonUtils.getConceptSchemeUrnOfMeasureDimensionRepresentation(dimensionComponentDtos);
-        
+
         // Load the concepts if the conceptScheme is not null and has not been retrieved previously
         // The concepts are used to fill 'showDecimalsPrecision' (a DSD visualisation metadata)
         if (conceptSchemeUrn != null && !StringUtils.equals(conceptSchemeUrn, conceptSchemeUrnOfMeasureDimensionRepresentation)) {
@@ -476,8 +504,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
             // If previous concepts scheme was not null and now is null, then clear the tree items
             this.conceptSchemeUrnOfMeasureDimensionRepresentation = conceptSchemeUrn;
             getView().resetMeasureDimensionConcepts();
-        }
-        else {
+        } else {
             conceptSchemeUrn = null;
         }
     }
@@ -517,5 +544,21 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
 
     private void updateDsdInMainDsdPage(String dsdUrn) {
         UpdateMaintainableArtefactEvent.fire(this, dsdUrn);
+    }
+
+    private void retrieveResources(final String urn) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteDsd(urn);
+                }
+            });
+        } else {
+            retrieveCompleteDsd(urn);
+        }
     }
 }

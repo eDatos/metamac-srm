@@ -176,13 +176,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     // ------------------------------------------------------------------------------------
     // CODELISTS
     // ------------------------------------------------------------------------------------
-          
+
     @Override
     @Test
     public void testCreateCodelist() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
         OrganisationMetamac sourceProviderOrganisation = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, sourceProviderOrganisation);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, sourceProviderOrganisation, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
         ServiceContext ctx = getServiceContextAdministrador();
 
@@ -245,15 +245,15 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.CodelistOpennessLevels=" + codelistVersion.getMaintainableArtefact().getMaintainer().getIdAsMaintainer() + ":"
                 + codelistVersion.getMaintainableArtefact().getCode() + "(01.000)." + allExpanded.getNameableArtefact().getCode(), allExpanded.getNameableArtefact().getUrn());
         assertNotNull(allExpanded.getNameableArtefact().getName());
-        
-        //Check sourceProvider is created.
+
+        // Check sourceProvider is created.
         assertEquals(AGENCY_ROOT_2_V1, codelistVersion.getSourceProvider().getNameableArtefact().getUrn());
     }
 
     @Test
     public void testCreateCodelistWithFamily() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
 
         // Check the family has no codelists
@@ -277,7 +277,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodelistWithAditionalMetadata() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
         OrganisationMetamac sourceProviderOrganisation = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, sourceProviderOrganisation);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, sourceProviderOrganisation, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
 
         codelistVersion.setShortName(null);
@@ -294,9 +294,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelistWithoutNormalizationType() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
-        
+
         codelistVersion.setShortName(null);
         codelistVersion.setIsRecommended(null);
         codelistVersion.setAccessType(null);
@@ -312,12 +312,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
 
     }
-       
-    
+
     @Test
     public void testCreateConceptSchemeErrorMaintainerNotDefault() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
 
         try {
@@ -335,7 +334,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelistErrorReplaceToWrongProcStatus() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
         ServiceContext ctx = getServiceContextAdministrador();
 
@@ -357,7 +356,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelistErrorReplaceToAlreadyReplaced() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
         ServiceContext ctx = getServiceContextAdministrador();
 
@@ -405,7 +404,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testUpdateSourceProviderCodelist() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
         OrganisationMetamac sourceProviderOrganisation = organisationMetamacRepository.findByUrn(AGENCY_ROOT_2_V1);
-        
+
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(ctx, CODELIST_2_V1);
         assertEquals("organisationScheme-1001-v1-org-0", codelistVersion.getSourceProvider().getUuid());
         codelistVersion.setSourceProvider(sourceProviderOrganisation);
@@ -414,7 +413,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodelistVersionMetamac codelistVersionUpdated = codesService.updateCodelist(ctx, codelistVersion);
         assertEquals("organisationScheme-1001-v1-org-1", codelistVersion.getSourceProvider().getUuid());
     }
-    
+
     @Test
     public void testUpdateCodelistChangingCode() throws Exception {
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_3_V1);
@@ -710,11 +709,11 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals(NormalizationTypeEnum.NOT_STANDARDIZED, codelistVersion.getNormalizationType());
 
     }
-    
+
     @Test
     public void testErrorCodelistCreatedNotStandardizedWithPublicAccess() throws Exception {
         OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac);
+        CodelistVersionMetamac codelistVersion = CodesMetamacDoMocks.mockCodelist(organisationMetamac, retrieveAnnotationType_1());
         codelistVersion.setVariable(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
 
         codelistVersion.setAccessType(AccessTypeEnum.PUBLIC);
@@ -727,9 +726,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         } catch (MetamacException e) {
             assertEquals(1, e.getExceptionItems().size());
             assertEquals(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS.getCode(), e.getExceptionItems().get(0).getCode());
-        }        
+        }
     }
-    
+
     @Test
     public void testErrorCodelistUpdatedNotStandardizedWithPublicAccess() throws Exception {
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
@@ -745,7 +744,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS.getCode(), e.getExceptionItems().get(0).getCode());
         }
     }
-    
+
     @Test
     public void testUpdateCodelistErrorChangeCodeInCodelistWithVersionAlreadyPublished() throws Exception {
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_1_V2);
@@ -907,6 +906,16 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(CODELIST_13_V1, codelistVersionPagedResult.getValues().get(i++).getMaintainableArtefact().getUrn());
             assertEquals(CODELIST_14_V1, codelistVersionPagedResult.getValues().get(i++).getMaintainableArtefact().getUrn());
         }
+    }
+
+    @Test
+    @Override
+    public void testFindCodelistsByVariableInformation() throws Exception {
+        String variableElementUrn = VARIABLE_2_VARIABLE_ELEMENT_1;
+        List<Long> codelistIds = codesService.findCodelistsByVariableInformation(getServiceContextAdministrador(), null, null, variableElementUrn);
+        assertNotNull(codelistIds);
+        assertEquals(3, codelistIds.size());
+
     }
 
     @Test
@@ -1654,7 +1663,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_1);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, null));
         }
         {
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_2);
@@ -1667,7 +1676,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_2_1_1);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, null));
         }
         {
             // Leaf code
@@ -1677,7 +1686,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_3);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, null));
         }
         {
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_4);
@@ -1690,7 +1699,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             // Leaf code
             CodeMetamac code = assertListCodesContainsCode(codelistVersion.getItems(), CODELIST_1_V2_CODE_4_1_1);
-            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, null));
+            assertOpennessVisualisationColumns(code, Arrays.asList(Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, null));
         }
     }
 
@@ -2135,7 +2144,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Validate
         validateVersioningCodelist3V1();
     }
-    
+
     @Test
     public void testVersioningCodelistWithTwoVersionsPublished() throws Exception {
         // This test checks the copy from one version but replacing to another one that is last version.
@@ -2603,7 +2612,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCode() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
 
         String codelistUrn = CODELIST_1_V2;
@@ -2633,7 +2642,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeWithVariableElement() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
         code.setShortName(null);
         code.setVariableElement(codesService.retrieveVariableElementByUrn(ctx, VARIABLE_2_VARIABLE_ELEMENT_1));
@@ -2653,12 +2662,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeExtended() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
         code.setShortName(null);
         code.setVariableElement(null);
         code.setIsExtended(true);
-        
+
         String codelistUrn = CODELIST_1_V2;
 
         // Create
@@ -2668,12 +2677,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodeMetamac codeRetrieved = codesService.retrieveCodeByUrn(ctx, urn);
         assertTrue(codeRetrieved.getIsExtended());
     }
-    
+
     @Test
     public void testCreateCodeErrorVariableElementDifferentCodelistVariable() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
         code.setShortName(null);
         code.setVariableElement(codesService.retrieveVariableElementByUrn(ctx, VARIABLE_5_VARIABLE_ELEMENT_1));
@@ -2693,7 +2702,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateCodeErrorCodelistImported() throws Exception {
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         String codelistUrn = CODELIST_1_V2;
 
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
@@ -2713,7 +2722,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateCodeSubcode() throws Exception {
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         CodeMetamac codeParent = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_1);
         code.setParent(codeParent);
         String codelistUrn = CODELIST_1_V2;
@@ -2739,7 +2748,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeIncorrectMetadata() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setShortName(BaseDoMocks.mockInternationalString()); // must be null when variable element is not null
         code.setVariableElement(codesService.retrieveVariableElementByUrn(ctx, VARIABLE_2_VARIABLE_ELEMENT_1));
         String codelistUrn = CODELIST_1_V2;
@@ -2758,7 +2767,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeIncorrectCodelist() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
 
         String codelistUrn = NOT_EXISTS;
@@ -2893,7 +2902,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 Annotation annotation = assertSetAnnotationsContainsAnnotations(code.getNameableArtefact().getAnnotations(), "CODE0201_ANNOTATION211");
                 assertEqualsInternationalString(annotation.getText(), "es", "Anotación 21", null, null);
                 assertEquals("title-annotation211", annotation.getTitle());
-                assertEquals("type-annotation211", annotation.getType());
+                assertEquals(ANNOTATION_TYPE_CODE_1, annotation.getAnnotationType().getCode());
                 assertEquals("http://annotation211", annotation.getUrl());
                 assertEquals("title-annotation211", annotation.getTitle());
             }
@@ -2901,7 +2910,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 Annotation annotation = assertSetAnnotationsContainsAnnotations(code.getNameableArtefact().getAnnotations(), "CODE0201_ANNOTATION212");
                 assertNull(annotation.getText());
                 assertEquals("title-annotation212", annotation.getTitle());
-                assertEquals("type-annotation212", annotation.getType());
+                assertEquals(ANNOTATION_TYPE_CODE_2, annotation.getAnnotationType().getCode());
                 assertEquals("http://annotation212", annotation.getUrl());
                 assertEquals("title-annotation212", annotation.getTitle());
             }
@@ -2917,8 +2926,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertFalse(code.getRestriction2());
             assertFalse(code.getRestriction3());
             assertFalse(code.getIsExtended());
-            
-            
 
             assertEquals(0, code.getChildren().size());
         }
@@ -3089,7 +3096,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertNull(code.getRestriction1());
             assertFalse(code.getRestriction2());
             assertFalse(code.getRestriction3());
-            
+
             assertEquals(0, code.getChildren().size());
         }
         {
@@ -3142,7 +3149,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertNull(code.getRestriction1());
             assertFalse(code.getRestriction2());
             assertFalse(code.getRestriction3());
-            
 
             assertEquals(0, code.getChildren().size());
         }
@@ -3198,7 +3204,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodeToCopy code = new CodeToCopy();
         code.setSourceUrn(code01SourceUrn);
         code.setNewCodeIdentifier("CODE03");
-        code.setParentNewCodeIdentifier(null);  
+        code.setParentNewCodeIdentifier(null);
         codesToCopy.add(code);
 
         // Copy
@@ -3212,7 +3218,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodeMetamac codeTarget = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code01TargetUrn);
         assertEquals(codeSource.getIsExtended(), codeSource.getIsExtended());
     }
-    
+
     @Test
     @Override
     public void testPreCreateCode() throws Exception {
@@ -3673,7 +3679,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // LOCALE = 'en' and ORDER = '3'
         {
             String locale = "en";
-            List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, locale, CODELIST_1_V2_ORDER_VISUALISATION_03, null, null);
+            List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, locale, CODELIST_1_V2_ORDER_VISUALISATION_03, null,
+                    null);
 
             // Validate
             assertEquals(9, codes.size());
@@ -3763,7 +3770,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // OPENNESS = '2'
         {
             String locale = "es";
-            List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, locale, null, CODELIST_1_V2_OPENNESS_VISUALISATION_02, null);
+            List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, locale, null, CODELIST_1_V2_OPENNESS_VISUALISATION_02,
+                    null);
 
             // Validate
             assertEquals(9, codes.size());
@@ -3780,7 +3788,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // OPENNESS = '3'
         {
             String locale = "es";
-            List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, locale, null, CODELIST_1_V2_OPENNESS_VISUALISATION_03, null);
+            List<CodeMetamacVisualisationResult> codes = codesService.retrieveCodesByCodelistUrn(getServiceContextAdministrador(), codelistUrn, locale, null, CODELIST_1_V2_OPENNESS_VISUALISATION_03,
+                    null);
 
             // Validate
             assertEquals(9, codes.size());
@@ -3876,7 +3885,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 assertEquals("CODE01", code.getRecodedCode());
         }
     }
-    
+
     @Test
     public void testRetrieveCodesByCodelistUrnCheckVariableElements() throws Exception {
 
@@ -4797,7 +4806,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertTrue(code.getOpenness3());
             assertEquals(null, code.getOpenness4());
             assertFalse(code.getIsExtended());
-            
+
         }
     }
 
@@ -5221,9 +5230,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
-    
-    //TEST RESTRICTION CODELIST IMPORT
-    
+    // TEST RESTRICTION CODELIST IMPORT
+
     @Override
     @Test
     @DirtyDatabase
@@ -5372,7 +5380,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
         assertTrue(BooleanUtils.isNotTrue(codelistVersion.getItemScheme().getIsTaskInBackground()));
     }
-   
+
     @Test
     @DirtyDatabase
     public void testImportCodeRestrictionsTsvErrorHeaderIncorrectCodeNotFoundInBackground() throws Exception {
@@ -5446,7 +5454,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
-
     @Test
     @DirtyDatabase
     public void testImportCodeRestrictionsTsvErrorBodyIncorrectNumberCodes() throws Exception {
@@ -5465,7 +5472,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(e.getExceptionItems().size(), i);
         }
     }
-   
+
     @Test
     @DirtyDatabase
     public void testImportCodeRestrictionsTsvErrorBodyVisualisationNotFound() throws Exception {
@@ -5507,9 +5514,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(e.getExceptionItems().size(), i);
         }
     }
-    
-   //TEST CODE OPENNESS LEVELS IMPORT
-    
+
+    // TEST CODE OPENNESS LEVELS IMPORT
+
     @Override
     @Test
     public void testImportCodeOpennessLevelsTsv() throws Exception {
@@ -5627,14 +5634,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
         assertNotNull(task);
         assertEquals(TaskStatusTypeEnum.FINISHED, task.getStatus());
-        assertEquals(0, task.getTaskResults().size()); 
+        assertEquals(0, task.getTaskResults().size());
 
         // Validate item scheme
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
         assertEquals(false, codelistVersion.getItemScheme().getIsTaskInBackground());
     }
-    
-   
+
     @Test
     @DirtyDatabase
     public void testImportCodeOpennessLevelTsvErrorHeaderIncorrectCodeNotFound() throws Exception {
@@ -5658,7 +5664,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
         assertTrue(BooleanUtils.isNotTrue(codelistVersion.getItemScheme().getIsTaskInBackground()));
     }
-    
+
     @Test
     @DirtyDatabase
     public void testImportCodeOpennessLevelTsvErrorHeaderIncorrectCodeNotFoundInBackground() throws Exception {
@@ -5711,7 +5717,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         CodelistVersionMetamac codelistVersion = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), codelistUrn);
         assertEquals(false, codelistVersion.getItemScheme().getIsTaskInBackground());
     }
-    
+
     @Test
     @DirtyDatabase
     public void testImportCodeOpennessLevelTsvErrorHeaderColumnVisualisationNotFound() throws Exception {
@@ -5732,7 +5738,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         }
     }
 
-
     @Test
     @DirtyDatabase
     public void testImportCodeOpennessLevelTsvErrorBodyIncorrectNumberCodes() throws Exception {
@@ -5751,7 +5756,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(e.getExceptionItems().size(), i);
         }
     }
-   
+
     @Test
     @DirtyDatabase
     public void testImportCodeOpennessLevelTsvErrorBodyVisualisationNotFound() throws Exception {
@@ -5793,7 +5798,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(e.getExceptionItems().size(), i);
         }
     }
-    
+
     @DirtyDatabase
     @Test
     public void testClearDirtyDatabaseBecausePreviuosTestCanNotHaveNotTransactionalAnnotation() throws Exception {
@@ -5987,7 +5992,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Override
     @Test
     public void testCreateCodelistFamily() throws Exception {
-        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily();
+        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily(retrieveAnnotationType_1());
         ServiceContext ctx = getServiceContextAdministrador();
 
         // Create
@@ -6003,7 +6008,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateCodelistFamilyErrorWrongCode() throws Exception {
-        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily();
+        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily(retrieveAnnotationType_1());
         codelistFamily.getNameableArtefact().setCode(" 0 - invalid identifier");
         try {
             codesService.createCodelistFamily(getServiceContextAdministrador(), codelistFamily);
@@ -6016,7 +6021,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateCodelistFamilyErrorDuplicatedCode() throws Exception {
-        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily();
+        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily(retrieveAnnotationType_1());
         codelistFamily.getNameableArtefact().setCode("CODELIST_FAMILY_01");
         try {
             codesService.createCodelistFamily(getServiceContextAdministrador(), codelistFamily);
@@ -6043,7 +6048,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateCodelistFamilyErrorMetadataTranslations() throws Exception {
-        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily();
+        CodelistFamily codelistFamily = CodesMetamacDoMocks.mockCodelistFamily(retrieveAnnotationType_1());
         codelistFamily.getNameableArtefact().setName(new InternationalString());
         codelistFamily.getNameableArtefact().getName().addText(new LocalisedString("aa", "Label"));
         try {
@@ -6289,7 +6294,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Override
     @Test
     public void testCreateVariableFamily() throws Exception {
-        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily();
+        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily(retrieveAnnotationType_1());
         ServiceContext ctx = getServiceContextAdministrador();
 
         // Create
@@ -6310,7 +6315,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableFamilyErrorWrongCode() throws Exception {
-        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily();
+        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily(retrieveAnnotationType_1());
         variableFamily.getNameableArtefact().setCode(" 0 - invalid identifier");
         try {
             codesService.createVariableFamily(getServiceContextAdministrador(), variableFamily);
@@ -6323,7 +6328,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableFamilyErrorDuplicatedCode() throws Exception {
-        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily();
+        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily(retrieveAnnotationType_1());
         variableFamily.getNameableArtefact().setCode("VARIABLE_FAMILY_01");
         try {
             codesService.createVariableFamily(getServiceContextAdministrador(), variableFamily);
@@ -6350,7 +6355,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableFamilyErrorMetadataTranslations() throws Exception {
-        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily();
+        VariableFamily variableFamily = CodesMetamacDoMocks.mockVariableFamily(retrieveAnnotationType_1());
         variableFamily.getNameableArtefact().setName(new InternationalString());
         variableFamily.getNameableArtefact().getName().addText(new LocalisedString("aa", "Label"));
         try {
@@ -6506,7 +6511,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         ServiceContext ctx = getServiceContextAdministrador();
 
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(ctx, VARIABLE_FAMILY_1));
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(ctx, VARIABLE_FAMILY_2));
         // Replace to
@@ -6556,7 +6561,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         ServiceContext ctx = getServiceContextAdministrador();
 
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(ctx, VARIABLE_FAMILY_1));
         variable.setType(VariableTypeEnum.GEOGRAPHICAL);
 
@@ -6571,7 +6576,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableErrorReplaceTo() throws Exception {
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(getServiceContextAdministrador(), VARIABLE_FAMILY_1));
         variable.getReplaceToVariables().add(codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1));
         try {
@@ -6585,7 +6590,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableErrorWrongCode() throws Exception {
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(getServiceContextAdministrador(), VARIABLE_FAMILY_1));
         variable.getNameableArtefact().setCode(" 0 - invalid identifier");
         try {
@@ -6599,7 +6604,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableErrorDuplicatedCode() throws Exception {
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(getServiceContextAdministrador(), VARIABLE_FAMILY_1));
         variable.getNameableArtefact().setCode("VARIABLE_01");
         try {
@@ -6632,7 +6637,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableErrorMetadataMaximumLength() throws Exception {
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(getServiceContextAdministrador(), VARIABLE_FAMILY_1));
         variable.getShortName().getLocalisedLabelEntity("es").setLabel(MetamacMocks.mockString(1000));
         try {
@@ -6647,7 +6652,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Test
     public void testCreateVariableErrorMetadataTranslations() throws Exception {
-        Variable variable = CodesMetamacDoMocks.mockVariable();
+        Variable variable = CodesMetamacDoMocks.mockVariable(retrieveAnnotationType_1());
         variable.addFamily(codesService.retrieveVariableFamilyByUrn(getServiceContextAdministrador(), VARIABLE_FAMILY_1));
         variable.getNameableArtefact().setName(new InternationalString());
         variable.getNameableArtefact().getName().addText(new LocalisedString("aa", "Label"));
@@ -7102,7 +7107,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         Variable variable = codesService.retrieveVariableByUrn(ctx, VARIABLE_5);
         assertTrue(VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType()));
         CodeMetamac geographicalGranularity = codesService.retrieveCodeByUrn(ctx, CODELIST_13_V1_CODE_1);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElementGeographical(variable, geographicalGranularity);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElementGeographical(variable, geographicalGranularity, retrieveAnnotationType_1());
         // Replace to
         VariableElement variableElementReplaced1 = codesService.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_5_VARIABLE_ELEMENT_3);
         variableElement.getReplaceToVariableElements().add(variableElementReplaced1);
@@ -7139,7 +7144,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         Variable variable = codesService.retrieveVariableByUrn(ctx, VARIABLE_3);
         assertFalse(VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType()));
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
 
         // Create
         VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
@@ -7158,7 +7163,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         String renderingColor = "#FFFFFF";
         Variable variable = codesService.retrieveVariableByUrn(ctx, VARIABLE_3);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.setRenderingColor(renderingColor);
 
         // Create
@@ -7207,7 +7212,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             String renderingColor = "TEST!";
             Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_3);
-            VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+            VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
             variableElement.setRenderingColor(renderingColor);
             try {
                 codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -7221,7 +7226,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             String renderingColor = "#ABCDEFG";
             Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_3);
-            VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+            VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
             variableElement.setRenderingColor(renderingColor);
             try {
                 codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -7235,7 +7240,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             String renderingColor = "#12345";
             Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_3);
-            VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+            VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
             variableElement.setRenderingColor(renderingColor);
             try {
                 codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -7254,7 +7259,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertTrue(VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType()));
         CodeMetamac geographicalGranularity = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_13_V1_CODE_1); // TODO geo gran debe ser null. Comprobar que la granularidad del
                                                                                                                                        // elemento es null. (METAMAC-2149)
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElementGeographical(variable, geographicalGranularity);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElementGeographical(variable, geographicalGranularity, retrieveAnnotationType_1());
         try {
             codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
             fail("world");
@@ -7267,7 +7272,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateVariableElementErrorReplaceTo() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_2);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.getReplaceToVariableElements().add(codesService.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_2_VARIABLE_ELEMENT_1));
         try {
             codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -7281,7 +7286,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateVariableElementErrorReplaceToDifferentFamily() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_3);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
 
         // Replace to
         VariableElement variableElementAnotherFamily = codesService.retrieveVariableElementByUrn(getServiceContextAdministrador(), VARIABLE_5_VARIABLE_ELEMENT_1);
@@ -7299,7 +7304,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateVariableElementErrorWrongCode() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.getIdentifiableArtefact().setCode(" 0 - invalid identifier");
         try {
             codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -7313,7 +7318,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateVariableElementErrorDuplicatedCode() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_1);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.getIdentifiableArtefact().setCode("VARIABLE_ELEMENT_01");
         try {
             codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -7349,7 +7354,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateVariableElementErrorIncorrectMetadataGeographical() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_5);
         assertTrue(VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType()));
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.setLatitude(null);
         variableElement.setLongitude(null);
         variableElement.setShapeWkt(null);
@@ -7369,7 +7374,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateVariableElementErrorGeographicalGranularity() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_5);
         CodeMetamac geographicalGranularity = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V1_CODE_1);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElementGeographical(variable, geographicalGranularity);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElementGeographical(variable, geographicalGranularity, retrieveAnnotationType_1());
         try {
             codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
             fail("wrong geographical granularity");
@@ -7384,7 +7389,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateVariableElementErrorIncorrectMetadataNonGeographical() throws Exception {
         Variable variable = codesService.retrieveVariableByUrn(getServiceContextAdministrador(), VARIABLE_3);
         assertFalse(VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType()));
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.setLatitude(Double.valueOf(1));
         variableElement.setLongitude(Double.valueOf(2));
         variableElement.setShapeWkt("3");
@@ -7408,7 +7413,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateVariableElementErrorMetadataMaximumLength() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
         Variable variable = codesService.retrieveVariableByUrn(ctx, VARIABLE_3);
-        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable);
+        VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
         variableElement.getShortName().getLocalisedLabelEntity("es").setLabel(MetamacMocks.mockString(1000));
         try {
             codesService.createVariableElement(getServiceContextAdministrador(), variableElement);
@@ -8054,7 +8059,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEqualsMetamacExceptionItem(ServiceExceptionType.VARIABLE_ELEMENT_WITH_OPERATIONS, 1, new String[]{variableElementUrn}, e.getExceptionItems().get(0));
         }
     }
-    
+
     @Test
     public void testDeleteVariableElementErrorWithCodes() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
@@ -8181,7 +8186,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodelistOrderVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodelistOrderVisualisation codelistOrderVisualisation = CodesMetamacDoMocks.mockCodelistOrderVisualisation();
+        CodelistOrderVisualisation codelistOrderVisualisation = CodesMetamacDoMocks.mockCodelistOrderVisualisation(retrieveAnnotationType_1());
         String codelistUrn = CODELIST_1_V2;
 
         // Create
@@ -8209,7 +8214,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelistOrderVisualisationErrorDuplicatedCode() throws Exception {
 
-        CodelistOrderVisualisation codelistOrderVisualisation = CodesMetamacDoMocks.mockCodelistOrderVisualisation();
+        CodelistOrderVisualisation codelistOrderVisualisation = CodesMetamacDoMocks.mockCodelistOrderVisualisation(null);
         codelistOrderVisualisation.getNameableArtefact().setCode("VISUALISATION02");
         String codelistUrn = CODELIST_1_V2;
         try {
@@ -8261,7 +8266,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.getNameableArtefact().setCode("code029");
         code.setParent(null);
 
@@ -8318,7 +8323,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeSubCodeTestingOrderVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.getNameableArtefact().setCode("CODE0200");
         CodeMetamac codeParent = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2);
         code.setParent(codeParent);
@@ -8369,7 +8374,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeSubCodeInLevelWithoutOtherCodesTestingOrderVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         CodeMetamac codeParent = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_4_1_1);
         code.setParent(codeParent);
 
@@ -8482,8 +8487,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // tested in other operations
     }
 
-    
-    
     @Override
     @Test
     public void testRetrieveCodelistOrderVisualisationsByCodelist() throws Exception {
@@ -8937,7 +8940,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEqualsDate("2011-01-01 01:02:03", codelistOpennessVisualisation.getCodelistVersion().getItemScheme().getResourceCreatedDate().toDate());
         assertTrue(DateUtils.isSameDay(new Date(), codelistOpennessVisualisation.getCodelistVersion().getItemScheme().getResourceLastUpdated().toDate()));
     }
-    
+
     @Override
     @Test
     public void testRetrieveCodelistOpennessVisualisationByUrn() throws Exception {
@@ -8981,7 +8984,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodelistOpennessVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodelistOpennessVisualisation codelistOpennessVisualisation = CodesMetamacDoMocks.mockCodelistOpennessVisualisation();
+        CodelistOpennessVisualisation codelistOpennessVisualisation = CodesMetamacDoMocks.mockCodelistOpennessVisualisation(null);
         String codelistUrn = CODELIST_1_V2;
 
         // Create
@@ -9009,7 +9012,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Test
     public void testCreateCodelistOpennessVisualisationErrorDuplicatedCode() throws Exception {
 
-        CodelistOpennessVisualisation codelistOpennessVisualisation = CodesMetamacDoMocks.mockCodelistOpennessVisualisation();
+        CodelistOpennessVisualisation codelistOpennessVisualisation = CodesMetamacDoMocks.mockCodelistOpennessVisualisation(null);
         codelistOpennessVisualisation.getNameableArtefact().setCode("VISUALISATION02");
         String codelistUrn = CODELIST_1_V2;
         try {
@@ -9026,7 +9029,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Already tested
     }
 
-    
     @Override
     @Test
     public void testDeleteCodelistOpennessVisualisation() throws Exception {
@@ -9073,7 +9075,6 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertNull(code2.getOpenness3());
         }
     }
-       
 
     @Test
     public void testDeleteCodelistOpennessVisualisationWhenIsDefault() throws Exception {
@@ -9100,7 +9101,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
 
         String codelistUrn = CODELIST_1_V2;
@@ -9145,7 +9146,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeSubCodeTestingOpennessVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.getNameableArtefact().setCode("CODE0200");
         CodeMetamac codeParent = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2);
         code.setParent(codeParent);
@@ -9187,8 +9188,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(Boolean.TRUE, getCodeMetamacVisualisationResult(codes, codeCreated.getNameableArtefact().getUrn()).getOpenness());
         }
     }
-    
-    //RESTRICTION TEST
+
+    // RESTRICTION TEST
 
     @Override
     @Test
@@ -9223,7 +9224,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodelistRestrictionVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodelistRestrictionVisualisation codelistRestrictionVisualisation = CodesMetamacDoMocks.mockCodelistRestrictionVisualisation();
+        CodelistRestrictionVisualisation codelistRestrictionVisualisation = CodesMetamacDoMocks.mockCodelistRestrictionVisualisation(null);
         String codelistUrn = CODELIST_1_V2;
 
         // Create
@@ -9287,7 +9288,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.setParent(null);
 
         String codelistUrn = CODELIST_1_V2;
@@ -9322,7 +9323,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     public void testCreateCodeSubCodeTestingRestrictionVisualisation() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
-        CodeMetamac code = CodesMetamacDoMocks.mockCode();
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
         code.getNameableArtefact().setCode("CODE0200");
         CodeMetamac codeParent = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_1_V2_CODE_2);
         code.setParent(codeParent);
@@ -9725,7 +9726,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 assertEquals(Boolean.FALSE, code.getOpenness2());
                 assertEquals(Boolean.TRUE, code.getRestriction1());
                 assertEquals(Boolean.FALSE, code.getRestriction2());
-                
+
                 assertEquals(2, code.getChildren().size());
                 {
                     CodeMetamac codeChild = assertListCodesContainsCode(code.getChildren(), urnExpectedCode21);
@@ -10125,7 +10126,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertContainsCodelistOpennessVisualisation(CODELIST_1_V2_OPENNESS_VISUALISATION_02, visualisations);
         assertContainsCodelistOpennessVisualisation(CODELIST_1_V2_OPENNESS_VISUALISATION_03, visualisations);
     }
- 
+
     @Override
     @Test
     public void testUpdateCodesInOpennessVisualisation() throws Exception {
@@ -11386,7 +11387,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals("CODE040101\tNombre codelist-1-v2-code-4-1-1\t3\tCODE0401\tfalse\ttrue", bufferedReader.readLine());
         bufferedReader.close();
     }
-    
+
     @Override
     @Test
     public void testExportCodeOpennessLevelsTsv() throws Exception {
@@ -11399,7 +11400,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         FileInputStream fileInputStream = new FileInputStream(file);
         InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                
+
         assertEquals("code\tlabel\tlevel\tparent\tALL_EXPANDED\tVISUALISATION02\tVISUALISATION03", bufferedReader.readLine());
         assertEquals("CODE01\tIsla de Tenerife\t1\t\ttrue\tfalse\ttrue", bufferedReader.readLine());
         assertEquals("CODE02\tNombre codelist-1-v2-code-2 Canaria, Gran\t1\t\ttrue\ttrue\tfalse", bufferedReader.readLine());
@@ -11412,7 +11413,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         assertEquals("CODE040101\tNombre codelist-1-v2-code-4-1-1\t3\tCODE0401\ttrue\tfalse\ttrue", bufferedReader.readLine());
         bufferedReader.close();
     }
-    
+
     @Override
     @Test
     @DirtyDatabase
@@ -11700,6 +11701,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 taskImportTsvInfo.getInformationItems().get(0));
     }
 
+    @Test
+    @Override
+    public void testResendKafkaMessageExternallyCodelist() {
+        // No test. cron job process
+    }
+
     private VariableElementOperation getVariableElementOperationByCode(List<VariableElementOperation> operations, String code) {
         for (VariableElementOperation variableElementOperation : operations) {
             if (code.equals(variableElementOperation.getCode())) {
@@ -11738,7 +11745,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         fail("restriction visualisation not found");
         return null;
     }
-    
+
     private CodeMetamac getCode(List<Code> items, String urn) {
         for (Item item : items) {
             if (item.getNameableArtefact().getUrn().equals(urn)) {
@@ -11822,7 +11829,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
             assertEquals(urnExpected, codelistVersionNewVersion.getMaintainableArtefact().getUrn());
             assertEqualsCodelistWithoutLifeCycleMetadata(codelistVersionToCopy, codelistVersionNewVersion);
         }
-        
+
         // Validate retrieving
         // New version
         {
@@ -12132,4 +12139,5 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     protected String getDataSetFile() {
         return "dbunit/SrmCodesTest.xml";
     }
+
 }

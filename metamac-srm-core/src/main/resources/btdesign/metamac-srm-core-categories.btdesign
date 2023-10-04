@@ -21,6 +21,7 @@ Application CategoriesMetamac {
 			
 			> @CategorySchemeVersionMetamacRepository
 			> @CategoryMetamacRepository
+			> @CategoryElementRepository
 			
 			"Creates category scheme"
 			@CategorySchemeVersionMetamac createCategoryScheme(@CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException;
@@ -88,7 +89,7 @@ Application CategoriesMetamac {
 			"Deletes category"
     		deleteCategory(String urn) throws MetamacException;
     		"Retrieves categories by category scheme in locale requested"
-    		List<ItemVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
+    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
     		"Retrieves categories by category scheme unordered"
     		List<ItemResult> retrieveCategoriesByCategorySchemeUrnUnordered(String categorySchemeUrn, ItemResultSelection itemResultSelection) throws MetamacException;
     		"Imports categories in TSV format"
@@ -123,7 +124,31 @@ Application CategoriesMetamac {
     		PagedResult<@Categorisation> findCategorisationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Checks categorisations have related resources externally published"
     		checkCategorisationsWithRelatedResourcesExternallyPublished(String artefactCategorisedUrn, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
-		}
+    		
+    		//category elements
+    		"Deletes category element"
+    		deleteCategoryElement(String urn) throws MetamacException;
+    		@CategoryElement createCategoryElement(@CategoryElement categoryElement) throws MetamacException;
+			"Updates category element"
+			@CategoryElement updateCategoryElement(@CategoryElement categoryElement) throws MetamacException;
+    		"Retrieves variable element by urn"
+    		@CategoryElement retrieveCategoryElementByUrn(String urn) throws MetamacException;
+    		"Finds category elements by criteria"
+    		PagedResult<@CategoryElement> findCategoryElementsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+    		"Exports category elements in tsv format"
+    		String exportCategoryElementsTsv(List<String> categoryElementUrns) throws MetamacException;
+    		"Imports category elements in tsv format"
+    		TaskImportationInfo importCategoryElementsTsv(java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
+    		"Change category element of category"
+			@CategoryMetamac updateCategoryElementOfCategory(String categoryUrn, String categoryElementUrn) throws MetamacException;
+			"Change category elements to codes"
+			updateCodesCategoryElements(String categorySchemeUrn, Map<Long,Long> categoryElementsIdByCodeId) throws MetamacException;
+			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
+	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
+	   		
+			// resend kafka message for the last number of version of published category.
+    		List<MetamacExceptionItem> resendKafkaMessageExternallyCategorySchemes() throws MetamacException;
+   		}
 
 		// ----------------------------------------------------------------
 		// 							ENTITIES
@@ -144,6 +169,7 @@ Application CategoriesMetamac {
 				@CategorySchemeVersionMetamac retrieveCategorySchemeVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@CategorySchemeVersionMetamac findByCategory(String urn);
 				checkCategorySchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+				List<@CategorySchemeVersionMetamac> retrieveCategorySchemesPublishedExternally() throws MetamacException;
 			}			
 		}
 		
@@ -153,6 +179,7 @@ Application CategoriesMetamac {
 
 			"Metadata ENI SCHEMA"
 			- @EniSchemaCatalog eniSchema nullable cascade="none" databaseColumn="ENI_SCHEMA_FK";
+			- @CategoryElement categoryElement nullable cascade="none" fetch="lazy" databaseColumn="CATEGORY_ELEMENT_FK"  <-> codes;
 			
 			Repository CategoryMetamacRepository {
 				save;
@@ -162,9 +189,30 @@ Application CategoriesMetamac {
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findCategoriesByCategorySchemeUnordered(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
 				List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException;
-				
+				List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException;
+				updateCodesCategoryElements(Map<Long,Long> categoryElementsByCodes, Long categorySchemeId) throws MetamacException;
+
 				checkCategoryTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+			}
+		}
+				
+		Entity CategoryElement extends @ResourceElement {
+			databaseTable="TB_CAT_RESOURCE_ELEMENTS"
+			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"	
+			
+			- Bag<@CategoryMetamac> codes cascade="none" fetch="lazy" <-> categoryElement;
+			
+			Repository CategoryElementRepository {
+				save;
+				delete;
+				findAll;
+				findByQuery;
+				@CategoryElement findByUrn(String urn);
+				@CategoryElement findByCode(String code);
+				List<@CategoryElement> findByUrnIn(List<String> urns);
+				List<@CategoryElement> findByCodeIn(List<String> codes);
+				findByCondition(PagingParameter pagingParameter);
+
 			}
 		}
 	}

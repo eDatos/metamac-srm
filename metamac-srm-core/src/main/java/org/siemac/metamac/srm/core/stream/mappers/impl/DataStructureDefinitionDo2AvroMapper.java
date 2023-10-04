@@ -13,29 +13,24 @@ public class DataStructureDefinitionDo2AvroMapper implements Do2AvroMapper<DataS
     private InternationalStringDo2AvroMapper internationalStringMapper;
 
     @Autowired
-    private OrganisationDo2AvroMapper maintainerMapper;
+    private OrganisationDo2AvroMapper        maintainerMapper;
 
     @Autowired
-    private CategorisationDo2AvroMapper categorisationMapper;
+    private CategorisationDo2AvroMapper      categorisationMapper;
 
     @Autowired
-    private ProcStatusEnumDo2AvroMapper procStatusMapper;
+    private ProcStatusEnumDo2AvroMapper      procStatusMapper;
 
     @Override
     public DataStructureDefinitionAvro toAvro(DataStructureDefinitionVersionMetamac source) {
         if (source == null) {
             return null;
         }
-        return DataStructureDefinitionAvro.newBuilder()
-                .setUuid(source.getUuid())
-                .setName(internationalStringMapper.toAvro(source.getMaintainableArtefact().getName()))
-                .setUrn(source.getMaintainableArtefact().getUrn())
-                .setVersion(source.getVersion())
-                .setUriProvider(source.getMaintainableArtefact().getUriProvider())
-                .setUrnProvider(source.getMaintainableArtefact().getUrnProvider())
-                .setDescription(internationalStringMapper.toAvro(source.getMaintainableArtefact().getDescription()))
-                .setFinalLogic(source.getMaintainableArtefact().getFinalLogic())
-                .setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
+        return DataStructureDefinitionAvro.newBuilder().setUuid(source.getUuid()).setName(internationalStringMapper.toAvro(source.getMaintainableArtefact().getName()))
+                .setUrn(source.getMaintainableArtefact().getUrn()).setVersion(source.getVersion()).setUriProvider(source.getMaintainableArtefact().getUriProvider())
+                .setUrnProvider(source.getMaintainableArtefact().getUrnProvider()).setDescription(internationalStringMapper.toAvro(source.getMaintainableArtefact().getDescription()))
+                .setFinalLogic(source.getMaintainableArtefact().getFinalLogic()).setLatestVersionNumberFinal(source.getMaintainableArtefact().getLatestVersionNumberFinal())
+                .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations())).build();
     }

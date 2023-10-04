@@ -1,0 +1,55 @@
+[
+    {
+        "namespace" : "org.siemac.metamac.srm.core.stream.message",
+        "name" : "TypeExternalArtefactsEnumAvro",
+        "type" : "enum",
+        "symbols" : [
+            "AGENCY",
+            "AGENCY_SCHEME",
+            "CATEGORY",
+            "CATEGORY_SCHEME",
+            "CODELIST",
+            "CODE",
+            "CONCEPT_SCHEME",
+            "CONCEPT",
+            "CONTENT_CONSTRAINTS",
+            "CONFIGURATION",
+            "DATA_CONSUMER",
+            "DATA_CONSUMER_SCHEME",
+            "DATA_PROVIDER",
+            "DATA_PROVIDER_SCHEME",
+            "DATASTRUCTURE",
+            "DIMENSION",
+            "INDICATOR",
+            "ORGANISATION",
+            "ORGANISATION_SCHEME",
+            "ORGANISATION_UNIT",
+            "ORGANISATION_UNIT_SCHEME",
+            "STATISTICAL_OPERATION",
+            "STATISTICAL_OPERATION_INSTANCE",
+            "DATASET",
+            "COLLECTION",
+            "QUERY",
+            "MULTIDATASET",
+            "VARIABLE_FAMILY",
+            "VARIABLE",
+            "VARIABLE_ELEMENT"
+        ]
+    }
+    
+,  
+      {
+        "namespace": "org.siemac.metamac.srm.core.stream.message",
+         "type": "record",
+         "name": "ExternalItemAvro",
+         "fields" : [
+             {"name" : "code", "type" : ["null", "string"]},
+             {"name" : "codeNested", "type" : ["null", "string"]},
+             {"name" : "urn", "type" : ["null", "string"]},
+             {"name" : "urnProvider", "type" : ["null", "string"]},
+             {"name" : "managementAppUrl", "type" : ["null", "string"]},
+             {"name" : "type", "type" : ["null", "TypeExternalArtefactsEnumAvro"]},
+             {"name" : "title", "type" : ["null", "InternationalStringAvro"]}
+         ]
+     }
+ ]

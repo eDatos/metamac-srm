@@ -1,8 +1,6 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.mapper.dsd;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +8,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
@@ -39,6 +38,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Resourc
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ShowDecimalPrecision;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ShowDecimalPrecisions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TimeDimension;
+import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionOrder;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
@@ -47,6 +48,7 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.base.StructureBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.internal.v1_0.mapper.concept.ConceptsDo2RestMapperV10;
+import org.siemac.metamac.srm.rest.internal.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
@@ -63,9 +65,9 @@ import com.arte.statistic.sdmx.srm.core.structure.domain.GroupRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDescriptor;
 import com.arte.statistic.sdmx.srm.core.structure.domain.NoSpecifiedRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.PrimaryMeasureRelationship;
-import com.arte.statistic.sdmx.srm.core.structure.serviceimpl.utils.StructuresComparator;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialAttributeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialDimensionTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 
 @org.springframework.stereotype.Component
@@ -73,6 +75,9 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
 
     @Autowired
     private ConceptsDo2RestMapperV10 conceptsDo2RestMapper;
+
+    @Autowired
+    private ConceptsMetamacService   conceptsService;
 
     @Override
     public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
@@ -93,7 +98,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
     }
 
     @Override
-    public DataStructure toDataStructure(DataStructureDefinitionVersionMetamac source) {
+    public DataStructure toDataStructure(DataStructureDefinitionVersionMetamac source, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -109,7 +114,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
 
         toStructure(source, source.getLifeCycleMetadata(), target);
 
-        target.setDataStructureComponents(toDataStructureComponents(source.getGrouping(), isImported));
+        target.setDataStructureComponents(toDataStructureComponents(source.getGrouping(), isImported, fields));
         target.setStatisticalOperation(toResourceExternalItemStatisticalOperation(source.getStatisticalOperation()));
         target.setAutoOpen(source.getAutoOpen());
         target.setShowNullValuesByDefault(source.getShowNullValuesByDefault());
@@ -123,11 +128,11 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private DataStructureComponents toDataStructureComponents(Set<ComponentList> sources, Boolean isImported) {
+    private DataStructureComponents toDataStructureComponents(Set<ComponentList> sources, Boolean isImported, Set<String> fields) throws MetamacException {
         DataStructureComponents target = new DataStructureComponents();
         for (ComponentList source : sources) {
             if (source instanceof DimensionDescriptor) {
-                target.setDimensions(toDimensions((DimensionDescriptor) source, isImported));
+                target.setDimensions(toDimensions((DimensionDescriptor) source, isImported, fields));
             } else if (source instanceof GroupDimensionDescriptor) {
                 if (target.getGroups() == null) {
                     target.setGroups(new Groups());
@@ -145,7 +150,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private Dimensions toDimensions(DimensionDescriptor source, Boolean isImported) {
+    private Dimensions toDimensions(DimensionDescriptor source, Boolean isImported, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -153,15 +158,15 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         toComponentList(source, target, isImported);
 
         // Dimensions must be returned in order
-        List<Component> componentsSorted = new ArrayList<>(source.getComponents());
-        Collections.sort(componentsSorted, StructuresComparator.STRUCTURE_COMPOENTN_ID_COMPARATOR);
+        List<Component> componentsSorted = getDimensionsOrdered(source.getComponents(), TypeComponentList.DIMENSION_DESCRIPTOR);
+
         for (Component component : componentsSorted) {
             if (component instanceof com.arte.statistic.sdmx.srm.core.structure.domain.Dimension) {
-                target.getDimensions().add(toDimension((com.arte.statistic.sdmx.srm.core.structure.domain.Dimension) component, isImported));
+                target.getDimensions().add(toDimension((com.arte.statistic.sdmx.srm.core.structure.domain.Dimension) component, isImported, fields));
             } else if (component instanceof com.arte.statistic.sdmx.srm.core.structure.domain.TimeDimension) {
-                target.getDimensions().add(toTimeDimension((com.arte.statistic.sdmx.srm.core.structure.domain.TimeDimension) component, isImported));
+                target.getDimensions().add(toTimeDimension((com.arte.statistic.sdmx.srm.core.structure.domain.TimeDimension) component, isImported, fields));
             } else if (component instanceof com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension) {
-                target.getDimensions().add(toMeasureDimension((com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension) component, isImported));
+                target.getDimensions().add(toMeasureDimension((com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension) component, isImported, fields));
             } else {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
                 throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
@@ -273,13 +278,17 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private void toDimensionCommon(com.arte.statistic.sdmx.srm.core.structure.domain.DimensionComponent source, DimensionBase target, Boolean isImported) {
+    private void toDimensionCommon(com.arte.statistic.sdmx.srm.core.structure.domain.DimensionComponent source, DimensionBase target, Boolean isImported, Set<String> fields) throws MetamacException {
         toComponent(source, target, isImported);
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_DIMENSION_PLURAL_NAME)) {
+            ConceptMetamac dimensionConcept = conceptsService.retrieveConceptByUrn(null, source.getCptIdRef().getNameableArtefact().getUrn());
+            target.setPluralName(toInternationalString(dimensionConcept.getPluralName()));
+        }
     }
 
-    private Dimension toDimension(com.arte.statistic.sdmx.srm.core.structure.domain.Dimension source, Boolean isImported) {
+    private Dimension toDimension(com.arte.statistic.sdmx.srm.core.structure.domain.Dimension source, Boolean isImported, Set<String> fields) throws MetamacException {
         Dimension target = new Dimension();
-        toDimensionCommon(source, target, isImported);
+        toDimensionCommon(source, target, isImported, fields);
 
         target.setType(DimensionType.DIMENSION);
         if (source != null) {
@@ -291,9 +300,9 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private MeasureDimension toMeasureDimension(com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension source, Boolean isImported) {
+    private MeasureDimension toMeasureDimension(com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension source, Boolean isImported, Set<String> fields) throws MetamacException {
         MeasureDimension target = new MeasureDimension();
-        toDimensionCommon(source, target, isImported);
+        toDimensionCommon(source, target, isImported, fields);
 
         target.setType(DimensionType.MEASURE_DIMENSION);
         if (source != null) {
@@ -302,9 +311,9 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private TimeDimension toTimeDimension(com.arte.statistic.sdmx.srm.core.structure.domain.TimeDimension source, Boolean isImported) {
+    private TimeDimension toTimeDimension(com.arte.statistic.sdmx.srm.core.structure.domain.TimeDimension source, Boolean isImported, Set<String> fields) throws MetamacException {
         TimeDimension target = new TimeDimension();
-        toDimensionCommon(source, target, isImported);
+        toDimensionCommon(source, target, isImported, fields);
         target.setType(DimensionType.TIME_DIMENSION);
         return target;
     }

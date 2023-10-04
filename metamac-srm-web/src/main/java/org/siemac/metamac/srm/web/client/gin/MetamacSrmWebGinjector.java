@@ -1,10 +1,14 @@
 package org.siemac.metamac.srm.web.client.gin;
 
 import org.siemac.metamac.srm.web.category.presenter.CategoriesPresenter;
+import org.siemac.metamac.srm.web.category.presenter.CategoryElementPresenter;
+import org.siemac.metamac.srm.web.category.presenter.CategoryElementsPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategoryPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemeListPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemePresenter;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
+import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter;
+import org.siemac.metamac.srm.web.client.admin.AdminPresenter;
 import org.siemac.metamac.srm.web.client.presenter.ErrorPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.StructuralResourcesPresenter;
@@ -82,6 +86,8 @@ public interface MetamacSrmWebGinjector extends MetamacWebGinjector {
     AsyncProvider<CategorySchemePresenter> getCategorySchemePresenter();
     AsyncProvider<CategoryPresenter> getCategoryPresenter();
     AsyncProvider<CategoriesPresenter> getCategoriesPresenter();
+    AsyncProvider<CategoryElementPresenter> getCategoryElementPresenter();
+    AsyncProvider<CategoryElementsPresenter> getCategoryElementsPresenter();
 
     // Codes
     AsyncProvider<CodelistListPresenter> getCodelistListPresenter();
@@ -96,4 +102,8 @@ public interface MetamacSrmWebGinjector extends MetamacWebGinjector {
     AsyncProvider<VariablePresenter> getVariablePresenter();
     AsyncProvider<VariableElementPresenter> getVariableElementPresenter();
     AsyncProvider<VariableElementsPresenter> getVariableElementsPresenter();
+
+    // Admin
+    AsyncProvider<AdminPresenter> getAdminPresenter();
+    AsyncProvider<AdminAnnotationTypeTabPresenter> getAdminAnnotationTypeTabPresenter();
 }

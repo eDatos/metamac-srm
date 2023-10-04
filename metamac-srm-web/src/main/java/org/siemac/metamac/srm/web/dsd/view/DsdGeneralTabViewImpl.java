@@ -54,6 +54,7 @@ import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavig
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
@@ -70,35 +71,35 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHandlers> implements DsdGeneralTabPresenter.DsdGeneralTabView {
 
-    private final VLayout panel;
+    private final VLayout                      panel;
 
-    private final DsdMainFormLayout mainFormLayout;
+    private final DsdMainFormLayout            mainFormLayout;
 
     // VIEW FORM
 
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm classDescriptorsForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm diffusionDescriptorsForm;
-    private GroupDynamicForm versionResponsibilityForm;
-    private GroupDynamicForm visualisationMetadataForm;
-    private GroupDynamicForm commentsForm;
-    private AnnotationsPanel annotationsPanel;
+    private GroupDynamicForm                   identifiersForm;
+    private GroupDynamicForm                   contentDescriptorsForm;
+    private GroupDynamicForm                   classDescriptorsForm;
+    private GroupDynamicForm                   productionDescriptorsForm;
+    private GroupDynamicForm                   diffusionDescriptorsForm;
+    private GroupDynamicForm                   versionResponsibilityForm;
+    private GroupDynamicForm                   visualisationMetadataForm;
+    private GroupDynamicForm                   commentsForm;
+    private AnnotationsPanel                   annotationsPanel;
 
     // EDITION FORM
 
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private GroupDynamicForm classDescriptorsEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm diffusionDescriptorsEditionForm;
-    private GroupDynamicForm versionResponsibilityEditionForm;
-    private GroupDynamicForm visualisationMetadataEditionForm;
-    private GroupDynamicForm commentsEditionForm;
-    private AnnotationsPanel annotationsEditionPanel;
+    private GroupDynamicForm                   identifiersEditionForm;
+    private GroupDynamicForm                   contentDescriptorsEditionForm;
+    private GroupDynamicForm                   classDescriptorsEditionForm;
+    private GroupDynamicForm                   productionDescriptorsEditionForm;
+    private GroupDynamicForm                   diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                   versionResponsibilityEditionForm;
+    private GroupDynamicForm                   visualisationMetadataEditionForm;
+    private GroupDynamicForm                   commentsEditionForm;
+    private AnnotationsPanel                   annotationsEditionPanel;
 
-    private DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto;
+    private DataStructureDefinitionMetamacDto  dataStructureDefinitionMetamacDto;
 
     private SearchStatisticalOperationLinkItem operationItem;
 
@@ -365,7 +366,8 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         ShowDecimalsPrecisionItem showDecimalsPrecision = new ShowDecimalsPrecisionItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getConstants().dsdShowDecimalsPrecision(), false);
         DsdDimensionCodesVisualisationItem dimensionCodesVisualisationItem = new DsdDimensionCodesVisualisationItem(DataStructureDefinitionDS.DIMENSION_CODES_VISUALISATION,
                 getConstants().dsdDimensionCodesVisualisation(), false);
-        visualisationMetadataForm.setFields(showNullValuesByDefault, showZeroValuesByDefault, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
+        visualisationMetadataForm.setFields(showNullValuesByDefault, showZeroValuesByDefault, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision,
+                dimensionsVisualisationItem);
 
         // Comments
         commentsForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -502,8 +504,9 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         ShowDecimalsPrecisionItem showDecimalsPrecision = new ShowDecimalsPrecisionItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getConstants().dsdShowDecimalsPrecision(), true);
         DsdDimensionCodesVisualisationItem dimensionCodesVisualisationItem = new DsdDimensionCodesVisualisationItem(DataStructureDefinitionDS.DIMENSION_CODES_VISUALISATION,
                 getConstants().dsdDimensionCodesVisualisation(), true);
-        
-        visualisationMetadataEditionForm.setFields(showNullValuesByDefault, showZeroValuesByDefault, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision, dimensionsVisualisationItem);
+
+        visualisationMetadataEditionForm.setFields(showNullValuesByDefault, showZeroValuesByDefault, autoOpen, showDecimals, dimensionCodesVisualisationItem, showDecimalsPrecision,
+                dimensionsVisualisationItem);
 
         // Comments
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -618,7 +621,7 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
         ((DimensionsVisualisationItem) visualisationMetadataForm.getItem(DataStructureDefinitionDS.DIMENSIONS_VISUALISATIONS)).setVisualisationDimensions(dsd.getHeadingDimensions(),
                 dsd.getStubDimensions());
         ((ShowDecimalsPrecisionItem) visualisationMetadataForm.getItem(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION)).setMeasureDimensionPrecisions(dsd.getShowDecimalsPrecisions());
-        
+
         // DIMENSION_CODES_VISUALISATION is set in set setDimensionsAndCandidateVisualisations
 
         // Comments
@@ -734,10 +737,10 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
 
         // Visualisation metadata
         dataStructureDefinitionMetamacDto.setAutoOpen(((BooleanSelectItem) visualisationMetadataEditionForm.getItem(DataStructureDefinitionDS.AUTO_OPEN)).getBooleanValue());
-		dataStructureDefinitionMetamacDto.setShowNullValuesByDefault(((BooleanSelectItem) visualisationMetadataEditionForm
-				.getItem(DataStructureDefinitionDS.SHOW_NULL_VALUES_BY_DEFAULT)).getBooleanValue());
-		dataStructureDefinitionMetamacDto.setShowZeroValuesByDefault(((BooleanSelectItem) visualisationMetadataEditionForm
-				.getItem(DataStructureDefinitionDS.SHOW_ZERO_VALUES_BY_DEFAULT)).getBooleanValue());
+        dataStructureDefinitionMetamacDto
+                .setShowNullValuesByDefault(((BooleanSelectItem) visualisationMetadataEditionForm.getItem(DataStructureDefinitionDS.SHOW_NULL_VALUES_BY_DEFAULT)).getBooleanValue());
+        dataStructureDefinitionMetamacDto
+                .setShowZeroValuesByDefault(((BooleanSelectItem) visualisationMetadataEditionForm.getItem(DataStructureDefinitionDS.SHOW_ZERO_VALUES_BY_DEFAULT)).getBooleanValue());
         dataStructureDefinitionMetamacDto.setShowDecimals(!StringUtils.isBlank(visualisationMetadataEditionForm.getValueAsString(DataStructureDefinitionDS.SHOW_DECIMALS))
                 ? Integer.valueOf(visualisationMetadataEditionForm.getValueAsString(DataStructureDefinitionDS.SHOW_DECIMALS))
                 : null);
@@ -916,5 +919,16 @@ public class DsdGeneralTabViewImpl extends ViewWithUiHandlers<DsdGeneralTabUiHan
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto) {
+        this.annotationsPanel.updateAnnotationTypeValues(annotationTypeDto);
+        this.annotationsEditionPanel.updateAnnotationTypeValues(annotationTypeDto);
+    }
+
+    @Override
+    public boolean mustFillAnnotationTypeList() {
+        return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
     }
 }

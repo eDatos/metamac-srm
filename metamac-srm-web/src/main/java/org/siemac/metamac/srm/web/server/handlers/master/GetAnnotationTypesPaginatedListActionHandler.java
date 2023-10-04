@@ -1,0 +1,52 @@
+package org.siemac.metamac.srm.web.server.handlers.master;
+
+import org.siemac.metamac.core.common.criteria.MetamacCriteria;
+import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
+import org.siemac.metamac.core.common.criteria.MetamacCriteriaPaginator;
+import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.web.server.utils.MetamacWebCriteriaUtils;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesPaginatedListResult;
+import org.siemac.metamac.web.common.server.ServiceContextHolder;
+import org.siemac.metamac.web.common.server.handlers.SecurityActionHandler;
+import org.siemac.metamac.web.common.server.utils.WebExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
+import com.gwtplatform.dispatch.shared.ActionException;
+
+@Component
+public class GetAnnotationTypesPaginatedListActionHandler extends SecurityActionHandler<GetAnnotationTypesPaginatedListAction, GetAnnotationTypesPaginatedListResult> {
+
+    @Autowired
+    private SrmCoreServiceFacade srmCoreServiceFacade;
+
+    public GetAnnotationTypesPaginatedListActionHandler() {
+        super(GetAnnotationTypesPaginatedListAction.class);
+    }
+
+    @Override
+    public GetAnnotationTypesPaginatedListResult executeSecurityAction(GetAnnotationTypesPaginatedListAction action) throws ActionException {
+        try {
+            MetamacCriteria criteria = new MetamacCriteria();
+
+            // Criteria
+            MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
+            restriction.getRestrictions().add(MetamacWebCriteriaUtils.buildMetamacCriteriaFromWebcriteria(action.getCriteria()));
+            criteria.setRestriction(restriction);
+
+            criteria.setPaginator(new MetamacCriteriaPaginator());
+            criteria.getPaginator().setFirstResult(action.getCriteria().getFirstResult());
+            criteria.getPaginator().setMaximumResultSize(action.getCriteria().getMaxResults());
+            criteria.getPaginator().setCountTotalResults(true);
+            MetamacCriteriaResult<AnnotationTypeDto> annotationTypes = srmCoreServiceFacade.findAnnotationTypes(ServiceContextHolder.getCurrentServiceContext(), criteria);
+            return new GetAnnotationTypesPaginatedListResult(annotationTypes.getResults(), annotationTypes.getPaginatorResult().getTotalResults());
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+}

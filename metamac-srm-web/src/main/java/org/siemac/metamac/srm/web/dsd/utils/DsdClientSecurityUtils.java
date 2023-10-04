@@ -48,8 +48,8 @@ public class DsdClientSecurityUtils {
 
     public static boolean canCancelDsdValidity(DataStructureDefinitionMetamacBasicDto dataStructureDefinitionMetamacBasicDto) {
         return canCancelDsdValidity(dataStructureDefinitionMetamacBasicDto.getUrn(), CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacBasicDto),
-                dataStructureDefinitionMetamacBasicDto.getMaintainer(), dataStructureDefinitionMetamacBasicDto.getVersionLogic(),
-                dataStructureDefinitionMetamacBasicDto.getLifeCycle().getProcStatus(), dataStructureDefinitionMetamacBasicDto.getValidTo());
+                dataStructureDefinitionMetamacBasicDto.getMaintainer(), dataStructureDefinitionMetamacBasicDto.getVersionLogic(), dataStructureDefinitionMetamacBasicDto.getLifeCycle().getProcStatus(),
+                dataStructureDefinitionMetamacBasicDto.getValidTo());
     }
 
     public static boolean canExportDsd(String versionLogic) {
@@ -134,6 +134,11 @@ public class DsdClientSecurityUtils {
         // Maintainer is checked because the structure of an imported resource can not be modified
         String operationCode = CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacDto);
         return SharedDsdSecurityUtils.canUpdateDimensions(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), operationCode)
+                && org.siemac.metamac.srm.web.client.utils.CommonUtils.canSdmxMetadataAndStructureBeModified(dataStructureDefinitionMetamacDto);
+    }
+
+    public static boolean canAlterOrderDimension(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
+        return SharedDsdSecurityUtils.canUpdateDimensions(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), null)
                 && org.siemac.metamac.srm.web.client.utils.CommonUtils.canSdmxMetadataAndStructureBeModified(dataStructureDefinitionMetamacDto);
     }
 

@@ -21,6 +21,7 @@ public class CategoriesDoMocks {
         } else {
             target.getNameableArtefact().setCodeFull(parent.getNameableArtefact().getCodeFull() + "." + resourceID);
         }
+        target.setCategoryElement(CategoriesMetamacDoMocks.mockCategoryElementFixedValues("categoryElement-" + resourceID));
         target.setEniSchema(CategoriesMetamacDoMocks.mockEniSchemeFixedValues(target.getNameableArtefact().getCodeFull()));
         return target;
     }
@@ -28,9 +29,10 @@ public class CategoriesDoMocks {
     public static CategoryMetamac mockCategoryWithEniScheme(String resourceID, CategorySchemeVersionMetamac categoryScheme, CategoryMetamac parent) {
         CategoryMetamac target = mockCategory(resourceID, categoryScheme, parent);
         target.setEniSchema(CategoriesMetamacDoMocks.mockEniSchemeFixedValues(resourceID));
+        target.setCategoryElement(CategoriesMetamacDoMocks.mockCategoryElementFixedValues("categoryElement-" + resourceID));
         return target;
     }
-    
+
     public static CategorySchemeVersionMetamac mockCategorySchemeWithCategories(String agencyID, String resourceID, String version) {
 
         CategorySchemeVersionMetamac categorySchemeVersion = mockCategoryScheme(agencyID, resourceID, version);
@@ -54,15 +56,14 @@ public class CategoriesDoMocks {
         return categorySchemeVersion;
     }
 
-    
     public static ItemResult mockCategoryItemResult(String resourceID, ItemResult parent) {
         ItemResult itemResult = CategoriesMetamacDoMocks.mockCategoryResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000)."));
         itemResult.setUrnProvider(itemResult.getUrn());
-               
+
         itemResult.setExtensionPoint(CategoriesMetamacDoMocks.mockCategoryMetamacResultFixedValues());
-        
+
         return itemResult;
     }
 
@@ -73,7 +74,7 @@ public class CategoriesDoMocks {
         itemResult.setUrnProvider(itemResult.getUrn());
         return itemResult;
     }
-    
+
     public static Categorisation mockCategorisation(String agencyID, String resourceID, String version) {
         Categorisation target = new Categorisation();
         target.setMaintainableArtefact(new MaintainableArtefact());

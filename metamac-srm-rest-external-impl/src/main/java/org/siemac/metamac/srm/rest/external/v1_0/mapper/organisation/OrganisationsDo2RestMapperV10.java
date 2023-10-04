@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumer;
@@ -23,12 +24,14 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 public interface OrganisationsDo2RestMapperV10 {
 
     // Organisations (Global search)
-    public org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationSchemes toOrganisationSchemes(PagedResult<OrganisationSchemeVersionMetamac> sources, String agencyID,
-            String resourceID, String query, String orderBy, Integer limit);
+    public org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationSchemes toOrganisationSchemes(PagedResult<OrganisationSchemeVersionMetamac> sources, String agencyID, String resourceID,
+            String query, String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationScheme toOrganisationScheme(OrganisationSchemeVersionMetamac source) throws MetamacException;
 
-    public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
+    public Organisations toOrganisations(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields);
     public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
+    List<PlainTextResource> toPlainTextOrganisations(Organisations source, List<String> languages, Set<String> fields, String format) throws MetamacException;
     public Organisation toOrganisation(OrganisationMetamac source) throws MetamacException;
 
     // Agencies
@@ -36,7 +39,8 @@ public interface OrganisationsDo2RestMapperV10 {
             String query, String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencyScheme toAgencyScheme(OrganisationSchemeVersionMetamac source) throws MetamacException;
 
-    public Agencies toAgencies(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
+    public Agencies toAgencies(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields);
     public Agencies toAgencies(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
     public Agency toAgency(OrganisationMetamac source) throws MetamacException;
 
@@ -45,25 +49,28 @@ public interface OrganisationsDo2RestMapperV10 {
             String resourceID, String query, String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnitScheme toOrganisationUnitScheme(OrganisationSchemeVersionMetamac source);
 
-    public OrganisationUnits toOrganisationUnits(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
+    public OrganisationUnits toOrganisationUnits(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields);
     public OrganisationUnits toOrganisationUnits(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
     public OrganisationUnit toOrganisationUnit(OrganisationMetamac source);
 
     // Data providers
-    public org.siemac.metamac.rest.structural_resources.v1_0.domain.DataProviderSchemes toDataProviderSchemes(PagedResult<OrganisationSchemeVersionMetamac> sources, String agencyID,
-            String resourceID, String query, String orderBy, Integer limit);
+    public org.siemac.metamac.rest.structural_resources.v1_0.domain.DataProviderSchemes toDataProviderSchemes(PagedResult<OrganisationSchemeVersionMetamac> sources, String agencyID, String resourceID,
+            String query, String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.DataProviderScheme toDataProviderScheme(OrganisationSchemeVersionMetamac source);
 
-    public DataProviders toDataProviders(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
+    public DataProviders toDataProviders(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields);
     public DataProviders toDataProviders(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
     public DataProvider toDataProvider(OrganisationMetamac source);
 
     // Data consumers
-    public org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumerSchemes toDataConsumerSchemes(PagedResult<OrganisationSchemeVersionMetamac> sources, String agencyID,
-            String resourceID, String query, String orderBy, Integer limit);
+    public org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumerSchemes toDataConsumerSchemes(PagedResult<OrganisationSchemeVersionMetamac> sources, String agencyID, String resourceID,
+            String query, String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.DataConsumerScheme toDataConsumerScheme(OrganisationSchemeVersionMetamac source);
 
-    public DataConsumers toDataConsumers(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
+    public DataConsumers toDataConsumers(PagedResult<OrganisationMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
+            Set<String> fields);
     public DataConsumers toDataConsumers(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields);
     public DataConsumer toDataConsumer(OrganisationMetamac source);
 }

@@ -48,7 +48,7 @@
 				<p2:Annotations>
 					<p2:Annotation id="AGENCIES_SCHEME_ANNO_01">
 						<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-						<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+						<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 						<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 						<p2:AnnotationText xml:lang="en">AnnotationText
 						</p2:AnnotationText>
@@ -62,7 +62,7 @@
 					<p2:Annotations>
 						<p2:Annotation id="FAO_ANNO_01">
 							<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-							<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+							<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 							<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 							<p2:AnnotationText xml:lang="en">AnnotationText
 							</p2:AnnotationText>
@@ -90,7 +90,7 @@
 				<p2:Annotations>
 					<p2:Annotation id="DATA_CONSUMERS_SCHEME_ANNO_01">
 						<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-						<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+						<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 						<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 						<p2:AnnotationText xml:lang="en">AnnotationText
 						</p2:AnnotationText>
@@ -104,7 +104,7 @@
 					<p2:Annotations>
 						<p2:Annotation id="UNICEF_ANNO_01">
 							<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-							<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+							<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 							<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 							<p2:AnnotationText xml:lang="en">AnnotationText
 							</p2:AnnotationText>
@@ -131,7 +131,7 @@
 				<p2:Annotations>
 					<p2:Annotation id="DATA_PROVIDERS_SCHEME_ANNO_01">
 						<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-						<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+						<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 						<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 						<p2:AnnotationText xml:lang="en">AnnotationText
 						</p2:AnnotationText>
@@ -145,7 +145,7 @@
 					<p2:Annotations>
 						<p2:Annotation id="USG_USAID_ANNO_01">
 							<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-							<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+							<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 							<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 							<p2:AnnotationText xml:lang="en">AnnotationText
 							</p2:AnnotationText>
@@ -172,7 +172,7 @@
 				<p2:Annotations>
 					<p2:Annotation id="ORGANISATION_UNIT_SCHEME_ANNO_01">
 						<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-						<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+						<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 						<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 						<p2:AnnotationText xml:lang="en">AnnotationText
 						</p2:AnnotationText>
@@ -186,7 +186,7 @@
 					<p2:Annotations>
 						<p2:Annotation id="NA_COMMITTEE_ANNO_01">
 							<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-							<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+							<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 							<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 							<p2:AnnotationText xml:lang="en">AnnotationText
 							</p2:AnnotationText>
@@ -207,7 +207,7 @@
 					<p2:Annotations>
 						<p2:Annotation id="NA_COMMISSION_ANNO_01">
 							<p2:AnnotationTitle>AnnotationTitle</p2:AnnotationTitle>
-							<p2:AnnotationType>AnnotationType</p2:AnnotationType>
+							<p2:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</p2:AnnotationType>
 							<p2:AnnotationURL>http://tempuri.org</p2:AnnotationURL>
 							<p2:AnnotationText xml:lang="en">AnnotationText
 							</p2:AnnotationText>

@@ -27,6 +27,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
@@ -87,6 +88,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Variabl
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -260,29 +262,69 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     public Concepts findConcepts(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-
-            if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                // Find. Retrieve concepts paginated
-                SculptorCriteria sculptorCriteria = conceptsRest2DoMapper.getConceptCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-                PagedResult<ConceptMetamac> entitiesPagedResult = findConceptsCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
-
-                // Transform
-                return conceptsDo2RestMapper.toConcepts(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
-            } else {
-                // Retrieve all concepts of conceptScheme, without pagination
-                ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemePublished(agencyID, resourceID, version);
-
-                ConceptMetamacResultSelection itemMetamacResultSelection = ConceptMetamacResultSelection.API;
-                itemMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
-                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                itemMetamacResultSelection.setPluralName(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME));
-                List<ItemResult> items = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(ctx, conceptSchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
-
-                // Transform
-                return conceptsDo2RestMapper.toConcepts(items, conceptSchemeVersion, fieldsToShow);
-            }
+            return findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
+        }
+    }
+
+    private Concepts findConceptsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+            throws MetamacException {
+        if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            // Find. Retrieve concepts paginated
+            SculptorCriteria sculptorCriteria = conceptsRest2DoMapper.getConceptCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+            PagedResult<ConceptMetamac> entitiesPagedResult = findConceptsCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+            // Transform
+            return conceptsDo2RestMapper.toConcepts(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        } else {
+            // Retrieve all concepts of conceptScheme, without pagination
+            ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemePublished(agencyID, resourceID, version);
+
+            ConceptMetamacResultSelection itemMetamacResultSelection = ConceptMetamacResultSelection.API;
+            itemMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
+            itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            itemMetamacResultSelection.setPluralName(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME));
+            List<ItemResult> items = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(ctx, conceptSchemeVersion.getMaintainableArtefact().getUrn(), itemMetamacResultSelection);
+
+            // Transform
+            return conceptsDo2RestMapper.toConcepts(items, conceptSchemeVersion, fieldsToShow);
+        }
+    }
+
+    @Override
+    public Response findConceptsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    }
+
+    @Override
+    public Response findConceptsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    @Override
+    public Response findConceptsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findConceptsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
+    }
+
+    private Response findConceptsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+        try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Concepts concepts = findConceptsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+
+            // Transform
+            List<PlainTextResource> flattenResource = conceptsDo2RestMapper.toPlainTextConcepts(concepts, configurationService.retrieveLanguages(), fieldsToShow, format);
+
+            String fileNamePrefix = "concepts";
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+
+        } catch (Exception e) {
+            return manageExceptionResponse(e);
         }
     }
 
@@ -353,34 +395,74 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
-            
-            Set<String> validFields = new HashSet<>();
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
-            validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
-            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
-            
-            if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                // Find. Retrieve categories paginated
-                SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-                PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
-                // Transform
-                return categoriesDo2RestMapper.toCategories(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
-            } else {
-                // Retrieve all categories of categoryScheme, without pagination
-                CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
+            Set<String> fieldsToShow = getFieldsParameters(fields);
+            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
 
-                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
-                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(),
-                        itemMetamacResultSelection);
-
-                // Transform
-                return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
-            }
         } catch (Exception e) {
             throw manageException(e);
+        }
+    }
+
+    public Categories findCategoriesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+            throws MetamacException {
+        if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            // Find. Retrieve categories paginated
+            SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+            PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+            // Transform
+            return categoriesDo2RestMapper.toCategories(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        } else {
+            // Retrieve all categories of categoryScheme, without pagination
+            CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
+
+            CategoryMetamacResultSelection categoryMetamacResultSelection = CategoryMetamacResultSelection.API;
+
+            categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
+
+            // Transform
+            return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
+        }
+    }
+
+    @Override
+    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    }
+
+    @Override
+    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    @Override
+    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findCategoriesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
+    }
+
+    private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+        try {
+
+            Set<String> fieldsToShow = getFieldsParameters(fields);
+
+            Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+
+            // Transform
+            List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow, format);
+
+            String fileNamePrefix = "categories";
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+
+        } catch (Exception e) {
+            return manageExceptionResponse(e);
         }
     }
 
@@ -476,29 +558,68 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     public Organisations findOrganisations(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-
-            if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                // Find. Retrieve organisations paginated
-                SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-                PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(null, agencyID, resourceID, version, null, sculptorCriteria.getConditions(),
-                        sculptorCriteria.getPagingParameter());
-
-                // Transform
-                return organisationsDo2RestMapper.toOrganisations(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
-            } else {
-                // Retrieve all organisations of organisationScheme, without pagination
-                OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemePublished(agencyID, resourceID, version);
-
-                ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
-                itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
-                        itemMetamacResultSelection);
-
-                // Transform
-                return organisationsDo2RestMapper.toOrganisations(items, organisationSchemeVersion, fieldsToShow);
-            }
+            return findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
+        }
+    }
+
+    public Organisations findOrganisationsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+            throws MetamacException {
+        if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            // Find. Retrieve organisations paginated
+            SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+            PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(null, agencyID, resourceID, version, null, sculptorCriteria.getConditions(),
+                    sculptorCriteria.getPagingParameter());
+
+            // Transform
+            return organisationsDo2RestMapper.toOrganisations(entitiesPagedResult, agencyID, resourceID, version, query, orderBy, sculptorCriteria.getLimit(), fieldsToShow);
+        } else {
+            // Retrieve all organisations of organisationScheme, without pagination
+            OrganisationSchemeVersionMetamac organisationSchemeVersion = retrieveOrganisationSchemePublished(agencyID, resourceID, version);
+
+            ItemMetamacResultSelection itemMetamacResultSelection = ItemMetamacResultSelection.API;
+            itemMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            List<ItemResult> items = organisationsService.retrieveOrganisationsByOrganisationSchemeUrnUnordered(ctx, organisationSchemeVersion.getMaintainableArtefact().getUrn(),
+                    itemMetamacResultSelection);
+
+            // Transform
+            return organisationsDo2RestMapper.toOrganisations(items, organisationSchemeVersion, fieldsToShow);
+        }
+    }
+
+    @Override
+    public Response findOrganisationsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    }
+
+    @Override
+    public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    }
+
+    @Override
+    public Response findOrganisationsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    }
+
+    @Override
+    public Response findOrganisationsXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+        return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xls");
+    }
+
+    private Response findOrganisationsPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+        try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Organisations organisations = findOrganisationsCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+
+            // Transform
+            List<PlainTextResource> flattenResource = organisationsDo2RestMapper.toPlainTextOrganisations(organisations, configurationService.retrieveLanguages(), fieldsToShow, format);
+            String fileNamePrefix = "organisations";
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+
+        } catch (Exception e) {
+            return manageExceptionResponse(e);
         }
     }
 
@@ -889,51 +1010,97 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             Boolean extended, String fields) {
         try {
             Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
-
-            if (isFindByDefaultGeographicalGranularitiesCodelist(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                String codelistUrn = configurationService.retrieveDefaultCodelistGeographicalGranularityUrn();
-                String[] codelistUrnSplited = UrnUtils.splitUrnItemScheme(codelistUrn);
-                agencyID = codelistUrnSplited[0];
-                resourceID = codelistUrnSplited[1];
-                version = codelistUrnSplited[2];
-                query = null;
-                orderBy = null;
-                limit = null;
-            }
-
-            if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
-                checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
-                checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
-                checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
-                return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
-            } else {
-                // Retrieve all codes of codelist, without pagination
-                CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
-
-                String orderToUse = getOrderToUseToRetrieveCodelist(agencyID, resourceID, version, order, codelistVersion);
-                String opennessToUse = getOpennessToUseToRetrieveCodelist(agencyID, resourceID, version, openness, codelistVersion);
-                String restrictionToUse = getRestrictionToUseToRetrieveCodelist(agencyID, resourceID, version, restriction, codelistVersion);
-
-                ItemMetamacResultSelection codeMetamacResultSelection = CodeMetamacResultSelection.API;
-                codeMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
-                codeMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
-                List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
-                        opennessToUse, restrictionToUse);
-
-                return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
-            }
+            return findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
+
+    private Codes findCodesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, Set<String> fieldsToShow) throws MetamacException {
+        if (isFindByDefaultGeographicalGranularitiesCodelist(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            String codelistUrn = configurationService.retrieveDefaultCodelistGeographicalGranularityUrn();
+            String[] codelistUrnSplited = UrnUtils.splitUrnItemScheme(codelistUrn);
+            agencyID = codelistUrnSplited[0];
+            resourceID = codelistUrnSplited[1];
+            version = codelistUrnSplited[2];
+            query = null;
+            orderBy = null;
+            limit = null;
+        }
+
+        if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_ID, order);
+            checkParameterEmpty(SrmRestConstants.PARAMETER_OPENNESS_ID, openness);
+            checkParameterEmpty(SrmRestConstants.PARAMETER_RESTRICTION_ID, restriction);
+            return findCodesInMultipleCodelists(agencyID, resourceID, version, query, orderBy, limit, offset, extended, fieldsToShow);
+        } else {
+            // Retrieve all codes of codelist, without pagination
+            CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
+
+            String orderToUse = getOrderToUseToRetrieveCodelist(agencyID, resourceID, version, order, codelistVersion);
+            String opennessToUse = getOpennessToUseToRetrieveCodelist(agencyID, resourceID, version, openness, codelistVersion);
+            String restrictionToUse = getRestrictionToUseToRetrieveCodelist(agencyID, resourceID, version, restriction, codelistVersion);
+
+            ItemMetamacResultSelection codeMetamacResultSelection = CodeMetamacResultSelection.API;
+            codeMetamacResultSelection.setDescriptions(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_DESCRIPTION));
+            codeMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
+            List<ItemResult> items = codesService.retrieveCodesByCodelistUrnOrderedInDepth(ctx, codelistVersion.getMaintainableArtefact().getUrn(), codeMetamacResultSelection, orderToUse,
+                    opennessToUse, restrictionToUse);
+
+            return codesDo2RestMapper.toCodes(items, codelistVersion, fieldsToShow, restriction, extended);
+        }
+
+    }
+
+    @Override
+    public Response findCodesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "tsv");
+    }
+
+    @Override
+    public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "csv");
+    }
+
+    @Override
+    public Response findCodesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xlsx");
+    }
+
+    @Override
+    public Response findCodesXLS(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
+            Boolean extended, String fields) {
+        return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "xls");
+    }
+
+    private Response findCodesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness,
+            String restriction, Boolean extended, String fields, String format) {
+        try {
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
+            Codes codes = findCodesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fieldsToShow);
+
+            // Transform
+            List<PlainTextResource> flattenResource = codesDo2RestMapper.toPlainTextCodes(codes, configurationService.retrieveLanguages(), fieldsToShow, format);
+
+            String fileNamePrefix = "codes";
+            return Response.status(Status.OK).entity(flattenResource).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+
+        } catch (Exception e) {
+            return manageExceptionResponse(e);
+        }
+    }
+
     @Override
     public RecodedCodes retrieveRecodedCodes(String agencyID1, String resourceID1, String version1, String agencyID2, String resourceID2, String version2) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID1, resourceID1, version1);
             checkParameterNotWildcardRetrieveItemScheme(agencyID2, resourceID2, version2);
-            
+
             // Retrieve all codes of codelist
             CodelistVersionMetamac codelistVersionOrigin = retrieveCodelistPublished(agencyID1, resourceID1, version1);
 
@@ -941,34 +1108,33 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             CodelistVersionMetamac codelistVersionToMatch = retrieveCodelistPublished(agencyID2, resourceID2, version2);
 
             checkCodelistVersionWithSameVariable(codelistVersionOrigin, codelistVersionToMatch);
-            
+
             List<RelatedCode> items = codesService.recodeCodes(ctx, codelistVersionOrigin, codelistVersionToMatch);
-            
+
             return codesDo2RestMapper.toRecodedCodes(codelistVersionOrigin, codelistVersionToMatch, items);
-            
+
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
-    
+
     @Override
     public CodelistRestrictions findCodelistRestrictions(String agencyID, String resourceID, String version) {
         try {
 
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
-            
+
             CodelistVersionMetamac codelistVersion = retrieveCodelistPublished(agencyID, resourceID, version);
 
-            List<CodelistRestrictionVisualisation> restrictions =  codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
-            
+            List<CodelistRestrictionVisualisation> restrictions = codesService.retrieveCodelistRestrictionVisualisationsByCodelist(ctx, codelistVersion.getMaintainableArtefact().getUrn());
+
             return codesDo2RestMapper.toCodeListRestrictions(restrictions, codelistVersion, agencyID, resourceID, version);
-         
+
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
+
     private String getOpennessToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String openness, CodelistVersionMetamac codelistVersion) throws MetamacException {
         String opennessToUse = null;
         if (openness == null) {
@@ -990,8 +1156,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         }
         return restrictionToUse;
     }
-       
-    
+
     private String getOrderToUseToRetrieveCodelist(String agencyID, String resourceID, String version, String order, CodelistVersionMetamac codelistVersion) throws MetamacException {
         String orderToUse = null;
         if (order == null) {
@@ -1223,7 +1388,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             throw manageException(e);
         }
     }
-  
+
     @Override
     public DataStructures findDataStructures(String query, String orderBy, String limit, String offset) {
         return findDataStructures(null, null, null, query, orderBy, limit, offset);
@@ -1242,9 +1407,11 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     }
 
     @Override
-    public DataStructure retrieveDataStructure(String agencyID, String resourceID, String version) {
+    public DataStructure retrieveDataStructure(String agencyID, String resourceID, String version, String fields) {
         try {
             checkParameterNotWildcardRetrieveItemScheme(agencyID, resourceID, version);
+
+            Set<String> fieldsToShow = SrmRestInternalUtils.parseFieldsParameter(fields);
 
             // Find one
             PagedResult<DataStructureDefinitionVersionMetamac> entitiesPagedResult = findDataStructuresCore(agencyID, resourceID, version, null, pagingParameterOneResult);
@@ -1254,7 +1421,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             }
 
             // Transform
-            return dataStructuresDo2RestMapperV10.toDataStructure(entitiesPagedResult.getValues().get(0));
+            return dataStructuresDo2RestMapperV10.toDataStructure(entitiesPagedResult.getValues().get(0), fieldsToShow);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -1537,7 +1704,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
     private PagedResult<CategoryMetamac> findCategoriesCore(String agencyID, String resourceID, String version, String categoryID, List<ConditionalCriteria> conditionalCriteriaQuery,
             PagingParameter pagingParameter) throws MetamacException {
-       
+
         // Criteria to find items by criteria
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItems(agencyID, resourceID, version, categoryID,
                 CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact(), CategoryMetamacProperties.nameableArtefact(), conditionalCriteriaQuery, CategoryMetamac.class);
@@ -1722,7 +1889,8 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         }
     }
 
-    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction) throws MetamacException {
+    private CodelistRestrictionVisualisation retrieveCodelistRestrictionVisualisation(String agencyID, String resourceID, String version, String codelistUrn, String restriction)
+            throws MetamacException {
         try {
             return codesService.retrieveCodelistRestrictionVisualisationByCode(ctx, codelistUrn, restriction);
         } catch (MetamacException e) {
@@ -1735,7 +1903,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             }
         }
     }
-    
+
     private PagedResult<CodelistVersionMetamac> findCodelistsCore(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteriaQuery,
             PagingParameter pagingParameter) throws MetamacException {
 
@@ -1977,6 +2145,15 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         }
     }
 
+    /**
+     * Throws response error, logging exception
+     * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
+     */
+    private Response manageExceptionResponse(Exception e) {
+        RestException errorResponse = manageException(e);
+        return Response.fromResponse(errorResponse.getResponse()).header("Accept", "application/xml").header("Content-Type", "application/xml").build();
+    }
+
     private void checkParameterNotWildcardFindItemSchemes(String agencyID) {
         checkParameterNotWildcardAll(SrmRestConstants.PARAMETER_AGENCY_ID, agencyID);
     }
@@ -2005,7 +2182,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
             throw new RestException(exception, Status.BAD_REQUEST);
         }
     }
-    
+
     /**
      * Check unsupported wildcards in some parameters
      */
@@ -2178,4 +2355,16 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         return constraintsService.updateRegionKeys(serviceContext, contentConstraintUrn, regionValue.getCode(), keysToPersist);
     }
 
+    public static String getContentDisposition(String fileNamePrefix, String format) {
+        return "inline; filename=" + fileNamePrefix + "." + format;
+    }
+
+    private Set<String> getFieldsParameters(String fields) {
+        Set<String> validFields = new HashSet<>();
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
+        return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
+    }
 }

@@ -25,7 +25,7 @@
 				<structure:Code id="A">
 					<common:Annotations>
 						<common:Annotation>
-							<common:AnnotationType>NOTE</common:AnnotationType>
+							<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 							<common:AnnotationText xml:lang="en">It is
 								typically used for annual data. This can also serve cases of
 								multi-annual data (data that appear once every two, three or,
@@ -41,7 +41,7 @@
 				<structure:Code id="B">
 					<common:Annotations>
 						<common:Annotation>
-							<common:AnnotationType>NOTE</common:AnnotationType>
+							<common:AnnotationType>SDMX-ID1-ANNOTATION_TYPE</common:AnnotationType>
 							<common:AnnotationText xml:lang="en">Similar to
 								"daily", however there are no observations for Saturday and
 								Sunday (so, neither "missing values" nor "numeric values" should

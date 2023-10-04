@@ -3,13 +3,20 @@ package org.siemac.metamac.srm.rest.internal.v1_0.service.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
+import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -184,13 +191,13 @@ public class SrmRestInternalUtils {
             if (OrganisationSchemeVersionMetamac.class.equals(entity)) {
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).lbrace().withProperty(OrganisationSchemeVersionProperties.organisationSchemeType())
                         .in(OrganisationSchemeTypeEnum.AGENCY_SCHEME, OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME).or()
-                        .withProperty(maintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
+                        .withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
             } else if (OrganisationMetamac.class.equals(entity)) {
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).lbrace().withProperty(OrganisationProperties.organisationType())
-                        .in(OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER).or().withProperty(maintainableArtefactProperty.latestFinal())
-                        .eq(Boolean.TRUE).rbrace().buildSingle());
+                        .in(OrganisationTypeEnum.AGENCY, OrganisationTypeEnum.DATA_CONSUMER, OrganisationTypeEnum.DATA_PROVIDER).or()
+                        .withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).rbrace().buildSingle());
             } else {
-                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).withProperty(maintainableArtefactProperty.latestFinal()).eq(Boolean.TRUE).buildSingle());
+                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).withProperty(maintainableArtefactProperty.latestVersionNumberFinal()).eq(Boolean.TRUE).buildSingle());
             }
         } else if (version != null && !SrmRestConstants.WILDCARD_ALL.equals(version)) {
             conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entity).withProperty(maintainableArtefactProperty.versionLogic()).eq(version).buildSingle());
@@ -217,12 +224,13 @@ public class SrmRestInternalUtils {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_EXTENDED_CODE);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_DIMENSION_PLURAL_NAME);
         return parseFieldsParameter(fieldsParam, validFields);
     }
 
     public static Set<String> parseFieldsParameter(String fieldsParam, Set<String> validFields) {
         Set<String> showFields = new HashSet<>();
-        if (fieldsParam != null) {       
+        if (fieldsParam != null) {
             List<String> fieldList = Arrays.asList(fieldsParam.split(","));
             List<String> parsedFieldList = new ArrayList<>();
             for (String field : fieldList) {
@@ -243,5 +251,41 @@ public class SrmRestInternalUtils {
 
     public static boolean containsField(Set<String> fields, String field) {
         return fields != null && fields.contains(field);
+    }
+
+    public static Map<String, String> internationalString2MapExport(String nameField, InternationalString source, List<String> languages, String format) {
+        Map<String, String> target = new LinkedHashMap<>();
+
+        InternationalString copySource = new InternationalString();
+
+        if (source != null) {
+            copySource = source;
+        }
+
+        String header;
+        for (String language : languages) {
+            header = nameField + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language, format));
+        }
+
+        return target;
+    }
+
+    private static String getLocalisedStringByLang(List<LocalisedString> source, String language, String format) {
+        // in the api, lamba functions is not allowed. the search is done with a loop.
+        for (LocalisedString loc : source) {
+            if (language.equals(loc.getLang())) {
+                String value = TsvExportationUtils.removeUnsupportedCharaters(loc.getValue());
+                return formattedText(value, format);
+            }
+        }
+        return null;
+    }
+
+    private static String formattedText(String text, String format) {
+        if ("csv".equals(format)) {
+            text = StringEscapeUtils.escapeCsv(text);
+        }
+        return text;
     }
 }

@@ -154,6 +154,9 @@ Application ConceptsMetamac {
 			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
 			"Updates position of concept"
 			updateConceptInOrder(String conceptUrn, String conceptSchemeUrn, Integer newConceptIndex) throws MetamacException;
+			
+			// resend kafka message for the last number of version of published concept.
+    		List<MetamacExceptionItem> resendKafkaMessageExternallyConceptSchemes() throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------
@@ -184,6 +187,7 @@ Application ConceptsMetamac {
 				@ConceptSchemeVersionMetamac retrieveConceptSchemeVersionByProcStatus(String urn, ArrayProcStatusEnum procStatus) throws MetamacException;
 				@ConceptSchemeVersionMetamac findByConcept(String urn);
 				checkConceptSchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+				List<@ConceptSchemeVersionMetamac> retrieveConceptsSchemesPublishedExternally() throws MetamacException
 			}			
 		}
 		
@@ -261,7 +265,7 @@ Application ConceptsMetamac {
 			"Number of decimal places to use for displaying the values of a metric concept"
 			Integer decimalPlaces nullable;
 			"Multiplier of percentage"
-			Integer unitMultiplier nullable;
+			- @CodeMetamac unitMultiplier nullable cascade="none" databaseColumn="UNIT_MULTIPLIER_FK";
 			"Min. Only when Quantity is Magnitude"
 			Integer minimum nullable;
 			"Max. Only when Quantity is Magnitude"

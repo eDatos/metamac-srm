@@ -81,6 +81,8 @@ import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.StatisticalOperationWebCriteria;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
+import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
@@ -91,6 +93,7 @@ import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -147,6 +150,10 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
         void setCategorisations(List<CategorisationDto> categorisationDtos);
         void setCategorySchemesForCategorisations(GetRelatedResourcesResult result);
         void setCategoriesForCategorisations(GetRelatedResourcesResult result);
+
+        // Annotations
+        void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
+        boolean mustFillAnnotationTypeList();
     }
 
     @ContentSlot
@@ -185,7 +192,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
         super.prepareFromRequest(request);
         String identifier = PlaceRequestUtils.getConceptSchemeParamFromUrl(placeManager);
         if (identifier != null) {
-            retrieveCompleteConceptSchemeByIdentifier(identifier);
+            retrieveResources(identifier);
         }
         getView().selectConceptSchemeTab();
     }
@@ -794,5 +801,21 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
                 retrieveConceptsByScheme(conceptSchemeDto.getUrn());
             }
         });
+    }
+
+    private void retrieveResources(final String identifier) {
+        // list is cached in the first access to the page.
+        if (getView().mustFillAnnotationTypeList()) {
+            dispatcher.execute(new GetAnnotationTypesAction(), new WaitingAsyncCallbackHandlingError<GetAnnotationTypesResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetAnnotationTypesResult result) {
+                    getView().setAnnotationTypeList(result.getAnnotationTypes());
+                    retrieveCompleteConceptSchemeByIdentifier(identifier);
+                }
+            });
+        } else {
+            retrieveCompleteConceptSchemeByIdentifier(identifier);
+        }
     }
 }

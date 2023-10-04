@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.reset;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.rest.api.constants.RestApiConstants.WILDCARD_ALL;
 import static org.siemac.metamac.srm.rest.internal.v1_0.dsd.utils.DataStructuresAsserts.assertEqualsResource;
@@ -22,12 +23,20 @@ import static org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants.
 import static org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants.VERSION_2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeQualifierType;
@@ -46,17 +55,51 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationTypeRepository;
+import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.structure.domain.Dimension;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionDescriptor;
+import com.arte.statistic.sdmx.srm.core.structure.mapper.DataStructureDefinitionDo2DtoMapper;
+import com.arte.statistic.sdmx.srm.core.structure.serviceimpl.utils.StructuresComparator;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialDimensionTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/srm-rest-internal/applicationContext-test.xml"})
 public class DataStructuresDo2RestMapperTest {
 
+    // annotation type
+    public final static String             ANNOTATION_TYPE_CODE_1 = "SDMX-ID1-ANNOTATION_TYPE";
+
     @Autowired
     private DataStructuresDo2RestMapperV10 do2RestInternalMapper;
+
+    @Autowired
+    private AnnotationTypeRepository       annotationTypeRepository;
+
+    @Autowired
+    DataStructureDefinitionDo2DtoMapper    dataStructureDefinitionDo2DtoMapper;
+
+    protected AnnotationType retrieveAnnotationType_1() {
+        return retrieveAnnotationType(ANNOTATION_TYPE_CODE_1);
+    }
+
+    private AnnotationType retrieveAnnotationType(String type) {
+        try {
+            return annotationTypeRepository.findByCode(type);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        // Remove cglib from mock
+        Mockito.reset(dataStructureDefinitionDo2DtoMapper);
+
+    }
 
     @Test
     public void testToDataStructures() {
@@ -101,14 +144,31 @@ public class DataStructuresDo2RestMapperTest {
         }
     }
 
-    @Test
-    public void testToDataStructure() {
+    @SuppressWarnings("unchecked")
+    private void mockitoGetDimensionOrdered() {
+        reset(dataStructureDefinitionDo2DtoMapper);
+        Mockito.when(dataStructureDefinitionDo2DtoMapper.getDimensionsOrdered(Matchers.anySet(), Matchers.any(TypeComponentList.class))).thenAnswer(new Answer<List<Component>>() {
 
-        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123");
+            @Override
+            public List<Component> answer(InvocationOnMock invocation) throws Throwable {
+                Set<Component> comnponents = (Set<Component>) invocation.getArguments()[0];
+                List<Component> componentsSorted = new ArrayList<>(comnponents);
+                Collections.sort(componentsSorted, StructuresComparator.STRUCTURE_COMPOENTN_ID_COMPARATOR);
+                return componentsSorted;
+            };
+        });
+    }
+
+    @Test
+    public void testToDataStructure() throws MetamacException {
+
+        DataStructureDefinitionVersionMetamac source = mockDataStructureWithComponents("agencyID1", "resourceID1", "01.123", retrieveAnnotationType_1());
         source.getStatisticalOperation().setCodeNested("codeNested");
 
+        mockitoGetDimensionOrdered();
+
         // Transform
-        DataStructure target = do2RestInternalMapper.toDataStructure(source);
+        DataStructure target = do2RestInternalMapper.toDataStructure(source, null);
 
         // Validate (only Metamac metadata and some SDMX). Note: check with concrete values (not doing "getter" of source)
         assertEquals(SrmRestConstants.KIND_DATA_STRUCTURE, target.getKind());
@@ -162,8 +222,8 @@ public class DataStructuresDo2RestMapperTest {
 
         assertEquals("MeasureDescriptor", target.getDataStructureComponents().getMeasure().getId());
         assertEquals("OBS_VALUE", target.getDataStructureComponents().getMeasure().getPrimaryMeasure().getId());
-        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01", target.getDataStructureComponents().getMeasure().getPrimaryMeasure()
-                .getConceptIdentity().getUrn());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01",
+                target.getDataStructureComponents().getMeasure().getPrimaryMeasure().getConceptIdentity().getUrn());
 
         assertEquals("AttributeDescriptor", target.getDataStructureComponents().getAttributes().getId());
         assertEquals(1, target.getDataStructureComponents().getAttributes().getAttributes().size());
@@ -191,11 +251,11 @@ public class DataStructuresDo2RestMapperTest {
         assertNull(target.getStatisticalOperation().getName());
         // show decimals
         assertEquals(2, target.getShowDecimalsPrecisions().getTotal().intValue());
-        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01", target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(0).getConcept()
-                .getUrn());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01",
+                target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(0).getConcept().getUrn());
         assertEquals(2, target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(0).getShowDecimals());
-        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02", target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(1).getConcept()
-                .getUrn());
+        assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02",
+                target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(1).getConcept().getUrn());
         assertEquals(5, target.getShowDecimalsPrecisions().getShowDecimalPrecisions().get(1).getShowDecimals());
         // heading
         assertEquals(2, target.getHeading().getTotal().intValue());
@@ -253,7 +313,7 @@ public class DataStructuresDo2RestMapperTest {
     }
 
     @Test
-    public void testToDataStructureImported() {
+    public void testToDataStructureImported() throws MetamacException {
 
         DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123");
         source.getMaintainableArtefact().setIsImported(Boolean.TRUE);
@@ -261,7 +321,7 @@ public class DataStructuresDo2RestMapperTest {
         source.getMaintainableArtefact().setUriProvider("uriProviderDb");
 
         // Transform
-        DataStructure target = do2RestInternalMapper.toDataStructure(source);
+        DataStructure target = do2RestInternalMapper.toDataStructure(source, null);
 
         // Validate
         assertEquals("urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=agencyID1:resourceID1(01.123)", target.getUrn());
@@ -270,7 +330,7 @@ public class DataStructuresDo2RestMapperTest {
     }
 
     @Test
-    public void testToDataStructureWithDimensionsSpatial() {
+    public void testToDataStructureWithDimensionsSpatial() throws MetamacException {
 
         DataStructureDefinitionVersionMetamac source = mockDataStructure("agencyID1", "resourceID1", "01.123");
         ComponentList dimensionDescriptor = new DimensionDescriptor();
@@ -291,8 +351,10 @@ public class DataStructuresDo2RestMapperTest {
         dimension3.setSpecialDimensionType(SpecialDimensionTypeEnum.SPATIAL);
         dimensionDescriptor.addComponent(dimension3);
 
+        mockitoGetDimensionOrdered();
+
         // Transform
-        DataStructure target = do2RestInternalMapper.toDataStructure(source);
+        DataStructure target = do2RestInternalMapper.toDataStructure(source, null);
         assertEquals(3, target.getDataStructureComponents().getDimensions().getDimensions().size());
         assertEquals(null, ((org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimension) getDimension(target, "dimension01")).isIsSpatial());
         assertEquals(true, ((org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimension) getDimension(target, "dimension02")).isIsSpatial());

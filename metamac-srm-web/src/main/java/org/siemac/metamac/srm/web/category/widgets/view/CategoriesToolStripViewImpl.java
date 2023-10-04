@@ -22,6 +22,7 @@ public class CategoriesToolStripViewImpl implements CategoriesToolStripPresenter
 
     private CustomToolStripButton categorySchemesButton;
     private CustomToolStripButton categoriesButton;
+    private CustomToolStripButton categoryElementsButton;
 
     @Inject
     public CategoriesToolStripViewImpl() {
@@ -41,8 +42,14 @@ public class CategoriesToolStripViewImpl implements CategoriesToolStripPresenter
         categoriesButton.setActionType(SelectionType.RADIO);
         categoriesButton.setRadioGroup(RADIO_GROUP);
 
+        categoryElementsButton = new CustomToolStripButton(MetamacSrmWeb.getConstants().categoryElements());
+        categoryElementsButton.setID(CategoriesToolStripButtonEnum.CATEGORY_ELEMENTS.getValue());
+        categoryElementsButton.setActionType(SelectionType.RADIO);
+        categoryElementsButton.setRadioGroup(RADIO_GROUP);
+
         toolStrip.addButton(categorySchemesButton);
         toolStrip.addButton(categoriesButton);
+        toolStrip.addButton(categoryElementsButton);
     }
 
     @Override
@@ -84,5 +91,10 @@ public class CategoriesToolStripViewImpl implements CategoriesToolStripPresenter
     @Override
     public HasClickHandlers getCategoriesButton() {
         return categoriesButton;
+    }
+
+    @Override
+    public HasClickHandlers getCategoryElementsButton() {
+        return categoryElementsButton;
     }
 }

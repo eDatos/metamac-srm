@@ -630,7 +630,9 @@
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories_findCategories_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"  
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -644,7 +646,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType\""
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType,+categoryElement\""
                 }
             ],
             "responses":{
@@ -690,8 +692,13 @@
                   "in":"path",
                   "type":"string",
                   "description":"Identificador de la categoría"
-               },
-              
+               },   
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+categoryElement\""
+               }           
             ],
             "responses":{
                "200":{
@@ -740,7 +747,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"<div>Consulta para filtrar los resultados</div><div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: pátron sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul><div>Campos válidos:<ul><li>ID</li> <li>URN</li> <li>NAME</li></ul>Ejemplo: query=\"ID EQ 2090\"</div>"
+                  "description":"<div>Consulta para filtrar los resultados</div><div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: patrón sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul><div>Campos válidos:<ul><li>ID</li> <li>URN</li> <li>NAME</li></ul>Ejemplo: query=\"ID EQ 2090\"</div>"
                }
             ],
             "responses":{
@@ -1092,7 +1099,9 @@
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes_findCodes_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"    
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -1100,7 +1109,7 @@
                 {"$ref":"#/components/parameters/versionParam"},
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
-                {"$ref":"#/components/parameters/codelistQueryParam"},
+                {"$ref":"#/components/parameters/codelistCodesQueryParam"},
                 {"$ref":"#/components/parameters/codelistOrderByParam"},
                {
                   "name":"openness",
@@ -1415,7 +1424,9 @@
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts_findConcepts_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -2359,6 +2370,12 @@
                 {"$ref":"#/components/parameters/agencyIdParam"},
                 {"$ref":"#/components/parameters/resourceIdParam"},
                 {"$ref":"#/components/parameters/versionParam"},
+                {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+dimension.pluralName: muestra el nombre en plural de las dimensiones</li></ul> Ejemplo: fields=\"+dimension.pluralName\""
+                }
             ],
             "responses":{
                "200":{
@@ -2554,7 +2571,9 @@
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations_findOrganisations_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},

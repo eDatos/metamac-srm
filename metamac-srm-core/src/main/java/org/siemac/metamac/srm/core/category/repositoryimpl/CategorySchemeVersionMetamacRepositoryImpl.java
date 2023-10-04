@@ -57,8 +57,8 @@ public class CategorySchemeVersionMetamacRepositoryImpl extends CategorySchemeVe
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("urn", urn);
         parameters.put("procStatus", SrmServiceUtils.procStatusEnumToList(procStatusArray));
-        List<CategorySchemeVersionMetamac> result = findByQuery("from CategorySchemeVersionMetamac where maintainableArtefact.urn = :urn and lifeCycleMetadata.procStatus in (:procStatus)",
-                parameters, 1);
+        List<CategorySchemeVersionMetamac> result = findByQuery("from CategorySchemeVersionMetamac where maintainableArtefact.urn = :urn and lifeCycleMetadata.procStatus in (:procStatus)", parameters,
+                1);
         if (result == null || result.isEmpty()) {
             // check scheme exists to throws specific exception
             CategorySchemeVersionMetamac categorySchemeVersionMetamac = findByUrn(urn);
@@ -78,6 +78,16 @@ public class CategorySchemeVersionMetamacRepositoryImpl extends CategorySchemeVe
     public void checkCategorySchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException {
         categorySchemeVersionRepository.checkCategorySchemeVersionTranslations(itemSchemeVersionId, locale, exceptionItemsByUrn);
         // no metadata specific in metamac
+    }
+
+    @Override
+    public List<CategorySchemeVersionMetamac> retrieveCategorySchemesPublishedExternally() throws MetamacException {
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("procStatus", ProcStatusEnum.EXTERNALLY_PUBLISHED);
+        return findByQuery("from CategorySchemeVersionMetamac where maintainableArtefact.latestVersionNumberPublic is not null and lifeCycleMetadata.procStatus = :procStatus)", parameters,
+                Integer.MAX_VALUE);
+
     }
 
 }

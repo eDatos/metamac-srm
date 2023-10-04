@@ -2,13 +2,13 @@ package org.siemac.metamac.srm.core.task.domain;
 
 public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
 
-    private InternationalStringTsv         pluralName;
-    private InternationalStringTsv         acronym;
-    private InternationalStringTsv         descriptionSource;
-    private InternationalStringTsv         context;
-    private InternationalStringTsv         docMethod;
-    private InternationalStringTsv         derivation;
-    private InternationalStringTsv         legalActs;
+    private InternationalStringTsv pluralName;
+    private InternationalStringTsv acronym;
+    private InternationalStringTsv descriptionSource;
+    private InternationalStringTsv context;
+    private InternationalStringTsv docMethod;
+    private InternationalStringTsv derivation;
+    private InternationalStringTsv legalActs;
 
     private int                    conceptTypePosition;                   // Number of columns of TSV File
     private RepresentationsTsv     representation;
@@ -16,10 +16,11 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
     private Integer                sdmxRelatedArtefactPosition = null;
 
     private int                    quantityTypePosition;
-    private int                    unitCodelistCodePosition;
+    private int                    unitCodelistUrnPosition;
     private int                    unitCodePosition;
     private int                    unitSymbolPositionPosition;
-    private int                    unitMultiplierPosition;
+    private int                    unitMultiplierCodelistUrnPosition;
+    private int                    unitMultiplierCodePosition;
     private int                    significantDigitsPosition;
     private int                    decimalPlacesPosition;
     private int                    miminumPosition;
@@ -32,7 +33,7 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
     private InternationalStringTsv percentageOf;
     private int                    indexBaseValuePosition;
     private int                    indexBaseTimePosition;
-    private int                    indexBaseLocationCodelistCodePosition;
+    private int                    indexBaseLocationCodelistUrnPosition;
     private int                    indexBaseLocationCodePosition;
     private int                    indexBaseQuantityConceptSchemePosition;
     private int                    indexBaseQuantityConceptPosition;
@@ -133,14 +134,6 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
         this.quantityTypePosition = quantityTypePosition;
     }
 
-    public int getUnitCodelistCodePosition() {
-        return unitCodelistCodePosition;
-    }
-
-    public void setUnitCodelistCodePosition(int unitCodelistCodePosition) {
-        this.unitCodelistCodePosition = unitCodelistCodePosition;
-    }
-
     public int getUnitCodePosition() {
         return unitCodePosition;
     }
@@ -157,12 +150,12 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
         this.unitSymbolPositionPosition = unitSymbolPositionPosition;
     }
 
-    public int getUnitMultiplierPosition() {
-        return unitMultiplierPosition;
+    public int getUnitMultiplierCodePosition() {
+        return unitMultiplierCodePosition;
     }
 
-    public void setUnitMultiplierPosition(int unitMultiplierPosition) {
-        this.unitMultiplierPosition = unitMultiplierPosition;
+    public void setUnitMultiplierCodePosition(int unitMultiplierCodePosition) {
+        this.unitMultiplierCodePosition = unitMultiplierCodePosition;
     }
 
     public int getSignificantDigitsPosition() {
@@ -253,14 +246,6 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
         this.indexBaseTimePosition = indexBaseTimePosition;
     }
 
-    public int getIndexBaseLocationCodelistCodePosition() {
-        return indexBaseLocationCodelistCodePosition;
-    }
-
-    public void setIndexBaseLocationCodelistCodePosition(int indexBaseLocationCodelistCodePosition) {
-        this.indexBaseLocationCodelistCodePosition = indexBaseLocationCodelistCodePosition;
-    }
-
     public int getIndexBaseLocationCodePosition() {
         return indexBaseLocationCodePosition;
     }
@@ -291,6 +276,30 @@ public class ImportationConceptsTsvHeader extends ImportationItemsTsvHeader {
 
     public void setPercentageOf(InternationalStringTsv percentageOf) {
         this.percentageOf = percentageOf;
+    }
+
+    public int getUnitMultiplierCodelistUrnPosition() {
+        return unitMultiplierCodelistUrnPosition;
+    }
+
+    public void setUnitMultiplierCodelistUrnPosition(int unitMultiplierCodelistUrnPosition) {
+        this.unitMultiplierCodelistUrnPosition = unitMultiplierCodelistUrnPosition;
+    }
+
+    public int getUnitCodelistUrnPosition() {
+        return unitCodelistUrnPosition;
+    }
+
+    public void setUnitCodelistUrnPosition(int unitCodelistUrnPosition) {
+        this.unitCodelistUrnPosition = unitCodelistUrnPosition;
+    }
+
+    public int getIndexBaseLocationCodelistUrnPosition() {
+        return indexBaseLocationCodelistUrnPosition;
+    }
+
+    public void setIndexBaseLocationCodelistUrnPosition(int indexBaseLocationCodelistUrnPosition) {
+        this.indexBaseLocationCodelistUrnPosition = indexBaseLocationCodelistUrnPosition;
     }
 
 }

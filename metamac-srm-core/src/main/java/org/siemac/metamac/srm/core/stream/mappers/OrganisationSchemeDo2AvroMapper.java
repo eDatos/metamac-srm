@@ -1,7 +1,11 @@
 package org.siemac.metamac.srm.core.stream.mappers;
 
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
-import org.siemac.metamac.srm.core.stream.mappers.impl.*;
+import org.siemac.metamac.srm.core.stream.mappers.impl.CategorisationDo2AvroMapper;
+import org.siemac.metamac.srm.core.stream.mappers.impl.InternationalStringDo2AvroMapper;
+import org.siemac.metamac.srm.core.stream.mappers.impl.OrganisationDo2AvroMapper;
+import org.siemac.metamac.srm.core.stream.mappers.impl.OrganisationSchemeTypeEnumDo2AvroMapper;
+import org.siemac.metamac.srm.core.stream.mappers.impl.ProcStatusEnumDo2AvroMapper;
 import org.siemac.metamac.srm.core.stream.message.OrganisationSchemeAvro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,34 +14,33 @@ import org.springframework.stereotype.Component;
 public class OrganisationSchemeDo2AvroMapper implements Do2AvroMapper<OrganisationSchemeVersionMetamac, OrganisationSchemeAvro> {
 
     @Autowired
-    private InternationalStringDo2AvroMapper internationalStringMapper;
+    private InternationalStringDo2AvroMapper        internationalStringMapper;
 
     @Autowired
-    private OrganisationDo2AvroMapper maintainerMapper;
+    private OrganisationDo2AvroMapper               maintainerMapper;
 
     @Autowired
-    private CategorisationDo2AvroMapper categorisationMapper;
+    private CategorisationDo2AvroMapper             categorisationMapper;
 
     @Autowired
-    private ProcStatusEnumDo2AvroMapper procStatusMapper;
+    private ProcStatusEnumDo2AvroMapper             procStatusMapper;
+
+    @Autowired
+    private OrganisationSchemeTypeEnumDo2AvroMapper organisationSchemeTypeEnumDo2AvroMapper;
 
     @Override
     public OrganisationSchemeAvro toAvro(OrganisationSchemeVersionMetamac source) {
         if (source == null) {
             return null;
         }
-        return OrganisationSchemeAvro.newBuilder()
-                .setUuid(source.getUuid())
-                .setName(internationalStringMapper.toAvro(source.getMaintainableArtefact().getName()))
-                .setUrn(source.getMaintainableArtefact().getUrn())
-                .setVersion(source.getVersion())
-                .setUriProvider(source.getMaintainableArtefact().getUriProvider())
-                .setUrnProvider(source.getMaintainableArtefact().getUrnProvider())
-                .setDescription(internationalStringMapper.toAvro(source.getMaintainableArtefact().getDescription()))
-                .setIsPartial(source.getIsPartial())
-                .setFinalLogic(source.getMaintainableArtefact().getFinalLogic())
-                .setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
+        return OrganisationSchemeAvro.newBuilder().setUuid(source.getUuid()).setName(internationalStringMapper.toAvro(source.getMaintainableArtefact().getName()))
+                .setUrn(source.getMaintainableArtefact().getUrn()).setVersion(source.getVersion()).setUriProvider(source.getMaintainableArtefact().getUriProvider())
+                .setUrnProvider(source.getMaintainableArtefact().getUrnProvider()).setDescription(internationalStringMapper.toAvro(source.getMaintainableArtefact().getDescription()))
+                .setIsPartial(source.getIsPartial()).setFinalLogic(source.getMaintainableArtefact().getFinalLogic())
+                .setLatestVersionNumberFinal(source.getMaintainableArtefact().getLatestVersionNumberFinal())
+                .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
-                .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations())).build();
+                .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
+                .setOrganisationSchemeType(organisationSchemeTypeEnumDo2AvroMapper.toAvro(source.getOrganisationSchemeType())).build();
     }
 }

@@ -2,10 +2,14 @@ package org.siemac.metamac.srm.web.client.gin;
 
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.category.presenter.CategoriesPresenter;
+import org.siemac.metamac.srm.web.category.presenter.CategoryElementPresenter;
+import org.siemac.metamac.srm.web.category.presenter.CategoryElementsPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategoryPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemeListPresenter;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemePresenter;
 import org.siemac.metamac.srm.web.category.view.CategoriesViewImpl;
+import org.siemac.metamac.srm.web.category.view.CategoryElementViewImpl;
+import org.siemac.metamac.srm.web.category.view.CategoryElementsViewImpl;
 import org.siemac.metamac.srm.web.category.view.CategorySchemeListViewImpl;
 import org.siemac.metamac.srm.web.category.view.CategorySchemeViewImpl;
 import org.siemac.metamac.srm.web.category.view.CategoryViewImpl;
@@ -13,6 +17,12 @@ import org.siemac.metamac.srm.web.category.widgets.presenter.CategoriesToolStrip
 import org.siemac.metamac.srm.web.category.widgets.view.CategoriesToolStripViewImpl;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.srm.web.client.MetamacPlaceManager;
+import org.siemac.metamac.srm.web.client.admin.AdminAnnotationTypeTabPresenter;
+import org.siemac.metamac.srm.web.client.admin.AdminPresenter;
+import org.siemac.metamac.srm.web.client.admin.view.AdminAnnotationTypeTabViewImpl;
+import org.siemac.metamac.srm.web.client.admin.view.AdminViewImpl;
+import org.siemac.metamac.srm.web.client.admin.widgets.AdminToolStripPresenterWidget;
+import org.siemac.metamac.srm.web.client.admin.widgets.AdminToolStripViewImpl;
 import org.siemac.metamac.srm.web.client.presenter.ErrorPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.presenter.StructuralResourcesPresenter;
@@ -113,6 +123,7 @@ public class ClientModule extends AbstractPresenterModule {
         bindSingletonPresenterWidget(CategoriesToolStripPresenterWidget.class, CategoriesToolStripPresenterWidget.CategoriesToolStripView.class, CategoriesToolStripViewImpl.class);
         bindSingletonPresenterWidget(ConceptsToolStripPresenterWidget.class, ConceptsToolStripPresenterWidget.ConceptsToolStripView.class, ConceptsToolStripViewImpl.class);
         bindSingletonPresenterWidget(OrganisationsToolStripPresenterWidget.class, OrganisationsToolStripPresenterWidget.OrganisationsToolStripView.class, OrganisationsToolStripViewImpl.class);
+        bindSingletonPresenterWidget(AdminToolStripPresenterWidget.class, AdminToolStripPresenterWidget.AdminToolStripView.class, AdminToolStripViewImpl.class);
 
         // Gate keeper
         bind(LoggedInGatekeeper.class).in(Singleton.class);
@@ -159,6 +170,8 @@ public class ClientModule extends AbstractPresenterModule {
         bindPresenter(CategorySchemePresenter.class, CategorySchemePresenter.CategorySchemeView.class, CategorySchemeViewImpl.class, CategorySchemePresenter.CategorySchemeProxy.class);
         bindPresenter(CategoryPresenter.class, CategoryPresenter.CategoryView.class, CategoryViewImpl.class, CategoryPresenter.CategoryProxy.class);
         bindPresenter(CategoriesPresenter.class, CategoriesPresenter.CategoriesView.class, CategoriesViewImpl.class, CategoriesPresenter.CategoriesProxy.class);
+        bindPresenter(CategoryElementsPresenter.class, CategoryElementsPresenter.CategoryElementsView.class, CategoryElementsViewImpl.class, CategoryElementsPresenter.CategoryElementsProxy.class);
+        bindPresenter(CategoryElementPresenter.class, CategoryElementPresenter.CategoryElementView.class, CategoryElementViewImpl.class, CategoryElementPresenter.CategoryElementProxy.class);
 
         // Codes
         bindPresenter(CodelistListPresenter.class, CodelistListPresenter.CodelistListView.class, CodelistListViewImpl.class, CodelistListPresenter.CodelistListProxy.class);
@@ -175,5 +188,10 @@ public class ClientModule extends AbstractPresenterModule {
         bindPresenter(VariableElementsPresenter.class, VariableElementsPresenter.VariableElementsView.class, VariableElementsViewImpl.class, VariableElementsPresenter.VariableElementsProxy.class);
         bindPresenter(VariableElementPresenter.class, VariableElementPresenter.VariableElementView.class, VariableElementViewImpl.class, VariableElementPresenter.VariableElementProxy.class);
         bindPresenter(CodesPresenter.class, CodesPresenter.CodesView.class, CodesViewImpl.class, CodesPresenter.CodesProxy.class);
+
+        // Admin
+        bindPresenter(AdminAnnotationTypeTabPresenter.class, AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabView.class, AdminAnnotationTypeTabViewImpl.class,
+                AdminAnnotationTypeTabPresenter.AdminAnnotationTypeTabProxy.class);
+        bindPresenter(AdminPresenter.class, AdminPresenter.AdminView.class, AdminViewImpl.class, AdminPresenter.AdminProxy.class);
     }
 }

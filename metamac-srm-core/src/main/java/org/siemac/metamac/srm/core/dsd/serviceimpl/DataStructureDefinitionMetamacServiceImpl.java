@@ -893,6 +893,24 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     }
 
     @Override
+    public void updateAttributesInOrder(ServiceContext ctx, List<Long> attributesId, String dsdUrn) throws MetamacException {
+        // Validation
+        // DsdsMetamacInvocationValidator.checkUpdateAttributeInOrder(attributeUrn, attributeSchemeUrn, newAttributeIndex, null);
+        // DataStructureDefinitionVersionMetamac attribute = retrieveDataStructureDefinitionVersionByUrn(attributeSchemeUrn);
+        // if (newAttributeIndex != attribute.getMaintainableArtefact().getOrderValue()) {
+        // maintainableArtefactRepository.updateOthersAttributeOrder(attribute.getMaintainableArtefact().getCode(), attributeUrn, newAttributeIndex,
+        // attribute.getMaintainableArtefact().getOrderValue());
+        // maintainableArtefactRepository.updateAttributeOrder(attributeUrn, newAttributeIndex);
+        // attribute.getMaintainableArtefact().getOrderValue();
+        // }
+
+        // TODO: VALIDACIONES
+        maintainableArtefactRepository.updateAttributesOrder(attributesId);
+
+    }
+
+    // TODO: BORRAR
+    @Override
     public void updateAttributeInOrder(ServiceContext ctx, String attributeUrn, String attributeSchemeUrn, Integer newAttributeIndex) throws MetamacException {
         // Validation
         DsdsMetamacInvocationValidator.checkUpdateAttributeInOrder(attributeUrn, attributeSchemeUrn, newAttributeIndex, null);

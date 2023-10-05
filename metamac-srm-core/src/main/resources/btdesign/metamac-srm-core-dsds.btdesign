@@ -144,6 +144,8 @@ Application DsdsMetamac {
             PagedResult<@CodelistOpennessVisualisation> findOpennessVisualisationCanBeHierarchylevelopenForDsdDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String dimensionUrn) throws MetamacException;	
 			"Update Attributes"
 			public void updateAttributeInOrder(String attributeUrn, String attributeSchemeUrn, Integer newattributeIndex) throws MetamacException;
+			"Updates positions of attributes"
+			public void updateAttributesInOrder(List<Long> attributesId, String dsdUrn) throws MetamacException;
 			
 			// Check related resources
 	    	checkPrimaryMeasure(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion, @Component component, List<MetamacExceptionItem> exceptions) throws MetamacException 

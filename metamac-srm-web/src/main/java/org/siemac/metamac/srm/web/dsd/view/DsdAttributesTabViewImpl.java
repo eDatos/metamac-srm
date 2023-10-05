@@ -198,15 +198,22 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         attributesGrid.addRecordDropHandler(new RecordDropHandler() {
 
             @Override
-            public void onRecordDrop(RecordDropEvent arg0) {
-                position = arg0.getIndex();
-                if (position >= 0 && position < arg0.getIndex()) {
-                    position--;
-                }
-
-                DataAttributeRecord droppedNode = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+            public void onRecordDrop(RecordDropEvent recordDropEvent) {
                 if (DsdClientSecurityUtils.canUpdateAttributeOrderInLevel(dataStructureDefinitionMetamacDto)) {
-                    getUiHandlers().updateAttributeInOrder(droppedNode.getAttribute(DataAttributeDS.URN), dataStructureDefinitionMetamacDto.getUrn(), position);
+                    List<Long> attributesId = new ArrayList<Long>();
+                    DataAttributeRecord selectedRecord = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+
+                    for (ListGridRecord attributeGridRecord : attributesGrid.getRecords()) {
+                        DataAttributeRecord record = (DataAttributeRecord) attributeGridRecord;
+                        if (!record.equals(selectedRecord)) {
+                            attributesId.add(record.getIdentifier());
+                        }
+                    }
+
+                    attributesId.add(recordDropEvent.getIndex(), selectedRecord.getIdentifier());
+                    getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
+                    // TODO: BORRAR
+                    // getUiHandlers().updateAttributeInOrder(selectedRecord.getAttribute(DataAttributeDS.URN), dataStructureDefinitionMetamacDto.getUrn(), position);
                 }
             }
 

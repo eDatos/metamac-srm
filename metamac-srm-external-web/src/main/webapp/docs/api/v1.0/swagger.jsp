@@ -646,7 +646,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType,+categoryElement\""
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemaTypes: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemaTypes,+categoryElement\""
                 }
             ],
             "responses":{

@@ -312,11 +312,11 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
     private void executeQueryEniSchemaAndUpdateCategoryMetamacResult(Long itemSchemeVersionId, Map<Long, ItemResult> mapCategoriesByItemId, boolean requiredFullEniInformation)
             throws MetamacException {
         StringBuilder sbCategoryElements = new StringBuilder();
-        sbCategoryElements.append("SELECT c.TB_CATEGORIES as ITEM_ID, cve.ENI_SCHEMA_FK as eniSchemaId, e.IDENTIFIER as eniSchemaCode ");
+        sbCategoryElements.append("SELECT c.TB_CATEGORIES as ITEM_ID, cve.ENI_SCHEMA as eniSchemaId, e.IDENTIFIER as eniSchemaCode ");
         sbCategoryElements.append("FROM TB_M_CATEGORIES c ");
         sbCategoryElements.append("INNER JOIN TB_CATEGORIES cb on c.TB_CATEGORIES = cb.ID ");
-        sbCategoryElements.append("INNER JOIN TB_CAT_ENI_SCHEMA cve on cve.category_fk = c.TB_CATEGORIES ");
-        sbCategoryElements.append("INNER JOIN TB_LIS_ENI_SCHEMA_CATALOGS e on e.ID = cve.eni_schema_fk ");
+        sbCategoryElements.append("INNER JOIN TB_CAT_ENI_SCHEMA cve on cve.tb_m_categories = c.TB_CATEGORIES ");
+        sbCategoryElements.append("INNER JOIN TB_LIS_ENI_SCHEMA_CATALOGS e on e.ID = cve.eni_schema ");
         sbCategoryElements.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
 
         Query queryCategoryElements = getEntityManager().createNativeQuery(sbCategoryElements.toString());

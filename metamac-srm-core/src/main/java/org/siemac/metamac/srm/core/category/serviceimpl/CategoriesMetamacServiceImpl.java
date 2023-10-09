@@ -391,6 +391,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
 
+            // TODO VER QUE NO COMPARTEN INTERNATIONAL STRING al copiar
+            category.getEniSchemas().addAll(getEniSchemasFromExtensionPoint(categoryTempItemResult));
+
             category.setCategoryElement(categoryTemp.getCategoryElement());
 
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
@@ -431,6 +434,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     private EniSchemaCatalog getEniSchemaCatalogFromExtensionPoint(ItemResult categoryTempItemResult) {
         if (categoryTempItemResult != null && categoryTempItemResult.getExtensionPoint() != null) {
             return ((CategoryMetamacResultExtensionPoint) categoryTempItemResult.getExtensionPoint()).getEniSchemeCatalog();
+        }
+        return null;
+    }
+
+    private List<EniSchemaCatalog> getEniSchemasFromExtensionPoint(ItemResult categoryTempItemResult) {
+        if (categoryTempItemResult != null && categoryTempItemResult.getExtensionPoint() != null) {
+            return ((CategoryMetamacResultExtensionPoint) categoryTempItemResult.getExtensionPoint()).getEniSchemas();
         }
         return null;
     }

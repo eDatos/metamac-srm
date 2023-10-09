@@ -31,6 +31,8 @@ Application DtosMetamacCategoryDomain {
 			- @EniSchemaCatalogDto eniSchema nullable;
 			"Category element"
 			- @RelatedResourceDto categoryElement nullable;
+			"ENI Schemas"
+			- Set<@EniSchemaCatalogDto> eniSchemas nullable;
 		}
 		
 		"Dto for CategoryMetamac"

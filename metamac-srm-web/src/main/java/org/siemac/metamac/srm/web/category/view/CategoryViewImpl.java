@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.category.view;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
@@ -15,6 +16,7 @@ import org.siemac.metamac.srm.web.category.utils.CategoriesFormUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryUiHandlers;
 import org.siemac.metamac.srm.web.category.widgets.CategoriesTreeGrid;
 import org.siemac.metamac.srm.web.category.widgets.CategoryMainFormLayout;
+import org.siemac.metamac.srm.web.client.base.widgets.SearchEniSchemaItem;
 import org.siemac.metamac.srm.web.client.utils.MasterTablesUtils;
 import org.siemac.metamac.srm.web.client.utils.SemanticIdentifiersUtils;
 import org.siemac.metamac.srm.web.client.widgets.AnnotationsPanel;
@@ -72,6 +74,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
     private GroupDynamicForm                     productionDescriptorsEditionForm;
     private GroupDynamicForm                     contentDescriptorsEditionForm;
     private CustomSelectItem                     eniSchemaCatalog;
+    private SearchEniSchemaItem                  eniSchemasItem;
     private GroupDynamicForm                     commentsEditionForm;
     private AnnotationsPanel                     annotationsEditionPanel;
 
@@ -146,6 +149,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         this.eniSchemaCatalogDto = eniSchemaCatalogDto;
         eniSchemaCatalog.setSortField(CategoryDS.ENI_SCHEMA);
         eniSchemaCatalog.setValueMap(MasterTablesUtils.getEniSchemaCatalogHashMap(this.eniSchemaCatalogDto));
+        eniSchemasItem.setEniSchemaCatalogList(eniSchemaCatalogDto);
     }
 
     @Override
@@ -207,7 +211,9 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         ViewMultiLanguageTextItem description = new ViewMultiLanguageTextItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
         RelatedResourceLinkItem categoryElement = new RelatedResourceLinkItem(CategoryDS.CATEGORY_ELEMENT, getConstants().categoryElement(), getCustomLinkItemNavigationClickHandler());
         ViewTextItem eniSchema = new ViewTextItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
-        contentDescriptorsForm.setFields(description, categoryElement, eniSchema);
+        SearchEniSchemaItem eniSchemasItem = new SearchEniSchemaItem(CategoryDS.ENI_SCHEMAS, getConstants().categorySchemaENI(), false);
+
+        contentDescriptorsForm.setFields(description, categoryElement, eniSchema, eniSchemasItem);
 
         // Comments
         commentsForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -252,8 +258,9 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(CategoryDS.DESCRIPTION, getConstants().nameableArtefactDescription());
         SearchRelatedResourceLinkItem categoryElement = createCategoryElementItem(CategoryDS.CATEGORY_ELEMENT, getConstants().categoryElement());
         eniSchemaCatalog = new CustomSelectItem(CategoryDS.ENI_SCHEMA, getConstants().categorySchemaENI());
+        eniSchemasItem = new SearchEniSchemaItem(CategoryDS.ENI_SCHEMAS, getConstants().categorySchemaENI(), true);
 
-        contentDescriptorsEditionForm.setFields(description, categoryElement, eniSchemaCatalog);
+        contentDescriptorsEditionForm.setFields(description, categoryElement, eniSchemaCatalog, eniSchemasItem);
 
         // Comments
         commentsEditionForm = new GroupDynamicForm(getConstants().nameableArtefactComments());
@@ -286,6 +293,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(CategoryDS.CATEGORY_ELEMENT)).setRelatedResource(categoryDto.getCategoryElement());
 
         contentDescriptorsForm.setValue(CategoryDS.ENI_SCHEMA, categoryDto.getEniSchema() == null ? "" : InternationalStringUtils.getLocalisedString(categoryDto.getEniSchema().getDescription()));
+        ((SearchEniSchemaItem) contentDescriptorsForm.getItem(CategoryDS.ENI_SCHEMAS)).setEniSchema(new ArrayList<EniSchemaCatalogDto>(categoryDto.getEniSchemas()));
 
         // Comments
         commentsForm.setValue(CategoryDS.COMMENTS, categoryDto.getComment());
@@ -310,6 +318,7 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         contentDescriptorsEditionForm.setValue(CategoryDS.DESCRIPTION, categoryDto.getDescription());
         ((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CategoryDS.CATEGORY_ELEMENT)).setRelatedResource(categoryDto.getCategoryElement());
         eniSchemaCatalog.setValue(categoryDto.getEniSchema() != null ? categoryDto.getEniSchema().getId() : null);
+        eniSchemasItem.setEniSchema(new ArrayList<EniSchemaCatalogDto>(categoryDto.getEniSchemas()));
 
         // Comments
         commentsEditionForm.setValue(CategoryDS.COMMENTS, categoryDto.getComment());
@@ -401,6 +410,8 @@ public class CategoryViewImpl extends ViewWithUiHandlers<CategoryUiHandlers> imp
         categoryDto.setCategoryElement(((SearchRelatedResourceLinkItem) contentDescriptorsEditionForm.getItem(CategoryDS.CATEGORY_ELEMENT)).getRelatedResourceDto());
         categoryDto.setEniSchema(MasterTablesUtils.geteniSchemaCatalogDto(eniSchemaCatalog.getValueAsString(), eniSchemaCatalogDto));
 
+        categoryDto.getEniSchemas().clear();
+        categoryDto.getEniSchemas().addAll(((SearchEniSchemaItem) contentDescriptorsEditionForm.getItem(CategoryDS.ENI_SCHEMAS)).getSelectedEniSchemaDtos());
         // Comments
         categoryDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(CategoryDS.COMMENTS));
 

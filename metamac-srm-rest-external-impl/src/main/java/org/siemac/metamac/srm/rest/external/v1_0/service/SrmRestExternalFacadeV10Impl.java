@@ -451,6 +451,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
             categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            categoryMetamacResultSelection.setEniSchemaFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME));
             List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
 
             // Transform

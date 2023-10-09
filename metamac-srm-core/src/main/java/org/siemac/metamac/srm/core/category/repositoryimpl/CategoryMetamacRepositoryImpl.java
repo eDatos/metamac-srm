@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
@@ -94,6 +95,11 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
                 executeQueryCategoryElementAndUpdateCategoryMetamacResult(itemSchemeVersionId, mapCategoriesByItemId);
             } else if (categoryResultSelection.isCategoryElementFull()) {
                 executeQueryFullCategoryElementAndUpdateCategoryMetamacResult(itemSchemeVersionId, mapCategoriesByItemId);
+            }
+            if (categoryResultSelection.isEniSchemaCode()) {
+                executeQueryEniSchemaAndUpdateCategoryMetamacResult(itemSchemeVersionId, mapCategoriesByItemId, false);
+            } else if (categoryResultSelection.isEniSchemaFull()) {
+                executeQueryEniSchemaAndUpdateCategoryMetamacResult(itemSchemeVersionId, mapCategoriesByItemId, true);
             }
         }
 
@@ -300,6 +306,55 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
                 categoryElementResult.getShortName().put(locale, label);
             }
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void executeQueryEniSchemaAndUpdateCategoryMetamacResult(Long itemSchemeVersionId, Map<Long, ItemResult> mapCategoriesByItemId, boolean requiredFullEniInformation)
+            throws MetamacException {
+        StringBuilder sbCategoryElements = new StringBuilder();
+        sbCategoryElements.append("SELECT c.TB_CATEGORIES as ITEM_ID, cve.ENI_SCHEMA_FK as eniSchemaId, e.IDENTIFIER as eniSchemaCode ");
+        sbCategoryElements.append("FROM TB_M_CATEGORIES c ");
+        sbCategoryElements.append("INNER JOIN TB_CATEGORIES cb on c.TB_CATEGORIES = cb.ID ");
+        sbCategoryElements.append("INNER JOIN TB_CAT_ENI_SCHEMA cve on cve.category_fk = c.TB_CATEGORIES ");
+        sbCategoryElements.append("INNER JOIN TB_LIS_ENI_SCHEMA_CATALOGS e on e.ID = cve.eni_schema_fk ");
+        sbCategoryElements.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
+
+        Query queryCategoryElements = getEntityManager().createNativeQuery(sbCategoryElements.toString());
+        queryCategoryElements.setParameter("itemSchemeVersionId", itemSchemeVersionId);
+        List categoryElementsResultSql = queryCategoryElements.getResultList();
+        for (Object categoryElementResultSql : categoryElementsResultSql) {
+            Object[] resultOrderArray = (Object[]) categoryElementResultSql;
+            Long categoryId = getLong(resultOrderArray[0]);
+            ItemResult category = mapCategoriesByItemId.get(categoryId);
+            if (requiredFullEniInformation) {
+                getFullEniSchemaInformation(resultOrderArray, category);
+            } else {
+                getCodeEniSchemaInformation(resultOrderArray, category);
+            }
+
+        }
+    }
+
+    private void getFullEniSchemaInformation(Object[] eniSchemasByCategoryId, ItemResult category) throws MetamacException {
+        Long eniSchemeId = getLong(eniSchemasByCategoryId[1]);
+        try {
+            if (eniSchemeId != null) {
+                EniSchemaCatalog eniSchemeCatalog = eniSchemeCatalogMetamacRepository.findById(eniSchemeId);
+                if (eniSchemeCatalog != null) {
+                    ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().add(eniSchemeCatalog);
+                }
+            }
+        } catch (EniSchemaCatalogNotFoundException e) {
+            throw new MetamacException(ServiceExceptionType.ENI_SCHEMA_CATALOG_NOT_FOUND, eniSchemeId);
+        }
+    }
+
+    private void getCodeEniSchemaInformation(Object[] eniSchemasByCategoryId, ItemResult category) throws MetamacException {
+        String eniSchemeCode = getString(eniSchemasByCategoryId[2]);
+        if (StringUtils.isEmpty(eniSchemeCode)) {
+            ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemaCodes().add(eniSchemeCode);
+        }
+
     }
 
     @Override

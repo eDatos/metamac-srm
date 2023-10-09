@@ -36,6 +36,16 @@ public class MasterTablesUtils {
     }
 
     /**
+     * Returns {String} from {EniSchemaCatalogDto}
+     * 
+     * @param EniSchemaCatalogDto
+     * @return
+     */
+    public static String getEniSchemaDescription(EniSchemaCatalogDto eniSchema) {
+        return InternationalStringUtils.getLocalisedString(eniSchema.getDescription());
+    }
+
+    /**
      * Returns {EniSchemaCatalogDto} from id
      * 
      * @param EniSchemaCatalogDto

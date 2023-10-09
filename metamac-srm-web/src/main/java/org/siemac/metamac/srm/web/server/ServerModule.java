@@ -301,9 +301,7 @@ import org.siemac.metamac.srm.web.shared.dsd.SaveDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.UpdateDsdProcStatusAction;
 import org.siemac.metamac.srm.web.shared.dsd.VersionDsdAction;
-import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributeInOrderAction;
 import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributesInOrderAction;
-import org.siemac.metamac.srm.web.server.handlers.dsd.UpdateAttributeInOrderActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.dsd.UpdateAttributesInOrderActionHandler;
 import org.siemac.metamac.srm.web.shared.master.DeleteAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
@@ -368,8 +366,6 @@ public class ServerModule extends HandlerModule {
         bindHandler(DeleteDimensionListForDsdAction.class, DeleteDimensionListForDsdActionHandler.class);
         bindHandler(DeleteAttributesForDsdAction.class, DeleteAttributesForDsdActionHandler.class);
         bindHandler(UpdateAttributesInOrderAction.class, UpdateAttributesInOrderActionHandler.class);
-        // TODO: BORRAR
-        bindHandler(UpdateAttributeInOrderAction.class, UpdateAttributeInOrderActionHandler.class);
         bindHandler(DeleteDescriptorListForDsdAction.class, DeleteDescriptorListForDsdActionHandler.class);
         bindHandler(ExportSDMXResourceAction.class, ExportSDMXResourceActionHandler.class);
         bindHandler(UpdateDsdProcStatusAction.class, UpdateDsdProcStatusActionHandlder.class);

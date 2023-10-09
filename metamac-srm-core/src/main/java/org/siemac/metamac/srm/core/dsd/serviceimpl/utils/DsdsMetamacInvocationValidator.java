@@ -170,13 +170,13 @@ public class DsdsMetamacInvocationValidator extends DataStructureInvocationValid
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkUpdateAttributeInOrder(String attributeUrn, String urn, Integer newAttributeIndex, List<MetamacExceptionItem> exceptions) throws MetamacException {
+    public static void checkUpdateAttributesInOrder(List<Long> attributesId, String dsdUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
 
-        ValidationUtils.checkParameterRequired(urn, ServiceExceptionParameters.URN, exceptions);
-        ValidationUtils.checkParameterRequired(newAttributeIndex, ServiceExceptionParameters.CONCEPT_SCHEME_ORDER_INDEX, exceptions);
+        ValidationUtils.checkParameterRequired(attributesId, ServiceExceptionParameters.IDENTIFIER, exceptions);
+        ValidationUtils.checkParameterRequired(dsdUrn, ServiceExceptionParameters.URN, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
     }

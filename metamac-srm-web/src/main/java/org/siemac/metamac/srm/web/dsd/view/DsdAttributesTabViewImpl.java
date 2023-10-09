@@ -212,8 +212,6 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
                     attributesId.add(recordDropEvent.getIndex(), selectedRecord.getIdentifier());
                     getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
-                    // TODO: BORRAR
-                    // getUiHandlers().updateAttributeInOrder(selectedRecord.getAttribute(DataAttributeDS.URN), dataStructureDefinitionMetamacDto.getUrn(), position);
                 }
             }
 

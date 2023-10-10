@@ -82,9 +82,6 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         }
         CategoryMetamacDto target = new CategoryMetamacDto();
         target.setCategoryElement(categoryElementDoToRelatedResourceDto(source.getCategoryElement()));
-        if (source.getEniSchema() != null) {
-            target.setEniSchema(do2DtoMapper.eniSchemaCatalogToDto(source.getEniSchema()));
-        }
 
         for (EniSchemaCatalog eniSchema : source.getEniSchemas()) {
             target.addEniSchema(do2DtoMapper.eniSchemaCatalogToDto(eniSchema));

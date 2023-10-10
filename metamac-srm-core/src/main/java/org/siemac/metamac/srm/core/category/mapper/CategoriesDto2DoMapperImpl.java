@@ -99,8 +99,6 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
             target.setCategoryElement(null);
         }
 
-        target.setEniSchema(source.getEniSchema() != null ? masterTablesDto2DoMapper.eniSchemaCatalogDtoToEntity(source.getEniSchema()) : null);
-
         target.removeAllEniSchemas();
         for (EniSchemaCatalogDto eniSchemaDto : source.getEniSchemas()) {
 

@@ -52,7 +52,6 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
 
         CategoryMetamac source = (CategoryMetamac) sourceItem;
         CategoryMetamac target = (CategoryMetamac) targetItem;
-        target.setEniSchema(source.getEniSchema());
         target.setCategoryElement(source.getCategoryElement());
         copyEniSchemas(source, target);
 

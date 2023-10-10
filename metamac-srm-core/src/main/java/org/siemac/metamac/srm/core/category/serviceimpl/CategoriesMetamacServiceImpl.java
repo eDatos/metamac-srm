@@ -41,7 +41,6 @@ import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTempora
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
-import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
@@ -427,20 +426,6 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn());
         return categorySchemeVersion;
-    }
-
-    private EniSchemaCatalog getEniSchemaCatalogFromExtensionPoint(ItemResult categoryTempItemResult) {
-        if (categoryTempItemResult != null && categoryTempItemResult.getExtensionPoint() != null) {
-            return ((CategoryMetamacResultExtensionPoint) categoryTempItemResult.getExtensionPoint()).getEniSchemeCatalog();
-        }
-        return null;
-    }
-
-    private List<EniSchemaCatalog> getEniSchemasFromExtensionPoint(ItemResult categoryTempItemResult) {
-        if (categoryTempItemResult != null && categoryTempItemResult.getExtensionPoint() != null) {
-            return ((CategoryMetamacResultExtensionPoint) categoryTempItemResult.getExtensionPoint()).getEniSchemas();
-        }
-        return null;
     }
 
     @Override

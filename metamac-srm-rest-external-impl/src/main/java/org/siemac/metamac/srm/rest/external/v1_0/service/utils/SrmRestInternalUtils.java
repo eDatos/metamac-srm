@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -291,11 +290,11 @@ public class SrmRestInternalUtils {
 
     public static void toFlattenEniSchemas(List<Item> eniSchemas, PlainTextResource target, String format) {
         if (eniSchemas != null && !eniSchemas.isEmpty()) {
-            Set<String> eniSchemaIdentifiers = new LinkedHashSet<>();
+            List<String> eniSchemaIdentifiers = new ArrayList<String>();
             for (Item eniSchema : eniSchemas) {
                 eniSchemaIdentifiers.add(eniSchema.getId());
             }
-            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, SrmRestInternalUtils.formattedText(eniSchemaIdentifiers.toString().replace("[", "").replace("]", ""), format));
+            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, SrmRestInternalUtils.formattedText(String.join(",", eniSchemaIdentifiers), format));
         } else {
             target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, null);
         }

@@ -389,10 +389,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             // Inherit InternationalStrings
             BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToItem(category, categoryTempItemResult, internationalStringRepository);
 
-            category.setEniSchema(getEniSchemaCatalogFromExtensionPoint(categoryTempItemResult));
-
-            // TODO VER QUE NO COMPARTEN INTERNATIONAL STRING al copiar
-            category.getEniSchemas().addAll(getEniSchemasFromExtensionPoint(categoryTempItemResult));
+            category.removeAllEniSchemas();
+            category.getEniSchemas().addAll(categoryTemp.getEniSchemas());
 
             category.setCategoryElement(categoryTemp.getCategoryElement());
 
@@ -609,7 +607,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
                             categoriesPreviousInCategorySchemeByCode, categoriesToPersistByCode, exceptionItems, informationItems);
                     if (category != null) {
                         tsvLineToItemCategoryCategoryElement(category, categoryElementsByCode, header, columns, informationItems);
-                        TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns);
+                        TsvImportationUtils.tsvLineToItemCategoryOwnFields(category, eniSchemeMap, header, columns, exceptionItems);
                         categtoriesToPersist.add(category);
                         categoriesToPersistByCode.put(category.getNameableArtefact().getCodeFull(), category);
                     }

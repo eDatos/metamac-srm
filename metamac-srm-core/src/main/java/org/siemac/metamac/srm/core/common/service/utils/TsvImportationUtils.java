@@ -427,15 +427,28 @@ public class TsvImportationUtils {
 
     }
 
-    public static void tsvLineToItemCategoryOwnFields(CategoryMetamac category, LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap, ImportationCategoriesTsvHeader header, String[] columns) {
+    public static void tsvLineToItemCategoryOwnFields(CategoryMetamac category, LinkedHashMap<String, EniSchemaCatalog> eniSchemeMap, ImportationCategoriesTsvHeader header, String[] columns,
+            List<MetamacExceptionItem> exceptionItems) {
 
         // eni scheme field
-        String itemIdentifierEniScheme = columns[header.getEniSchemePosition()];
-        if (!StringUtils.isBlank(itemIdentifierEniScheme)) {
-            EniSchemaCatalog eniScheme = eniSchemeMap.get(itemIdentifierEniScheme);
-            category.setEniSchema(eniScheme);
+        String itemIdentifierEniSchemas = columns[header.getEniSchemePosition()];
+        if (!StringUtils.isBlank(itemIdentifierEniSchemas)) {
+            category.removeAllEniSchemas();
+            String[] eniSchemaIdentifiers = itemIdentifierEniSchemas.split(",");
+            for (String eniSchemaIdentifier : eniSchemaIdentifiers) {
+                EniSchemaCatalog eniSchema = eniSchemeMap.get(eniSchemaIdentifier);
+                if (eniSchema == null) {
+                    exceptionItems
+                            .add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT, eniSchemaIdentifier, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_ENI_SCHEMA));
+                    return;
+
+                } else {
+                    category.getEniSchemas().add(eniSchema);
+                }
+            }
+
         } else {
-            category.setEniSchema(null);
+            category.removeAllEniSchemas();
         }
     }
 

@@ -351,7 +351,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
 
     private void getCodeEniSchemaInformation(Object[] eniSchemasByCategoryId, ItemResult category) throws MetamacException {
         String eniSchemeCode = getString(eniSchemasByCategoryId[2]);
-        if (StringUtils.isEmpty(eniSchemeCode)) {
+        if (!StringUtils.isEmpty(eniSchemeCode)) {
             ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemaCodes().add(eniSchemeCode);
         }
 

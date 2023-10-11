@@ -155,9 +155,11 @@ public class DsdClientSecurityUtils {
         String operationCode = CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacDto);
         return SharedDsdSecurityUtils.canUpdateAttributes(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), operationCode);
     }
-    
-    public static boolean canUpdateAttributeOrderInLevel(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
-        return canUpdateAttribute(dataStructureDefinitionMetamacDto);
+
+    public static boolean canAlterOrderAttribute(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
+        String operationCode = CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacDto);
+        return SharedDsdSecurityUtils.canUpdateAttributes(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), operationCode)
+                && org.siemac.metamac.srm.web.client.utils.CommonUtils.canSdmxMetadataAndStructureBeModified(dataStructureDefinitionMetamacDto);
     }
 
     public static boolean canDeleteAttribute(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {

@@ -206,10 +206,11 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
                 updateAttributeList(true);
                 ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
             }
+
             @Override
             public void onWaitSuccess(DeleteAttributesForDsdResult result) {
-                updateAttributeList(true);
                 fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeDeleted());
+                updateAttributeList(true);
             }
         });
     }
@@ -225,6 +226,7 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
 
             @Override
             public void onWaitSuccess(UpdateAttributesInOrderResult result) {
+                fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeSaved());
                 retrieveAttributes(dsdUrn);
             }
         });

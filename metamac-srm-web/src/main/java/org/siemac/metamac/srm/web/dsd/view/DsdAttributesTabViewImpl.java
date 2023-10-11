@@ -180,39 +180,47 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
         attributesGrid = new NavigableListGrid();
         attributesGrid.setWidth100();
-        attributesGrid.setCanReorderRecords(true);
-        attributesGrid.setCanAcceptDroppedRecords(true);
-        attributesGrid.setCanDragRecordsOut(false);
-        attributesGrid.setDragDataAction(DragDataAction.MOVE);
         attributesGrid.setHeight(150);
         attributesGrid.setSelectionType(SelectionStyle.SIMPLE);
         attributesGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
+        attributesGrid.setCanReorderRecords(true);
+        attributesGrid.setCanSort(false);
         CustomListGridField codeField = new CustomListGridField(DataAttributeDS.CODE, getConstants().dsdAttributeId());
         CustomListGridField usageField = new CustomListGridField(DataAttributeDS.USAGE_STATUS, getConstants().dsdAttributeUsageStatus());
         CustomListGridField specialAttributeTypeField = new CustomListGridField(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE, getConstants().dsdAttributeType());
         CustomListGridField relatedTo = new CustomListGridField(DataAttributeDS.RELATED_TO, getConstants().dsdAttributeRelatedWith());
         CustomLinkListGridField conceptField = new CustomLinkListGridField(DataAttributeDS.CONCEPT, getConstants().concept());
-
         attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField);
 
         attributesGrid.addRecordDropHandler(new RecordDropHandler() {
 
             @Override
-            public void onRecordDrop(RecordDropEvent recordDropEvent) {
-                if (DsdClientSecurityUtils.canUpdateAttributeOrderInLevel(dataStructureDefinitionMetamacDto)) {
-                    List<Long> attributesId = new ArrayList<Long>();
-                    DataAttributeRecord selectedRecord = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+            public void onRecordDrop(RecordDropEvent event) {
+                List<Long> attributesId = new ArrayList<Long>();
 
-                    for (ListGridRecord attributeGridRecord : attributesGrid.getRecords()) {
-                        DataAttributeRecord record = (DataAttributeRecord) attributeGridRecord;
-                        if (!record.equals(selectedRecord)) {
-                            attributesId.add(record.getIdentifier());
-                        }
+                List<Long> draggedRecordsId = new ArrayList<Long>();
+                for (ListGridRecord record : event.getDropRecords()) {
+                    draggedRecordsId.add(((DataAttributeRecord) record).getIdentifier());
+                }
+
+                ListGridRecord[] gridRecords = attributesGrid.getRecords();
+                Integer index = event.getIndex();
+                for (int i = 0; i < gridRecords.length; i++) {
+                    if (index.equals(i)) {
+                        attributesId.addAll(draggedRecordsId);
                     }
 
-                    attributesId.add(recordDropEvent.getIndex(), selectedRecord.getIdentifier());
-                    getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
+                    Long identifier = ((DataAttributeRecord) gridRecords[i]).getIdentifier();
+                    if (!draggedRecordsId.contains(identifier)) {
+                        attributesId.add(identifier);
+                    }
                 }
+
+                if (!attributesId.containsAll(draggedRecordsId)) {
+                    attributesId.addAll(draggedRecordsId);
+                }
+
+                getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
             }
 
         });
@@ -570,6 +578,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         mainFormLayout.setCanEdit(DsdClientSecurityUtils.canUpdateAttribute(dataStructureDefinitionMetamacDto));
 
         attributesGrid.setData(DsdRecordUtils.getAttributeRecords(dataAttributeDtos));
+        attributesGrid.setCanReorderRecords(DsdClientSecurityUtils.canAlterOrderAttribute(dataStructureDefinitionMetamacDto));
     }
 
     @Override

@@ -34,7 +34,7 @@ public class RestTestConstants {
 
     public static String BASE_ENI_SCHEME_IDENTIFIER           = "ID - ";
 
-    public static String FIELD_ENI_SCHEME                     = "+eniSchemeType";
+    public static String FIELD_ENI_SCHEME                     = "+eniSchemaTypes";
     public static String FIELD_CATEGORY_ELEMENT               = "+categoryElement";
 
     public static String URI_MARK_TO_RECOGNISE_IS_IN_DATABASE = "db:";

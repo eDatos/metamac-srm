@@ -608,11 +608,11 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         if (fields != null && fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             for (int i = 0; i < categories.getCategories().size(); i++) {
-                assertNotNull(categories.getCategories().get(i).getEniSchemeType());
+                assertNotNull(categories.getCategories().get(i).getEniSchemaTypes());
             }
         } else {
             for (int i = 0; i < categories.getCategories().size(); i++) {
-                assertNull(categories.getCategories().get(i).getEniSchemeType());
+                assertNull(categories.getCategories().get(i).getEniSchemaTypes());
             }
         }
     }

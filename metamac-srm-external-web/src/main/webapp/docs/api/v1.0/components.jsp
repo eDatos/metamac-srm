@@ -12,6 +12,7 @@
 <%! String variableUrn = "VARIABLE_URN: URN de variable"; %>
 <%! String variableFamilyUrn = "VARIABLE_FAMILY_URN: URN de la familia de variables"; %>
 <%! String codelistFamilyUrn = "CODELIST_FAMILY_URN: URN de la familia de clasificaciones"; %>
+<%! String isRecommended = "IS_RECOMMENDED: Indica si la clasificación es recomendada o no"; %>
 <%! String variableElementUrn = "VARIABLE_ELEMENT_URN: URN del elemento de variable"; %>
 <%! String codelistUrn = "CODELIST_URN: URN de la clasificación"; %>
 <%! String codelistLatest = "CODELIST_LATEST: última clasificación"; %>
@@ -91,7 +92,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description": "<%= queryDescriptionWithParams(id, urn, name, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn, codelistFamilyUrn) %>"
+            "description": "<%= queryDescriptionWithParams(id, urn, name, description, descriptionSource, validFrom, validTo, lastUpdatedDate, latest, variableUrn, variableFamilyUrn, codelistFamilyUrn, isRecommended) %>"
         },
         "codelistCodesQueryParam": {
         "name":"query",

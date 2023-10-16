@@ -196,31 +196,34 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
             @Override
             public void onRecordDrop(RecordDropEvent event) {
-                List<Long> attributesId = new ArrayList<Long>();
+                ListGridRecord[] draggedRecords = event.getDropRecords();
+                if (event.getSourceWidget() == attributesGrid && draggedRecords.length != 0) {
+                    List<Long> attributesId = new ArrayList<Long>();
 
-                List<Long> draggedRecordsId = new ArrayList<Long>();
-                for (ListGridRecord record : event.getDropRecords()) {
-                    draggedRecordsId.add(((DataAttributeRecord) record).getIdentifier());
-                }
+                    List<Long> draggedRecordsId = new ArrayList<Long>();
+                    for (ListGridRecord record : draggedRecords) {
+                        draggedRecordsId.add(((DataAttributeRecord) record).getIdentifier());
+                    }
 
-                ListGridRecord[] gridRecords = attributesGrid.getRecords();
-                Integer index = event.getIndex();
-                for (int i = 0; i < gridRecords.length; i++) {
-                    if (index.equals(i)) {
+                    ListGridRecord[] gridRecords = attributesGrid.getRecords();
+                    Integer index = event.getIndex();
+                    for (int i = 0; i < gridRecords.length; i++) {
+                        if (index.equals(i)) {
+                            attributesId.addAll(draggedRecordsId);
+                        }
+
+                        Long identifier = ((DataAttributeRecord) gridRecords[i]).getIdentifier();
+                        if (!draggedRecordsId.contains(identifier)) {
+                            attributesId.add(identifier);
+                        }
+                    }
+
+                    if (!attributesId.containsAll(draggedRecordsId)) {
                         attributesId.addAll(draggedRecordsId);
                     }
 
-                    Long identifier = ((DataAttributeRecord) gridRecords[i]).getIdentifier();
-                    if (!draggedRecordsId.contains(identifier)) {
-                        attributesId.add(identifier);
-                    }
+                    getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
                 }
-
-                if (!attributesId.containsAll(draggedRecordsId)) {
-                    attributesId.addAll(draggedRecordsId);
-                }
-
-                getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
             }
 
         });

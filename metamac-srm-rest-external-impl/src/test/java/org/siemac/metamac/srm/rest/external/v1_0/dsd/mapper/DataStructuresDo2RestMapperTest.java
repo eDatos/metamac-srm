@@ -149,7 +149,7 @@ public class DataStructuresDo2RestMapperTest {
             public List<Component> answer(InvocationOnMock invocation) throws Throwable {
                 Set<Component> comnponents = (Set<Component>) invocation.getArguments()[0];
                 List<Component> componentsSorted = new ArrayList<>(comnponents);
-                Collections.sort(componentsSorted, StructuresComparator.STRUCTURE_COMPOENTN_ID_COMPARATOR);
+                Collections.sort(componentsSorted, StructuresComparator.STRUCTURE_COMPONENT_ID_COMPARATOR);
                 return componentsSorted;
             };
         });

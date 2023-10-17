@@ -156,6 +156,12 @@ public class DsdClientSecurityUtils {
         return SharedDsdSecurityUtils.canUpdateAttributes(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), operationCode);
     }
 
+    public static boolean canAlterOrderAttribute(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
+        String operationCode = CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacDto);
+        return SharedDsdSecurityUtils.canUpdateAttributes(MetamacSrmWeb.getCurrentUser(), dataStructureDefinitionMetamacDto.getLifeCycle().getProcStatus(), operationCode)
+                && org.siemac.metamac.srm.web.client.utils.CommonUtils.canSdmxMetadataAndStructureBeModified(dataStructureDefinitionMetamacDto);
+    }
+
     public static boolean canDeleteAttribute(DataStructureDefinitionMetamacDto dataStructureDefinitionMetamacDto) {
         // Maintainer is checked because the structure of an imported resource can not be modified
         String operationCode = CommonUtils.getStatisticalOperationCodeFromDsd(dataStructureDefinitionMetamacDto);

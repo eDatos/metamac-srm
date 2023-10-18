@@ -87,8 +87,6 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEn
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 
-import test.generated.java.org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacServiceTestBase;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/srm/applicationContext-test.xml"})
 @TransactionConfiguration(transactionManager = "txManagerCore", defaultRollback = true)

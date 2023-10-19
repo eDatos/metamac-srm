@@ -486,7 +486,9 @@ Application SrmFacadeCore {
 			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
 			"Updates position of concept"
 			updateConceptInOrder(String conceptUrn, String conceptSchemeUrn, Integer newConceptIndex) throws MetamacException;
-
+			"Updates positions of attributes"
+			updateAttributesInOrder(List<Long> attributesId, String dsdUrn) throws MetamacException;
+			
 	    	/**************************************************************************
 		     * CATEGORIES
 		     **************************************************************************/

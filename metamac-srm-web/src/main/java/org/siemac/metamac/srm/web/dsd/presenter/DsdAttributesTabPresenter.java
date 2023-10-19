@@ -34,6 +34,8 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
 import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdResult;
+import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributesInOrderAction;
+import org.siemac.metamac.srm.web.shared.dsd.UpdateAttributesInOrderResult;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
@@ -204,10 +206,28 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
                 updateAttributeList(true);
                 ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
             }
+
             @Override
             public void onWaitSuccess(DeleteAttributesForDsdResult result) {
-                updateAttributeList(true);
                 fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeDeleted());
+                updateAttributeList(true);
+            }
+        });
+    }
+
+    @Override
+    public void updateAttributesInOrder(final List<Long> attributesId, final String dsdUrn) {
+        dispatcher.execute(new UpdateAttributesInOrderAction(attributesId, dsdUrn), new WaitingAsyncCallbackHandlingError<UpdateAttributesInOrderResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(UpdateAttributesInOrderResult result) {
+                fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeSaved());
+                retrieveAttributes(dsdUrn);
             }
         });
     }

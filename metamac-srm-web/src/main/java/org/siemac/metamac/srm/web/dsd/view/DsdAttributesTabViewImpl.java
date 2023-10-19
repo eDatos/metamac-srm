@@ -73,6 +73,7 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -91,6 +92,8 @@ import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
+import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
+import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -130,6 +133,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
     private SearchRelatedResourcePaginatedWindow searchCodelistForEnumeratedRepresentationWindow;
     private SearchRelatedResourcePaginatedWindow searchConceptSchemeForEnumeratedRepresentationWindow;
+    private Integer                              position;
 
     @Inject
     public DsdAttributesTabViewImpl() {
@@ -179,12 +183,50 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         attributesGrid.setHeight(150);
         attributesGrid.setSelectionType(SelectionStyle.SIMPLE);
         attributesGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
+        attributesGrid.setCanReorderRecords(true);
+        attributesGrid.setCanSort(false);
         CustomListGridField codeField = new CustomListGridField(DataAttributeDS.CODE, getConstants().dsdAttributeId());
         CustomListGridField usageField = new CustomListGridField(DataAttributeDS.USAGE_STATUS, getConstants().dsdAttributeUsageStatus());
         CustomListGridField specialAttributeTypeField = new CustomListGridField(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE, getConstants().dsdAttributeType());
         CustomListGridField relatedTo = new CustomListGridField(DataAttributeDS.RELATED_TO, getConstants().dsdAttributeRelatedWith());
         CustomLinkListGridField conceptField = new CustomLinkListGridField(DataAttributeDS.CONCEPT, getConstants().concept());
         attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField);
+
+        attributesGrid.addRecordDropHandler(new RecordDropHandler() {
+
+            @Override
+            public void onRecordDrop(RecordDropEvent event) {
+                ListGridRecord[] draggedRecords = event.getDropRecords();
+                if (event.getSourceWidget() == attributesGrid && draggedRecords.length != 0) {
+                    List<Long> attributesId = new ArrayList<Long>();
+
+                    List<Long> draggedRecordsId = new ArrayList<Long>();
+                    for (ListGridRecord record : draggedRecords) {
+                        draggedRecordsId.add(((DataAttributeRecord) record).getIdentifier());
+                    }
+
+                    ListGridRecord[] gridRecords = attributesGrid.getRecords();
+                    Integer index = event.getIndex();
+                    for (int i = 0; i < gridRecords.length; i++) {
+                        if (index.equals(i)) {
+                            attributesId.addAll(draggedRecordsId);
+                        }
+
+                        Long identifier = ((DataAttributeRecord) gridRecords[i]).getIdentifier();
+                        if (!draggedRecordsId.contains(identifier)) {
+                            attributesId.add(identifier);
+                        }
+                    }
+
+                    if (!attributesId.containsAll(draggedRecordsId)) {
+                        attributesId.addAll(draggedRecordsId);
+                    }
+
+                    getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
+                }
+            }
+
+        });
 
         // Show attribute details when record clicked
         attributesGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
@@ -193,11 +235,13 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             public void onSelectionChanged(SelectionEvent event) {
                 if (attributesGrid.getSelectedRecords() != null && attributesGrid.getSelectedRecords().length == 1) {
                     DataAttributeRecord record = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+                    position = attributesGrid.getRecordIndex(record);
                     DataAttributeDto dataAttributeDto = record.getDataAttributeDto();
                     selectAttribute(dataAttributeDto);
                 } else {
                     // No record selected
                     deselectAttribute();
+                    position = null;
                     if (attributesGrid.getSelectedRecords().length > 1) {
                         // Delete more than one dimension with one click
                         showDeleteToolStripButton();
@@ -537,6 +581,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         mainFormLayout.setCanEdit(DsdClientSecurityUtils.canUpdateAttribute(dataStructureDefinitionMetamacDto));
 
         attributesGrid.setData(DsdRecordUtils.getAttributeRecords(dataAttributeDtos));
+        attributesGrid.setCanReorderRecords(DsdClientSecurityUtils.canAlterOrderAttribute(dataStructureDefinitionMetamacDto));
     }
 
     @Override

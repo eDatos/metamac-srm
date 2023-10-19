@@ -16,6 +16,8 @@ import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCrite
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElementResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElements;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
@@ -237,6 +239,24 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
+    public CategoryElements toCategoryElements(PagedResult<CategoryElement> sourcesPagedResult, String query, String orderBy, Integer limit) {
+
+        CategoryElements targets = new CategoryElements();
+        targets.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENTS);
+
+        // Pagination
+        String baseLink = toCategoryElementsLink();
+        SculptorCriteria2RestCriteria.toPagedResult(sourcesPagedResult, targets, query, orderBy, limit, baseLink);
+
+        // Values
+        for (CategoryElement source : sourcesPagedResult.getValues()) {
+            CategoryElementResource target = toCategoryElementResource(source);
+            targets.getCategoryElements().add(target);
+        }
+        return targets;
+    }
+
+    @Override
     protected boolean canItemSchemeVersionBeProvidedByApi(ItemSchemeVersion source) {
         return true; // no additional conditions
     }
@@ -410,6 +430,20 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
+    private CategoryElementResource toCategoryElementResource(CategoryElement source) {
+        if (source == null) {
+            return null;
+        }
+
+        CategoryElementResource target = new CategoryElementResource();
+        toResource(source.getIdentifiableArtefact(), SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getIdentifiableArtefact().getCode()), target, false);
+        target.setName(toInternationalString(source.getShortName()));
+        target.setValidTo(toDate(source.getValidTo()));
+        target.setValidFrom(toDate(source.getValidFrom()));
+
+        return target;
+    }
+
     private ResourceLink toCategoryElementSelfLink(String codeCategoryElement) {
         ResourceLink target = new ResourceLink();
         target.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENT);
@@ -420,5 +454,10 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     private String toCategoryElementLink(String codeCategoryElement) {
         String link = RestUtils.createLink(getSrmApiExternalEndpointV10(), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENTS);
         return RestUtils.createLink(link, codeCategoryElement);
+    }
+
+    // API/categoryElements
+    private String toCategoryElementsLink() {
+        return RestUtils.createLink(getSrmApiExternalEndpointV10(), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENTS);
     }
 }

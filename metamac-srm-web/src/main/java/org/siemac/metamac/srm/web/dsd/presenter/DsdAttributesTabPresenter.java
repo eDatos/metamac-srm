@@ -198,7 +198,7 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
                 });
     }
 
-    void saveAttributes(List<DataAttributeDto> attributesToSave) {
+    public void saveAttributes(List<DataAttributeDto> attributesToSave) {
         dispatcher.execute(new SaveMultipleComponentsForDsdAction(dataStructureDefinitionDto.getUrn(), new ArrayList<ComponentDto>(attributesToSave), TypeComponentList.ATTRIBUTE_DESCRIPTOR),
                 new WaitingAsyncCallbackHandlingError<SaveMultipleComponentsForDsdResult>(this) {
 

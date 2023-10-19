@@ -200,7 +200,6 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                 ListGridRecord[] draggedRecords = event.getDropRecords();
                 if (event.getSourceWidget() == attributesGrid && draggedRecords.length != 0) {
                     List<DataAttributeDto> draggedComponents = new ArrayList<DataAttributeDto>();
-
                     for (int i = 0; i < draggedRecords.length; i++) {
                         draggedComponents.add(((DataAttributeRecord) draggedRecords[i]).getDataAttributeDto());
                     }
@@ -212,10 +211,6 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                     for (int i = 0; i < data.getLength(); i++) {
                         DataAttributeDto attributeDto = ((DataAttributeRecord) data.get(i)).getDataAttributeDto();
                         if (draggedIndex.equals(i)) {
-                            for (DataAttributeDto draggedAttributeDto : draggedComponents) {
-                                draggedAttributeDto.setOrderLogic(orderLogic++);
-                                attributes.add(draggedAttributeDto);
-                            }
                             attributes.addAll(draggedComponents);
                         }
 
@@ -226,10 +221,11 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                     }
 
                     if (!attributes.containsAll(draggedComponents)) {
-                        for (DataAttributeDto draggedAttributeDto : draggedComponents) {
-                            draggedAttributeDto.setOrderLogic(orderLogic++);
-                            attributes.add(draggedAttributeDto);
-                        }
+                        attributes.addAll(draggedComponents);
+                    }
+
+                    for (int i = 0; i < attributes.size(); i++) {
+                        attributes.get(i).setOrderLogic(i + 1);
                     }
 
                     getUiHandlers().saveAttributes(attributes);

@@ -210,7 +210,7 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
                     @Override
                     public void onWaitSuccess(SaveMultipleComponentsForDsdResult result) {
                         fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeSaved());
-                        retrieveAttributes(dataStructureDefinitionDto.getUrn());
+                        updateAttributeList(true);
                     }
                 });
     }

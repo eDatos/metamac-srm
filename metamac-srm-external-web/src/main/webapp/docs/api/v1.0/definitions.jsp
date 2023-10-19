@@ -5030,5 +5030,54 @@
             }
          ],
          "description":""
+      },
+      "CategoryElements":{
+         "type":"object",
+         "title":"CategoryElements",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "categoryElement":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/CategoryElementResource"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },      
+      "CategoryElementResource":{
+         "type":"object",
+         "title":"CategoryElementResource",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                   "validFrom":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"",
+                     "type":"string"
+                  },
+                  "validTo":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":""
       }
    }

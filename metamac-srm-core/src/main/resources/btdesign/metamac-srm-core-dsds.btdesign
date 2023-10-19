@@ -142,8 +142,6 @@ Application DsdsMetamac {
 			PagedResult<@CodelistOrderVisualisation> findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String dimensionUrn) throws MetamacException;
             "Find openessVisualisation belong to same codelist representation of dimension"	
             PagedResult<@CodelistOpennessVisualisation> findOpennessVisualisationCanBeHierarchylevelopenForDsdDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String dimensionUrn) throws MetamacException;	
-			"Updates positions of attributes"
-			public void updateAttributesInOrder(List<Long> attributesId, String dsdUrn) throws MetamacException;
 			
 			// Check related resources
 	    	checkPrimaryMeasure(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion, @Component component, List<MetamacExceptionItem> exceptions) throws MetamacException 

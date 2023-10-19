@@ -46,8 +46,6 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
-import org.siemac.metamac.srm.core.code.domain.Variable;
-import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableElementOperation;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
@@ -75,7 +73,6 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
-import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
@@ -4196,16 +4193,6 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         }
         return eniSchemaCatalogDtoList;
 
-    }
-
-    @Override
-    public void updateAttributesInOrder(ServiceContext ctx, List<Long> attributesId, String dsdUrn) throws MetamacException {
-        // Security
-        DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac = getDataStructureDefinitionMetamacService().retrieveDataStructureDefinitionByUrn(ctx, dsdUrn); // Load DSD
-        DataStructureDefinitionSecurityUtils.canUpdateAttribute(ctx, dataStructureDefinitionVersionMetamac);
-
-        // Update order
-        getDataStructureDefinitionMetamacService().updateAttributesInOrder(ctx, attributesId, dsdUrn);
     }
 
     // ------------------------------------------------------------------------

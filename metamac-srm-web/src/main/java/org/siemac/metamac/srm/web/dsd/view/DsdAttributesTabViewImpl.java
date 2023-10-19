@@ -73,6 +73,7 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
@@ -198,31 +199,40 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             public void onRecordDrop(RecordDropEvent event) {
                 ListGridRecord[] draggedRecords = event.getDropRecords();
                 if (event.getSourceWidget() == attributesGrid && draggedRecords.length != 0) {
-                    List<Long> attributesId = new ArrayList<Long>();
+                    List<DataAttributeDto> draggedComponents = new ArrayList<DataAttributeDto>();
 
-                    List<Long> draggedRecordsId = new ArrayList<Long>();
-                    for (ListGridRecord record : draggedRecords) {
-                        draggedRecordsId.add(((DataAttributeRecord) record).getIdentifier());
+                    for (int i = 0; i < draggedRecords.length; i++) {
+                        draggedComponents.add(((DataAttributeRecord) draggedRecords[i]).getDataAttributeDto());
                     }
 
-                    ListGridRecord[] gridRecords = attributesGrid.getRecords();
-                    Integer index = event.getIndex();
-                    for (int i = 0; i < gridRecords.length; i++) {
-                        if (index.equals(i)) {
-                            attributesId.addAll(draggedRecordsId);
+                    List<DataAttributeDto> attributes = new ArrayList<DataAttributeDto>();
+                    RecordList data = attributesGrid.getDataAsRecordList();
+                    Integer draggedIndex = event.getIndex();
+                    Integer orderLogic = 1;
+                    for (int i = 0; i < data.getLength(); i++) {
+                        DataAttributeDto attributeDto = ((DataAttributeRecord) data.get(i)).getDataAttributeDto();
+                        if (draggedIndex.equals(i)) {
+                            for (DataAttributeDto draggedAttributeDto : draggedComponents) {
+                                draggedAttributeDto.setOrderLogic(orderLogic++);
+                                attributes.add(draggedAttributeDto);
+                            }
+                            attributes.addAll(draggedComponents);
                         }
 
-                        Long identifier = ((DataAttributeRecord) gridRecords[i]).getIdentifier();
-                        if (!draggedRecordsId.contains(identifier)) {
-                            attributesId.add(identifier);
+                        if (!draggedComponents.contains(attributeDto)) {
+                            attributeDto.setOrderLogic(orderLogic++);
+                            attributes.add(attributeDto);
                         }
                     }
 
-                    if (!attributesId.containsAll(draggedRecordsId)) {
-                        attributesId.addAll(draggedRecordsId);
+                    if (!attributes.containsAll(draggedComponents)) {
+                        for (DataAttributeDto draggedAttributeDto : draggedComponents) {
+                            draggedAttributeDto.setOrderLogic(orderLogic++);
+                            attributes.add(draggedAttributeDto);
+                        }
                     }
 
-                    getUiHandlers().updateAttributesInOrder(attributesId, dataStructureDefinitionMetamacDto.getUrn());
+                    getUiHandlers().saveAttributes(attributes);
                 }
             }
 

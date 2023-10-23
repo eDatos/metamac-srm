@@ -65,4 +65,8 @@ public abstract class StructureBaseDo2RestMapperV10Impl extends BaseDo2RestMappe
     protected List<Component> getDimensionsOrdered(Set<Component> components, TypeComponentList type) {
         return dataStructureDefinitionDo2DtoMapper.getDimensionsOrdered(components, type);
     }
+
+    protected List<Component> getAttributesOrdered(Set<Component> components, TypeComponentList type) {
+        return dataStructureDefinitionDo2DtoMapper.getDimensionsOrdered(components, type);
+    }
 }

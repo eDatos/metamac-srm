@@ -892,14 +892,6 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         return findCodelistOpennessVisualisationRepositoryByConditions(ctx, conditions, pagingParameter, codelistId);
     }
 
-    @Override
-    public void updateAttributesInOrder(ServiceContext ctx, List<Long> attributesId, String dsdUrn) throws MetamacException {
-        // Validation
-        DsdsMetamacInvocationValidator.checkUpdateAttributesInOrder(attributesId, dsdUrn, null);
-
-        maintainableArtefactRepository.updateAttributesOrder(attributesId);
-    }
-
     /**************************************************************************
      * PRIVATE
      *************************************************************************/

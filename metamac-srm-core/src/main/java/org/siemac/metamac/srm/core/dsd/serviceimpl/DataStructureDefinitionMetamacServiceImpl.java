@@ -79,7 +79,6 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentListRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Facet;
-import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Representation;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersionRepository;
@@ -118,9 +117,6 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
     @Autowired
     private DataStructureDefinitionService          dataStructureDefinitionService;
-
-    @Autowired
-    private MaintainableArtefactRepository          maintainableArtefactRepository;
 
     @Autowired
     private CategoriesMetamacService                categoriesMetamacService;

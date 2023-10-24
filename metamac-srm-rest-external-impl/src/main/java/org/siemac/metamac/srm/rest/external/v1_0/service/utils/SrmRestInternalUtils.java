@@ -12,7 +12,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -284,5 +286,17 @@ public class SrmRestInternalUtils {
             text = StringEscapeUtils.escapeCsv(text);
         }
         return text;
+    }
+
+    public static void toFlattenEniSchemas(List<Item> eniSchemas, PlainTextResource target, String format) {
+        if (eniSchemas != null && !eniSchemas.isEmpty()) {
+            List<String> eniSchemaIdentifiers = new ArrayList<String>();
+            for (Item eniSchema : eniSchemas) {
+                eniSchemaIdentifiers.add(eniSchema.getId());
+            }
+            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, SrmRestInternalUtils.formattedText(String.join(",", eniSchemaIdentifiers), format));
+        } else {
+            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, null);
+        }
     }
 }

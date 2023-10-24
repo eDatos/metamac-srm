@@ -510,6 +510,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tables.add("TB_M_DIM_VIS_INFO");
         tables.add("TB_MISC_VALUES");
         tables.add("TB_ENTITIES_TO_DELETE");
+        tables.add("TB_CAT_ENI_SCHEMA");
         return tables;
     }
 
@@ -531,6 +532,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tablePrimaryKeys.put("TB_M_VAR_ELEM_OP_TARGETS", Arrays.asList("TARGET_FK", "OPERATION_FK"));
         tablePrimaryKeys.put("TB_M_VAR_ELEM_OP_SOURCES", Arrays.asList("SOURCE_FK", "OPERATION_FK"));
         tablePrimaryKeys.put("TB_CAT_RESOURCE_ELEMENTS", Arrays.asList("TB_RESOURCE_ELEMENTS"));
+        tablePrimaryKeys.put("TB_CAT_ENI_SCHEMA", Arrays.asList("ENI_SCHEMA", "TB_M_CATEGORIES"));
         // It is necessary to specify the table name and the column name in upper and lower case for compatibility with the different database providers.
         Map<String, List<String>> primaryKeysInLowerCase = new HashMap<>();
         for (Entry<String, List<String>> primaryKey : tablePrimaryKeys.entrySet()) {

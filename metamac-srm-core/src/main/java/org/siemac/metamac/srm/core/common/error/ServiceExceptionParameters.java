@@ -147,6 +147,7 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  IMPORTATION_TSV_COLUMN_GEOGRAPHICAL_GRANULARITY            = createCode(IMPORTATION_PREFIX, "geographical_granularity");
     public static final String  IMPORTATION_TSV_COLUMN_REPRESENTATION_VALUE                = createCode(IMPORTATION_PREFIX, "representation_value");
     public static final String  IMPORTATION_TSV_COLUMN_CONCEPTS_EXTENDS_VALUE              = createCode(IMPORTATION_PREFIX, "concepts_extends");
+    public static final String  IMPORTATION_TSV_COLUMN_ENI_SCHEMA                          = createCode(IMPORTATION_PREFIX, "eni_schema");
 
     public static final String  IMPORTATION_TSV_COLUMN_INDEX_BASE                          = createCode(IMPORTATION_PREFIX, "index_base_value");
 

@@ -1247,20 +1247,41 @@
                      "description":"",
                      "type":"string"
                   },
-                   "eniSchemeType":{
+                   "eniSchemaTypes":{
                      "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                      "categoryElement":{
+                     "description":"",
+                     "$ref":"#/definitions/EniSchemaTypes"
+                  },
+                   "categoryElement":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"",
                      "$ref":"#/definitions/Resource"
-                  },
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
+      "EniSchemaTypes":{
+         "type":"object",
+         "title":"EniSchemaTypes",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "eniSchemaType":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
                      "description":"",
                      "$ref":"#/definitions/Item"
-                  },
+                  }
                }
             }
          ],
@@ -1426,12 +1447,12 @@
             },
             {
                "properties":{
-                  "eniSchemeType":{
+                 "eniSchemaTypes":{
                      "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Item"
+                     "$ref":"#/definitions/EniSchemaTypes"
                   },
                 "categoryElement":{
                     "xml":{

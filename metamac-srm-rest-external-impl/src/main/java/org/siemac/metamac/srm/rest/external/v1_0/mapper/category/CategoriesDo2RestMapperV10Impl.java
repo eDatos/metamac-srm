@@ -21,6 +21,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElements
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.EniSchemaTypes;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
@@ -135,8 +136,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
             target.setCategoryElement(toResource(source.getCategoryElement()));
         }
 
-        if (source.getEniSchema() != null) {
-            target.setEniSchemeType(toItem(source.getEniSchema()));
+        if (source.getEniSchemas() != null && !source.getEniSchemas().isEmpty()) {
+            target.setEniSchemaTypes(toEniSchemaTypes(new ArrayList<EniSchemaCatalog>(source.getEniSchemas())));
         }
 
         return target;
@@ -169,9 +170,20 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         }
 
         if (fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
-            target.getFields().put(SrmConstants.TSV_HEADER_ENI_SCHEME_ID, source.getEniSchemeType() != null ? source.getEniSchemeType().getId() : null);
-            target.getFields().putAll(SrmRestInternalUtils.internationalString2MapExport(SrmConstants.TSV_HEADER_ENI_SCHEME_NAME,
-                    source.getEniSchemeType() != null ? source.getEniSchemeType().getName() : null, languages, format));
+            SrmRestInternalUtils.toFlattenEniSchemas(source.getEniSchemaTypes().getEniSchemaTypes(), target, format);
+        }
+
+        return target;
+    }
+
+    private EniSchemaTypes toEniSchemaTypes(List<EniSchemaCatalog> source) {
+        if (source == null) {
+            return null;
+        }
+        EniSchemaTypes target = new EniSchemaTypes();
+        target.setTotal(BigInteger.valueOf(source.size()));
+        for (EniSchemaCatalog eniSchema : source) {
+            target.getEniSchemaTypes().add(toItem(eniSchema));
         }
 
         return target;
@@ -374,7 +386,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
     private void setVisibleCategoryFields(CategoryMetamac source, CategoryResource target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
-            target.setEniSchemeType(toItem(source.getEniSchema()));
+            target.setEniSchemaTypes(toEniSchemaTypes(new ArrayList<EniSchemaCatalog>(source.getEniSchemas())));
         }
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT)) {
@@ -385,7 +397,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
     private void setVisibleCategoryFields(ItemResult source, CategoryResource target, Set<String> fields) {
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME) && source.getExtensionPoint() != null) {
-            target.setEniSchemeType(toItem(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getEniSchemeCatalog()));
+            target.setEniSchemaTypes(toEniSchemaTypes(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getEniSchemas()));
         }
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT) && source.getExtensionPoint() != null) {

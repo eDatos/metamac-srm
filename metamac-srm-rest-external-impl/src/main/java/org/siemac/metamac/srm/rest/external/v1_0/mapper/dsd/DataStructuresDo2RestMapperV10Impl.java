@@ -217,7 +217,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
 
         Attributes target = new Attributes();
         toComponentList(source, target, isImported);
-        List<Component> componentsSorted = getDimensionsOrdered(source.getComponents(), TypeComponentList.ATTRIBUTE_DESCRIPTOR);
+        List<Component> componentsSorted = getAttributesOrdered(source.getComponents(), TypeComponentList.ATTRIBUTE_DESCRIPTOR);
 
         for (Component sourceComponent : componentsSorted) {
             if (sourceComponent instanceof DataAttribute) {

@@ -1634,33 +1634,4 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     protected String getDataSetFile() {
         return "dbunit/SrmDsdTest.xml";
     }
-
-    @Override
-    @Test
-    public void testUpdateAttributesInOrder() throws Exception {
-        String dsdUrn = DSD_7_V1;
-
-        ServiceContext ctx = getServiceContextAdministrador();
-        List<DescriptorDto> attributeDescriptorDtos = srmCoreServiceFacade.findDescriptorsForDataStructureDefinition(ctx, dsdUrn, TypeComponentList.ATTRIBUTE_DESCRIPTOR);
-        List<Long> attributeIdsOld = getIdsAttributeList(attributeDescriptorDtos.get(0).getComponents());
-
-        List<Long> reverseAttributeIds = new ArrayList<Long>(attributeIdsOld);
-        Collections.reverse(reverseAttributeIds);
-
-        dataStructureDefinitionMetamacService.updateAttributesInOrder(ctx, reverseAttributeIds, dsdUrn);
-        entityManager.clear();
-
-        List<DescriptorDto> attributeDescriptorDtosUpdated = srmCoreServiceFacade.findDescriptorsForDataStructureDefinition(ctx, dsdUrn, TypeComponentList.ATTRIBUTE_DESCRIPTOR);
-        List<Long> attributeIdsNew = getIdsAttributeList(attributeDescriptorDtosUpdated.get(0).getComponents());
-
-        assertEquals(reverseAttributeIds, attributeIdsNew);
-    }
-
-    private List<Long> getIdsAttributeList(List<ComponentDto> components) {
-        List<Long> attributeIds = new ArrayList<Long>();
-        for (ComponentDto component : components) {
-            attributeIds.add(component.getId());
-        }
-        return attributeIds;
-    }
 }

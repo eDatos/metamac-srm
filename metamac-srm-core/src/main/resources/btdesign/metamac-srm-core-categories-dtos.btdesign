@@ -27,10 +27,10 @@ Application DtosMetamacCategoryDomain {
 
 		"Dto for CategoryMetamac"
 		DataTransferObject CategoryMetamacDto extends @CategoryDto {
-		    "ENI Schema"
-			- @EniSchemaCatalogDto eniSchema nullable;
 			"Category element"
 			- @RelatedResourceDto categoryElement nullable;
+			"ENI Schemas"
+			- Set<@EniSchemaCatalogDto> eniSchemas nullable;
 		}
 		
 		"Dto for CategoryMetamac"

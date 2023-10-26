@@ -10,6 +10,7 @@ import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
@@ -51,10 +52,21 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
 
         CategoryMetamac source = (CategoryMetamac) sourceItem;
         CategoryMetamac target = (CategoryMetamac) targetItem;
-        target.setEniSchema(source.getEniSchema());
         target.setCategoryElement(source.getCategoryElement());
+        copyEniSchemas(source, target);
 
         // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from sourceItemResult
+    }
+
+    private void copyEniSchemas(CategoryMetamac source, CategoryMetamac target) {
+
+        if (source.getEniSchemas() == null || source.getEniSchemas().isEmpty()) {
+            return;
+        }
+
+        for (EniSchemaCatalog eniSchema : source.getEniSchemas()) {
+            target.addEniSchema(eniSchema);
+        }
     }
 
     @Override

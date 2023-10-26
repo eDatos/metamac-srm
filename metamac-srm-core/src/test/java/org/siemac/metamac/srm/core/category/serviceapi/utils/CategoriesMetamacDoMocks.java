@@ -47,9 +47,10 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
 
     public static CategoryMetamacResultExtensionPoint mockCategoryMetamacResultFixedValues() {
         CategoryMetamacResultExtensionPoint target = new CategoryMetamacResultExtensionPoint();
-        target.setEniSchemeCatalog(mockEniSchemeFixedValues("eniSchemeText"));
+        EniSchemaCatalog eniSchema = mockEniSchemeFixedValues("eniSchemeText");
+        target.getEniSchemas().add(eniSchema);
         target.setCategoryElement(mockCategoryElementResultFixedValues("categoryElement1"));
-        target.setEniSchemeIdentifier(target.getEniSchemeCatalog().getIdentifier());
+        target.getEniSchemaCodes().add(eniSchema.getIdentifier());
         return target;
     }
 

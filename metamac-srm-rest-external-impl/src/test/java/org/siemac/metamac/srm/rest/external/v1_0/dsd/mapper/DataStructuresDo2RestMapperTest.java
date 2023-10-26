@@ -143,7 +143,7 @@ public class DataStructuresDo2RestMapperTest {
     @SuppressWarnings("unchecked")
     private void mockitoGetDimensionOrdered() {
         reset(dataStructureDefinitionDo2DtoMapper);
-        Mockito.when(dataStructureDefinitionDo2DtoMapper.getDimensionsOrdered(Matchers.anySet(), Matchers.any(TypeComponentList.class))).thenAnswer(new Answer<List<Component>>() {
+        Mockito.when(dataStructureDefinitionDo2DtoMapper.getComponentsOrdered(Matchers.anySet(), Matchers.any(TypeComponentList.class))).thenAnswer(new Answer<List<Component>>() {
 
             @Override
             public List<Component> answer(InvocationOnMock invocation) throws Throwable {

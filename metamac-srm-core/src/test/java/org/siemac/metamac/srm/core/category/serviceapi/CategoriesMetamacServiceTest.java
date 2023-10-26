@@ -60,7 +60,6 @@ import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAs
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
-import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
@@ -2774,7 +2773,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Test
     public void testRetrieveCategoriesOrderedInDepthByCategorySchemeUrn() throws Exception {
 
-        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), new CategoryMetamacResultSelection(true, true, true, true, false, true));
+        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12),
+                new CategoryMetamacResultSelection(true, true, true, true, false, true, false, true));
 
         assertEquals(8, categories.size());
 
@@ -2948,8 +2948,8 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // Retrieve
         String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
 
-        ItemMetamacResultSelection itemResultSelection = new ItemMetamacResultSelection(true, false, false, false);
-        List<ItemResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(getServiceContextAdministrador(), categorySchemeUrn, itemResultSelection);
+        CategoryMetamacResultSelection categoryMetamacResultSelection = new CategoryMetamacResultSelection(true, true, true, true, false, true, false, true);
+        List<ItemResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(getServiceContextAdministrador(), categorySchemeUrn, categoryMetamacResultSelection);
 
         // Validate
         assertEquals(8, categories.size());
@@ -2966,7 +2966,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals(Long.valueOf(121), category.getItemIdDatabase());
             assertEquals(null, category.getParent());
             assertEquals(null, category.getParentIdDatabase());
-            assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 02
@@ -2975,7 +2975,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals("CATEGORY02", category.getCode());
             assertEquals("Nombre categoryScheme-1-v2-category-2", category.getName().get("es"));
             assertEquals(null, category.getDescription().get("es"));
-            assertEquals("SRM-ID3-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID3-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 02 01 (validate parent)
@@ -2988,7 +2988,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals("Descripción cat2-1", category.getDescription().get("es"));
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2, category.getParent().getUrn());
             assertEquals(Long.valueOf("122"), category.getParentIdDatabase());
-            assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 02 01 01
@@ -2998,28 +2998,28 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals("Nombre categoryScheme-1-v2-category-2-1-1", category.getName().get("es"));
             assertEquals("Descripción cat2-1-1", category.getDescription().get("es"));
             assertEquals(Long.valueOf("1221"), category.getParentIdDatabase());
-            assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 03
             ItemResult category = getItemResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_3, category.getUrn());
             assertEquals("nombre category-3", category.getName().get("es"));
-            assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 04
             ItemResult category = getItemResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4, category.getUrn());
             assertEquals("Lanzarote", category.getName().get("es"));
-            assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID1-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 04 01
             ItemResult category = getItemResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getUrn());
             assertEquals("La Gomera", category.getName().get("es"));
-            assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID2-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
         {
             // Category 04 01 01
@@ -3028,7 +3028,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals("CATEGORY0401", category.getParent().getCode());
             assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getParent().getUrn());
             assertEquals("Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife", category.getName().get("es"));
-            assertEquals("SRM-ID3-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemeCatalog().getIdentifier());
+            assertEquals("SRM-ID3-ENI-SCHEME", ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).getEniSchemas().get(0).getIdentifier());
         }
     }
 

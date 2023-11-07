@@ -99,6 +99,13 @@ public class VariableElementViewImpl extends ViewWithUiHandlers<VariableElementU
                 showCreateSegregationWindow();
             }
         });
+        mainFormLayout.getResendVariableElementStreamMessage().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().reSendStreamMessageVariableElement(variableElementDto.getUrn());
+            }
+        });
         bindMainFormLayoutEvents();
         createViewForm();
         createEditionForm();

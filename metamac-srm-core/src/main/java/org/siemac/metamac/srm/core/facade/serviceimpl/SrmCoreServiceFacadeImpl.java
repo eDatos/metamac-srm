@@ -4343,4 +4343,15 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         return getCategoriesMetamacService().normaliseCategoryElementsToCategories(ctx, categorySchemeUrn, locale, proposeOnlyWithoutCategoryElement);
     }
 
+    @Override
+    public SendStreamMessageResult resendUpdatedVariableElement(ServiceContext ctx, String variableElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canResendVariableElementKafkaMessage(ctx);
+
+        VariableElement variableElement = getCodesMetamacService().retrieveVariableElementByUrn(ctx, variableElementUrn);
+
+        // Normalise
+        return getCodesMetamacService().notifyVariableElementPublication(ctx, variableElement);
+    }
+
 }

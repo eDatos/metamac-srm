@@ -14,6 +14,7 @@ public class VariableElementMainFormLayout extends InternationalMainFormLayout {
 
     private VariableElementDto     variableElementDto;
     protected MainFormLayoutButton segregateButton;
+    protected MainFormLayoutButton resendVariableElementStreamMessageButton;
 
     public VariableElementMainFormLayout() {
         super();
@@ -41,13 +42,16 @@ public class VariableElementMainFormLayout extends InternationalMainFormLayout {
 
     private void common() {
         segregateButton = new MainFormLayoutButton(getConstants().actionSegregate(), GlobalResources.RESOURCE.segregate().getURL());
+        resendVariableElementStreamMessageButton = new MainFormLayoutButton(getConstants().actionResendVariableElementKafkaMessage(), GlobalResources.RESOURCE.reload().getURL());
         toolStrip.addButton(segregateButton);
+        toolStrip.addButton(resendVariableElementStreamMessageButton);
     }
 
     @Override
     public void setViewMode() {
         super.setViewMode();
         showSegregateButton();
+        showResendVariableElementStreamMessageButton();
     }
 
     @Override
@@ -64,5 +68,15 @@ public class VariableElementMainFormLayout extends InternationalMainFormLayout {
         if (CodesClientSecurityUtils.canSegregateVariableElement()) {
             segregateButton.show();
         }
+    }
+
+    private void showResendVariableElementStreamMessageButton() {
+        if (CodesClientSecurityUtils.canResendVariableElementStreamMessage()) {
+            resendVariableElementStreamMessageButton.show();
+        }
+    }
+
+    public HasClickHandlers getResendVariableElementStreamMessage() {
+        return resendVariableElementStreamMessageButton;
     }
 }

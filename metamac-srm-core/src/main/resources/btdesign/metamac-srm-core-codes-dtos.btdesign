@@ -140,6 +140,7 @@ Application DtosMetamacCodeDomain {
 			- @RelatedResourceDto geographicalGranularity nullable;
 			"Version to optimistic locking"
 			Long versionOptimisticLocking;
+			- @StreamMessageStatusEnum streamMessageStatus;
 		}
 
 		"Dto for VariableElement"

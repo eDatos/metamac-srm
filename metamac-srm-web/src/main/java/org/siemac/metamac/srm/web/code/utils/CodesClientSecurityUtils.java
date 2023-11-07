@@ -315,7 +315,7 @@ public class CodesClientSecurityUtils {
         }
         return SharedCodesSecurityUtils.canImportCodelistOrderVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-       
+
     public static boolean canUpdateCodelistOrderVisualisation(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
@@ -359,14 +359,14 @@ public class CodesClientSecurityUtils {
         }
         return SharedCodesSecurityUtils.canCrudCodelistOpennessVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-    
+
     public static boolean canImportCodelistOpennessVisualisations(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
         }
         return SharedCodesSecurityUtils.canImportCodelistOpennessVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-    
+
     public static boolean canExportCodesOpennessLevels(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
@@ -396,21 +396,21 @@ public class CodesClientSecurityUtils {
         }
         return SharedCodesSecurityUtils.canCrudCodelistRestrictionVisualisation(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-    
+
     public static boolean canImportCodelistRestrictionVisualisations(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
         }
         return SharedCodesSecurityUtils.canImportCodelistRestrictionVisualisations(MetamacSrmWeb.getCurrentUser(), codelistMetamacDto.getLifeCycle().getProcStatus());
     }
-    
+
     public static boolean canExportCodesRestriction(CodelistMetamacDto codelistMetamacDto) {
         if (isTaskInBackground(codelistMetamacDto.getIsTaskInBackground())) {
             return false;
         }
         return SharedCodesSecurityUtils.canExportCodeRestrictionsTsv(MetamacSrmWeb.getCurrentUser());
     }
-    
+
     // CODELIST FAMILY
 
     public static boolean canCreateCodelistFamily() {
@@ -506,6 +506,10 @@ public class CodesClientSecurityUtils {
     }
 
     public static boolean canSegregateVariableElement() {
+        return SharedCodesSecurityUtils.canCrudVariableElement(MetamacSrmWeb.getCurrentUser());
+    }
+
+    public static boolean canResendVariableElementStreamMessage() {
         return SharedCodesSecurityUtils.canCrudVariableElement(MetamacSrmWeb.getCurrentUser());
     }
 

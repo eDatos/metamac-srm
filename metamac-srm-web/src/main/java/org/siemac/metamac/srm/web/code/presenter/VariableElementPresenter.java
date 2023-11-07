@@ -35,6 +35,8 @@ import org.siemac.metamac.srm.web.shared.code.GetVariableElementOperationsByVari
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsAction;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
+import org.siemac.metamac.srm.web.shared.code.ReSendVariableElementStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendVariableElementStreamMessageResult;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementResult;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
@@ -270,18 +272,40 @@ public class VariableElementPresenter extends Presenter<VariableElementPresenter
         });
     }
 
-    private void retrieveVariableElementOperations(String variableElementUrn) {
-        dispatcher.execute(new GetVariableElementOperationsByVariableElementAction(variableElementUrn), new WaitingAsyncCallbackHandlingError<GetVariableElementOperationsByVariableElementResult>(this) {
+    //
+    // VARIABLE ELEMENT STREAM MESSAGES
+    //
+
+    @Override
+    public void reSendStreamMessageVariableElement(final String variableElementUrn) {
+        dispatcher.execute(new ReSendVariableElementStreamMessageAction(variableElementUrn), new WaitingAsyncCallbackHandlingError<ReSendVariableElementStreamMessageResult>(this) {
 
             @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(VariableElementPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(GetVariableElementOperationsByVariableElementResult result) {
-                getView().setVariableElementOperations(result.getOperations());
+            public void onWaitSuccess(ReSendVariableElementStreamMessageResult result) {
+                getView().setVariableElement(result.getVariableElementDto());
+
+                if (result.getNotificationException() != null) {
+                    ShowMessageEvent.fireWarningMessageWithError(VariableElementPresenter.this, getMessages().variableElementReSendStreamMessageError(), result.getNotificationException());
+                } else {
+                    ShowMessageEvent.fireSuccessMessage(VariableElementPresenter.this, getMessages().variableElementReSendStreamMessagePublished());
+                }
             }
         });
+    }
+
+    private void retrieveVariableElementOperations(String variableElementUrn) {
+        dispatcher.execute(new GetVariableElementOperationsByVariableElementAction(variableElementUrn),
+                new WaitingAsyncCallbackHandlingError<GetVariableElementOperationsByVariableElementResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(VariableElementPresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetVariableElementOperationsByVariableElementResult result) {
+                        getView().setVariableElementOperations(result.getOperations());
+                    }
+                });
     }
 
     //

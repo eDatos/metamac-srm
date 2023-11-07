@@ -786,6 +786,9 @@ Application SrmFacadeCore {
     		TaskImportationInfo importVariableElementsPoints(String variableUrn, URL shapeFileUrl) throws MetamacException;
 			"Exports variable elements in tsv format"
     		String exportVariableElementsTsv(String variableUrn) throws MetamacException;
+    		"Resend a updated variable element"
+            org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendUpdatedVariableElement(String variableElementUrn) throws MetamacException;
+    		
     		    		
     		"ENI scheme catalogs"
     		List<@EniSchemaCatalogDto> findAllEniSchemaCatalogs() throws MetamacException;

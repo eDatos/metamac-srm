@@ -91,7 +91,7 @@ Application CodesMetamac {
     		checkCodelistWithRelatedResourcesExternallyPublished(@CodelistVersionMetamac codelistVersion) throws MetamacException;
     		"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
             List<Long> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
-    		
+
 			// CODES
 
 			"Creates code"
@@ -291,6 +291,7 @@ Application CodesMetamac {
     		
     		// resend kafka message for the last number of version of published codelist.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyCodelist() throws MetamacException;
+    		org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult notifyVariableElementPublication(@VariableElement message) throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------
@@ -671,6 +672,8 @@ Application CodesMetamac {
 			- Bag<@CodeMetamac> codes cascade="none" fetch="lazy" <-> variableElement;
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
+			"Stream message status"
+            - @StreamMessageStatusEnum streamMessageStatus;
 			
 			Repository VariableElementRepository {
 				save;

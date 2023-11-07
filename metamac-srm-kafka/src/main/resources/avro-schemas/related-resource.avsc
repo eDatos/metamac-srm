@@ -24,7 +24,8 @@
       "TIME_DIMENSION",
       "PRIMARY_MEASURE",
       "DATA_FLOW",
-      "CONTENT_CONSTRAINT"
+      "CONTENT_CONSTRAINT",
+       "VARIABLE"
     ]
   },
   {

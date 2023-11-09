@@ -2236,6 +2236,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         // Create
         setVariableElementUrnUnique(variableElement.getVariable(), variableElement, Boolean.TRUE);
+        variableElement.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
+
         variableElement = getVariableElementRepository().save(variableElement);
 
         // Fill replaceTo metadata after save entity
@@ -2243,6 +2245,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             variableElement.addReplaceToVariableElement(variableElementReplaceTo);
         }
         variableElement = getVariableElementRepository().save(variableElement);
+
+        SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElement);
+
         return variableElement;
     }
 
@@ -2268,6 +2273,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         for (VariableElement replaceTo : variableElement.getReplaceToVariableElements()) {
             replaceTo.setReplacedByVariableElement(variableElement);
         }
+        variableElement.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
 
         // Update
         VariableElement variableElementResult = getVariableElementRepository().save(variableElement);
@@ -2354,6 +2360,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Delete
         variableElementToDelete.removeAllReplaceToVariableElements(); // variable element can be deleted although it replaces to another variable element
         getVariableElementRepository().delete(variableElementToDelete);
+        variableElementToDelete.setValidTo(new DateTime());
+        SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElementToDelete);
     }
 
     @Override

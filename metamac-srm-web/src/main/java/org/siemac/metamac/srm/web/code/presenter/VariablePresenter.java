@@ -47,6 +47,8 @@ import org.siemac.metamac.srm.web.shared.code.GetVariableFamiliesResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariableResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesAction;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
+import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageResult;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementResult;
@@ -125,7 +127,8 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
     public static final Object                        TYPE_SetContextAreaContentCodesToolBar = new Object();
 
     @Inject
-    public VariablePresenter(EventBus eventBus, VariableView view, VariableProxy proxy, DispatchAsync dispatcher, PlaceManager placeManager, CodesToolStripPresenterWidget codesToolStripPresenterWidget) {
+    public VariablePresenter(EventBus eventBus, VariableView view, VariableProxy proxy, DispatchAsync dispatcher, PlaceManager placeManager,
+            CodesToolStripPresenterWidget codesToolStripPresenterWidget) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
@@ -293,6 +296,24 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
             public void onWaitSuccess(DeleteVariableElementsResult result) {
                 retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
                 fireSuccessMessage(MetamacSrmWeb.getMessages().variableElementDeleted());
+            }
+        });
+    }
+
+    @Override
+    public void resendUpdatedVariableElementsKafkaMessage(List<String> urns) {
+        dispatcher.execute(new ReSendMultipleVariableElementsStreamMessageAction(urns), new WaitingAsyncCallbackHandlingError<ReSendMultipleVariableElementsStreamMessageResult>(this) {
+
+            @Override
+            public void onWaitSuccess(ReSendMultipleVariableElementsStreamMessageResult result) {
+                retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
+
+                if (result.getNotificationException() != null) {
+                    ShowMessageEvent.fireWarningMessageWithError(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessageError(), result.getNotificationException());
+                } else {
+                    ShowMessageEvent.fireSuccessMessage(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessagePublished());
+                }
+
             }
         });
     }

@@ -93,49 +93,52 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> implements VariablePresenter.VariableView {
 
-    private final VLayout panel;
-    private final VariableMainFormLayout mainFormLayout;
+    private final VLayout                                panel;
+    private final VariableMainFormLayout                 mainFormLayout;
 
     // View forms
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm diffusionDescriptorsForm;
+    private GroupDynamicForm                             identifiersForm;
+    private GroupDynamicForm                             contentDescriptorsForm;
+    private GroupDynamicForm                             productionDescriptorsForm;
+    private GroupDynamicForm                             diffusionDescriptorsForm;
 
     // Edition forms
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                             identifiersEditionForm;
+    private GroupDynamicForm                             contentDescriptorsEditionForm;
+    private GroupDynamicForm                             productionDescriptorsEditionForm;
+    private GroupDynamicForm                             diffusionDescriptorsEditionForm;
 
     // Variable elements
 
-    private final PaginatedCheckListGrid variableElementListGrid;
-    private final CustomToolStripButton createVariableElementButton;
-    private final CustomToolStripButton importVariableElementButton;
-    private final CustomToolStripButton exportVariableElementButton;
-    private final CustomToolStripButton deleteVariableElementButton;
-    private final CustomToolStripButton fusionVariableElementButton;
-    private final CustomToolStripButton segregateVariableElementButton;
-    private NewVariableElementWindow newVariableElementWindow;
-    private final DeleteConfirmationWindow deleteConfirmationWindow;
-    private SearchSectionStack elementsSectionStack;
+    private final PaginatedCheckListGrid                 variableElementListGrid;
+    private final CustomToolStripButton                  createVariableElementButton;
+    private final CustomToolStripButton                  importVariableElementButton;
+    private final CustomToolStripButton                  exportVariableElementButton;
+    private final CustomToolStripButton                  deleteVariableElementButton;
+    private final CustomToolStripButton                  fusionVariableElementButton;
+    private final CustomToolStripButton                  segregateVariableElementButton;
+    private final CustomToolStripButton                  resendVariableElementStreamMessageButton;
+    private final CustomToolStripButton                  resendAllVariableElementStreamMessageButton;
 
-    private SearchRelatedResourcePaginatedWindow createFusionWindow;
+    private NewVariableElementWindow                     newVariableElementWindow;
+    private final DeleteConfirmationWindow               deleteConfirmationWindow;
+    private SearchSectionStack                           elementsSectionStack;
+
+    private SearchRelatedResourcePaginatedWindow         createFusionWindow;
     private SearchMultipleRelatedResourcePaginatedWindow createSegregationWindow;
 
     // Variable elements importation
 
-    private final ImportVariableElementsWindow importVariableElementsWindow;
+    private final ImportVariableElementsWindow           importVariableElementsWindow;
 
     // Variable element operations
 
-    private final CustomSectionStack operationsSectionStack;
-    private final VariableElementOperationLayout variableElementOperationsLayout;
+    private final CustomSectionStack                     operationsSectionStack;
+    private final VariableElementOperationLayout         variableElementOperationsLayout;
 
-    private final ImportVariableElementShapeWindow importVariableElementShapeWindow;
+    private final ImportVariableElementShapeWindow       importVariableElementShapeWindow;
 
-    private VariableDto variableDto;
+    private VariableDto                                  variableDto;
 
     @Inject
     public VariableViewImpl() {
@@ -189,7 +192,7 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
         // ToolStrip
 
         ToolStrip toolStrip = new ToolStrip();
-        toolStrip.setWidth100();
+        toolStrip.setWidth(400);
         createVariableElementButton = createCreateVariableElementButton();
         toolStrip.addButton(createVariableElementButton);
 
@@ -207,6 +210,12 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
 
         segregateVariableElementButton = createSegregateButton();
         toolStrip.addButton(segregateVariableElementButton);
+
+        resendVariableElementStreamMessageButton = createResendMessageKafkaVariableElementsButton();
+        toolStrip.addButton(resendVariableElementStreamMessageButton);
+
+        resendAllVariableElementStreamMessageButton = createResendMessageKafkaAllVariableElementsButton();
+        toolStrip.addButton(resendAllVariableElementStreamMessageButton);
 
         // ListGrid
 
@@ -748,6 +757,34 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
             }
         });
         return exportButton;
+    }
+
+    private CustomToolStripButton createResendMessageKafkaVariableElementsButton() {
+        CustomToolStripButton resendKafkaMessageButton = new CustomToolStripButton(getConstants().actionResendVariableElementsKafkaMessage(), GlobalResources.RESOURCE.reload().getURL());
+        resendKafkaMessageButton.setVisible(CodesClientSecurityUtils.canResendVariableElementStreamMessage());
+        resendKafkaMessageButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().resendUpdatedVariableElementsKafkaMessage(
+                        org.siemac.metamac.srm.web.code.utils.CommonUtils.getUrnsFromSelectedVariableElements(variableElementListGrid.getListGrid().getSelectedRecords()));
+            }
+        });
+        return resendKafkaMessageButton;
+    }
+
+    private CustomToolStripButton createResendMessageKafkaAllVariableElementsButton() {
+        CustomToolStripButton resendKafkaMessageButton = new CustomToolStripButton(getConstants().actionResendAllVariableElementsKafkaMessage(), GlobalResources.RESOURCE.reload().getURL());
+        resendKafkaMessageButton.setVisible(CodesClientSecurityUtils.canResendVariableElementStreamMessage());
+        resendKafkaMessageButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().resendUpdatedVariableElementsKafkaMessage(
+                        org.siemac.metamac.srm.web.code.utils.CommonUtils.getUrnsFromSelectedVariableElements(variableElementListGrid.getListGrid().getRecords()));
+            }
+        });
+        return resendKafkaMessageButton;
     }
 
     private CustomToolStripButton createDeleteVariableElementButton() {

@@ -147,6 +147,7 @@ Application DtosMetamacCodeDomain {
 		DataTransferObject VariableElementBasicDto extends @IdentifiableArtefactMetamacBasicDto {
 			"Short name"
 			- @InternationalStringDto shortName nullable;
+			- @StreamMessageStatusEnum streamMessageStatus;
 			"Variable"
 			- @RelatedResourceDto variable not nullable;
 			"Has shape"

@@ -2,8 +2,6 @@ package org.siemac.metamac.srm.web.client.utils;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
-import com.smartgwt.client.types.Alignment;
-import com.smartgwt.client.types.ListGridFieldType;
 import org.siemac.metamac.srm.web.category.model.ds.CategorySchemeDS;
 import org.siemac.metamac.srm.web.client.model.ds.ItemDS;
 import org.siemac.metamac.srm.web.client.model.ds.VersionableResourceDS;
@@ -17,6 +15,8 @@ import org.siemac.metamac.web.common.client.utils.ListGridUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomLinkListGridField;
 import org.siemac.metamac.web.common.client.widgets.CustomListGridField;
 
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.widgets.grid.GroupNode;
 import com.smartgwt.client.widgets.grid.GroupTitleRenderer;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -116,7 +116,7 @@ public class ResourceFieldUtils {
         variable.setHidden(true);
 
         CustomListGridField streamStatus = getCustomIconListGridField(CodelistDS.PUBLICATION_STREAM_STATUS, getConstants().codelistStreamMessageStatus());
-        
+
         CustomListGridField normalizationType = new CustomListGridField(CodelistDS.NORMALIZATION_TYPE, getConstants().codelistNormalizationType());
         normalizationType.setHidden(true);
 
@@ -218,7 +218,7 @@ public class ResourceFieldUtils {
         return new DetailViewerField[]{code, urn, name, description, creationDate};
     }
 
-    private static CustomListGridField getCustomIconListGridField(String name, String title) {
+    public static CustomListGridField getCustomIconListGridField(String name, String title) {
         CustomListGridField customIconListGridField = new CustomListGridField(name, title);
         customIconListGridField.setType(ListGridFieldType.IMAGE);
         customIconListGridField.setAlign(Alignment.CENTER);

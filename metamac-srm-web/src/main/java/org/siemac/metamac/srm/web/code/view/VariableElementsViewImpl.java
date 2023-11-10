@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import java.util.List;
 
 import org.siemac.metamac.srm.core.code.dto.VariableElementBasicDto;
+import org.siemac.metamac.srm.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.srm.web.code.model.ds.VariableElementDS;
 import org.siemac.metamac.srm.web.code.model.record.VariableElementRecord;
 import org.siemac.metamac.srm.web.code.presenter.VariableElementsPresenter;
@@ -67,7 +68,8 @@ public class VariableElementsViewImpl extends ViewWithUiHandlers<VariableElement
         ListGridField fieldShortName = new ListGridField(VariableElementDS.SHORT_NAME, getConstants().variableElementShortName());
         CustomListGridField hasShape = new CustomListGridField(VariableElementDS.SHAPE_WKT, getConstants().variableElementHasPolygonShape());
         ListGridField urn = new ListGridField(VariableElementDS.URN, getConstants().identifiableArtefactUrn());
-        variableElementsListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn);
+        CustomListGridField publicationStreamStatus = ResourceFieldUtils.getCustomIconListGridField(VariableElementDS.PUBLICATION_STREAM_STATUS, getConstants().codelistStreamMessageStatus());
+        variableElementsListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn, publicationStreamStatus);
 
         variableElementsListGrid.setHeight100();
 

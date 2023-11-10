@@ -335,7 +335,6 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setTitle(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
         target.setUrn(source.getIdentifiableArtefact().getUrn());
         target.setUrnProvider(source.getIdentifiableArtefact().getUrnProvider());
-
         target.setType(null);
         return target;
     }

@@ -1,7 +1,10 @@
 package org.siemac.metamac.srm.web.code.model.record;
 
+import static org.siemac.metamac.srm.web.shared.CommonSharedUtils.getPublicationStreamStatusIconUrl;
+
 import org.siemac.metamac.srm.core.code.dto.VariableElementBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
+import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.code.model.ds.VariableElementDS;
 
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -11,12 +14,13 @@ public class VariableElementRecord extends ListGridRecord {
     public VariableElementRecord() {
     }
 
-    public VariableElementRecord(Long id, String code, String shortName, String urn, String hasShape, VariableElementDto variableDto) {
+    public VariableElementRecord(Long id, String code, String shortName, String urn, String hasShape, StreamMessageStatusEnum kafkaPublicationStreamStatus, VariableElementDto variableDto) {
         setId(id);
         setCode(code);
         setShortName(shortName);
         setUrn(urn);
         setHasShape(hasShape);
+        setStreamMessageStatus(kafkaPublicationStreamStatus);
         setVariableElementDto(variableDto);
     }
 
@@ -38,6 +42,10 @@ public class VariableElementRecord extends ListGridRecord {
 
     public void setHasShape(String value) {
         setAttribute(VariableElementDS.SHAPE_WKT, value);
+    }
+
+    public void setStreamMessageStatus(StreamMessageStatusEnum value) {
+        setAttribute(VariableElementDS.PUBLICATION_STREAM_STATUS, getPublicationStreamStatusIconUrl(value));
     }
 
     public String getCode() {

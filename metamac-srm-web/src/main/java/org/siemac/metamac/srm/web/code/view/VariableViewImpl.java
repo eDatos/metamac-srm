@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.resources.GlobalResources;
+import org.siemac.metamac.srm.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.srm.web.client.widgets.RelatedResourceListItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
 import org.siemac.metamac.srm.web.client.widgets.search.SearchMultiRelatedResourceSimpleItem;
@@ -256,9 +257,10 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
         ListGridField fieldShortName = new ListGridField(VariableElementDS.SHORT_NAME, getConstants().variableElementShortName());
         CustomListGridField hasShape = new CustomListGridField(VariableElementDS.SHAPE_WKT, getConstants().variableElementHasPolygonShape());
         ListGridField urn = new ListGridField(VariableElementDS.URN, getConstants().identifiableArtefactUrn());
+        CustomListGridField publicationStreamStatus = ResourceFieldUtils.getCustomIconListGridField(VariableElementDS.PUBLICATION_STREAM_STATUS, getConstants().codelistStreamMessageStatus());
 
         variableElementListGrid.getListGrid().setAutoFitData(Autofit.VERTICAL);
-        variableElementListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn);
+        variableElementListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn, publicationStreamStatus);
 
         // Remove window
 

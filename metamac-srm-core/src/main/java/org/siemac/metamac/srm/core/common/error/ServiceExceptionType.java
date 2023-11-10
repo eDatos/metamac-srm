@@ -249,5 +249,6 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "stream_message.srm.exception.send_organisation_scheme_message.fails");
     public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CONCEPT_SCHEME_MESSAGE_ERROR                                  = create(
             "stream_message.srm.exception.send_concept_scheme_message.fails");
-
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_VARIABLE_ELEMENT_MESSAGE_ERROR                                = create(
+            "stream_message.srm.exception.send_variable_element_message.fails");
 }

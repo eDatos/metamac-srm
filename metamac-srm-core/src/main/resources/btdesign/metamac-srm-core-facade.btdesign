@@ -751,9 +751,9 @@ Application SrmFacadeCore {
     		removeVariableFromVariableFamily(String variableUrn, String familyUrn) throws MetamacException;
     		
     		"Creates variable element"
-			@VariableElementDto createVariableElement(@VariableElementDto variableElement) throws MetamacException;
+			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElementDto> createVariableElement(@VariableElementDto variableElement) throws MetamacException;
 			"Updates variable element"
-			@VariableElementDto updateVariableElement(@VariableElementDto variableElement) throws MetamacException;
+			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElementDto> updateVariableElement(@VariableElementDto variableElement) throws MetamacException;
     		"Retrieves variable element by urn"
     		@VariableElementDto retrieveVariableElementByUrn(String urn) throws MetamacException;
     		"Finds variable elements by criteria"

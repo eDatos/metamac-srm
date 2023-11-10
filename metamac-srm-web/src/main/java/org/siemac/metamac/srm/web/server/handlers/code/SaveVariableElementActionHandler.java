@@ -1,13 +1,21 @@
 package org.siemac.metamac.srm.web.server.handlers.code;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
+import org.siemac.metamac.srm.web.server.rest.NoticesRestInternalFacade;
+import org.siemac.metamac.srm.web.server.utils.StreamUtils;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementResult;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
 import org.siemac.metamac.web.common.server.handlers.SecurityActionHandler;
 import org.siemac.metamac.web.common.server.utils.WebExceptionUtils;
+import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +25,10 @@ import com.gwtplatform.dispatch.shared.ActionException;
 public class SaveVariableElementActionHandler extends SecurityActionHandler<SaveVariableElementAction, SaveVariableElementResult> {
 
     @Autowired
-    private SrmCoreServiceFacade srmCoreServiceFacade;
+    private SrmCoreServiceFacade      srmCoreServiceFacade;
+
+    @Autowired
+    private NoticesRestInternalFacade noticesRestInternalFacade;
 
     public SaveVariableElementActionHandler() {
         super(SaveVariableElementAction.class);
@@ -27,15 +38,25 @@ public class SaveVariableElementActionHandler extends SecurityActionHandler<Save
     public SaveVariableElementResult executeSecurityAction(SaveVariableElementAction action) throws ActionException {
         try {
             VariableElementDto variableElementToSave = action.getVariableElementDto();
-            VariableElementDto savedVariableElementDto = null;
+            ResourceVersionPublicationResult<VariableElementDto> variableElementResult = null;
+            List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+            List<VariableElementDto> variableElementsDto = new ArrayList<VariableElementDto>();
+
             if (variableElementToSave.getId() == null) {
                 // Create
-                savedVariableElementDto = srmCoreServiceFacade.createVariableElement(ServiceContextHolder.getCurrentServiceContext(), variableElementToSave);
+                variableElementResult = srmCoreServiceFacade.createVariableElement(ServiceContextHolder.getCurrentServiceContext(), variableElementToSave);
             } else {
                 // Update
-                savedVariableElementDto = srmCoreServiceFacade.updateVariableElement(ServiceContextHolder.getCurrentServiceContext(), variableElementToSave);
+                variableElementResult = srmCoreServiceFacade.updateVariableElement(ServiceContextHolder.getCurrentServiceContext(), variableElementToSave);
             }
-            return new SaveVariableElementResult(savedVariableElementDto);
+
+            StreamUtils.getResendKafkaVariableElementMessageErrors(variableElementsDto, variableElementResult.getResourceVersion(), variableElementResult, exceptionItems);
+
+            MetamacWebException webExceptions = StreamUtils.retrieveMultipleKafkaSendingErrors(ServiceContextHolder.getCurrentServiceContext(), noticesRestInternalFacade, exceptionItems,
+                    variableElementsDto);
+
+            return new SaveVariableElementResult(variableElementResult.getResourceVersion(), webExceptions);
+
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

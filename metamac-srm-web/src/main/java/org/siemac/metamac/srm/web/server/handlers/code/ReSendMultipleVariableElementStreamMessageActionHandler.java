@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
-import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
 import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.web.server.rest.NoticesRestInternalFacade;
+import org.siemac.metamac.srm.web.server.utils.StreamUtils;
 import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageResult;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
@@ -39,46 +40,51 @@ public class ReSendMultipleVariableElementStreamMessageActionHandler
 
     @Override
     public ReSendMultipleVariableElementsStreamMessageResult executeSecurityAction(ReSendMultipleVariableElementsStreamMessageAction action) throws ActionException {
-
         ServiceContext serviceContext = ServiceContextHolder.getCurrentServiceContext();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<VariableElementDto> variableElementsDto = new ArrayList<VariableElementDto>();
+        List<String> variableElementsUrn = retrieveVariableElementsUrnToSend(serviceContext, action);
 
-        MetamacWebException variableElementStreamMessageException = null;
+        for (String variableElementUrn : variableElementsUrn) {
+            sendVariableElementToKafka(serviceContext, variableElementUrn, variableElementsDto, exceptionItems);
+        }
+
+        MetamacWebException webExceptions = StreamUtils.retrieveMultipleKafkaSendingErrors(serviceContext, noticesRestInternalFacade, exceptionItems, variableElementsDto);
+
+        return new ReSendMultipleVariableElementsStreamMessageResult(webExceptions);
+
+    }
+
+    private void sendVariableElementToKafka(ServiceContext serviceContext, String variableElementUrn, List<VariableElementDto> variableElementsDto, List<MetamacExceptionItem> exceptionItems)
+            throws MetamacWebException {
         try {
-
-            for (String variableElementUrn : action.getUrns()) {
-                VariableElementDto variableElementDto;
-                SendStreamMessageResult result;
-                result = srmCoreServiceFacade.resendUpdatedVariableElement(serviceContext, variableElementUrn);
-                variableElementDto = srmCoreServiceFacade.retrieveVariableElementByUrn(serviceContext, variableElementUrn);
-                getResendKafkaVariableElementMessageErrors(serviceContext, variableElementDto, result, variableElementStreamMessageException);
-            }
-
+            VariableElementDto variableElementDto;
+            SendStreamMessageResult result;
+            result = srmCoreServiceFacade.resendUpdatedVariableElement(serviceContext, variableElementUrn);
+            variableElementDto = srmCoreServiceFacade.retrieveVariableElementByUrn(serviceContext, variableElementUrn);
+            StreamUtils.getResendKafkaVariableElementMessageErrors(variableElementsDto, variableElementDto, result, exceptionItems);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }
-
-        return new ReSendMultipleVariableElementsStreamMessageResult(variableElementStreamMessageException);
     }
 
-    private void getResendKafkaVariableElementMessageErrors(ServiceContext serviceContext, VariableElementDto variableElementDto, SendStreamMessageResult result,
-            MetamacWebException variableElementStreamMessageException) {
-        if (!result.isOk()) {
-            MetamacException e = result.getMainException();
-            List<MetamacExceptionItem> list = new ArrayList<>();
-            for (MetamacException exception : result.getSecondaryExceptions()) {
-                list.addAll(exception.getExceptionItems());
+    private List<String> retrieveVariableElementsUrnToSend(ServiceContext serviceContext, ReSendMultipleVariableElementsStreamMessageAction action) throws MetamacWebException {
+        try {
+            if (action.getUrns() != null && !action.getUrns().isEmpty()) {
+                return action.getUrns();
             }
-            e.getExceptionItems().addAll(list);
+            List<String> variableElementsUrn = new ArrayList<String>();
+            if (action.getVariable() != null && action.getLocale() != null) {
 
-            if (variableElementStreamMessageException == null) {
-                variableElementStreamMessageException = WebExceptionUtils.createMetamacWebException(e);
+                List<VariableElementVisualisationResult> variableElementsByVariable = srmCoreServiceFacade.retrieveVariableElementsByVariable(serviceContext, action.getVariable(), action.getLocale());
+                for (VariableElementVisualisationResult variableElement : variableElementsByVariable) {
+                    variableElementsUrn.add(variableElement.getUrn());
+                }
             }
+            return variableElementsUrn;
 
-            try {
-                noticesRestInternalFacade.createStreamMessageErrorNotification(serviceContext, variableElementDto, TypeExternalArtefactsEnum.VARIABLE_ELEMENT);
-            } catch (MetamacWebException noticeException) {
-                variableElementStreamMessageException.getWebExceptionItems().addAll(noticeException.getWebExceptionItems());
-            }
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
         }
     }
 }

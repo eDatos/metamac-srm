@@ -174,12 +174,18 @@ public class VariableElementPresenter extends Presenter<VariableElementPresenter
             @Override
             public void onWaitSuccess(SaveVariableElementResult result) {
                 VariableElementPresenter.this.variableElementDto = result.getSavedVariableElementDto();
-                fireSuccessMessage(getMessages().variableElementSaved());
-                VariableElementDto variableElementDto = result.getSavedVariableElementDto();
-                getView().setVariableElement(variableElementDto);
+
+                if (result.getNotificationException() != null) {
+                    ShowMessageEvent.fireWarningMessageWithError(VariableElementPresenter.this, getMessages().variableElementSavedWithKafkaSendingError(), result.getNotificationException());
+                } else {
+                    fireSuccessMessage(getMessages().variableElementSaved());
+                }
+
+                VariableElementDto variableElementDtoSaved = result.getSavedVariableElementDto();
+                getView().setVariableElement(variableElementDtoSaved);
 
                 // Update URL
-                PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeVariableElementPlaceRequest(result.getSavedVariableElementDto().getCode());
+                PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeVariableElementPlaceRequest(variableElementDtoSaved.getCode());
                 placeManager.updateHistory(placeRequest, true);
             }
         });

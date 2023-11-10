@@ -34,6 +34,7 @@ public class ExternalItemUtils {
         resourceTypeKindMappings.put(TypeExternalArtefactsEnum.DATA_PROVIDER_SCHEME, SrmRestConstants.KIND_DATA_PROVIDER_SCHEME);
         resourceTypeKindMappings.put(TypeExternalArtefactsEnum.AGENCY_SCHEME, SrmRestConstants.KIND_AGENCY_SCHEME);
         resourceTypeKindMappings.put(TypeExternalArtefactsEnum.CATEGORY_SCHEME, SrmRestConstants.KIND_CATEGORY_SCHEME);
+        resourceTypeKindMappings.put(TypeExternalArtefactsEnum.VARIABLE_ELEMENT, SrmRestConstants.KIND_VARIABLE_ELEMENT);
 
         resourceTypeExceptionParameterMappings.put(TypeExternalArtefactsEnum.CONCEPT_SCHEME, ServiceExceptionParameters.CONCEPT_SCHEME);
         resourceTypeExceptionParameterMappings.put(TypeExternalArtefactsEnum.CODELIST, ServiceExceptionParameters.CODELIST);
@@ -43,6 +44,7 @@ public class ExternalItemUtils {
         resourceTypeExceptionParameterMappings.put(TypeExternalArtefactsEnum.DATA_CONSUMER_SCHEME, ServiceExceptionParameters.ORGANISATION_SCHEME);
         resourceTypeExceptionParameterMappings.put(TypeExternalArtefactsEnum.DATA_PROVIDER_SCHEME, ServiceExceptionParameters.ORGANISATION_SCHEME);
         resourceTypeExceptionParameterMappings.put(TypeExternalArtefactsEnum.CATEGORY_SCHEME, ServiceExceptionParameters.CATEGORY_SCHEME);
+        resourceTypeExceptionParameterMappings.put(TypeExternalArtefactsEnum.VARIABLE_ELEMENT, ServiceExceptionParameters.VARIABLE_ELEMENT);
     }
 
     public static TypeExternalArtefactsEnum getOrganisationSchemeType(OrganisationSchemeTypeEnum type) {

@@ -40,6 +40,7 @@ import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
+import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
@@ -767,7 +768,7 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
             @Override
             public void onClick(ClickEvent event) {
                 getUiHandlers().resendUpdatedVariableElementsKafkaMessage(
-                        org.siemac.metamac.srm.web.code.utils.CommonUtils.getUrnsFromSelectedVariableElements(variableElementListGrid.getListGrid().getSelectedRecords()));
+                        org.siemac.metamac.srm.web.code.utils.CommonUtils.getUrnsFromSelectedVariableElements(variableElementListGrid.getListGrid().getSelectedRecords()), null, null);
             }
         });
         return resendKafkaMessageButton;
@@ -780,8 +781,7 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().resendUpdatedVariableElementsKafkaMessage(
-                        org.siemac.metamac.srm.web.code.utils.CommonUtils.getUrnsFromSelectedVariableElements(variableElementListGrid.getListGrid().getRecords()));
+                getUiHandlers().resendUpdatedVariableElementsKafkaMessage(null, variableDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale());
             }
         });
         return resendKafkaMessageButton;

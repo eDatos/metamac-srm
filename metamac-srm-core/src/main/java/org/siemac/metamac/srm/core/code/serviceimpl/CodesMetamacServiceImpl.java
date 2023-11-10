@@ -2221,7 +2221,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     // ------------------------------------------------------------------------------------
 
     @Override
-    public VariableElement createVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
+    public ResourceVersionPublicationResult<VariableElement> createVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2248,11 +2248,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElement);
 
-        return variableElement;
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), variableElement);
+
     }
 
     @Override
-    public VariableElement updateVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
+    public ResourceVersionPublicationResult<VariableElement> updateVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2280,7 +2281,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElementResult);
 
-        return variableElementResult;
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), variableElementResult);
 
     }
 

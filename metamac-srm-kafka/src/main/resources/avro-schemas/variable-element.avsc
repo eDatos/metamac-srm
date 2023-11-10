@@ -49,18 +49,6 @@
         "name": "longitud",
         "type": ["null", "double"]
       },
-      {
-        "name": "renderingColor",
-        "type": ["null", "string"]
-      },
-      {
-        "name": "shapeGeojson",
-        "type": ["null", "string"]
-      },
-      {
-        "name": "shapeWkt",
-        "type": ["null", "string"]
-      },
       {"name" : "validFrom", "type" : ["null", "DatetimeAvro"]},
       {"name" : "validTo", "type" : ["null", "DatetimeAvro"]}
     ]

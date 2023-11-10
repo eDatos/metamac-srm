@@ -14,6 +14,12 @@ public class ReSendMultipleVariableElementsStreamMessage {
     @In(1)
     List<String>        urns;
 
+    @In(2)
+    String              variable;
+
+    @In(3)
+    String              locale;
+
     @Out(1)
     MetamacWebException notificationException;
 }

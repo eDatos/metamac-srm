@@ -301,21 +301,22 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
     }
 
     @Override
-    public void resendUpdatedVariableElementsKafkaMessage(List<String> urns) {
-        dispatcher.execute(new ReSendMultipleVariableElementsStreamMessageAction(urns), new WaitingAsyncCallbackHandlingError<ReSendMultipleVariableElementsStreamMessageResult>(this) {
+    public void resendUpdatedVariableElementsKafkaMessage(List<String> urns, String variableUrn, String locale) {
+        dispatcher.execute(new ReSendMultipleVariableElementsStreamMessageAction(urns, variableUrn, locale),
+                new WaitingAsyncCallbackHandlingError<ReSendMultipleVariableElementsStreamMessageResult>(this) {
 
-            @Override
-            public void onWaitSuccess(ReSendMultipleVariableElementsStreamMessageResult result) {
-                retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
+                    @Override
+                    public void onWaitSuccess(ReSendMultipleVariableElementsStreamMessageResult result) {
+                        retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
 
-                if (result.getNotificationException() != null) {
-                    ShowMessageEvent.fireWarningMessageWithError(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessageError(), result.getNotificationException());
-                } else {
-                    ShowMessageEvent.fireSuccessMessage(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessagePublished());
-                }
+                        if (result.getNotificationException() != null) {
+                            ShowMessageEvent.fireWarningMessageWithError(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessageError(), result.getNotificationException());
+                        } else {
+                            ShowMessageEvent.fireSuccessMessage(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessagePublished());
+                        }
 
-            }
-        });
+                    }
+                });
     }
 
     @Override

@@ -251,9 +251,9 @@ Application CodesMetamac {
     		// VARIABLE ELEMENTS
     		
     		"Creates variable element"
-			@VariableElement createVariableElement(@VariableElement variableElement) throws MetamacException;
+			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElement> createVariableElement(@VariableElement variableElement) throws MetamacException;
 			"Updates variable element"
-			@VariableElement updateVariableElement(@VariableElement variableElement) throws MetamacException;
+			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElement> updateVariableElement(@VariableElement variableElement) throws MetamacException;
     		"Retrieves variable element by urn"
     		@VariableElement retrieveVariableElementByUrn(String urn) throws MetamacException;
     		"Finds variable elements by criteria"

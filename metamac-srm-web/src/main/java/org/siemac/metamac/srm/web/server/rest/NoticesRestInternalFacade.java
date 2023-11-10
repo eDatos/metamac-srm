@@ -1,5 +1,7 @@
 package org.siemac.metamac.srm.web.server.rest;
 
+import java.util.List;
+
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
@@ -14,5 +16,5 @@ public interface NoticesRestInternalFacade {
     void createInternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException;
     void createExternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException;
     void createStreamMessageErrorNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException;
-    void createStreamMessageErrorNotification(ServiceContext serviceContext, VariableElementDto variableElementDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException;
+    void createStreamMessageErrorNotification(ServiceContext serviceContext, List<VariableElementDto> variableElementsDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException;
 }

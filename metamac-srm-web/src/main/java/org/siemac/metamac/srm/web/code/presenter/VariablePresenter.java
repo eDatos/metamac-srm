@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
+import org.siemac.metamac.core.common.util.shared.BooleanUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.core.code.dto.VariableDto;
@@ -117,7 +118,7 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
 
         void setCodelistsForVariableElementGeographicalGranularity(GetRelatedResourcesResult result);
         void setCodesForVariableElementGeographicalGranularity(GetRelatedResourcesResult result);
-
+        void showInformationMessage(String title, String message);
         void clearSearchSection();
     }
 
@@ -309,12 +310,16 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
                     public void onWaitSuccess(ReSendMultipleVariableElementsStreamMessageResult result) {
                         retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
 
-                        if (result.getNotificationException() != null) {
-                            ShowMessageEvent.fireWarningMessageWithError(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessageError(), result.getNotificationException());
+                        if (BooleanUtils.isTrue(result.getTaskInBackground())) {
+                            getView().showInformationMessage(getMessages().variableElementReSendStreamMessageInBackground(), getMessages().variableElementReSendStreamMessageInProgressBackground());
                         } else {
-                            ShowMessageEvent.fireSuccessMessage(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessagePublished());
+                            if (result.getNotificationException() != null) {
+                                ShowMessageEvent.fireWarningMessageWithError(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessageError(),
+                                        result.getNotificationException());
+                            } else {
+                                ShowMessageEvent.fireSuccessMessage(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessagePublished());
+                            }
                         }
-
                     }
                 });
     }

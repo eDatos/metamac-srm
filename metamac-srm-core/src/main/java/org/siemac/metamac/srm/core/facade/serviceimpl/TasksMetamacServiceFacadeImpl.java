@@ -100,6 +100,12 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     }
 
     @Override
+    public void processResendkafkaMessageVariableElementJob(ServiceContext ctx, String jobKey, String user, String variableUrn, String localeLanguage) throws MetamacException {
+        getCodesMetamacService().notifyVariableElementPublicationByVariable(ctx, user, variableUrn, localeLanguage);
+        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, null);
+    }
+
+    @Override
     public void markTaskAsFailed(ServiceContext ctx, String job, Exception exception) throws MetamacException {
         getTasksMetamacService().markTaskAsFailed(ctx, job, exception);
     }

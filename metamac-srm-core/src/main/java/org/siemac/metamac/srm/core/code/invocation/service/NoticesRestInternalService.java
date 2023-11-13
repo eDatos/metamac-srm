@@ -1,8 +1,12 @@
 package org.siemac.metamac.srm.core.code.invocation.service;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.code.domain.VariableElement;
 
 public interface NoticesRestInternalService {
 
@@ -14,5 +18,8 @@ public interface NoticesRestInternalService {
     public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, Serializable... successMessageParameters);
 
     public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, MetamacException exception, Serializable... successMessageParameters);
+
+    public void createVariableElementStreamMessageErrorNotification(ServiceContext serviceContext, String user, List<VariableElement> variableElements, TypeExternalArtefactsEnum resourceType)
+            throws MetamacException;
 
 }

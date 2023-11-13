@@ -4356,4 +4356,14 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         return getCodesMetamacService().notifyVariableElementPublication(ctx, variableElement);
     }
 
+    @Override
+    public TaskInfo publishVariableElementInBackground(ServiceContext ctx, String variableUrn, String localeLanguage) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canResendVariableElementKafkaMessage(ctx);
+
+        // Publish
+        return getCodesMetamacService().publishVariableElementInBackground(ctx, variableUrn, localeLanguage);
+
+    }
+
 }

@@ -58,6 +58,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
+import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
@@ -92,6 +93,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.code.serviceimpl.utils.CodesMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.code.serviceimpl.utils.CodesUtils;
@@ -110,6 +112,7 @@ import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.srm.core.invocation.utils.StreamUtils;
 import org.siemac.metamac.srm.core.normalisation.DiceLuceneRamAproxStringMatch;
 import org.siemac.metamac.srm.core.normalisation.MatchResult;
 import org.siemac.metamac.srm.core.notices.serviceimpl.utils.NoticesCallbackMetamacImpl;
@@ -127,6 +130,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactRepository;
@@ -233,6 +241,14 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
     private VariableElementStreamMessagingCallbackImpl variableElementStreamMessagingCallback;
+
+    @Autowired
+    private PlatformTransactionManager                 platformTransactionManager;
+
+    /*
+     * @Autowired
+     * private NoticesRestInternalService noticesRestInternalService;
+     */
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                            entityManager;
@@ -4689,7 +4705,77 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public TaskInfo publishVariableElementInBackground(ServiceContext ctx, String variableUrn, String localeLanguage) throws MetamacException {
+        TaskInfo kafkaTasksInfo = new TaskInfo();
+
+        String jobKey = tasksMetamacService.plannifyResendKafkaVariableElementsMessages(ctx, variableUrn, localeLanguage);
+
+        kafkaTasksInfo.setIsPlannedInBackground(Boolean.TRUE);
+        kafkaTasksInfo.setJobKey(jobKey);
+
+        return kafkaTasksInfo;
+    }
+
+    @Override
     public SendStreamMessageResult notifyVariableElementPublication(ServiceContext ctx, VariableElement message) throws MetamacException {
         return streamMessagingService.sendMessage(message, variableElementStreamMessagingCallback);
+    }
+
+    @Override
+    public void notifyVariableElementPublicationByVariable(ServiceContext ctx, String user, String variableUrn, String localeLanguage) throws MetamacException {
+
+        List<VariableElementVisualisationResult> variableElementsByVariable = retrieveVariableElementsByVariable(ctx, variableUrn, localeLanguage);
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<VariableElement> variableElements = new ArrayList<VariableElement>();
+
+        for (VariableElementVisualisationResult variableElementResult : variableElementsByVariable) {
+
+            VariableElement variableElement = this.retrieveVariableElementByUrn(variableElementResult.getUrn());
+            SendStreamMessageResult result = getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<SendStreamMessageResult>() {
+
+                @Override
+                protected SendStreamMessageResult doInMetamacTransaction(TransactionStatus status) {
+                    try {
+                        return notifyVariableElementPublication(ctx, variableElement);
+                    } catch (MetamacException e) {
+                        MetamacExceptionItem exceptionVariableElement = new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_VARIABLE_ELEMENT_MESSAGE_ERROR,
+                                variableElement.getIdentifiableArtefact().getCode());
+                        exceptionVariableElement.getExceptionItems().addAll(e.getExceptionItems());
+                        exceptionItems.add(exceptionVariableElement);
+                        variableElements.add(variableElement);
+                        return null;
+                    }
+                }
+            });
+
+            StreamUtils.getResendKafkaVariableElementMessageErrors(variableElements, variableElement, result, exceptionItems);
+        }
+
+        StreamUtils.retrieveMultipleKafkaSendingErrors(ctx, getNoticesRestInternalService(), user, exceptionItems, variableElements, variableUrn);
+
+    }
+
+    private TransactionTemplate getTransactionTemplate() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        return transactionTemplate;
+    }
+
+    abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
+
+        @Override
+        public final T doInTransaction(TransactionStatus status) {
+            try {
+                return doInMetamacTransaction(status);
+            } catch (MetamacException e) {
+                throw new RuntimeException("Error in transactional method", e);
+            }
+        }
+
+        protected abstract T doInMetamacTransaction(TransactionStatus status) throws MetamacException;
+    }
+
+    private NoticesRestInternalService getNoticesRestInternalService() {
+        return (NoticesRestInternalService) ApplicationContextProvider.getApplicationContext().getBean(NoticesRestInternalService.BEAN_ID);
     }
 }

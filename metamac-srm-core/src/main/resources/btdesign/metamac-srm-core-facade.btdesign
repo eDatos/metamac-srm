@@ -788,6 +788,9 @@ Application SrmFacadeCore {
     		String exportVariableElementsTsv(String variableUrn) throws MetamacException;
     		"Resend a updated variable element"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendUpdatedVariableElement(String variableElementUrn) throws MetamacException;
+            "Resend all variable elements by variablUrn"
+            TaskInfo publishVariableElementInBackground(String variableUrn, String localeLanguage) throws MetamacException;
+            
     		
     		    		
     		"ENI scheme catalogs"
@@ -865,6 +868,8 @@ Application SrmFacadeCore {
     		TaskImportationInfo processImportVariableElementsPoints(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
     		"Perform a merge with temporal codelist"
 			processPublishInternallyCodelist(String urnToCopy, boolean forceLatestFinal, String jobKey) throws MetamacException;
+			"Perform kafka variable element message sending"
+			processResendkafkaMessageVariableElementJob(String jobKey, String user, String variableUrn, String localeLanguage) throws MetamacException;
 			
 			// Schedule Job resend kafka messages for all resources
     		scheduleResendKafkaResourcesMessageJob();  		

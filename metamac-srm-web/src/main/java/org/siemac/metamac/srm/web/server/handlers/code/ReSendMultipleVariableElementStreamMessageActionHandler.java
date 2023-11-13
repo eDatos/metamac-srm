@@ -21,6 +21,7 @@ import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
 import com.gwtplatform.dispatch.shared.ActionException;
 
 @Component
@@ -41,18 +42,41 @@ public class ReSendMultipleVariableElementStreamMessageActionHandler
     @Override
     public ReSendMultipleVariableElementsStreamMessageResult executeSecurityAction(ReSendMultipleVariableElementsStreamMessageAction action) throws ActionException {
         ServiceContext serviceContext = ServiceContextHolder.getCurrentServiceContext();
+        List<String> variableElementsUrn = retrieveVariableElementsUrnToSend(serviceContext, action);
+        Boolean isTaskInBackground = false;
+        MetamacWebException webExceptions = null;
+
+        if (mustExecuteTaskInBackground(variableElementsUrn)) {
+            executeTaskInBackground(serviceContext, action.getVariable(), action.getLocale());
+            isTaskInBackground = true;
+        } else {
+
+            webExceptions = executeTaskAdHoc(serviceContext, variableElementsUrn);
+
+        }
+        return new ReSendMultipleVariableElementsStreamMessageResult(webExceptions, isTaskInBackground);
+    }
+
+    private void executeTaskInBackground(ServiceContext serviceContext, String variableUrn, String locale) throws MetamacWebException {
+        try {
+            srmCoreServiceFacade.publishVariableElementInBackground(serviceContext, variableUrn, locale);
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+    private MetamacWebException executeTaskAdHoc(ServiceContext serviceContext, List<String> variableElementsUrn) throws MetamacWebException {
         List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
         List<VariableElementDto> variableElementsDto = new ArrayList<VariableElementDto>();
-        List<String> variableElementsUrn = retrieveVariableElementsUrnToSend(serviceContext, action);
-
         for (String variableElementUrn : variableElementsUrn) {
             sendVariableElementToKafka(serviceContext, variableElementUrn, variableElementsDto, exceptionItems);
         }
 
-        MetamacWebException webExceptions = StreamUtils.retrieveMultipleKafkaSendingErrors(serviceContext, noticesRestInternalFacade, exceptionItems, variableElementsDto);
+        return StreamUtils.retrieveMultipleKafkaSendingErrors(serviceContext, noticesRestInternalFacade, exceptionItems, variableElementsDto);
+    }
 
-        return new ReSendMultipleVariableElementsStreamMessageResult(webExceptions);
-
+    private boolean mustExecuteTaskInBackground(List<String> variableElementsUrn) {
+        return !variableElementsUrn.isEmpty() && variableElementsUrn.size() > SdmxConstants.ITEMS_LIMIT_TO_EXECUTE_TASK_IN_BACKGROUND;
     }
 
     private void sendVariableElementToKafka(ServiceContext serviceContext, String variableElementUrn, List<VariableElementDto> variableElementsDto, List<MetamacExceptionItem> exceptionItems)

@@ -1015,4 +1015,10 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
             }
         };
     }
+
+    @Override
+    public void showInformationMessage(String title, String message) {
+        InformationWindow informationWindow = new InformationWindow(title, message);
+        informationWindow.show();
+    }
 }

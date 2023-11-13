@@ -22,4 +22,7 @@ public class ReSendMultipleVariableElementsStreamMessage {
 
     @Out(1)
     MetamacWebException notificationException;
+
+    @Out(2)
+    Boolean             taskInBackground;
 }

@@ -517,29 +517,16 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return versioningResult;
     }
 
-    private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, List<MetamacExceptionItem> exceptions, ConceptMetamac concept, ConceptSchemeVersionMetamac conceptSchemeTemporalVersion)
-            throws MetamacException {
+    private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, List<MetamacExceptionItem> exceptions, ConceptMetamac concept, ConceptMetamac conceptTemporal) throws MetamacException {
         String conceptUrn = concept.getNameableArtefact().getUrn();
-        String conceptTemporalUrn = GeneratorUrnUtils.makeUrnAsTemporal(conceptUrn);
-        ConceptMetamac conceptTemporal = getConceptFromConceptSchemeVersionByConceptUrn(conceptSchemeTemporalVersion, conceptTemporalUrn);
         if ((conceptTemporal.getVariable() != null && concept.getVariable() == null) || (conceptTemporal.getVariable() == null && concept.getVariable() != null)
                 || (conceptTemporal.getVariable() != null && concept.getVariable() != null
                         && !conceptTemporal.getVariable().getNameableArtefact().getUrn().equals(concept.getVariable().getNameableArtefact().getUrn()))) {
             boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, conceptUrn);
             if (isUsed) {
-                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IN_USED, conceptUrn));
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IS_USED, conceptUrn));
             }
         }
-    }
-
-    private ConceptMetamac getConceptFromConceptSchemeVersionByConceptUrn(ConceptSchemeVersionMetamac conceptSchemeVersion, String conceptUrn) {
-        for (Item item : conceptSchemeVersion.getItems()) {
-            ConceptMetamac concept = (ConceptMetamac) item;
-            if (concept.getNameableArtefact().getUrn().equals(conceptUrn)) {
-                return concept;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -622,7 +609,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 concept.addRoleConcept(conceptRole);
             }
 
-            checkIfConceptVariableUsedIsChanged(ctx, exceptions, concept, conceptSchemeTemporalVersion);
+            checkIfConceptVariableUsedIsChanged(ctx, exceptions, concept, conceptTemp);
             concept.setVariable(conceptTemp.getVariable());
 
             // Extends : can copy "extend" because they are concepts in another concept scheme

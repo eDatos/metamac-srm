@@ -518,13 +518,12 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
     }
 
     private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, List<MetamacExceptionItem> exceptions, ConceptMetamac concept, ConceptMetamac conceptTemporal) throws MetamacException {
-        String conceptUrn = concept.getNameableArtefact().getUrn();
-        if ((conceptTemporal.getVariable() != null && concept.getVariable() == null) || (conceptTemporal.getVariable() == null && concept.getVariable() != null)
-                || (conceptTemporal.getVariable() != null && concept.getVariable() != null
-                        && !conceptTemporal.getVariable().getNameableArtefact().getUrn().equals(concept.getVariable().getNameableArtefact().getUrn()))) {
-            boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, conceptUrn);
+        String urnTemporal = conceptTemporal.getVariable() != null ? conceptTemporal.getVariable().getNameableArtefact().getUrn() : null;
+        String urn = concept.getVariable() != null ? concept.getVariable().getNameableArtefact().getUrn() : null;
+        if (urnTemporal.equals(urn)) {
+            boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, urn);
             if (isUsed) {
-                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IS_USED, conceptUrn));
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IS_USED, urn));
             }
         }
     }

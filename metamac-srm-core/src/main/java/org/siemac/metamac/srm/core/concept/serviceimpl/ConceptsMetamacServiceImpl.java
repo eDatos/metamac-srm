@@ -75,6 +75,7 @@ import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositi
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
@@ -189,6 +190,9 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
     @Autowired
     private ExternalItemRepository                   externalItemRepository;
+
+    @Autowired
+    private DataStructureDefinitionMetamacService    dataStructureDefinitionMetamacService;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                          entityManager;
@@ -513,6 +517,35 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return versioningResult;
     }
 
+    private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptSchemeVersionMetamac conceptSchemeTemporalVersion)
+            throws MetamacException {
+        List<MetamacExceptionItem> exceptions = new ArrayList<>();
+        for (Item item : conceptSchemeTemporalVersion.getItems()) {
+            ConceptMetamac conceptTemporal = (ConceptMetamac) item;
+            String conceptUrn = GeneratorUrnUtils.makeUrnFromTemporal(conceptTemporal.getNameableArtefact().getUrn());
+            ConceptMetamac concept = getConceptFromConceptSchemeVersionByConceptUrn(conceptSchemeVersion, conceptUrn);
+            if ((conceptTemporal.getVariable() != null && concept.getVariable() == null) || (conceptTemporal.getVariable() == null && concept.getVariable() != null)
+                    || (conceptTemporal.getVariable() != null && concept.getVariable() != null
+                            && !conceptTemporal.getVariable().getNameableArtefact().getUrn().equals(concept.getVariable().getNameableArtefact().getUrn()))) {
+                boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, conceptUrn);
+                if (isUsed) {
+                    exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IN_USED, conceptUrn));
+                }
+            }
+        }
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    private ConceptMetamac getConceptFromConceptSchemeVersionByConceptUrn(ConceptSchemeVersionMetamac conceptSchemeVersion, String conceptUrn) {
+        for (Item item : conceptSchemeVersion.getItems()) {
+            ConceptMetamac concept = (ConceptMetamac) item;
+            if (concept.getNameableArtefact().getUrn().equals(conceptUrn)) {
+                return concept;
+            }
+        }
+        return null;
+    }
+
     @Override
     public ConceptSchemeVersionMetamac mergeTemporalVersion(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeTemporalVersion) throws MetamacException {
         // Check if is a temporal version
@@ -522,6 +555,8 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         // Load original version
         ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, GeneratorUrnUtils.makeUrnFromTemporal(conceptSchemeTemporalVersion.getMaintainableArtefact().getUrn()));
+
+        checkIfConceptVariableUsedIsChanged(ctx, conceptSchemeVersion, conceptSchemeTemporalVersion);
 
         // Inherit InternationalStrings
         BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToItemSchemeVersionWithoutItems(conceptSchemeVersion, conceptSchemeTemporalVersion, internationalStringRepository);

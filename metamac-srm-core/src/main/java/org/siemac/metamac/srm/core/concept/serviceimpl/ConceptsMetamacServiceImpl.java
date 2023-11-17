@@ -517,23 +517,19 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return versioningResult;
     }
 
-    private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptSchemeVersionMetamac conceptSchemeTemporalVersion)
+    private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, List<MetamacExceptionItem> exceptions, ConceptMetamac concept, ConceptSchemeVersionMetamac conceptSchemeTemporalVersion)
             throws MetamacException {
-        List<MetamacExceptionItem> exceptions = new ArrayList<>();
-        for (Item item : conceptSchemeTemporalVersion.getItems()) {
-            ConceptMetamac conceptTemporal = (ConceptMetamac) item;
-            String conceptUrn = GeneratorUrnUtils.makeUrnFromTemporal(conceptTemporal.getNameableArtefact().getUrn());
-            ConceptMetamac concept = getConceptFromConceptSchemeVersionByConceptUrn(conceptSchemeVersion, conceptUrn);
-            if ((conceptTemporal.getVariable() != null && concept.getVariable() == null) || (conceptTemporal.getVariable() == null && concept.getVariable() != null)
-                    || (conceptTemporal.getVariable() != null && concept.getVariable() != null
-                            && !conceptTemporal.getVariable().getNameableArtefact().getUrn().equals(concept.getVariable().getNameableArtefact().getUrn()))) {
-                boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, conceptUrn);
-                if (isUsed) {
-                    exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IN_USED, conceptUrn));
-                }
+        String conceptUrn = concept.getNameableArtefact().getUrn();
+        String conceptTemporalUrn = GeneratorUrnUtils.makeUrnAsTemporal(conceptUrn);
+        ConceptMetamac conceptTemporal = getConceptFromConceptSchemeVersionByConceptUrn(conceptSchemeTemporalVersion, conceptTemporalUrn);
+        if ((conceptTemporal.getVariable() != null && concept.getVariable() == null) || (conceptTemporal.getVariable() == null && concept.getVariable() != null)
+                || (conceptTemporal.getVariable() != null && concept.getVariable() != null
+                        && !conceptTemporal.getVariable().getNameableArtefact().getUrn().equals(concept.getVariable().getNameableArtefact().getUrn()))) {
+            boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, conceptUrn);
+            if (isUsed) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IN_USED, conceptUrn));
             }
         }
-        ExceptionUtils.throwIfException(exceptions);
     }
 
     private ConceptMetamac getConceptFromConceptSchemeVersionByConceptUrn(ConceptSchemeVersionMetamac conceptSchemeVersion, String conceptUrn) {
@@ -556,8 +552,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         // Load original version
         ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, GeneratorUrnUtils.makeUrnFromTemporal(conceptSchemeTemporalVersion.getMaintainableArtefact().getUrn()));
 
-        checkIfConceptVariableUsedIsChanged(ctx, conceptSchemeVersion, conceptSchemeTemporalVersion);
-
         // Inherit InternationalStrings
         BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToItemSchemeVersionWithoutItems(conceptSchemeVersion, conceptSchemeTemporalVersion, internationalStringRepository);
 
@@ -572,7 +566,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         Map<String, Item> temporalItemMap = SrmServiceUtils.createMapOfItemsByOriginalUrn(conceptSchemeTemporalVersion.getItems());
         List<ItemResult> conceptsFoundEfficiently = getConceptMetamacRepository().findConceptsByConceptSchemeUnordered(conceptSchemeTemporalVersion.getId(), ItemMetamacResultSelection.ALL);
         Map<String, ItemResult> conceptsFoundEfficientlyByUrn = SdmxSrmUtils.createMapOfItemsResultByUrn(conceptsFoundEfficiently);
-
+        List<MetamacExceptionItem> exceptions = new ArrayList<>();
         for (Item item : conceptSchemeVersion.getItems()) {
             ConceptMetamac concept = (ConceptMetamac) item;
             ConceptMetamac conceptTemp = (ConceptMetamac) temporalItemMap.get(item.getNameableArtefact().getUrn());
@@ -628,6 +622,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 concept.addRoleConcept(conceptRole);
             }
 
+            checkIfConceptVariableUsedIsChanged(ctx, exceptions, concept, conceptSchemeTemporalVersion);
             concept.setVariable(conceptTemp.getVariable());
 
             // Extends : can copy "extend" because they are concepts in another concept scheme
@@ -638,6 +633,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
             concept.removeAllRelatedConcepts(); // Clean related concepts, at the final the new related concepts will be added
         }
+        ExceptionUtils.throwIfException(exceptions);
 
         // Versioning related concepts
         for (Item conceptToCopyRelatedConcepts : conceptSchemeTemporalVersion.getItems()) {

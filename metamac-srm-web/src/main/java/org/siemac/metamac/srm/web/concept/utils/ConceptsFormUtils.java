@@ -38,12 +38,6 @@ public class ConceptsFormUtils {
     // CONCEPTS
     // ---------------------------------------------------------------------------------------------
 
-    // VARIABLE
-
-    public static boolean canConceptVariableBeEdited(ConceptSchemeMetamacDto conceptSchemeDto) {
-        return (conceptSchemeDto != null);
-    }
-
     // CODE
 
     public static boolean canConceptCodeBeEdited(ConceptSchemeMetamacDto conceptSchemeDto) {

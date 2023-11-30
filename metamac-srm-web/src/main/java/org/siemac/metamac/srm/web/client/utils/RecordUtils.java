@@ -9,6 +9,8 @@ import org.siemac.metamac.srm.core.base.dto.ItemSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.base.dto.LifeCycleBasicDto;
 import org.siemac.metamac.srm.core.base.dto.MaintainableArtefactMetamacBasicDto;
 import org.siemac.metamac.srm.core.base.dto.StructureMetamacBasicDto;
+import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
+import org.siemac.metamac.srm.web.category.model.record.EniSchemaRecord;
 import org.siemac.metamac.srm.web.client.model.record.AnnotationTypeRecord;
 import org.siemac.metamac.srm.web.client.model.record.CategorisationRecord;
 import org.siemac.metamac.srm.web.client.model.record.ItemRecord;
@@ -116,6 +118,23 @@ public class RecordUtils {
 
     public static AnnotationTypeRecord getAnnotationTypeRecord(AnnotationTypeDto dto) {
         AnnotationTypeRecord record = new AnnotationTypeRecord(dto.getUuid(), getLocalisedString(dto.getTitle()), dto.getCode(), dto.isExternalResource(), dto);
+        return record;
+    }
+
+    public static EniSchemaRecord[] getEniSchemaRecords(List<EniSchemaCatalogDto> eniSchemaDtos) {
+        EniSchemaRecord[] records = new EniSchemaRecord[eniSchemaDtos.size()];
+        for (int i = 0; i < eniSchemaDtos.size(); i++) {
+            MasterTablesUtils.getEniSchemaCatalogHashMap(eniSchemaDtos);
+            records[i] = getEniSchemaRecord(eniSchemaDtos.get(i));
+        }
+        return records;
+    }
+
+    public static EniSchemaRecord getEniSchemaRecord(EniSchemaCatalogDto eniSchemaDto) {
+        EniSchemaRecord record = new EniSchemaRecord();
+        record.setIdentifier(eniSchemaDto.getIdentifier());
+        record.setValue(MasterTablesUtils.getEniSchemaDescription(eniSchemaDto));
+        record.setEniSchemaDto(eniSchemaDto);
         return record;
     }
 }

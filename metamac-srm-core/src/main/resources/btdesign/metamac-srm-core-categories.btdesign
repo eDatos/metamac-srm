@@ -177,9 +177,9 @@ Application CategoriesMetamac {
 			databaseTable="TB_M_CATEGORIES"
 			hint="idSequence=M_CATEGORIES"	
 
-			"Metadata ENI SCHEMA"
-			- @EniSchemaCatalog eniSchema nullable cascade="none" databaseColumn="ENI_SCHEMA_FK";
 			- @CategoryElement categoryElement nullable cascade="none" fetch="lazy" databaseColumn="CATEGORY_ELEMENT_FK"  <-> codes;
+			"Metadata ENI SCHEMA"
+			- Set<@EniSchemaCatalog> eniSchemas cascade="none" fetch="lazy" databaseJoinTable="TB_CAT_ENI_SCHEMA";
 			
 			Repository CategoryMetamacRepository {
 				save;

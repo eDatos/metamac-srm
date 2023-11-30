@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.rest.api.constants.RestApiConstants.WILDCARD_ALL;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesAsserts.assertEqualsCategoryElementResult;
+import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesAsserts.assertEqualsEniSchemaResult;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesAsserts.assertEqualsResource;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategorisation;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategory;
@@ -211,7 +212,7 @@ public class CategoriesDo2RestMapperTest {
         String version = WILDCARD_ALL;
         Integer limit = Integer.valueOf(4);
         Integer offset = Integer.valueOf(4);
-        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemeType", "+categoryElement"));
+        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemaTypes", "+categoryElement"));
 
         CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1);
         List<CategoryMetamac> source = new ArrayList<CategoryMetamac>();
@@ -246,7 +247,7 @@ public class CategoriesDo2RestMapperTest {
 
         assertEquals(source.size(), target.getCategories().size());
         for (int i = 0; i < source.size(); i++) {
-            assertEquals(source.get(i).getEniSchema().getIdentifier(), target.getCategories().get(i).getEniSchemeType().getId());
+            assertEqualsEniSchemaResult(new ArrayList<EniSchemaCatalog>(source.get(i).getEniSchemas()), target.getCategories().get(i).getEniSchemaTypes());
             assertEqualsCategoryElementResult(source.get(i).getCategoryElement(), target.getCategories().get(i).getCategoryElement());
         }
     }
@@ -293,7 +294,7 @@ public class CategoriesDo2RestMapperTest {
         String agencyID = AGENCY_1;
         String categorySchemeID = ITEM_SCHEME_1_CODE;
         String version = VERSION_1;
-        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemeType"));
+        Set<String> fields = new HashSet<>(Arrays.asList("+eniSchemaTypes"));
 
         CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(agencyID, categorySchemeID, version);
         List<ItemResult> sources = new ArrayList<ItemResult>();
@@ -319,8 +320,8 @@ public class CategoriesDo2RestMapperTest {
 
         assertEquals(sources.size(), target.getCategories().size());
         for (int i = 0; i < sources.size(); i++) {
-            EniSchemaCatalog eniSchemeType = ((CategoryMetamacResultExtensionPoint) sources.get(i).getExtensionPoint()).getEniSchemeCatalog();
-            assertEquals(eniSchemeType.getIdentifier(), target.getCategories().get(i).getEniSchemeType().getId());
+            EniSchemaCatalog eniSchemeType = ((CategoryMetamacResultExtensionPoint) sources.get(i).getExtensionPoint()).getEniSchemas().get(0);
+            assertEquals(eniSchemeType.getIdentifier(), target.getCategories().get(i).getEniSchemaTypes().getEniSchemaTypes().get(0).getId());
         }
     }
 

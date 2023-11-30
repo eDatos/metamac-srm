@@ -20,7 +20,9 @@ import static org.siemac.metamac.srm.rest.internal.v1_0.utils.RestTestConstants.
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -32,6 +34,8 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -44,9 +48,12 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.internal.v1_0.dsd.utils.DataStructuresDoMocks;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersionRepository;
 import com.arte.statistic.sdmx.srm.core.structure.mapper.DataStructureDefinitionDo2DtoMapper;
+import com.arte.statistic.sdmx.srm.core.structure.serviceimpl.utils.StructuresComparator;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 
 public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalFacadeV10BaseTest {
 
@@ -208,7 +215,7 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
 
     @Test
     public void testRetrieveDataStructureXml() throws Exception {
-
+        mockitoGetComponentOrdered();
         String requestBase = getUriItemSchemes(AGENCY_1, ARTEFACT_1_CODE, VERSION_1);
         String[] requestUris = new String[]{requestBase, requestBase + ".xml", requestBase + "?_type=xml"};
 
@@ -380,6 +387,22 @@ public class SrmRestInternalFacadeV10DataStructuresTest extends SrmRestInternalF
 
         mockRetrieveStructureVersionByVersion();
         mockFindDataStructuresByCondition();
+        mockitoGetComponentOrdered();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mockitoGetComponentOrdered() {
+        reset(dataStructureDefinitionDo2DtoMapper);
+        Mockito.when(dataStructureDefinitionDo2DtoMapper.getComponentsOrdered(Matchers.anySet(), Matchers.any(TypeComponentList.class))).thenAnswer(new Answer<List<Component>>() {
+
+            @Override
+            public List<Component> answer(InvocationOnMock invocation) throws Throwable {
+                Set<Component> comnponents = (Set<Component>) invocation.getArguments()[0];
+                List<Component> componentsSorted = new ArrayList<>(comnponents);
+                Collections.sort(componentsSorted, StructuresComparator.STRUCTURE_COMPONENT_ID_COMPARATOR);
+                return componentsSorted;
+            };
+        });
     }
 
     private String getUriStructures(String agencyID, String resourceID, String version) {

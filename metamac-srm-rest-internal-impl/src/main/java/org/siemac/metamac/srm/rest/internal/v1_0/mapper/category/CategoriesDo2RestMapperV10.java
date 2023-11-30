@@ -9,6 +9,8 @@ import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryElements;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 
@@ -34,4 +36,6 @@ public interface CategoriesDo2RestMapperV10 {
 
     public ResourceLink toCategorySchemeSelfLink(String agencyID, String resourceID, String version);
     public String toCategorySchemeManagementApplicationLink(String categorySchemeUrn);
+
+    public CategoryElements toCategoryElements(PagedResult<CategoryElement> sourcesPagedResult, String query, String orderBy, Integer limit);
 }

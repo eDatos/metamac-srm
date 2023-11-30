@@ -27,6 +27,9 @@
 <%! String categoryUrn = "CATEGORY_URN: URN de categoría"; %>
 <%! String categorySchemeUrn = "CATEGORY_SCHEME_URN: URN de esquema de categoría"; %>
 <%! String categorySchemeLatest = "CATEGORY_SCHEME_LATEST: último esquema de categoría"; %>
+<%! String categoryElementCode = "CATEGORY_ELEMENT_CODE: código del elemento de categoría"; %>
+<%! String categoryElementUrn = "CATEGORY_ELEMENT_URN: Urn del elemento de categoría"; %>
+<%! String categoryElementShortName = "CATEGORY_ELEMENT_SHORT_NAME: nombre corto del elemento de categoría"; %>
 <%! String variableType = "VARIABLE_TYPE: tipo de variable"; %>
 <%! String familyUrn = "FAMILY_URN: URN de familia"; %>
 <%! String shortName = "SHORT_NAME: Nombre corto"; %>
@@ -95,7 +98,7 @@
         "name":"query",
         "in":"query",
         "type":"string",
-               "description": "<%= queryDescriptionWithParams(id, urn, name, shortName, parent, description, codelistUrn, codelistLatest, geographicalGranularityUrn, variableElementUrn) %>"
+        "description": "<%= queryDescriptionWithParams(id, urn, name, shortName, parent, description, codelistUrn, codelistLatest, geographicalGranularityUrn, variableElementUrn) %>"
         },
         "codelistOrderByParam": {
           "name":"orderBy",
@@ -203,7 +206,7 @@
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest) %>"
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest, categoryElementCode, categoryElementUrn, categoryElementShortName) %>"
         },
         "categoryOrderByParam": {
           "name":"orderBy",
@@ -242,6 +245,18 @@
             "description":"<%= queryDescriptionWithParams(id ,urn ,name ,geographicalGranularityUrn ,variableType)%>"
         },
         "variableElementOrderByParam": {
+          "name":"orderBy",
+          "in":"query",
+          "type":"string",
+          "description":"<%= orderByDescription %><br>Campos válidos<ul><li>ID</li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+        },
+         "categoryElementQueryParam": {
+            "name":"query",
+            "in":"query",
+            "type":"string",
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name)%>"
+        },
+        "categoryElementOrderByParam": {
           "name":"orderBy",
           "in":"query",
           "type":"string",

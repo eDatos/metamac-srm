@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.core.security;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.security.shared.SharedConceptsSecurityUtils;
 import org.siemac.metamac.srm.core.security.shared.SharedDsdSecurityUtils;
 
 public class DataStructureDefinitionSecurityUtils extends CommonSecurityUtils {
@@ -155,6 +156,12 @@ public class DataStructureDefinitionSecurityUtils extends CommonSecurityUtils {
     public static void canDeleteComponentForDataStructureDefinition(ServiceContext ctx, DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac) throws MetamacException {
         if (!SharedDsdSecurityUtils.canDeleteComponentForDataStructureDefinition(getMetamacPrincipal(ctx), dataStructureDefinitionVersionMetamac.getLifeCycleMetadata().getProcStatus(),
                 getOperationCode(dataStructureDefinitionVersionMetamac))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+    
+    public static void canUpdateAttribute(ServiceContext ctx, DataStructureDefinitionVersionMetamac attributeSchemeMetamac) throws MetamacException {
+        if (!SharedDsdSecurityUtils.canUpdateAttributes(getMetamacPrincipal(ctx), attributeSchemeMetamac.getLifeCycleMetadata().getProcStatus(), getOperationCode(attributeSchemeMetamac))) {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }

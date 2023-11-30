@@ -40,7 +40,7 @@ public class CategoriesMetamacRepositoryTest extends SrmBaseTest {
     @Test
     public void testRetrieveCodesOrderedByCodelistUrn() throws Exception {
 
-        ItemMetamacResultSelection selection = new CategoryMetamacResultSelection(true, true, true, true, false, true);
+        ItemMetamacResultSelection selection = new CategoryMetamacResultSelection(true, true, true, true, false, true, false, false);
         // Retrieve
         List<ItemResult> codes = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), selection);
 

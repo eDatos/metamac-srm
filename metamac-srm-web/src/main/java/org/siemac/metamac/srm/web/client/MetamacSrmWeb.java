@@ -38,7 +38,6 @@ public class MetamacSrmWeb extends MetamacSecurityEntryPoint {
         setUncaughtExceptionHandler();
 
         prepareApplication(SECURITY_ENABLED);
-
     }
 
     @Override

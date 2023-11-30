@@ -2,10 +2,14 @@ package org.siemac.metamac.srm.rest.external.v1_0.category.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.EniSchemaTypes;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.v1_0.utils.Asserts;
 
@@ -70,5 +74,12 @@ public class CategoriesAsserts extends Asserts {
         assertEquals(categoryElement.getIdentifiableArtefact().getUrn(), categoryElementResult.getUrn());
         assertEquals(kindExpected, categoryElementResult.getKind());
         assertEquals(selfLinkHrefExpected, categoryElementResult.getSelfLink().getHref());
+    }
+
+    public static void assertEqualsEniSchemaResult(List<EniSchemaCatalog> eniSchemas, EniSchemaTypes eniSchemaTypes) {
+        assertEquals(eniSchemas.size(), eniSchemaTypes.getEniSchemaTypes().size());
+        for (int i = 0; i < eniSchemas.size(); i++) {
+            assertEquals(eniSchemas.get(i).getIdentifier(), eniSchemaTypes.getEniSchemaTypes().get(i).getId());
+        }
     }
 }

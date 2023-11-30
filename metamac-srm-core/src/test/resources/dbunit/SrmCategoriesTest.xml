@@ -388,9 +388,13 @@
             
             <!-- CATEGORY01 -->
             
+             <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="111"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="111"
-                ENI_SCHEMA_FK="1"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -439,9 +443,13 @@
     
             <!-- CATEGORY02 -->
             
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="112"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="112"
-                ENI_SCHEMA_FK="1"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -587,10 +595,13 @@
                         
             <!-- CATEGORY01 -->
             
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="121"
+            />
             
 	        <TB_M_CATEGORIES
                 TB_CATEGORIES="121"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="2"
             />
             
@@ -638,10 +649,14 @@
             />
             
             <!-- CATEGORY02 -->
+                        
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="3"
+                TB_M_CATEGORIES="122"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="122"
-                ENI_SCHEMA_FK="3"
                 CATEGORY_ELEMENT_FK="3"
                 
             />
@@ -690,10 +705,14 @@
             />   
             
                 <!-- CATEGORY0201 -->
-
+            
+                 <TB_CAT_ENI_SCHEMA
+                    ENI_SCHEMA="1"
+                    TB_M_CATEGORIES="1221"
+                 />
+            
                 <TB_M_CATEGORIES
                     TB_CATEGORIES="1221"
-                    ENI_SCHEMA_FK="1"
                     CATEGORY_ELEMENT_FK="1"
                 />
                 
@@ -742,10 +761,14 @@
                 
         
                     <!-- CATEGORY020101 -->
-
+            
+            		<TB_CAT_ENI_SCHEMA
+                		ENI_SCHEMA="1"
+                		TB_M_CATEGORIES="12211"
+            		/>
+            
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="12211"
-                        ENI_SCHEMA_FK="1"
                         CATEGORY_ELEMENT_FK="1"
                     />
                     
@@ -793,10 +816,14 @@
                     />
             
             <!-- CATEGORY03 -->
+                        
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="123"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="123"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="2"
             />
             
@@ -844,10 +871,14 @@
             />                
             
             <!-- CATEGORY04 -->
-
+                        
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="124"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="124"
-                ENI_SCHEMA_FK="1"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -895,10 +926,14 @@
             />
             
                 <!-- CATEGORY0401 -->
-                
+                                        
+      		      <TB_CAT_ENI_SCHEMA
+      		          ENI_SCHEMA="2"
+      		          TB_M_CATEGORIES="1241"
+   		         />
+            
                 <TB_M_CATEGORIES
                     TB_CATEGORIES="1241"
-                    ENI_SCHEMA_FK="2"
                     CATEGORY_ELEMENT_FK="2"
                 />
                 
@@ -946,10 +981,14 @@
                 />
         
                     <!-- CATEGORY040101 -->
-
+                        
+          			  <TB_CAT_ENI_SCHEMA
+         			     ENI_SCHEMA="3"
+                		TB_M_CATEGORIES="12411"
+        			    />
+            
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="12411"
-                        ENI_SCHEMA_FK="3"
                     />
                     
                     <TB_CATEGORIES
@@ -1102,10 +1141,14 @@
             <!-- -> CATEGORY02 -->
             
             <!-- CATEGORY01 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="211"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="211"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="2"
             />
             
@@ -1153,10 +1196,14 @@
             />     
             
             <!-- CATEGORY02 -->
-
+                        
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="212"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="212"
-                ENI_SCHEMA_FK="1"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -1504,10 +1551,14 @@
             <!--    -> CATEGORY0201 -->
             <!--        -> CATEGORY020101 -->
             <!--    -> CATEGORY0202 -->
-
+                        
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="311"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="311"
-                ENI_SCHEMA_FK="1"
             />
 
             <TB_CATEGORIES
@@ -1554,10 +1605,14 @@
             />
                    
             <!-- CATEGORY02 -->
-
+                        
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="312"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="312"
-                ENI_SCHEMA_FK="1"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -1605,10 +1660,14 @@
             />
             
             <!-- CATEGORY0201 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="3121"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="3121"
-                ENI_SCHEMA_FK="1"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -1656,10 +1715,14 @@
             />       
             
                     <!-- CATEGORY020101 -->
-                    
+                                            
+           			 <TB_CAT_ENI_SCHEMA
+           			     ENI_SCHEMA="2"
+          	 		     TB_M_CATEGORIES="31211"
+           			 />
+            
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="31211"
-                        ENI_SCHEMA_FK="2"
                         CATEGORY_ELEMENT_FK="2" 
                     />
                     
@@ -1705,11 +1768,15 @@
                         LAST_UPDATED="2011-01-22 01:02:03"
                         LAST_UPDATED_TZ="Europe/London"
                     />                  
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="3122"
+            />
             
             <!-- CATEGORY0202 -->
             <TB_M_CATEGORIES
                 TB_CATEGORIES="3122"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="[null]"    
             />
             
@@ -1862,10 +1929,14 @@
             <!-- -> CATEGORY01 -->
             
             <!-- CATEGORY01 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="411"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="411"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="1"
             />
             
@@ -2019,10 +2090,14 @@
             <!-- -> CATEGORY01 -->
             
             <!-- CATEGORY01 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="511"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="511"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="2"       
             />
             
@@ -2175,10 +2250,14 @@
             <!-- -> CATEGORY01 -->
             
             <!-- CATEGORY01 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="611"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="611"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="2"
             />
             
@@ -2418,10 +2497,14 @@
             <!-- -> CATEGORY01 -->
             
             <!-- CATEGORY01 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="721"
+            />
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="721"
-                ENI_SCHEMA_FK="2"
                 CATEGORY_ELEMENT_FK="[null]"
             />
             
@@ -2603,10 +2686,15 @@
             <!-- -> CATEGORY03 -->
             
             <!-- CATEGORY01 -->
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="811"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="811"
-                ENI_SCHEMA_FK="1"
-            />
+             />
             
             <TB_CATEGORIES
                 ID="811"
@@ -2650,11 +2738,15 @@
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
             /> 
-                                    
+                                              
+        		    <TB_CAT_ENI_SCHEMA
+          		      ENI_SCHEMA="1"
+          		      TB_M_CATEGORIES="8111"
+        		    />
+                          
                     <!-- CATEGORY0101 -->
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="8111"
-                        ENI_SCHEMA_FK="1"
                     />
                     
                     <TB_CATEGORIES
@@ -2711,12 +2803,19 @@
                             TEXT_FK="48"
                             ANNOTABLE_ARTEFACT_FK="8111"
                             TYPE_FK="1"
+
                         />                    
                     
             <!-- CATEGORY02 -->
+            
+                                    
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="1"
+                TB_M_CATEGORIES="812"
+            />
+            
             <TB_M_CATEGORIES
                 TB_CATEGORIES="812"
-                ENI_SCHEMA_FK="1"
             />
             
             <TB_CATEGORIES
@@ -2786,10 +2885,13 @@
                     TYPE_FK="2"
                 />  
             
+            <TB_CAT_ENI_SCHEMA
+                ENI_SCHEMA="2"
+                TB_M_CATEGORIES="813"
+            />
             <!-- CATEGORY03 -->
             <TB_M_CATEGORIES
                 TB_CATEGORIES="813"
-                ENI_SCHEMA_FK="2"
             />
             
             <TB_CATEGORIES

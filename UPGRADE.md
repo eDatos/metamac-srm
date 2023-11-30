@@ -7,11 +7,20 @@
 *EJEMPLO: Queremos actualizar desde la versión 1.0.0 a la 3.0.0 y existe un cambio en la base de datos en la actualización de la versión 1.0.0 a la 2.0.0.*
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
+ 
+## 6.2.0 a 6.2.1-SNAPSHOT
+**BREAKING CHANGE.** Los temas pueden tener varios esquemas eni con EDATOS-4190. Hasta ahora sólo tenían uno. Por lo que el campo eniSchemeType de los dos SW de temas que lo usaban y, en su lugar se define "eniSchemaTypes" que contendrá una lista de esquemas ENI
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.2.0/db](etc/changes-from-release/6.2.0/db) 
+
+* Cambios en statistic-sdmx-srm. Se debe borrar campo deshabilitado en release anterior en TB_ANNOTATIONS "old_type" Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
+  ```shell
+    etc/changes-from-release/3.4.0/db/postgresql/20232709_drop-column-type-in-table-tbAnnotations.sql
+  ```shell
 
 ## 6.0.0 a 6.1.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db) 
-
 
 ## 5.0.1 a 6.0.0
 **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional denominado `fields` al siguiente endpoint:

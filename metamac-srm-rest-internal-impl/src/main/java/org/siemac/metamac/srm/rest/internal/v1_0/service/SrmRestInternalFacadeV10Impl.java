@@ -41,6 +41,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categorisation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryElements;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
@@ -216,7 +217,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     private DataStructuresDo2RestMapperV10        dataStructuresDo2RestMapperV10;
 
     @Autowired
-    @Qualifier("contentConstraintsCopyCallback")
+    @Qualifier("contentConstraintsVersioningCallback")
     private ContentConstraintsCopyCallback        contentConstraintsVersioningCallback;
 
     private static final String                   restInternalUser         = "restInternal";
@@ -421,6 +422,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
 
             categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
             categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            categoryMetamacResultSelection.setEniSchemaFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME));
             List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
 
             // Transform
@@ -484,6 +486,21 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
         } catch (Exception e) {
             throw manageException(e);
         }
+    }
+
+    private PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> findCategoryElementsCore(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter)
+            throws MetamacException {
+
+        List<ConditionalCriteria> conditionalCriteria = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
+            conditionalCriteria.addAll(conditionalCriteriaQuery);
+        } else {
+            // init
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(org.siemac.metamac.srm.core.category.domain.CategoryElement.class).distinctRoot().build());
+        }
+
+        // Find
+        return categoriesService.findCategoryElementsByCondition(ctx, conditionalCriteria, pagingParameter);
     }
 
     @Override
@@ -1333,6 +1350,23 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     @Override
     public VariableElementsGeoInfo findVariableElementsGeoInfoXml(String variableID, String resourceID, String query, String orderBy, String limit, String offset, String fields) {
         return (VariableElementsGeoInfo) findVariableElementsGeoInfoCommon(variableID, resourceID, query, orderBy, limit, offset, fields, MediaType.APPLICATION_XML);
+    }
+
+    @Override
+    public CategoryElements findCategoryElements(String query, String orderBy, String limit, String offset) {
+        try {
+            // Retrieve category elements by criteria
+            SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryElementCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            // Retrieve
+            PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> entitiesPagedResult = findCategoryElementsCore(sculptorCriteria.getConditions(),
+                    sculptorCriteria.getPagingParameter());
+
+            // Transform
+            return categoriesDo2RestMapper.toCategoryElements(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit());
+        } catch (Exception e) {
+            throw manageException(e);
+        }
     }
 
     @Override

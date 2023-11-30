@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.master.dto.EniSchemaCatalogDto;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDto2DoMapper;
 import org.siemac.metamac.srm.core.resource.element.mapper.ResourceElementDto2DoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,11 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
             target.setCategoryElement(null);
         }
 
-        target.setEniSchema(source.getEniSchema() != null ? masterTablesDto2DoMapper.eniSchemaCatalogDtoToEntity(source.getEniSchema()) : null);
+        target.removeAllEniSchemas();
+        for (EniSchemaCatalogDto eniSchemaDto : source.getEniSchemas()) {
+
+            target.getEniSchemas().add(masterTablesDto2DoMapper.eniSchemaCatalogDtoToEntity(eniSchemaDto));
+        }
 
         // Sdmx
         dto2DoMapperSdmxSrm.categoryDtoToDo(source, target);

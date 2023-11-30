@@ -34,6 +34,8 @@ import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsAction;
 import org.siemac.metamac.srm.web.shared.dsd.GetDsdAndDescriptorsResult;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdAction;
 import org.siemac.metamac.srm.web.shared.dsd.SaveComponentForDsdResult;
+import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdAction;
+import org.siemac.metamac.srm.web.shared.dsd.SaveMultipleComponentsForDsdResult;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesAction;
 import org.siemac.metamac.srm.web.shared.master.GetAnnotationTypesResult;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
@@ -41,6 +43,7 @@ import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingEr
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DataAttributeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
@@ -195,6 +198,23 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
                 });
     }
 
+    public void saveAttributes(List<DataAttributeDto> attributesToSave) {
+        dispatcher.execute(new SaveMultipleComponentsForDsdAction(dataStructureDefinitionDto.getUrn(), new ArrayList<ComponentDto>(attributesToSave), TypeComponentList.ATTRIBUTE_DESCRIPTOR),
+                new WaitingAsyncCallbackHandlingError<SaveMultipleComponentsForDsdResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
+                    }
+
+                    @Override
+                    public void onWaitSuccess(SaveMultipleComponentsForDsdResult result) {
+                        fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeSaved());
+                        updateAttributeList(true);
+                    }
+                });
+    }
+
     @Override
     public void deleteAttributes(List<DataAttributeDto> attributesToDelete) {
         dispatcher.execute(new DeleteAttributesForDsdAction(dataStructureDefinitionDto.getUrn(), attributesToDelete), new WaitingAsyncCallbackHandlingError<DeleteAttributesForDsdResult>(this) {
@@ -204,10 +224,11 @@ public class DsdAttributesTabPresenter extends Presenter<DsdAttributesTabPresent
                 updateAttributeList(true);
                 ShowMessageEvent.fireErrorMessage(DsdAttributesTabPresenter.this, caught);
             }
+
             @Override
             public void onWaitSuccess(DeleteAttributesForDsdResult result) {
-                updateAttributeList(true);
                 fireSuccessMessage(MetamacSrmWeb.getMessages().dsdAttributeDeleted());
+                updateAttributeList(true);
             }
         });
     }

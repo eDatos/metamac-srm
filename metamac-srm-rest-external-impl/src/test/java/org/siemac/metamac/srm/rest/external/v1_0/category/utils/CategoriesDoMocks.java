@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.category.utils;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
@@ -27,8 +28,13 @@ public class CategoriesDoMocks {
 
     public static CategoryMetamac mockCategoryWithEniScheme(String resourceID, CategorySchemeVersionMetamac categoryScheme, CategoryMetamac parent) {
         CategoryMetamac target = mockCategory(resourceID, categoryScheme, parent);
+
+        for (int i = 0; i < 2; i++) {
+            EniSchemaCatalog eniSchema = CategoriesMetamacDoMocks.mockEniSchemeFixedValues(resourceID + "-" + i);
+            target.getEniSchemas().add(eniSchema);
+        }
+
         target.setCategoryElement(CategoriesMetamacDoMocks.mockCategoryElementFixedValues("categoryElement-" + resourceID));
-        target.setEniSchema(CategoriesMetamacDoMocks.mockEniSchemeFixedValues(resourceID));
         return target;
     }
 

@@ -431,8 +431,8 @@ public class TsvExportationUtils {
     private static void writeItemExtensionPointEniSchemeIdentifier(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
         CategoryMetamacResultExtensionPoint extensionPoint = (CategoryMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         writer.write(SrmConstants.TSV_SEPARATOR);
-        if (extensionPoint.getEniSchemeIdentifier() != null) {
-            writer.write(extensionPoint.getEniSchemeIdentifier());
+        if (extensionPoint.getEniSchemaCodes() != null && !extensionPoint.getEniSchemaCodes().isEmpty()) {
+            writer.write(String.join(",", extensionPoint.getEniSchemaCodes()));
         }
     }
 

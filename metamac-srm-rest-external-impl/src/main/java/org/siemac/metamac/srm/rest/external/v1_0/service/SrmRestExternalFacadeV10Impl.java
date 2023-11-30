@@ -40,6 +40,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElements;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Code;
@@ -451,6 +452,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
             categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
+            categoryMetamacResultSelection.setEniSchemaFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME));
             List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
 
             // Transform
@@ -1490,6 +1492,38 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         } catch (Exception e) {
             throw manageException(e);
         }
+    }
+
+    @Override
+    public CategoryElements findCategoryElements(String query, String orderBy, String limit, String offset) {
+        try {
+            // Retrieve category elements by criteria
+            SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryElementCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            // Retrieve
+            PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> entitiesPagedResult = findCategoryElementsCore(sculptorCriteria.getConditions(),
+                    sculptorCriteria.getPagingParameter());
+
+            // Transform
+            return categoriesDo2RestMapper.toCategoryElements(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit());
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> findCategoryElementsCore(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter)
+            throws MetamacException {
+
+        List<ConditionalCriteria> conditionalCriteria = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
+            conditionalCriteria.addAll(conditionalCriteriaQuery);
+        } else {
+            // init
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(org.siemac.metamac.srm.core.category.domain.CategoryElement.class).distinctRoot().build());
+        }
+
+        // Find
+        return categoriesService.findCategoryElementsByCondition(ctx, conditionalCriteria, pagingParameter);
     }
 
     private ConceptSchemes findConceptSchemes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {

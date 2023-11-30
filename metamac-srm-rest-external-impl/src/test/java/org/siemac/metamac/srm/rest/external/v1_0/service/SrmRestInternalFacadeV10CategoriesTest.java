@@ -620,11 +620,11 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         if (fields != null && fields.contains(SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME)) {
             for (int i = 0; i < categories.getCategories().size(); i++) {
-                assertNotNull(categories.getCategories().get(i).getEniSchemeType());
+                assertNotNull(categories.getCategories().get(i).getEniSchemaTypes());
             }
         } else {
             for (int i = 0; i < categories.getCategories().size(); i++) {
-                assertNull(categories.getCategories().get(i).getEniSchemeType());
+                assertNull(categories.getCategories().get(i).getEniSchemaTypes());
             }
         }
 
@@ -702,8 +702,8 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
                         category = null;
                     } else if (AGENCY_1.equals(agencyID) && ITEM_SCHEME_1_CODE.equals(resourceID) && VERSION_1.equals(version) && ITEM_1_CODE.equals(itemID)) {
                         CategorySchemeVersionMetamac categoryScheme1 = CategoriesDoMocks.mockCategoryScheme(AGENCY_1, resourceID, version);
-                        CategoryMetamac parent = CategoriesDoMocks.mockCategory(ITEM_2_CODE, categoryScheme1, null);
-                        category = CategoriesDoMocks.mockCategory(ITEM_1_CODE, categoryScheme1, parent);
+                        CategoryMetamac parent = CategoriesDoMocks.mockCategoryWithEniScheme(ITEM_2_CODE, categoryScheme1, null);
+                        category = CategoriesDoMocks.mockCategoryWithEniScheme(ITEM_1_CODE, categoryScheme1, parent);
                     } else {
                         fail();
                     }

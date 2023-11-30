@@ -33,7 +33,7 @@
          "description":""
       },
       {
-         "name":"Variables",
+         "name":"Recursos auxiliares",
          "description":""
       }
    ],
@@ -646,7 +646,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemeType: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemeType,+categoryElement\""
+                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemaTypes: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemaTypes,+categoryElement\""
                 }
             ],
             "responses":{
@@ -2919,7 +2919,7 @@
       "/v1.0/variablefamilies":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variablefamilies_findVariableFamilies_GET",
@@ -2959,7 +2959,7 @@
       "/v1.0/variablefamilies/{id}":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variablefamilies__id__retrieveVariableFamilyById_GET",
@@ -3001,7 +3001,7 @@
       "/v1.0/variablefamilies/{id}/variables":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variablefamilies__id__variables_findVariablesByFamily_GET",
@@ -3047,7 +3047,7 @@
       "/v1.0/variables":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables_findVariables_GET",
@@ -3087,7 +3087,7 @@
       "/v1.0/variables/{id}":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__id__retrieveVariableById_GET",
@@ -3129,7 +3129,7 @@
       "/v1.0/variables/{variableID}/variableelements":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__variableID__variableelements_findVariableElements_GET",
@@ -3181,7 +3181,7 @@
       "/v1.0/variables/{variableID}/variableelements/{resourceID}":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__retrieveVariableElementById_GET",
@@ -3224,7 +3224,7 @@
       "/v1.0/variables/{variableID}/variableelements/{resourceID}/geoinfo":{
          "get":{
             "tags":[
-               "Variables"
+              "Recursos auxiliares"
             ],
             "description":"",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__geoinfo_findVariableElementsGeoInfoXml_GET",
@@ -3273,6 +3273,47 @@
                }
             }
          }
+      },
+       "/v1.0/categoryelements":{
+         "get":{
+            "tags":[
+              "Recursos auxiliares"
+            ],
+            "description":"",
+            "operationId":"resource__v1.0_categoryElements_findCategoryElements_GET",
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "parameters":[              
+                {"$ref":"#/components/parameters/limitParam"},
+                {"$ref":"#/components/parameters/offsetParam"},
+                {"$ref":"#/components/parameters/categoryElementQueryParam"},
+                {"$ref":"#/components/parameters/categoryElementOrderByParam"},
+            ],
+            "responses":{
+               "200":{
+               	  "schema":{
+                     "description":"",
+                     "$ref":"#/definitions/CategoryElements"
+                  },                
+                  "headers":{
+
+                  },
+                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+               },
+               "406":{
+                  "description":"No aceptable. El formato solicitado no es válido"
+               },
+               "500":{
+                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+               },
+               "503":{
+                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+               }
+            }
+         }
       }
+      
    }
 }

@@ -29,12 +29,12 @@
     <sr:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/item2.item1"/>
     <sr:parentLink kind="structuralResources#categories" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories"/>
     <sr:name>
-        <cdomain:text xml:lang="en">name-item1 in English</cdomain:text>
         <cdomain:text xml:lang="es">name-item1 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">name-item1 in English</cdomain:text>
     </sr:name>
     <sr:description>
-        <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-item1 in English</cdomain:text>
+        <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
     </sr:description>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).item2</sr:parent>
     <sr:categoryElement kind="structuralResources#categoryElement">
@@ -46,4 +46,20 @@
             <cdomain:text xml:lang="en">shortName-categoryElement-item1 in English</cdomain:text>
         </cdomain:name>
     </sr:categoryElement>
+    <sr:eniSchemaTypes total="2">
+        <sr:eniSchemaType>
+            <cdomain:id>ID - item1-0</cdomain:id>
+            <cdomain:name>
+                <cdomain:text xml:lang="es">desc-item1-0-bu0xXzPmYV en Español</cdomain:text>
+                <cdomain:text xml:lang="en">desc-item1-0-KdlZ69BDgX in English</cdomain:text>
+            </cdomain:name>
+        </sr:eniSchemaType>
+        <sr:eniSchemaType>
+            <cdomain:id>ID - item1-1</cdomain:id>
+            <cdomain:name>
+                <cdomain:text xml:lang="es">desc-item1-1-UK7YwM7nn6 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">desc-item1-1-EXZbhEBh1Z in English</cdomain:text>
+            </cdomain:name>
+        </sr:eniSchemaType>
+    </sr:eniSchemaTypes>
 </sr:category>

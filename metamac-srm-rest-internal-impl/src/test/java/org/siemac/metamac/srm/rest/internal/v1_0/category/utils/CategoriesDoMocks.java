@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.rest.internal.v1_0.category.utils;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
+import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
@@ -22,13 +23,17 @@ public class CategoriesDoMocks {
             target.getNameableArtefact().setCodeFull(parent.getNameableArtefact().getCodeFull() + "." + resourceID);
         }
         target.setCategoryElement(CategoriesMetamacDoMocks.mockCategoryElementFixedValues("categoryElement-" + resourceID));
-        target.setEniSchema(CategoriesMetamacDoMocks.mockEniSchemeFixedValues(target.getNameableArtefact().getCodeFull()));
         return target;
     }
 
     public static CategoryMetamac mockCategoryWithEniScheme(String resourceID, CategorySchemeVersionMetamac categoryScheme, CategoryMetamac parent) {
         CategoryMetamac target = mockCategory(resourceID, categoryScheme, parent);
-        target.setEniSchema(CategoriesMetamacDoMocks.mockEniSchemeFixedValues(resourceID));
+
+        for (int i = 0; i < 2; i++) {
+            EniSchemaCatalog eniSchema = CategoriesMetamacDoMocks.mockEniSchemeFixedValues(resourceID + "-" + i);
+            target.getEniSchemas().add(eniSchema);
+        }
+
         target.setCategoryElement(CategoriesMetamacDoMocks.mockCategoryElementFixedValues("categoryElement-" + resourceID));
         return target;
     }
@@ -38,10 +43,10 @@ public class CategoriesDoMocks {
         CategorySchemeVersionMetamac categorySchemeVersion = mockCategoryScheme(agencyID, resourceID, version);
 
         // categorys
-        CategoryMetamac category1 = mockCategory("category1", categorySchemeVersion, null);
-        CategoryMetamac category2 = mockCategory("category2", categorySchemeVersion, null);
-        CategoryMetamac category2A = mockCategory("category2A", categorySchemeVersion, category2);
-        CategoryMetamac category2B = mockCategory("category2B", categorySchemeVersion, category2);
+        CategoryMetamac category1 = mockCategoryWithEniScheme("category1", categorySchemeVersion, null);
+        CategoryMetamac category2 = mockCategoryWithEniScheme("category2", categorySchemeVersion, null);
+        CategoryMetamac category2A = mockCategoryWithEniScheme("category2A", categorySchemeVersion, category2);
+        CategoryMetamac category2B = mockCategoryWithEniScheme("category2B", categorySchemeVersion, category2);
 
         // categorys hierarchy
         categorySchemeVersion.addItem(category1);

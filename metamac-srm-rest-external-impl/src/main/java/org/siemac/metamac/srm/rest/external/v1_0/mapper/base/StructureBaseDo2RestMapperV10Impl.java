@@ -63,6 +63,10 @@ public abstract class StructureBaseDo2RestMapperV10Impl extends BaseDo2RestMappe
     protected abstract boolean canStructureVersionBeProvidedByApi(StructureVersion source);
 
     protected List<Component> getDimensionsOrdered(Set<Component> components, TypeComponentList type) {
-        return dataStructureDefinitionDo2DtoMapper.getDimensionsOrdered(components, type);
+        return dataStructureDefinitionDo2DtoMapper.getComponentsOrdered(components, type);
+    }
+
+    protected List<Component> getAttributesOrdered(Set<Component> components, TypeComponentList type) {
+        return dataStructureDefinitionDo2DtoMapper.getComponentsOrdered(components, type);
     }
 }

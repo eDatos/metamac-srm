@@ -73,6 +73,8 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -91,6 +93,8 @@ import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
+import com.smartgwt.client.widgets.grid.events.RecordDropEvent;
+import com.smartgwt.client.widgets.grid.events.RecordDropHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -130,6 +134,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
     private SearchRelatedResourcePaginatedWindow searchCodelistForEnumeratedRepresentationWindow;
     private SearchRelatedResourcePaginatedWindow searchConceptSchemeForEnumeratedRepresentationWindow;
+    private Integer                              position;
 
     @Inject
     public DsdAttributesTabViewImpl() {
@@ -179,12 +184,55 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         attributesGrid.setHeight(150);
         attributesGrid.setSelectionType(SelectionStyle.SIMPLE);
         attributesGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
+        attributesGrid.setCanReorderRecords(true);
+        attributesGrid.setCanSort(false);
         CustomListGridField codeField = new CustomListGridField(DataAttributeDS.CODE, getConstants().dsdAttributeId());
         CustomListGridField usageField = new CustomListGridField(DataAttributeDS.USAGE_STATUS, getConstants().dsdAttributeUsageStatus());
         CustomListGridField specialAttributeTypeField = new CustomListGridField(DataAttributeDS.SPECIAL_ATTRIBUTE_TYPE, getConstants().dsdAttributeType());
         CustomListGridField relatedTo = new CustomListGridField(DataAttributeDS.RELATED_TO, getConstants().dsdAttributeRelatedWith());
         CustomLinkListGridField conceptField = new CustomLinkListGridField(DataAttributeDS.CONCEPT, getConstants().concept());
         attributesGrid.setFields(codeField, specialAttributeTypeField, usageField, relatedTo, conceptField);
+
+        attributesGrid.addRecordDropHandler(new RecordDropHandler() {
+
+            @Override
+            public void onRecordDrop(RecordDropEvent event) {
+                ListGridRecord[] draggedRecords = event.getDropRecords();
+                if (event.getSourceWidget() == attributesGrid && draggedRecords.length != 0) {
+                    List<DataAttributeDto> draggedComponents = new ArrayList<DataAttributeDto>();
+                    for (int i = 0; i < draggedRecords.length; i++) {
+                        draggedComponents.add(((DataAttributeRecord) draggedRecords[i]).getDataAttributeDto());
+                    }
+
+                    List<DataAttributeDto> attributes = new ArrayList<DataAttributeDto>();
+                    RecordList data = attributesGrid.getDataAsRecordList();
+                    Integer draggedIndex = event.getIndex();
+                    Integer orderLogic = 1;
+                    for (int i = 0; i < data.getLength(); i++) {
+                        DataAttributeDto attributeDto = ((DataAttributeRecord) data.get(i)).getDataAttributeDto();
+                        if (draggedIndex.equals(i)) {
+                            attributes.addAll(draggedComponents);
+                        }
+
+                        if (!draggedComponents.contains(attributeDto)) {
+                            attributeDto.setOrderLogic(orderLogic++);
+                            attributes.add(attributeDto);
+                        }
+                    }
+
+                    if (!attributes.containsAll(draggedComponents)) {
+                        attributes.addAll(draggedComponents);
+                    }
+
+                    for (int i = 0; i < attributes.size(); i++) {
+                        attributes.get(i).setOrderLogic(i + 1);
+                    }
+
+                    getUiHandlers().saveAttributes(attributes);
+                }
+            }
+
+        });
 
         // Show attribute details when record clicked
         attributesGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
@@ -193,11 +241,13 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
             public void onSelectionChanged(SelectionEvent event) {
                 if (attributesGrid.getSelectedRecords() != null && attributesGrid.getSelectedRecords().length == 1) {
                     DataAttributeRecord record = (DataAttributeRecord) attributesGrid.getSelectedRecord();
+                    position = attributesGrid.getRecordIndex(record);
                     DataAttributeDto dataAttributeDto = record.getDataAttributeDto();
                     selectAttribute(dataAttributeDto);
                 } else {
                     // No record selected
                     deselectAttribute();
+                    position = null;
                     if (attributesGrid.getSelectedRecords().length > 1) {
                         // Delete more than one dimension with one click
                         showDeleteToolStripButton();
@@ -537,6 +587,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         mainFormLayout.setCanEdit(DsdClientSecurityUtils.canUpdateAttribute(dataStructureDefinitionMetamacDto));
 
         attributesGrid.setData(DsdRecordUtils.getAttributeRecords(dataAttributeDtos));
+        attributesGrid.setCanReorderRecords(DsdClientSecurityUtils.canAlterOrderAttribute(dataStructureDefinitionMetamacDto));
     }
 
     @Override
@@ -680,7 +731,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                     // CODELIST
 
                     if (!SpecialAttributeTypeEnum.MEASURE_EXTENDS.equals(dataAttributeDto.getSpecialAttributeType())) {
-                        ((RelatedResourceLinkItem) form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
+                        ((RelatedResourceLinkItem) form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST))
+                                .setRelatedResourceWithVersion(dataAttributeDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST).show();
                     }
 
@@ -690,7 +742,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
                     if (SpecialAttributeTypeEnum.MEASURE_EXTENDS.equals(dataAttributeDto.getSpecialAttributeType())) {
                         ((RelatedResourceLinkItem) form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME))
-                                .setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dataAttributeDto.getLocalRepresentation().getEnumeration());
                         form.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME).show();
                     }
                 }
@@ -788,9 +840,9 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
 
                     if (!SpecialAttributeTypeEnum.MEASURE_EXTENDS.equals(dataAttributeDto.getSpecialAttributeType())) {
                         ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST))
-                                .setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dataAttributeDto.getLocalRepresentation().getEnumeration());
                         ((RelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST_VIEW))
-                                .setRelatedResource(dataAttributeDto.getLocalRepresentation().getEnumeration());
+                                .setRelatedResourceWithVersion(dataAttributeDto.getLocalRepresentation().getEnumeration());
                     }
 
                 } else if (RelatedResourceTypeEnum.CONCEPT_SCHEME.equals(dataAttributeDto.getLocalRepresentation().getEnumeration().getType())) {
@@ -846,8 +898,8 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
     }
 
     private void setConceptSchemeEnumerationRepresentationInEditionForm(RelatedResourceDto relatedResourceDto) {
-        ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(relatedResourceDto);
-        ((RelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW)).setRelatedResource(relatedResourceDto);
+        ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResourceWithVersion(relatedResourceDto);
+        ((RelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME_VIEW)).setRelatedResourceWithVersion(relatedResourceDto);
     }
 
     @Override
@@ -1276,7 +1328,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                             RelatedResourceDto selectedCodelist = searchCodelistForEnumeratedRepresentationWindow.getSelectedRelatedResource();
                             searchCodelistForEnumeratedRepresentationWindow.markForDestroy();
                             // Set selected codelist in form
-                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResource(selectedCodelist);
+                            ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CODELIST)).setRelatedResourceWithVersion(selectedCodelist);
                             editionForm.validate(false);
                         }
                     });
@@ -1344,7 +1396,7 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                         RelatedResourceDto selectedConceptScheme = searchConceptSchemeForEnumeratedRepresentationWindow.getSelectedRelatedResource();
                         searchConceptSchemeForEnumeratedRepresentationWindow.markForDestroy();
                         // Set selected conceptScheme in form
-                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResource(selectedConceptScheme);
+                        ((SearchRelatedResourceLinkItem) editionForm.getItem(DataAttributeDS.ENUMERATED_REPRESENTATION_CONCEPT_SCHEME)).setRelatedResourceWithVersion(selectedConceptScheme);
                         editionForm.validate(false);
                     }
                 });

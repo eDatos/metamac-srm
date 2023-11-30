@@ -23,8 +23,8 @@ public class MetamacRestApisLocator {
     private StatisticalResourcesV1_0                   statisticalResourcesV1_0;
     private StatisticalOperationsRestInternalFacadeV10 statisticalOperationsRestInternalFacadeV1_0 = null;
 
-    public static final String                               FIELD_EXCLUDE_METADATA                      = "-metadata";
-    public static final String                               FIELD_EXCLUDE_DATA                          = "-data";
+    public static final String                         FIELD_EXCLUDE_METADATA                      = "-metadata";
+    public static final String                         FIELD_EXCLUDE_DATA                          = "-data";
 
     @PostConstruct
     public void initService() throws Exception {
@@ -54,7 +54,7 @@ public class MetamacRestApisLocator {
 
     public Dataset retrieveDatasetVersion(String agencyID, String resourceID, String version) throws MetamacException {
         try {
-            return getStatisticalResourcesV1_0().retrieveDataset(agencyID, resourceID, version, null, FIELD_EXCLUDE_METADATA + FIELD_EXCLUDE_DATA, null, null);
+            return getStatisticalResourcesV1_0().retrieveDataset(agencyID, resourceID, version, null, FIELD_EXCLUDE_METADATA + "," + FIELD_EXCLUDE_DATA, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }

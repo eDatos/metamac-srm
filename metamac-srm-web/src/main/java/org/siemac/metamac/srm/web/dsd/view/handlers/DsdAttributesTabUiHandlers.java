@@ -13,6 +13,8 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialAttributeType
 public interface DsdAttributesTabUiHandlers extends BaseUiHandlers {
 
     void saveAttribute(DataAttributeDto dataAttributeDto);
+    void saveAttributes(List<DataAttributeDto> dataAttributeDto);
+
     void deleteAttributes(List<DataAttributeDto> dataAttributeDtos);
 
     void retrieveConceptSchemes(SpecialAttributeTypeEnum specialAttributeTypeEnum, int firstResult, int maxResults, ConceptSchemeWebCriteria conceptSchemeWebCriteria);

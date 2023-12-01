@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
  
-## 6.2.0 a 6.2.1-SNAPSHOT
+## 6.2.0 a 6.3.0
 **BREAKING CHANGE.** Los temas pueden tener varios esquemas eni con EDATOS-4190. Hasta ahora sólo tenían uno. Por lo que el campo eniSchemeType de los dos SW de temas que lo usaban y, en su lugar se define "eniSchemaTypes" que contendrá una lista de esquemas ENI
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.2.0/db](etc/changes-from-release/6.2.0/db) 

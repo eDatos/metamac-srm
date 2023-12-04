@@ -1591,7 +1591,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
-    public void updateCodesVariableElements(ServiceContext ctx, String codelistUrn, Map<Long, Long> variableElementsIdByCodeId) throws MetamacException {
+    public SendStreamMessageResult updateCodesVariableElements(ServiceContext ctx, String codelistUrn, Map<Long, Long> variableElementsIdByCodeId) throws MetamacException {
         // Validation
         CodesMetamacInvocationValidator.checkUpdateCodesVariableElements(codelistUrn, variableElementsIdByCodeId, null);
         // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
@@ -1605,7 +1605,21 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         // Update all
         getCodeMetamacRepository().updateCodesVariableElements(variableElementsIdByCodeId, codelistVersion.getId(), variable.getId());
+
+        SendStreamMessageResult sendStreamMessageResult = resendPublishedCodelist(ctx, codelistVersion);
+
         baseService.updateItemSchemeLastUpdated(ctx, codelistVersion);
+
+        return sendStreamMessageResult;
+
+    }
+
+    private SendStreamMessageResult resendPublishedCodelist(ServiceContext ctx, CodelistVersionMetamac codelistVersion) throws MetamacException {
+        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(codelistVersion.getLifeCycleMetadata().getProcStatus())
+                || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(codelistVersion.getLifeCycleMetadata().getProcStatus())) {
+            return resendCodelist(ctx, codelistVersion);
+        }
+        return null;
     }
 
     @Override

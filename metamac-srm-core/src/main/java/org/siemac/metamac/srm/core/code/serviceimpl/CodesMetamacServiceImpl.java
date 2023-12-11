@@ -46,6 +46,8 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
 import org.joda.time.DateTime;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -94,7 +96,6 @@ import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.code.serviceimpl.utils.CodesMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.code.serviceimpl.utils.CodesUtils;
 import org.siemac.metamac.srm.core.common.LifeCycle;
@@ -221,6 +222,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     private ItemSchemesCopyCallback                    codesCopyCallback;
 
     @Autowired
+    @Qualifier("codelistStreamMessagingCallback")
     private CodelistStreamMessagingCallbackImpl        codelistStreamMessagingCallback;
 
     @Autowired
@@ -240,20 +242,16 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     private MiscMetamacService                         miscMetamacService;
 
     @Autowired
+    @Qualifier("variableElementStreamMessagingCallback")
     private VariableElementStreamMessagingCallbackImpl variableElementStreamMessagingCallback;
 
     @Autowired
     private PlatformTransactionManager                 platformTransactionManager;
 
-    /*
-     * @Autowired
-     * private NoticesRestInternalService noticesRestInternalService;
-     */
-
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                            entityManager;
 
-    private static Logger                              logger = LoggerFactory.getLogger(CodesMetamacService.class);
+    private static Logger                              logger = LoggerFactory.getLogger(CodesMetamacServiceImpl.class);
 
     public CodesMetamacServiceImpl() {
         // without comment
@@ -1563,31 +1561,38 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Override
     public CodeMetamac updateCodeVariableElement(ServiceContext ctx, String codeUrn, String variableElementUrn) throws MetamacException {
+        try {
+            // Validation
+            CodesMetamacInvocationValidator.checkUpdateCodeVariableElement(codeUrn, variableElementUrn, null);
+            // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
 
-        // Validation
-        CodesMetamacInvocationValidator.checkUpdateCodeVariableElement(codeUrn, variableElementUrn, null);
-        // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
+            CodeMetamac code = retrieveCodeByUrn(ctx, codeUrn);
+            if (variableElementUrn == null) {
+                // Delete
+                if (code.getVariableElement() != null) {
+                    code.getVariableElement().removeCode(code);
+                }
+            } else {
+                // Add
+                VariableElement variableElement = retrieveVariableElementByUrn(variableElementUrn);
+                CodelistVersionMetamac codelistVersion = retrieveCodelistByCodeUrn(ctx, codeUrn);
+                checkCodeVariableElement(codelistVersion, variableElement);
 
-        CodeMetamac code = retrieveCodeByUrn(ctx, codeUrn);
-        if (variableElementUrn == null) {
-            // Delete
-            if (code.getVariableElement() != null) {
-                code.getVariableElement().removeCode(code);
+                if (code.getVariableElement() != null) {
+                    code.getVariableElement().removeCode(code);
+                }
+                variableElement.addCode(code);
+                code.setShortName(null); // reset short name
             }
-        } else {
-            // Add
-            VariableElement variableElement = retrieveVariableElementByUrn(variableElementUrn);
-            CodelistVersionMetamac codelistVersion = retrieveCodelistByCodeUrn(ctx, codeUrn);
-            checkCodeVariableElement(codelistVersion, variableElement);
-
-            if (code.getVariableElement() != null) {
-                code.getVariableElement().removeCode(code);
+            baseService.updateItemSchemeLastUpdated(ctx, code.getItemSchemeVersion());
+            return getCodeMetamacRepository().save(code);
+        } catch (InvalidStateException e) {
+            for (InvalidValue invalidValue : e.getInvalidValues()) {
+                logger.info("Instance of bean class: " + invalidValue.getBeanClass().getSimpleName() + " has an invalid property: " + invalidValue.getPropertyName() + " with message: "
+                        + invalidValue.getMessage());
             }
-            variableElement.addCode(code);
-            code.setShortName(null); // reset short name
+            throw e;
         }
-        baseService.updateItemSchemeLastUpdated(ctx, code.getItemSchemeVersion());
-        return getCodeMetamacRepository().save(code);
     }
 
     @Override
@@ -2575,6 +2580,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         // Persist
         for (VariableElement variableElement : variableElementsToPersistByCode.values()) {
+            notifyVariableElementPublication(ctx, variableElement);
             getVariableElementRepository().save(variableElement);
         }
 
@@ -4184,6 +4190,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 variableElement.setRenderingColor(null);
             }
         }
+
+        variableElement.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
 
         // Do not persist if any error ocurrs
         if (!CollectionUtils.isEmpty(exceptionItems)) {

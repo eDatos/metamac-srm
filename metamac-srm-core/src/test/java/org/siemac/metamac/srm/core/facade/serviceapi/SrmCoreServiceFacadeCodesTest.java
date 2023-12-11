@@ -71,6 +71,7 @@ import org.siemac.metamac.srm.core.criteria.VariableCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.VariableElementCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.criteria.VariableFamilyCriteriaPropertyEnum;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -358,8 +359,8 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
         // Find by internal publication date == X
         {
-            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(), new DateTime(2012, 01, 3, 9, 9, 8, 987)
-                    .toDate(), OperationType.EQ));
+            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(),
+                    new DateTime(2012, 01, 3, 9, 9, 8, 987).toDate(), OperationType.EQ));
 
             MetamacCriteriaResult<CodelistMetamacBasicDto> result = srmCoreServiceFacade.findCodelistsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(2, result.getPaginatorResult().getTotalResults().intValue());
@@ -376,8 +377,8 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         }
         // Find by internal publication date == X
         {
-            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(), new DateTime(2010, 3, 31, 9, 9, 8, 987)
-                    .toDate(), OperationType.EQ));
+            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(),
+                    new DateTime(2010, 3, 31, 9, 9, 8, 987).toDate(), OperationType.EQ));
 
             MetamacCriteriaResult<CodelistMetamacBasicDto> result = srmCoreServiceFacade.findCodelistsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(1, result.getPaginatorResult().getTotalResults().intValue());
@@ -390,8 +391,8 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         }
         // Find by internal publication date > X
         {
-            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(), new DateTime(2012, 01, 1, 1, 1, 1, 1)
-                    .toDate(), OperationType.GT));
+            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(),
+                    new DateTime(2012, 01, 1, 1, 1, 1, 1).toDate(), OperationType.GT));
 
             MetamacCriteriaResult<CodelistMetamacBasicDto> result = srmCoreServiceFacade.findCodelistsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(3, result.getPaginatorResult().getTotalResults().intValue());
@@ -413,8 +414,8 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
         // Find by internal publication date < X
         {
-            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(), new DateTime(2011, 12, 1, 1, 1, 1, 1)
-                    .toDate(), OperationType.LT));
+            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(CodelistVersionMetamacCriteriaPropertyEnum.INTERNAL_PUBLICATION_DATE.name(),
+                    new DateTime(2011, 12, 1, 1, 1, 1, 1).toDate(), OperationType.LT));
 
             MetamacCriteriaResult<CodelistMetamacBasicDto> result = srmCoreServiceFacade.findCodelistsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(5, result.getPaginatorResult().getTotalResults().intValue());
@@ -2156,7 +2157,8 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         VariableElementDto variableElementDto = CodesMetamacDtoMocks.mockVariableElementDto();
         variableElementDto.setVariable(CodesMetamacDtoMocks.mockVariableRelatedResourceDto("VARIABLE_02", VARIABLE_2));
         variableElementDto.getReplaceToVariableElements().add(CodesMetamacDtoMocks.mockVariableElementRelatedResourceDto("VARIABLE_ELEMENT_03", VARIABLE_2_VARIABLE_ELEMENT_3));
-        VariableElementDto variableElementCreated = srmCoreServiceFacade.createVariableElement(getServiceContextAdministrador(), variableElementDto);
+        ResourceVersionPublicationResult<VariableElementDto> resultVariableElement = srmCoreServiceFacade.createVariableElement(getServiceContextAdministrador(), variableElementDto);
+        VariableElementDto variableElementCreated = resultVariableElement.getResourceVersion();
 
         // Validate some metadata
         assertEquals(variableElementDto.getCode(), variableElementCreated.getCode());
@@ -2192,7 +2194,9 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         variableElementDto.setShortName(MetamacMocks.mockInternationalStringDto());
         variableElementDto.setValidTo(new Date());
 
-        VariableElementDto variableElementDtoUpdated = srmCoreServiceFacade.updateVariableElement(getServiceContextAdministrador(), variableElementDto);
+        ResourceVersionPublicationResult<VariableElementDto> resultVariableElement = srmCoreServiceFacade.updateVariableElement(getServiceContextAdministrador(), variableElementDto);
+
+        VariableElementDto variableElementDtoUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertNotNull(variableElementDtoUpdated);
@@ -2213,7 +2217,10 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         variableElementDtoSession2.setShortName(MetamacMocks.mockInternationalStringDto());
 
         // Update by session 1
-        VariableElementDto variableElementDtoSession1AfterUpdate1 = srmCoreServiceFacade.updateVariableElement(getServiceContextAdministrador(), variableElementDtoSession1);
+        ResourceVersionPublicationResult<VariableElementDto> resultVariableElement = srmCoreServiceFacade.updateVariableElement(getServiceContextAdministrador(), variableElementDtoSession1);
+
+        VariableElementDto variableElementDtoSession1AfterUpdate1 = resultVariableElement.getResourceVersion();
+
         assertTrue(variableElementDtoSession1AfterUpdate1.getVersionOptimisticLocking() > variableElementDtoSession1.getVersionOptimisticLocking());
 
         // Fails when is updated by session 2
@@ -2228,7 +2235,9 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
 
         // Session 1 can modify because has last version
         variableElementDtoSession1AfterUpdate1.setShortName(MetamacMocks.mockInternationalStringDto());
-        VariableElementDto variableElementDtoSession1AfterUpdate2 = srmCoreServiceFacade.updateVariableElement(getServiceContextAdministrador(), variableElementDtoSession1AfterUpdate1);
+        resultVariableElement = srmCoreServiceFacade.updateVariableElement(getServiceContextAdministrador(), variableElementDtoSession1AfterUpdate1);
+        VariableElementDto variableElementDtoSession1AfterUpdate2 = resultVariableElement.getResourceVersion();
+
         assertTrue(variableElementDtoSession1AfterUpdate2.getVersionOptimisticLocking() > variableElementDtoSession1AfterUpdate1.getVersionOptimisticLocking());
     }
 
@@ -2794,7 +2803,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         }
         fail("openness visualisation not found");
     }
-    
+
     private void assertContainsCodelistRestrictionVisualisation(String codelistRestrictionVisualisationUrnExpected, List<CodelistVisualisationDto> actuals) {
         for (CodelistVisualisationDto actual : actuals) {
             if (actual.getUrn().equals(codelistRestrictionVisualisationUrnExpected)) {
@@ -2817,7 +2826,7 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
     protected String getDataSetFile() {
         return "dbunit/SrmCodesTest.xml";
     }
-    
+
     // ------------------------------------------------------------------------------------
     // CODELIST RESTRICTION VISUALISATIONS
     // ------------------------------------------------------------------------------------
@@ -2854,7 +2863,8 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
         codelistRestrictionVisualisation.setName(MetamacMocks.mockInternationalStringDto());
 
         // Update
-        CodelistVisualisationDto codelistRestrictionVisualisationUpdated = srmCoreServiceFacade.updateCodelistRestrictionVisualisation(getServiceContextAdministrador(), codelistRestrictionVisualisation);
+        CodelistVisualisationDto codelistRestrictionVisualisationUpdated = srmCoreServiceFacade.updateCodelistRestrictionVisualisation(getServiceContextAdministrador(),
+                codelistRestrictionVisualisation);
 
         // Validate
         assertEqualsCodelistRestrictionVisualisationDto(codelistRestrictionVisualisation, codelistRestrictionVisualisationUpdated);
@@ -2918,6 +2928,5 @@ public class SrmCoreServiceFacadeCodesTest extends SrmBaseTest {
             assertEquals(Boolean.FALSE, getCodeMetamacVisualisationResult(codes, CODELIST_1_V2_CODE_4).getRestriction());
         }
     }
-
 
 }

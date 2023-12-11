@@ -99,6 +99,7 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacRepository;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -7113,7 +7114,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElement.getReplaceToVariableElements().add(variableElementReplaced1);
 
         // Create
-        VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.createVariableElement(ctx, variableElement);
+
+        VariableElement variableElementCreated = resultVariableElement.getResourceVersion();
+
         String urn = variableElementCreated.getIdentifiableArtefact().getUrn();
 
         // Validate
@@ -7147,7 +7151,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
 
         // Create
-        VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.createVariableElement(ctx, variableElement);
+
+        VariableElement variableElementCreated = resultVariableElement.getResourceVersion();
+
         String urn = variableElementCreated.getIdentifiableArtefact().getUrn();
 
         // Validate
@@ -7167,7 +7174,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElement.setRenderingColor(renderingColor);
 
         // Create
-        VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.createVariableElement(ctx, variableElement);
+
+        VariableElement variableElementCreated = resultVariableElement.getResourceVersion();
+
         String urn = variableElementCreated.getIdentifiableArtefact().getUrn();
 
         // Validate
@@ -7180,7 +7190,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElementRetrieved.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
 
         // Update
-        VariableElement variableElementUpdated = codesService.updateVariableElement(ctx, variableElementRetrieved);
+        resultVariableElement = codesService.updateVariableElement(ctx, variableElementRetrieved);
+
+        VariableElement variableElementUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertEquals(renderingColor, variableElementUpdated.getRenderingColor());
@@ -7190,7 +7202,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElementRetrieved.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
 
         // Update
-        variableElementUpdated = codesService.updateVariableElement(ctx, variableElementRetrieved);
+        resultVariableElement = codesService.updateVariableElement(ctx, variableElementRetrieved);
+
+        variableElementUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertEquals(renderingColor, variableElementUpdated.getRenderingColor());
@@ -7200,7 +7214,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElementRetrieved.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
 
         // Update
-        variableElementUpdated = codesService.updateVariableElement(ctx, variableElementRetrieved);
+        resultVariableElement = codesService.updateVariableElement(ctx, variableElementRetrieved);
+
+        variableElementUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertEquals(renderingColor, variableElementUpdated.getRenderingColor());
@@ -7434,7 +7450,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElement.setValidFrom(MetamacMocks.mockDateTime());
         variableElement.setValidTo(null);
 
-        VariableElement variableElementUpdated = codesService.updateVariableElement(getServiceContextAdministrador(), variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.updateVariableElement(getServiceContextAdministrador(), variableElement);
+
+        VariableElement variableElementUpdated = resultVariableElement.getResourceVersion();
 
         assertEqualsVariableElement(variableElement, variableElementUpdated);
     }
@@ -11705,6 +11723,24 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Override
     public void testResendKafkaMessageExternallyCodelist() {
         // No test. cron job process
+    }
+
+    @Test
+    @Override
+    public void testPublishVariableElementInBackground() throws Exception {
+        // no test cron job process
+    }
+
+    @Test
+    @Override
+    public void testNotifyVariableElementPublicationByVariable() throws Exception {
+        // no test cron job process and kafka sending
+    }
+
+    @Test
+    @Override
+    public void testNotifyVariableElementPublication() throws Exception {
+        // no test kafka sending
     }
 
     private VariableElementOperation getVariableElementOperationByCode(List<VariableElementOperation> operations, String code) {

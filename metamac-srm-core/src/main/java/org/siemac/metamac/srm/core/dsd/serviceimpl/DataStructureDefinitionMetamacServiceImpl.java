@@ -1894,27 +1894,13 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     }
 
     @Override
-    public boolean checkCodelistIsUsedByDsdOrConcept(ServiceContext ctx, String codelistUrn) throws MetamacException {
+    public boolean checkCodelistIsUsedByDsd(ServiceContext ctx, String codelistUrn) throws MetamacException {
         codelistUrn = GeneratorUrnUtils.makeUrnFromTemporal(codelistUrn);
-        boolean isUsedByDSD = checkCodelistIsUsedByDsd(ctx, codelistUrn);
-        boolean isUsedByConcept = checkCodelistIsUsedByConcept(ctx, codelistUrn);
-        return isUsedByDSD || isUsedByConcept;
-    }
-
-    private boolean checkCodelistIsUsedByDsd(ServiceContext ctx, String codelistUrn) throws MetamacException {
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
                 .withProperty(DataStructureDefinitionVersionMetamacProperties.grouping().components().localRepresentation().enumerationCodelist().maintainableArtefact().urn()).eq(codelistUrn).build();
         PagedResult<DataStructureDefinitionVersion> dsdWithCodelist = dataStructureDefinitionService.findDataStructureDefinitionByCondition(ctx, criteria, pagingParameter);
         return !dsdWithCodelist.getValues().isEmpty();
-    }
-
-    private boolean checkCodelistIsUsedByConcept(ServiceContext ctx, String codelistUrn) throws MetamacException {
-        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class)
-                .withProperty(ConceptMetamacProperties.coreRepresentation().enumerationCodelist().maintainableArtefact().urn()).eq(codelistUrn).build();
-        PagedResult<ConceptMetamac> conceptWithCodelist = this.conceptsService.findConceptsByCondition(ctx, criteria, pagingParameter);
-        return !conceptWithCodelist.getValues().isEmpty();
     }
 
 }

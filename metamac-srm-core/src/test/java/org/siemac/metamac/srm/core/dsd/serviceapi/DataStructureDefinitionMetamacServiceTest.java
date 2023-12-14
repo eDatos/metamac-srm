@@ -1637,9 +1637,9 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
 
     @Override
     @Test
-    public void testCheckCodelistIsUsedByDsdOrConcept() throws Exception {
+    public void testCheckCodelistIsUsedByDsd() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
-        boolean isUsed = dataStructureDefinitionMetamacService.checkCodelistIsUsedByDsdOrConcept(ctx, CODELIST_7_V1);
+        boolean isUsed = dataStructureDefinitionMetamacService.checkCodelistIsUsedByDsd(ctx, CODELIST_7_V1);
         assertEquals(isUsed, true);
     }
 

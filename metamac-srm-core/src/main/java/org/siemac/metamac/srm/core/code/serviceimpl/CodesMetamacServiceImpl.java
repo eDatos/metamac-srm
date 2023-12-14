@@ -106,6 +106,7 @@ import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvImportationUtils;
+import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
@@ -197,6 +198,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
     private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
+
+    @Autowired
+    private ConceptsMetamacService                conceptsMetamacService;
 
     @Autowired
     private SrmConfiguration                      srmConfiguration;
@@ -564,8 +568,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         String urnTemporal = codelistTemporalVersion.getVariable() != null ? codelistTemporalVersion.getVariable().getNameableArtefact().getUrn() : null;
         String urn = codelistVersion.getVariable() != null ? codelistVersion.getVariable().getNameableArtefact().getUrn() : null;
         if (!Objects.equal(urn, urnTemporal)) {
-            boolean isUsedByDsdOrConcept = dataStructureDefinitionMetamacService.checkCodelistIsUsedByDsdOrConcept(ctx, codelistTemporalUrn);
-            if (isUsedByDsdOrConcept) {
+            boolean isUsedByDsd = dataStructureDefinitionMetamacService.checkCodelistIsUsedByDsd(ctx, codelistTemporalUrn);
+            boolean isUsedByConcept = conceptsMetamacService.checkCodelistIsUsedByConcept(ctx, codelistTemporalUrn);
+            if (isUsedByDsd || isUsedByConcept) {
                 exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CODELIST_CANNOT_BE_REPLACE_CODELIST_IS_USED, codelistTemporalUrn));
             }
         }

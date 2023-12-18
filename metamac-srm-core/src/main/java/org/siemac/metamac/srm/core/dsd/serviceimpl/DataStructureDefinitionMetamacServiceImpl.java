@@ -1910,4 +1910,13 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         return false;
     }
 
+    public boolean checkCodelistIsUsedByDsd(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        codelistUrn = GeneratorUrnUtils.makeUrnFromTemporal(codelistUrn);
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
+                .withProperty(DataStructureDefinitionVersionMetamacProperties.grouping().components().localRepresentation().enumerationCodelist().maintainableArtefact().urn()).eq(codelistUrn).build();
+        PagedResult<DataStructureDefinitionVersion> dsdWithCodelist = dataStructureDefinitionService.findDataStructureDefinitionByCondition(ctx, criteria, pagingParameter);
+        return !dsdWithCodelist.getValues().isEmpty();
+    }
+
 }

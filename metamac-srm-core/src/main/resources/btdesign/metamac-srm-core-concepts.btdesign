@@ -157,6 +157,9 @@ Application ConceptsMetamac {
 			
 			// resend kafka message for the last number of version of published concept.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyConceptSchemes() throws MetamacException;
+    		
+    		"Check codelist is used by concept"
+			boolean checkCodelistIsUsedByConcept(String codelistUrn) throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------

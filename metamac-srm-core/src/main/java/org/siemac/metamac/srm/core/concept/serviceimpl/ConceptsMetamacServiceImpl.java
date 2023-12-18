@@ -2357,6 +2357,15 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         logger.info("resend all published last version concept schemes kafka messages end at {} ", new Date());
 
         return exceptionsItems;
+    }
 
+    @Override
+    public boolean checkCodelistIsUsedByConcept(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        codelistUrn = GeneratorUrnUtils.makeUrnFromTemporal(codelistUrn);
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(ConceptMetamac.class)
+                .withProperty(ConceptMetamacProperties.coreRepresentation().enumerationCodelist().maintainableArtefact().urn()).eq(codelistUrn).build();
+        PagedResult<Concept> conceptWithCodelist = conceptsService.findConceptsByCondition(ctx, criteria, pagingParameter);
+        return !conceptWithCodelist.getValues().isEmpty();
     }
 }

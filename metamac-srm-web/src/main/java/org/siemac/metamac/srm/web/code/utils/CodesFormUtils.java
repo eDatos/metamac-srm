@@ -31,10 +31,7 @@ public class CodesFormUtils {
     // VARIABLE
 
     public static boolean canCodelistVariableBeEdited(CodelistMetamacDto codelistDto) {
-        if (codelistDto == null) {
-            return false;
-        }
-        return !VersionUtil.isTemporalVersion(codelistDto.getVersionLogic());
+        return (codelistDto != null);
     }
 
     // ---------------------------------------------------------------------------------------------

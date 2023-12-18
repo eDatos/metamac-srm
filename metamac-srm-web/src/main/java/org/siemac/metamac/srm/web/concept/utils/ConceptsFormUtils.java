@@ -38,15 +38,6 @@ public class ConceptsFormUtils {
     // CONCEPTS
     // ---------------------------------------------------------------------------------------------
 
-    // VARIABLE
-
-    public static boolean canConceptVariableBeEdited(ConceptSchemeMetamacDto conceptSchemeDto) {
-        if (conceptSchemeDto == null) {
-            return false;
-        }
-        return !VersionUtil.isTemporalVersion(conceptSchemeDto.getVersionLogic());
-    }
-
     // CODE
 
     public static boolean canConceptCodeBeEdited(ConceptSchemeMetamacDto conceptSchemeDto) {

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -75,6 +76,7 @@ import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositi
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
@@ -189,6 +191,9 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
     @Autowired
     private ExternalItemRepository                   externalItemRepository;
+
+    @Autowired
+    private DataStructureDefinitionMetamacService    dataStructureDefinitionMetamacService;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                          entityManager;
@@ -513,6 +518,18 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return versioningResult;
     }
 
+    private void checkIfConceptVariableUsedIsChanged(ServiceContext ctx, List<MetamacExceptionItem> exceptions, ConceptMetamac concept, ConceptMetamac conceptTemporal) throws MetamacException {
+        String conceptUrn = concept.getNameableArtefact().getUrn();
+        String urnTemporal = conceptTemporal.getVariable() != null ? conceptTemporal.getVariable().getNameableArtefact().getUrn() : null;
+        String urn = concept.getVariable() != null ? concept.getVariable().getNameableArtefact().getUrn() : null;
+        if (Objects.equals(urn, urnTemporal)) {
+            boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, conceptUrn);
+            if (isUsed) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IS_USED, conceptUrn));
+            }
+        }
+    }
+
     @Override
     public ConceptSchemeVersionMetamac mergeTemporalVersion(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeTemporalVersion) throws MetamacException {
         // Check if is a temporal version
@@ -537,7 +554,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         Map<String, Item> temporalItemMap = SrmServiceUtils.createMapOfItemsByOriginalUrn(conceptSchemeTemporalVersion.getItems());
         List<ItemResult> conceptsFoundEfficiently = getConceptMetamacRepository().findConceptsByConceptSchemeUnordered(conceptSchemeTemporalVersion.getId(), ItemMetamacResultSelection.ALL);
         Map<String, ItemResult> conceptsFoundEfficientlyByUrn = SdmxSrmUtils.createMapOfItemsResultByUrn(conceptsFoundEfficiently);
-
+        List<MetamacExceptionItem> exceptions = new ArrayList<>();
         for (Item item : conceptSchemeVersion.getItems()) {
             ConceptMetamac concept = (ConceptMetamac) item;
             ConceptMetamac conceptTemp = (ConceptMetamac) temporalItemMap.get(item.getNameableArtefact().getUrn());
@@ -593,6 +610,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 concept.addRoleConcept(conceptRole);
             }
 
+            checkIfConceptVariableUsedIsChanged(ctx, exceptions, concept, conceptTemp);
             concept.setVariable(conceptTemp.getVariable());
 
             // Extends : can copy "extend" because they are concepts in another concept scheme
@@ -603,6 +621,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
             concept.removeAllRelatedConcepts(); // Clean related concepts, at the final the new related concepts will be added
         }
+        ExceptionUtils.throwIfException(exceptions);
 
         // Versioning related concepts
         for (Item conceptToCopyRelatedConcepts : conceptSchemeTemporalVersion.getItems()) {

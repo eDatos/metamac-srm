@@ -150,8 +150,13 @@ Application DsdsMetamac {
             checkDimension(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion, @Component component, List<MetamacExceptionItem> exceptions) throws MetamacException
             checkAttribute(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion, @Component component, List<MetamacExceptionItem> exceptions) throws MetamacException
 		
+
+			"Check concept is used by dsd"
+			boolean checkConceptIsUsedByDsd(String conceptUrn) throws MetamacException;
+
 			"Check codelist is used by dsd"
 			boolean checkCodelistIsUsedByDsd(String codelistUrn) throws MetamacException;
+
 		}
 
 		// ----------------------------------------------------------------

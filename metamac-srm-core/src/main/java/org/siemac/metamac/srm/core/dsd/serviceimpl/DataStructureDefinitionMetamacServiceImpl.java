@@ -19,6 +19,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.criteria.SculptorPropertyCriteria;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
@@ -1894,6 +1895,21 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     }
 
     @Override
+    public boolean checkConceptIsUsedByDsd(ServiceContext ctx, String conceptUrn) throws MetamacException {
+        conceptUrn = GeneratorUrnUtils.makeUrnFromTemporal(conceptUrn);
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
+                .withProperty(DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn()).eq(conceptUrn).build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        PagedResult<DataStructureDefinitionVersion> dsdWithConcept = dataStructureDefinitionService.findDataStructureDefinitionByCondition(ctx, criteria, pagingParameter);
+
+        if (!dsdWithConcept.getValues().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean checkCodelistIsUsedByDsd(ServiceContext ctx, String codelistUrn) throws MetamacException {
         codelistUrn = GeneratorUrnUtils.makeUrnFromTemporal(codelistUrn);
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);

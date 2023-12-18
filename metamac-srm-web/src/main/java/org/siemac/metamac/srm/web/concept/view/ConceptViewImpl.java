@@ -987,9 +987,10 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
         return new FormItemIfFunction() {
 
             @Override
-            public boolean execute(FormItem arg0, Object arg1, DynamicForm arg2) {
+            public boolean execute(FormItem arg0, Object arg1, DynamicForm form) {
                 if (conceptSchemeMetamacDto != null) {
-                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType()) && ConceptsFormUtils.canConceptVariableBeEdited(conceptSchemeMetamacDto);
+                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType())
+                            && !org.siemac.metamac.srm.web.dsd.utils.CommonUtils.isRepresentationTypeEnumerated(form.getValueAsString(RepresentationDS.TYPE));
                 }
                 return false;
             }
@@ -1013,9 +1014,10 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
         return new FormItemIfFunction() {
 
             @Override
-            public boolean execute(FormItem arg0, Object arg1, DynamicForm arg2) {
+            public boolean execute(FormItem arg0, Object arg1, DynamicForm form) {
                 if (conceptSchemeMetamacDto != null) {
-                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType()) && !ConceptsFormUtils.canConceptVariableBeEdited(conceptSchemeMetamacDto);
+                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType())
+                            && org.siemac.metamac.srm.web.dsd.utils.CommonUtils.isRepresentationTypeEnumerated(form.getValueAsString(RepresentationDS.TYPE));
                 }
                 return false;
             }

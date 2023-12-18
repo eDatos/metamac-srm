@@ -89,7 +89,8 @@ public class DsdListViewImpl extends ViewWithUiHandlers<DsdListUiHandlers> imple
         });
         newToolStripButton.setVisible(DsdClientSecurityUtils.canCreateDsd());
 
-        exportToolStripButton = new ToolStripButton(MetamacSrmWeb.getConstants().actionExportSdmxMl(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+        exportToolStripButton = new ToolStripButton(MetamacSrmWeb.getConstants().actionExportSdmxMl(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
         exportToolStripButton.setVisible(false);
         exportToolStripButton.addClickHandler(new ClickHandler() {
 
@@ -140,7 +141,6 @@ public class DsdListViewImpl extends ViewWithUiHandlers<DsdListUiHandlers> imple
         dsdGridToolStrip.addButton(newToolStripButton);
         dsdGridToolStrip.addButton(deleteToolStripButton);
         dsdGridToolStrip.addButton(cancelValidityButton);
-        dsdGridToolStrip.addSeparator();
         dsdGridToolStrip.addButton(exportToolStripButton);
 
         // Search
@@ -184,7 +184,7 @@ public class DsdListViewImpl extends ViewWithUiHandlers<DsdListUiHandlers> imple
             }
         });
         dsdListGrid.setHeight100();
-        
+
         panel.addMember(dsdGridToolStrip);
         panel.addMember(searchSectionStack);
         panel.addMember(dsdListGrid);
@@ -268,7 +268,7 @@ public class DsdListViewImpl extends ViewWithUiHandlers<DsdListUiHandlers> imple
     public void setCodelistsForSearchSection(GetCodelistsResult result) {
         searchSectionStack.setCodelist(result);
     }
-    
+
     @Override
     public DataStructureDefinitionWebCriteria getDataStructureDefinitionWebCriteria() {
         return searchSectionStack.getDataStructureDefinitionWebCriteria();

@@ -5,6 +5,7 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeVariableElementNormalisationResult;
 import org.siemac.metamac.srm.core.code.domain.shared.VariableElementVisualisationResult;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.model.ds.ItemDS;
 import org.siemac.metamac.srm.web.client.resources.GlobalResources;
 import org.siemac.metamac.srm.web.client.utils.ItemsTreeGridUtils;
@@ -30,7 +31,7 @@ public class CodesTreeGridUtils extends ItemsTreeGridUtils {
         node.setParentID(code.getParent() != null ? code.getParent().getUrn() : schemeNodeName);
         node.setAttribute(CodeDS.ID_DATABASE, code.getItemIdDatabase());
         node.setAttribute(ItemDS.CODE, code.getCode());
-        node.setAttribute(ItemDS.NAME, code.getName() != null ? code.getName() : StringUtils.EMPTY);
+        node.setAttribute(ItemDS.NAME, code.getName() != null ? code.getName().replace(SrmConstants.TSV_BR_TAG, SrmConstants.TSV_DOUBLE_SPACE) : StringUtils.EMPTY);
         node.setAttribute(ItemDS.URN, code.getUrn());
         node.setAttribute(ItemDS.DESCRIPTION, code.getDescription());
         node.setAttribute(ItemDS.CREATION_DATE, DateUtils.getFormattedDate(code.getCreatedDate()));
@@ -41,15 +42,15 @@ public class CodesTreeGridUtils extends ItemsTreeGridUtils {
         node.setOrder(code.getOrder() == null ? 0 : code.getOrder());
         // Specify the openness level
         node.setAttribute(CodeDS.OPENNESS_LEVEL, code.getOpenness());
-        node.setAttribute(CodeDS.OPENNESS_LEVEL_INITIAL, code.getOpenness()); // The value is unmodifiable by the user       
+        node.setAttribute(CodeDS.OPENNESS_LEVEL_INITIAL, code.getOpenness()); // The value is unmodifiable by the user
         String iconUrl = BooleanUtils.isTrue(code.getOpenness()) ? GlobalResources.RESOURCE.folderOpened().getURL() : GlobalResources.RESOURCE.folderClosed().getURL();
         node.setAttribute(CodeDS.OPENNESS_LEVEL_ICON, iconUrl);
 
-        //restriction
+        // restriction
         node.setAttribute(CodeDS.RESTRICTION, Boolean.TRUE); // folder always open in restriction by default.
-        node.setAttribute(CodeDS.RESTRICTION_CHECK, code.getRestriction()); 
-        node.setAttribute(CodeDS.RESTRICTION_CHECK_INITIAL, code.getRestriction()); // The value is unmodifiable by the user       
-        
+        node.setAttribute(CodeDS.RESTRICTION_CHECK, code.getRestriction());
+        node.setAttribute(CodeDS.RESTRICTION_CHECK_INITIAL, code.getRestriction()); // The value is unmodifiable by the user
+
         // Only for variable elements tree grid
         node.setVariableElement(code.getVariableElement());
 

@@ -51,7 +51,7 @@ public class CodesRecordUtils extends org.siemac.metamac.srm.web.client.utils.Re
     public static CodeRecord getCodeRecord(CodeMetamacBasicDto codeDto) {
         CodeRecord record = new CodeRecord();
         record = (CodeRecord) getItemRecord(record, codeDto);
-        if (record.getName() != null && record.getName().contains(SrmConstants.TSV_BR_TAG)) {
+        if (record.getName() != null) {
             record.setName(record.getName().replace(SrmConstants.TSV_BR_TAG, SrmConstants.TSV_DOUBLE_SPACE));
         }
         record.setCodeBasicDto(codeDto);

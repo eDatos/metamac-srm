@@ -17,6 +17,7 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.code.dto.VariableElementOperationDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.code.model.record.CodeRecord;
 import org.siemac.metamac.srm.web.code.model.record.CodelistFamilyRecord;
@@ -50,6 +51,9 @@ public class CodesRecordUtils extends org.siemac.metamac.srm.web.client.utils.Re
     public static CodeRecord getCodeRecord(CodeMetamacBasicDto codeDto) {
         CodeRecord record = new CodeRecord();
         record = (CodeRecord) getItemRecord(record, codeDto);
+        if (record.getName() != null && record.getName().contains(SrmConstants.TSV_BR_TAG)) {
+            record.setName(record.getName().replace(SrmConstants.TSV_BR_TAG, SrmConstants.TSV_DOUBLE_SPACE));
+        }
         record.setCodeBasicDto(codeDto);
         return record;
     }

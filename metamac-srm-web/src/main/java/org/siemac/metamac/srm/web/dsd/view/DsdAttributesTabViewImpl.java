@@ -174,7 +174,6 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
         ToolStrip attributeGridToolStrip = new ToolStrip();
         attributeGridToolStrip.setWidth100();
         attributeGridToolStrip.addButton(newToolStripButton);
-        attributeGridToolStrip.addSeparator();
         attributeGridToolStrip.addButton(deleteToolStripButton);
 
         // Grid

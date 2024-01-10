@@ -113,7 +113,6 @@ public class DsdGroupKeysTabViewImpl extends ViewWithUiHandlers<DsdGroupKeysTabU
         ToolStrip groupKeysGridToolStrip = new ToolStrip();
         groupKeysGridToolStrip.setWidth100();
         groupKeysGridToolStrip.addButton(newToolStripButton);
-        groupKeysGridToolStrip.addSeparator();
         groupKeysGridToolStrip.addButton(deleteToolStripButton);
 
         // Grid

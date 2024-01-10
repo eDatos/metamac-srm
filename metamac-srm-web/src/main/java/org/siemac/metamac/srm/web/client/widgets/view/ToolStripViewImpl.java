@@ -60,7 +60,6 @@ public class ToolStripViewImpl implements ToolStripPresenterWidget.ToolStripView
         toolStrip.addButton(conceptsButton);
         toolStrip.addButton(classificationsButton);
         toolStrip.addButton(dsdListButton);
-        toolStrip.addSeparator();
         toolStrip.addButton(organisationsButton);
         toolStrip.addButton(categoriesButton);
         toolStrip.addButton(adminButtonButton);

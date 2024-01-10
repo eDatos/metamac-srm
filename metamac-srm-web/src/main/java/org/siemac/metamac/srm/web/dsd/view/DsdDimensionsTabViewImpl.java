@@ -170,7 +170,6 @@ public class DsdDimensionsTabViewImpl extends ViewWithUiHandlers<DsdDimensionsTa
         ToolStrip dimensionGridToolStrip = new ToolStrip();
         dimensionGridToolStrip.setWidth100();
         dimensionGridToolStrip.addButton(newToolStripButton);
-        dimensionGridToolStrip.addSeparator();
         dimensionGridToolStrip.addButton(deleteToolStripButton);
 
         // Grid

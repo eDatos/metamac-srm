@@ -59,7 +59,6 @@ public class CategoriesCodesCategoryElementsPanel extends VLayout {
         // Normalise
 
         normaliseButton = createNormaliseButton();
-        toolStrip.addSeparator();
         toolStrip.addButton(normaliseButton);
 
         addMember(toolStrip);

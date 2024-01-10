@@ -133,7 +133,6 @@ public class OrganisationSchemeListViewImpl extends ViewWithUiHandlers<Organisat
         toolStrip.addButton(newButton);
         toolStrip.addButton(deleteButton);
         toolStrip.addButton(cancelValidityButton);
-        toolStrip.addSeparator();
         toolStrip.addButton(exportButton);
 
         // Search

@@ -28,6 +28,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.concepts.concept_scheme_not_externally_published");
     public static final CommonServiceExceptionType CONCEPT_REPRESENTATION_ENUMERATED_CODELIST_VARIABLE_REQUIRED                          = create(
             "exception.srm.concepts.concept.enumerated_representation_codelist.variable_required");
+    public static final CommonServiceExceptionType CONCEPT_SCHEME_CANNOT_BE_REPLACE_CONCEPT_IS_USED                                      = create(
+            "exception.srm.concepts.concept_scheme.cannot_be_replace_concept_scheme_concept_is_used");
 
     // Organisations
     public static final CommonServiceExceptionType ORGANISATION_SCHEME_WRONG_TYPE                                                        = create(
@@ -94,6 +96,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.codelists.codelist_unsupported_to_geographical_granularity");
     public static final CommonServiceExceptionType CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS                       = create(
             "exception.srm.codelists.codelist_unsupported_not_standardized_with_public_access");
+    public static final CommonServiceExceptionType CODELIST_CANNOT_BE_REPLACE_CODELIST_IS_USED                                           = create(
+            "exception.srm.codelists.cannot_be_replace_codelists_is_used");
 
     // Variables
     public static final CommonServiceExceptionType VARIABLE_TYPE_UPDATE_TO_GEOGRAPHICAL_UNSUPPORTED                                      = create(

@@ -1631,7 +1631,24 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     }
 
     @Override
+    @Test
+    public void testCheckConceptIsUsedByDsd() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+        boolean isUsed = dataStructureDefinitionMetamacService.checkConceptIsUsedByDsd(ctx, CONCEPT_SCHEME_2_V1_CONCEPT_1);
+        assertEquals(isUsed, true);
+    }
+
+    @Override
     protected String getDataSetFile() {
         return "dbunit/SrmDsdTest.xml";
     }
+
+    @Override
+    @Test
+    public void testCheckCodelistIsUsedByDsd() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+        boolean isUsed = dataStructureDefinitionMetamacService.checkCodelistIsUsedByDsd(ctx, CODELIST_7_V1);
+        assertEquals(isUsed, true);
+    }
+
 }

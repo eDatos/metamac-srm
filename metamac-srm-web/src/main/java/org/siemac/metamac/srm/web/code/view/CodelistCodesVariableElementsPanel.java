@@ -59,7 +59,6 @@ public class CodelistCodesVariableElementsPanel extends VLayout {
         // Normalise
 
         normaliseButton = createNormaliseButton();
-        toolStrip.addSeparator();
         toolStrip.addButton(normaliseButton);
 
         addMember(toolStrip);
@@ -152,8 +151,8 @@ public class CodelistCodesVariableElementsPanel extends VLayout {
     }
 
     private ToolStripButton createCancelButton() {
-        ToolStripButton cancelButton = new ToolStripButton(MetamacSrmWeb.getConstants().actionCancel(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.cancelListGrid()
-                .getURL());
+        ToolStripButton cancelButton = new ToolStripButton(MetamacSrmWeb.getConstants().actionCancel(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.cancelListGrid().getURL());
         cancelButton.addClickHandler(new ClickHandler() {
 
             @Override

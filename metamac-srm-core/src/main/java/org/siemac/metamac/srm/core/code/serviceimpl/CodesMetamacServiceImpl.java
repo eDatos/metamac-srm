@@ -109,8 +109,10 @@ import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.TsvImportationUtils;
+import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.invocation.utils.StreamUtils;
@@ -163,6 +165,7 @@ import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
 import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
 import com.arte.statistic.sdmx.srm.core.notices.serviceimpl.utils.NoticesCallback;
+import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
@@ -201,6 +204,12 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
     private SrmValidation                              srmValidation;
+
+    @Autowired
+    private DataStructureDefinitionMetamacService      dataStructureDefinitionMetamacService;
+
+    @Autowired
+    private ConceptsMetamacService                     conceptsMetamacService;
 
     @Autowired
     private SrmConfiguration                           srmConfiguration;
@@ -329,8 +338,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         // if variable is changed, remove variable elements of codes
         if (codelistVersion.getIsVariableUpdated()) {
-            // codelist can not be temporal, because it can merge in original version, and in this case variable must be inmutable
-            SrmValidationUtils.checkArtefactIsNotTemporal(codelistVersion.getMaintainableArtefact());
             // actions in codes
             getCodeMetamacRepository().clearCodesVariableElementByCodelist(codelistVersion);
         }
@@ -572,6 +579,20 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return versioningResult;
     }
 
+    private void checkIfCodeIsUsed(ServiceContext ctx, List<MetamacExceptionItem> exceptions, CodelistVersionMetamac codelistVersion, CodelistVersionMetamac codelistTemporalVersion)
+            throws MetamacException {
+        String codelistTemporalUrn = codelistTemporalVersion.getMaintainableArtefact().getUrn();
+        String urnTemporal = codelistTemporalVersion.getVariable() != null ? codelistTemporalVersion.getVariable().getNameableArtefact().getUrn() : null;
+        String urn = codelistVersion.getVariable() != null ? codelistVersion.getVariable().getNameableArtefact().getUrn() : null;
+        if (!Objects.equal(urn, urnTemporal)) {
+            boolean isUsedByDsd = dataStructureDefinitionMetamacService.checkCodelistIsUsedByDsd(ctx, codelistTemporalUrn);
+            boolean isUsedByConcept = conceptsMetamacService.checkCodelistIsUsedByConcept(ctx, codelistTemporalUrn);
+            if (isUsedByDsd || isUsedByConcept) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CODELIST_CANNOT_BE_REPLACE_CODELIST_IS_USED, codelistTemporalUrn));
+            }
+        }
+    }
+
     @Override
     public CodelistVersionMetamac mergeTemporalVersion(ServiceContext ctx, String urnTemporal) throws MetamacException {
 
@@ -583,6 +604,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         // Load original version
         CodelistVersionMetamac codelistVersion = retrieveCodelistOriginalFromUrnTemporal(ctx, codelistTemporalVersion.getMaintainableArtefact().getUrn());
+
+        List<MetamacExceptionItem> exceptions = new ArrayList<>();
+        checkIfCodeIsUsed(ctx, exceptions, codelistVersion, codelistTemporalVersion);
+        ExceptionUtils.throwIfException(exceptions);
 
         // Inherit InternationalStrings
         BaseReplaceFromTemporalMetamac.replaceInternationalStringFromTemporalToCodelist(codelistVersion, codelistTemporalVersion, internationalStringRepository);

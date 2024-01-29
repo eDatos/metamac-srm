@@ -64,7 +64,7 @@ Application CodesMetamac {
 	    	"Publish internally a codelist"
 	    	TaskInfo publishInternallyCodelist(String urn, Boolean forceLatestFinal, Boolean canBeBackground) throws MetamacException;
 	    	"Publish externally a codelist"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CodelistVersionMetamac> publishExternallyCodelist(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CodelistVersionMetamac> publishExternallyCodelist(String urn) throws MetamacException;
 	    	"Resend a codelist"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCodelist(@CodelistVersionMetamac codelistVersion) throws MetamacException;
 			"Deletes codelist version. This must be last version and no published"
@@ -251,9 +251,9 @@ Application CodesMetamac {
     		// VARIABLE ELEMENTS
     		
     		"Creates variable element"
-			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElement> createVariableElement(@VariableElement variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElement> createVariableElement(@VariableElement variableElement) throws MetamacException;
 			"Updates variable element"
-			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElement> updateVariableElement(@VariableElement variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElement> updateVariableElement(@VariableElement variableElement) throws MetamacException;
     		"Retrieves variable element by urn"
     		@VariableElement retrieveVariableElementByUrn(String urn) throws MetamacException;
     		"Finds variable elements by criteria"

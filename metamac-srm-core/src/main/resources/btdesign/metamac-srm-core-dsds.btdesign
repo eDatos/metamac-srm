@@ -51,9 +51,9 @@ Application DsdsMetamac {
 	    	"Rejects diffusion validation of data structure definition"
 	    	@DataStructureDefinitionVersionMetamac rejectDataStructureDefinitionDiffusionValidation(String urn) throws MetamacException;
 	    	"Publish internally a data structure definition"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@DataStructureDefinitionVersionMetamac> publishInternallyDataStructureDefinition(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@DataStructureDefinitionVersionMetamac> publishInternallyDataStructureDefinition(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publish externally a data structure definition"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@DataStructureDefinitionVersionMetamac> publishExternallyDataStructureDefinition(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@DataStructureDefinitionVersionMetamac> publishExternallyDataStructureDefinition(String urn) throws MetamacException;
 	    	"Resend a data structure definition"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendDataStructureDefinition(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion) throws MetamacException;
 	    	

@@ -143,7 +143,7 @@ Application SrmFacadeCore {
 		     @return
 		     @throws org.siemac.metamac.core.common.exception.MetamacException
 		    "
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	
 	    	"
 	    	 Publishes externally a dsd  		
@@ -152,7 +152,7 @@ Application SrmFacadeCore {
 		     @return
 		     @throws org.siemac.metamac.core.common.exception.MetamacException
 		    "
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionExternally(String urn) throws MetamacException;
 
 	    	"
 	    	 Resend a data structure definition
@@ -339,9 +339,9 @@ Application SrmFacadeCore {
 	    	"Rejects diffusion validation of organisation scheme"
 	    	@OrganisationSchemeMetamacDto rejectOrganisationSchemeDiffusionValidation(String urn) throws MetamacException; 
 	    	"Publishes internally a organisation scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a organisation scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeExternally(String urn) throws MetamacException;
 	    	"Resend a organisation scheme"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendOrganisationScheme(String urn) throws MetamacException;
     		"Copies a organisation scheme version, creating a new organisation scheme, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -416,9 +416,9 @@ Application SrmFacadeCore {
 	    	"Rejects diffusion validation of concept scheme"
 	    	@ConceptSchemeMetamacDto rejectConceptSchemeDiffusionValidation(String urn) throws MetamacException; 
 	    	"Publishes internally a concept scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a concept scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeExternally(String urn) throws MetamacException;
 	    	"Resend a concept scheme"
 	    	org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendConceptScheme(String urn) throws MetamacException;
     		"Copies a concept scheme version, creating a new concept scheme, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -515,9 +515,9 @@ Application SrmFacadeCore {
 	    	"Rejects diffusion validation of category scheme"
 	    	@CategorySchemeMetamacDto rejectCategorySchemeDiffusionValidation(String urn) throws MetamacException; 
 	    	"Publishes internally a category scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a category scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeExternally(String urn) throws MetamacException;
 	    	"Resend a category scheme"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCategoryScheme(String urn) throws MetamacException;
     		"Copies a category scheme version, creating a new category scheme, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -616,7 +616,7 @@ Application SrmFacadeCore {
 	    	"Publishes internally a Codelist"
 	    	TaskInfo publishCodelistInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a Codelist"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CodelistMetamacDto> publishCodelistExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CodelistMetamacDto> publishCodelistExternally(String urn) throws MetamacException;
 	    	"Resend a Codelist"
 	    	org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCodelist(String urn) throws MetamacException;
     		"Copies a codelist version, creating a new codelist, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -751,9 +751,9 @@ Application SrmFacadeCore {
     		removeVariableFromVariableFamily(String variableUrn, String familyUrn) throws MetamacException;
     		
     		"Creates variable element"
-			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElementDto> createVariableElement(@VariableElementDto variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElementDto> createVariableElement(@VariableElementDto variableElement) throws MetamacException;
 			"Updates variable element"
-			org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@VariableElementDto> updateVariableElement(@VariableElementDto variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElementDto> updateVariableElement(@VariableElementDto variableElement) throws MetamacException;
     		"Retrieves variable element by urn"
     		@VariableElementDto retrieveVariableElementByUrn(String urn) throws MetamacException;
     		"Finds variable elements by criteria"

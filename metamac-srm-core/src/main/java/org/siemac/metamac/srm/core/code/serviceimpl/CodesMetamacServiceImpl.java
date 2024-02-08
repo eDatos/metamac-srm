@@ -1091,8 +1091,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Export
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes-orders", ".tsv");
+            file = File.createTempFile("codes-orders", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -1140,6 +1141,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            if (file != null && file.exists()) {
+                file.delete();
+            }
         }
     }
 
@@ -1260,8 +1264,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Export
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes-openness", ".tsv");
+            file = File.createTempFile("codes-openness", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -1309,6 +1314,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            if (file != null && file.exists()) {
+                file.delete();
+            }
         }
     }
 
@@ -1450,8 +1458,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Export
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes-restrictions", ".tsv");
+            file = File.createTempFile("codes-restrictions", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -1499,6 +1508,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            if (file != null && file.exists()) {
+                file.delete();
+            }
         }
     }
 

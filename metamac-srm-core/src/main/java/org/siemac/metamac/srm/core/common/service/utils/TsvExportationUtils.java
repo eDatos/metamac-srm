@@ -38,8 +38,9 @@ public class TsvExportationUtils {
     public static String exportCodes(List<ItemResult> items, List<String> languages) throws MetamacException {
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes", ".tsv");
+            file = File.createTempFile("codes", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -63,6 +64,13 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            deleteTemporalFile(file);
+        }
+    }
+
+    private static void deleteTemporalFile(File file) {
+        if (file != null && file.exists()) {
+            file.delete();
         }
     }
 
@@ -108,8 +116,9 @@ public class TsvExportationUtils {
     public static String exportConcepts(ConceptSchemeVersionMetamac conceptSchemeVersion, List<ItemResult> items, List<String> languages) throws MetamacException {
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("concepts", ".tsv");
+            file = File.createTempFile("concepts", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -144,6 +153,7 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            deleteTemporalFile(file);
         }
     }
 
@@ -256,8 +266,9 @@ public class TsvExportationUtils {
     public static String exportOrganisations(List<ItemResult> items, List<String> languages) throws MetamacException {
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("organisations", ".tsv");
+            file = File.createTempFile("organisations", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -278,6 +289,7 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            deleteTemporalFile(file);
         }
     }
 
@@ -306,8 +318,9 @@ public class TsvExportationUtils {
     public static String exportCategories(List<ItemResult> items, List<String> languages) throws MetamacException {
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("categories", ".tsv");
+            file = File.createTempFile("categories", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -330,6 +343,7 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            deleteTemporalFile(file);
         }
     }
 
@@ -370,8 +384,9 @@ public class TsvExportationUtils {
     public static String exportVariableElements(List<VariableElementResult> variableElements, List<String> languages) throws MetamacException {
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("variable_elements", ".tsv");
+            file = File.createTempFile("variable_elements", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -391,6 +406,7 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            deleteTemporalFile(file);
         }
     }
 
@@ -781,8 +797,9 @@ public class TsvExportationUtils {
 
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("category_elements", ".tsv");
+            file = File.createTempFile("category_elements", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
             writeResourceElementsHeader(writer, languages);
@@ -798,6 +815,7 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+            deleteTemporalFile(file);
         }
     }
 

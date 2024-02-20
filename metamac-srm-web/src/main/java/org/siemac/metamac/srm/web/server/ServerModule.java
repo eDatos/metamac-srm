@@ -89,6 +89,7 @@ import org.siemac.metamac.srm.web.server.handlers.code.SaveCodelistRestrictionAc
 import org.siemac.metamac.srm.web.server.handlers.code.SaveVariableActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.SaveVariableElementActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.SaveVariableFamilyActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.TempFilesDeleteActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.UpdateCodeInOrderActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.UpdateCodeParentActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.UpdateCodeVariableElementActionHandler;
@@ -250,6 +251,7 @@ import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableFamilyAction;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeParentAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodelistProcStatusAction;
@@ -542,5 +544,7 @@ public class ServerModule extends HandlerModule {
 
         // This action should be removed to use CAS authentication
         bindHandler(MockCASUserAction.class, MockCASUserActionHandler.class);
+        
+        bindHandler(TempFilesDeleteAction.class, TempFilesDeleteActionHandler.class);
     }
 }

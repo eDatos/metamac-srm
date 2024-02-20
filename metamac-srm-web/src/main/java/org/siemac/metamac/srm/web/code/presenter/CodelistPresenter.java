@@ -111,6 +111,8 @@ import org.siemac.metamac.srm.web.shared.code.SaveCodelistOrderResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeParentAction;
@@ -1322,7 +1324,6 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     @Override
     public void exportCodes(String codelistUrn) {
         dispatcher.execute(new ExportCodesAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesResult>(this) {
-
             @Override
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
@@ -1330,6 +1331,19 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             @Override
             public void onWaitSuccess(ExportCodesResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
+            }
+        });
+    }
+
+    private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(TempFilesDeleteResult result) {
             }
         });
     }
@@ -1345,6 +1359,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             @Override
             public void onWaitSuccess(ExportCodesOrderResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
             }
         });
     }

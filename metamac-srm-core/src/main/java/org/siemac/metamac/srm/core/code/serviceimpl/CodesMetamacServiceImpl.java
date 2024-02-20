@@ -1141,13 +1141,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
-        }
-    }
-
-    private void deleteTemporalFile(File file) {
-        if (file != null && file.exists()) {
-            file.delete();
         }
     }
 
@@ -1318,7 +1311,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 
@@ -1510,7 +1502,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 

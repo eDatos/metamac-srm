@@ -64,13 +64,6 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
-        }
-    }
-
-    private static void deleteTemporalFile(File file) {
-        if (file != null && file.exists()) {
-            file.delete();
         }
     }
 
@@ -153,7 +146,6 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 
@@ -289,7 +281,6 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 
@@ -343,7 +334,6 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 
@@ -406,7 +396,6 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 
@@ -815,7 +804,6 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
-            deleteTemporalFile(file);
         }
     }
 

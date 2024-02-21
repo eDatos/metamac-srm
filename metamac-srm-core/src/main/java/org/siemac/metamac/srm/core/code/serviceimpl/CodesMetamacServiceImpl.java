@@ -1071,6 +1071,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
+        TsvExportationUtils.deleteTemporalFile(fileName);
+    }
+
+    @Override
     public String exportCodeOrdersTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
         CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);

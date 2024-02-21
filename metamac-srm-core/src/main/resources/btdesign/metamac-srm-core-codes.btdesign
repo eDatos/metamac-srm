@@ -137,6 +137,8 @@ Application CodesMetamac {
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
+    		"Delete temporal files"
+    		deleteTemporalFile(String fileName) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness leves in tsv format"

@@ -77,6 +77,8 @@ import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsAct
 import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
@@ -542,10 +544,22 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
             @Override
             public void onWaitSuccess(ExportCategoriesResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
             }
         });
     }
 
+    private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(TempFilesDeleteResult result) {
+            }
+        });
+    }
     @Override
     public void resourceImportationSucceed(String successMessage) {
         ShowMessageEvent.fireSuccessMessage(CategorySchemePresenter.this, successMessage);

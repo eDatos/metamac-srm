@@ -5,6 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.security.AccessController;
 import java.util.List;
 import java.util.Set;
 
@@ -15,6 +22,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.srm.core.base.domain.ResourceElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.category.serviceimpl.CategoriesMetamacServiceImpl;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -22,12 +30,17 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionP
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 
+import sun.security.action.GetPropertyAction;
+
 public class TsvExportationUtils {
 
+    private static Logger logger = LoggerFactory.getLogger(TsvExportationUtils.class);
     private TsvExportationUtils() {
     }
 
@@ -64,6 +77,22 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+        }
+    }
+
+    public static void deleteTemporalFile(String fileName) {
+        FileSystem fileSystem = FileSystems.getDefault();
+        File tmpdir = new File(AccessController.doPrivileged(new GetPropertyAction("java.io.tmpdir")));
+        Path path = fileSystem.getPath(tmpdir.getPath() + "\\" + fileName);
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            try {
+                Thread.sleep(5000);
+                Files.delete(path);
+            } catch (IOException | InterruptedException ex) {
+                logger.error(ex.getMessage());
+            }
         }
     }
 

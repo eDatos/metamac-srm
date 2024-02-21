@@ -51,6 +51,8 @@ import org.siemac.metamac.srm.web.shared.code.SaveVariableAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementResult;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
@@ -403,10 +405,22 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
             @Override
             public void onWaitSuccess(ExportVariableElementsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
             }
         });
     };
 
+    private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(VariablePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(TempFilesDeleteResult result) {
+            }
+        });
+    }
     @Override
     public void showWaitPopup() {
         ChangeWaitPopupVisibilityEvent.fire(this, true);

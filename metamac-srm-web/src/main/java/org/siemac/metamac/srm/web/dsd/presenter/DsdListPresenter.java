@@ -220,7 +220,7 @@ public class DsdListPresenter extends Presenter<DsdListPresenter.DsdListView, Ds
     @Override
     public void exportDsds(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
 
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.DATA_STRUCTURE, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.DATA_STRUCTURE, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

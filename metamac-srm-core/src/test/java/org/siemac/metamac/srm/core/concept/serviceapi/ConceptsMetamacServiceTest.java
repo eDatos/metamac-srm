@@ -6049,4 +6049,13 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     public void testResendKafkaMessageExternallyConceptSchemes() {
         // No test. cron job process
     }
+
+    @Override
+    @Test
+    public void testCheckCodelistIsUsedByConcept() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+        boolean isUsed = conceptsService.checkCodelistIsUsedByConcept(ctx, CODELIST_7_V1);
+        assertEquals(isUsed, true);
+    }
+
 }

@@ -61,9 +61,9 @@ Application ConceptsMetamac {
 	    	"Rejects diffusion validation of concept scheme"
 	    	@ConceptSchemeVersionMetamac rejectConceptSchemeDiffusionValidation(String urn) throws MetamacException;
 	    	"Publish internally a concept scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@ConceptSchemeVersionMetamac> publishInternallyConceptScheme(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@ConceptSchemeVersionMetamac> publishInternallyConceptScheme(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publish externally a concept scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@ConceptSchemeVersionMetamac> publishExternallyConceptScheme(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@ConceptSchemeVersionMetamac> publishExternallyConceptScheme(String urn) throws MetamacException;
 	    	"Resend a concept scheme"
 	    	org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
 			"Deletes concept scheme version. This must be last version and no published"

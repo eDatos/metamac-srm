@@ -952,6 +952,15 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private String toVariableElementLink(org.siemac.metamac.srm.core.code.domain.VariableElement variableElement) {
         return toVariableElementLink(variableElement.getVariable().getNameableArtefact().getCode(), variableElement.getIdentifiableArtefact().getCode());
     }
+
+    @Override
+    public ResourceLink toVariableElementSelfLink(String variableCode, String variableElementCode) {
+        ResourceLink target = new ResourceLink();
+        target.setKind(SrmRestConstants.KIND_VARIABLE_ELEMENT);
+        target.setHref(toVariableElementLink(variableCode, variableElementCode));
+        return target;
+    }
+
     private ResourceLink toVariableElementSelfLink(org.siemac.metamac.srm.core.code.domain.VariableElement source) {
         ResourceLink target = new ResourceLink();
         target.setKind(SrmRestConstants.KIND_VARIABLE_ELEMENT);
@@ -1119,9 +1128,15 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return getInternalWebApplicationNavigation().buildVariableUrl(source);
     }
 
+    @Override
+    public String toVariableElementManagementApplicationLink(String variableCode, String variableElementCode) {
+        return getInternalWebApplicationNavigation().buildVariableElementUrl(variableCode, variableElementCode);
+    }
+
     private String toVariableElementManagementApplicationLink(org.siemac.metamac.srm.core.code.domain.VariableElement source) {
         return getInternalWebApplicationNavigation().buildVariableElementUrl(source);
     }
+
     private String toVariableElementManagementApplicationLink(String variableID, org.siemac.metamac.srm.core.code.domain.VariableElementResult source) {
         return getInternalWebApplicationNavigation().buildVariableElementUrl(variableID, source.getCode());
     }

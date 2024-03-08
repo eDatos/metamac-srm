@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.resources.GlobalResources;
+import org.siemac.metamac.srm.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.srm.web.client.widgets.RelatedResourceListItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
 import org.siemac.metamac.srm.web.client.widgets.search.SearchMultiRelatedResourceSimpleItem;
@@ -40,6 +41,7 @@ import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
+import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
@@ -93,49 +95,52 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> implements VariablePresenter.VariableView {
 
-    private final VLayout panel;
-    private final VariableMainFormLayout mainFormLayout;
+    private final VLayout                                panel;
+    private final VariableMainFormLayout                 mainFormLayout;
 
     // View forms
-    private GroupDynamicForm identifiersForm;
-    private GroupDynamicForm contentDescriptorsForm;
-    private GroupDynamicForm productionDescriptorsForm;
-    private GroupDynamicForm diffusionDescriptorsForm;
+    private GroupDynamicForm                             identifiersForm;
+    private GroupDynamicForm                             contentDescriptorsForm;
+    private GroupDynamicForm                             productionDescriptorsForm;
+    private GroupDynamicForm                             diffusionDescriptorsForm;
 
     // Edition forms
-    private GroupDynamicForm identifiersEditionForm;
-    private GroupDynamicForm contentDescriptorsEditionForm;
-    private GroupDynamicForm productionDescriptorsEditionForm;
-    private GroupDynamicForm diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                             identifiersEditionForm;
+    private GroupDynamicForm                             contentDescriptorsEditionForm;
+    private GroupDynamicForm                             productionDescriptorsEditionForm;
+    private GroupDynamicForm                             diffusionDescriptorsEditionForm;
 
     // Variable elements
 
-    private final PaginatedCheckListGrid variableElementListGrid;
-    private final CustomToolStripButton createVariableElementButton;
-    private final CustomToolStripButton importVariableElementButton;
-    private final CustomToolStripButton exportVariableElementButton;
-    private final CustomToolStripButton deleteVariableElementButton;
-    private final CustomToolStripButton fusionVariableElementButton;
-    private final CustomToolStripButton segregateVariableElementButton;
-    private NewVariableElementWindow newVariableElementWindow;
-    private final DeleteConfirmationWindow deleteConfirmationWindow;
-    private SearchSectionStack elementsSectionStack;
+    private final PaginatedCheckListGrid                 variableElementListGrid;
+    private final CustomToolStripButton                  createVariableElementButton;
+    private final CustomToolStripButton                  importVariableElementButton;
+    private final CustomToolStripButton                  exportVariableElementButton;
+    private final CustomToolStripButton                  deleteVariableElementButton;
+    private final CustomToolStripButton                  fusionVariableElementButton;
+    private final CustomToolStripButton                  segregateVariableElementButton;
+    private final CustomToolStripButton                  resendVariableElementStreamMessageButton;
+    private final CustomToolStripButton                  resendAllVariableElementStreamMessageButton;
 
-    private SearchRelatedResourcePaginatedWindow createFusionWindow;
+    private NewVariableElementWindow                     newVariableElementWindow;
+    private final DeleteConfirmationWindow               deleteConfirmationWindow;
+    private SearchSectionStack                           elementsSectionStack;
+
+    private SearchRelatedResourcePaginatedWindow         createFusionWindow;
     private SearchMultipleRelatedResourcePaginatedWindow createSegregationWindow;
 
     // Variable elements importation
 
-    private final ImportVariableElementsWindow importVariableElementsWindow;
+    private final ImportVariableElementsWindow           importVariableElementsWindow;
 
     // Variable element operations
 
-    private final CustomSectionStack operationsSectionStack;
-    private final VariableElementOperationLayout variableElementOperationsLayout;
+    private final CustomSectionStack                     operationsSectionStack;
+    private final VariableElementOperationLayout         variableElementOperationsLayout;
 
-    private final ImportVariableElementShapeWindow importVariableElementShapeWindow;
+    private final ImportVariableElementShapeWindow       importVariableElementShapeWindow;
 
-    private VariableDto variableDto;
+    private VariableDto                                  variableDto;
 
     @Inject
     public VariableViewImpl() {
@@ -189,7 +194,7 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
         // ToolStrip
 
         ToolStrip toolStrip = new ToolStrip();
-        toolStrip.setWidth100();
+        toolStrip.setWidth(400);
         createVariableElementButton = createCreateVariableElementButton();
         toolStrip.addButton(createVariableElementButton);
 
@@ -207,6 +212,12 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
 
         segregateVariableElementButton = createSegregateButton();
         toolStrip.addButton(segregateVariableElementButton);
+
+        resendVariableElementStreamMessageButton = createResendMessageKafkaVariableElementsButton();
+        toolStrip.addButton(resendVariableElementStreamMessageButton);
+
+        resendAllVariableElementStreamMessageButton = createResendMessageKafkaAllVariableElementsButton();
+        toolStrip.addButton(resendAllVariableElementStreamMessageButton);
 
         // ListGrid
 
@@ -246,9 +257,10 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
         ListGridField fieldShortName = new ListGridField(VariableElementDS.SHORT_NAME, getConstants().variableElementShortName());
         CustomListGridField hasShape = new CustomListGridField(VariableElementDS.SHAPE_WKT, getConstants().variableElementHasPolygonShape());
         ListGridField urn = new ListGridField(VariableElementDS.URN, getConstants().identifiableArtefactUrn());
+        CustomListGridField publicationStreamStatus = ResourceFieldUtils.getCustomIconListGridField(VariableElementDS.PUBLICATION_STREAM_STATUS, getConstants().codelistStreamMessageStatus());
 
         variableElementListGrid.getListGrid().setAutoFitData(Autofit.VERTICAL);
-        variableElementListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn);
+        variableElementListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn, publicationStreamStatus);
 
         // Remove window
 
@@ -750,6 +762,33 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
         return exportButton;
     }
 
+    private CustomToolStripButton createResendMessageKafkaVariableElementsButton() {
+        CustomToolStripButton resendKafkaMessageButton = new CustomToolStripButton(getConstants().actionResendVariableElementsKafkaMessage(), GlobalResources.RESOURCE.reload().getURL());
+        resendKafkaMessageButton.setVisible(CodesClientSecurityUtils.canResendVariableElementStreamMessage());
+        resendKafkaMessageButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().resendUpdatedVariableElementsKafkaMessage(
+                        org.siemac.metamac.srm.web.code.utils.CommonUtils.getUrnsFromSelectedVariableElements(variableElementListGrid.getListGrid().getSelectedRecords()), null, null);
+            }
+        });
+        return resendKafkaMessageButton;
+    }
+
+    private CustomToolStripButton createResendMessageKafkaAllVariableElementsButton() {
+        CustomToolStripButton resendKafkaMessageButton = new CustomToolStripButton(getConstants().actionResendAllVariableElementsKafkaMessage(), GlobalResources.RESOURCE.reload().getURL());
+        resendKafkaMessageButton.setVisible(CodesClientSecurityUtils.canResendVariableElementStreamMessage());
+        resendKafkaMessageButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().resendUpdatedVariableElementsKafkaMessage(null, variableDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale());
+            }
+        });
+        return resendKafkaMessageButton;
+    }
+
     private CustomToolStripButton createDeleteVariableElementButton() {
         CustomToolStripButton deleteButton = new CustomToolStripButton(getConstants().actionDelete(), RESOURCE.deleteListGrid().getURL());
         deleteButton.setVisible(false);
@@ -975,5 +1014,11 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
                 return getUiHandlers();
             }
         };
+    }
+
+    @Override
+    public void showInformationMessage(String title, String message) {
+        InformationWindow informationWindow = new InformationWindow(title, message);
+        informationWindow.show();
     }
 }

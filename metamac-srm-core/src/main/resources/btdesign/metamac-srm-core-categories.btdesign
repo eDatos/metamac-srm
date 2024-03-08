@@ -46,9 +46,9 @@ Application CategoriesMetamac {
 	    	"Rejects diffusion validation of category scheme"
 	    	@CategorySchemeVersionMetamac rejectCategorySchemeDiffusionValidation(String urn) throws MetamacException;
 	    	"Publish internally a category scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CategorySchemeVersionMetamac> publishInternallyCategoryScheme(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CategorySchemeVersionMetamac> publishInternallyCategoryScheme(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publish externally a category scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CategorySchemeVersionMetamac> publishExternallyCategoryScheme(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CategorySchemeVersionMetamac> publishExternallyCategoryScheme(String urn) throws MetamacException;
 	    	"Resend a category scheme"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCategoryScheme(@CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException;
 			"Deletes category scheme version. This must be last version and no published"

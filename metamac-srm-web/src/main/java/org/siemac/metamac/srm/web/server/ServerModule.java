@@ -78,6 +78,8 @@ import org.siemac.metamac.srm.web.server.handlers.code.GetVariableFamilyActionHa
 import org.siemac.metamac.srm.web.server.handlers.code.GetVariablesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.NormaliseVariableElementsToCodesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ReSendCodelistStreamMessageActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.ReSendMultipleVariableElementStreamMessageActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.ReSendVariableElementStreamMessageActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.RemoveCodelistsFromCodelistFamilyActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.RemoveVariablesFromVariableFamilyActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.SaveCodeActionHandler;
@@ -239,6 +241,8 @@ import org.siemac.metamac.srm.web.shared.code.GetVariableFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesAction;
 import org.siemac.metamac.srm.web.shared.code.NormaliseVariableElementsToCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ReSendCodelistStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendVariableElementStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.code.RemoveCodelistsFromCodelistFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.RemoveVariablesFromVariableFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodeAction;
@@ -518,6 +522,8 @@ public class ServerModule extends HandlerModule {
         bindHandler(ReSendCodelistStreamMessageAction.class, ReSendCodelistStreamMessageActionHandler.class);
         bindHandler(ExportCodesRestrictionAction.class, ExportCodesRestrictionActionHandler.class);
         bindHandler(ExportCodesOpennessAction.class, ExportCodesOpennessActionHandler.class);
+        bindHandler(ReSendVariableElementStreamMessageAction.class, ReSendVariableElementStreamMessageActionHandler.class);
+        bindHandler(ReSendMultipleVariableElementsStreamMessageAction.class, ReSendMultipleVariableElementStreamMessageActionHandler.class);
 
         // Master Tables
         bindHandler(GetEniSchemaCatalogsAction.class, GetEniSchemaCatalogsActionHandler.class);

@@ -1,6 +1,8 @@
 package org.siemac.metamac.srm.web.server.rest;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ws.rs.core.Response;
@@ -16,12 +18,12 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.notices.v1_0.domain.Message;
-import org.siemac.metamac.rest.notices.v1_0.domain.Notice;
 import org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacApplicationsEnum;
 import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.MessageBuilder;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.NoticeBuilder;
+import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.invocation.MetamacApisLocator;
 import org.siemac.metamac.srm.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.srm.core.notices.ServiceNoticeMessage;
@@ -67,36 +69,48 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
     @Override
     public void createInternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
             throws MetamacWebException {
-        
-        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.TECNICO_APOYO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
-        
+
+        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.TECNICO_APOYO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION,
+                MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
+
         createNotification(serviceContext, ServiceNoticeAction.RESOURCE_INTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_INTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType, roles);
     }
-    
+
     @Override
     public void createExternalPublicationNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
             throws MetamacWebException {
-        
-        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
-                
+
+        MetamacRolesEnum[] roles = {MetamacRolesEnum.JEFE_NORMALIZACION, MetamacRolesEnum.TECNICO_NORMALIZACION, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION,
+                MetamacRolesEnum.TECNICO_APOYO_PRODUCCION, MetamacRolesEnum.LECTOR};
+
         createNotification(serviceContext, ServiceNoticeAction.RESOURCE_EXTERNAL_PUBLICATION, ServiceNoticeMessage.RESOURCE_EXTERNAL_PUBLICATION_OK, maintainableArtefactDto, resourceType, roles);
     }
 
     @Override
-    public void createStreamMessageErrorNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException {
+    public void createStreamMessageErrorNotification(ServiceContext serviceContext, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType)
+            throws MetamacWebException {
         createNotification(serviceContext, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR, maintainableArtefactDto, resourceType, null);
     }
 
-    private void createNotification(ServiceContext ctx, String actionCode, String messageCode, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType,
-            MetamacRolesEnum[] roles) throws MetamacWebException {
+    @Override
+    public void createStreamMessageErrorNotification(ServiceContext serviceContext, List<VariableElementDto> variableElementsDto, TypeExternalArtefactsEnum resourceType) throws MetamacWebException {
+        List<ResourceInternal> resources = new ArrayList<ResourceInternal>();
+        for (VariableElementDto variableElementDto : variableElementsDto) {
+            resources.add(variableElementToResourceInternal(variableElementDto));
+        }
 
-        ResourceInternal resource = this.maintainableResourceToResourceInternal(ctx, maintainableArtefactDto, resourceType);
-        ResourceInternal[] resources = {resource};
+        createNotification(serviceContext, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR, resources.toArray(new ResourceInternal[resources.size()]),
+                resourceType, null);
+    }
+
+    private void createNotification(ServiceContext ctx, String actionCode, String messageCode, ResourceInternal[] resources, TypeExternalArtefactsEnum resourceType, MetamacRolesEnum[] roles)
+            throws MetamacWebException {
+
         MetamacApplicationsEnum[] applications = {MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES};
 
         String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES.getName();
         String subject = buildSubject(ctx, actionCode, resourceType);
-        String messageText = buildMessage(ctx, messageCode, maintainableArtefactDto, resourceType);
+        String messageText = buildMessage(ctx, messageCode, resourceType);
 
         Message message = MessageBuilder.message().withText(messageText).withResources(resources).build();
 
@@ -114,6 +128,14 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
         }
     }
 
+    private void createNotification(ServiceContext ctx, String actionCode, String messageCode, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType,
+            MetamacRolesEnum[] roles) throws MetamacWebException {
+
+        ResourceInternal resource = this.maintainableResourceToResourceInternal(ctx, maintainableArtefactDto, resourceType);
+        ResourceInternal[] resources = {resource};
+        createNotification(ctx, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR, resources, resourceType, null);
+    }
+
     private ResourceInternal maintainableResourceToResourceInternal(ServiceContext ctx, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) {
         ResourceInternal resource = new ResourceInternal();
         if (maintainableArtefactDto != null) {
@@ -123,6 +145,19 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
             resource.setName(this.toInternationalString(maintainableArtefactDto.getName()));
             resource.setManagementAppLink(getMaintainableArtefactManagementApplicationLink(maintainableArtefactDto, resourceType));
             resource.setSelfLink(getMaintainableArtefactSelfLink(maintainableArtefactDto, resourceType));
+        }
+        return resource;
+    }
+
+    private ResourceInternal variableElementToResourceInternal(VariableElementDto variableElementDto) {
+        ResourceInternal resource = new ResourceInternal();
+        if (variableElementDto != null) {
+            resource.setId(variableElementDto.getCode());
+            resource.setUrn(variableElementDto.getUrn());
+            resource.setKind(ExternalItemUtils.getResourceKind(TypeExternalArtefactsEnum.VARIABLE_ELEMENT));
+            resource.setName(this.toInternationalString(variableElementDto.getShortName()));
+            resource.setManagementAppLink(codesDo2RestMapperV10.toVariableElementManagementApplicationLink(variableElementDto.getVariable().getCode(), variableElementDto.getCode()));
+            resource.setSelfLink(codesDo2RestMapperV10.toVariableElementSelfLink(variableElementDto.getVariable().getCode(), variableElementDto.getCode()));
         }
         return resource;
     }
@@ -207,7 +242,7 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
         return localizedMessage;
     }
 
-    private String buildMessage(ServiceContext ctx, String messageCode, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) {
+    private String buildMessage(ServiceContext ctx, String messageCode, TypeExternalArtefactsEnum resourceType) {
         Locale locale = ServiceContextUtils.getLocale(ctx);
         return getLocalizedMessage(locale, messageCode);
     }

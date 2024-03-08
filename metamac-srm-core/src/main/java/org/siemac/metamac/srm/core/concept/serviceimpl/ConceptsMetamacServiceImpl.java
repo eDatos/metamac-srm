@@ -979,15 +979,23 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
             // ConceptsExtends
             concept.setConceptExtends(tsvLineToConceptExtends(ctx, header, columns, lineNumber, conceptIdentifier, exceptionItems));
-
             concept.setQuantity(setQuantityMetadata(ctx, lineNumber, header, columns, concept.getQuantity() != null ? concept.getQuantity() : new Quantity(), exceptionItems));
 
-            TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
+            // Variable
+            setVariable(concept);
 
+            TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
         } catch (Exception e) {
             MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
             exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, ServiceExceptionParameters.CONCEPT));
             exceptionItems.add(exceptionItem);
+        }
+    }
+
+    private void setVariable(ConceptMetamac concept) {
+        if (concept.getCoreRepresentation() != null && concept.getCoreRepresentation().getEnumerationCodelist() != null) {
+            Variable variable = ((CodelistVersionMetamac) concept.getCoreRepresentation().getEnumerationCodelist()).getVariable();
+            concept.setVariable(variable);
         }
     }
 

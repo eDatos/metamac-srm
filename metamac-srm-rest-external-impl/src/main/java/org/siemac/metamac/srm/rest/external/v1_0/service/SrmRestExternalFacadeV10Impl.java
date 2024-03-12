@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -140,8 +142,6 @@ import org.siemac.metamac.srm.rest.external.v1_0.mapper.dsd.DataStructuresRest2D
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation.OrganisationsDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation.OrganisationsRest2DoMapper;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -215,7 +215,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private DataStructuresDo2RestMapperV10        dataStructuresDo2RestMapperV10;
 
     private final ServiceContext                  ctx                      = new ServiceContext("restInternal", "restInternal", "restInternal");
-    private final Logger                          logger                   = LoggerFactory.getLogger(SrmRestExternalFacadeV10Impl.class);
+    private final Logger                          logger                   = Logger.getLogger(SrmRestExternalFacadeV10Impl.class.getName());
     private final PagingParameter                 pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
 
     @Override
@@ -1817,7 +1817,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_RESTRICTION_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_RESTRICTION_CONFIGURATION_NOT_FOUND, restriction,
                         resourceID, version, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                RestException ex =new RestException(exception, Status.NOT_FOUND);
+                ex.setStackTrace(e.getStackTrace());
+                throw ex; 
             } else {
                 throw e;
             }
@@ -2069,7 +2071,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
      * Throws response error, logging exception
      */
     private RestException manageException(Exception e) {
-        logger.error("Error", e);
+        logger.log(Level.SEVERE, "Error", e);
         if (e instanceof RestException) {
             return (RestException) e;
         } else {

@@ -1788,7 +1788,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_ORDER_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_ORDER_CONFIGURATION_NOT_FOUND, order, resourceID,
                         version, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                RestException ex = new RestException(exception, Status.NOT_FOUND);
+                ex.setStackTrace(e.getStackTrace());
+                throw ex;
             } else {
                 throw e;
             }
@@ -1802,7 +1804,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_OPENNESS_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_OPENNESS_CONFIGURATION_NOT_FOUND, openness,
                         resourceID, version, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                RestException ex = new RestException(exception, Status.NOT_FOUND);
+                ex.setStackTrace(e.getStackTrace());
+                throw ex;
             } else {
                 throw e;
             }
@@ -1817,7 +1821,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_RESTRICTION_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_RESTRICTION_CONFIGURATION_NOT_FOUND, restriction,
                         resourceID, version, agencyID);
-                RestException ex =new RestException(exception, Status.NOT_FOUND);
+                RestException ex = new RestException(exception, Status.NOT_FOUND);
                 ex.setStackTrace(e.getStackTrace());
                 throw ex; 
             } else {
@@ -2071,10 +2075,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
      * Throws response error, logging exception
      */
     private RestException manageException(Exception e) {
-        logger.log(Level.SEVERE, "Error", e);
         if (e instanceof RestException) {
+            logger.log(Level.SEVERE, ((RestException) e).getException().getMessage(), e);
             return (RestException) e;
         } else {
+            logger.log(Level.SEVERE, "Error", e);
             // do not show information details about exception to user
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
             return new RestException(exception, Status.INTERNAL_SERVER_ERROR);

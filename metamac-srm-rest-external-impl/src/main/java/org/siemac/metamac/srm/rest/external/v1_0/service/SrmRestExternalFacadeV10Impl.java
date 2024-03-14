@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -142,6 +140,8 @@ import org.siemac.metamac.srm.rest.external.v1_0.mapper.dsd.DataStructuresRest2D
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation.OrganisationsDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.organisation.OrganisationsRest2DoMapper;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -215,7 +215,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private DataStructuresDo2RestMapperV10        dataStructuresDo2RestMapperV10;
 
     private final ServiceContext                  ctx                      = new ServiceContext("restInternal", "restInternal", "restInternal");
-    private final Logger                          logger                   = Logger.getLogger(SrmRestExternalFacadeV10Impl.class.getName());
+    private final Logger                          logger                   = LoggerFactory.getLogger(SrmRestExternalFacadeV10Impl.class);
     private final PagingParameter                 pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
 
     @Override
@@ -330,7 +330,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<ConceptMetamac> entitiesPagedResult = findConceptsCore(agencyID, resourceID, version, conceptID, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CONCEPT_NOT_FOUND, conceptID, version, resourceID, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -475,7 +475,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_NOT_FOUND, categoryID, version, resourceID,
                         agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -511,7 +511,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<com.arte.statistic.sdmx.srm.core.category.domain.Categorisation> entitiesPagedResult = findCategorisationsCore(agencyID, resourceID, version, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORISATION_NOT_FOUND, resourceID, version, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -633,7 +633,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.ORGANISATION_NOT_FOUND, organisationID, version, resourceID,
                         agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -714,7 +714,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.AGENCY_NOT_FOUND, organisationID, version, resourceID,
                         agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -797,7 +797,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.ORGANISATION_UNIT_NOT_FOUND, organisationID, version,
                         resourceID, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -880,7 +880,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.DATA_PROVIDER_NOT_FOUND, organisationID, version, resourceID,
                         agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -963,7 +963,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.DATA_CONSUMER_NOT_FOUND, organisationID, version, resourceID,
                         agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1187,7 +1187,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<org.siemac.metamac.srm.core.code.domain.VariableFamily> entitiesPagedResult = findVariableFamiliesCore(id, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_FAMILY_NOT_FOUND, id);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1240,7 +1240,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<org.siemac.metamac.srm.core.code.domain.Variable> entitiesPagedResult = findVariablesCore(id, null, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_NOT_FOUND, id);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1277,7 +1277,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<org.siemac.metamac.srm.core.code.domain.VariableElement> entitiesPagedResult = findVariableElementsCore(variableID, resourceID, false, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_ELEMENT_NOT_FOUND, resourceID, variableID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1343,7 +1343,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<org.siemac.metamac.srm.core.code.domain.CodelistFamily> entitiesPagedResult = findCodelistFamiliesCore(id, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_FAMILY_NOT_FOUND, id);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1381,7 +1381,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, codeID, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODE_NOT_FOUND, codeID, version, resourceID, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1419,7 +1419,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             PagedResult<DataStructureDefinitionVersionMetamac> entitiesPagedResult = findDataStructuresCore(agencyID, resourceID, version, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.DATA_STRUCTURE_NOT_FOUND, resourceID, version, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1456,7 +1456,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                     pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CONTENT_CONSTRAINT_NOT_FOUND, resourceID, version, agencyID);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1477,14 +1477,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (regionValue == null) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CONTENT_CONSTRAINT_REGION_NOT_FOUND, regionCode,
                         contentConstraintUrn);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // If not draft is allowed and isn't final, then is an error.
             if (BooleanUtils.isNotTrue(regionValue.getContentConstraint().getMaintainableArtefact().getFinalLogicClient())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CONTENT_CONSTRAINT_UNPUBLISHED, regionCode,
                         contentConstraintUrn);
-                throw new RestException(exception, Status.NOT_FOUND);
+                throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
             }
 
             // Transform
@@ -1545,7 +1545,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         PagedResult<ConceptSchemeVersionMetamac> entitiesPagedResult = findConceptSchemesCore(agencyID, resourceID, version, null, pagingParameterOneResult);
         if (entitiesPagedResult.getValues().size() != 1) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CONCEPT_SCHEME_NOT_FOUND, resourceID, version, agencyID);
-            throw new RestException(exception, Status.NOT_FOUND);
+            throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
         }
         return entitiesPagedResult.getValues().get(0);
     }
@@ -1606,7 +1606,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         PagedResult<CategorySchemeVersionMetamac> entitiesPagedResult = findCategorySchemesCore(agencyID, resourceID, version, null, pagingParameterOneResult);
         if (entitiesPagedResult.getValues().size() != 1) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_SCHEME_NOT_FOUND, resourceID, version, agencyID);
-            throw new RestException(exception, Status.NOT_FOUND);
+            throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
         }
         return entitiesPagedResult.getValues().get(0);
     }
@@ -1678,7 +1678,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         PagedResult<OrganisationSchemeVersionMetamac> entitiesPagedResult = findOrganisationSchemesCore(type, agencyID, resourceID, version, null, pagingParameterOneResult);
         if (entitiesPagedResult.getValues().size() != 1) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(exceptionType, resourceID, version, agencyID);
-            throw new RestException(exception, Status.NOT_FOUND);
+            throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
         }
         return entitiesPagedResult.getValues().get(0);
     }
@@ -1776,7 +1776,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         PagedResult<CodelistVersionMetamac> entitiesPagedResult = findCodelistsCore(agencyID, resourceID, version, null, pagingParameterOneResult);
         if (entitiesPagedResult.getValues().size() != 1) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_NOT_FOUND, resourceID, version, agencyID);
-            throw new RestException(exception, Status.NOT_FOUND);
+            throw new RestException(exception, Status.NOT_FOUND, new Throwable(exception.getMessage()));
         }
         return entitiesPagedResult.getValues().get(0);
     }
@@ -1788,9 +1788,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_ORDER_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_ORDER_CONFIGURATION_NOT_FOUND, order, resourceID,
                         version, agencyID);
-                RestException ex = new RestException(exception, Status.NOT_FOUND);
-                ex.setStackTrace(e.getStackTrace());
-                throw ex;
+                throw new RestException(exception, Status.NOT_FOUND, e);
             } else {
                 throw e;
             }
@@ -1804,9 +1802,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_OPENNESS_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_OPENNESS_CONFIGURATION_NOT_FOUND, openness,
                         resourceID, version, agencyID);
-                RestException ex = new RestException(exception, Status.NOT_FOUND);
-                ex.setStackTrace(e.getStackTrace());
-                throw ex;
+                throw new RestException(exception, Status.NOT_FOUND, e);
             } else {
                 throw e;
             }
@@ -1821,9 +1817,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CODELIST_RESTRICTION_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CODELIST_RESTRICTION_CONFIGURATION_NOT_FOUND, restriction,
                         resourceID, version, agencyID);
-                RestException ex = new RestException(exception, Status.NOT_FOUND);
-                ex.setStackTrace(e.getStackTrace());
-                throw ex; 
+                throw new RestException(exception, Status.NOT_FOUND, e);
             } else {
                 throw e;
             }
@@ -2075,11 +2069,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
      * Throws response error, logging exception
      */
     private RestException manageException(Exception e) {
+        logger.error("Error", e);
         if (e instanceof RestException) {
-            logger.log(Level.SEVERE, ((RestException) e).getException().getMessage(), e);
             return (RestException) e;
         } else {
-            logger.log(Level.SEVERE, "Error", e);
             // do not show information details about exception to user
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
             return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
@@ -2120,7 +2113,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         if (codelistVersion1.getVariable() == null || codelistVersion2.getVariable() == null
                 || !codelistVersion1.getVariable().getNameableArtefact().getCode().equals(codelistVersion2.getVariable().getNameableArtefact().getCode())) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_CODELIST_MUST_BE_THE_SAME_TO_GET_RECODING);
-            throw new RestException(exception, Status.BAD_REQUEST);
+            throw new RestException(exception, Status.BAD_REQUEST, new Throwable(exception.getMessage()));
         }
     }
 
@@ -2130,7 +2123,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private void checkParameterNotWildcardAll(String parameterName, String parameterValue) {
         if (SrmRestConstants.WILDCARD_ALL.equals(parameterValue)) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.PARAMETER_INCORRECT, parameterName);
-            throw new RestException(exception, Status.BAD_REQUEST);
+            throw new RestException(exception, Status.BAD_REQUEST, new Throwable(exception.getMessage()));
         }
     }
 
@@ -2140,7 +2133,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private void checkParameterEmpty(String parameterName, String parameterValue) {
         if (!StringUtils.isBlank(parameterValue)) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.PARAMETER_INCORRECT, parameterName);
-            throw new RestException(exception, Status.BAD_REQUEST);
+            throw new RestException(exception, Status.BAD_REQUEST, new Throwable(exception.getMessage()));
         }
     }
 

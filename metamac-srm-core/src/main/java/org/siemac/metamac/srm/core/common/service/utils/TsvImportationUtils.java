@@ -1262,6 +1262,7 @@ public class TsvImportationUtils {
         target.getNameableArtefact().setIsCodeUpdated(source.getNameableArtefact().getIsCodeUpdated());
         target.getNameableArtefact().setDescription(source.getNameableArtefact().getDescription());
         target.getNameableArtefact().setComment(source.getNameableArtefact().getComment());
+        target.setVariable(source.getVariable());
     }
 
     public static ImportationCategoryElementsTsvHeader parseTsvHeaderToImportCategoryElements(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {

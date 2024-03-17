@@ -11,7 +11,10 @@
 ## 6.4.0 a 6.4.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.4.0/db](etc/changes-from-release/6.4.0/db) 
- 
+* Se hace uso del topic CODELIST_PUBLICATION. Se requiere borrar los mensajes para evitar problemas de mensajes antiguos que no tienen campos obligatorios. El consumidor empieza desde el principio y falla al tratarlos. Dado que es información no relevante se borra. Para ello
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --describe retention.ms
+
 
 ## 6.3.0 a 6.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.

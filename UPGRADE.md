@@ -16,7 +16,7 @@
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --describe retention.ms
 -- Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --delete-config retention.ms --alter
-
+-- Comprobar que se ha borrado. En kafka-topics-ui de cada entorno ir al topic y comprobar que está vacío.
 
 ## 6.3.0 a 6.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.

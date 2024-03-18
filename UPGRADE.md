@@ -14,6 +14,8 @@
 * Se hace uso del topic CODELIST_PUBLICATION. Se requiere borrar los mensajes para evitar problemas de mensajes antiguos que no tienen campos obligatorios. El consumidor empieza desde el principio y falla al tratarlos. Dado que es información no relevante se borra. Para ello
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --add-config retention.ms=100 --alter
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --describe retention.ms
+-- Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --delete-config retention.ms --alter
 
 
 ## 6.3.0 a 6.4.0

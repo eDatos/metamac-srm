@@ -9,6 +9,7 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 ## 6.4.0 a 6.4.1-SNAPSHOT
+* **BREAKING CHANGE.** Se quita el formato XLS ya que es un formato con bastantes limitaciones y no se debe usar. Se usa XLSX
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.4.0/db](etc/changes-from-release/6.4.0/db) 
 * Se hace uso del topic CODELIST_PUBLICATION. Se requiere borrar los mensajes para evitar problemas de mensajes antiguos que no tienen campos obligatorios. El consumidor empieza desde el principio y falla al tratarlos. Dado que es información no relevante se borra. Para ello

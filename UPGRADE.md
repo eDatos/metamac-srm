@@ -19,6 +19,11 @@
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --delete-config retention.ms --alter
 -- Comprobar que se ha borrado. En kafka-topics-ui de cada entorno ir al topic y comprobar que está vacío.
 
+* Cambios en statistic-sdmx-srm. Se debe ampliar el campo key_representation en tamaño porque si hay muchos valores se pasa de tamaño. Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
+  ```shell
+    etc/changes-from-release/3.6.0/db/postgresql/20240401_change_length_key_representation_column_in_tb_keyvalues.sql
+  ```shell
+
 ## 6.3.0 a 6.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.3.0/db](etc/changes-from-release/6.3.0/db) 

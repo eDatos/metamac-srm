@@ -7,6 +7,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
+import org.siemac.metamac.srm.web.category.widgets.ImportAnnotationsWindow;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
@@ -25,8 +26,10 @@ public class CodelistCodesPanel extends VLayout {
     protected ToolStrip        toolStrip;
     protected ToolStripButton  importCodesButton;
     protected ToolStripButton  exportCodesButton;
+    protected ToolStripButton  importAnnotationsButton;
 
     private ImportCodesWindow  importCodesWindow;
+    private ImportAnnotationsWindow importAnnotationsWindows;
 
     private CodesTreeGrid      codesTreeGrid;
 
@@ -50,7 +53,18 @@ public class CodelistCodesPanel extends VLayout {
                 uiHandlers.resourceImportationSucceed(fileName);
             }
         });
+        importAnnotationsWindows = new ImportAnnotationsWindow(getConstants().actionImportAnnotationsTsv());
+        importAnnotationsWindows.setUploadListener(new UploadListener() {
 
+            @Override
+            public void uploadFailed(String errorMessage) {
+                uiHandlers.resourceImportationFailed(errorMessage);
+            }
+            @Override
+            public void uploadComplete(String fileName) {
+                uiHandlers.resourceImportationSucceed(fileName);
+            }
+        });
         toolStrip = new ToolStrip();
 
         importCodesButton = new CustomToolStripButton(getConstants().actionImportCodesTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
@@ -73,6 +87,16 @@ public class CodelistCodesPanel extends VLayout {
             }
         });
         toolStrip.addButton(exportCodesButton);
+
+        importCodesButton = new CustomToolStripButton(getConstants().actionImportAnnotationsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
+        importAnnotationsButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                importAnnotationsWindows.initImportWindow(CommonUtils.isDefaultMaintainer(codelistMetamacDto.getMaintainer()), VersionUtil.isTemporalVersion(codelistMetamacDto.getVersionLogic()));
+                
+            }});
+        toolStrip.addButton(importAnnotationsButton);
 
         addMember(toolStrip);
 

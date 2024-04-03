@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 6.4.0 a 6.4.1-SNAPSHOT
+## 6.4.0 a 6.4.1
 * Cambios en statistic-sdmx-srm. Se debe ampliar el campo key_representation en tamaño porque si hay muchos valores se pasa de tamaño. Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
   ```shell
     etc/changes-from-release/3.6.0/db/postgresql/20240401_change_length_key_representation_column_in_tb_keyvalues.sql

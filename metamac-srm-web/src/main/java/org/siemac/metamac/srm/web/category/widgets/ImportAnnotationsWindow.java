@@ -24,7 +24,7 @@ public class ImportAnnotationsWindow extends ImportResourceWindow {
     protected InformationLabel       informationLabel;
 
     public ImportAnnotationsWindow(String title) {
-        super(getConstants().actionImportCategoriesTsv());
+        super(title);
 
         UploadAnnotationsForm form = new UploadAnnotationsForm();
         setForm(form);
@@ -87,35 +87,22 @@ public class ImportAnnotationsWindow extends ImportResourceWindow {
 
             HiddenItem categorySchemeUrnItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_SCHEME_URN);
 
-            CustomCheckboxItem updateExistingCategoriesItem = new CustomCheckboxItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING, getConstants().categoriesUploadUpdateExisting());
-
-            addFieldsInThePenultimePosition(fileTypeItem, categorySchemeUrnItem, updateExistingCategoriesItem);
+            addFieldsInThePenultimePosition(fileTypeItem, categorySchemeUrnItem);
 
             //prepareRequiredFileCheck();
         }
     }
 
     public void initImportWindow(Boolean isLocalResource, Boolean isTemporalVersion) {
-        CustomCheckboxItem updateExistingCodesItem = (CustomCheckboxItem) this.form.getItem(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING);
-
         if (Boolean.FALSE.equals(isLocalResource)) {
-            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
-            updateExistingCodesItem.setCanEdit(false);
-            updateExistingCodesItem.hide();
             informationExternalResourceLabel.show();
             informationTemporalVersionLabel.hide();
             informationLabel.hide();
         } else if (Boolean.TRUE.equals(isTemporalVersion)) {
-            updateExistingCodesItem.setDefaultValue(Boolean.TRUE);
-            updateExistingCodesItem.setCanEdit(false);
-            updateExistingCodesItem.hide();
             informationExternalResourceLabel.hide();
             informationTemporalVersionLabel.show();
             informationLabel.hide();
         } else {
-            updateExistingCodesItem.show();
-            updateExistingCodesItem.setDefaultValue(Boolean.FALSE);
-            updateExistingCodesItem.setCanEdit(true);
             informationExternalResourceLabel.hide();
             informationTemporalVersionLabel.hide();
             informationLabel.show();

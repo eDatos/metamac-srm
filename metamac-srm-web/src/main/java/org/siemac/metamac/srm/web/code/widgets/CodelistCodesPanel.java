@@ -88,13 +88,13 @@ public class CodelistCodesPanel extends VLayout {
         });
         toolStrip.addButton(exportCodesButton);
 
-        importCodesButton = new CustomToolStripButton(getConstants().actionImportAnnotationsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
+        importAnnotationsButton = new CustomToolStripButton(getConstants().actionImportAnnotationsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
         importAnnotationsButton.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 importAnnotationsWindows.initImportWindow(CommonUtils.isDefaultMaintainer(codelistMetamacDto.getMaintainer()), VersionUtil.isTemporalVersion(codelistMetamacDto.getVersionLogic()));
-                
+                importAnnotationsWindows.show();
             }});
         toolStrip.addButton(importAnnotationsButton);
 

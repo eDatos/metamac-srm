@@ -660,6 +660,8 @@ Application SrmFacadeCore {
     		TaskImportationInfo importCodesTsv(String codelistUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
+    		"Imports annotations in tsv format"
+    		TaskImportationInfo importAnnotationsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
     		"Imports code openness levels in tsv format"
     		TaskImportationInfo importCodeOpennessLevelsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
     		"Imports code restrictions in tsv format"

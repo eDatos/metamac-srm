@@ -117,6 +117,7 @@ public class CodelistCodesPanel extends VLayout {
 
         updateButtonsVisibility(codelistMetamacDto);
         importCodesWindow.setCodelist(codelistMetamacDto);
+        importAnnotationsWindows.setCodelist(codelistMetamacDto);
     }
 
     public void setCodes(CodelistMetamacDto codelist, List<CodeMetamacVisualisationResult> codes) {

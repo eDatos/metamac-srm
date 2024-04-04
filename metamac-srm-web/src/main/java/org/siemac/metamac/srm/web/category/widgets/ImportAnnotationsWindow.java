@@ -3,25 +3,31 @@ package org.siemac.metamac.srm.web.category.widgets;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
-import org.siemac.metamac.srm.web.category.view.handlers.CategorySchemeUiHandlers;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
+import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
+import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
 import org.siemac.metamac.srm.web.shared.ImportableResourceTypeEnum;
 import org.siemac.metamac.srm.web.shared.utils.SrmSharedTokens;
 import org.siemac.metamac.web.common.client.widgets.ImportResourceWindow;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
 
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangeEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangeHandler;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
+import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
 public class ImportAnnotationsWindow extends ImportResourceWindow {
 
-    private static int               formWidth = 600;
+    private static int         formWidth = 600;
 
-    private CategorySchemeUiHandlers uiHandlers;
-    protected WarningLabel           warningLabel;
-    protected InformationLabel       informationTemporalVersionLabel;
-    protected InformationLabel       informationExternalResourceLabel;
-    protected InformationLabel       informationLabel;
+    private CodelistUiHandlers uiHandlers;
+    protected WarningLabel     warningLabel;
+    protected InformationLabel informationTemporalVersionLabel;
+    protected InformationLabel informationExternalResourceLabel;
+    protected InformationLabel informationLabel;
 
     public ImportAnnotationsWindow(String title) {
         super(title);
@@ -37,12 +43,20 @@ public class ImportAnnotationsWindow extends ImportResourceWindow {
 
     @Override
     public String getRelativeURL(String url) {
-        return null;
+        return MetamacSrmWeb.getRelativeURL(url);
     }
 
     @Override
     public void showWaitPopup() {
+        getUiHandlers().showWaitPopup();
+    }
 
+    public void setUiHandlers(CodelistUiHandlers uiHandlers) {
+        this.uiHandlers = uiHandlers;
+    }
+
+    public CodelistUiHandlers getUiHandlers() {
+        return uiHandlers;
     }
 
     private void buildInformationExternalResourceLabel() {
@@ -76,6 +90,10 @@ public class ImportAnnotationsWindow extends ImportResourceWindow {
         body.addMember(warningLabel, 0);
     }
 
+    public void setCodelist(CodelistMetamacDto codelistMetamacDto) {
+        ((HiddenItem) form.getItem(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN)).setDefaultValue(codelistMetamacDto.getUrn());
+    }
+
     private class UploadAnnotationsForm extends UploadForm {
 
         public UploadAnnotationsForm() {
@@ -83,13 +101,33 @@ public class ImportAnnotationsWindow extends ImportResourceWindow {
             this.setWidth(formWidth);
 
             HiddenItem fileTypeItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE);
-            fileTypeItem.setDefaultValue(ImportableResourceTypeEnum.CATEGORIES.name());
+            fileTypeItem.setDefaultValue(ImportableResourceTypeEnum.ANNOTATIONS.name());
 
-            HiddenItem categorySchemeUrnItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_SCHEME_URN);
+            HiddenItem codelistUrnItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN);
 
-            addFieldsInThePenultimePosition(fileTypeItem, categorySchemeUrnItem);
+            addFieldsInThePenultimePosition(fileTypeItem, codelistUrnItem);
+            prepareRequiredFileCheck();
+        }
 
-            //prepareRequiredFileCheck();
+        private void prepareRequiredFileCheck() {
+            getUploadItem().addChangeHandler(new ChangeHandler() {
+
+                @Override
+                public void onChange(ChangeEvent event) {
+                    warningLabel.hide();
+                }
+            });
+
+            getUploadButton().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    String displayValue = ImportAnnotationsWindow.this.form.getUploadItem().getDisplayValue();
+                    if (StringUtils.isBlank(displayValue)) {
+                        warningLabel.show();
+                    }
+                }
+            });
         }
     }
 

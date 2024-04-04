@@ -1520,6 +1520,17 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public TaskImportationInfo importAnnotationsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
+        // Security
+        CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);
+        CodesSecurityUtils.canImportAnnotations(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return null;//getCodesMetamacService().importCodeOrdersTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
+    }
+
+    @Override
     public TaskImportationInfo importCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
         // Security
         CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);

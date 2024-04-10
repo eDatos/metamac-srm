@@ -30,6 +30,9 @@ public class SrmConstants {
     public static final String             TSV_LINE_SEPARATOR                                                     = "\n";
     public static final String             TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR                              = "#";
     public static final String             TSV_HEADER_CODE                                                        = "code";
+    public static final String             TSV_HEADER_ANNOTATION                                                  = "annotation";
+    public static final String             TSV_HEADER_ANNOTATION_TYPE                                             = "type";
+    public static final String             TSV_HEADER_ANNOTATION_URL                                              = "url";
     public static final String             TSV_HEADER_URN                                                         = "urn";
     public static final String             TSV_HEADER_PARENT                                                      = "parent";
     public static final String             TSV_HEADER_NAME                                                        = "name";
@@ -101,6 +104,7 @@ public class SrmConstants {
     // Tasks
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_ITEMS_IMPORTATION                            = 250000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_ORDERS_IMPORTATION                     = 50000;
+    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_ANNOTATIONS_IMPORTATION                      = 50000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_IMPORTATION                = 150000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_VARIABLE_ELEMENTS_GEO_IMPORTATION            = 1000000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CODES_RESTRICTIONS_IMPORTATION               = 1000000;

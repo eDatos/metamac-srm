@@ -122,6 +122,7 @@ import org.siemac.metamac.srm.core.notices.serviceimpl.utils.NoticesCallbackMeta
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
+import org.siemac.metamac.srm.core.task.domain.ImportationAnnotationsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOpennessLevelsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeRestrictionsTsvHeader;
@@ -139,6 +140,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationRepository;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
@@ -188,6 +192,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
     private ItemSchemeVersionRepository                itemSchemeVersionRepository;
+
+    @Autowired
+    private AnnotationRepository                       annotationRepository;
 
     @Autowired
     private CodeRepository                             codeRepository;
@@ -955,6 +962,86 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         itemSchemeRepository.save(codelistVersion.getItemScheme());
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    @Override
+    public TaskImportationInfo importAnnotationsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
+     // Validation
+        CodesMetamacInvocationValidator.checkImportCodesTsv(codelistUrn, file, fileName, true, canBeBackground, null);
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        List<Code> codes = codelistVersion.getItemsFirstLevel();
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ANNOTATIONS_IMPORTATION);
+        if (executeInBackground) {
+            codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
+            itemSchemeRepository.save(codelistVersion.getItemScheme());
+
+            String jobKey = tasksMetamacService.plannifyImportAnnotationsTsvInBackground(ctx, codelistUrn, file, fileName);
+            return new TaskImportationInfo(Boolean.TRUE, jobKey);
+        }
+        return processAnnotationsTsv(file, fileName, codes, ctx);
+    }
+
+    private TaskImportationInfo processAnnotationsTsv(File file, String fileName, List<Code> codes, ServiceContext ctx) throws MetamacException {
+        // Execute importation now
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        List<Annotation> annotationsToPersist = null;
+        try {
+            InputStream stream = new FileInputStream(file);
+            String charset = FileUtils.guessCharset(file);
+            inputStreamReader = new InputStreamReader(stream, charset);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line = bufferedReader.readLine();
+            ImportationAnnotationsTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportAnnotations(line, exceptionItems);
+            List<AnnotationType> annotationsTypes = baseService.findAllAnnotationtypes(ctx);
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                annotationsToPersist = new ArrayList<>();
+                int lineNumber = 2;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (StringUtils.isBlank(line)) {
+                        continue;
+                    }
+
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
+                    if (columns.length != header.getColumnsSize()) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                        continue;
+                    }
+                    // Transform code and add to list to persist
+                    Annotation annotation = TsvImportationUtils.tsvLineToAnnotation(header, columns, lineNumber, exceptionItems, informationItems, annotationsTypes, codes);
+                    if (annotation != null) {
+                        annotationsToPersist.add(annotation);
+                    }
+                    lineNumber++;
+                }
+            }
+            saveAnnotations(annotationsToPersist);
+        } catch (Exception e) {
+            logger.error("Error importing annotations tsv file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } finally {
+            try {
+                inputStreamReader.close();
+                bufferedReader.close();
+            } catch (IOException e) {
+                // do not relaunch error
+                logger.error("Error closing streams", e);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            // rollback and inform about errors
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    private void saveAnnotations(List<Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            annotationRepository.save(annotation);
+        }
     }
 
     @Override

@@ -1527,7 +1527,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Import (can be in background)
         File file = createTempFile(tsvStream, fileName);
-        return null;//getCodesMetamacService().importCodeOrdersTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
+        return getCodesMetamacService().importAnnotationsTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
     }
 
     @Override

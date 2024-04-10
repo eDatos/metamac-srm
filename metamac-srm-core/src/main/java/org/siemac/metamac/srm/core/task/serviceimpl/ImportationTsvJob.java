@@ -42,6 +42,7 @@ public class ImportationTsvJob implements Job {
     public static final String        OPERATION_IMPORT_CATEGORIES           = "importCategories";
     public static final String        OPERATION_IMPORT_CODES                = "importCodes";
     public static final String        OPERATION_IMPORT_CODE_ORDERS          = "importCodeOrdes";
+    public static final String        OPERATION_IMPORT_ANNOTATIONS          = "importAnnotations";
     public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS    = "importCodeRestrictions";
     public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS = "importCodeOpennessLevels";
     public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS    = "importVariableElements";

@@ -1175,6 +1175,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public String exportAnnotationsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        return "";
+    }
+
+    @Override
     public String exportCodeOrdersTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
         CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);

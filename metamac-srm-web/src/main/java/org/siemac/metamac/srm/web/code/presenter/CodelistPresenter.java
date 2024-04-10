@@ -71,6 +71,8 @@ import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsResult;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsAction;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessResult;
@@ -1340,14 +1342,14 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void exportAnnotations(String codelistUrn) {
-        dispatcher.execute(new ExportCodesAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesResult>(this) {
+        dispatcher.execute(new ExportAnnotationsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportAnnotationsResult>(this) {
 
             @Override
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
             }
             @Override
-            public void onWaitSuccess(ExportCodesResult result) {
+            public void onWaitSuccess(ExportAnnotationsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
             }
         });

@@ -668,6 +668,8 @@ Application SrmFacadeCore {
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
+    		"Exports annotations in tsv format"
+    		String exportAnnotationsTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness levels in tsv format"

@@ -1562,6 +1562,15 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public String exportAnnotationsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canExportCodesTsv(ctx);
+
+        // Export
+        return getCodesMetamacService().exportCodesTsv(ctx, codelistUrn);
+    }
+
+    @Override
     public String exportCodeOrdersTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
         // Security
         CodesSecurityUtils.canExportCodeOrdersTsv(ctx);

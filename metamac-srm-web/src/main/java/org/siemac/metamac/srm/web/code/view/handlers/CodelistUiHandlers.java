@@ -38,6 +38,7 @@ public interface CodelistUiHandlers extends BaseCodeUiHandlers {
 
     void retrieveCodes();
     void exportCodes(String codelistUrn);
+    void exportAnnotations(String codelistUrn);
 
     void normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean onlyNormaliseCodesWithoutVariableElement);
     void updateCodesVariableElements(String codelistUrn, Map<Long, Long> variableElementsIdByCodeId);

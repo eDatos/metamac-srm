@@ -27,6 +27,7 @@ public class CodelistCodesPanel extends VLayout {
     protected ToolStripButton  importCodesButton;
     protected ToolStripButton  exportCodesButton;
     protected ToolStripButton  importAnnotationsButton;
+    protected ToolStripButton  exportAnnotationsButton;
 
     private ImportCodesWindow  importCodesWindow;
     private ImportAnnotationsWindow importAnnotationsWindows;
@@ -98,6 +99,17 @@ public class CodelistCodesPanel extends VLayout {
             }});
         toolStrip.addButton(importAnnotationsButton);
 
+        exportAnnotationsButton = new CustomToolStripButton(getConstants().actionExportAnnotationsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+        exportAnnotationsButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                uiHandlers.exportCodes(codelistMetamacDto.getUrn());
+            }
+        });
+        toolStrip.addButton(exportAnnotationsButton);
+
+
         addMember(toolStrip);
 
         codesTreeGrid = new CodesTreeGrid();
@@ -137,6 +149,7 @@ public class CodelistCodesPanel extends VLayout {
     private void updateButtonsVisibility(CodelistMetamacDto codelistMetamacDto) {
         updateImportCodesButtonVisibility(codelistMetamacDto);
         updateExportCodesButtonVisibility(codelistMetamacDto);
+        updateExportAnnotationsButtonVisibility(codelistMetamacDto);
     }
 
     private void updateImportCodesButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
@@ -152,6 +165,14 @@ public class CodelistCodesPanel extends VLayout {
             exportCodesButton.show();
         } else {
             exportCodesButton.hide();
+        }
+    }
+
+    private void updateExportAnnotationsButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
+        if (CodesClientSecurityUtils.canExportCodes(codelistMetamacDto)) {
+            exportAnnotationsButton.show();
+        } else {
+            exportAnnotationsButton.hide();
         }
     }
 }

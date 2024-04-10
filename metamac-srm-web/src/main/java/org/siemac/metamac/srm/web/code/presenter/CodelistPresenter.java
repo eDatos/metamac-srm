@@ -1339,6 +1339,21 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     }
 
     @Override
+    public void exportAnnotations(String codelistUrn) {
+        dispatcher.execute(new ExportCodesAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportCodesResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+    }
+
+    @Override
     public void exportCodesOrder(String codelistUrn) {
         dispatcher.execute(new ExportCodesOrderAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesOrderResult>(this) {
 

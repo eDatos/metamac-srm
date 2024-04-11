@@ -596,7 +596,7 @@ public class TsvImportationUtils {
         String annotationText = columns[header.getAnnotationPosition()];
         String annotationTypeCode = columns[header.getAnnotationTypePosition()];
         String annotationUrl = columns[header.getAnnotationUrlPosition()];
-        if (!checkAllParametersInLine(columns, exceptionItems, lineNumber, codeIdentifier, annotationText, annotationTypeCode)) {
+        if (!checkAllParametersInLine(exceptionItems, lineNumber, codeIdentifier, annotationText, annotationTypeCode)) {
             return null;
         }
         AnnotationType annotationType = getAnnotationType(annotationsTypes, annotationTypeCode);
@@ -633,7 +633,7 @@ public class TsvImportationUtils {
         return internationalString;
     }
 
-    private static Boolean checkAllParametersInLine(String[] columns, List<MetamacExceptionItem> exceptionItems, int lineNumber, String codeIdentifier,
+    private static Boolean checkAllParametersInLine(List<MetamacExceptionItem> exceptionItems, int lineNumber, String codeIdentifier,
             String annotationText, String annotationTypeCode) {
         if (StringUtils.isBlank(codeIdentifier) || StringUtils.isBlank(annotationText) || StringUtils.isBlank(annotationTypeCode)) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));

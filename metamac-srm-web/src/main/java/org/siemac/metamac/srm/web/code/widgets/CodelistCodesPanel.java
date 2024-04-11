@@ -104,7 +104,7 @@ public class CodelistCodesPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                uiHandlers.exportCodes(codelistMetamacDto.getUrn());
+                uiHandlers.exportAnnotations(codelistMetamacDto.getUrn());
             }
         });
         toolStrip.addButton(exportAnnotationsButton);

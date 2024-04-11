@@ -18,7 +18,7 @@ public class ExportAnnotationsActionHandler extends SecurityActionHandler<Export
     @Autowired
     private SrmCoreServiceFacade srmCoreServiceFacade;
 
-    public ExportAnnotationsActionHandler(Class<ExportAnnotationsAction> actionType) {
+    public ExportAnnotationsActionHandler() {
         super(ExportAnnotationsAction.class);
     }
 

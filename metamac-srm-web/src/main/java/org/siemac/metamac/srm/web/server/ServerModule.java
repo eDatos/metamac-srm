@@ -52,6 +52,7 @@ import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariableElementOper
 import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariableElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariableFamiliesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariablesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.ExportAnnotationsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ExportCodesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ExportCodesOpennessActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ExportCodesOrderActionHandler;
@@ -215,6 +216,7 @@ import org.siemac.metamac.srm.web.shared.code.DeleteVariableElementOperationsAct
 import org.siemac.metamac.srm.web.shared.code.DeleteVariableElementsAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteVariableFamiliesAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteVariablesAction;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOrderAction;
@@ -517,6 +519,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdateCodesVariableElementsAction.class, UpdateCodesVariableElementsActionHandler.class);
         bindHandler(CopyCodelistAction.class, CopyCodelistActionHandler.class);
         bindHandler(ExportCodesAction.class, ExportCodesActionHandler.class);
+        bindHandler(ExportAnnotationsAction.class, ExportAnnotationsActionHandler.class);
         bindHandler(ExportCodesOrderAction.class, ExportCodesOrderActionHandler.class);
         bindHandler(ExportVariableElementsAction.class, ExportVariableElementsActionHandler.class);
         bindHandler(ReSendCodelistStreamMessageAction.class, ReSendCodelistStreamMessageActionHandler.class);

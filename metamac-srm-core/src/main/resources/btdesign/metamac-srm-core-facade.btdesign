@@ -858,6 +858,8 @@ Application SrmFacadeCore {
     		processImportCategoryElementsTsv(java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
     		"Imports codes in tsv format"
     		processImportCodesTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
+    		"Imports codes in tsv format"
+    		processImportAnnotationsTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		processImportCodeOrdersTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
     		"Imports code openness levels in tsv format"

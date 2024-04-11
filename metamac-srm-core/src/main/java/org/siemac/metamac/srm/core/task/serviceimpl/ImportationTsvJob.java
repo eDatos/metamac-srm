@@ -89,6 +89,8 @@ public class ImportationTsvJob implements Job {
                 importVariableElements(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CATEGORY_ELEMENTS.equals(operation)) {
                 importCategoryElements(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_ANNOTATIONS.equals(operation)) {
+                importAnnotations(jobKey, data, serviceContext);
             } else {
                 throw new IllegalArgumentException("Job with operation " + operation + " is not supported");
             }
@@ -189,6 +191,19 @@ public class ImportationTsvJob implements Job {
 
         logger.info("ImportationJob [importCodes]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportCodesTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName(), updateAlreadyExisting);
+        logger.info("ImportationJob [importCodes]: " + jobKey + " finished at " + new Date());
+    }
+
+    private void importAnnotations(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String codelistUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+        Boolean updateAlreadyExisting = data.getBoolean(UPDATE_ALREADY_EXISTING);
+
+        logger.info("ImportationJob [importCodes]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportAnnotationsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName(), updateAlreadyExisting);
         logger.info("ImportationJob [importCodes]: " + jobKey + " finished at " + new Date());
     }
 

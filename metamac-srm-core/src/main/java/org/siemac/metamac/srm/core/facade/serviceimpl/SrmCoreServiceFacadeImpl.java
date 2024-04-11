@@ -1567,7 +1567,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         CodesSecurityUtils.canExportCodesTsv(ctx);
 
         // Export
-        return getCodesMetamacService().exportCodesTsv(ctx, codelistUrn);
+        return getCodesMetamacService().exportAnnotationsTsv(ctx, codelistUrn);
     }
 
     @Override

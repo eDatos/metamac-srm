@@ -969,7 +969,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
      // Validation
         CodesMetamacInvocationValidator.checkImportCodesTsv(codelistUrn, file, fileName, true, canBeBackground, null);
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
-        List<Code> codes = codelistVersion.getItemsFirstLevel();
+        
         // Decide if task must be executed in background
         boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ANNOTATIONS_IMPORTATION);
         if (executeInBackground) {
@@ -979,10 +979,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             String jobKey = tasksMetamacService.plannifyImportAnnotationsTsvInBackground(ctx, codelistUrn, file, fileName);
             return new TaskImportationInfo(Boolean.TRUE, jobKey);
         }
-        return processAnnotationsTsv(file, fileName, codes, ctx);
+        return processAnnotationsTsv(file, fileName, codelistVersion, ctx);
     }
 
-    private TaskImportationInfo processAnnotationsTsv(File file, String fileName, List<Code> codes, ServiceContext ctx) throws MetamacException {
+    private TaskImportationInfo processAnnotationsTsv(File file, String fileName, CodelistVersionMetamac codelistVersion, ServiceContext ctx) throws MetamacException {
+        List<Code> codes = codelistVersion.getItemsFirstLevel();
         // Execute importation now
         List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
         List<MetamacExceptionItem> informationItems = new ArrayList<>();
@@ -1035,6 +1036,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             // rollback and inform about errors
             throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
         }
+        codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.FALSE);
+        itemSchemeRepository.save(codelistVersion.getItemScheme());
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
 
@@ -1176,7 +1179,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Override
     public String exportAnnotationsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
-        return "";
+        CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);
+
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        return TsvExportationUtils.exportAnnotations(codelistVersion);
     }
 
     @Override

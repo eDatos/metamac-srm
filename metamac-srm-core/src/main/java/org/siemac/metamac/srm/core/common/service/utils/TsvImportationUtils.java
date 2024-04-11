@@ -547,7 +547,7 @@ public class TsvImportationUtils {
     }
 
     public static ImportationAnnotationsTsvHeader parseTsvHeaderToImportAnnotations(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_ANNOTATION, SrmConstants.TSV_HEADER_ANNOTATION_TYPE, SrmConstants.TSV_HEADER_ANNOTATION_URL);
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_ANNOTATION_TYPE, SrmConstants.TSV_HEADER_ANNOTATION, SrmConstants.TSV_HEADER_ANNOTATION_URL);
 
         String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
         if (headerColumns == null || headerColumns.length < headersExpected.size()) {
@@ -572,13 +572,13 @@ public class TsvImportationUtils {
                 headerExpectedIndex++;
             }
 
-            if (SrmConstants.TSV_HEADER_ANNOTATION.equals(columnName)) {
-                importationAnnotationsTsvHeader.setAnnotationPosition(i);
+            if (SrmConstants.TSV_HEADER_ANNOTATION_TYPE.equals(columnName)) {
+                importationAnnotationsTsvHeader.setAnnotationTypePosition(i);
                 headerExpectedIndex++;
             }
 
-            if (SrmConstants.TSV_HEADER_ANNOTATION_TYPE.equals(columnName)) {
-                importationAnnotationsTsvHeader.setAnnotationTypePosition(i);
+            if (SrmConstants.TSV_HEADER_ANNOTATION.equals(columnName)) {
+                importationAnnotationsTsvHeader.setAnnotationPosition(i);
                 headerExpectedIndex++;
             }
 

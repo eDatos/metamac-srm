@@ -148,6 +148,7 @@ public class CodelistCodesPanel extends VLayout {
 
     private void updateButtonsVisibility(CodelistMetamacDto codelistMetamacDto) {
         updateImportCodesButtonVisibility(codelistMetamacDto);
+        updateImportAnnotationsButtonVisibility(codelistMetamacDto);
         updateExportCodesButtonVisibility(codelistMetamacDto);
         updateExportAnnotationsButtonVisibility(codelistMetamacDto);
     }
@@ -157,6 +158,14 @@ public class CodelistCodesPanel extends VLayout {
             importCodesButton.show();
         } else {
             importCodesButton.hide();
+        }
+    }
+
+    private void updateImportAnnotationsButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
+        if (CodesClientSecurityUtils.canImportCodes(codelistMetamacDto)) {
+            importAnnotationsButton.show();
+        } else {
+            importAnnotationsButton.hide();
         }
     }
 

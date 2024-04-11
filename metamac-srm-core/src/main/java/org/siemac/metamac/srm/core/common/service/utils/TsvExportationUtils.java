@@ -81,18 +81,7 @@ public class TsvExportationUtils {
             List<Code> codes = codelistVersion.getItemsFirstLevel();
             for (Code code : codes) {
                 String codeName = code.getNameableArtefact().getCode();
-                for (Annotation annotation : code.getNameableArtefact().getAnnotations()) {
-                    writer.write(SrmConstants.TSV_LINE_SEPARATOR);
-                    writer.write(codeName);
-                    writer.write(SrmConstants.TSV_SEPARATOR);
-                    for (LocalisedString localisedString  : annotation.getText().getTexts()) {
-                        writer.write(localisedString.getLabel());
-                    }
-                    writer.write(SrmConstants.TSV_SEPARATOR);
-                    writer.write(annotation.getAnnotationType().getCode());
-                    writer.write(SrmConstants.TSV_SEPARATOR);
-                    writer.write(annotation.getUrl());
-                }
+                writeAnnotations(writer, code, codeName);
             }
             writer.flush();
             return file.getName();
@@ -101,6 +90,23 @@ public class TsvExportationUtils {
         } finally {
             IOUtils.closeQuietly(outputStream);
             IOUtils.closeQuietly(writer);
+        }
+    }
+
+    private static void writeAnnotations(OutputStreamWriter writer, Code code, String codeName) throws IOException {
+        for (Annotation annotation : code.getNameableArtefact().getAnnotations()) {
+            writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+            writer.write(codeName);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(annotation.getAnnotationType().getCode());
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            for (LocalisedString localisedString  : annotation.getText().getTexts()) {
+                writer.write(localisedString.getLabel());
+            }
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            if (annotation.getUrl() != null) {
+                writer.write(annotation.getUrl());
+            }
         }
     }
 

@@ -202,9 +202,9 @@ public class ImportationTsvJob implements Job {
         String fileName = data.getString(FILE_NAME);
         Boolean updateAlreadyExisting = data.getBoolean(UPDATE_ALREADY_EXISTING);
 
-        logger.info("ImportationJob [importCodes]: " + jobKey + " starting at " + new Date());
+        logger.info("ImportationJob [importAnnotations]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportAnnotationsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName(), updateAlreadyExisting);
-        logger.info("ImportationJob [importCodes]: " + jobKey + " finished at " + new Date());
+        logger.info("ImportationJob [importAnnotations]: " + jobKey + " finished at " + new Date());
     }
 
     private void importCodeOrders(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {

@@ -229,7 +229,7 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
     @Override
     public String plannifyImportAnnotationsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
         // Validation
-        TasksMetamacInvocationValidator.checkImportCodeOrdersTsvInBackground(codelistUrn, file, fileName, null);
+        TasksMetamacInvocationValidator.checkImportAnnotationsTsvInBackground(codelistUrn, file, fileName, null);
 
         // Plan job
         JobDataMap jobDataAdditional = new JobDataMap();

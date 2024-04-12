@@ -16,7 +16,6 @@ import org.siemac.metamac.srm.core.base.domain.ResourceElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
-import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
@@ -24,8 +23,7 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 
-import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
-import com.arte.statistic.sdmx.srm.core.code.domain.Code;
+import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 
@@ -69,7 +67,7 @@ public class TsvExportationUtils {
         }
     }
 
-    public static String exportAnnotations(CodelistVersionMetamac codelistVersion) throws MetamacException {
+    public static String exportAnnotations(List<ItemResult> items, List<String> languages) throws MetamacException {
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
         try {
@@ -77,11 +75,10 @@ public class TsvExportationUtils {
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
-            writeAnnotationsHeader(writer);
-            List<Code> codes = codelistVersion.getItemsFirstLevel();
-            for (Code code : codes) {
-                String codeName = code.getNameableArtefact().getCode();
-                writeAnnotations(writer, code, codeName);
+            writeAnnotationsHeader(writer, languages);
+            for (ItemResult item : items) {
+                String codeName = item.getCode();
+                writeAnnotations(writer, item, codeName, languages);
             }
             writer.flush();
             return file.getName();
@@ -93,16 +90,13 @@ public class TsvExportationUtils {
         }
     }
 
-    private static void writeAnnotations(OutputStreamWriter writer, Code code, String codeName) throws IOException {
-        for (Annotation annotation : code.getNameableArtefact().getAnnotations()) {
+    private static void writeAnnotations(OutputStreamWriter writer, ItemResult itemResult, String codeName, List<String> languages) throws IOException {
+        for (AnnotationResult annotation : itemResult.getAnnotations()) {
             writer.write(SrmConstants.TSV_LINE_SEPARATOR);
             writer.write(codeName);
             writer.write(SrmConstants.TSV_SEPARATOR);
             writer.write(annotation.getAnnotationType().getCode());
-            writer.write(SrmConstants.TSV_SEPARATOR);
-            for (LocalisedString localisedString  : annotation.getText().getTexts()) {
-                writer.write(localisedString.getLabel());
-            }
+            writeAnnotation(writer, annotation, languages);
             writer.write(SrmConstants.TSV_SEPARATOR);
             if (annotation.getUrl() != null) {
                 writer.write(annotation.getUrl());
@@ -137,12 +131,14 @@ public class TsvExportationUtils {
 
     }
 
-    private static void writeAnnotationsHeader(OutputStreamWriter writer) throws IOException {
+    private static void writeAnnotationsHeader(OutputStreamWriter writer, List<String> languages) throws IOException {
         writer.write(SrmConstants.TSV_HEADER_CODE);
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_ANNOTATION_TYPE);
-        writer.write(SrmConstants.TSV_SEPARATOR);
-        writer.write(SrmConstants.TSV_HEADER_ANNOTATION);
+        for (String language : languages) {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_ANNOTATION + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
+        }
         writer.write(SrmConstants.TSV_SEPARATOR);
         writer.write(SrmConstants.TSV_HEADER_ANNOTATION_URL);
     }
@@ -503,6 +499,17 @@ public class TsvExportationUtils {
     private static void writeItemDescription(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
         for (String language : languages) {
             String descriptionInLocale = itemResult.getDescription().get(language);
+            descriptionInLocale = removeUnsupportedCharaters(descriptionInLocale);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            if (descriptionInLocale != null) {
+                writer.write(descriptionInLocale);
+            }
+        }
+    }
+
+    private static void writeAnnotation(OutputStreamWriter writer, AnnotationResult annotation, List<String> languages) throws IOException {
+        for (String language : languages) {
+            String descriptionInLocale = annotation.getText().get(language);
             descriptionInLocale = removeUnsupportedCharaters(descriptionInLocale);
             writer.write(SrmConstants.TSV_SEPARATOR);
             if (descriptionInLocale != null) {

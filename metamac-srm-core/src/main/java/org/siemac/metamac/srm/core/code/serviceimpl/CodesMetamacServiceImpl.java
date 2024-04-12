@@ -1182,7 +1182,17 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);
 
         CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
-        return TsvExportationUtils.exportAnnotations(codelistVersion);
+
+        CodelistOrderVisualisation orderVisualisationToRetrieveCodes = codelistVersion.getDefaultOrderVisualisation();
+        if (orderVisualisationToRetrieveCodes == null) {
+            orderVisualisationToRetrieveCodes = codelistVersion.getOrderVisualisations().get(0); // any
+        }
+        Integer orderColumnIndex = orderVisualisationToRetrieveCodes.getColumnIndex();
+
+        List<ItemResult> items = getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), orderColumnIndex, null, null, CodeMetamacResultSelection.EXPORT);
+
+        List<String> languages = srmConfiguration.retrieveLanguages();
+        return TsvExportationUtils.exportAnnotations(items, languages);
     }
 
     @Override

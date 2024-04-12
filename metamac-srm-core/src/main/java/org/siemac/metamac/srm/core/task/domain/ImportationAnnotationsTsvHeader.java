@@ -2,12 +2,12 @@ package org.siemac.metamac.srm.core.task.domain;
 
 public class ImportationAnnotationsTsvHeader {
 
-    private int    columnsSize;
-    private int    codePosition;
-    private int    annotationPosition;
-    private int    annotationTypePosition;
-    private int    annotationUrlPosition;
-    private String columnName;
+    private int                    columnsSize;
+    private int                    codePosition;
+    private InternationalStringTsv annotation;
+    private int                    annotationTypePosition;
+    private int                    annotationUrlPosition;
+    private String                 columnName;
 
     public int getColumnsSize() {
         return columnsSize;
@@ -25,12 +25,12 @@ public class ImportationAnnotationsTsvHeader {
         this.codePosition = codePosition;
     }
 
-    public int getAnnotationPosition() {
-        return annotationPosition;
+    public InternationalStringTsv getAnnotation() {
+        return annotation;
     }
 
-    public void setAnnotationPosition(int annotationPosition) {
-        this.annotationPosition = annotationPosition;
+    public void setAnnotation(InternationalStringTsv annotation) {
+        this.annotation = annotation;
     }
 
     public int getAnnotationTypePosition() {

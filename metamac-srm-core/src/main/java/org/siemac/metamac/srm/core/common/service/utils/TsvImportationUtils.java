@@ -606,10 +606,7 @@ public class TsvImportationUtils {
         AnnotableArtefact annotableArtefact = getAnnotableArtefact(codes, codeIdentifier);
         
         if (annotationType == null || annotableArtefact == null) {
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, codes.get(0).getNameableArtefact().getCode()));
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, codes.get(1).getNameableArtefact().getCode()));
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, codes.get(2).getNameableArtefact().getCode()));
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, codes.get(3).getNameableArtefact().getCode()));
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
             return null;
         }
         Annotation annotation = new Annotation();

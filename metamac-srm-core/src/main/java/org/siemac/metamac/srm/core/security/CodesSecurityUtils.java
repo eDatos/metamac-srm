@@ -284,6 +284,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canImportAnnotations(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canImportAnnotations(getMetamacPrincipal(ctx), codelistProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
     public static void canImportCodelistRestrictionVisualisations(ServiceContext ctx, ProcStatusEnum codelistProcStatus) throws MetamacException {
         if (!SharedCodesSecurityUtils.canImportCodelistRestrictionVisualisations(getMetamacPrincipal(ctx), codelistProcStatus)) {
             throwExceptionIfOperationNotAllowed(ctx);

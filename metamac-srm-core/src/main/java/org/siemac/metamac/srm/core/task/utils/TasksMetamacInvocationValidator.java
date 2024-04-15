@@ -69,6 +69,18 @@ public class TasksMetamacInvocationValidator extends BaseInvocationValidator {
         ExceptionUtils.throwIfException(exceptions);
     }
 
+    public static void checkImportAnnotationsTsvInBackground(String codelistUrn, File file, String fileName, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(codelistUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
+        ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.FILE_NAME, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
     public static void checkImportCodeOrdersTsvInBackground(String codelistUrn, File file, String fileName, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();

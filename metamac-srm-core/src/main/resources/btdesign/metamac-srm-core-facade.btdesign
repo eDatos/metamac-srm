@@ -660,12 +660,16 @@ Application SrmFacadeCore {
     		TaskImportationInfo importCodesTsv(String codelistUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
+    		"Imports annotations in tsv format"
+    		TaskImportationInfo importAnnotationsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
     		"Imports code openness levels in tsv format"
     		TaskImportationInfo importCodeOpennessLevelsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
     		"Imports code restrictions in tsv format"
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
+    		"Exports annotations in tsv format"
+    		String exportAnnotationsTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness levels in tsv format"
@@ -854,6 +858,8 @@ Application SrmFacadeCore {
     		processImportCategoryElementsTsv(java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
     		"Imports codes in tsv format"
     		processImportCodesTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
+    		"Imports codes in tsv format"
+    		processImportAnnotationsTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		processImportCodeOrdersTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
     		"Imports code openness levels in tsv format"

@@ -12176,4 +12176,46 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         return "dbunit/SrmCodesTest.xml";
     }
 
+    @Test
+    @Override
+    public void testImportAnnotationsTsv() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = "importation-annotations-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = true;
+
+        TaskImportationInfo taskImportTsvInfo = codesService.importAnnotationsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, updateAlreadyExisting);
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+    }
+
+    @Test
+    @Override
+    public void testExportAnnotationsTsv() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = codesService.exportAnnotationsTsv(getServiceContextAdministrador(), codelistUrn);
+        assertNotNull(fileName);
+
+        // Validate
+        File file = new File(tempDirPath() + File.separatorChar + fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            System.out.println(line.replaceAll("\t", "\\\\t"));
+            lines.add(line);
+        }
+
+        Iterator<String> iterator = lines.iterator();
+        assertEquals("code\ttype\tannotation#es\tannotation#pt\tannotation#en\tannotation#ca\turl", iterator.next());
+        assertEquals("CODE01\tSDMX-ID1-ANNOTATION_TYPE\tAnotación 1 code01\t\tAnnotation 1 code01\t\thttp://annotation211", iterator.next());
+        assertEquals("CODE01\tSDMX-ID2-ANNOTATION_TYPE\tAnotación 2 code01\t\t\t\thttp://annotation212", iterator.next());
+        assertEquals("CODE0201\tSDMX-ID1-ANNOTATION_TYPE\tAnotación 21\t\t\t\thttp://annotation211", iterator.next());
+        assertEquals("CODE0201\tSDMX-ID2-ANNOTATION_TYPE\t\t\t\t\thttp://annotation212", iterator.next());
+        bufferedReader.close();
+    }
+
 }

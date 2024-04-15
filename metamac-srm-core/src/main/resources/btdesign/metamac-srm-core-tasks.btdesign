@@ -28,6 +28,8 @@ Application TaskMetamac {
     		String plannifyImportCategoryElementsTsvInBackground(java.io.File file, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Prepares importation of code orders in tsv format"
     		String plannifyImportCodeOrdersTsvInBackground(String codelistUrn, java.io.File file, String fileName) throws MetamacException;
+    		"Prepares importation of annotations in tsv format"
+    		String plannifyImportAnnotationsTsvInBackground(String codelistUrn, java.io.File file, String fileName) throws MetamacException;
     		"Prepares importation of code openness levels in tsv format"
     		String plannifyImportCodeOpennessLevelsTsvInBackground(String codelistUrn, java.io.File file, String fileName) throws MetamacException;
     		"Prepares importation of code restrictions in tsv format"

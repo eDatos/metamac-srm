@@ -227,6 +227,18 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
     }
 
     @Override
+    public String plannifyImportAnnotationsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
+        // Validation
+        TasksMetamacInvocationValidator.checkImportAnnotationsTsvInBackground(codelistUrn, file, fileName, null);
+
+        // Plan job
+        JobDataMap jobDataAdditional = new JobDataMap();
+        jobDataAdditional.put(ImportationTsvJob.ITEM_SCHEME_URN, codelistUrn);
+        jobDataAdditional.put(ImportationTsvJob.OPERATION, ImportationTsvJob.OPERATION_IMPORT_ANNOTATIONS);
+        return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
+    }
+
+    @Override
     public String plannifyImportCodeRestrictionsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
         // Validation
         TasksMetamacInvocationValidator.checkImportCodeRestrictionsTsvInBackground(codelistUrn, file, fileName, null);

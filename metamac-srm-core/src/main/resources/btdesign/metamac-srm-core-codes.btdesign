@@ -131,12 +131,16 @@ Application CodesMetamac {
     		TaskImportationInfo importCodesTsv(String codelistUrn, java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
+    		"Imports annotations in tsv format"
+    		TaskImportationInfo importAnnotationsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		"Imports code openness levels in tsv format"
     		TaskImportationInfo importCodeOpennessLevelsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		"Imports code restrictions in tsv format"
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
+    		"Exports annotations in tsv format"
+    		String exportAnnotationsTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness leves in tsv format"

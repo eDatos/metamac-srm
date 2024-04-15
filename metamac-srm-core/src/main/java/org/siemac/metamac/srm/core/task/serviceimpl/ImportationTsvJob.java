@@ -42,6 +42,7 @@ public class ImportationTsvJob implements Job {
     public static final String        OPERATION_IMPORT_CATEGORIES           = "importCategories";
     public static final String        OPERATION_IMPORT_CODES                = "importCodes";
     public static final String        OPERATION_IMPORT_CODE_ORDERS          = "importCodeOrdes";
+    public static final String        OPERATION_IMPORT_ANNOTATIONS          = "importAnnotations";
     public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS    = "importCodeRestrictions";
     public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS = "importCodeOpennessLevels";
     public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS    = "importVariableElements";
@@ -88,6 +89,8 @@ public class ImportationTsvJob implements Job {
                 importVariableElements(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CATEGORY_ELEMENTS.equals(operation)) {
                 importCategoryElements(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_ANNOTATIONS.equals(operation)) {
+                importAnnotations(jobKey, data, serviceContext);
             } else {
                 throw new IllegalArgumentException("Job with operation " + operation + " is not supported");
             }
@@ -189,6 +192,19 @@ public class ImportationTsvJob implements Job {
         logger.info("ImportationJob [importCodes]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportCodesTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName(), updateAlreadyExisting);
         logger.info("ImportationJob [importCodes]: " + jobKey + " finished at " + new Date());
+    }
+
+    private void importAnnotations(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String codelistUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+        Boolean updateAlreadyExisting = data.getBoolean(UPDATE_ALREADY_EXISTING);
+
+        logger.info("ImportationJob [importAnnotations]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportAnnotationsTsv(serviceContext, codelistUrn, new File(filePath), fileName, jobKey.getName(), updateAlreadyExisting);
+        logger.info("ImportationJob [importAnnotations]: " + jobKey + " finished at " + new Date());
     }
 
     private void importCodeOrders(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {

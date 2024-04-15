@@ -33,6 +33,7 @@ import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.serviceimpl.utils.OrganisationsMetamacInvocationValidator;
+import org.siemac.metamac.srm.core.task.domain.ImportationAnnotationsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoryElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOpennessLevelsTsvHeader;
@@ -48,10 +49,14 @@ import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotableArtefact;
+import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.BaseCopyAllMetadataUtils;
+import com.arte.statistic.sdmx.srm.core.code.domain.Code;
 import com.arte.statistic.sdmx.srm.core.common.domain.InternationalString;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
@@ -539,6 +544,105 @@ public class TsvImportationUtils {
             // description is optional
         }
         return header;
+    }
+
+    public static ImportationAnnotationsTsvHeader parseTsvHeaderToImportAnnotations(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_ANNOTATION_TYPE, SrmConstants.TSV_HEADER_ANNOTATION, SrmConstants.TSV_HEADER_ANNOTATION_URL);
+
+        String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
+        if (headerColumns == null || headerColumns.length < headersExpected.size()) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT, headersExpected.size()));
+        }
+        ImportationAnnotationsTsvHeader importationAnnotationsTsvHeader = new ImportationAnnotationsTsvHeader();
+        importationAnnotationsTsvHeader.setColumnsSize(headerColumns.length);
+        int headerExpectedIndex = 0;
+        for (int i = 0; i < headerColumns.length; i++) {
+            String column = headerColumns[i];
+            String[] columnSplited = StringUtils.splitPreserveAllTokens(column, SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR); // some column can be "complex"
+            String columnName = columnSplited[0];
+
+            String headerExpected = headersExpected.get(headerExpectedIndex);
+            if (!headerExpected.equals(columnName)) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, ServiceExceptionParameters.createCodeImportation(headerExpected)));
+                break;
+            }
+
+            if (SrmConstants.TSV_HEADER_CODE.equals(columnName)) {
+                importationAnnotationsTsvHeader.setCodePosition(i);
+                headerExpectedIndex++;
+            }
+
+            if (SrmConstants.TSV_HEADER_ANNOTATION_TYPE.equals(columnName)) {
+                importationAnnotationsTsvHeader.setAnnotationTypePosition(i);
+                headerExpectedIndex++;
+            }
+
+            if (SrmConstants.TSV_HEADER_ANNOTATION.equals(columnName)) {
+                importationAnnotationsTsvHeader.setAnnotation(columnHeaderToInternationalStringTsv(headerColumns, i, columnSplited, headerExpected, importationAnnotationsTsvHeader.getAnnotation(), exceptions));
+                if (importationAnnotationsTsvHeader.getAnnotation() == null) {
+                    break;
+                }
+                if (importationAnnotationsTsvHeader.getAnnotation().isEndPositionSetted()) {
+                    headerExpectedIndex++;
+                }
+            }
+            if (SrmConstants.TSV_HEADER_ANNOTATION_URL.equals(columnName)) {
+                importationAnnotationsTsvHeader.setAnnotationUrlPosition(i);
+                headerExpectedIndex++;
+            }
+        }
+        return importationAnnotationsTsvHeader;
+    }
+
+    public static Annotation tsvLineToAnnotation(ImportationAnnotationsTsvHeader header, String[] columns, int lineNumber, List<MetamacExceptionItem> exceptionItems,
+            List<MetamacExceptionItem> infoItems, List<AnnotationType> annotationsTypes, List<Code> codes) throws MetamacException {
+        String codeIdentifier = columns[header.getCodePosition()];
+        String annotationTypeCode = columns[header.getAnnotationTypePosition()];
+        String annotationUrl = columns[header.getAnnotationUrlPosition()];
+        if (!checkAllParametersInLine(exceptionItems, lineNumber, codeIdentifier, annotationTypeCode)) {
+            return null;
+        }
+        AnnotationType annotationType = getAnnotationType(annotationsTypes, annotationTypeCode);
+        AnnotableArtefact annotableArtefact = getAnnotableArtefact(codes, codeIdentifier);
+        
+        if (annotationType == null || annotableArtefact == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null;
+        }
+        Annotation annotation = new Annotation();
+        annotation.setCode(codeIdentifier);
+        annotation.setText(TsvImportationUtils.tsvLineToInternationalStringBase(header.getAnnotation(), columns, annotation.getText(), false));
+        annotation.setAnnotationType(annotationType);
+        annotation.setUrl(annotationUrl);
+        annotation.setAnnotableArtefact(annotableArtefact);
+        return annotation;
+    }
+
+    private static AnnotableArtefact getAnnotableArtefact(List<Code> codes, String codeIdentifier) {
+        codeIdentifier = codeIdentifier.replace(" ", "");
+        for (Code code : codes) {
+            if (codeIdentifier.equals(code.getNameableArtefact().getCode())) {
+                return code.getNameableArtefact();
+            }
+        }
+        return null;
+    }
+
+    private static Boolean checkAllParametersInLine(List<MetamacExceptionItem> exceptionItems, int lineNumber, String codeIdentifier, String annotationTypeCode) {
+        if (StringUtils.isBlank(codeIdentifier) || StringUtils.isBlank(annotationTypeCode)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return false;
+        }
+        return true;
+    }
+
+    private static AnnotationType getAnnotationType(List<AnnotationType> annotationsTypes, String annotationTypeCode) {
+        for (AnnotationType annotationType : annotationsTypes) {
+            if (annotationType.getCode().equals(annotationTypeCode)) {
+                return annotationType;
+            }
+        }
+        return null;
     }
 
     /**

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -1368,7 +1368,8 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 target.setRepresentationType(RepresentationTypeEnum.ENUMERATION);
                 if (SdmxSrmUrnParserUtils.isCodelistUrn(representationValue)) {
                     CodelistVersionMetamac enumeratedCodelist = codelistVersionMetamacRepository.findByUrn(representationValue);
-                    if (enumeratedCodelist != null) {
+                    if (enumeratedCodelist != null && (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(enumeratedCodelist.getLifeCycleMetadata().getProcStatus())
+                            || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(enumeratedCodelist.getLifeCycleMetadata().getProcStatus()))) {
                         target.setEnumerationCodelist(enumeratedCodelist);
                     } else {
                         MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
@@ -1378,7 +1379,8 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                     }
                 } else if (SdmxSrmUrnParserUtils.isConceptSchemeUrn(representationValue)) {
                     ConceptSchemeVersionMetamac enumeratedConceptScheme = conceptSchemeVersionMetamacRepository.findByUrn(representationValue);
-                    if (enumeratedConceptScheme != null) {
+                    if (enumeratedConceptScheme != null && (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(enumeratedConceptScheme.getLifeCycleMetadata().getProcStatus())
+                            || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(enumeratedConceptScheme.getLifeCycleMetadata().getProcStatus()))) {
                         target.setEnumerationConceptScheme(enumeratedConceptScheme);
                     } else {
                         MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);

@@ -97,7 +97,7 @@ public class ImportAnnotationsWindow extends ImportResourceWindow {
     private class UploadAnnotationsForm extends UploadForm {
 
         public UploadAnnotationsForm() {
-            super(getConstants().categories());
+            super(getConstants().annotations());
             this.setWidth(formWidth);
 
             HiddenItem fileTypeItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE);

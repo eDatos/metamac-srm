@@ -1042,8 +1042,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     private void saveAnnotations(List<Annotation> annotations) {
-        for (Annotation annotation : annotations) {
-            annotationRepository.save(annotation);
+        if (annotations != null && !annotations.isEmpty()) {
+            for (Annotation annotation : annotations) {
+                    annotationRepository.save(annotation);
+            }
         }
     }
 

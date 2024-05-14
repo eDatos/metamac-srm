@@ -166,6 +166,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     public static final CommonServiceExceptionType IMPORTATION_TSV_HEADER_COLUMN_UNEXPECTED                                              = create(
             "exception.srm.importation.tsv.error.header.column_unexpected");
     public static final CommonServiceExceptionType IMPORTATION_TSV_LINE_INCORRECT                                                        = create("exception.srm.importation.tsv.error.line.incorrect");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_CODE_INCORRECT                                                        = create("exception.srm.importation.tsv.error.code.incorrect");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ANNOTATION_TYPE_INCORRECT                                             = create("exception.srm.importation.tsv.error.annotation_type.incorrect");
     public static final CommonServiceExceptionType IMPORTATION_TSV_METADATA_REQUIRED                                                     = create(
             "exception.srm.importation.tsv.error.metadata_required");
     public static final CommonServiceExceptionType IMPORTATION_TSV_METADATA_INCORRECT                                                    = create(
@@ -238,6 +240,10 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "notice_message.srm.exception.publish_internally_codelist_job.fails");
     public static final CommonServiceExceptionType PUBLISH_INTERNALLY_CODELIST_JOB_ERROR_AND_CANT_MARK_AS_ERROR                          = create(
             "notice_message.srm.exception.publish_internally_codelist_job.fails_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType PUBLISH_KAFKA_SENDING_VARIABLE_ELEMENT_JOB_ERROR                                      = create(
+            "notice_message.srm.exception.publish_kakfa_sending_variable_element_job.fails");
+    public static final CommonServiceExceptionType PUBLISH_KAFKA_SENDING_VARIABLE_ELEMENT_JOB_ERROR_AND_CANT_MARK_AS_ERROR               = create(
+            "notice_message.srm.exception.publish_kakfa_sending_variable_element_job.fails_and_cant_mark_as_error");
 
     // Kafka
     public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER                            = create("stream_message.srm.exception.send_message.fails");
@@ -253,5 +259,6 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "stream_message.srm.exception.send_organisation_scheme_message.fails");
     public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_CONCEPT_SCHEME_MESSAGE_ERROR                                  = create(
             "stream_message.srm.exception.send_concept_scheme_message.fails");
-
+    public static final CommonServiceExceptionType STREAM_MESSAGING_RESEND_VARIABLE_ELEMENT_MESSAGE_ERROR                                = create(
+            "stream_message.srm.exception.send_variable_element_message.fails");
 }

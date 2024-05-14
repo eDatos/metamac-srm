@@ -1,9 +1,17 @@
 <%@page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
 <%@page pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
+<%
+   String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+%>
+<fmt:setLocale value="<%= locale %>"/>
+<fmt:setBundle basename="i18n.messages" var="i18n"/>
+<fmt:bundle basename="application"/>
 {
    "swagger":"2.0",
    "info":{
-      "description":"Los recursos estructurales son aquellos que sirven de apoyo para normalizar a los recursos estadísticos que produce la organización. Los principales recursos estructurales existente son los esquemas de organizaciones, esquemas de temas, esquemas de conceptos, clasificaciones y definiciones de estructuras de datos. Esta API permite consultar el inventario completo de los recursos estructurales que maneja la organización.",
+      "description":"<fmt:message key="api.doc.swagger.info.description" bundle="${i18n}"/>",
       "version":"1.0",
       "title":"API de recursos estructurales"
    },
@@ -14,27 +22,27 @@
    "tags":[
       {
          "name":"Organizaciones",
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.tags.0.description" bundle="${i18n}"/>"
       },
       {
          "name":"Temas",
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.tags.1.description" bundle="${i18n}"/>"
       },
       {
          "name":"Clasificaciones",
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.tags.2.description" bundle="${i18n}"/>"
       },
       {
          "name":"Conceptos",
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.tags.3.description" bundle="${i18n}"/>"
       },
       {
          "name":"Definiciones de Estructuras de Datos (DSD)",
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.tags.4.description" bundle="${i18n}"/>"
       },
       {
          "name":"Recursos auxiliares",
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.tags.5.description" bundle="${i18n}"/>"
       }
    ],
    "definitions": <jsp:include page="definitions.jsp" /> ,
@@ -45,7 +53,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_agencyschemes_findAgencySchemes_GET",
             "produces":[
                "application/json",
@@ -60,22 +68,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AgencySchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal" 
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>" 
                }
             }
          }
@@ -85,7 +93,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_agencyschemes__agencyID__findAgencySchemes_GET",
             "produces":[
                "application/json",
@@ -101,22 +109,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AgencySchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -126,7 +134,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID__findAgencySchemes_GET",
             "produces":[
                "application/json",
@@ -143,22 +151,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AgencySchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -168,7 +176,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID___version__retrieveAgencyScheme_GET",
             "produces":[
                "application/json",
@@ -182,22 +190,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AgencyScheme"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -207,7 +215,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID___version__agencies_findAgencies_GET",
             "produces":[
                "application/json",
@@ -231,22 +239,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.parameters.7.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Agencies"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -256,7 +264,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID___version__agencies__organisationID__retrieveAgency_GET",
             "produces":[
                "application/json",
@@ -270,29 +278,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Agency"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -302,7 +310,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categorisations_findCategorisations_GET",
             "produces":[
                "application/json",
@@ -317,22 +325,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Categorisations"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -342,7 +350,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categorisations__agencyID__findCategorisations_GET",
             "produces":[
                "application/json",
@@ -358,22 +366,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Categorisations"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -383,7 +391,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categorisations__agencyID___resourceID__findCategorisations_GET",
             "produces":[
                "application/json",
@@ -400,22 +408,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Categorisations"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -425,7 +433,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categorisations__agencyID___resourceID___version__retrieveCategorisation_GET",
             "produces":[
                "application/json",
@@ -439,22 +447,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Categorisation"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -464,7 +472,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryschemes_findCategorySchemes_GET",
             "produces":[
                "application/json",
@@ -479,22 +487,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategorySchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -504,7 +512,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryschemes__agencyID__findCategorySchemes_GET",
             "produces":[
                "application/json",
@@ -520,22 +528,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategorySchemes"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -545,7 +553,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID__findCategorySchemes_GET",
             "produces":[
                "application/json",
@@ -562,22 +570,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategorySchemes"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -587,7 +595,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__retrieveCategoryScheme_GET",
             "produces":[
                "application/json",
@@ -601,22 +609,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategoryScheme"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -626,7 +634,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories_findCategories_GET",
             "produces":[
                "application/json",
@@ -646,28 +654,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+eniSchemaTypes: Muestra la información de la taxonomía de sectores primarios establecido para la categoría según el esquema ENI. </li><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+description,+annotations,+eniSchemaTypes,+categoryElement\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.parameters.7.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Categories"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -677,7 +685,7 @@
             "tags":[
                "Temas"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories__categoryID__retrieveCategory_GET",
             "produces":[
                "application/json",
@@ -691,34 +699,34 @@
                   "name":"categoryID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la categoría"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.3.description" bundle="${i18n}"/>"
                },   
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+categoryElement: muestra su elemento de tema </li></ul> Ejemplo: fields=\"+categoryElement\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.4.description" bundle="${i18n}"/>"
                }           
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Category"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -728,7 +736,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite obtener el listado de familias de clasificaciones",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelistfamilies_findCodelistFamilies_GET",
             "produces":[
                "application/json",
@@ -741,34 +749,34 @@
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Campo por el que ordenar los resultados<br>Campos válidos<ul><li>ID</li></ul>Criterios de Orden<ul><li>ASC: ascendente</li><li>DESC: descendente</li></ul><br>Ejemplo: orderBy=\"ID ASC\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.parameters.2.description" bundle="${i18n}"/>"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"<div>Consulta para filtrar los resultados</div><div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: patrón sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul><div>Campos válidos:<ul><li>ID</li> <li>URN</li> <li>NAME</li></ul>Ejemplo: query=\"ID EQ 2090\"</div>"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.parameters.3.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CodelistFamilies"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -778,7 +786,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite obtener una familia de clasificaciones en particular",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.id.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelistfamilies__id__retrieveCodelistFamilyById_GET",
             "produces":[
                "application/json",
@@ -789,28 +797,28 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la familia de codelist"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.id.get.parameters.0.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.id.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CodelistFamily"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -820,7 +828,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite obtener el listado de clasificaciones",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists_findCodelists_GET",
             "produces":[
                "application/json",
@@ -835,22 +843,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Codelists"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -860,7 +868,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite obtener el listado de todas las clasificaciones mantenidas por una determinada organización.",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID__findCodelists_GET",
             "produces":[
                "application/json",
@@ -876,22 +884,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Codelists"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -901,7 +909,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite obtener todas las versiones de una clasificación con un determinado identificador y que además es matenida por una organización determinada.",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID__findCodelists_GET",
             "produces":[
                "application/json",
@@ -919,22 +927,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Codelists"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -944,7 +952,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite consultar una versión en particular de una clasificación",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__retrieveCodelist_GET",
             "produces":[
                "application/json",
@@ -958,22 +966,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Codelist"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -983,7 +991,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite consultar el listado de restricciones de una clasificación",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.restrictions.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__restrictions_findCodelistRestrictions_GET",
             "produces":[
                "application/json",
@@ -997,22 +1005,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.restrictions.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CodelistRestrictions"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1022,7 +1030,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite obtener las equivalencias de los códigos de un codelist en los códigos de otro codelist",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__recode_retrieveRecodedCodes_GET",
             "produces":[
                "application/json",
@@ -1033,59 +1041,59 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la agencia origen"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.0.description" bundle="${i18n}"/>"
             },
             {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del recurso origen"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.1.description" bundle="${i18n}"/>"
             },
             {
                   "name":"version",
                   "in":"path",
                   "type":"string",
-                  "description":"Versión origen"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.2.description" bundle="${i18n}"/>"
             },
             {
                   "name":"referenceAgencyID",
                   "in":"query",
                   "type":"string",
-                  "description":"Identificador de la agencia de la clasificación de referencia para recodificar"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.3.description" bundle="${i18n}"/>"
             },
             {
                   "name":"referenceResourceID",
                   "in":"query",
                   "type":"string",
-                  "description":"Identificador del recurso de la clasificación de referencia para recodificar"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.4.description" bundle="${i18n}"/>"
             },
             {
                   "name":"referenceVersion",
                   "in":"query",
                   "type":"string",
-                  "description":"Versión de la clasificación de referencia para recodificar"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.5.description" bundle="${i18n}"/>"
             }
             
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RecodedCodes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1095,7 +1103,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite consultar los códigos de una versión de una clasificación. Nótese que si se hace uso de <i>wildcards</i> como \"~all\" o de alguno de los parámetros <i>limit, offset, query u orderBy</i>, el listado se devolverá paginado automáticamente.",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes_findCodes_GET",
             "produces":[
                "application/json",
@@ -1115,52 +1123,52 @@
                   "name":"openness",
                   "in":"query",
                   "type":"string",
-                  "description":"Apertura establecida para la visualización"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.7.description" bundle="${i18n}"/>"
                },
                {
                   "name":"order",
                   "in":"query",
                   "type":"string",
-                  "description":"Orden establecido para la visualización"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.8.description" bundle="${i18n}"/>"
                },
                 {
                   "name":"restriction",
                   "in":"query",
                   "type":"string",
-                  "description":"Restricción establecida para la visualización. Sólo se mostrarán los códigos de esta restricción"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.9.description" bundle="${i18n}"/>"
                },
                {
                   "name":"extended",
                   "in":"query",
                   "type":"boolean",
-                  "description":"Indicará el tipo de código que se desea mostrar. Dos valores posibles: <ul><li>true: sólo se muestran códigos extendidos</li><li>false: sólo se muestran códigos no extendidos</li></ul>"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.10.description" bundle="${i18n}"/>"
                },
               {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+open: muestra la apertura del elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+order: muestra el orden establecido para el elemento. Sólo puede obtenerse en el caso de que no se esté haciendo uso del wildcard \"~all\".</li><li>+variableElement: muestra su variable de elemento </li><li>+description: muestra la descripción de los códigos</li><li>+variableElement: muestra su variable de elemento </li><li>+extended: muestra si el código es extendido o no </li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+open,+order\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.11.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Codes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1170,7 +1178,7 @@
             "tags":[
                "Clasificaciones"
             ],
-            "description":"Permite consultar un código concreto de una versión de una clasificación",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes__codeID__retrieveCode_GET",
             "produces":[
                "application/json",
@@ -1184,34 +1192,34 @@
                   "name":"codeID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del código"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.parameters.3.description" bundle="${i18n}"/>"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+variableElement: muestra su variable de elemento </li></ul> Ejemplo: fields=\"+variableElement\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.parameters.4.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Code"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1221,7 +1229,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptTypes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptTypes_retrieveConceptTypes_GET",
             "produces":[
                "application/json",
@@ -1233,22 +1241,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptTypes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptTypes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1258,7 +1266,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptschemes_findConceptSchemes_GET",
             "produces":[
                "application/json",
@@ -1273,22 +1281,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1298,7 +1306,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptschemes__agencyID__findConceptSchemes_GET",
             "produces":[
                "application/json",
@@ -1314,22 +1322,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptSchemes"
                   },                 
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1339,7 +1347,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID__findConceptSchemes_GET",
             "produces":[
                "application/json",
@@ -1356,22 +1364,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptSchemes"
                   },                 
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1381,7 +1389,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__retrieveConceptScheme_GET",
             "produces":[
                "application/json",
@@ -1395,22 +1403,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptScheme"
                   },                 
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1420,7 +1428,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts_findConcepts_GET",
             "produces":[
                "application/json",
@@ -1440,28 +1448,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li><li>+pluralName: muestra el nombre en plural del concepto</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.parameters.7.description" bundle="${i18n}"/>"
               }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Concepts"
                   },                   
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1471,7 +1479,7 @@
             "tags":[
                "Conceptos"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts__conceptID__retrieveConcept_GET",
             "produces":[
                "application/json",
@@ -1485,29 +1493,29 @@
                   "name":"conceptID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del concepto"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.parameters.3.description" bundle="${i18n}"/>"
                },
              
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Concept"
                   },                   
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1517,7 +1525,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_contentConstraints_findContentConstraints_GET",
             "produces":[
                "application/json",
@@ -1532,22 +1540,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ContentConstraints"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1557,7 +1565,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_contentConstraints__agencyID__findContentConstraints_GET",
             "produces":[
                "application/json",
@@ -1573,22 +1581,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ContentConstraints"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1598,7 +1606,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_contentConstraints__agencyID___resourceID__findContentConstraints_GET",
             "produces":[
                "application/json",
@@ -1615,22 +1623,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ContentConstraints"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1640,7 +1648,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_contentConstraints__agencyID___resourceID___version__retrieveContentConstraint_GET",
             "produces":[
                "application/json",
@@ -1654,22 +1662,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ContentConstraint"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1679,7 +1687,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_contentConstraints__agencyID___resourceID___version__regions__regionCode__retrieveRegionForContentConstraint_GET",
             "produces":[
                "application/json",
@@ -1690,7 +1698,7 @@
                   "name":"regionCode",
                   "in":"path",
                   "type":"string",
-                  "description":"Código de la región"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.parameters.0.description" bundle="${i18n}"/>"
                },
                 {"$ref":"#/components/parameters/agencyIdParam"},
                 {"$ref":"#/components/parameters/resourceIdParam"},
@@ -1699,22 +1707,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RegionReference"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1724,7 +1732,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataconsumerschemes_findDataConsumerSchemes_GET",
             "produces":[
                "application/json",
@@ -1739,22 +1747,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataConsumerSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1764,7 +1772,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID__findDataConsumerSchemes_GET",
             "produces":[
                "application/json",
@@ -1780,22 +1788,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataConsumerSchemes"
                   },                  
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1805,7 +1813,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID__findDataConsumerSchemes_GET",
             "produces":[
                "application/json",
@@ -1822,22 +1830,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataConsumerSchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1847,7 +1855,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID___version__retrieveDataConsumerScheme_GET",
             "produces":[
                "application/json",
@@ -1861,22 +1869,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataConsumerScheme"
                   },                  
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1886,7 +1894,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID___version__dataconsumers_findDataConsumers_GET",
             "produces":[
                "application/json",
@@ -1904,28 +1912,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.parameters.7.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataConsumers"
                   },                 
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1935,7 +1943,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID___version__dataconsumers__organisationID__retrieveDataConsumer_GET",
             "produces":[
                "application/json",
@@ -1949,29 +1957,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataConsumer"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -1981,7 +1989,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataproviderschemes_findDataProviderSchemes_GET",
             "produces":[
                "application/json",
@@ -1996,22 +2004,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataProviderSchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2021,7 +2029,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID__findDataProviderSchemes_GET",
             "produces":[
                "application/json",
@@ -2037,22 +2045,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataProviderSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2062,7 +2070,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID__findDataProviderSchemes_GET",
             "produces":[
                "application/json",
@@ -2079,22 +2087,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataProviderSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2104,7 +2112,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID___version__retrieveDataProviderScheme_GET",
             "produces":[
                "application/json",
@@ -2118,22 +2126,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataProviderScheme"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2143,7 +2151,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID___version__dataproviders_findDataProviders_GET",
             "produces":[
                "application/json",
@@ -2161,28 +2169,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.parameters.7.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataProviders"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2192,7 +2200,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID___version__dataproviders__organisationID__retrieveDataProvider_GET",
             "produces":[
                "application/json",
@@ -2206,28 +2214,28 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
                },
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataProvider"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2237,7 +2245,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_datastructures_findDataStructures_GET",
             "produces":[
                "application/json",
@@ -2252,22 +2260,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataStructures"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2277,7 +2285,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_datastructures__agencyID__findDataStructures_GET",
             "produces":[
                "application/json",
@@ -2293,22 +2301,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataStructures"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2318,7 +2326,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_datastructures__agencyID___resourceID__findDataStructures_GET",
             "produces":[
                "application/json",
@@ -2335,22 +2343,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataStructures"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2360,7 +2368,7 @@
             "tags":[
                "Definiciones de Estructuras de Datos (DSD)"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_datastructures__agencyID___resourceID___version__retrieveDataStructure_GET",
             "produces":[
                "application/json",
@@ -2374,28 +2382,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+dimension.pluralName: muestra el nombre en plural de las dimensiones</li></ul> Ejemplo: fields=\"+dimension.pluralName\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.parameters.3.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataStructure"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2405,7 +2413,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationschemes_findOrganisationSchemes_GET",
             "produces":[
                "application/json",
@@ -2420,22 +2428,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2445,7 +2453,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationschemes__agencyID__findOrganisationSchemes_GET",
             "produces":[
                "application/json",
@@ -2461,22 +2469,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationSchemes"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2486,7 +2494,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID__findOrganisationSchemes_GET",
             "produces":[
                "application/json",
@@ -2503,22 +2511,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2528,7 +2536,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__retrieveOrganisationScheme_GET",
             "produces":[
                "application/json",
@@ -2542,22 +2550,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationScheme"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2567,7 +2575,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations_findOrganisations_GET",
             "produces":[
                "application/json",
@@ -2587,28 +2595,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.parameters.7.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Organisations"
                   },                 
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2618,7 +2626,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations__organisationID__retrieveOrganisation_GET",
             "produces":[
                "application/json",
@@ -2632,29 +2640,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Organisation"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2664,7 +2672,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationunitschemes_findOrganisationUnitSchemes_GET",
             "produces":[
                "application/json",
@@ -2679,22 +2687,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationUnitSchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2704,7 +2712,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID__findOrganisationUnitSchemes_GET",
             "produces":[
                "application/json",
@@ -2720,22 +2728,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationUnitSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2745,7 +2753,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID__findOrganisationUnitSchemes_GET",
             "produces":[
                "application/json",
@@ -2762,22 +2770,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationUnitSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2787,7 +2795,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID___version__retrieveOrganisationUnitScheme_GET",
             "produces":[
                "application/json",
@@ -2801,22 +2809,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationUnitScheme"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2826,7 +2834,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID___version__organisationunits_findOrganisationUnits_GET",
             "produces":[
                "application/json",
@@ -2844,28 +2852,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.parameters.7.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationUnits"
                   },                      
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2875,7 +2883,7 @@
             "tags":[
                "Organizaciones"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID___version__organisationunits__organisationID__retrieveOrganisationUnit_GET",
             "produces":[
                "application/json",
@@ -2889,29 +2897,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrganisationUnit"
                   },                  
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2921,7 +2929,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variablefamilies_findVariableFamilies_GET",
             "produces":[
                "application/json",
@@ -2936,22 +2944,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableFamilies"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -2961,7 +2969,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variablefamilies__id__retrieveVariableFamilyById_GET",
             "produces":[
                "application/json",
@@ -2972,28 +2980,28 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la familia de variables"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.get.parameters.0.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableFamily"
                   },                 
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3003,7 +3011,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variablefamilies__id__variables_findVariablesByFamily_GET",
             "produces":[
                "application/json",
@@ -3014,7 +3022,7 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la familia de variables"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.parameters.0.description" bundle="${i18n}"/>"
                },
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
@@ -3024,22 +3032,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Variables"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3049,7 +3057,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variables_findVariables_GET",
             "produces":[
                "application/json",
@@ -3064,22 +3072,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Variables"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3089,7 +3097,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.id.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variables__id__retrieveVariableById_GET",
             "produces":[
                "application/json",
@@ -3100,28 +3108,28 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la variable"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.id.get.parameters.0.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.id.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Variable"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3131,7 +3139,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variables__variableID__variableelements_findVariableElements_GET",
             "produces":[
                "application/json",
@@ -3142,7 +3150,7 @@
                   "name":"variableID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la variable"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.parameters.0.description" bundle="${i18n}"/>"
                },
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
@@ -3152,28 +3160,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+renderingColor: muestra el color de representación</li></ul> Ejemplo: fields=\"+renderingColor\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.parameters.5.description" bundle="${i18n}"/>"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElements"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3183,7 +3191,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__retrieveVariableElementById_GET",
             "produces":[
                "application/json",
@@ -3195,28 +3203,28 @@
                   "name":"variableID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la variable"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.parameters.1.description" bundle="${i18n}"/>"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElement"
                   },               
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3226,7 +3234,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__geoinfo_findVariableElementsGeoInfoXml_GET",
             "produces":[
                "application/xml",
@@ -3237,13 +3245,13 @@
                   "name":"variableID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la variable"
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.parameters.0.description" bundle="${i18n}"/>"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos en la respuesta que pueden mostrarse/ocultarse. <br>Valores válidos:<ul><li>\"-point\": Ocultar campo punto</li><li>\"-geometry\": Ocultar el campo geometría</li><li>\"-geographicalGranularity\": Ocultar la granularidad geográfica</li></ul>Ejemplo: fields=\"-geometry\""
+                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.parameters.1.description" bundle="${i18n}"/>"
                },
                 {"$ref":"#/components/parameters/resourceIdParam"},
                 {"$ref":"#/components/parameters/limitParam"},
@@ -3254,22 +3262,22 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElementsGeoInfo"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }
@@ -3279,7 +3287,7 @@
             "tags":[
               "Recursos auxiliares"
             ],
-            "description":"",
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.get.description" bundle="${i18n}"/>",
             "operationId":"resource__v1.0_categoryElements_findCategoryElements_GET",
             "produces":[
                "application/json",
@@ -3294,22 +3302,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.get.responses.200.schema.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategoryElements"
                   },                
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado"
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
                },
                "503":{
-                   "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal"
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
                }
             }
          }

@@ -99,6 +99,7 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacRepository;
+import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -7113,7 +7114,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElement.getReplaceToVariableElements().add(variableElementReplaced1);
 
         // Create
-        VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.createVariableElement(ctx, variableElement);
+
+        VariableElement variableElementCreated = resultVariableElement.getResourceVersion();
+
         String urn = variableElementCreated.getIdentifiableArtefact().getUrn();
 
         // Validate
@@ -7147,7 +7151,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         VariableElement variableElement = CodesMetamacDoMocks.mockVariableElement(variable, retrieveAnnotationType_1());
 
         // Create
-        VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.createVariableElement(ctx, variableElement);
+
+        VariableElement variableElementCreated = resultVariableElement.getResourceVersion();
+
         String urn = variableElementCreated.getIdentifiableArtefact().getUrn();
 
         // Validate
@@ -7167,7 +7174,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElement.setRenderingColor(renderingColor);
 
         // Create
-        VariableElement variableElementCreated = codesService.createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.createVariableElement(ctx, variableElement);
+
+        VariableElement variableElementCreated = resultVariableElement.getResourceVersion();
+
         String urn = variableElementCreated.getIdentifiableArtefact().getUrn();
 
         // Validate
@@ -7180,7 +7190,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElementRetrieved.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
 
         // Update
-        VariableElement variableElementUpdated = codesService.updateVariableElement(ctx, variableElementRetrieved);
+        resultVariableElement = codesService.updateVariableElement(ctx, variableElementRetrieved);
+
+        VariableElement variableElementUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertEquals(renderingColor, variableElementUpdated.getRenderingColor());
@@ -7190,7 +7202,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElementRetrieved.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
 
         // Update
-        variableElementUpdated = codesService.updateVariableElement(ctx, variableElementRetrieved);
+        resultVariableElement = codesService.updateVariableElement(ctx, variableElementRetrieved);
+
+        variableElementUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertEquals(renderingColor, variableElementUpdated.getRenderingColor());
@@ -7200,7 +7214,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElementRetrieved.getIdentifiableArtefact().setIsCodeUpdated(Boolean.FALSE);
 
         // Update
-        variableElementUpdated = codesService.updateVariableElement(ctx, variableElementRetrieved);
+        resultVariableElement = codesService.updateVariableElement(ctx, variableElementRetrieved);
+
+        variableElementUpdated = resultVariableElement.getResourceVersion();
 
         // Validate
         assertEquals(renderingColor, variableElementUpdated.getRenderingColor());
@@ -7434,7 +7450,9 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         variableElement.setValidFrom(MetamacMocks.mockDateTime());
         variableElement.setValidTo(null);
 
-        VariableElement variableElementUpdated = codesService.updateVariableElement(getServiceContextAdministrador(), variableElement);
+        ResourceVersionPublicationResult<VariableElement> resultVariableElement = codesService.updateVariableElement(getServiceContextAdministrador(), variableElement);
+
+        VariableElement variableElementUpdated = resultVariableElement.getResourceVersion();
 
         assertEqualsVariableElement(variableElement, variableElementUpdated);
     }
@@ -11707,6 +11725,24 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // No test. cron job process
     }
 
+    @Test
+    @Override
+    public void testPublishVariableElementInBackground() throws Exception {
+        // no test cron job process
+    }
+
+    @Test
+    @Override
+    public void testNotifyVariableElementPublicationByVariable() throws Exception {
+        // no test cron job process and kafka sending
+    }
+
+    @Test
+    @Override
+    public void testNotifyVariableElementPublication() throws Exception {
+        // no test kafka sending
+    }
+
     private VariableElementOperation getVariableElementOperationByCode(List<VariableElementOperation> operations, String code) {
         for (VariableElementOperation variableElementOperation : operations) {
             if (code.equals(variableElementOperation.getCode())) {
@@ -12138,6 +12174,48 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmCodesTest.xml";
+    }
+
+    @Test
+    @Override
+    public void testImportAnnotationsTsv() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = "importation-annotations-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = true;
+
+        TaskImportationInfo taskImportTsvInfo = codesService.importAnnotationsTsv(getServiceContextAdministrador(), codelistUrn, file, fileName, updateAlreadyExisting);
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+    }
+
+    @Test
+    @Override
+    public void testExportAnnotationsTsv() throws Exception {
+        String codelistUrn = CODELIST_1_V2;
+        String fileName = codesService.exportAnnotationsTsv(getServiceContextAdministrador(), codelistUrn);
+        assertNotNull(fileName);
+
+        // Validate
+        File file = new File(tempDirPath() + File.separatorChar + fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+        while ((line = bufferedReader.readLine()) != null) {
+            System.out.println(line.replaceAll("\t", "\\\\t"));
+            lines.add(line);
+        }
+
+        Iterator<String> iterator = lines.iterator();
+        assertEquals("code\ttype\tannotation#es\tannotation#pt\tannotation#en\tannotation#ca\turl", iterator.next());
+        assertEquals("CODE01\tSDMX-ID1-ANNOTATION_TYPE\tAnotación 1 code01\t\tAnnotation 1 code01\t\thttp://annotation211", iterator.next());
+        assertEquals("CODE01\tSDMX-ID2-ANNOTATION_TYPE\tAnotación 2 code01\t\t\t\thttp://annotation212", iterator.next());
+        assertEquals("CODE0201\tSDMX-ID1-ANNOTATION_TYPE\tAnotación 21\t\t\t\thttp://annotation211", iterator.next());
+        assertEquals("CODE0201\tSDMX-ID2-ANNOTATION_TYPE\t\t\t\t\thttp://annotation212", iterator.next());
+        bufferedReader.close();
     }
 
 }

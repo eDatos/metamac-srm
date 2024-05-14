@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
@@ -31,7 +32,6 @@ import org.siemac.metamac.srm.core.code.dto.VariableFamilyBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
 import org.siemac.metamac.srm.core.code.dto.VariableRelatedResourceDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.siemac.metamac.core.common.util.shared.StringUtils;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
@@ -85,12 +85,11 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         itemSchemeVersionDoToItemSchemeBasicDto(source, source.getLifeCycleMetadata(), target);
         return target;
     }
-    
-    
+
     private RelatedResourceDto sourceProviderToDto(Organisation sourceProvider) {
         if (sourceProvider != null) {
             RelatedResourceDto target = new RelatedResourceDto();
-            target.setType(getRelatedResourceTypeEnum(sourceProvider.getOrganisationType().getName())); 
+            target.setType(getRelatedResourceTypeEnum(sourceProvider.getOrganisationType().getName()));
             do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(sourceProvider.getNameableArtefact(), target);
             return target;
         }
@@ -107,7 +106,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         }
         return null;
     }
-    
+
     @Override
     public RelatedResourceDto codelistMetamacDoToRelatedResourceDto(CodelistVersionMetamac source) {
         if (source == null) {
@@ -281,6 +280,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         }
         VariableElementDto target = new VariableElementDto();
         target.setShortName(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
+        target.setStreamMessageStatus(source.getStreamMessageStatus());
         target.setComment(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getComment()));
         target.setValidFrom(CoreCommonUtil.transformDateTimeToDate(source.getValidFrom()));
         target.setValidTo(CoreCommonUtil.transformDateTimeToDate(source.getValidTo()));
@@ -317,6 +317,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         }
         VariableElementBasicDto target = new VariableElementBasicDto();
         target.setShortName(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
+        target.setStreamMessageStatus(source.getStreamMessageStatus());
         target.setVariable(variableDoToRelatedResourceDto(source.getVariable()));
         target.setHasShape(source.getShapeWkt() != null);
         identifiableArtefactDoToIdentifiableArtefactBasicDto(source.getIdentifiableArtefact(), target);
@@ -334,7 +335,6 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setTitle(do2DtoMapperSdmxSrm.internationalStringToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getShortName()));
         target.setUrn(source.getIdentifiableArtefact().getUrn());
         target.setUrnProvider(source.getIdentifiableArtefact().getUrnProvider());
-
         target.setType(null);
         return target;
     }
@@ -511,7 +511,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         }
         return targets;
     }
-    
+
     @Override
     public CodelistVisualisationDto codelistRestrictionVisualisationDoToDto(CodelistRestrictionVisualisation source) {
         if (source == null) {
@@ -545,7 +545,7 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         }
         return targets;
     }
-    
+
     @Override
     public RelatedResourceDto codelistRestrictionVisualisationDoToRelatedResourceDto(CodelistRestrictionVisualisation source) {
         return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
@@ -557,5 +557,5 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
         target.setType(null);
         return target;
     }
-    
+
 }

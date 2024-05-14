@@ -7,6 +7,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.code.dto.CodelistMetamacDto;
+import org.siemac.metamac.srm.web.category.widgets.ImportAnnotationsWindow;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.code.utils.CodesClientSecurityUtils;
 import org.siemac.metamac.srm.web.code.view.handlers.CodelistUiHandlers;
@@ -25,8 +26,11 @@ public class CodelistCodesPanel extends VLayout {
     protected ToolStrip        toolStrip;
     protected ToolStripButton  importCodesButton;
     protected ToolStripButton  exportCodesButton;
+    protected ToolStripButton  importAnnotationsButton;
+    protected ToolStripButton  exportAnnotationsButton;
 
     private ImportCodesWindow  importCodesWindow;
+    private ImportAnnotationsWindow importAnnotationsWindows;
 
     private CodesTreeGrid      codesTreeGrid;
 
@@ -50,7 +54,18 @@ public class CodelistCodesPanel extends VLayout {
                 uiHandlers.resourceImportationSucceed(fileName);
             }
         });
+        importAnnotationsWindows = new ImportAnnotationsWindow(getConstants().actionImportAnnotationsTsv());
+        importAnnotationsWindows.setUploadListener(new UploadListener() {
 
+            @Override
+            public void uploadFailed(String errorMessage) {
+                uiHandlers.resourceImportationFailed(errorMessage);
+            }
+            @Override
+            public void uploadComplete(String fileName) {
+                uiHandlers.resourceImportationSucceed(fileName);
+            }
+        });
         toolStrip = new ToolStrip();
 
         importCodesButton = new CustomToolStripButton(getConstants().actionImportCodesTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
@@ -74,6 +89,27 @@ public class CodelistCodesPanel extends VLayout {
         });
         toolStrip.addButton(exportCodesButton);
 
+        importAnnotationsButton = new CustomToolStripButton(getConstants().actionImportAnnotationsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
+        importAnnotationsButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                importAnnotationsWindows.initImportWindow(CommonUtils.isDefaultMaintainer(codelistMetamacDto.getMaintainer()), VersionUtil.isTemporalVersion(codelistMetamacDto.getVersionLogic()));
+                importAnnotationsWindows.show();
+            }});
+        toolStrip.addButton(importAnnotationsButton);
+
+        exportAnnotationsButton = new CustomToolStripButton(getConstants().actionExportAnnotationsTsv(), org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+        exportAnnotationsButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                uiHandlers.exportAnnotations(codelistMetamacDto.getUrn());
+            }
+        });
+        toolStrip.addButton(exportAnnotationsButton);
+
+
         addMember(toolStrip);
 
         codesTreeGrid = new CodesTreeGrid();
@@ -84,6 +120,7 @@ public class CodelistCodesPanel extends VLayout {
         this.uiHandlers = uiHandlers;
         codesTreeGrid.setUiHandlers(uiHandlers);
         importCodesWindow.setUiHandlers(uiHandlers);
+        importAnnotationsWindows.setUiHandlers(uiHandlers);
     }
 
     public void updateItemScheme(CodelistMetamacDto codelistMetamacDto) {
@@ -93,6 +130,7 @@ public class CodelistCodesPanel extends VLayout {
 
         updateButtonsVisibility(codelistMetamacDto);
         importCodesWindow.setCodelist(codelistMetamacDto);
+        importAnnotationsWindows.setCodelist(codelistMetamacDto);
     }
 
     public void setCodes(CodelistMetamacDto codelist, List<CodeMetamacVisualisationResult> codes) {
@@ -111,7 +149,9 @@ public class CodelistCodesPanel extends VLayout {
 
     private void updateButtonsVisibility(CodelistMetamacDto codelistMetamacDto) {
         updateImportCodesButtonVisibility(codelistMetamacDto);
+        updateImportAnnotationsButtonVisibility(codelistMetamacDto);
         updateExportCodesButtonVisibility(codelistMetamacDto);
+        updateExportAnnotationsButtonVisibility(codelistMetamacDto);
     }
 
     private void updateImportCodesButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
@@ -122,11 +162,27 @@ public class CodelistCodesPanel extends VLayout {
         }
     }
 
+    private void updateImportAnnotationsButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
+        if (CodesClientSecurityUtils.canImportCodes(codelistMetamacDto)) {
+            importAnnotationsButton.show();
+        } else {
+            importAnnotationsButton.hide();
+        }
+    }
+
     private void updateExportCodesButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
         if (CodesClientSecurityUtils.canExportCodes(codelistMetamacDto)) {
             exportCodesButton.show();
         } else {
             exportCodesButton.hide();
+        }
+    }
+
+    private void updateExportAnnotationsButtonVisibility(CodelistMetamacDto codelistMetamacDto) {
+        if (CodesClientSecurityUtils.canExportCodes(codelistMetamacDto)) {
+            exportAnnotationsButton.show();
+        } else {
+            exportAnnotationsButton.hide();
         }
     }
 }

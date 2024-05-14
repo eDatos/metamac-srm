@@ -46,6 +46,8 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
 import org.joda.time.DateTime;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -58,6 +60,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
+import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
@@ -92,7 +95,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
-import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.code.serviceimpl.utils.CodesMetamacInvocationValidator;
 import org.siemac.metamac.srm.core.code.serviceimpl.utils.CodesUtils;
 import org.siemac.metamac.srm.core.common.LifeCycle;
@@ -112,12 +115,14 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.srm.core.invocation.utils.StreamUtils;
 import org.siemac.metamac.srm.core.normalisation.DiceLuceneRamAproxStringMatch;
 import org.siemac.metamac.srm.core.normalisation.MatchResult;
 import org.siemac.metamac.srm.core.notices.serviceimpl.utils.NoticesCallbackMetamacImpl;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
+import org.siemac.metamac.srm.core.task.domain.ImportationAnnotationsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOpennessLevelsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCodeRestrictionsTsvHeader;
@@ -129,7 +134,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.Annotation;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationRepository;
+import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.IdentifiableArtefactRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
@@ -181,6 +194,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     private ItemSchemeVersionRepository           itemSchemeVersionRepository;
 
     @Autowired
+    private AnnotationRepository                       annotationRepository;
+
+    @Autowired
     private CodeRepository                        codeRepository;
 
     @Autowired
@@ -222,6 +238,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     private ItemSchemesCopyCallback               codesCopyCallback;
 
     @Autowired
+    @Qualifier("codelistStreamMessagingCallback")
     private CodelistStreamMessagingCallbackImpl   codelistStreamMessagingCallback;
 
     @Autowired
@@ -240,10 +257,17 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     @Autowired
     private MiscMetamacService                    miscMetamacService;
 
+    @Autowired
+    @Qualifier("variableElementStreamMessagingCallback")
+    private VariableElementStreamMessagingCallbackImpl variableElementStreamMessagingCallback;
+
+    @Autowired
+    private PlatformTransactionManager                 platformTransactionManager;
+
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                       entityManager;
 
-    private static Logger                         logger = LoggerFactory.getLogger(CodesMetamacService.class);
+    private static Logger                              logger = LoggerFactory.getLogger(CodesMetamacServiceImpl.class);
 
     public CodesMetamacServiceImpl() {
         // without comment
@@ -941,6 +965,91 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public TaskImportationInfo importAnnotationsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
+     // Validation
+        CodesMetamacInvocationValidator.checkImportCodesTsv(codelistUrn, file, fileName, true, canBeBackground, null);
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+        
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_ANNOTATIONS_IMPORTATION);
+        if (executeInBackground) {
+            codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
+            itemSchemeRepository.save(codelistVersion.getItemScheme());
+
+            String jobKey = tasksMetamacService.plannifyImportAnnotationsTsvInBackground(ctx, codelistUrn, file, fileName);
+            return new TaskImportationInfo(Boolean.TRUE, jobKey);
+        }
+        return processAnnotationsTsv(file, fileName, codelistVersion, ctx);
+    }
+
+    private TaskImportationInfo processAnnotationsTsv(File file, String fileName, CodelistVersionMetamac codelistVersion, ServiceContext ctx) throws MetamacException {
+        List<Code> codes = codelistVersion.getItemsFirstLevel();
+        // Execute importation now
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        List<Annotation> annotationsToPersist = null;
+        try {
+            InputStream stream = new FileInputStream(file);
+            String charset = FileUtils.guessCharset(file);
+            inputStreamReader = new InputStreamReader(stream, charset);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line = bufferedReader.readLine();
+            ImportationAnnotationsTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportAnnotations(line, exceptionItems);
+            List<AnnotationType> annotationsTypes = baseService.findAllAnnotationtypes(ctx);
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                annotationsToPersist = new ArrayList<>();
+                int lineNumber = 2;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (StringUtils.isBlank(line)) {
+                        continue;
+                    }
+
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
+                    if (columns.length != header.getColumnsSize()) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                        continue;
+                    }
+                    // Transform code and add to list to persist
+                    Annotation annotation = TsvImportationUtils.tsvLineToAnnotation(header, columns, lineNumber, exceptionItems, informationItems, annotationsTypes, codes);
+                    if (annotation != null) {
+                        annotationsToPersist.add(annotation);
+                    }
+                    lineNumber++;
+                }
+            }
+            saveAnnotations(annotationsToPersist);
+        } catch (Exception e) {
+            logger.error("Error importing annotations tsv file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } finally {
+            try {
+                inputStreamReader.close();
+                bufferedReader.close();
+            } catch (IOException e) {
+                // do not relaunch error
+                logger.error("Error closing streams", e);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            // rollback and inform about errors
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+        codelistVersion.getItemScheme().setIsTaskInBackground(Boolean.FALSE);
+        itemSchemeRepository.save(codelistVersion.getItemScheme());
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    private void saveAnnotations(List<Annotation> annotations) {
+        if (annotations != null && !annotations.isEmpty()) {
+            for (Annotation annotation : annotations) {
+                    annotationRepository.save(annotation);
+            }
+        }
+    }
+
+    @Override
     public TaskImportationInfo importCodeOrdersTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
 
         // Validation
@@ -1071,6 +1180,23 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public String exportAnnotationsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        CodesMetamacInvocationValidator.checkExportCodesTsv(codelistUrn, null);
+
+        CodelistVersionMetamac codelistVersion = retrieveCodelistByUrn(ctx, codelistUrn);
+
+        CodelistOrderVisualisation orderVisualisationToRetrieveCodes = codelistVersion.getDefaultOrderVisualisation();
+        if (orderVisualisationToRetrieveCodes == null) {
+            orderVisualisationToRetrieveCodes = codelistVersion.getOrderVisualisations().get(0); // any
+        }
+        Integer orderColumnIndex = orderVisualisationToRetrieveCodes.getColumnIndex();
+
+        List<ItemResult> items = getCodeMetamacRepository().findCodesByCodelistOrderedInDepth(codelistVersion.getId(), orderColumnIndex, null, null, CodeMetamacResultSelection.EXPORT);
+
+        List<String> languages = srmConfiguration.retrieveLanguages();
+        return TsvExportationUtils.exportAnnotations(items, languages);
+    }
+
     public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
         TsvExportationUtils.deleteTemporalFile(fileName);
     }
@@ -1577,7 +1703,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Override
     public CodeMetamac updateCodeVariableElement(ServiceContext ctx, String codeUrn, String variableElementUrn) throws MetamacException {
-
+        try {
         // Validation
         CodesMetamacInvocationValidator.checkUpdateCodeVariableElement(codeUrn, variableElementUrn, null);
         // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
@@ -1602,10 +1728,17 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         baseService.updateItemSchemeLastUpdated(ctx, code.getItemSchemeVersion());
         return getCodeMetamacRepository().save(code);
+        } catch (InvalidStateException e) {
+            for (InvalidValue invalidValue : e.getInvalidValues()) {
+                logger.info("Instance of bean class: " + invalidValue.getBeanClass().getSimpleName() + " has an invalid property: " + invalidValue.getPropertyName() + " with message: "
+                        + invalidValue.getMessage());
+    }
+            throw e;
+        }
     }
 
     @Override
-    public void updateCodesVariableElements(ServiceContext ctx, String codelistUrn, Map<Long, Long> variableElementsIdByCodeId) throws MetamacException {
+    public SendStreamMessageResult updateCodesVariableElements(ServiceContext ctx, String codelistUrn, Map<Long, Long> variableElementsIdByCodeId) throws MetamacException {
         // Validation
         CodesMetamacInvocationValidator.checkUpdateCodesVariableElements(codelistUrn, variableElementsIdByCodeId, null);
         // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
@@ -1619,7 +1752,21 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         // Update all
         getCodeMetamacRepository().updateCodesVariableElements(variableElementsIdByCodeId, codelistVersion.getId(), variable.getId());
+
+        SendStreamMessageResult sendStreamMessageResult = resendPublishedCodelist(ctx, codelistVersion);
+
         baseService.updateItemSchemeLastUpdated(ctx, codelistVersion);
+
+        return sendStreamMessageResult;
+
+    }
+
+    private SendStreamMessageResult resendPublishedCodelist(ServiceContext ctx, CodelistVersionMetamac codelistVersion) throws MetamacException {
+        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(codelistVersion.getLifeCycleMetadata().getProcStatus())
+                || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(codelistVersion.getLifeCycleMetadata().getProcStatus())) {
+            return resendCodelist(ctx, codelistVersion);
+        }
+        return null;
     }
 
     @Override
@@ -2251,7 +2398,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     // ------------------------------------------------------------------------------------
 
     @Override
-    public VariableElement createVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
+    public ResourceVersionPublicationResult<VariableElement> createVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2266,6 +2413,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         // Create
         setVariableElementUrnUnique(variableElement.getVariable(), variableElement, Boolean.TRUE);
+        variableElement.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
+
         variableElement = getVariableElementRepository().save(variableElement);
 
         // Fill replaceTo metadata after save entity
@@ -2273,11 +2422,15 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             variableElement.addReplaceToVariableElement(variableElementReplaceTo);
         }
         variableElement = getVariableElementRepository().save(variableElement);
-        return variableElement;
+
+        SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElement);
+
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), variableElement);
+
     }
 
     @Override
-    public VariableElement updateVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
+    public ResourceVersionPublicationResult<VariableElement> updateVariableElement(ServiceContext ctx, VariableElement variableElement) throws MetamacException {
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // IMPORTANT: If any restriction change, review importation of tsv file, because the importation doesnot call to service methods to avoid extra queries, flushing...
         // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2298,9 +2451,15 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         for (VariableElement replaceTo : variableElement.getReplaceToVariableElements()) {
             replaceTo.setReplacedByVariableElement(variableElement);
         }
+        variableElement.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
 
         // Update
-        return getVariableElementRepository().save(variableElement);
+        VariableElement variableElementResult = getVariableElementRepository().save(variableElement);
+
+        SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElementResult);
+
+        return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), variableElementResult);
+
     }
 
     @Override
@@ -2379,6 +2538,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Delete
         variableElementToDelete.removeAllReplaceToVariableElements(); // variable element can be deleted although it replaces to another variable element
         getVariableElementRepository().delete(variableElementToDelete);
+        variableElementToDelete.setValidTo(new DateTime());
+        SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElementToDelete);
     }
 
     @Override
@@ -2561,6 +2722,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         // Persist
         for (VariableElement variableElement : variableElementsToPersistByCode.values()) {
+            notifyVariableElementPublication(ctx, variableElement);
             getVariableElementRepository().save(variableElement);
         }
 
@@ -4171,6 +4333,8 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             }
         }
 
+        variableElement.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
+
         // Do not persist if any error ocurrs
         if (!CollectionUtils.isEmpty(exceptionItems)) {
             return null;
@@ -4704,14 +4868,78 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     }
 
-    private List<CodelistVersionMetamac> retrievePublishedLastVersionCodelist(ServiceContext ctx) throws MetamacException {
+    @Override
+    public TaskInfo publishVariableElementInBackground(ServiceContext ctx, String variableUrn, String localeLanguage) throws MetamacException {
+        TaskInfo kafkaTasksInfo = new TaskInfo();
 
-        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.lifeCycleMetadata().procStatus())
-                .eq(ProcStatusEnum.EXTERNALLY_PUBLISHED).and().withProperty(CodelistVersionMetamacProperties.maintainableArtefact().latestVersionNumberPublic()).isNotNull().distinctRoot().build();
+        String jobKey = tasksMetamacService.plannifyResendKafkaVariableElementsMessages(ctx, variableUrn, localeLanguage);
 
-        PagedResult<CodelistVersion> codelistVersionPagedResult = codesService.findCodelistsByCondition(ctx, criteria, PagingParameter.noLimits());
-        return codelistVersionsToCodelistVersionsMetamac(codelistVersionPagedResult.getValues());
+        kafkaTasksInfo.setIsPlannedInBackground(Boolean.TRUE);
+        kafkaTasksInfo.setJobKey(jobKey);
+
+        return kafkaTasksInfo;
+    }
+
+    @Override
+    public SendStreamMessageResult notifyVariableElementPublication(ServiceContext ctx, VariableElement message) throws MetamacException {
+        return streamMessagingService.sendMessage(message, variableElementStreamMessagingCallback);
+    }
+
+    @Override
+    public void notifyVariableElementPublicationByVariable(ServiceContext ctx, String user, String variableUrn, String localeLanguage) throws MetamacException {
+
+        List<VariableElementVisualisationResult> variableElementsByVariable = retrieveVariableElementsByVariable(ctx, variableUrn, localeLanguage);
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        List<VariableElement> variableElements = new ArrayList<VariableElement>();
+
+        for (VariableElementVisualisationResult variableElementResult : variableElementsByVariable) {
+
+            VariableElement variableElement = this.retrieveVariableElementByUrn(variableElementResult.getUrn());
+            SendStreamMessageResult result = getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<SendStreamMessageResult>() {
+
+                @Override
+                protected SendStreamMessageResult doInMetamacTransaction(TransactionStatus status) {
+                    try {
+                        return notifyVariableElementPublication(ctx, variableElement);
+                    } catch (MetamacException e) {
+                        MetamacExceptionItem exceptionVariableElement = new MetamacExceptionItem(ServiceExceptionType.STREAM_MESSAGING_RESEND_VARIABLE_ELEMENT_MESSAGE_ERROR,
+                                variableElement.getIdentifiableArtefact().getCode());
+                        exceptionVariableElement.getExceptionItems().addAll(e.getExceptionItems());
+                        exceptionItems.add(exceptionVariableElement);
+                        variableElements.add(variableElement);
+                        return null;
+                    }
+                }
+            });
+
+            StreamUtils.getResendKafkaVariableElementMessageErrors(variableElements, variableElement, result, exceptionItems);
+        }
+
+        StreamUtils.retrieveMultipleKafkaSendingErrors(ctx, getNoticesRestInternalService(), user, exceptionItems, variableElements, variableUrn);
 
     }
 
+    private TransactionTemplate getTransactionTemplate() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        return transactionTemplate;
+    }
+
+    abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
+
+        @Override
+        public final T doInTransaction(TransactionStatus status) {
+            try {
+                return doInMetamacTransaction(status);
+            } catch (MetamacException e) {
+                throw new RuntimeException("Error in transactional method", e);
+            }
+        }
+
+        protected abstract T doInMetamacTransaction(TransactionStatus status) throws MetamacException;
+    }
+
+    private NoticesRestInternalService getNoticesRestInternalService() {
+        return (NoticesRestInternalService) ApplicationContextProvider.getApplicationContext().getBean(NoticesRestInternalService.BEAN_ID);
+    }
 }

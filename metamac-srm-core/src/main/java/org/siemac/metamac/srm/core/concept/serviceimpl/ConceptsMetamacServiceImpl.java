@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -900,7 +900,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                             conceptsPreviousInConceptSchemeByCode, conceptsToPersistByCode, exceptionItems, informationItems);
                     // Import other specials Metadata
 
-                    ImportationConceptsTsvHeader conceptTsvHeader = header;
                     if (concept != null) {
                         updateConceptMetadata(ctx, itemIdentifier, concept, header, columns, lineNumber, conceptSchemeVersion, isDefaultMaintainer, isTemporalVersion, cachedConceptTypeMap,
                                 exceptionItems);
@@ -909,7 +908,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                     boolean existsConcept = conceptsPreviousInConceptSchemeByCode.containsKey(itemIdentifier);
                     if (!CollectionUtils.isEmpty(exceptionItems)) {
                         if (!existsConcept) {
-                            MetamacExceptionItem infoItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+                            MetamacExceptionItem infoItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
                             informationItems.add(infoItem);
                         }
                         setImportErrors(exceptionItems, informationItems, fileName, lineNumber);
@@ -979,15 +978,26 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
             // ConceptsExtends
             concept.setConceptExtends(tsvLineToConceptExtends(ctx, header, columns, lineNumber, conceptIdentifier, exceptionItems));
-
             concept.setQuantity(setQuantityMetadata(ctx, lineNumber, header, columns, concept.getQuantity() != null ? concept.getQuantity() : new Quantity(), exceptionItems));
 
-            TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
+            // Variable
+            setVariable(conceptSchemeVersion, concept);
 
+            TsvImportationUtils.checkCanCreateOrUpdateConcept(conceptSchemeVersion, concept, lineNumber, exceptionItems);
         } catch (Exception e) {
-            MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+            MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
             exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, ServiceExceptionParameters.CONCEPT));
             exceptionItems.add(exceptionItem);
+        }
+    }
+
+    private void setVariable(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptMetamac concept) {
+        if (ConceptSchemeTypeEnum.OPERATION.equals(conceptSchemeVersion.getType()) || ConceptSchemeTypeEnum.TRANSVERSAL.equals(conceptSchemeVersion.getType())) {
+
+            if (concept.getCoreRepresentation() != null && concept.getCoreRepresentation().getEnumerationCodelist() != null) {
+                Variable variable = ((CodelistVersionMetamac) concept.getCoreRepresentation().getEnumerationCodelist()).getVariable();
+                concept.setVariable(variable);
+            }
         }
     }
 
@@ -1345,7 +1355,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             }
 
             if (StringUtils.isBlank(representationValue)) {
-                MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+                MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
                 exceptionItem.getExceptionItems().add(
                         new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, conceptIdentifier, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_REPRESENTATION_VALUE));
                 exceptionItems.add(exceptionItem);
@@ -1357,26 +1367,28 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 target.setRepresentationType(RepresentationTypeEnum.ENUMERATION);
                 if (SdmxSrmUrnParserUtils.isCodelistUrn(representationValue)) {
                     CodelistVersionMetamac enumeratedCodelist = codelistVersionMetamacRepository.findByUrn(representationValue);
-                    if (enumeratedCodelist != null) {
+                    if (enumeratedCodelist != null && (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(enumeratedCodelist.getLifeCycleMetadata().getProcStatus())
+                            || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(enumeratedCodelist.getLifeCycleMetadata().getProcStatus()))) {
                         target.setEnumerationCodelist(enumeratedCodelist);
                     } else {
-                        MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+                        MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
                         exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CODELIST_NOT_FOUND, representationValue));
                         exceptionItems.add(exceptionItem);
                         return null;
                     }
                 } else if (SdmxSrmUrnParserUtils.isConceptSchemeUrn(representationValue)) {
                     ConceptSchemeVersionMetamac enumeratedConceptScheme = conceptSchemeVersionMetamacRepository.findByUrn(representationValue);
-                    if (enumeratedConceptScheme != null) {
+                    if (enumeratedConceptScheme != null && (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(enumeratedConceptScheme.getLifeCycleMetadata().getProcStatus())
+                            || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(enumeratedConceptScheme.getLifeCycleMetadata().getProcStatus()))) {
                         target.setEnumerationConceptScheme(enumeratedConceptScheme);
                     } else {
-                        MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+                        MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
                         exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CONCEPT_SCHEME_NOT_FOUND, representationValue));
                         exceptionItems.add(exceptionItem);
                         return null;
                     }
                 } else {
-                    MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+                    MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
                     exceptionItem.getExceptionItems().add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT, conceptIdentifier,
                             ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_REPRESENTATION_VALUE));
                     exceptionItems.add(exceptionItem);
@@ -1401,7 +1413,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
             PagedResult<ConceptMetamac> result = findConceptsCanBeExtendedByCondition(ctx, conditions, PagingParameter.pageAccess(1, 1));
             if (result.getValues().size() != 1) {
-                MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber++);
+                MetamacExceptionItem exceptionItem = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber);
                 exceptionItem.getExceptionItems().add(
                         new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_INCORRECT, conceptIdentifier, ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CONCEPTS_EXTENDS_VALUE));
                 exceptionItems.add(exceptionItem);

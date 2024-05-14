@@ -33,6 +33,7 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arte.statistic.sdmx.srm.core.common.domain.AnnotationResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.domain.LocalisedString;
 
@@ -80,6 +81,43 @@ public class TsvExportationUtils {
         }
     }
 
+    public static String exportAnnotations(List<ItemResult> items, List<String> languages) throws MetamacException {
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+        try {
+            File file = File.createTempFile("annotations", ".tsv");
+            outputStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
+
+            writeAnnotationsHeader(writer, languages);
+            for (ItemResult item : items) {
+                String codeName = item.getCode();
+                writeAnnotations(writer, item, codeName, languages);
+            }
+            writer.flush();
+            return file.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(writer);
+        }
+    }
+
+    private static void writeAnnotations(OutputStreamWriter writer, ItemResult itemResult, String codeName, List<String> languages) throws IOException {
+        for (AnnotationResult annotation : itemResult.getAnnotations()) {
+            writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+            writer.write(codeName);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(annotation.getAnnotationType().getCode());
+            writeAnnotation(writer, annotation, languages);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            if (annotation.getUrl() != null) {
+                writer.write(annotation.getUrl());
+            }
+        }
+    }
+
     public static void deleteTemporalFile(String fileName) {
         FileSystem fileSystem = FileSystems.getDefault();
         File tmpdir = new File(AccessController.doPrivileged(new GetPropertyAction("java.io.tmpdir")));
@@ -121,6 +159,18 @@ public class TsvExportationUtils {
             writer.write(SrmConstants.TSV_HEADER_SHORT_NAME + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
         }
 
+    }
+
+    private static void writeAnnotationsHeader(OutputStreamWriter writer, List<String> languages) throws IOException {
+        writer.write(SrmConstants.TSV_HEADER_CODE);
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_ANNOTATION_TYPE);
+        for (String language : languages) {
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_ANNOTATION + SrmConstants.TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR + language);
+        }
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_ANNOTATION_URL);
     }
 
     private static void writeCodeVariableElement(OutputStreamWriter writer, ItemResult itemResult) throws IOException {
@@ -483,6 +533,17 @@ public class TsvExportationUtils {
     private static void writeItemDescription(OutputStreamWriter writer, ItemResult itemResult, List<String> languages) throws IOException {
         for (String language : languages) {
             String descriptionInLocale = itemResult.getDescription().get(language);
+            descriptionInLocale = removeUnsupportedCharaters(descriptionInLocale);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            if (descriptionInLocale != null) {
+                writer.write(descriptionInLocale);
+            }
+        }
+    }
+
+    private static void writeAnnotation(OutputStreamWriter writer, AnnotationResult annotation, List<String> languages) throws IOException {
+        for (String language : languages) {
+            String descriptionInLocale = annotation.getText().get(language);
             descriptionInLocale = removeUnsupportedCharaters(descriptionInLocale);
             writer.write(SrmConstants.TSV_SEPARATOR);
             if (descriptionInLocale != null) {

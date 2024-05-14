@@ -9,6 +9,7 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.code.dto.VariableElementOperationDto;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.widgets.RelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.RelatedResourceListItem;
@@ -21,6 +22,7 @@ import org.siemac.metamac.srm.web.code.view.handlers.VariableElementUiHandlers;
 import org.siemac.metamac.srm.web.code.widgets.SearchCodeForVariableElementGeographicalGranularity;
 import org.siemac.metamac.srm.web.code.widgets.VariableElementMainFormLayout;
 import org.siemac.metamac.srm.web.code.widgets.VariableElementOperationLayout;
+import org.siemac.metamac.srm.web.shared.CommonSharedUtils;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
@@ -97,6 +99,13 @@ public class VariableElementViewImpl extends ViewWithUiHandlers<VariableElementU
             @Override
             public void onClick(ClickEvent event) {
                 showCreateSegregationWindow();
+            }
+        });
+        mainFormLayout.getResendVariableElementStreamMessage().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().reSendStreamMessageVariableElement(variableElementDto.getUrn());
             }
         });
         bindMainFormLayoutEvents();
@@ -263,7 +272,10 @@ public class VariableElementViewImpl extends ViewWithUiHandlers<VariableElementU
         ViewTextItem code = new ViewTextItem(VariableElementDS.CODE, getConstants().identifiableArtefactCode());
         ViewMultiLanguageTextItem shortName = new ViewMultiLanguageTextItem(VariableElementDS.SHORT_NAME, getConstants().variableElementShortName());
         ViewTextItem urn = new ViewTextItem(VariableElementDS.URN, getConstants().identifiableArtefactUrn());
-        identifiersForm.setFields(code, shortName, urn);
+        ViewTextItem publicationStreamStatus = new ViewTextItem(VariableElementDS.PUBLICATION_STREAM_STATUS, getConstants().lifeCycleStructuralResourceStreamMsgStatus());
+        publicationStreamStatus.setWidth(20);
+
+        identifiersForm.setFields(code, shortName, urn, publicationStreamStatus);
 
         // Content descriptors
         contentDescriptorsForm = new GroupDynamicForm(getConstants().formContentDescriptors());
@@ -356,6 +368,10 @@ public class VariableElementViewImpl extends ViewWithUiHandlers<VariableElementU
         identifiersForm.setValue(VariableElementDS.CODE, variableElementDto.getCode());
         identifiersForm.setValue(VariableElementDS.URN, variableElementDto.getUrn());
         identifiersForm.setValue(VariableElementDS.SHORT_NAME, variableElementDto.getShortName());
+        identifiersForm.getItem(VariableElementDS.PUBLICATION_STREAM_STATUS)
+                .setIcons(StreamMessageStatusEnum.PENDING.equals(variableElementDto.getStreamMessageStatus())
+                        ? null
+                        : CommonSharedUtils.getPublicationStreamStatusIcon(variableElementDto.getStreamMessageStatus()));
 
         // Content descriptors
         ((RelatedResourceLinkItem) contentDescriptorsForm.getItem(VariableElementDS.VARIABLE)).setRelatedResource(variableElementDto.getVariable());

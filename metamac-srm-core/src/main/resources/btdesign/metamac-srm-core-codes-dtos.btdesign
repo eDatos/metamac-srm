@@ -140,12 +140,14 @@ Application DtosMetamacCodeDomain {
 			- @RelatedResourceDto geographicalGranularity nullable;
 			"Version to optimistic locking"
 			Long versionOptimisticLocking;
+			- @StreamMessageStatusEnum streamMessageStatus;
 		}
 
 		"Dto for VariableElement"
 		DataTransferObject VariableElementBasicDto extends @IdentifiableArtefactMetamacBasicDto {
 			"Short name"
 			- @InternationalStringDto shortName nullable;
+			- @StreamMessageStatusEnum streamMessageStatus;
 			"Variable"
 			- @RelatedResourceDto variable not nullable;
 			"Has shape"

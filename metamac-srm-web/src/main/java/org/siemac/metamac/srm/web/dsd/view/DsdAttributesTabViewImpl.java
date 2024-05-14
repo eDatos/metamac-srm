@@ -422,7 +422,9 @@ public class DsdAttributesTabViewImpl extends ViewWithUiHandlers<DsdAttributesTa
                         ? TypeRelathionship.valueOf(editionForm.getValueAsString(DataAttributeDS.RELATED_TO))
                         : null;
                 if (attributeType != null && !TypeRelathionship.NO_SPECIFIED_RELATIONSHIP.equals(typeRelathionship)) {
-                    return false;
+                    // FIXME EDATOS-2899 (provisionalmente hasta resolución definitiva de la tarea)
+                    // return false;
+                    return true;
                 }
                 return true;
             }

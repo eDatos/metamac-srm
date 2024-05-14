@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-srm</groupId>
         <artifactId>metamac-srm-parent</artifactId>
-        <version>6.3.1-SNAPSHOT</version>
+        <version>6.4.2-SNAPSHOT</version>
         <relativePath>../metamac-srm-parent/pom.xml</relativePath>
     </parent>
 
@@ -66,6 +66,25 @@
             <groupId>org.siemac.metamac.metamac-notifications</groupId>
             <artifactId>metamac-notifications-rest-internal-api</artifactId>
             <version>${metamac-notifications-rest-internal-api.version}</version>
+        </dependency>
+
+ 		<dependency>
+            <groupId>org.siemac.metamac</groupId>
+            <artifactId>metamac-rest-common</artifactId>
+            <version>${metamac-rest-common.version}</version>
+            <exclusions>
+			<!--             This exclusion is needed for Sculptor's generators. But also is for the final WAR deployment. Be sure the antlr-runtime is deployed in the final WAR. -->
+                <exclusion>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.siemac.metamac.metamac-srm</groupId>
+            <artifactId>metamac-srm-rest-api-common</artifactId>
+            <version>${metamac-srm-rest-api-common.version}</version>
         </dependency>
 
         <!-- ARTE -->
@@ -450,6 +469,14 @@
 		</exclusions>
 	</dependency>
 	 <!-- END Apache Kafka && Confluent -->
+	 
+	 <dependency>
+             <groupId>com.ibm.icu</groupId>
+             <artifactId>icu4j</artifactId>
+             <version>${icu4j.version}</version>
+             <scope>compile</scope>
+    </dependency>
+
     </dependencies>
 
     <profiles>

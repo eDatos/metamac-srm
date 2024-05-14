@@ -123,7 +123,7 @@ public class CodesRecordUtils extends org.siemac.metamac.srm.web.client.utils.Re
         Boolean hasShape = StringUtils.isBlank(variableElementDto.getShapeWkt()) ? Boolean.FALSE : Boolean.TRUE;
 
         VariableElementRecord record = new VariableElementRecord(variableElementDto.getId(), variableElementDto.getCode(), getLocalisedString(variableElementDto.getShortName()),
-                variableElementDto.getUrn(), BooleanWebUtils.getBooleanLabel(hasShape), variableElementDto);
+                variableElementDto.getUrn(), BooleanWebUtils.getBooleanLabel(hasShape), variableElementDto.getStreamMessageStatus(), variableElementDto);
         return record;
     }
 
@@ -133,6 +133,7 @@ public class CodesRecordUtils extends org.siemac.metamac.srm.web.client.utils.Re
         record.setShortName(getLocalisedString(variableElementDto.getShortName()));
         record.setUrn(variableElementDto.getUrn());
         record.setHasShape(BooleanWebUtils.getBooleanLabel(variableElementDto.getHasShape()));
+        record.setStreamMessageStatus(variableElementDto.getStreamMessageStatus());
         record.setVariableElementBasicDto(variableElementDto);
         return record;
     }

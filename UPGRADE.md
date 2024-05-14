@@ -8,6 +8,23 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 6.4.1 a 6.4.2-SNAPSHOT
+* **BREAKING CHANGE.** Se quita el formato XLS ya que es un formato con bastantes limitaciones y no se debe usar. Se usa XLSX
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.4.1/db](etc/changes-from-release/6.4.1/db) 
+* Se hace uso del topic CODELIST_PUBLICATION. Se requiere borrar los mensajes para evitar problemas de mensajes antiguos que no tienen campos obligatorios. El consumidor empieza desde el principio y falla al tratarlos. Dado que es información no relevante se borra. Para ello
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --describe retention.ms
+-- Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name CODELIST_PUBLICATIONS --delete-config retention.ms --alter
+-- Comprobar que se ha borrado. En kafka-topics-ui de cada entorno ir al topic y comprobar que está vacío.
+
+## 6.4.0 a 6.4.1
+* Cambios en statistic-sdmx-srm. Se debe ampliar el campo key_representation en tamaño porque si hay muchos valores se pasa de tamaño. Para ello ejecutar el script de la siguiente ruta del proyecto statistic-sdmx-srm:
+  ```shell
+    etc/changes-from-release/3.6.0/db/postgresql/20240401_change_length_key_representation_column_in_tb_keyvalues.sql
+  ```shell
+
 ## 6.3.0 a 6.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/6.3.0/db](etc/changes-from-release/6.3.0/db) 

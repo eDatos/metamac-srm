@@ -71,6 +71,8 @@ import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsResult;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsAction;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessResult;
@@ -1097,6 +1099,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             @Override
             public void onWaitSuccess(UpdateCodesVariableElementsResult result) {
                 retrieveCodes();
+
+                if (result.getNotificationException() != null) {
+                    ShowMessageEvent.fireWarningMessageWithError(CodelistPresenter.this, getMessages().lifeCycleReSendStreamMessageError(), result.getNotificationException());
+                }
             }
         });
     }
@@ -1344,6 +1350,21 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             }
             @Override
             public void onWaitSuccess(TempFilesDeleteResult result) {
+            }
+        });
+    }
+
+    @Override
+    public void exportAnnotations(String codelistUrn) {
+        dispatcher.execute(new ExportAnnotationsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportAnnotationsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportAnnotationsResult result) {
+                CommonUtils.downloadFile(result.getFileName());
             }
         });
     }

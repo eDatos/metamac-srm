@@ -25,6 +25,8 @@ import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
@@ -187,9 +189,22 @@ public class CategoryElementsPresenter extends Presenter<CategoryElementsPresent
             @Override
             public void onWaitSuccess(ExportCategoryElementsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
             }
         });
 
+    }
+
+    private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementsPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(TempFilesDeleteResult result) {
+            }
+        });
     }
 
     @Override

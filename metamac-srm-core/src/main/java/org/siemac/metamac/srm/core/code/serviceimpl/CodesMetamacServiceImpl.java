@@ -182,80 +182,80 @@ import com.vividsolutions.jts.geom.Polygon;
 public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
     @Autowired
-    private BaseService                                baseService;
+    private BaseService                           baseService;
 
     @Autowired
-    private CodesService                               codesService;
+    private CodesService                          codesService;
 
     @Autowired
-    private CategoriesMetamacService                   categoriesMetamacService;
+    private CategoriesMetamacService              categoriesMetamacService;
 
     @Autowired
-    private ItemSchemeVersionRepository                itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository           itemSchemeVersionRepository;
 
     @Autowired
     private AnnotationRepository                       annotationRepository;
 
     @Autowired
-    private CodeRepository                             codeRepository;
+    private CodeRepository                        codeRepository;
 
     @Autowired
-    private ItemSchemeRepository                       itemSchemeRepository;
+    private ItemSchemeRepository                  itemSchemeRepository;
 
     @Autowired
-    private IdentifiableArtefactRepository             identifiableArtefactRepository;
+    private IdentifiableArtefactRepository        identifiableArtefactRepository;
 
     @Autowired
     @Qualifier("codelistLifeCycle")
-    private LifeCycle                                  codelistLifeCycle;
+    private LifeCycle                             codelistLifeCycle;
 
     @Autowired
-    private SrmValidation                              srmValidation;
+    private SrmValidation                         srmValidation;
 
     @Autowired
-    private DataStructureDefinitionMetamacService      dataStructureDefinitionMetamacService;
+    private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
 
     @Autowired
-    private ConceptsMetamacService                     conceptsMetamacService;
+    private ConceptsMetamacService                conceptsMetamacService;
 
     @Autowired
-    private SrmConfiguration                           srmConfiguration;
+    private SrmConfiguration                      srmConfiguration;
 
     @Autowired
     @Qualifier("codesVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback                    codesVersioningWithCodesCallback;
+    private ItemSchemesCopyCallback               codesVersioningWithCodesCallback;
 
     @Autowired
     @Qualifier("codesVersioningWithoutCodesCallbackMetamac")
-    private ItemSchemesCopyCallback                    codesVersioningWithoutCodesCallback;
+    private ItemSchemesCopyCallback               codesVersioningWithoutCodesCallback;
 
     @Autowired
     @Qualifier("codesDummyVersioningCallbackMetamac")
-    private ItemSchemesCopyCallback                    codesDummyVersioningCallbackMetamac;
+    private ItemSchemesCopyCallback               codesDummyVersioningCallbackMetamac;
 
     @Autowired
     @Qualifier("codesCopyCallbackMetamac")
-    private ItemSchemesCopyCallback                    codesCopyCallback;
+    private ItemSchemesCopyCallback               codesCopyCallback;
 
     @Autowired
     @Qualifier("codelistStreamMessagingCallback")
-    private CodelistStreamMessagingCallbackImpl        codelistStreamMessagingCallback;
+    private CodelistStreamMessagingCallbackImpl   codelistStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService                     streamMessagingService;
+    private StreamMessagingService                streamMessagingService;
 
     @Autowired
     @Qualifier(NoticesCallbackMetamacImpl.BEAN_ID)
-    private NoticesCallback                            noticesCallbackMetamac;
+    private NoticesCallback                       noticesCallbackMetamac;
 
     @Autowired
-    private TasksMetamacService                        tasksMetamacService;
+    private TasksMetamacService                   tasksMetamacService;
 
     @Autowired
-    private InternationalStringRepository              internationalStringRepository;
+    private InternationalStringRepository         internationalStringRepository;
 
     @Autowired
-    private MiscMetamacService                         miscMetamacService;
+    private MiscMetamacService                    miscMetamacService;
 
     @Autowired
     @Qualifier("variableElementStreamMessagingCallback")
@@ -265,7 +265,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     private PlatformTransactionManager                 platformTransactionManager;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager                            entityManager;
+    protected EntityManager                       entityManager;
 
     private static Logger                              logger = LoggerFactory.getLogger(CodesMetamacServiceImpl.class);
 
@@ -1197,6 +1197,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return TsvExportationUtils.exportAnnotations(items, languages);
     }
 
+    public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
+        TsvExportationUtils.deleteTemporalFile(fileName);
+    }
+
     @Override
     public String exportCodeOrdersTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 
@@ -1218,8 +1222,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Export
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes-orders", ".tsv");
+            file = File.createTempFile("codes-orders", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -1387,8 +1392,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Export
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes-openness", ".tsv");
+            file = File.createTempFile("codes-openness", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -1577,8 +1583,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         // Export
         OutputStream outputStream = null;
         OutputStreamWriter writer = null;
+        File file = null;
         try {
-            File file = File.createTempFile("codes-restrictions", ".tsv");
+            file = File.createTempFile("codes-restrictions", ".tsv");
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
 
@@ -1697,35 +1704,35 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     @Override
     public CodeMetamac updateCodeVariableElement(ServiceContext ctx, String codeUrn, String variableElementUrn) throws MetamacException {
         try {
-            // Validation
-            CodesMetamacInvocationValidator.checkUpdateCodeVariableElement(codeUrn, variableElementUrn, null);
-            // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
+        // Validation
+        CodesMetamacInvocationValidator.checkUpdateCodeVariableElement(codeUrn, variableElementUrn, null);
+        // Note: It is not necessary to check the codelist status. Variable element can be modified although the codelist is published
 
-            CodeMetamac code = retrieveCodeByUrn(ctx, codeUrn);
-            if (variableElementUrn == null) {
-                // Delete
-                if (code.getVariableElement() != null) {
-                    code.getVariableElement().removeCode(code);
-                }
-            } else {
-                // Add
-                VariableElement variableElement = retrieveVariableElementByUrn(variableElementUrn);
-                CodelistVersionMetamac codelistVersion = retrieveCodelistByCodeUrn(ctx, codeUrn);
-                checkCodeVariableElement(codelistVersion, variableElement);
-
-                if (code.getVariableElement() != null) {
-                    code.getVariableElement().removeCode(code);
-                }
-                variableElement.addCode(code);
-                code.setShortName(null); // reset short name
+        CodeMetamac code = retrieveCodeByUrn(ctx, codeUrn);
+        if (variableElementUrn == null) {
+            // Delete
+            if (code.getVariableElement() != null) {
+                code.getVariableElement().removeCode(code);
             }
-            baseService.updateItemSchemeLastUpdated(ctx, code.getItemSchemeVersion());
-            return getCodeMetamacRepository().save(code);
+        } else {
+            // Add
+            VariableElement variableElement = retrieveVariableElementByUrn(variableElementUrn);
+            CodelistVersionMetamac codelistVersion = retrieveCodelistByCodeUrn(ctx, codeUrn);
+            checkCodeVariableElement(codelistVersion, variableElement);
+
+            if (code.getVariableElement() != null) {
+                code.getVariableElement().removeCode(code);
+            }
+            variableElement.addCode(code);
+            code.setShortName(null); // reset short name
+        }
+        baseService.updateItemSchemeLastUpdated(ctx, code.getItemSchemeVersion());
+        return getCodeMetamacRepository().save(code);
         } catch (InvalidStateException e) {
             for (InvalidValue invalidValue : e.getInvalidValues()) {
                 logger.info("Instance of bean class: " + invalidValue.getBeanClass().getSimpleName() + " has an invalid property: " + invalidValue.getPropertyName() + " with message: "
                         + invalidValue.getMessage());
-            }
+    }
             throw e;
         }
     }

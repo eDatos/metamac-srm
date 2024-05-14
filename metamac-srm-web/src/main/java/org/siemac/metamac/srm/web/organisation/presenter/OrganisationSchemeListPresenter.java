@@ -176,7 +176,7 @@ public class OrganisationSchemeListPresenter extends Presenter<OrganisationSchem
 
     @Override
     public void exportOrganisationSchemes(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.ORGANISATION_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.ORGANISATION_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

@@ -192,7 +192,7 @@ public class CodelistListPresenter extends Presenter<CodelistListPresenter.Codel
 
     @Override
     public void exportCodelists(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CODELIST, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CODELIST, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

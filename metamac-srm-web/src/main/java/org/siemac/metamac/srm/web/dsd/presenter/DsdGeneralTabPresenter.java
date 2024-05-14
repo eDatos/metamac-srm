@@ -244,7 +244,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
 
     @Override
     public void exportDsd(String urn, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.DATA_STRUCTURE, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.DATA_STRUCTURE, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

@@ -41,6 +41,8 @@ import org.siemac.metamac.srm.web.shared.category.DeleteCategorisationsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorisationsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.concept.CancelConceptSchemeValidityAction;
 import org.siemac.metamac.srm.web.shared.concept.CancelConceptSchemeValidityResult;
 import org.siemac.metamac.srm.web.shared.concept.CopyConceptSchemeAction;
@@ -313,7 +315,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
     @Override
     public void exportConceptScheme(String urn, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CONCEPT_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CONCEPT_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override
@@ -594,10 +596,22 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
             @Override
             public void onWaitSuccess(ExportConceptsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
             }
         });
     }
 
+    private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(TempFilesDeleteResult result) {
+            }
+        });
+    }
     //
     // RELATED RESOURCES
     //
@@ -672,7 +686,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
     @Override
     public void exportCategorisations(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CATEGORISATION, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CATEGORISATION, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

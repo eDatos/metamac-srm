@@ -141,6 +141,8 @@ Application CodesMetamac {
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
     		"Exports annotations in tsv format"
     		String exportAnnotationsTsv(String codelistUrn) throws MetamacException;
+                    "Delete temporal files"
+    		deleteTemporalFile(String fileName) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness leves in tsv format"

@@ -183,7 +183,7 @@ public class ConceptSchemeListPresenter extends Presenter<ConceptSchemeListPrese
 
     @Override
     public void exportConceptSchemes(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CONCEPT_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CONCEPT_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

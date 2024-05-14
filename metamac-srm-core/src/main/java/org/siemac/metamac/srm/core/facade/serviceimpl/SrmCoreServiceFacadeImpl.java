@@ -73,6 +73,7 @@ import org.siemac.metamac.srm.core.code.mapper.CodesDto2DoMapper;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
+import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
@@ -1568,6 +1569,13 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Export
         return getCodesMetamacService().exportAnnotationsTsv(ctx, codelistUrn);
+    }
+
+    @Override
+
+
+    public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
+        TsvExportationUtils.deleteTemporalFile(fileName);
     }
 
     @Override

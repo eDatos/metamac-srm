@@ -121,7 +121,7 @@ public class TsvExportationUtils {
     public static void deleteTemporalFile(String fileName) {
         FileSystem fileSystem = FileSystems.getDefault();
         File tmpdir = new File(AccessController.doPrivileged(new GetPropertyAction("java.io.tmpdir")));
-        Path path = fileSystem.getPath(tmpdir.getPath() + "\\" + fileName);
+        Path path = fileSystem.getPath(tmpdir.getPath() + "/" + fileName);
         try {
             Files.delete(path);
         } catch (IOException e) {

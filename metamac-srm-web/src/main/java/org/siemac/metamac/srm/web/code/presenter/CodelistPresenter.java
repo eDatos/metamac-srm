@@ -1365,6 +1365,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             @Override
             public void onWaitSuccess(ExportAnnotationsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
             }
         });
     }

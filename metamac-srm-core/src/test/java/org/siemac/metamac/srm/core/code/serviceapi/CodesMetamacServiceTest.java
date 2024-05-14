@@ -12218,4 +12218,8 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         bufferedReader.close();
     }
 
+    @Override
+    public void testDeleteTemporalFile() throws Exception {
+    }
+
 }

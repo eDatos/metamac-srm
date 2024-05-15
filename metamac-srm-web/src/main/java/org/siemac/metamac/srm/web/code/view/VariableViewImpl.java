@@ -194,7 +194,7 @@ public class VariableViewImpl extends ViewWithUiHandlers<VariableUiHandlers> imp
         // ToolStrip
 
         ToolStrip toolStrip = new ToolStrip();
-        toolStrip.setWidth(400);
+        toolStrip.setWidth100();
         createVariableElementButton = createCreateVariableElementButton();
         toolStrip.addButton(createVariableElementButton);
 

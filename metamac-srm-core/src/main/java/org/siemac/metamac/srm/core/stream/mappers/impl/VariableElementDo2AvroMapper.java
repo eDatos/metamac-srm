@@ -27,7 +27,7 @@ public class VariableElementDo2AvroMapper implements Do2AvroMapper<VariableEleme
         return VariableElementAvro.newBuilder().setUuid(source.getUuid()).setCode(source.getIdentifiableArtefact().getCode()).setShortName(internationalStringMapper.toAvro(source.getShortName()))
                 .setUrn(source.getIdentifiableArtefact().getUrn()).setUriProvider(source.getIdentifiableArtefact().getUriProvider()).setUrnProvider(source.getIdentifiableArtefact().getUrnProvider())
                 .setVariable(variableMapper.toAvro(source.getVariable())).setGeographicGranularities(codeMetamacMapper.toAvro(source.getGeographicalGranularity())).setLatitud(source.getLatitude())
-                .setLongitud(source.getLatitude()).setValidTo(DateTimeDo2AvroMapper.do2Avro(source.getValidTo())).setValidFrom(DateTimeDo2AvroMapper.do2Avro(source.getValidFrom())).build();
+                .setLongitud(source.getLongitude()).setValidTo(DateTimeDo2AvroMapper.do2Avro(source.getValidTo())).setValidFrom(DateTimeDo2AvroMapper.do2Avro(source.getValidFrom())).build();
     }
 
 }

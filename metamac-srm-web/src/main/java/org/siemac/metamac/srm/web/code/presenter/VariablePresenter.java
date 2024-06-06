@@ -432,22 +432,10 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
             @Override
             public void onWaitSuccess(ExportVariableElementsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
-                deleteTemporalFile(result.getFileName());
             }
         });
     };
 
-    private void deleteTemporalFile(String fileName) {
-        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(VariablePresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(TempFilesDeleteResult result) {
-            }
-        });
-    }
     @Override
     public void showWaitPopup() {
         ChangeWaitPopupVisibilityEvent.fire(this, true);

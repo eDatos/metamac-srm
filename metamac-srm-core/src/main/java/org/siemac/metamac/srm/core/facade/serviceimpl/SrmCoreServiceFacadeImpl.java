@@ -1572,13 +1572,6 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-
-
-    public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
-        TsvExportationUtils.deleteTemporalFile(fileName);
-    }
-
-    @Override
     public String exportCodeOrdersTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
         // Security
         CodesSecurityUtils.canExportCodeOrdersTsv(ctx);

@@ -189,22 +189,9 @@ public class CategoryElementsPresenter extends Presenter<CategoryElementsPresent
             @Override
             public void onWaitSuccess(ExportCategoryElementsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
-                deleteTemporalFile(result.getFileName());
             }
         });
 
-    }
-
-    private void deleteTemporalFile(String fileName) {
-        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(CategoryElementsPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(TempFilesDeleteResult result) {
-            }
-        });
     }
 
     @Override

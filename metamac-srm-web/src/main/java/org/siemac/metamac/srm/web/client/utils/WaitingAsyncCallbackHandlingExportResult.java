@@ -33,28 +33,11 @@ public class WaitingAsyncCallbackHandlingExportResult extends WaitingAsyncCallba
         if (result.getFileName() != null && result.getException() != null) {
             ShowMessageEvent.fireWarningMessageWithError(source, getMessages().exportationWithErrorsWarning(), result.getException());
             org.siemac.metamac.srm.web.client.utils.CommonUtils.downloadFile(result.getFileName());
-            if (dispatcher != null) {
-                deleteTemporalFile(result.getFileName());
-            }
         } else if (result.getFileName() != null && result.getException() == null) {
             org.siemac.metamac.srm.web.client.utils.CommonUtils.downloadFile(result.getFileName());
-            if (dispatcher != null) {
-                deleteTemporalFile(result.getFileName());
-            }
         } else {
             ShowMessageEvent.fireErrorMessage(source, result.getException());
         }
     }
 
-    private void deleteTemporalFile(String fileName) {
-        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(source) {
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(source, caught);
-            }
-            @Override
-            public void onWaitSuccess(TempFilesDeleteResult result) {
-            }
-        });
-    }
 }

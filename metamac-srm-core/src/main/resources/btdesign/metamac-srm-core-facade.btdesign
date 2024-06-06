@@ -682,8 +682,6 @@ Application SrmFacadeCore {
     		String exportCodeOpennessLevelsTsv(String codelistUrn) throws MetamacException;
     		"Exports code restrictions in tsv format"
     		String exportCodeRestrictionsTsv(String codelistUrn) throws MetamacException;
-    		"Delete temporal file"
-    		deleteTemporalFile(String fileName) throws MetamacException;
     		
 	   		"Proposes a normalisation of variable elements to codes. If boolean is true, only normalise codes without variable element. To codes with variable element returns actual variable element"
 	   		List<CodeVariableElementNormalisationResult> normaliseVariableElementsToCodes(String codelistUrn, String locale, boolean proposeOnlyWithoutVariableElement) throws MetamacException;

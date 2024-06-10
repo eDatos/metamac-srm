@@ -164,6 +164,8 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         setCategoryElementViewMode(categoryElementDto);
         setCategoryElementEditionMode(categoryElementDto);
 
+        importCategoryElementLogoWindow.setCategoryElementUrn(categoryElementDto);
+
     }
 
     private void createViewForm() {

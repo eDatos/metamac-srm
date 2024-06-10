@@ -35,6 +35,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
+import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -43,6 +44,7 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.base.domain.ResourceFile;
 import org.siemac.metamac.srm.core.base.domain.ResourceMetadataFile;
+import org.siemac.metamac.srm.core.base.domain.ResourceMetadataFileRepository;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
@@ -106,7 +108,6 @@ import com.arte.statistic.sdmx.srm.core.base.serviceimpl.ItemSchemesCopyCallback
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorisationRepository;
 import com.arte.statistic.sdmx.srm.core.category.domain.Category;
-import com.arte.statistic.sdmx.srm.core.category.domain.CategoryRepository;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.CategoriesService;
 import com.arte.statistic.sdmx.srm.core.category.serviceimpl.utils.CategoriesInvocationValidator;
@@ -173,9 +174,6 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     private ItemSchemeVersionRepository               itemSchemeVersionRepository;
 
     @Autowired
-    private CategoryRepository                        categoryRepository;
-
-    @Autowired
     private CategorisationRepository                  categorisationRepository;
 
     @Autowired
@@ -189,6 +187,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
     @Autowired
     private IdentifiableArtefactRepository            identifiableArtefactRepository;
+
+    @Autowired
+    private ResourceMetadataFileRepository            resourceMetadataFileRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                           entityManager;
@@ -1519,28 +1520,55 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     @Override
     public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String tempFilePathName, Boolean canBeBackground) throws MetamacException {
         List<MetamacExceptionItem> informationItems = new ArrayList<>();
-        categoryElementUrn = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=DEMOGRAFIA";
         CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
 
-        try {
-
-            Path logoFile = Paths.get(tempFilePathName);
-            byte[] logoData = Files.readAllBytes(logoFile);
-
-            ResourceMetadataFile resourceMetadataFile = new ResourceMetadataFile();
-            resourceMetadataFile.setFileName(FilenameUtils.getBaseName(logoFile.getFileName().toString()));
-            resourceMetadataFile.setExtension(FilenameUtils.getExtension(logoFile.getFileName().toString()));
-            ResourceFile resourceFile = new ResourceFile();
-            resourceFile.setFileData(logoData);
-            resourceMetadataFile.setFile(resourceFile);
-
-            categoryElement.setResourceMetadataFile(resourceMetadataFile);
-
-        } catch (IOException e) {
-            logger.info("fichero no encontrado");
+        if (categoryElement == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(categoryElementUrn)
+                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
         }
 
+        Path logoFile = Paths.get(tempFilePathName);
+        try {
+
+            byte[] logoData = Files.readAllBytes(logoFile);
+
+            saveCategoryElementLogo(categoryElement, logoData, logoFile);
+
+        } catch (IOException e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_ERROR).withMessageParameters(categoryElementUrn).build();
+        }
+
+        deleteFileByPath(logoFile);
+
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
+
+    }
+
+    private void saveCategoryElementLogo(CategoryElement categoryElement, byte[] logoData, Path logoFilePath) {
+        if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getId() != null) {
+            resourceMetadataFileRepository.delete(categoryElement.getResourceMetadataFile());
+        }
+
+        ResourceMetadataFile resourceMetadataFile = new ResourceMetadataFile();
+        resourceMetadataFile.setFileName(FilenameUtils.getBaseName(logoFilePath.getFileName().toString()));
+        resourceMetadataFile.setExtension(FilenameUtils.getExtension(logoFilePath.getFileName().toString()));
+        ResourceFile resourceFile = new ResourceFile();
+        resourceFile.setFileData(logoData);
+        resourceMetadataFile.setFile(resourceFile);
+
+        categoryElement.setResourceMetadataFile(resourceMetadataFile);
+
+        getCategoryElementRepository().save(categoryElement);
+
+    }
+
+    private void deleteFileByPath(Path file) {
+        try {
+            Files.delete(file);
+
+        } catch (IOException e) {
+            logger.error(String.format("Error en el borrado del fichero temporal %s", file.getFileName().toString()));
+        }
 
     }
 
@@ -1548,10 +1576,14 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     public String retrieveCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
         try {
             CategoriesMetamacInvocationValidator.checkRetrieveCategoryElementLogo(categoryElementUrn, null);
-            categoryElementUrn = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=DEMOGRAFIA";
             CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
 
-            if (categoryElement != null && categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getFile() != null) {
+            if (categoryElement == null) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(categoryElementUrn)
+                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
+
+            if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getFile() != null) {
                 Path fileName = Files.createTempFile(categoryElement.getResourceMetadataFile().getFileName(), "." + categoryElement.getResourceMetadataFile().getExtension());
                 Files.write(fileName, categoryElement.getResourceMetadataFile().getFile().getFileData(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                 return fileName.getFileName().toString();
@@ -1559,7 +1591,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             return null;
         } catch (IOException e) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build(); // TODO EDATOS-4513
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_LOGO_CATEGORY_ELEMENT).withMessageParameters(e).build();
         }
     }
 }

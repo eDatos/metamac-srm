@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.category.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementUiHandlers;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.shared.ImportableResourceTypeEnum;
@@ -22,6 +23,10 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
         setForm(form);
     }
 
+    public void setCategoryElementUrn(CategoryElementDto categoryElementDto) {
+        ((HiddenItem) form.getItem(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_ELEMENT_URN)).setDefaultValue(categoryElementDto.getUrn());
+    }
+
     private class UploadOrdersForm extends UploadForm {
 
         public UploadOrdersForm() {
@@ -29,8 +34,9 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
 
             HiddenItem fileTypeItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE);
             fileTypeItem.setDefaultValue(ImportableResourceTypeEnum.CATEGORY_ELEMENT_LOGO.name());
+            HiddenItem categoryElementUrnItem = new HiddenItem(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_ELEMENT_URN);
 
-            addFieldsInThePenultimePosition(fileTypeItem);
+            addFieldsInThePenultimePosition(fileTypeItem, categoryElementUrnItem);
 
             prepareRequiredFileCheck();
         }

@@ -558,19 +558,6 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
             @Override
             public void onWaitSuccess(ExportOrganisationsResult result) {
                 org.siemac.metamac.srm.web.client.utils.CommonUtils.downloadFile(result.getFileName());
-                deleteTemporalFile(result.getFileName());
-            }
-        });
-    }
-
-    private void deleteTemporalFile(String fileName) {
-        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(OrganisationSchemePresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(TempFilesDeleteResult result) {
             }
         });
     }

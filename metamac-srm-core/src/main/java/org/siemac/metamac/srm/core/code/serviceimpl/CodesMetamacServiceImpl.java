@@ -1288,10 +1288,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return TsvExportationUtils.exportAnnotations(items, languages);
     }
 
-    public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
-        TsvExportationUtils.deleteTemporalFile(fileName);
-    }
-
     @Override
     public String exportCodeOrdersTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
 

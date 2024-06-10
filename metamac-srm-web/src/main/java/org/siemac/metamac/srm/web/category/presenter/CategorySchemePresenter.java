@@ -544,22 +544,10 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
             @Override
             public void onWaitSuccess(ExportCategoriesResult result) {
                 CommonUtils.downloadFile(result.getFileName());
-                deleteTemporalFile(result.getFileName());
             }
         });
     }
 
-    private void deleteTemporalFile(String fileName) {
-        dispatcher.execute(new TempFilesDeleteAction(fileName), new WaitingAsyncCallbackHandlingError<TempFilesDeleteResult>(this) {
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(TempFilesDeleteResult result) {
-            }
-        });
-    }
     @Override
     public void resourceImportationSucceed(String successMessage) {
         ShowMessageEvent.fireSuccessMessage(CategorySchemePresenter.this, successMessage);

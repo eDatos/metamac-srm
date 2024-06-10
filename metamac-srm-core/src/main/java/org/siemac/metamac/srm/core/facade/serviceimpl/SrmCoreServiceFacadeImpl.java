@@ -1573,7 +1573,6 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
 
-
     public void deleteTemporalFile(ServiceContext ctx, String fileName) throws MetamacException {
         TsvExportationUtils.deleteTemporalFile(fileName);
     }
@@ -4231,6 +4230,24 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     // ------------------------------------------------------------------------
     // CATEGORY ELEMENTS
     // ------------------------------------------------------------------------
+
+    @Override
+    public String retrieveCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canRetrieveVariableElementLogo(ctx);
+
+        // Import in background
+        return getCategoriesMetamacService().retrieveCategoryElementLogo(ctx, categoryElementUrn);
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String tempFilePathName) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canSaveVariableElementLogo(ctx);
+
+        // Import in background
+        return getCategoriesMetamacService().importCategoryElementLogo(ctx, categoryElementUrn, tempFilePathName, Boolean.FALSE);
+    }
 
     @Override
     public CategoryElementDto retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {

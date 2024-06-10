@@ -145,9 +145,13 @@ Application CategoriesMetamac {
 			updateCodesCategoryElements(String categorySchemeUrn, Map<Long,Long> categoryElementsIdByCodeId) throws MetamacException;
 			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
 	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
+	   		"retrieve category element logo file"
+    		String retrieveCategoryElementLogo(String categoryElementUrn) throws MetamacException;
 	   		
 			// resend kafka message for the last number of version of published category.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyCategorySchemes() throws MetamacException;
+    		"Load category element logo"
+    		TaskImportationInfo importCategoryElementLogo(String categoryElementUrn, String tempFilePathName, Boolean canBeBackground) throws MetamacException;
    		}
 
 		// ----------------------------------------------------------------
@@ -201,7 +205,8 @@ Application CategoriesMetamac {
 			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"	
 			
 			- Bag<@CategoryMetamac> codes cascade="none" fetch="lazy" <-> categoryElement;
-			
+			  "logo"
+			- @ResourceMetadataFile resourceMetadataFile nullable cascade="all" fetch="lazy" databaseColumn="LOGO_FK";
 			Repository CategoryElementRepository {
 				save;
 				delete;

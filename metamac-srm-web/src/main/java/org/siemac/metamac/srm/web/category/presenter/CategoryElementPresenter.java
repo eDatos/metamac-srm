@@ -17,13 +17,17 @@ import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementLogoAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementLogoResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
+import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -176,6 +180,45 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
             }
         });
 
+    }
+
+    @Override
+    public void retrieveCategoryElementLogo(String categoryElementUrn) {
+
+        dispatcher.execute(new GetCategoryElementLogoAction(categoryElementUrn), new WaitingAsyncCallbackHandlingError<GetCategoryElementLogoResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(GetCategoryElementLogoResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+
+    }
+
+    //
+    // LOGO IMPORTATION
+    //
+
+    @Override
+    public void resourceImportationSucceed(String successMessage) {
+        ShowMessageEvent.fireSuccessMessage(CategoryElementPresenter.this, successMessage);
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void resourceImportationFailed(String errorMessage) {
+        ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, errorMessage);
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void showWaitPopup() {
+        ChangeWaitPopupVisibilityEvent.fire(this, true);
     }
 
     //

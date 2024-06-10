@@ -8,6 +8,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -36,6 +41,8 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
+import org.siemac.metamac.srm.core.base.domain.ResourceFile;
+import org.siemac.metamac.srm.core.base.domain.ResourceMetadataFile;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
@@ -1507,5 +1514,52 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         return exceptionsItems;
 
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String tempFilePathName, Boolean canBeBackground) throws MetamacException {
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+        categoryElementUrn = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=DEMOGRAFIA";
+        CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
+
+        try {
+
+            Path logoFile = Paths.get(tempFilePathName);
+            byte[] logoData = Files.readAllBytes(logoFile);
+
+            ResourceMetadataFile resourceMetadataFile = new ResourceMetadataFile();
+            resourceMetadataFile.setFileName(FilenameUtils.getBaseName(logoFile.getFileName().toString()));
+            resourceMetadataFile.setExtension(FilenameUtils.getExtension(logoFile.getFileName().toString()));
+            ResourceFile resourceFile = new ResourceFile();
+            resourceFile.setFileData(logoData);
+            resourceMetadataFile.setFile(resourceFile);
+
+            categoryElement.setResourceMetadataFile(resourceMetadataFile);
+
+        } catch (IOException e) {
+            logger.info("fichero no encontrado");
+        }
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+
+    }
+
+    @Override
+    public String retrieveCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+        try {
+            CategoriesMetamacInvocationValidator.checkRetrieveCategoryElementLogo(categoryElementUrn, null);
+            categoryElementUrn = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategoryElement=DEMOGRAFIA";
+            CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
+
+            if (categoryElement != null && categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getFile() != null) {
+                Path fileName = Files.createTempFile(categoryElement.getResourceMetadataFile().getFileName(), "." + categoryElement.getResourceMetadataFile().getExtension());
+                Files.write(fileName, categoryElement.getResourceMetadataFile().getFile().getFileData(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                return fileName.getFileName().toString();
+            }
+
+            return null;
+        } catch (IOException e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build(); // TODO EDATOS-4513
+        }
     }
 }

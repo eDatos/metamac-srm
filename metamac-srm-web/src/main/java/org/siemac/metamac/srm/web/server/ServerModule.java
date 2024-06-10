@@ -21,6 +21,7 @@ import org.siemac.metamac.srm.web.server.handlers.category.GetCategorisationActi
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorisationsByArtefactActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementLogoActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemeVersionsActionHandler;
@@ -186,6 +187,7 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorisationAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementLogoAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsAction;
@@ -460,6 +462,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdateCategoryElementOfCategoryAction.class, UpdateCategoryElementOfCategoryActionHandler.class);
         bindHandler(UpdateCodesCategoryElementsAction.class, UpdateCodesCategoryElementsActionHandler.class);
         bindHandler(NormaliseCategoryElementsToCategoriesAction.class, NormaliseCategoryElementsToCategoriesActionHandler.class);
+        bindHandler(GetCategoryElementLogoAction.class, GetCategoryElementLogoActionHandler.class);
 
         // Codes
         bindHandler(DeleteCodelistsAction.class, DeleteCodelistsActionHandler.class);
@@ -553,7 +556,7 @@ public class ServerModule extends HandlerModule {
 
         // This action should be removed to use CAS authentication
         bindHandler(MockCASUserAction.class, MockCASUserActionHandler.class);
-        
+
         bindHandler(TempFilesDeleteAction.class, TempFilesDeleteActionHandler.class);
     }
 }

@@ -8,13 +8,16 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.web.category.presenter.CategoryElementPresenter;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementUiHandlers;
 import org.siemac.metamac.srm.web.category.widgets.CategoryElementMainFormLayout;
+import org.siemac.metamac.srm.web.category.widgets.ImportCategoryElementLogoWindow;
 import org.siemac.metamac.srm.web.resource.element.model.ds.ResourceElementDS;
+import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.SearchViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
@@ -25,24 +28,28 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
+import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementUiHandlers> implements CategoryElementPresenter.CategoryElementView {
 
-    private VLayout                       panel;
-    private CategoryElementMainFormLayout mainFormLayout;
+    private VLayout                               panel;
+    private CategoryElementMainFormLayout         mainFormLayout;
 
     // View forms
-    private GroupDynamicForm              identifiersForm;
-    private GroupDynamicForm              diffusionDescriptorsForm;
-    private GroupDynamicForm              annotationsForm;
+    private GroupDynamicForm                      identifiersForm;
+    private GroupDynamicForm                      diffusionDescriptorsForm;
+    private GroupDynamicForm                      annotationsForm;
 
     // Edition forms
-    private GroupDynamicForm              identifiersEditionForm;
-    private GroupDynamicForm              diffusionDescriptorsEditionForm;
-    private GroupDynamicForm              annotationsEditionForm;
+    private GroupDynamicForm                      identifiersEditionForm;
+    private GroupDynamicForm                      diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                      annotationsEditionForm;
 
-    private CategoryElementDto            categoryElementDto;
+    private CategoryElementDto                    categoryElementDto;
+    private final ImportCategoryElementLogoWindow importCategoryElementLogoWindow;
+    SearchViewTextItem                            importLogoButton;
 
     @Inject
     public CategoryElementViewImpl() {
@@ -55,6 +62,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         //
 
         mainFormLayout = new CategoryElementMainFormLayout();
+        importCategoryElementLogoWindow = createImportVariableElementLogoWindow();
         bindMainFormLayoutEvents();
         createViewForm();
         createEditionForm();
@@ -69,6 +77,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
     @Override
     public void setUiHandlers(CategoryElementUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
+        importCategoryElementLogoWindow.setUiHandlers(uiHandlers);
     }
 
     private void bindMainFormLayoutEvents() {
@@ -193,7 +202,11 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
         CustomDateItem validFrom = new CustomDateItem(ResourceElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
         CustomDateItem validTo = new CustomDateItem(ResourceElementDS.VALID_TO, getConstants().categoryElementValidTo());
-        diffusionDescriptorsEditionForm.setFields(validFrom, validTo);
+        importLogoButton = loadLogo();
+
+        SearchViewTextItem exportLogoButton = createGetCategoryElementLogoButton();
+
+        diffusionDescriptorsEditionForm.setFields(validFrom, validTo, importLogoButton, exportLogoButton);
 
         // Annotations
         annotationsEditionForm = new GroupDynamicForm(getConstants().formAnnotations());
@@ -249,5 +262,56 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         categoryElementDto.setComment(annotationsEditionForm.getValueAsInternationalStringDto(ResourceElementDS.COMMENTS));
 
         return categoryElementDto;
+    }
+
+    private ImportCategoryElementLogoWindow createImportVariableElementLogoWindow() {
+        ImportCategoryElementLogoWindow importLogoWindow = new ImportCategoryElementLogoWindow();
+        importLogoWindow.setUploadListener(new UploadListener() {
+
+            @Override
+            public void uploadFailed(String errorMessage) {
+                getUiHandlers().resourceImportationFailed(errorMessage);
+            }
+
+            @Override
+            public void uploadComplete(String fileName) {
+                diffusionDescriptorsEditionForm.setValue(ResourceElementDS.LOGO, importCategoryElementLogoWindow.getFileName());
+                getUiHandlers().resourceImportationSucceed(fileName);
+            }
+
+        });
+
+        return importLogoWindow;
+    }
+
+    private SearchViewTextItem loadLogo() {
+        SearchViewTextItem createLogoButton = new SearchViewTextItem(ResourceElementDS.LOGO, getConstants().logo());
+        createLogoButton.setRequired(true);
+
+        createLogoButton.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                importCategoryElementLogoWindow.show();
+            }
+        });
+
+        return createLogoButton;
+    }
+
+    private SearchViewTextItem createGetCategoryElementLogoButton() {
+
+        SearchViewTextItem exportLogoButton = new SearchViewTextItem(ResourceElementDS.LOGO_EXPORT, getConstants().download());
+        exportLogoButton.setRequired(true);
+
+        exportLogoButton.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                getUiHandlers().retrieveCategoryElementLogo(categoryElementDto.getUrn());
+            }
+        });
+
+        return exportLogoButton;
     }
 }

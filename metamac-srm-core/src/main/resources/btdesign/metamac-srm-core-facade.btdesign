@@ -582,6 +582,10 @@ Application SrmFacadeCore {
 			updateCodesCategoryElements(String categorySchemeUrn, Map<Long,Long> categoryElementsIdByCodeId) throws MetamacException;
    			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
 	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
+	   		"Load category element logo"
+    		TaskImportationInfo importCategoryElementLogo(String categoryElementUrn, String tempFilePathName) throws MetamacException;
+    		String retrieveCategoryElementLogo( String categoryElementUrn) throws MetamacException;
+    		
 	    	/**************************************************************************
 		     * CODES
 		     **************************************************************************/
@@ -796,8 +800,7 @@ Application SrmFacadeCore {
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendUpdatedVariableElement(String variableElementUrn) throws MetamacException;
             "Resend all variable elements by variablUrn"
             TaskInfo publishVariableElementInBackground(String variableUrn, String localeLanguage) throws MetamacException;
-            
-    		
+
     		    		
     		"ENI scheme catalogs"
     		List<@EniSchemaCatalogDto> findAllEniSchemaCatalogs() throws MetamacException;

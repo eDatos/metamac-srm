@@ -8,6 +8,7 @@ public class WebMessageExceptionsConstants {
     public static final String REST_API_STATISTICAL_OPERATIONS_INVOCATION_ERROR_UNKNOWN               = "exception.access_control.api.statistical_operations.invocation.unknown";
 
     public static final String RESOURCE_SUCCESSFUL_IMPORTATION                                        = "message.resource.successful_importation";
+    public static final String SIMPLE_RESOURCE_SUCCESSFUL_IMPORTATION                                 = "message.resource.simple.successful_importation";
     public static final String RESOURCE_IMPORTATION_PLANNED_IN_BACKGROUND                             = "message.resource.importation_planned_in_background";
 
     public static final String RESOURCE_EXPORTATION_ZIP_CREATION_ERROR                                = "message.resource.exportation_zip_creation_error";

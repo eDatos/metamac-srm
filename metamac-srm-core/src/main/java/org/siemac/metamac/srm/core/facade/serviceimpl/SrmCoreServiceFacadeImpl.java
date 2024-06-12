@@ -4241,12 +4241,21 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String tempFilePathName) throws MetamacException {
+    public void deleteCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canDeleteVariableElementLogo(ctx);
+
+        // Import in background
+        getCategoriesMetamacService().deleteCategoryElementLogo(ctx, categoryElementUrn);
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, InputStream inputStream, String fileName, String categoryElementUrn) throws MetamacException {
         // Security
         CodesSecurityUtils.canSaveVariableElementLogo(ctx);
 
         // Import in background
-        return getCategoriesMetamacService().importCategoryElementLogo(ctx, categoryElementUrn, tempFilePathName, Boolean.FALSE);
+        return getCategoriesMetamacService().importCategoryElementLogo(ctx, categoryElementUrn, fileName, inputStream, Boolean.FALSE);
     }
 
     @Override

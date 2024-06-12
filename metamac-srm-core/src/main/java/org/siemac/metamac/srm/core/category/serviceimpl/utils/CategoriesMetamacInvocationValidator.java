@@ -169,7 +169,7 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkRetrieveCategoryElementLogo(String categoryElementUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
+    public static void checkRetrieveCategoryElement(String categoryElementUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
@@ -252,5 +252,16 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
     private static void checkCategory(ItemSchemeVersion categorySchemeVersion, CategoryMetamac category, List<MetamacExceptionItem> exceptions) {
 
         // common metadata in sdmx are checked in Sdmx module
+    }
+
+    public static void checkImportCategoryElementLogo(String categoryElementUrn, String fileName, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categoryElementUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.RESOURCE_ELEMENT_LOGO, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
     }
 }

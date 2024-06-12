@@ -133,6 +133,10 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
         return canCrudVariableElement(metamacPrincipal);
     }
 
+    public static boolean canDeleteVariableElementLogo(MetamacPrincipal metamacPrincipal) {
+        return canCrudVariableElement(metamacPrincipal);
+    }
+
     public static boolean canExportCodesTsv(MetamacPrincipal metamacPrincipal) {
         return canRetrieveOrFindResource(metamacPrincipal);
     }

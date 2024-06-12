@@ -11,6 +11,7 @@ import org.siemac.metamac.srm.web.server.handlers.category.CreateCategorisationA
 import org.siemac.metamac.srm.web.server.handlers.category.CreateCategorySchemeTemporalVersionActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategorisationsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategoryActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategoryElementLogoActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategoryElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategorySchemesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.ExportCategoriesActionHandler;
@@ -177,6 +178,7 @@ import org.siemac.metamac.srm.web.shared.category.CreateCategorisationAction;
 import org.siemac.metamac.srm.web.shared.category.CreateCategorySchemeTemporalVersionAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorisationsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementLogoAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorySchemesAction;
 import org.siemac.metamac.srm.web.shared.category.ExportCategoriesAction;
@@ -463,6 +465,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdateCodesCategoryElementsAction.class, UpdateCodesCategoryElementsActionHandler.class);
         bindHandler(NormaliseCategoryElementsToCategoriesAction.class, NormaliseCategoryElementsToCategoriesActionHandler.class);
         bindHandler(GetCategoryElementLogoAction.class, GetCategoryElementLogoActionHandler.class);
+        bindHandler(DeleteCategoryElementLogoAction.class, DeleteCategoryElementLogoActionHandler.class);
 
         // Codes
         bindHandler(DeleteCodelistsAction.class, DeleteCodelistsActionHandler.class);

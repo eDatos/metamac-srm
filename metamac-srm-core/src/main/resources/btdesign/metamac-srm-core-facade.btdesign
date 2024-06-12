@@ -583,8 +583,10 @@ Application SrmFacadeCore {
    			"Proposes a normalisation of category elements to categories. If boolean is true, only normalise categories without category element. To categories with category element returns actual category element"
 	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
 	   		"Load category element logo"
-    		TaskImportationInfo importCategoryElementLogo(String categoryElementUrn, String tempFilePathName) throws MetamacException;
+    		TaskImportationInfo importCategoryElementLogo(InputStream imageStream, String fileName, String categoryElementUrn) throws MetamacException;
     		String retrieveCategoryElementLogo( String categoryElementUrn) throws MetamacException;
+    		"delete category element logo file"
+    		deleteCategoryElementLogo(String categoryElementUrn) throws MetamacException;
     		
 	    	/**************************************************************************
 		     * CODES

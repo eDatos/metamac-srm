@@ -1,13 +1,17 @@
 package org.siemac.metamac.srm.web.category.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementUiHandlers;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.shared.ImportableResourceTypeEnum;
 import org.siemac.metamac.srm.web.shared.utils.SrmSharedTokens;
 import org.siemac.metamac.web.common.client.widgets.ImportResourceWindow;
+import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 
@@ -15,12 +19,36 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
 
     private CategoryElementUiHandlers uiHandlers;
     private String                    fileName = null;
+    protected InformationLabel        informationLabel;
 
     public ImportCategoryElementLogoWindow() {
         super(getConstants().actionImportLogo());
 
+        buildInformationLabel();
+
         UploadOrdersForm form = new UploadOrdersForm();
         setForm(form);
+    }
+
+    private void buildInformationLabel() {
+        String allowedImageExtensions = CommonUtils.getMetamacAllowedImageExtensions();
+
+        if (StringUtils.isNotEmpty(allowedImageExtensions)) {
+            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)));
+            informationLabel.setWidth(getWidth());
+            informationLabel.setMargin(5);
+            body.addMember(informationLabel, 0);
+        }
+    }
+
+    // String with extensions formatted like this: .png, .jpg, .svg
+    private String getFormattedExtensions(String allowedImageExtensions) {
+        String[] allowedImagesExtensionItems = allowedImageExtensions.split(",");
+        String formattedExtension = "";
+        for (String imageExtension : allowedImagesExtensionItems) {
+            formattedExtension = formattedExtension + ", ." + imageExtension.trim();
+        }
+        return formattedExtension;
     }
 
     public void setCategoryElementUrn(CategoryElementDto categoryElementDto) {

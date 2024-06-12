@@ -184,8 +184,8 @@ public class ResourceImportationServlet extends HttpServlet {
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
             } else if (ImportableResourceTypeEnum.CATEGORY_ELEMENT_LOGO.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
-                TaskImportationInfo taskImportationInfo = importCategoryElementLogo(srmCoreServiceFacade, fileName, inputStream, args);
-                successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+                importCategoryElementLogo(srmCoreServiceFacade, fileName, inputStream, args);
+                successMessage = getTranslatedMessage(WebMessageExceptionsConstants.SIMPLE_RESOURCE_SUCCESSFUL_IMPORTATION);
             }
             sendSuccessImportationResponse(response, successMessage);
 
@@ -409,9 +409,8 @@ public class ResourceImportationServlet extends HttpServlet {
             throws MetamacException, IOException {
 
         String categoryElementUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_ELEMENT_URN);
-        String tempFilePathName = inputStreamToTempFile(fileName, inputStream);
 
-        return srmCoreServiceFacade.importCategoryElementLogo(ServiceContextHolder.getCurrentServiceContext(), categoryElementUrn, tempFilePathName);
+        return srmCoreServiceFacade.importCategoryElementLogo(ServiceContextHolder.getCurrentServiceContext(), inputStream, fileName, categoryElementUrn);
 
     }
 

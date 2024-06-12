@@ -326,6 +326,12 @@ public class CodesSecurityUtils extends CommonSecurityUtils {
         }
     }
 
+    public static void canDeleteVariableElementLogo(ServiceContext ctx) throws MetamacException {
+        if (!SharedCodesSecurityUtils.canDeleteVariableElementLogo(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
     // EXPORTATIONS
 
     public static void canExportCodesTsv(ServiceContext ctx) throws MetamacException {

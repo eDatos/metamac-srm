@@ -19,6 +19,8 @@ import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementLogoAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementLogoResult;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementAction;
@@ -195,6 +197,24 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
             @Override
             public void onWaitSuccess(GetCategoryElementLogoResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+
+    }
+
+    @Override
+    public void deleteCategoryElementLogo(String categoryElementUrn) {
+
+        dispatcher.execute(new DeleteCategoryElementLogoAction(categoryElementUrn), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementLogoResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(DeleteCategoryElementLogoResult result) {
+                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementLogoDeleted()); // TODO EDATOS-4513 PONER MENSAJE APROPIADO
             }
         });
 

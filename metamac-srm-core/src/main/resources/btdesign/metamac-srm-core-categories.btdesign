@@ -147,11 +147,13 @@ Application CategoriesMetamac {
 	   		List<CodeCategoryElementNormalisationResult> normaliseCategoryElementsToCategories(String categorySchemeUrn, String locale, boolean proposeOverridingOnlyWithoutCategoryElement) throws MetamacException;
 	   		"retrieve category element logo file"
     		String retrieveCategoryElementLogo(String categoryElementUrn) throws MetamacException;
+    		"delete category element logo file"
+    		deleteCategoryElementLogo(String categoryElementUrn) throws MetamacException;
 	   		
 			// resend kafka message for the last number of version of published category.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyCategorySchemes() throws MetamacException;
     		"Load category element logo"
-    		TaskImportationInfo importCategoryElementLogo(String categoryElementUrn, String tempFilePathName, Boolean canBeBackground) throws MetamacException;
+    		TaskImportationInfo importCategoryElementLogo(String categoryElementUrn, String fileName, InputStream imageStream, Boolean canBeBackground) throws MetamacException;
    		}
 
 		// ----------------------------------------------------------------

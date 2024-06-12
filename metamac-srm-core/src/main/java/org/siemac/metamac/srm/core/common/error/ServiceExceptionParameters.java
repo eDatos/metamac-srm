@@ -173,6 +173,8 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  RESOURCE_ELEMENT_VALID_FROM                                = createCode(RESOURCE_ELEMENT_PREFIX, "valid_from");
     public static final String  RESOURCE_ELEMENT_VALID_TO                                  = createCode(RESOURCE_ELEMENT_PREFIX, "valid_to");
 
+    public static final String  RESOURCE_ELEMENT_LOGO                                      = createCode(RESOURCE_ELEMENT_PREFIX, "logo");
+
     private static String createCode(String fieldCode) {
         return PREFIX_PARAMETER_SRM + "." + fieldCode;
     }

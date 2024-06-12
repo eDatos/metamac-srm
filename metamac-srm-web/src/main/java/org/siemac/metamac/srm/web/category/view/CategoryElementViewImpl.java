@@ -13,11 +13,13 @@ import org.siemac.metamac.srm.web.resource.element.model.ds.ResourceElementDS;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
+import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.BooleanSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.FileManagement;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
-import org.siemac.metamac.web.common.client.widgets.form.fields.SearchViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
@@ -40,20 +42,24 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
     // View forms
     private GroupDynamicForm                      identifiersForm;
     private GroupDynamicForm                      diffusionDescriptorsForm;
+    private GroupDynamicForm                      otherDataForm;
     private GroupDynamicForm                      annotationsForm;
 
     // Edition forms
     private GroupDynamicForm                      identifiersEditionForm;
     private GroupDynamicForm                      diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                      otherDataEditionForm;
     private GroupDynamicForm                      annotationsEditionForm;
 
     private CategoryElementDto                    categoryElementDto;
     private final ImportCategoryElementLogoWindow importCategoryElementLogoWindow;
-    SearchViewTextItem                            importLogoButton;
+    FileManagement                                importLogoButton;
+    private DeleteConfirmationWindow              deleteConfirmationWindow;
 
     @Inject
     public CategoryElementViewImpl() {
         super();
+
         panel = new VLayout();
         panel.setHeight100();
 
@@ -91,6 +97,9 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
                 diffusionDescriptorsForm.setTranslationsShowed(translationsShowed);
                 diffusionDescriptorsEditionForm.setTranslationsShowed(translationsShowed);
+
+                otherDataForm.setTranslationsShowed(translationsShowed);
+                otherDataEditionForm.setTranslationsShowed(translationsShowed);
 
                 annotationsForm.setTranslationsShowed(translationsShowed);
                 annotationsEditionForm.setTranslationsShowed(translationsShowed);
@@ -181,6 +190,13 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         ViewTextItem validFrom = new ViewTextItem(ResourceElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
         ViewTextItem validTo = new ViewTextItem(ResourceElementDS.VALID_TO, getConstants().categoryElementValidTo());
         diffusionDescriptorsForm.setFields(validFrom, validTo);
+
+        // other data
+        otherDataForm = new GroupDynamicForm(getConstants().formOtherData());
+        ViewTextItem isVisibleForOperationVisualizer = new ViewTextItem(ResourceElementDS.IS_VISIBLE_FOR_OPERATIONS_VISUALIZER, getConstants().codelistIsRecommended());
+        FileManagement importViewLogoButton = loadLogo();
+        otherDataForm.setFields(isVisibleForOperationVisualizer, importViewLogoButton);
+
         // Annotations
         annotationsForm = new GroupDynamicForm(getConstants().formAnnotations());
         ViewMultiLanguageTextItem comments = new ViewMultiLanguageTextItem(ResourceElementDS.COMMENTS, getConstants().categoryElementComment());
@@ -188,7 +204,9 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
         mainFormLayout.addViewCanvas(identifiersForm);
         mainFormLayout.addViewCanvas(diffusionDescriptorsForm);
+        mainFormLayout.addViewCanvas(otherDataForm);
         mainFormLayout.addViewCanvas(annotationsForm);
+
     }
 
     private void createEditionForm() {
@@ -204,11 +222,14 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
         CustomDateItem validFrom = new CustomDateItem(ResourceElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
         CustomDateItem validTo = new CustomDateItem(ResourceElementDS.VALID_TO, getConstants().categoryElementValidTo());
+
+        diffusionDescriptorsEditionForm.setFields(validFrom, validTo);
+
+        // other data
+        otherDataEditionForm = new GroupDynamicForm(getConstants().formOtherData());
+        BooleanSelectItem isVisibleForOperationVisualizer = new BooleanSelectItem(ResourceElementDS.IS_VISIBLE_FOR_OPERATIONS_VISUALIZER, getConstants().codelistIsRecommended());
         importLogoButton = loadLogo();
-
-        SearchViewTextItem exportLogoButton = createGetCategoryElementLogoButton();
-
-        diffusionDescriptorsEditionForm.setFields(validFrom, validTo, importLogoButton, exportLogoButton);
+        otherDataEditionForm.setFields(isVisibleForOperationVisualizer, importLogoButton);
 
         // Annotations
         annotationsEditionForm = new GroupDynamicForm(getConstants().formAnnotations());
@@ -217,6 +238,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
         mainFormLayout.addEditionCanvas(identifiersEditionForm);
         mainFormLayout.addEditionCanvas(diffusionDescriptorsEditionForm);
+        mainFormLayout.addEditionCanvas(otherDataEditionForm);
         mainFormLayout.addEditionCanvas(annotationsEditionForm);
     }
 
@@ -277,20 +299,23 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
             @Override
             public void uploadComplete(String fileName) {
-                diffusionDescriptorsEditionForm.setValue(ResourceElementDS.LOGO, importCategoryElementLogoWindow.getFileName());
+                otherDataEditionForm.setValue(ResourceElementDS.LOGO, importCategoryElementLogoWindow.getFileName());
+                otherDataForm.setValue(ResourceElementDS.LOGO, importCategoryElementLogoWindow.getFileName());
                 getUiHandlers().resourceImportationSucceed(fileName);
             }
 
         });
 
+        createDeleteLogoConfirmationWindow();
+
         return importLogoWindow;
     }
 
-    private SearchViewTextItem loadLogo() {
-        SearchViewTextItem createLogoButton = new SearchViewTextItem(ResourceElementDS.LOGO, getConstants().logo());
+    private FileManagement loadLogo() {
+        FileManagement createLogoButton = new FileManagement(ResourceElementDS.LOGO, getConstants().logo());
         createLogoButton.setRequired(true);
 
-        createLogoButton.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+        createLogoButton.getUploadIcon().addFormItemClickHandler(new FormItemClickHandler() {
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
@@ -298,15 +323,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
             }
         });
 
-        return createLogoButton;
-    }
-
-    private SearchViewTextItem createGetCategoryElementLogoButton() {
-
-        SearchViewTextItem exportLogoButton = new SearchViewTextItem(ResourceElementDS.LOGO_EXPORT, getConstants().download());
-        exportLogoButton.setRequired(true);
-
-        exportLogoButton.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+        createLogoButton.getDownloadIcon().addFormItemClickHandler(new FormItemClickHandler() {
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
@@ -314,6 +331,28 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
             }
         });
 
-        return exportLogoButton;
+        createLogoButton.getDeleteIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                deleteConfirmationWindow.show();
+
+            }
+        });
+
+        return createLogoButton;
+    }
+
+    private void createDeleteLogoConfirmationWindow() {
+        deleteConfirmationWindow = new DeleteConfirmationWindow(getConstants().categoryElementLogoDeleteConfirmationTitle(), getConstants().categoryElementLogoDeleteConfirmation());
+        deleteConfirmationWindow.setVisible(false);
+        deleteConfirmationWindow.getYesButton().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().deleteCategoryElementLogo(categoryElementDto.getUrn());
+                deleteConfirmationWindow.hide();
+            }
+        });
     }
 }

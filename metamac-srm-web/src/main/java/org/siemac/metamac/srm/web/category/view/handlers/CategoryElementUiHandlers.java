@@ -13,4 +13,5 @@ public interface CategoryElementUiHandlers extends BaseCategoryElementUiHandlers
     void showWaitPopup();
 
     void retrieveCategoryElementLogo(String categoryElementUrn);
+    void deleteCategoryElementLogo(String categoryElementUrn);
 }

@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1518,40 +1517,53 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     }
 
     @Override
-    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String tempFilePathName, Boolean canBeBackground) throws MetamacException {
+    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String fileName, InputStream imageStream, Boolean canBeBackground) throws MetamacException {
+
         List<MetamacExceptionItem> informationItems = new ArrayList<>();
-        CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
 
-        if (categoryElement == null) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(categoryElementUrn)
-                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-        }
+        // Validation
+        CategoriesMetamacInvocationValidator.checkImportCategoryElementLogo(categoryElementUrn, fileName, informationItems);
+        checkAllowedImageExtension(categoryElementUrn, fileName);
 
-        Path logoFile = Paths.get(tempFilePathName);
+        CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
+
         try {
+            byte[] logoData = IOUtils.toByteArray(imageStream);
 
-            byte[] logoData = Files.readAllBytes(logoFile);
-
-            saveCategoryElementLogo(categoryElement, logoData, logoFile);
+            saveCategoryElementLogo(categoryElement, logoData, fileName);
 
         } catch (IOException e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_ERROR).withMessageParameters(categoryElementUrn).build();
+        } finally {
+            IOUtils.closeQuietly(imageStream);
         }
-
-        deleteFileByPath(logoFile);
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
 
     }
 
-    private void saveCategoryElementLogo(CategoryElement categoryElement, byte[] logoData, Path logoFilePath) {
+    private void checkAllowedImageExtension(String categoryElementUrn, String fileName) throws MetamacException {
+        String allowedImageExtensions = srmConfiguration.retrieveAllowedImageExtensions();
+        String extensionFile = FilenameUtils.getExtension(fileName);
+        String[] imageExtensions = StringUtils.split(allowedImageExtensions, ",");
+
+        for (String extension : imageExtensions) {
+            if (extension.trim().equals(extensionFile)) {
+                return;
+            }
+        }
+        throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_EXTENSION_ERROR)
+                .withMessageParameters(categoryElementUrn, allowedImageExtensions).build();
+    }
+
+    private void saveCategoryElementLogo(CategoryElement categoryElement, byte[] logoData, String logoFilePath) {
         if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getId() != null) {
             resourceMetadataFileRepository.delete(categoryElement.getResourceMetadataFile());
         }
 
         ResourceMetadataFile resourceMetadataFile = new ResourceMetadataFile();
-        resourceMetadataFile.setFileName(FilenameUtils.getBaseName(logoFilePath.getFileName().toString()));
-        resourceMetadataFile.setExtension(FilenameUtils.getExtension(logoFilePath.getFileName().toString()));
+        resourceMetadataFile.setFileName(FilenameUtils.getBaseName(logoFilePath));
+        resourceMetadataFile.setExtension(FilenameUtils.getExtension(logoFilePath));
         ResourceFile resourceFile = new ResourceFile();
         resourceFile.setFileData(logoData);
         resourceMetadataFile.setFile(resourceFile);
@@ -1562,26 +1574,10 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
     }
 
-    private void deleteFileByPath(Path file) {
-        try {
-            Files.delete(file);
-
-        } catch (IOException e) {
-            logger.error(String.format("Error en el borrado del fichero temporal %s", file.getFileName().toString()));
-        }
-
-    }
-
     @Override
     public String retrieveCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
         try {
-            CategoriesMetamacInvocationValidator.checkRetrieveCategoryElementLogo(categoryElementUrn, null);
-            CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
-
-            if (categoryElement == null) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(categoryElementUrn)
-                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-            }
+            CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
 
             if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getFile() != null) {
                 Path fileName = Files.createTempFile(categoryElement.getResourceMetadataFile().getFileName(), "." + categoryElement.getResourceMetadataFile().getExtension());
@@ -1593,5 +1589,30 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         } catch (IOException e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_LOGO_CATEGORY_ELEMENT).withMessageParameters(e).build();
         }
+    }
+
+    @Override
+    public void deleteCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+
+        CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
+
+        if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getId() != null) {
+            resourceMetadataFileRepository.delete(categoryElement.getResourceMetadataFile());
+        }
+        categoryElement.setResourceMetadataFile(null);
+        getCategoryElementRepository().save(categoryElement);
+
+    }
+
+    private CategoryElement findCategoryElementByUrn(String categoryElementUrn) throws MetamacException {
+        CategoriesMetamacInvocationValidator.checkRetrieveCategoryElement(categoryElementUrn, null);
+        CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
+
+        if (categoryElement == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(categoryElementUrn)
+                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
+
+        return categoryElement;
     }
 }

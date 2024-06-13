@@ -1,6 +1,9 @@
 package org.siemac.metamac.srm.web.category.view;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
+import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
+
+import java.util.logging.Logger;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
@@ -11,6 +14,7 @@ import org.siemac.metamac.srm.web.category.widgets.CategoryElementMainFormLayout
 import org.siemac.metamac.srm.web.category.widgets.ImportCategoryElementLogoWindow;
 import org.siemac.metamac.srm.web.resource.element.model.ds.ResourceElementDS;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
+import org.siemac.metamac.web.common.client.utils.BooleanWebUtils;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
@@ -35,6 +39,8 @@ import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementUiHandlers> implements CategoryElementPresenter.CategoryElementView {
+
+    private static Logger                         logger = Logger.getLogger(CategoryElementViewImpl.class.getName());
 
     private VLayout                               panel;
     private CategoryElementMainFormLayout         mainFormLayout;
@@ -177,6 +183,13 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
     }
 
+    @Override
+    public void cleanFileName() {
+        otherDataEditionForm.setValue(ResourceElementDS.LOGO, "");
+        otherDataForm.setValue(ResourceElementDS.LOGO, "");
+
+    }
+
     private void createViewForm() {
         // Identifiers Form
         identifiersForm = new GroupDynamicForm(getConstants().formIdentifiers());
@@ -193,9 +206,9 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
         // other data
         otherDataForm = new GroupDynamicForm(getConstants().formOtherData());
-        ViewTextItem isVisibleForOperationVisualizer = new ViewTextItem(ResourceElementDS.IS_VISIBLE_FOR_OPERATIONS_VISUALIZER, getConstants().codelistIsRecommended());
+        ViewTextItem isVisible = new ViewTextItem(ResourceElementDS.IS_VISIBLE, getConstants().categoryElementVisible());
         FileManagement importViewLogoButton = loadLogo();
-        otherDataForm.setFields(isVisibleForOperationVisualizer, importViewLogoButton);
+        otherDataForm.setFields(isVisible, importViewLogoButton);
 
         // Annotations
         annotationsForm = new GroupDynamicForm(getConstants().formAnnotations());
@@ -227,9 +240,9 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
         // other data
         otherDataEditionForm = new GroupDynamicForm(getConstants().formOtherData());
-        BooleanSelectItem isVisibleForOperationVisualizer = new BooleanSelectItem(ResourceElementDS.IS_VISIBLE_FOR_OPERATIONS_VISUALIZER, getConstants().codelistIsRecommended());
+        BooleanSelectItem isVisible = new BooleanSelectItem(ResourceElementDS.IS_VISIBLE, getConstants().categoryElementVisible());
         importLogoButton = loadLogo();
-        otherDataEditionForm.setFields(isVisibleForOperationVisualizer, importLogoButton);
+        otherDataEditionForm.setFields(isVisible, importLogoButton);
 
         // Annotations
         annotationsEditionForm = new GroupDynamicForm(getConstants().formAnnotations());
@@ -256,6 +269,10 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         diffusionDescriptorsForm.setValue(ResourceElementDS.VALID_FROM, DateUtils.getFormattedDate(categoryElementDto.getValidFrom()));
         diffusionDescriptorsForm.setValue(ResourceElementDS.VALID_TO, DateUtils.getFormattedDate(categoryElementDto.getValidTo()));
 
+        // Other data
+        otherDataForm.setValue(ResourceElementDS.IS_VISIBLE, BooleanWebUtils.getBooleanLabel(categoryElementDto.getIsVisible()));
+        otherDataForm.setValue(ResourceElementDS.LOGO, categoryElementDto.getLogo() != null ? categoryElementDto.getLogo().getFullFileName() : null);
+
         // Annotations
         annotationsForm.setValue(ResourceElementDS.COMMENTS, categoryElementDto.getComment());
     }
@@ -270,6 +287,10 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         diffusionDescriptorsEditionForm.setValue(ResourceElementDS.VALID_FROM, categoryElementDto.getValidFrom());
         diffusionDescriptorsEditionForm.setValue(ResourceElementDS.VALID_TO, categoryElementDto.getValidTo());
 
+        // Other data
+        otherDataEditionForm.setValue(ResourceElementDS.IS_VISIBLE, BooleanWebUtils.getBooleanLabel(categoryElementDto.getIsVisible()));
+        otherDataEditionForm.setValue(ResourceElementDS.LOGO, categoryElementDto.getLogo() != null ? categoryElementDto.getLogo().getFullFileName() : null);
+
         // Annotations
         annotationsEditionForm.setValue(ResourceElementDS.COMMENTS, categoryElementDto.getComment());
     }
@@ -281,6 +302,10 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         // Diffusion descriptors
         categoryElementDto.setValidFrom(((CustomDateItem) diffusionDescriptorsEditionForm.getItem(ResourceElementDS.VALID_FROM)).getValueAsDate());
         categoryElementDto.setValidTo(((CustomDateItem) diffusionDescriptorsEditionForm.getItem(ResourceElementDS.VALID_TO)).getValueAsDate());
+
+        // Other data
+        categoryElementDto.setIsVisible(((BooleanSelectItem) otherDataEditionForm.getItem(ResourceElementDS.IS_VISIBLE)).getBooleanValue());
+        // logo is not updated here because import and export are independent.
 
         // Annotations
         categoryElementDto.setComment(annotationsEditionForm.getValueAsInternationalStringDto(ResourceElementDS.COMMENTS));
@@ -298,10 +323,11 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
             }
 
             @Override
-            public void uploadComplete(String fileName) {
-                otherDataEditionForm.setValue(ResourceElementDS.LOGO, importCategoryElementLogoWindow.getFileName());
-                otherDataForm.setValue(ResourceElementDS.LOGO, importCategoryElementLogoWindow.getFileName());
-                getUiHandlers().resourceImportationSucceed(fileName);
+            public void uploadComplete(String resultMessage) {
+                String fileNameWithoutPath = getFileNameFromPath(importCategoryElementLogoWindow.getFileName());
+                otherDataEditionForm.setValue(ResourceElementDS.LOGO, fileNameWithoutPath);
+                otherDataForm.setValue(ResourceElementDS.LOGO, fileNameWithoutPath);
+                getUiHandlers().resourceImportationSucceed(resultMessage, categoryElementDto.getUrn());
             }
 
         });
@@ -311,9 +337,12 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         return importLogoWindow;
     }
 
+    private String getFileNameFromPath(String absolutePath) {
+        return absolutePath.substring(absolutePath.lastIndexOf("/") + 1).substring(absolutePath.lastIndexOf("\\") + 1);
+    }
+
     private FileManagement loadLogo() {
         FileManagement createLogoButton = new FileManagement(ResourceElementDS.LOGO, getConstants().logo());
-        createLogoButton.setRequired(true);
 
         createLogoButton.getUploadIcon().addFormItemClickHandler(new FormItemClickHandler() {
 
@@ -327,7 +356,11 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
-                getUiHandlers().retrieveCategoryElementLogo(categoryElementDto.getUrn());
+                if (existsLogo()) {
+                    getUiHandlers().retrieveCategoryElementLogo(categoryElementDto.getUrn());
+                } else {
+                    getUiHandlers().resourceImportationFailed(getMessages().categoryElementEmptyLogo());
+                }
             }
         });
 
@@ -335,12 +368,20 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
-                deleteConfirmationWindow.show();
-
+                if (existsLogo()) {
+                    deleteConfirmationWindow.show();
+                } else {
+                    getUiHandlers().resourceImportationFailed(getMessages().categoryElementEmptyLogo());
+                }
             }
         });
 
         return createLogoButton;
+    }
+
+    private boolean existsLogo() {
+        String fileName = otherDataEditionForm.getValueAsString(ResourceElementDS.LOGO);
+        return StringUtils.isNotEmpty(fileName);
     }
 
     private void createDeleteLogoConfirmationWindow() {

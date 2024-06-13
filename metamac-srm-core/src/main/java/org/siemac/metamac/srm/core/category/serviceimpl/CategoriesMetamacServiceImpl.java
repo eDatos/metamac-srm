@@ -1557,8 +1557,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     }
 
     private void saveCategoryElementLogo(CategoryElement categoryElement, byte[] logoData, String logoFilePath) {
-        if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getId() != null) {
-            resourceMetadataFileRepository.delete(categoryElement.getResourceMetadataFile());
+        if (categoryElement.getLogo() != null && categoryElement.getLogo().getId() != null) {
+            resourceMetadataFileRepository.delete(categoryElement.getLogo());
         }
 
         ResourceMetadataFile resourceMetadataFile = new ResourceMetadataFile();
@@ -1568,7 +1568,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         resourceFile.setFileData(logoData);
         resourceMetadataFile.setFile(resourceFile);
 
-        categoryElement.setResourceMetadataFile(resourceMetadataFile);
+        categoryElement.setLogo(resourceMetadataFile);
 
         getCategoryElementRepository().save(categoryElement);
 
@@ -1579,9 +1579,10 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         try {
             CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
 
-            if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getFile() != null) {
-                Path fileName = Files.createTempFile(categoryElement.getResourceMetadataFile().getFileName(), "." + categoryElement.getResourceMetadataFile().getExtension());
-                Files.write(fileName, categoryElement.getResourceMetadataFile().getFile().getFileData(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            if (categoryElement.getLogo() != null && categoryElement.getLogo().getFile() != null) {
+                Path fileName = Files.createTempFile(categoryElement.getLogo().getFileName(), "." + categoryElement.getLogo().getExtension());
+
+                Files.write(fileName, categoryElement.getLogo().getFile().getFileData(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                 return fileName.getFileName().toString();
             }
 
@@ -1596,10 +1597,10 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
 
-        if (categoryElement.getResourceMetadataFile() != null && categoryElement.getResourceMetadataFile().getId() != null) {
-            resourceMetadataFileRepository.delete(categoryElement.getResourceMetadataFile());
+        if (categoryElement.getLogo() != null && categoryElement.getLogo().getId() != null) {
+            resourceMetadataFileRepository.delete(categoryElement.getLogo());
         }
-        categoryElement.setResourceMetadataFile(null);
+        categoryElement.setLogo(null);
         getCategoryElementRepository().save(categoryElement);
 
     }

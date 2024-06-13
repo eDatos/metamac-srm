@@ -207,8 +207,10 @@ Application CategoriesMetamac {
 			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"	
 			
 			- Bag<@CategoryMetamac> codes cascade="none" fetch="lazy" <-> categoryElement;
+			"Is visible"
+			Boolean isVisible;
 			  "logo"
-			- @ResourceMetadataFile resourceMetadataFile nullable cascade="all" fetch="lazy" databaseColumn="LOGO_FK";
+			- @ResourceMetadataFile logo nullable cascade="all" fetch="lazy" databaseColumn="LOGO_FK";
 			Repository CategoryElementRepository {
 				save;
 				delete;

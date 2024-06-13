@@ -76,6 +76,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     public interface CategoryElementView extends View, HasUiHandlers<CategoryElementUiHandlers> {
 
         void setCategoryElement(CategoryElementDto categoryElementDto);
+        void cleanFileName();
     }
 
     @ContentSlot
@@ -214,7 +215,9 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
 
             @Override
             public void onWaitSuccess(DeleteCategoryElementLogoResult result) {
-                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementLogoDeleted()); // TODO EDATOS-4513 PONER MENSAJE APROPIADO
+                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementLogoDeleted());
+                getView().cleanFileName();
+
             }
         });
 
@@ -225,8 +228,9 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     //
 
     @Override
-    public void resourceImportationSucceed(String successMessage) {
+    public void resourceImportationSucceed(String successMessage, String categoryElementUrn) {
         ShowMessageEvent.fireSuccessMessage(CategoryElementPresenter.this, successMessage);
+        retrieveCategoryElementByUrn(categoryElementUrn);
         ChangeWaitPopupVisibilityEvent.fire(this, false);
     }
 

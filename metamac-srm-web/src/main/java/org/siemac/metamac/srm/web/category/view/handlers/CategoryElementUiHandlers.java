@@ -9,7 +9,7 @@ public interface CategoryElementUiHandlers extends BaseCategoryElementUiHandlers
 
     // logo upload
     void resourceImportationFailed(String errorMessage);
-    void resourceImportationSucceed(String fileName);
+    void resourceImportationSucceed(String successMessage, String categoryElementUrn);
     void showWaitPopup();
 
     void retrieveCategoryElementLogo(String categoryElementUrn);

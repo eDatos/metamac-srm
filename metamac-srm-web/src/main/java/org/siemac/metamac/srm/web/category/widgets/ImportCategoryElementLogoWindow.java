@@ -44,11 +44,12 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
     // String with extensions formatted like this: .png, .jpg, .svg
     private String getFormattedExtensions(String allowedImageExtensions) {
         String[] allowedImagesExtensionItems = allowedImageExtensions.split(",");
-        String formattedExtension = "";
+
+        StringBuilder formattedExtension = new StringBuilder();
         for (String imageExtension : allowedImagesExtensionItems) {
-            formattedExtension = formattedExtension + ", ." + imageExtension.trim();
+            formattedExtension.append((formattedExtension.length() == 0 ? "." : ", .") + imageExtension.trim());
         }
-        return formattedExtension;
+        return formattedExtension.toString();
     }
 
     public void setCategoryElementUrn(CategoryElementDto categoryElementDto) {

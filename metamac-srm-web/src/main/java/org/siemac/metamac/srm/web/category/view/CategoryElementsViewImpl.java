@@ -158,6 +158,7 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
     public void setUiHandlers(CategoryElementsUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         searchSectionStack.setUiHandlers(uiHandlers);
+        importCategoryElementsWindow.setUiHandlers(uiHandlers);
     }
 
     @Override

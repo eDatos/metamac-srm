@@ -75,7 +75,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
 
     public interface CategoryElementView extends View, HasUiHandlers<CategoryElementUiHandlers> {
 
-        void setCategoryElement(CategoryElementDto categoryElementDto);
+        void setCategoryElement(CategoryElementDto categoryElementDto, boolean onlyUpdate);
         void cleanFileName();
     }
 
@@ -123,11 +123,11 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     private void retrieveCategoryElement(String elementIdentifier) {
         String urn = UrnUtils.generateUrn(UrnConstants.URN_SIEMAC_CLASS_CATEGORY_ELEMENT_PREFIX, elementIdentifier);
         if (!StringUtils.isBlank(urn)) {
-            retrieveCategoryElementByUrn(urn);
+            retrieveCategoryElementByUrn(urn, false);
         }
     }
 
-    private void retrieveCategoryElementByUrn(String urn) {
+    private void retrieveCategoryElementByUrn(String urn, final boolean onlyUpdate) {
 
         dispatcher.execute(new GetCategoryElementAction(urn), new WaitingAsyncCallbackHandlingError<GetCategoryElementResult>(this) {
 
@@ -138,7 +138,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
             @Override
             public void onWaitSuccess(GetCategoryElementResult result) {
                 CategoryElementPresenter.this.categoryElementDto = result.getCategoryElementDto();
-                getView().setCategoryElement(result.getCategoryElementDto());
+                getView().setCategoryElement(result.getCategoryElementDto(), onlyUpdate);
             }
         });
 
@@ -158,7 +158,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
                 CategoryElementPresenter.this.categoryElementDto = result.getSavedCategoryElementDto();
                 fireSuccessMessage(getMessages().categoryElementSaved());
                 CategoryElementDto categoryElementDto = result.getSavedCategoryElementDto();
-                getView().setCategoryElement(categoryElementDto);
+                getView().setCategoryElement(categoryElementDto, false);
                 // Update URL
                 PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeCategoryElementPlaceRequest(result.getSavedCategoryElementDto().getCode());
                 placeManager.updateHistory(placeRequest, true);
@@ -230,7 +230,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     @Override
     public void resourceImportationSucceed(String successMessage, String categoryElementUrn) {
         ShowMessageEvent.fireSuccessMessage(CategoryElementPresenter.this, successMessage);
-        retrieveCategoryElementByUrn(categoryElementUrn);
+        retrieveCategoryElementByUrn(categoryElementUrn, true);
         ChangeWaitPopupVisibilityEvent.fire(this, false);
     }
 

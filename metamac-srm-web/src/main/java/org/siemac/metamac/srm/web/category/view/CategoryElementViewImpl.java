@@ -40,27 +40,27 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementUiHandlers> implements CategoryElementPresenter.CategoryElementView {
 
-    private static Logger                         logger = Logger.getLogger(CategoryElementViewImpl.class.getName());
+    private static Logger                   logger = Logger.getLogger(CategoryElementViewImpl.class.getName());
 
-    private VLayout                               panel;
-    private CategoryElementMainFormLayout         mainFormLayout;
+    private VLayout                         panel;
+    private CategoryElementMainFormLayout   mainFormLayout;
 
     // View forms
-    private GroupDynamicForm                      identifiersForm;
-    private GroupDynamicForm                      diffusionDescriptorsForm;
-    private GroupDynamicForm                      otherDataForm;
-    private GroupDynamicForm                      annotationsForm;
+    private GroupDynamicForm                identifiersForm;
+    private GroupDynamicForm                diffusionDescriptorsForm;
+    private GroupDynamicForm                otherDataForm;
+    private GroupDynamicForm                annotationsForm;
 
     // Edition forms
-    private GroupDynamicForm                      identifiersEditionForm;
-    private GroupDynamicForm                      diffusionDescriptorsEditionForm;
-    private GroupDynamicForm                      otherDataEditionForm;
-    private GroupDynamicForm                      annotationsEditionForm;
+    private GroupDynamicForm                identifiersEditionForm;
+    private GroupDynamicForm                diffusionDescriptorsEditionForm;
+    private GroupDynamicForm                otherDataEditionForm;
+    private GroupDynamicForm                annotationsEditionForm;
 
-    private CategoryElementDto                    categoryElementDto;
-    private final ImportCategoryElementLogoWindow importCategoryElementLogoWindow;
-    FileManagement                                importLogoButton;
-    private DeleteConfirmationWindow              deleteConfirmationWindow;
+    private CategoryElementDto              categoryElementDto;
+    private ImportCategoryElementLogoWindow importCategoryElementLogoWindow;
+    FileManagement                          importLogoButton;
+    private DeleteConfirmationWindow        deleteConfirmationWindow;
 
     @Inject
     public CategoryElementViewImpl() {
@@ -74,7 +74,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         //
 
         mainFormLayout = new CategoryElementMainFormLayout();
-        importCategoryElementLogoWindow = createImportVariableElementLogoWindow();
+        createDeleteLogoConfirmationWindow();
         bindMainFormLayoutEvents();
         createViewForm();
         createEditionForm();
@@ -89,7 +89,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
     @Override
     public void setUiHandlers(CategoryElementUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
-        importCategoryElementLogoWindow.setUiHandlers(uiHandlers);
+
     }
 
     private void bindMainFormLayoutEvents() {
@@ -167,9 +167,10 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
     }
 
     @Override
-    public void setCategoryElement(CategoryElementDto categoryElementDto) {
+    public void setCategoryElement(CategoryElementDto categoryElementDto, boolean onlyUpdate) {
         this.categoryElementDto = categoryElementDto;
 
+        if (!onlyUpdate) {
         String defaultLocalized = InternationalStringUtils.getLocalisedString(categoryElementDto.getShortName());
         String title = defaultLocalized != null ? defaultLocalized : StringUtils.EMPTY;
         mainFormLayout.setTitleLabelContents(title);
@@ -178,8 +179,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
         setCategoryElementViewMode(categoryElementDto);
         setCategoryElementEditionMode(categoryElementDto);
-
-        importCategoryElementLogoWindow.setCategoryElementUrn(categoryElementDto);
+        }
 
     }
 
@@ -187,6 +187,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
     public void cleanFileName() {
         otherDataEditionForm.setValue(ResourceElementDS.LOGO, "");
         otherDataForm.setValue(ResourceElementDS.LOGO, "");
+        importCategoryElementLogoWindow.destroy();
 
     }
 
@@ -207,7 +208,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         // other data
         otherDataForm = new GroupDynamicForm(getConstants().formOtherData());
         ViewTextItem isVisible = new ViewTextItem(ResourceElementDS.IS_VISIBLE, getConstants().categoryElementVisible());
-        FileManagement importViewLogoButton = loadLogo();
+        FileManagement importViewLogoButton = loadLogo(true);
         otherDataForm.setFields(isVisible, importViewLogoButton);
 
         // Annotations
@@ -241,7 +242,7 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         // other data
         otherDataEditionForm = new GroupDynamicForm(getConstants().formOtherData());
         BooleanSelectItem isVisible = new BooleanSelectItem(ResourceElementDS.IS_VISIBLE, getConstants().categoryElementVisible());
-        importLogoButton = loadLogo();
+        importLogoButton = loadLogo(false);
         otherDataEditionForm.setFields(isVisible, importLogoButton);
 
         // Annotations
@@ -313,8 +314,11 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         return categoryElementDto;
     }
 
+    // warning: this component must be created when it is used and destroy after this. In another way, the event "uploadComplete"
+    // can interact with the another event "uploadComplete" of the import category element window of the parent window.
+    // One event can overlap the other and to produce random effects.
     private ImportCategoryElementLogoWindow createImportVariableElementLogoWindow() {
-        ImportCategoryElementLogoWindow importLogoWindow = new ImportCategoryElementLogoWindow();
+        final ImportCategoryElementLogoWindow importLogoWindow = new ImportCategoryElementLogoWindow();
         importLogoWindow.setUploadListener(new UploadListener() {
 
             @Override
@@ -324,15 +328,13 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
 
             @Override
             public void uploadComplete(String resultMessage) {
-                String fileNameWithoutPath = getFileNameFromPath(importCategoryElementLogoWindow.getFileName());
+                String fileNameWithoutPath = getFileNameFromPath(importLogoWindow.getFileName());
                 otherDataEditionForm.setValue(ResourceElementDS.LOGO, fileNameWithoutPath);
                 otherDataForm.setValue(ResourceElementDS.LOGO, fileNameWithoutPath);
                 getUiHandlers().resourceImportationSucceed(resultMessage, categoryElementDto.getUrn());
             }
 
         });
-
-        createDeleteLogoConfirmationWindow();
 
         return importLogoWindow;
     }
@@ -341,14 +343,16 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         return absolutePath.substring(absolutePath.lastIndexOf("/") + 1).substring(absolutePath.lastIndexOf("\\") + 1);
     }
 
-    private FileManagement loadLogo() {
-        FileManagement createLogoButton = new FileManagement(ResourceElementDS.LOGO, getConstants().logo());
+    private FileManagement loadLogo(boolean readForm) {
+        FileManagement createLogoButton = new FileManagement(ResourceElementDS.LOGO, getConstants().logo(), readForm);
 
         createLogoButton.getUploadIcon().addFormItemClickHandler(new FormItemClickHandler() {
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
+                importCategoryElementLogoWindow = initiateImportWindow();
                 importCategoryElementLogoWindow.show();
+
             }
         });
 
@@ -377,6 +381,13 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         });
 
         return createLogoButton;
+    }
+
+    private ImportCategoryElementLogoWindow initiateImportWindow() {
+        ImportCategoryElementLogoWindow importCategoryLogoWindow = createImportVariableElementLogoWindow();
+        importCategoryLogoWindow.setUiHandlers(this.getUiHandlers());
+        importCategoryLogoWindow.setCategoryElementUrn(categoryElementDto);
+        return importCategoryLogoWindow;
     }
 
     private boolean existsLogo() {

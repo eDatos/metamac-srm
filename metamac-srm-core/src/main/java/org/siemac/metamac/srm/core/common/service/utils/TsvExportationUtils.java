@@ -5,11 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.AccessController;
 import java.util.List;
@@ -22,7 +20,6 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.srm.core.base.domain.ResourceElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
-import org.siemac.metamac.srm.core.category.serviceimpl.CategoriesMetamacServiceImpl;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -42,6 +39,7 @@ import sun.security.action.GetPropertyAction;
 public class TsvExportationUtils {
 
     private static Logger logger = LoggerFactory.getLogger(TsvExportationUtils.class);
+
     private TsvExportationUtils() {
     }
 
@@ -882,10 +880,12 @@ public class TsvExportationUtils {
             outputStream = new FileOutputStream(file);
             writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
             writeResourceElementsHeader(writer, languages);
+            writeCategoryElementsHeader(writer);
             for (CategoryElement categoryElement : categoryElements) {
                 writer.write(SrmConstants.TSV_LINE_SEPARATOR);
                 writeResourceElementCode(writer, categoryElement);
                 writeResourceElementShortName(writer, categoryElement, languages);
+                writeCategoryElementIsVisible(writer, categoryElement);
             }
             writer.flush();
             return file.getName();
@@ -905,8 +905,19 @@ public class TsvExportationUtils {
         }
     }
 
+    private static void writeCategoryElementsHeader(OutputStreamWriter writer) throws IOException {
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(SrmConstants.TSV_HEADER_IS_VISIBLE);
+
+    }
+
     private static void writeResourceElementCode(OutputStreamWriter writer, ResourceElement resourceElement) throws IOException {
         writer.write(resourceElement.getIdentifiableArtefact().getCode());
+    }
+
+    private static void writeCategoryElementIsVisible(OutputStreamWriter writer, CategoryElement categoryElement) throws IOException {
+        writer.write(SrmConstants.TSV_SEPARATOR);
+        writer.write(categoryElement.getIsVisible() != null ? String.valueOf(categoryElement.getIsVisible()) : null);
     }
 
     private static void writeResourceElementShortName(OutputStreamWriter writer, ResourceElement resourceElement, List<String> languages) throws IOException {

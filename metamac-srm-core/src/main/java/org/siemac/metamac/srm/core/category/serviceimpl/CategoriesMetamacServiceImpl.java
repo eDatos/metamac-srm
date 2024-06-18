@@ -1340,10 +1340,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
         // short name
         categoryElement.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, categoryElement.getShortName()));
+
         if (categoryElement.getShortName() == null) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, categoryElement.getIdentifiableArtefact().getCode(),
                     ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
         }
+
+        fillCategoryElementIsVisibleField(header, columns, categoryElement);
 
         // Do not persist if any error ocurrs
         if (!CollectionUtils.isEmpty(exceptionItems)) {
@@ -1364,6 +1367,15 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             exceptionItems.add(metamacExceptionItem);
         }
         return categoryElement;
+    }
+
+    private void fillCategoryElementIsVisibleField(ImportationCategoryElementsTsvHeader header, String[] columns, CategoryElement categoryElement) {
+        String isVisible = columns[header.getIsVisiblePosition()];
+        if (!StringUtils.isBlank(isVisible)) {
+            categoryElement.setIsVisible(Boolean.valueOf(isVisible));
+        } else {
+            categoryElement.setIsVisible(null);
+        }
     }
 
     @Override

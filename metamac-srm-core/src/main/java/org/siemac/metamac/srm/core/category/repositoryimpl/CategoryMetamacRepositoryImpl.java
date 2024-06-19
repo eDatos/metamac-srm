@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.core.category.repositoryimpl;
 
+import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getBoolean;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getDate;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getLong;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getString;
@@ -251,9 +252,10 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
     }
 
     @SuppressWarnings("rawtypes")
-    private void executeQueryFullCategoryElementAndUpdateCategoryMetamacResult(Long itemSchemeVersionId, Map<Long, ItemResult> mapCodeByItemId) {
+    private void executeQueryFullCategoryElementAndUpdateCategoryMetamacResult(Long itemSchemeVersionId, Map<Long, ItemResult> mapCodeByItemId) throws MetamacException {
         StringBuilder sbCategoryElements = new StringBuilder();
-        sbCategoryElements.append("SELECT c.TB_CATEGORIES as ITEM_ID, ave.URN as VE_URN, ave.CODE as VE_CODE, ls.LOCALE as SHORT_NAME_LOCALE, ls.LABEL as SHORT_NAME_LABEL ");
+        sbCategoryElements
+                .append("SELECT c.TB_CATEGORIES as ITEM_ID, ave.URN as VE_URN, ave.CODE as VE_CODE, cve.IS_VISIBLE as VE_IS_VISIBLE, ls.LOCALE as SHORT_NAME_LOCALE, ls.LABEL as SHORT_NAME_LABEL ");
         sbCategoryElements.append("FROM TB_M_CATEGORIES c ");
         sbCategoryElements.append("INNER JOIN TB_CATEGORIES cb on c.TB_CATEGORIES = cb.ID ");
         sbCategoryElements.append("INNER JOIN TB_CAT_RESOURCE_ELEMENTS cve on cve.tb_resource_elements = c.CATEGORY_ELEMENT_FK ");
@@ -276,6 +278,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
                 ((CategoryMetamacResultExtensionPoint) target.getExtensionPoint()).setCategoryElement(categoryElementResult);
                 categoryElementResult.setUrn(getString(categoryElementResultSqlArray[i++]));
                 categoryElementResult.setCode(getString(categoryElementResultSqlArray[i++]));
+                categoryElementResult.setIsVisible(getBoolean(categoryElementResultSqlArray[i++]));
             } else {
                 i++; // code
                 i++; // urn

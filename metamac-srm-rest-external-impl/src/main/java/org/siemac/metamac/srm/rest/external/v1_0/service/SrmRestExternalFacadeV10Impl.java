@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.rest.external.v1_0.service;
 
 import static org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils.hasField;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElementResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElements;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
@@ -86,6 +88,8 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamily;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
+import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
@@ -1480,7 +1484,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryElementCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
             // Retrieve
-            PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> entitiesPagedResult = findCategoryElementsCore(sculptorCriteria.getConditions(),
+            PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> entitiesPagedResult = findCategoryElementsCore(null, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
 
             // Transform
@@ -1490,8 +1494,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
-    private PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> findCategoryElementsCore(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter)
-            throws MetamacException {
+    private PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> findCategoryElementsCore(String categoryElementCode, List<ConditionalCriteria> conditionalCriteriaQuery,
+            PagingParameter pagingParameter) throws MetamacException {
 
         List<ConditionalCriteria> conditionalCriteria = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
@@ -1501,8 +1505,65 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(org.siemac.metamac.srm.core.category.domain.CategoryElement.class).distinctRoot().build());
         }
 
+        if (categoryElementCode != null) {
+            conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(org.siemac.metamac.srm.core.category.domain.CategoryElement.class)
+                    .withProperty(CategoryElementProperties.identifiableArtefact().code()).eq(categoryElementCode).buildSingle());
+        }
+
         // Find
         return categoriesService.findCategoryElementsByCondition(ctx, conditionalCriteria, pagingParameter);
+    }
+
+    @Override
+    public CategoryElementResource retrieveCategoryElementById(String resourceID) {
+        try {
+            checkParameterNotWildcardAll(SrmRestConstants.PARAMETER_RESOURCE_ID, resourceID);
+
+            // Retrieve
+            PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> entitiesPagedResult = findCategoryElementsCore(resourceID, null, pagingParameterOneResult);
+
+            if (entitiesPagedResult.getValues().size() != 1) {
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_ELEMENT_NOT_FOUND, resourceID);
+                throw new RestException(exception, Status.NOT_FOUND);
+            }
+
+            // Transform
+            CategoryElement categoryElementEntity = entitiesPagedResult.getValues().get(0);
+            return categoriesDo2RestMapper.toCategoryElementResource(categoryElementEntity);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
+    public Response retrieveCategoryElementLogo(String resourceID) {
+        try {
+            checkParameterNotWildcardAll(SrmRestConstants.PARAMETER_RESOURCE_ID, resourceID);
+
+            // Retrieve
+            PagedResult<org.siemac.metamac.srm.core.category.domain.CategoryElement> entitiesPagedResult = findCategoryElementsCore(resourceID, null, pagingParameterOneResult);
+
+            if (entitiesPagedResult.getValues().size() != 1) {
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_ELEMENT_NOT_FOUND, resourceID);
+                throw new RestException(exception, Status.NOT_FOUND);
+            }
+
+            // Transform
+            CategoryElement categoryElementEntity = entitiesPagedResult.getValues().get(0);
+
+            //
+            if (categoryElementEntity.getLogo() == null || categoryElementEntity.getLogo().getFile() == null) {
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_ELEMENT_LOGO_NOT_FOUND, resourceID);
+                throw new RestException(exception, Status.NOT_FOUND);
+            }
+
+            // Return
+            return Response.ok(new ByteArrayInputStream(categoryElementEntity.getLogo().getFile().getFileData()))
+                    .header("Content-Disposition", getContentDisposition(categoryElementEntity.getLogo().getFileName(), categoryElementEntity.getLogo().getExtension())).build();
+
+        } catch (Exception e) {
+            return manageExceptionResponse(e);
+        }
     }
 
     private ConceptSchemes findConceptSchemes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {

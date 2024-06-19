@@ -1374,7 +1374,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         if (!StringUtils.isBlank(isVisible)) {
             categoryElement.setIsVisible(Boolean.valueOf(isVisible));
         } else {
-            categoryElement.setIsVisible(null);
+            categoryElement.setIsVisible(false);
         }
     }
 

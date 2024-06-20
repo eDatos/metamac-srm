@@ -3,8 +3,6 @@ package org.siemac.metamac.srm.web.category.view;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getMessages;
 
-import java.util.logging.Logger;
-
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -39,8 +37,6 @@ import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementUiHandlers> implements CategoryElementPresenter.CategoryElementView {
-
-    private static Logger                   logger = Logger.getLogger(CategoryElementViewImpl.class.getName());
 
     private VLayout                         panel;
     private CategoryElementMainFormLayout   mainFormLayout;
@@ -171,14 +167,14 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         this.categoryElementDto = categoryElementDto;
 
         if (!onlyUpdate) {
-        String defaultLocalized = InternationalStringUtils.getLocalisedString(categoryElementDto.getShortName());
-        String title = defaultLocalized != null ? defaultLocalized : StringUtils.EMPTY;
-        mainFormLayout.setTitleLabelContents(title);
+            String defaultLocalized = InternationalStringUtils.getLocalisedString(categoryElementDto.getShortName());
+            String title = defaultLocalized != null ? defaultLocalized : StringUtils.EMPTY;
+            mainFormLayout.setTitleLabelContents(title);
 
-        mainFormLayout.setViewMode();
+            mainFormLayout.setViewMode();
 
-        setCategoryElementViewMode(categoryElementDto);
-        setCategoryElementEditionMode(categoryElementDto);
+            setCategoryElementViewMode(categoryElementDto);
+            setCategoryElementEditionMode(categoryElementDto);
         }
 
     }

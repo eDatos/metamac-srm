@@ -42,6 +42,7 @@ public class CategoriesRecordUtils extends org.siemac.metamac.srm.web.client.uti
         categoryElementRecord.setCode(categoryElementDto.getCode());
         categoryElementRecord.setShortName(getLocalisedString(categoryElementDto.getShortName()));
         categoryElementRecord.setUrn(categoryElementDto.getUrn());
+        categoryElementRecord.setIsVisible(categoryElementDto.getIsVisible());
         categoryElementRecord.setCategoryElementDto(categoryElementDto);
         return categoryElementRecord;
     }

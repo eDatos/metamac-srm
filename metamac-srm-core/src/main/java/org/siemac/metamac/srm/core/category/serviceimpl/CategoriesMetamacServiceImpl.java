@@ -1081,8 +1081,15 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         // Create
         setCategoryElementUrnUnique(categoryElement, Boolean.TRUE);
+        setIsVisible(categoryElement);
         categoryElement = getCategoryElementRepository().save(categoryElement);
         return categoryElement;
+    }
+
+    private void setIsVisible(CategoryElement categoryElement) {
+        if (categoryElement.getIsVisible() == null) {
+            categoryElement.setIsVisible(false);
+        }
     }
 
     public CategoryElement updateCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
@@ -1097,6 +1104,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         if (categoryElement.getIdentifiableArtefact().getIsCodeUpdated()) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_UNMODIFIABLE).withMessageParameters(ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE).build();
         }
+
+        setIsVisible(categoryElement);
         categoryElement.setUpdateDate(new DateTime()); // Optimistic locking: Update "update date" attribute to force update to root entity, to increase attribute "version"
 
         // Update

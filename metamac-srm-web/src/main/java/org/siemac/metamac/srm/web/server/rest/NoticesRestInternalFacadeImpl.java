@@ -133,7 +133,7 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
 
         ResourceInternal resource = this.maintainableResourceToResourceInternal(ctx, maintainableArtefactDto, resourceType);
         ResourceInternal[] resources = {resource};
-        createNotification(ctx, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR, resources, resourceType, null);
+        createNotification(ctx, actionCode, messageCode, resources, resourceType, null);
     }
 
     private ResourceInternal maintainableResourceToResourceInternal(ServiceContext ctx, MaintainableArtefactDto maintainableArtefactDto, TypeExternalArtefactsEnum resourceType) {

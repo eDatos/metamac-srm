@@ -9,4 +9,5 @@
     <entry key="metamac.srm.variables.variable_element_world.urn">urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableElement=TERRITORIO_MUNDO.MUNDO</entry>
     <entry key="metamac.srm.web.internal">http://host:8080/structural-resources-internal</entry>
     <entry key="metamac.srm.rest.internal">//apis.metamac.org/srm-internal</entry>
+     <entry key="metamac.allowed_image_extensions">svg,jpg,jpeg,png,bmp</entry>
 </properties>

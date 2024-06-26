@@ -118,6 +118,7 @@ public class CategoriesMetamacAsserts extends CategoriesAsserts {
         assertEqualsInternationalString(expected.getComment(), actual.getComment());
         assertEqualsDate(expected.getValidFrom(), actual.getValidFrom());
         assertEqualsDate(expected.getValidTo(), actual.getValidTo());
+        assertEquals(expected.getIsVisible(), actual.getIsVisible());
 
         // other artefacts
         assertEqualsIdentifiableArtefact(expected.getIdentifiableArtefact(), actual.getIdentifiableArtefact());

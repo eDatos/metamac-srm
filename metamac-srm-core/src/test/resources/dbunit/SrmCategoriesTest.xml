@@ -39,6 +39,8 @@
     <TB_SEQUENCES SEQUENCE_NAME="M_CODELISTS_VERSIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODES" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_RESOURCE_ELEMENTS" SEQUENCE_NEXT_VALUE="100000000" />
+    <TB_SEQUENCES SEQUENCE_NAME="M_RESOURCE_METADATA_FILE" SEQUENCE_NEXT_VALUE="100000000" />
+    
  
      <!-- ************************************************************************************** -->
     <!-- TB_LIS_ENI_SCHEMA_CATALOGS                                                             -->
@@ -3267,18 +3269,28 @@
                 />   
                 
       <TB_CAT_RESOURCE_ELEMENTS
+       	IS_VISIBLE="true"
+       	
 		TB_RESOURCE_ELEMENTS="1" />
 	<TB_CAT_RESOURCE_ELEMENTS
+		IS_VISIBLE="false"
+		
 		TB_RESOURCE_ELEMENTS="2" />
 	<TB_CAT_RESOURCE_ELEMENTS
+		IS_VISIBLE="false"
+			
 		TB_RESOURCE_ELEMENTS="3" />
 	<TB_CAT_RESOURCE_ELEMENTS
+		IS_VISIBLE="true"
 		TB_RESOURCE_ELEMENTS="4" />
 	<TB_CAT_RESOURCE_ELEMENTS
+		IS_VISIBLE="true"
 		TB_RESOURCE_ELEMENTS="5" />
 	<TB_CAT_RESOURCE_ELEMENTS
+		IS_VISIBLE="true"
 		TB_RESOURCE_ELEMENTS="6" />	
 		<TB_CAT_RESOURCE_ELEMENTS
+		IS_VISIBLE="true"
 		TB_RESOURCE_ELEMENTS="7" />	
     <!-- ************************************************************************************** -->
     <!-- EXTERNAL ITEMS                                                                         -->

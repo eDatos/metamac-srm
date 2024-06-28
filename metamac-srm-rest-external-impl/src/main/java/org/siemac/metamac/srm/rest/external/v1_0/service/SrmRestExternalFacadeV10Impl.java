@@ -1559,7 +1559,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
             // Return
             return Response.ok(new ByteArrayInputStream(categoryElementEntity.getLogo().getFile().getFileData()))
-                    .header("Content-Disposition", getContentDisposition(categoryElementEntity.getLogo().getFileName(), categoryElementEntity.getLogo().getExtension())).build();
+                    .header("Content-Disposition", getContentDisposition(categoryElementEntity.getLogo().getFileName(), categoryElementEntity.getLogo().getExtension(), "attachment")).build();
 
         } catch (Exception e) {
             return manageExceptionResponse(e);
@@ -2282,7 +2282,11 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     public static String getContentDisposition(String fileNamePrefix, String format) {
-        return "inline; filename=" + fileNamePrefix + "." + format;
+        return getContentDisposition(fileNamePrefix, format, "inline");
+    }
+
+    public static String getContentDisposition(String fileNamePrefix, String format, String type) {
+        return type + "; filename=" + fileNamePrefix + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {

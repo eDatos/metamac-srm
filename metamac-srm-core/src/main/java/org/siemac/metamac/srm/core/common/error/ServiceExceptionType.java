@@ -230,7 +230,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "info.srm.importation.logo.error.category_element.error");
     public static final CommonServiceExceptionType IMPORTATION_LOGO_CATEGORY_ELEMENT_EXTENSION_ERROR                                     = create(
             "info.srm.importation.logo.error.category_element_extension.error");
-
+    public static final CommonServiceExceptionType IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR                                      = create(
+            "info.srm.importation.logo.error.category_element_max_size.error");
     public static final CommonServiceExceptionType EXPORTATION_LOGO_CATEGORY_ELEMENT                                                     = create(
             "exception.srm.exportation.category_element.logo.error");
 

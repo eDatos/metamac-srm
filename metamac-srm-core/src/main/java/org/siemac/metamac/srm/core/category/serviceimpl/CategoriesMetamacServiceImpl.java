@@ -1551,6 +1551,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         try {
             byte[] logoData = IOUtils.toByteArray(imageStream);
 
+            checkMaxImageSize(categoryElementUrn, logoData);
+
             saveCategoryElementLogo(categoryElement, logoData, fileName);
 
         } catch (IOException e) {
@@ -1575,6 +1577,18 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
         throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_EXTENSION_ERROR)
                 .withMessageParameters(categoryElementUrn, allowedImageExtensions).build();
+    }
+
+    private void checkMaxImageSize(String categoryElementUrn, byte[] logoData) throws MetamacException {
+        int maxImageSizeInKB = Integer.parseInt(srmConfiguration.retrieveImageMaxSize());
+
+        double sizeInKB = (double) logoData.length / (double) 1024;
+
+        if (sizeInKB > maxImageSizeInKB) {
+
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR)
+                    .withMessageParameters(categoryElementUrn, maxImageSizeInKB).build();
+        }
     }
 
     private void saveCategoryElementLogo(CategoryElement categoryElement, byte[] logoData, String logoFilePath) {

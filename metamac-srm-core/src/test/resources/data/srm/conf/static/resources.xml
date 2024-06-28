@@ -10,4 +10,5 @@
     <entry key="metamac.srm.web.internal">http://host:8080/structural-resources-internal</entry>
     <entry key="metamac.srm.rest.internal">//apis.metamac.org/srm-internal</entry>
      <entry key="metamac.allowed_image_extensions">svg,jpg,jpeg,png,bmp</entry>
+     <entry key="metamac.image_max_size_in_kb">10</entry>
 </properties>

@@ -3339,10 +3339,8 @@
                "200":{
                   "schema":{
                      "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.responses.200.schema.description" bundle="${i18n}"/>",
-                      "type": "file"
                   },
                   "headers":{
-
                   },
                   "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
                },

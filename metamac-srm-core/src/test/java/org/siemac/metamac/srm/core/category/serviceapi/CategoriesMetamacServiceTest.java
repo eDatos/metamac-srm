@@ -3353,6 +3353,23 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
     }
 
+    @Test
+    public void testImportCategoryElementLogoMaxSizeError() throws Exception {
+        String fileName = "poblacion.svg";
+        File file = new File(this.getClass().getResource("/images/" + fileName).getFile());
+
+        try (InputStream imageStream = new FileInputStream(file)) {
+
+            categoriesService.importCategoryElementLogo(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN, fileName, imageStream, false);
+            fail("logo exceeds max size");
+
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+
+    }
+
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmCategoriesTest.xml";

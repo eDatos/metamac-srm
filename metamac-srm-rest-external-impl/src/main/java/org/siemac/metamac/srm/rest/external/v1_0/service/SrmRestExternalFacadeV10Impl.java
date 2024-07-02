@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -29,6 +30,8 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
+import org.siemac.metamac.rest.enume.utils.ResourcesFormat;
+import org.siemac.metamac.rest.enume.utils.ResourcesFormatOperation;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -1558,8 +1561,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             }
 
             // Return
-            return Response.ok(new ByteArrayInputStream(categoryElementEntity.getLogo().getFile().getFileData()))
-                    .header("Content-Disposition", getContentDisposition(categoryElementEntity.getLogo().getFileName(), categoryElementEntity.getLogo().getExtension(), "attachment")).build();
+            ResourcesFormatOperation resourcesFormatOperation = new ResourcesFormatOperation();
+            ResponseBuilder response = Response.ok(new ByteArrayInputStream(categoryElementEntity.getLogo().getFile().getFileData())).header("Content-Disposition",
+                    getContentDisposition(categoryElementEntity.getLogo().getFileName(), categoryElementEntity.getLogo().getExtension()));
+            if (ResourcesFormat.SVG.name().equals(categoryElementEntity.getLogo().getExtension().toUpperCase())) {
+                response.header("Content-Type", resourcesFormatOperation.getMimeType(ResourcesFormat.SVG.name()));
+            }
+            return response.build();
 
         } catch (Exception e) {
             return manageExceptionResponse(e);
@@ -2282,11 +2290,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     public static String getContentDisposition(String fileNamePrefix, String format) {
-        return getContentDisposition(fileNamePrefix, format, "inline");
-    }
-
-    public static String getContentDisposition(String fileNamePrefix, String format, String type) {
-        return type + "; filename=" + fileNamePrefix + "." + format;
+        return "inline; filename=" + fileNamePrefix + "." + format;
     }
 
     private Set<String> getFieldsParameters(String fields) {

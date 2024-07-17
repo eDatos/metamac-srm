@@ -1,60 +1,82 @@
+<%@page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
 <%@page pageEncoding="UTF-8"%>
-<%! String id = "ID: identificador"; %>
-<%! String urn = "URN: urn única"; %>
-<%! String name = "NAME: nombre"; %>
-<%! String parent = "PARENT: identificador del elemento padre"; %>
-<%! String description = "DESCRIPTION: descripción"; %>
-<%! String descriptionSource = "DESCRIPTION_SOURCE: origen de la descripción"; %>
-<%! String validFrom = "VALID_FROM: válido desde"; %>
-<%! String validTo = "VALID_TO: válido hasta"; %>
-<%! String lastUpdatedDate = "LAST_UPDATED_DATE: fecha de última actualización"; %>
-<%! String latest = "LATEST: es último"; %>
-<%! String variableUrn = "VARIABLE_URN: URN de variable"; %>
-<%! String variableFamilyUrn = "VARIABLE_FAMILY_URN: URN de la familia de variables"; %>
-<%! String codelistFamilyUrn = "CODELIST_FAMILY_URN: URN de la familia de clasificaciones"; %>
-<%! String isRecommended = "IS_RECOMMENDED: Indica si la clasificación es recomendada o no"; %>
-<%! String variableElementUrn = "VARIABLE_ELEMENT_URN: URN del elemento de variable"; %>
-<%! String codelistUrn = "CODELIST_URN: URN de la clasificación"; %>
-<%! String codelistLatest = "CODELIST_LATEST: última clasificación"; %>
-<%! String statisticalOperationUrn = "STATISTICAL_OPERATION_URN: URN de operación estadística"; %>
-<%! String conceptSchemeLatest = "CONCEPT_SCHEME_LATEST: Último esquema de concepto"; %>
-<%! String acronym = "ACRONYM: Acrónimo"; %>
-<%! String extendsUrn = "EXTENDS_URN: Extiende URN"; %>
-<%! String artefactUrn = "ARTEFACT_URN: URN de artefacto"; %>
-<%! String relatedConceptUrn = "RELATED_CONCEPT_URN: URN de concepto relacionado"; %>
-<%! String organisationSchemeUrn = "ORGANISATION_SCHEME_URN: URN de esquema de organización"; %>
-<%! String type = "TYPE: tipo"; %>
-<%! String categoryUrn = "CATEGORY_URN: URN de categoría"; %>
-<%! String categorySchemeUrn = "CATEGORY_SCHEME_URN: URN de esquema de categoría"; %>
-<%! String categorySchemeLatest = "CATEGORY_SCHEME_LATEST: último esquema de categoría"; %>
-<%! String categoryElementCode = "CATEGORY_ELEMENT_CODE: código del elemento de categoría"; %>
-<%! String categoryElementUrn = "CATEGORY_ELEMENT_URN: Urn del elemento de categoría"; %>
-<%! String categoryElementShortName = "CATEGORY_ELEMENT_SHORT_NAME: nombre corto del elemento de categoría"; %>
-<%! String variableType = "VARIABLE_TYPE: tipo de variable"; %>
-<%! String familyUrn = "FAMILY_URN: URN de familia"; %>
-<%! String shortName = "SHORT_NAME: Nombre corto"; %>
-<%! String geographicalGranularityUrn = "GEOGRAPHICAL_GRANULARITY_URN: URN de granularidad geográfica"; %>
-<%! String organisationSchemeLatest = "ORGANISATION_SCHEME_LATEST: último esquema de organización"; %>
-<%! String conceptSchemeUrn = "CONCEPT_SCHEME_URN: URN de esquema de concepto"; %>
-<%! String conceptSchemeStatisticalOperationUrn = "CONCEPT_SCHEME_STATISTICAL_OPERATION_URN"; %>
-<%! String conceptSchemeType = "CONCEPT_SCHEME_TYPE"; %>
-<%! String attributeConceptUrn = "ATTRIBUTE_CONCEPT_URN"; %>
-<%! String dimensionConceptUrn = "DIMENSION_CONCEPT_URN"; %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
+<%
+   String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+%>
+<fmt:setLocale value="<%= locale %>"/>
+<fmt:setBundle basename="i18n.messages" var="i18n"/>
+<fmt:bundle basename="application"/>
 
-<%! String validOperators = "<div>Operadores válidos:<ul><li>EQ: igual, </li><li>IEQ: igual sin distinción de mayúsculas, </li><li>LIKE: patrón de búsqueda, </li><li>ILIKE: patrón sin distinción de mayúsculas, </li><li>NE: no igual, </li><li>LT: menor que, </li><li>LE: menor o igual, </li><li>GT: mayor que, </li><li>GE: mayor o igual, </li><li>IS_NULL. valor nulo, </li><li>IS_NOT_NULL: valor no nulo, </li><li>IN: valor dentro de un conjunto</li></ul>"; %>
-<%! String criteriosDeOrden = "Criterios de Orden<ul><li>ASC: ascendente</li><li>DESC: descendente</li></ul>"; %>
-<%! String queryDescription = "<div>Consulta para filtrar los resultados</div>"; %>
-<%! String orderByDescription = "<div>Campo por el que ordenar los resultados</div>"; %>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="org.apache.commons.lang.LocaleUtils" %>
+<%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
 
-<%! public String queryDescriptionWithParams(String... a) {
-    String result = "" + queryDescription + validOperators +"<div>Campos válidos:<ul>";
+<%! 
+
+String locale = "es";
+
+ResourceBundle messagesBundle = ResourceBundle.getBundle("i18n.messages", LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
+
+String id = messagesBundle.getString("api.doc.swagger.components.id");
+String urn = messagesBundle.getString("api.doc.swagger.components.urn");
+String name = messagesBundle.getString("api.doc.swagger.components.name");
+String parent = messagesBundle.getString("api.doc.swagger.components.parent");
+String description = messagesBundle.getString("api.doc.swagger.components.description");
+String descriptionSource = messagesBundle.getString("api.doc.swagger.components.descriptionSource");
+String validFrom = messagesBundle.getString("api.doc.swagger.components.validFrom");
+String validTo = messagesBundle.getString("api.doc.swagger.components.validTo");
+String lastUpdatedDate = messagesBundle.getString("api.doc.swagger.components.lastUpdatedDate");
+String latest = messagesBundle.getString("api.doc.swagger.components.latest");
+String variableUrn = messagesBundle.getString("api.doc.swagger.components.variableUrn");
+String variableFamilyUrn = messagesBundle.getString("api.doc.swagger.components.variableFamilyUrn");
+String codelistFamilyUrn = messagesBundle.getString("api.doc.swagger.components.codelistFamilyUrn");
+String isRecommended = messagesBundle.getString("api.doc.swagger.components.isRecommended");
+String variableElementUrn = messagesBundle.getString("api.doc.swagger.components.variableElementUrn");
+String codelistUrn = messagesBundle.getString("api.doc.swagger.components.codelistUrn");
+String codelistLatest = messagesBundle.getString("api.doc.swagger.components.codelistLatest");
+String statisticalOperationUrn = messagesBundle.getString("api.doc.swagger.components.statisticalOperationUrn");
+String conceptSchemeLatest = messagesBundle.getString("api.doc.swagger.components.conceptSchemeLatest");
+String acronym = messagesBundle.getString("api.doc.swagger.components.acronym");
+String extendsUrn = messagesBundle.getString("api.doc.swagger.components.extendsUrn");
+String artefactUrn = messagesBundle.getString("api.doc.swagger.components.artefactUrn");
+String relatedConceptUrn = messagesBundle.getString("api.doc.swagger.components.relatedConceptUrn");
+String organisationSchemeUrn = messagesBundle.getString("api.doc.swagger.components.organisationSchemeUrn");
+String type = messagesBundle.getString("api.doc.swagger.components.type");
+String categoryUrn = messagesBundle.getString("api.doc.swagger.components.categoryUrn");
+String categorySchemeUrn = messagesBundle.getString("api.doc.swagger.components.categorySchemeUrn");
+String categorySchemeLatest = messagesBundle.getString("api.doc.swagger.components.categorySchemeLatest");
+String categoryElementCode = messagesBundle.getString("api.doc.swagger.components.categoryElementCode");
+String categoryElementUrn = messagesBundle.getString("api.doc.swagger.components.categoryElementUrn");
+String categoryElementShortName = messagesBundle.getString("api.doc.swagger.components.categoryElementShortName");
+String variableType = messagesBundle.getString("api.doc.swagger.components.variableType");
+String familyUrn = messagesBundle.getString("api.doc.swagger.components.familyUrn");
+String shortName = messagesBundle.getString("api.doc.swagger.components.shortName");
+String geographicalGranularityUrn = messagesBundle.getString("api.doc.swagger.components.geographicalGranularityUrn");
+String organisationSchemeLatest = messagesBundle.getString("api.doc.swagger.components.organisationSchemeLatest");
+String conceptSchemeUrn = messagesBundle.getString("api.doc.swagger.components.conceptSchemeUrn");
+String conceptSchemeStatisticalOperationUrn = messagesBundle.getString("api.doc.swagger.components.conceptSchemeStatisticalOperationUrn");
+String conceptSchemeType = messagesBundle.getString("api.doc.swagger.components.conceptSchemeType");
+String attributeConceptUrn = messagesBundle.getString("api.doc.swagger.components.attributeConceptUrn");
+String dimensionConceptUrn = messagesBundle.getString("api.doc.swagger.components.dimensionConceptUrn");
+
+String validOperators = messagesBundle.getString("api.doc.swagger.components.validOperators");
+String criteriosDeOrden = messagesBundle.getString("api.doc.swagger.components.criteriosDeOrden");
+String queryDescription = messagesBundle.getString("api.doc.swagger.components.queryDescription");
+String orderByDescription = messagesBundle.getString("api.doc.swagger.components.orderByDescription");
+
+String exampleOrderBy = messagesBundle.getString("api.doc.swagger.components.exampleOrderBy");
+String validFieldId = messagesBundle.getString("api.doc.swagger.components.validFieldId");
+
+public String queryDescriptionWithParams(String... a) {
+    String result = "" + queryDescription + validOperators + messagesBundle.getString("api.doc.swagger.components.validFields");
     for (int i = 0; i < a.length; i++) {
         result += "<li>" + a[i] + "</li>";
     }
-    return result + "</ul> Ejemplo: query=\\\"ID EQ 2090\\\"</div>";    
+    return result + messagesBundle.getString("api.doc.swagger.components.example");    
 }
 %>
-
 
 {
     "parameters": {
@@ -62,31 +84,31 @@
             "name":"limit",
             "in":"query",
             "type":"string",
-            "description":"Límite de resultados (número máximo), por defecto 25.<br/>Ejemplo: limit=10."
+            "description":"<fmt:message key="api.doc.swagger.components.parameters.limitParam.description" bundle="${i18n}"/>"
         },
         "offsetParam":{
               "name":"offset",
               "in":"query",
               "type":"string",
-              "description":" Desplazamiento. Resultado a partir del que se devuelve. El valor por defecto es 0. Ejemplo: offset=2."
+              "description":"<fmt:message key="api.doc.swagger.components.parameters.offsetParam.description" bundle="${i18n}"/>"
         },
         "agencyIdParam":{
               "name":"agencyID",
               "in":"path",
               "type":"string",
-              "description":"Identificador de la agencia que publica"
+              "description":"<fmt:message key="api.doc.swagger.components.parameters.agencyIdParam.description" bundle="${i18n}"/>"
          },
         "resourceIdParam": {
               "name":"resourceID",
               "in":"path",
               "type":"string",
-              "description":"Identificador del recurso"
+              "description":"<fmt:message key="api.doc.swagger.components.parameters.resourceIdParam.description" bundle="${i18n}"/>"
          },
          "versionParam":  {
               "name":"version",
               "in":"path",
               "type":"string",
-              "description":"Versión específica del recurso"
+              "description":"<fmt:message key="api.doc.swagger.components.parameters.versionParam.description" bundle="${i18n}"/>"
           },
         "codelistQueryParam": {
             "name":"query",
@@ -104,7 +126,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "conceptSchemasQueryParam": {
             "name":"query",
@@ -116,7 +138,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "conceptQueryParam": {
             "name":"query",
@@ -128,7 +150,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "contentConstraintQueryParam": {
             "name":"query",
@@ -140,7 +162,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "dataStructuresQueryParam": {
             "name":"query",
@@ -152,7 +174,7 @@
             "name":"orderBy",
             "in":"query",
             "type":"string",
-            "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+            "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "organizationSchemeQueryParam": {
             "name":"query",
@@ -164,7 +186,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
          "organizationQueryParam": {
             "name":"query",
@@ -176,7 +198,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "categorySchemeQueryParam": {
             "name":"query",
@@ -188,7 +210,7 @@
             "name":"orderBy",
             "in":"query",
             "type":"string",
-            "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+            "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
          "categorisationQueryParam": {
             "name":"query",
@@ -200,7 +222,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
          "categoryQueryParam": {
             "name":"query",
@@ -212,7 +234,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableFamilyQueryParam": {
             "name":"query",
@@ -224,7 +246,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableQueryParam": {
             "name":"query",
@@ -236,7 +258,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br>Campos válidos<ul><li><%=id %></li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableElementQueryParam": {
             "name":"query",
@@ -248,7 +270,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%= orderByDescription %><br>Campos válidos<ul><li>ID</li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%= orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
          "categoryElementQueryParam": {
             "name":"query",
@@ -260,7 +282,7 @@
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%= orderByDescription %><br>Campos válidos<ul><li>ID</li></ul><%= criteriosDeOrden %><br>Ejemplo: orderBy=\"ID ASC\""
+          "description":"<%= orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         
     }

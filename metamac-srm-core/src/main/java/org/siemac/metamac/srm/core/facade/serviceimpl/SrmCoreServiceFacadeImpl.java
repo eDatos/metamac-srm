@@ -73,6 +73,7 @@ import org.siemac.metamac.srm.core.code.mapper.CodesDto2DoMapper;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
+import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
@@ -1520,6 +1521,17 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public TaskImportationInfo importAnnotationsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
+        // Security
+        CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);
+        CodesSecurityUtils.canImportAnnotations(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCodesMetamacService().importAnnotationsTsv(ctx, codelistUrn, file, fileName, Boolean.TRUE);
+    }
+
+    @Override
     public TaskImportationInfo importCodeRestrictionsTsv(ServiceContext ctx, String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException {
         // Security
         CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);
@@ -1548,6 +1560,15 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Export
         return getCodesMetamacService().exportCodesTsv(ctx, codelistUrn);
+    }
+
+    @Override
+    public String exportAnnotationsTsv(ServiceContext ctx, String codelistUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canExportCodesTsv(ctx);
+
+        // Export
+        return getCodesMetamacService().exportAnnotationsTsv(ctx, codelistUrn);
     }
 
     @Override
@@ -1609,13 +1630,13 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public void updateCodesVariableElements(ServiceContext ctx, String codelistUrn, Map<Long, Long> variableElementsIdByCodeId) throws MetamacException {
+    public SendStreamMessageResult updateCodesVariableElements(ServiceContext ctx, String codelistUrn, Map<Long, Long> variableElementsIdByCodeId) throws MetamacException {
         // Security
         CodelistVersionMetamac codelistVersion = getCodesMetamacService().retrieveCodelistByUrn(ctx, codelistUrn);
         CodesSecurityUtils.canUpdateCodeVariableElement(ctx, codelistVersion.getLifeCycleMetadata().getProcStatus());
 
         // Update
-        getCodesMetamacService().updateCodesVariableElements(ctx, codelistUrn, variableElementsIdByCodeId);
+        return getCodesMetamacService().updateCodesVariableElements(ctx, codelistUrn, variableElementsIdByCodeId);
     }
 
     @Override
@@ -2238,7 +2259,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public VariableElementDto createVariableElement(ServiceContext ctx, VariableElementDto variableElementDto) throws MetamacException {
+    public ResourceVersionPublicationResult<VariableElementDto> createVariableElement(ServiceContext ctx, VariableElementDto variableElementDto) throws MetamacException {
         // Security
         CodesSecurityUtils.canCrudVariableElement(ctx);
 
@@ -2246,11 +2267,13 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         VariableElement variableElement = codesDto2DoMapper.variableElementDtoToDo(variableElementDto);
 
         // Create
-        VariableElement variableElementCreated = getCodesMetamacService().createVariableElement(ctx, variableElement);
+        ResourceVersionPublicationResult<VariableElement> variableElementResult = getCodesMetamacService().createVariableElement(ctx, variableElement);
 
         // Transform to DTO
-        variableElementDto = codesDo2DtoMapper.variableElementDoToDto(variableElementCreated);
-        return variableElementDto;
+        variableElementDto = codesDo2DtoMapper.variableElementDoToDto(variableElementResult.getResourceVersion());
+
+        return new ResourceVersionPublicationResult<>(variableElementResult.getContent(), variableElementResult.getExceptions(), variableElementDto);
+
     }
 
     @Override
@@ -2290,7 +2313,7 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public VariableElementDto updateVariableElement(ServiceContext ctx, VariableElementDto variableElementDto) throws MetamacException {
+    public ResourceVersionPublicationResult<VariableElementDto> updateVariableElement(ServiceContext ctx, VariableElementDto variableElementDto) throws MetamacException {
         // Security
         CodesSecurityUtils.canCrudVariableElement(ctx);
 
@@ -2298,11 +2321,11 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         VariableElement variableElementToUpdate = codesDto2DoMapper.variableElementDtoToDo(variableElementDto);
 
         // Update
-        VariableElement variableElementUpdated = getCodesMetamacService().updateVariableElement(ctx, variableElementToUpdate);
+        ResourceVersionPublicationResult<VariableElement> variableElementResult = getCodesMetamacService().updateVariableElement(ctx, variableElementToUpdate);
 
         // Transform to DTO
-        variableElementDto = codesDo2DtoMapper.variableElementDoToDto(variableElementUpdated);
-        return variableElementDto;
+        variableElementDto = codesDo2DtoMapper.variableElementDoToDto(variableElementResult.getResourceVersion());
+        return new ResourceVersionPublicationResult<>(variableElementResult.getContent(), variableElementResult.getExceptions(), variableElementDto);
     }
 
     @Override
@@ -4341,6 +4364,27 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
         // Normalise
         return getCategoriesMetamacService().normaliseCategoryElementsToCategories(ctx, categorySchemeUrn, locale, proposeOnlyWithoutCategoryElement);
+    }
+
+    @Override
+    public SendStreamMessageResult resendUpdatedVariableElement(ServiceContext ctx, String variableElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canResendVariableElementKafkaMessage(ctx);
+
+        VariableElement variableElement = getCodesMetamacService().retrieveVariableElementByUrn(ctx, variableElementUrn);
+
+        // Normalise
+        return getCodesMetamacService().notifyVariableElementPublication(ctx, variableElement);
+    }
+
+    @Override
+    public TaskInfo publishVariableElementInBackground(ServiceContext ctx, String variableUrn, String localeLanguage) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canResendVariableElementKafkaMessage(ctx);
+
+        // Publish
+        return getCodesMetamacService().publishVariableElementInBackground(ctx, variableUrn, localeLanguage);
+
     }
 
 }

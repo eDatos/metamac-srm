@@ -136,7 +136,10 @@ public class ResourceImportationServlet extends HttpServlet {
                 TaskImportationInfo taskImportationInfo = importCodes(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
 
-            } else if (ImportableResourceTypeEnum.CODES_ORDER.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
+            } else if (ImportableResourceTypeEnum.ANNOTATIONS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) { 
+                TaskImportationInfo taskImportationInfo = importAnnotations(srmCoreServiceFacade, fileName, inputStream, args);
+                successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+            }else if (ImportableResourceTypeEnum.CODES_ORDER.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
                 TaskImportationInfo taskImportationInfo = importCodeOrders(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
@@ -329,6 +332,15 @@ public class ResourceImportationServlet extends HttpServlet {
         Boolean updateAlreadyExisting = Boolean.parseBoolean(args.get(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING));
 
         return srmCoreServiceFacade.importCodesTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName, updateAlreadyExisting);
+    }
+
+    //Annotations
+    
+    private TaskImportationInfo importAnnotations(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
+
+        String codelistUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN);
+
+        return srmCoreServiceFacade.importAnnotationsTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName);
     }
 
     // Code orders

@@ -9,4 +9,6 @@ public interface VariableElementUiHandlers extends BaseVariableUiHandlers {
 
     void retrieveVariableElementsByVariableForReplaceTo(int firstResult, int maxResults, final String criteria, String variableUrn);
     void retrieveVariableElementsByVariableForSegregationOperation(int firstResult, int maxResults, final String criteria, String variableUrn);
+
+    void reSendStreamMessageVariableElement(String urn);
 }

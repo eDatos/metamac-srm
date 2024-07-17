@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
+import org.siemac.metamac.core.common.util.shared.BooleanUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.core.code.dto.VariableDto;
@@ -47,10 +48,14 @@ import org.siemac.metamac.srm.web.shared.code.GetVariableFamiliesResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariableResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesAction;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
+import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageResult;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementAction;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableElementResult;
 import org.siemac.metamac.srm.web.shared.code.SaveVariableResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
@@ -115,7 +120,7 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
 
         void setCodelistsForVariableElementGeographicalGranularity(GetRelatedResourcesResult result);
         void setCodesForVariableElementGeographicalGranularity(GetRelatedResourcesResult result);
-
+        void showInformationMessage(String title, String message);
         void clearSearchSection();
     }
 
@@ -125,7 +130,8 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
     public static final Object                        TYPE_SetContextAreaContentCodesToolBar = new Object();
 
     @Inject
-    public VariablePresenter(EventBus eventBus, VariableView view, VariableProxy proxy, DispatchAsync dispatcher, PlaceManager placeManager, CodesToolStripPresenterWidget codesToolStripPresenterWidget) {
+    public VariablePresenter(EventBus eventBus, VariableView view, VariableProxy proxy, DispatchAsync dispatcher, PlaceManager placeManager,
+            CodesToolStripPresenterWidget codesToolStripPresenterWidget) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
@@ -295,6 +301,29 @@ public class VariablePresenter extends Presenter<VariablePresenter.VariableView,
                 fireSuccessMessage(MetamacSrmWeb.getMessages().variableElementDeleted());
             }
         });
+    }
+
+    @Override
+    public void resendUpdatedVariableElementsKafkaMessage(List<String> urns, String variableUrn, String locale) {
+        dispatcher.execute(new ReSendMultipleVariableElementsStreamMessageAction(urns, variableUrn, locale),
+                new WaitingAsyncCallbackHandlingError<ReSendMultipleVariableElementsStreamMessageResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(ReSendMultipleVariableElementsStreamMessageResult result) {
+                        retrieveVariableElementsByVariable(ELEMENT_LIST_FIRST_RESULT, ELEMENT_LIST_MAX_RESULTS, null, variableDto.getUrn());
+
+                        if (BooleanUtils.isTrue(result.getTaskInBackground())) {
+                            getView().showInformationMessage(getMessages().variableElementReSendStreamMessageInBackground(), getMessages().variableElementReSendStreamMessageInProgressBackground());
+                        } else {
+                            if (result.getNotificationException() != null) {
+                                ShowMessageEvent.fireWarningMessageWithError(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessageError(),
+                                        result.getNotificationException());
+                            } else {
+                                ShowMessageEvent.fireSuccessMessage(VariablePresenter.this, getMessages().multipleVariableElementReSendStreamMessagePublished());
+                            }
+                        }
+                    }
+                });
     }
 
     @Override

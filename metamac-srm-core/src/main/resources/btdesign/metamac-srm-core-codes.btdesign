@@ -64,7 +64,7 @@ Application CodesMetamac {
 	    	"Publish internally a codelist"
 	    	TaskInfo publishInternallyCodelist(String urn, Boolean forceLatestFinal, Boolean canBeBackground) throws MetamacException;
 	    	"Publish externally a codelist"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CodelistVersionMetamac> publishExternallyCodelist(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CodelistVersionMetamac> publishExternallyCodelist(String urn) throws MetamacException;
 	    	"Resend a codelist"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCodelist(@CodelistVersionMetamac codelistVersion) throws MetamacException;
 			"Deletes codelist version. This must be last version and no published"
@@ -91,7 +91,7 @@ Application CodesMetamac {
     		checkCodelistWithRelatedResourcesExternallyPublished(@CodelistVersionMetamac codelistVersion) throws MetamacException;
     		"Finds codelist IDs by variable information (variableUrn, variableFamilyUrn and variableElementUrn"
             List<Long> findCodelistsByVariableInformation(String variableUrn, String variableFamilyUrn, String variableElementUrn) throws MetamacException;
-    		
+
 			// CODES
 
 			"Creates code"
@@ -103,7 +103,7 @@ Application CodesMetamac {
 			"Change variable element to code"
 			@CodeMetamac updateCodeVariableElement(String codeUrn, String variableElementUrn) throws MetamacException;
 			"Change variable elements to codes"
-			updateCodesVariableElements(String codelistUrn, Map<Long,Long> variableElementsIdByCodeId) throws MetamacException;
+			org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult updateCodesVariableElements(String codelistUrn, Map<Long,Long> variableElementsIdByCodeId) throws MetamacException;
 			"Updates parent of code. parentUrn is null when code is moved to first level. Code is moved at the end of new level"
 			updateCodeParent(String codeUrn, String newParentUrn) throws MetamacException;
 			"Updates position of code to visualisation requested"
@@ -131,12 +131,16 @@ Application CodesMetamac {
     		TaskImportationInfo importCodesTsv(String codelistUrn, java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
+    		"Imports annotations in tsv format"
+    		TaskImportationInfo importAnnotationsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		"Imports code openness levels in tsv format"
     		TaskImportationInfo importCodeOpennessLevelsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		"Imports code restrictions in tsv format"
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
+    		"Exports annotations in tsv format"
+    		String exportAnnotationsTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness leves in tsv format"
@@ -251,9 +255,9 @@ Application CodesMetamac {
     		// VARIABLE ELEMENTS
     		
     		"Creates variable element"
-			@VariableElement createVariableElement(@VariableElement variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElement> createVariableElement(@VariableElement variableElement) throws MetamacException;
 			"Updates variable element"
-			@VariableElement updateVariableElement(@VariableElement variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElement> updateVariableElement(@VariableElement variableElement) throws MetamacException;
     		"Retrieves variable element by urn"
     		@VariableElement retrieveVariableElementByUrn(String urn) throws MetamacException;
     		"Finds variable elements by criteria"
@@ -291,6 +295,12 @@ Application CodesMetamac {
     		
     		// resend kafka message for the last number of version of published codelist.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyCodelist() throws MetamacException;
+    		"Resend a updated variable element by VariableElement"
+    		org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult notifyVariableElementPublication(@VariableElement message) throws MetamacException;
+    		"Resend a updated variable element by Variable element urn"
+    		notifyVariableElementPublicationByVariable(String user, String variableUrn, String localeLanguage) throws MetamacException;
+    		"Resend all variable elements by variablUrn"
+    		TaskInfo publishVariableElementInBackground(String variableUrn, String localeLanguage) throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------
@@ -671,6 +681,8 @@ Application CodesMetamac {
 			- Bag<@CodeMetamac> codes cascade="none" fetch="lazy" <-> variableElement;
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
+			"Stream message status"
+            - @StreamMessageStatusEnum streamMessageStatus;
 			
 			Repository VariableElementRepository {
 				save;

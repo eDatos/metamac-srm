@@ -1,4 +1,13 @@
+<%@page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
 <%@page pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
+<%
+   String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+%>
+<fmt:setLocale value="<%= locale %>"/>
+<fmt:setBundle basename="i18n.messages" var="i18n"/>
+<fmt:bundle basename="application"/>
 	{
       "Error":{
          "type":"object",
@@ -10,27 +19,27 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Error.properties.code.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "message":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Error.properties.message.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "parameters":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Error.properties.parameters.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ErrorParameters"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Error.description" bundle="${i18n}"/>"
       },
       "ErrorParameters":{
          "type":"object",
@@ -43,20 +52,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ErrorParameters.properties.total.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "parameter":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ErrorParameters.properties.parameter.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ErrorParameters.description" bundle="${i18n}"/>"
       },
       "Errors":{
          "type":"object",
@@ -69,20 +78,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Errors.properties.total.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "error":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Errors.properties.error.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Error"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Errors.description" bundle="${i18n}"/>"
       },
       "Exception":{
          "type":"object",
@@ -97,13 +106,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Exception.properties.errors.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Errors"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Exception.description" bundle="${i18n}"/>"
       },
       "InternationalString":{
          "type":"object",
@@ -115,13 +124,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.InternationalString.properties.text.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/LocalisedString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.InternationalString.description" bundle="${i18n}"/>"
       },
       "ListBase":{
          "type":"object",
@@ -134,7 +143,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase.properties.limit.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "offset":{
@@ -142,7 +151,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase.properties.offset.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "total":{
@@ -150,13 +159,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase.properties.total.description" bundle="${i18n}"/>",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ListBase.description" bundle="${i18n}"/>"
       },
       "LocalisedString":{
          "type":"object",
@@ -169,20 +178,20 @@
                         "attribute":true,
                         "namespace":"http://www.w3.org/XML/1998/namespace"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalisedString.properties.lang.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "(value)":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalisedString.properties.value.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.LocalisedString.description" bundle="${i18n}"/>"
       },
       "MetamacCriteria":{
          "type":"object",
@@ -195,7 +204,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteria.properties.countTotalResults.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "firstResult":{
@@ -203,7 +212,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteria.properties.firstResult.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "maximumResultSize":{
@@ -211,27 +220,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteria.properties.maximumResultSize.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "ordersBy":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteria.properties.ordersBy.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/MetamacCriteriaOrders"
                   },
                   "restriction":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteria.properties.restriction.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/MetamacCriteriaRestriction"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteria.description" bundle="${i18n}"/>"
       },
       "MetamacCriteriaDisjunctionRestriction":{
          "type":"object",
@@ -246,13 +255,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaDisjunctionRestriction.properties.restrictions.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/MetamacCriteriaRestrictions"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaDisjunctionRestriction.description" bundle="${i18n}"/>"
       },
       "MetamacCriteriaOrder":{
          "type":"object",
@@ -264,20 +273,20 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaOrder.properties.propertyName.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "type":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaOrder.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/OrderType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaOrder.description" bundle="${i18n}"/>"
       },
       "MetamacCriteriaOrders":{
          "type":"object",
@@ -289,13 +298,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaOrders.properties.order.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/MetamacCriteriaOrder"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaOrders.description" bundle="${i18n}"/>"
       },
       "MetamacCriteriaRestriction":{
          "type":"object",
@@ -305,7 +314,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaRestriction.description" bundle="${i18n}"/>"
       },
       "MetamacCriteriaRestrictions":{
          "type":"object",
@@ -317,13 +326,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaRestrictions.properties.restriction.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/MetamacCriteriaRestriction"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MetamacCriteriaRestrictions.description" bundle="${i18n}"/>"
       },
       "OrderType":{
          "type":"string",
@@ -332,7 +341,7 @@
             "DESC",
             "ASC"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrderType.description" bundle="${i18n}"/>"
       },
       "Resource":{
          "type":"object",
@@ -345,27 +354,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "urn":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Resource.description" bundle="${i18n}"/>"
       },
       "Codelist":{
          "type":"object",
@@ -380,76 +389,76 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.descriptionSource.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "family":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.family.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "isRecommended":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.isRecommended.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ReplaceToCodelist"
                   },
                   "replaceToVersion":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.replaceToVersion.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "replacedBy":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.replacedBy.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "replacedByVersion":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.replacedByVersion.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.shortName.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "urnProvider":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.urnProvider.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "variable":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.properties.variable.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Codelist.description" bundle="${i18n}"/>"
       },
       "CodelistFamilies":{
          "type":"object",
@@ -464,13 +473,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamilies.properties.codelistFamily.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CodelistFamily"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamilies.description" bundle="${i18n}"/>"
       },
       "CodelistFamily":{
          "type":"object",
@@ -483,7 +492,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urn":{
@@ -491,27 +500,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "urnProvider":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily.properties.urnProvider.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily.description" bundle="${i18n}"/>"
       },
       "Codelists":{
          "type":"object",
@@ -526,13 +535,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelists.properties.codelist.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Codelists.description" bundle="${i18n}"/>"
       },
       "CodelistRestrictions":{
          "type":"object",
@@ -547,13 +556,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistRestrictions.properties.restriction.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodelistRestrictions.description" bundle="${i18n}"/>"
       },
       "ReplaceToCodelist":{
          "type":"object",
@@ -568,13 +577,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ReplaceToCodelist.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ReplaceToCodelist.description" bundle="${i18n}"/>"
       },
       "ReplaceToVariable":{
          "type":"object",
@@ -589,13 +598,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ReplaceToVariable.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ReplaceToVariable.description" bundle="${i18n}"/>"
       },
       "Variable":{
          "type":"object",
@@ -608,7 +617,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urn":{
@@ -616,69 +625,69 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "families":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.families.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableFamilyCodes"
                   },
                   "name":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ReplaceToVariable"
                   },
                   "replacedBy":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.replacedBy.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.shortName.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "urnProvider":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.urnProvider.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validFrom":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.validFrom.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable.properties.validTo.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Variable.description" bundle="${i18n}"/>"
       },
       "VariableFamilies":{
          "type":"object",
@@ -693,13 +702,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamilies.properties.variableFamily.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableFamily"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamilies.description" bundle="${i18n}"/>"
       },
       "VariableFamily":{
          "type":"object",
@@ -712,7 +721,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urn":{
@@ -720,27 +729,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "urnProvider":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily.properties.urnProvider.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily.description" bundle="${i18n}"/>"
       },
       "VariableFamilyCodes":{
          "type":"object",
@@ -755,13 +764,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamilyCodes.properties.family.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamilyCodes.description" bundle="${i18n}"/>"
       },
       "Variables":{
          "type":"object",
@@ -776,13 +785,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variables.properties.variable.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Variable"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Variables.description" bundle="${i18n}"/>"
       },
       "Agencies":{
          "type":"object",
@@ -797,13 +806,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Agencies.properties.agency.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Agencies.description" bundle="${i18n}"/>"
       },
       "Agency":{
          "type":"object",
@@ -828,7 +837,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Agency.description" bundle="${i18n}"/>"
       },
       "AgencyScheme":{
          "type":"object",
@@ -859,7 +868,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AgencyScheme.description" bundle="${i18n}"/>"
       },
       "AgencySchemes":{
          "type":"object",
@@ -874,13 +883,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AgencySchemes.properties.agencyScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AgencySchemes.description" bundle="${i18n}"/>"
       },
       "AnnotableArtefact":{
          "type":"object",
@@ -892,13 +901,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotableArtefact.properties.annotations.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Annotations"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AnnotableArtefact.description" bundle="${i18n}"/>"
       },
       "Annotation":{
          "type":"object",
@@ -910,41 +919,41 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Annotation.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "text":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Annotation.properties.text.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "title":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Annotation.properties.title.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Annotation.properties.type.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "url":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Annotation.properties.url.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Annotation.description" bundle="${i18n}"/>"
       },
       "Annotations":{
          "type":"object",
@@ -959,13 +968,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Annotations.properties.annotation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Annotation"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Annotations.description" bundle="${i18n}"/>"
       },
       "Attribute":{
          "type":"object",
@@ -990,27 +999,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Attribute.properties.assignmentStatus.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AttributeUsageStatusType"
                   },
                   "attributeRelationship":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Attribute.properties.attributeRelationship.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AttributeRelationship"
                   },
                   "roleConcepts":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Attribute.properties.roleConcepts.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RoleConcepts"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Attribute.description" bundle="${i18n}"/>"
       },
       "AttributeBase":{
          "type":"object",
@@ -1031,13 +1040,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AttributeBase.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AttributeQualifierType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AttributeBase.description" bundle="${i18n}"/>"
       },
       "AttributeQualifierType":{
          "type":"string",
@@ -1047,7 +1056,7 @@
             "SPATIAL",
             "TIME"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AttributeQualifierType.description" bundle="${i18n}"/>"
       },
       "AttributeRelationship":{
          "type":"object",
@@ -1059,41 +1068,41 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AttributeRelationship.properties.attachmentGroup.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AttributeRelationship.properties.dimension.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "group":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AttributeRelationship.properties.group.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "none":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AttributeRelationship.properties.none.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Empty"
                   },
                   "primaryMeasure":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AttributeRelationship.properties.primaryMeasure.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AttributeRelationship.description" bundle="${i18n}"/>"
       },
       "AttributeUsageStatusType":{
          "type":"string",
@@ -1102,7 +1111,7 @@
             "MANDATORY",
             "CONDITIONAL"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AttributeUsageStatusType.description" bundle="${i18n}"/>"
       },
       "Attributes":{
          "type":"object",
@@ -1123,13 +1132,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Attributes.properties.attribute.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AttributeBase"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Attributes.description" bundle="${i18n}"/>"
       },
       "Categories":{
          "type":"object",
@@ -1144,13 +1153,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Categories.properties.category.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategoryResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Categories.description" bundle="${i18n}"/>"
       },
       "Categorisation":{
          "type":"object",
@@ -1178,21 +1187,21 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Categorisation.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "source":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Categorisation.properties.source.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "target":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Categorisation.properties.target.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
@@ -1213,13 +1222,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Categorisations.properties.categorisation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Categorisations.description" bundle="${i18n}"/>"
       },
       "Category":{
          "type":"object",
@@ -1244,27 +1253,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Category.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                    "eniSchemaTypes":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Category.properties.eniSchemaTypes.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/EniSchemaTypes"
                   },
                    "categoryElement":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Category.properties.categoryElement.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Category.description" bundle="${i18n}"/>"
       },
       "EniSchemaTypes":{
          "type":"object",
@@ -1279,13 +1288,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.EniSchemaTypes.properties.eniSchemaType.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Item"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.EniSchemaTypes.description" bundle="${i18n}"/>"
       },
       "CategoryScheme":{
          "type":"object",
@@ -1316,13 +1325,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryScheme.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CategoryScheme.description" bundle="${i18n}"/>"
       },
       "CategorySchemes":{
          "type":"object",
@@ -1337,13 +1346,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategorySchemes.properties.categoryScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CategorySchemes.description" bundle="${i18n}"/>"
       },
       "Code":{
          "type":"object",
@@ -1368,27 +1377,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Code.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Code.properties.shortName.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "extended":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Code.properties.extended.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Code.description" bundle="${i18n}"/>"
       },
       "CodeResource":{
          "type":"object",
@@ -1406,34 +1415,34 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeResource.properties.open.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "order":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeResource.properties.order.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "variableElement":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeResource.properties.variableElement.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "extended":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeResource.properties.extended.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodeResource.description" bundle="${i18n}"/>"
       },
         "CategoryResource":{
          "type":"object",
@@ -1451,20 +1460,20 @@
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryResource.properties.eniSchemaTypes.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/EniSchemaTypes"
                   },
                 "categoryElement":{
                     "xml":{
                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                     },
-                    "description":"",
+                    "description":"<fmt:message key="api.doc.swagger.definitions.CategoryResource.properties.categoryElement.description" bundle="${i18n}"/>",
                     "$ref":"#/definitions/Resource"
                   },
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CategoryResource.description" bundle="${i18n}"/>"
       },
       "RecodedCodeResource":{
          "type":"object",
@@ -1482,13 +1491,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.RecodedCodeResource.properties.recodedId.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.RecodedCodeResource.description" bundle="${i18n}"/>"
       },
       "Codelist":{
          "type":"object",
@@ -1519,62 +1528,62 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "descriptionSource":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.descriptionSource.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "isRecommended":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.isRecommended.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "opennessConfigurations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.opennessConfigurations.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VisualisationConfigurations"
                   },
                   "orderConfigurations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.orderConfigurations.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VisualisationConfigurations"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ReplaceToResources"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.shortName.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "variable":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.properties.variable.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Codelist_.description" bundle="${i18n}"/>"
       },
       "CodelistFamilies":{
          "type":"object",
@@ -1589,13 +1598,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamilies_.properties.codelistFamily.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamilies_.description" bundle="${i18n}"/>"
       },
       "CodelistFamily":{
          "type":"object",
@@ -1617,13 +1626,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily_.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodelistFamily_.description" bundle="${i18n}"/>"
       },
       "Codelists":{
          "type":"object",
@@ -1638,13 +1647,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codelists_.properties.codelist.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Codelists_.description" bundle="${i18n}"/>"
       },
       "Codes":{
          "type":"object",
@@ -1659,13 +1668,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Codes.properties.code.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CodeResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Codes.description" bundle="${i18n}"/>"
       },
       "RecodedCodes":{
          "type":"object",
@@ -1680,13 +1689,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.RecodedCodes.properties.code.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RecodedCodeResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.RecodedCodes.description" bundle="${i18n}"/>"
       },
       "Component":{
          "type":"object",
@@ -1704,20 +1713,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Component.properties.conceptIdentity.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "localRepresentation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Component.properties.localRepresentation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Representation"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Component.description" bundle="${i18n}"/>"
       },
       "Components":{
          "type":"object",
@@ -1733,7 +1742,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Components.description" bundle="${i18n}"/>"
       },
       "Concept":{
          "type":"object",
@@ -1758,111 +1767,111 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "acronym":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.acronym.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "context":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.context.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "coreRepresentation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.coreRepresentation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Representation"
                   },
                   "derivation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.derivation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "descriptionSource":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.descriptionSource.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "docMethod":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.docMethod.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "extends":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.extends.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "legalActs":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.legalActs.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "pluralName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.pluralName.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "quantity":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.quantity.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Quantity"
                   },
                   "relatedConcepts":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.relatedConcepts.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RelatedConcepts"
                   },
                   "roles":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.roles.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RoleConcepts"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Item"
                   },
                   "variable":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concept.properties.variable.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Concept.description" bundle="${i18n}"/>"
       },
       "ConceptResource":{
          "type":"object",
@@ -1875,7 +1884,7 @@
                "$ref":"#/definitions/ItemResource"
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ConceptResource.description" bundle="${i18n}"/>"
       },
       "ConceptScheme":{
          "type":"object",
@@ -1906,27 +1915,27 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ConceptScheme.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ConceptScheme.properties.statisticalOperation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ConceptScheme.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptSchemeType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ConceptScheme.description" bundle="${i18n}"/>"
       },
       "ConceptSchemeType":{
          "type":"string",
@@ -1938,7 +1947,7 @@
             "ROLE",
             "MEASURE"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ConceptSchemeType.description" bundle="${i18n}"/>"
       },
       "ConceptSchemes":{
          "type":"object",
@@ -1953,13 +1962,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ConceptSchemes.properties.conceptScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ConceptSchemes.description" bundle="${i18n}"/>"
       },
       "ConceptTypes":{
          "type":"object",
@@ -1974,13 +1983,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ConceptTypes.properties.conceptType.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Item"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ConceptTypes.description" bundle="${i18n}"/>"
       },
       "Concepts":{
          "type":"object",
@@ -1995,13 +2004,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Concepts.properties.concept.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ConceptResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Concepts.description" bundle="${i18n}"/>"
       },
       "Contact":{
          "type":"object",
@@ -2013,62 +2022,62 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.emails.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "faxes":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.faxes.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "organisationUnit":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.organisationUnit.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "responsibility":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.responsibility.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "telephones":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.telephones.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urls":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contact.properties.urls.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Contact.description" bundle="${i18n}"/>"
       },
       "Contacts":{
          "type":"object",
@@ -2083,13 +2092,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Contacts.properties.contact.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Contact"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Contacts.description" bundle="${i18n}"/>"
       },
       "ContentConstraint":{
          "type":"object",
@@ -2117,34 +2126,34 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraint.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "constraintAttachment":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraint.properties.constraintAttachment.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "regions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraint.properties.regions.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Regions"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraint.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ContentConstraintType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraint.description" bundle="${i18n}"/>"
       },
       "ContentConstraintType":{
          "type":"string",
@@ -2153,7 +2162,7 @@
             "ALLOWED",
             "ACTUAL"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraintType.description" bundle="${i18n}"/>"
       },
       "ContentConstraints":{
          "type":"object",
@@ -2168,13 +2177,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraints.properties.contentConstraint.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ContentConstraints.description" bundle="${i18n}"/>"
       },
       "DataConsumer":{
          "type":"object",
@@ -2199,7 +2208,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataConsumer.description" bundle="${i18n}"/>"
       },
       "DataConsumerScheme":{
          "type":"object",
@@ -2230,7 +2239,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataConsumerScheme.description" bundle="${i18n}"/>"
       },
       "DataConsumerSchemes":{
          "type":"object",
@@ -2245,13 +2254,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataConsumerSchemes.properties.dataConsumerScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataConsumerSchemes.description" bundle="${i18n}"/>"
       },
       "DataConsumers":{
          "type":"object",
@@ -2266,13 +2275,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataConsumers.properties.dataConsumer.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataConsumers.description" bundle="${i18n}"/>"
       },
       "DataProvider":{
          "type":"object",
@@ -2297,7 +2306,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataProvider.description" bundle="${i18n}"/>"
       },
       "DataProviderScheme":{
          "type":"object",
@@ -2328,7 +2337,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataProviderScheme.description" bundle="${i18n}"/>"
       },
       "DataProviderSchemes":{
          "type":"object",
@@ -2343,13 +2352,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataProviderSchemes.properties.dataProviderScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataProviderSchemes.description" bundle="${i18n}"/>"
       },
       "DataProviders":{
          "type":"object",
@@ -2364,13 +2373,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataProviders.properties.dataProvider.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataProviders.description" bundle="${i18n}"/>"
       },
       "DataStructure":{
          "type":"object",
@@ -2398,69 +2407,69 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "autoOpen":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.autoOpen.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "dataStructureComponents":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.dataStructureComponents.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataStructureComponents"
                   },
                   "dimensionVisualisations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.dimensionVisualisations.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionVisualisations"
                   },
                   "heading":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.heading.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionReferences"
                   },
                   "showDecimals":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.showDecimals.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "showDecimalsPrecisions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.showDecimalsPrecisions.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ShowDecimalPrecisions"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.statisticalOperation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "stub":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.properties.stub.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionReferences"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataStructure.description" bundle="${i18n}"/>"
       },
       "DataStructureComponents":{
          "type":"object",
@@ -2472,34 +2481,34 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructureComponents.properties.attributes.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Attributes"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructureComponents.properties.dimensions.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Dimensions"
                   },
                   "groups":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructureComponents.properties.groups.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Groups"
                   },
                   "measure":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructureComponents.properties.measure.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Measure"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataStructureComponents.description" bundle="${i18n}"/>"
       },
       "DataStructures":{
          "type":"object",
@@ -2514,13 +2523,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DataStructures.properties.dataStructure.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataStructures.description" bundle="${i18n}"/>"
       },
       "DataType":{
          "type":"string",
@@ -2566,7 +2575,7 @@
             "TIME",
             "XHTML"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DataType.description" bundle="${i18n}"/>"
       },
       "DimensionBase":{
          "type":"object",
@@ -2588,13 +2597,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DimensionBase.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DimensionBase.description" bundle="${i18n}"/>"
       },
       "DimensionReferences":{
          "type":"object",
@@ -2609,13 +2618,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DimensionReferences.properties.dimension.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DimensionReferences.description" bundle="${i18n}"/>"
       },
       "DimensionType":{
          "type":"string",
@@ -2625,7 +2634,7 @@
             "MEASURE_DIMENSION",
             "TIME_DIMENSION"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DimensionType.description" bundle="${i18n}"/>"
       },
       "DimensionVisualisation":{
          "type":"object",
@@ -2637,13 +2646,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DimensionVisualisation.properties.dimension.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DimensionVisualisation.description" bundle="${i18n}"/>"
       },
       "DimensionVisualisations":{
          "type":"object",
@@ -2658,13 +2667,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.DimensionVisualisations.properties.dimensionVisualisation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionVisualisation"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.DimensionVisualisations.description" bundle="${i18n}"/>"
       },
       "Dimensions":{
          "type":"object",
@@ -2685,13 +2694,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Dimensions.properties.dimension.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionBase"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Dimensions.description" bundle="${i18n}"/>"
       },
       "Empty":{
          "type":"object",
@@ -2701,7 +2710,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Empty.description" bundle="${i18n}"/>"
       },
       "Group":{
          "type":"object",
@@ -2722,13 +2731,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Group.properties.dimensions.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DimensionReferences"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Group.description" bundle="${i18n}"/>"
       },
       "Groups":{
          "type":"object",
@@ -2743,13 +2752,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Groups.properties.group.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Group"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Groups.description" bundle="${i18n}"/>"
       },
       "IdentifiableArtefact":{
          "type":"object",
@@ -2764,69 +2773,69 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.childLinks.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "managementAppLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.managementAppLink.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "nestedId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.nestedId.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.parentLink.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.selfLink.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "uri":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.uri.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urnProvider":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.properties.urnProvider.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.IdentifiableArtefact.description" bundle="${i18n}"/>"
       },
       "Item":{
          "type":"object",
@@ -2847,13 +2856,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Item.properties.parent.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Item.description" bundle="${i18n}"/>"
       },
       "ItemResource":{
          "type":"object",
@@ -2868,13 +2877,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ItemResource.properties.parent.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ItemResource.description" bundle="${i18n}"/>"
       },
       "ItemScheme":{
          "type":"object",
@@ -2901,13 +2910,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ItemScheme.properties.isPartial.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ItemScheme.description" bundle="${i18n}"/>"
       },
       "Key":{
          "type":"object",
@@ -2919,20 +2928,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Key.properties.included.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "keyParts":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Key.properties.keyParts.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/KeyParts"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Key.description" bundle="${i18n}"/>"
       },
       "KeyPart":{
          "type":"object",
@@ -2944,97 +2953,97 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.afterPeriod.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "afterPeriodInclusive":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.afterPeriodInclusive.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "beforePeriod":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.beforePeriod.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "beforePeriodInclusive":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.beforePeriodInclusive.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "cascadeValues":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.cascadeValues.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "endPeriod":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.endPeriod.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "endPeriodInclusive":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.endPeriodInclusive.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "identifier":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.identifier.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "position":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.position.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "startPeriod":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.startPeriod.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "startPeriodInclusive":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.startPeriodInclusive.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/KeyPartType"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.properties.value.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.KeyPart.description" bundle="${i18n}"/>"
       },
       "KeyPartType":{
          "type":"string",
@@ -3043,7 +3052,7 @@
             "TIME_RANGE",
             "NORMAL"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.KeyPartType.description" bundle="${i18n}"/>"
       },
       "KeyParts":{
          "type":"object",
@@ -3058,13 +3067,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.KeyParts.properties.keyPart.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/KeyPart"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.KeyParts.description" bundle="${i18n}"/>"
       },
       "Keys":{
          "type":"object",
@@ -3079,13 +3088,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Keys.properties.key.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Key"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Keys.description" bundle="${i18n}"/>"
       },
       "LifeCycle":{
          "type":"object",
@@ -3097,13 +3106,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LifeCycle.properties.lastUpdatedDate.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.LifeCycle.description" bundle="${i18n}"/>"
       },
       "MaintainableArtefact":{
          "type":"object",
@@ -3127,48 +3136,48 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.properties.agencyID.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "isExternalReference":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.properties.isExternalReference.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "isFinal":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.properties.isFinal.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "lifeCycle":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.properties.lifeCycle.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/LifeCycle"
                   },
                   "serviceUrl":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.properties.serviceUrl.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "structureUrl":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.properties.structureUrl.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MaintainableArtefact.description" bundle="${i18n}"/>"
       },
       "Measure":{
          "type":"object",
@@ -3189,13 +3198,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Measure.properties.primaryMeasure.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/PrimaryMeasure"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Measure.description" bundle="${i18n}"/>"
       },
       "MeasureDimension":{
          "type":"object",
@@ -3219,13 +3228,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.MeasureDimension.properties.roleConcepts.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RoleConcepts"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.MeasureDimension.description" bundle="${i18n}"/>"
       },
       "NameableArtefact":{
          "type":"object",
@@ -3243,20 +3252,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.NameableArtefact.properties.description.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.NameableArtefact.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.NameableArtefact.description" bundle="${i18n}"/>"
       },
       "Organisation":{
          "type":"object",
@@ -3281,20 +3290,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Organisation.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "contacts":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Organisation.properties.contacts.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Contacts"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Organisation.description" bundle="${i18n}"/>"
       },
       "OrganisationScheme":{
          "type":"object",
@@ -3325,13 +3334,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationScheme.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationScheme.description" bundle="${i18n}"/>"
       },
       "OrganisationSchemes":{
          "type":"object",
@@ -3346,13 +3355,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationSchemes.properties.organisationScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationSchemes.description" bundle="${i18n}"/>"
       },
       "OrganisationUnit":{
          "type":"object",
@@ -3377,7 +3386,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationUnit.description" bundle="${i18n}"/>"
       },
       "OrganisationUnitScheme":{
          "type":"object",
@@ -3408,7 +3417,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationUnitScheme.description" bundle="${i18n}"/>"
       },
       "OrganisationUnitSchemes":{
          "type":"object",
@@ -3423,13 +3432,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationUnitSchemes.properties.organisationUnitScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationUnitSchemes.description" bundle="${i18n}"/>"
       },
       "OrganisationUnits":{
          "type":"object",
@@ -3444,13 +3453,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationUnits.properties.organisationUnit.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.OrganisationUnits.description" bundle="${i18n}"/>"
       },
       "Organisations":{
          "type":"object",
@@ -3465,13 +3474,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Organisations.properties.organisation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Organisations.description" bundle="${i18n}"/>"
       },
       "PrimaryMeasure":{
          "type":"object",
@@ -3490,7 +3499,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.PrimaryMeasure.description" bundle="${i18n}"/>"
       },
       "Quantity":{
          "type":"object",
@@ -3502,41 +3511,41 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Quantity.properties.decimalPlaces.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "significantDigits":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Quantity.properties.significantDigits.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "unitCode":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Quantity.properties.unitCode.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "unitMultiplier":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Quantity.properties.unitMultiplier.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "unitSymbolPosition":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Quantity.properties.unitSymbolPosition.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/QuantityUnitSymbolPosition"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Quantity.description" bundle="${i18n}"/>"
       },
       "QuantityAmount":{
          "type":"object",
@@ -3549,7 +3558,7 @@
 
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.QuantityAmount.description" bundle="${i18n}"/>"
       },
       "QuantityUnitSymbolPosition":{
          "type":"string",
@@ -3558,7 +3567,7 @@
             "START",
             "END"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.QuantityUnitSymbolPosition.description" bundle="${i18n}"/>"
       },
       "Region":{
          "type":"object",
@@ -3570,27 +3579,27 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Region.properties.code.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "keys":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Region.properties.keys.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Keys"
                   },
                   "regionValueType":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Region.properties.regionValueType.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/RegionValueType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Region.description" bundle="${i18n}"/>"
       },
       "RegionReference":{
          "type":"object",
@@ -3605,13 +3614,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.RegionReference.properties.contentConstraintUrn.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.RegionReference.description" bundle="${i18n}"/>"
       },
       "RegionValueType":{
          "type":"string",
@@ -3620,7 +3629,7 @@
             "KEY_SET",
             "CUBE"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.RegionValueType.description" bundle="${i18n}"/>"
       },
       "Regions":{
          "type":"object",
@@ -3635,13 +3644,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Regions.properties.region.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Region"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Regions.description" bundle="${i18n}"/>"
       },
       "RelatedConcepts":{
          "type":"object",
@@ -3656,13 +3665,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.RelatedConcepts.properties.relatedConcept.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.RelatedConcepts.description" bundle="${i18n}"/>"
       },
       "ReplaceToResources":{
          "type":"object",
@@ -3677,13 +3686,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ReplaceToResources.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ReplaceToResources.description" bundle="${i18n}"/>"
       },
       "Representation":{
          "type":"object",
@@ -3695,27 +3704,27 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Representation.properties.enumerationCodelist.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "enumerationConceptScheme":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Representation.properties.enumerationConceptScheme.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "textFormat":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Representation.properties.textFormat.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/TextFormat"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Representation.description" bundle="${i18n}"/>"
       },
       "RoleConcepts":{
          "type":"object",
@@ -3730,13 +3739,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.RoleConcepts.properties.role.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.RoleConcepts.description" bundle="${i18n}"/>"
       },
       "ShowDecimalPrecision":{
          "type":"object",
@@ -3748,20 +3757,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ShowDecimalPrecision.properties.concept.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "showDecimals":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ShowDecimalPrecision.properties.showDecimals.description" bundle="${i18n}"/>",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ShowDecimalPrecision.description" bundle="${i18n}"/>"
       },
       "ShowDecimalPrecisions":{
          "type":"object",
@@ -3776,13 +3785,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ShowDecimalPrecisions.properties.showDecimalPrecision.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ShowDecimalPrecision"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ShowDecimalPrecisions.description" bundle="${i18n}"/>"
       },
       "TextFormat":{
          "type":"object",
@@ -3794,111 +3803,111 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.decimals.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "endTime":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.endTime.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "endValue":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.endValue.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "interval":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.interval.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "isMultiLingual":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.isMultiLingual.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "isSequence":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.isSequence.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "maxLength":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.maxLength.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "maxValue":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.maxValue.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "minLength":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.minLength.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "minValue":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.minValue.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "pattern":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.pattern.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "startTime":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.startTime.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "startValue":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.startValue.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "textType":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.textType.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/DataType"
                   },
                   "timeInterval":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.properties.timeInterval.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.TextFormat.description" bundle="${i18n}"/>"
       },
       "Variable":{
          "type":"object",
@@ -3920,48 +3929,48 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "families":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.properties.families.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableFamiliesMetadata"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ReplaceToResources"
                   },
                   "replacedBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.properties.replacedBy.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.properties.shortName.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.properties.type.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Variable_.description" bundle="${i18n}"/>"
       },
       "VariableElement":{
          "type":"object",
@@ -3983,41 +3992,41 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElement.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElement.properties.replaceTo.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ReplaceToResources"
                   },
                   "replacedBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElement.properties.replacedBy.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "variable":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElement.properties.variable.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   },
                   "renderingColor":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElement.properties.renderingColor.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElement.description" bundle="${i18n}"/>"
       },
       "VariableElements":{
          "type":"object",
@@ -4032,13 +4041,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElements.properties.variableElement.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElementResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElements.description" bundle="${i18n}"/>"
       },      
       "VariableElementResource":{
          "type":"object",
@@ -4053,20 +4062,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementResource.properties.geographicalGranularity.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "renderingColor":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementResource.properties.renderingColor.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementResource.description" bundle="${i18n}"/>"
       },
       "VariableElementsGeoInfo":{
          "type":"object",
@@ -4078,20 +4087,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfo.properties.features.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElementsGeoInfoFeatures"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfo.properties.type.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfo.description" bundle="${i18n}"/>"
       },
       "VariableElementsGeoInfoFeature":{
          "type":"object",
@@ -4103,34 +4112,34 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeature.properties.geometryWKT.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeature.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "properties":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeature.properties.properties.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElementsGeoInfoFeatureProperties"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeature.properties.type.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeature.description" bundle="${i18n}"/>"
       },
       "VariableElementsGeoInfoFeatureProperties":{
          "type":"object",
@@ -4142,41 +4151,41 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatureProperties.properties.geographicalGranularity.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "lastUpdatedDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatureProperties.properties.lastUpdatedDate.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "latitude":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatureProperties.properties.latitude.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "longitude":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatureProperties.properties.longitude.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatureProperties.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatureProperties.description" bundle="${i18n}"/>"
       },
       "VariableElementsGeoInfoFeatures":{
          "type":"object",
@@ -4191,13 +4200,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatures.properties.feature.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VariableElementsGeoInfoFeature"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableElementsGeoInfoFeatures.description" bundle="${i18n}"/>"
       },
       "VariableFamilies":{
          "type":"object",
@@ -4212,13 +4221,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamilies_.properties.variableFamily.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamilies_.description" bundle="${i18n}"/>"
       },
       "VariableFamiliesMetadata":{
          "type":"object",
@@ -4233,13 +4242,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamiliesMetadata.properties.family.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamiliesMetadata.description" bundle="${i18n}"/>"
       },
       "VariableFamily":{
          "type":"object",
@@ -4261,13 +4270,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily_.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableFamily_.description" bundle="${i18n}"/>"
       },
       "VariableType":{
          "type":"string",
@@ -4275,7 +4284,7 @@
          "enum":[
             "GEOGRAPHICAL"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VariableType.description" bundle="${i18n}"/>"
       },
       "Variables":{
          "type":"object",
@@ -4290,13 +4299,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Variables_.properties.variable.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Variables_.description" bundle="${i18n}"/>"
       },
       "VersionableArtefact":{
          "type":"object",
@@ -4317,41 +4326,41 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VersionableArtefact.properties.replaceToVersion.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "replacedByVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VersionableArtefact.properties.replacedByVersion.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validFrom":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VersionableArtefact.properties.validFrom.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VersionableArtefact.properties.validTo.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "version":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VersionableArtefact.properties.version.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VersionableArtefact.description" bundle="${i18n}"/>"
       },
       "VisualisationConfiguration":{
          "type":"object",
@@ -4366,13 +4375,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VisualisationConfiguration.properties.default.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VisualisationConfiguration.description" bundle="${i18n}"/>"
       },
       "VisualisationConfigurations":{
          "type":"object",
@@ -4387,13 +4396,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.VisualisationConfigurations.properties.visualisationConfiguration.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/VisualisationConfiguration"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.VisualisationConfigurations.description" bundle="${i18n}"/>"
       },
       "QueryTextType":{
          "type":"object",
@@ -4409,13 +4418,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.QueryTextType.properties.operator.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.QueryTextType.description" bundle="${i18n}"/>"
       },
       "CodeType":{
          "type":"object",
@@ -4428,7 +4437,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "uri":{
@@ -4436,7 +4445,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.uri.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urn":{
@@ -4444,41 +4453,41 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "Annotations":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.Annotations.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AnnotationsType"
                   },
                   "Description":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.Description.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/TextType"
                   },
                   "Name":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.Name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/TextType"
                   },
                   "Parent":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.properties.Parent.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/LocalCodeReferenceType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodeType.description" bundle="${i18n}"/>"
       },
       "CodelistType":{
          "type":"object",
@@ -4491,7 +4500,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.agencyID.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "id":{
@@ -4499,7 +4508,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "isExternalReference":{
@@ -4507,7 +4516,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.isExternalReference.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "isFinal":{
@@ -4515,7 +4524,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.isFinal.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "isPartial":{
@@ -4523,7 +4532,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.isPartial.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "serviceURL":{
@@ -4531,7 +4540,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.serviceURL.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "structureURL":{
@@ -4539,7 +4548,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.structureURL.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "uri":{
@@ -4547,7 +4556,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.uri.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "urn":{
@@ -4555,7 +4564,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validFrom":{
@@ -4563,7 +4572,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.validFrom.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validTo":{
@@ -4571,7 +4580,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.validTo.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "version":{
@@ -4579,41 +4588,41 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.version.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "Annotations":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.Annotations.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AnnotationsType"
                   },
                   "Code":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.Code.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CodeType"
                   },
                   "Description":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.Description.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/TextType"
                   },
                   "Name":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.properties.Name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/TextType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CodelistType.description" bundle="${i18n}"/>"
       },
       "ChildLinks":{
          "type":"object",
@@ -4626,20 +4635,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ChildLinks.properties.total.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "childLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ChildLinks.properties.childLink.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ResourceLink"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ChildLinks.description" bundle="${i18n}"/>"
       },
       "InternationalString":{
          "type":"object",
@@ -4651,13 +4660,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.InternationalString_.properties.text.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/LocalisedString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.InternationalString_.description" bundle="${i18n}"/>"
       },
       "Item":{
          "type":"object",
@@ -4669,20 +4678,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Item_.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Item_.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Item_.description" bundle="${i18n}"/>"
       },
       "ListBase":{
          "type":"object",
@@ -4695,7 +4704,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.firstLink.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "kind":{
@@ -4703,7 +4712,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "lastLink":{
@@ -4711,7 +4720,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.lastLink.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "limit":{
@@ -4719,7 +4728,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.limit.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "nextLink":{
@@ -4727,7 +4736,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.nextLink.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "offset":{
@@ -4735,7 +4744,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.offset.description" bundle="${i18n}"/>",
                      "type":"number"
                   },
                   "previousLink":{
@@ -4743,7 +4752,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.previousLink.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "selfLink":{
@@ -4751,7 +4760,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.selfLink.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "total":{
@@ -4759,13 +4768,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.properties.total.description" bundle="${i18n}"/>",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ListBase_.description" bundle="${i18n}"/>"
       },
       "LocalisedString":{
          "type":"object",
@@ -4778,20 +4787,20 @@
                         "attribute":true,
                         "namespace":"http://www.w3.org/XML/1998/namespace"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalisedString_.properties.lang.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "(value)":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalisedString_.properties.value.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.LocalisedString_.description" bundle="${i18n}"/>"
       },
       "Resource":{
          "type":"object",
@@ -4804,48 +4813,48 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.properties.name.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "nestedId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.properties.nestedId.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.properties.selfLink.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.properties.urn.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.Resource_.description" bundle="${i18n}"/>"
       },
       "ResourceLink":{
          "type":"object",
@@ -4858,7 +4867,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ResourceLink.properties.href.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "kind":{
@@ -4866,13 +4875,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.ResourceLink.properties.kind.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ResourceLink.description" bundle="${i18n}"/>"
       },
       "AnnotationType":{
          "type":"object",
@@ -4885,41 +4894,41 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationType.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "AnnotationText":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationType.properties.AnnotationText.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/TextType"
                   },
                   "AnnotationTitle":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationType.properties.AnnotationTitle.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "AnnotationType":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationType.properties.AnnotationType.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "AnnotationURL":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationType.properties.AnnotationURL.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationType.description" bundle="${i18n}"/>"
       },
       "AnnotationsType":{
          "type":"object",
@@ -4931,13 +4940,13 @@
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationsType.properties.Annotation.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/AnnotationType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.AnnotationsType.description" bundle="${i18n}"/>"
       },
       "ItemSchemePackageTypeCodelistType":{
          "type":"string",
@@ -4948,7 +4957,7 @@
             "CATEGORYSCHEME",
             "CONCEPTSCHEME"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ItemSchemePackageTypeCodelistType.description" bundle="${i18n}"/>"
       },
       "ItemTypeCodelistType":{
          "type":"string",
@@ -4963,7 +4972,7 @@
             "ORGANISATION_UNIT",
             "REPORTING_CATEGORY"
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.ItemTypeCodelistType.description" bundle="${i18n}"/>"
       },
       "LocalCodeRefType":{
          "type":"object",
@@ -4976,7 +4985,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeRefType.properties.class.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemTypeCodelistType"
                   },
                   "id":{
@@ -4984,7 +4993,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeRefType.properties.id.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "local":{
@@ -4992,7 +5001,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeRefType.properties.local.description" bundle="${i18n}"/>",
                      "type":"boolean"
                   },
                   "package":{
@@ -5000,13 +5009,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeRefType.properties.package.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/ItemSchemePackageTypeCodelistType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeRefType.description" bundle="${i18n}"/>"
       },
       "LocalCodeReferenceType":{
          "type":"object",
@@ -5018,13 +5027,13 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeReferenceType.properties.Ref.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/LocalCodeRefType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.LocalCodeReferenceType.description" bundle="${i18n}"/>"
       },
       "TextType":{
          "type":"object",
@@ -5037,20 +5046,20 @@
                         "attribute":true,
                         "namespace":"http://www.w3.org/XML/1998/namespace"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextType.properties.lang.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "(value)":{
                      "xml":{
                         "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.TextType.properties.value.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.TextType.description" bundle="${i18n}"/>"
       },
       "CategoryElements":{
          "type":"object",
@@ -5065,13 +5074,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElements.properties.categoryElement.description" bundle="${i18n}"/>",
                      "$ref":"#/definitions/CategoryElementResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElements.description" bundle="${i18n}"/>"
       },      
       "CategoryElementResource":{
          "type":"object",
@@ -5086,19 +5095,19 @@
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElementResource.properties.validFrom.description" bundle="${i18n}"/>",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElementResource.properties.validTo.description" bundle="${i18n}"/>",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElementResource.description" bundle="${i18n}"/>"
       }
    }

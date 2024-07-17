@@ -5,6 +5,7 @@ import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.VersionUtil;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
@@ -989,12 +990,18 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
             @Override
             public boolean execute(FormItem arg0, Object arg1, DynamicForm form) {
                 if (conceptSchemeMetamacDto != null) {
-                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType())
-                            && !org.siemac.metamac.srm.web.dsd.utils.CommonUtils.isRepresentationTypeEnumerated(form.getValueAsString(RepresentationDS.TYPE));
+                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType()) && !isRepresentationTypeEnumeratedInTemporalVersion(form.getValueAsString(RepresentationDS.TYPE));
                 }
                 return false;
             }
         };
+    }
+
+    private boolean isRepresentationTypeEnumeratedInTemporalVersion(String ConceptSchemeType) {
+        if (VersionUtil.isTemporalVersion(conceptSchemeMetamacDto.getVersionLogic())) {
+            return org.siemac.metamac.srm.web.dsd.utils.CommonUtils.isRepresentationTypeEnumerated(ConceptSchemeType);
+        }
+        return false;
     }
 
     private FormItemIfFunction getVariableViewFormItemIfFunction() {
@@ -1016,8 +1023,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
             @Override
             public boolean execute(FormItem arg0, Object arg1, DynamicForm form) {
                 if (conceptSchemeMetamacDto != null) {
-                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType())
-                            && org.siemac.metamac.srm.web.dsd.utils.CommonUtils.isRepresentationTypeEnumerated(form.getValueAsString(RepresentationDS.TYPE));
+                    return CommonUtils.isMetadataVariableVisible(conceptSchemeMetamacDto.getType()) && isRepresentationTypeEnumeratedInTemporalVersion(form.getValueAsString(RepresentationDS.TYPE));
                 }
                 return false;
             }

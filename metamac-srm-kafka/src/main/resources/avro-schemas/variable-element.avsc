@@ -1,0 +1,56 @@
+  {
+    "type": "record",
+    "name": "VariableElementAvro",
+    "namespace": "org.siemac.metamac.srm.core.stream.message",
+    "fields": [
+      {
+        "name": "uuid",
+        "type": [
+          "null",
+          "string"
+        ]
+      },
+       {
+        "name": "code",
+        "type": "string"
+      },
+      {
+        "name": "shortName",
+        "type": [
+          "null",
+          "InternationalStringAvro"
+        ]
+      },
+      {
+        "name": "urn",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "uriProvider",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "urnProvider",
+        "type": ["null", "string"]
+      },
+      {
+        "name": "variable",
+        "type": "RelatedResourceAvro"
+      },
+      {
+        "name": "geographicGranularities",
+        "type": ["null", "RelatedResourceAvro"]
+      },
+      {
+        "name": "latitud",
+        "type": ["null", "double"]
+      },
+      {
+        "name": "longitud",
+        "type": ["null", "double"]
+      },
+      {"name" : "validFrom", "type" : ["null", "DatetimeAvro"]},
+      {"name" : "validTo", "type" : ["null", "DatetimeAvro"]}
+    ]
+  }
+]

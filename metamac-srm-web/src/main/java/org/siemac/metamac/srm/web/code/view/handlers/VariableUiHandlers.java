@@ -34,6 +34,7 @@ public interface VariableUiHandlers extends BaseVariableUiHandlers {
     // Exportation
 
     void exportVariableElements(String variableUrn);
+    void resendUpdatedVariableElementsKafkaMessage(List<String> urns, String variableUrn, String locale);
 
     void showWaitPopup();
 }

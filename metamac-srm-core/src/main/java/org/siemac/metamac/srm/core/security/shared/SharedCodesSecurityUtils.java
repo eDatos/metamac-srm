@@ -117,6 +117,10 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
         return canCreateCode(metamacPrincipal, procStatus);
     }
 
+    public static boolean canImportAnnotations(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
+    }
+
     public static boolean canImportVariableElements(MetamacPrincipal metamacPrincipal) {
         return canCrudVariableElement(metamacPrincipal);
     }

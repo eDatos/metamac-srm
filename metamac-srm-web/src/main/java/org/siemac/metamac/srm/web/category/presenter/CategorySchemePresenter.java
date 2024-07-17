@@ -77,6 +77,8 @@ import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsAct
 import org.siemac.metamac.srm.web.shared.category.UpdateCodesCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.VersionCategorySchemeResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeResult;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
@@ -298,7 +300,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
     @Override
     public void exportCategorisations(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CATEGORISATION, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CATEGORISATION, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override
@@ -315,7 +317,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
     @Override
     public void exportCategoryScheme(String urn, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CATEGORY_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CATEGORY_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override

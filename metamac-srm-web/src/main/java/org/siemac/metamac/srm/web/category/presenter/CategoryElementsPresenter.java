@@ -25,6 +25,8 @@ import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;

@@ -68,4 +68,6 @@ public interface CodesDo2RestMapperV10 {
 
     ResourceLink toCodelistSelfLink(String agencyID, String resourceID, String version);
     String toCodelistManagementApplicationLink(String codelistUrn);
+    ResourceLink toVariableElementSelfLink(String variableCode, String variableElementCode);
+    String toVariableElementManagementApplicationLink(String variableCode, String variableElementCode);
 }

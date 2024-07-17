@@ -72,13 +72,13 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
 
     @Autowired
     private CodelistOpennessVisualisationRepository                        codelistOpennessVisualisationRepository;
-    
+
     @Autowired
-    private OrganisationRepository                                          organisationRepository;
+    private OrganisationRepository                                         organisationRepository;
 
     @Autowired
     private CodelistRestrictionVisualisationRepository                     codelistRestrictionVisualisationRepository;
-    
+
     @Override
     public CodelistVersionMetamac codelistDtoToDo(CodelistMetamacDto source) throws MetamacException {
         if (source == null) {
@@ -114,8 +114,8 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
             target.setSourceProvider(sourceProviderDtoToDo(source.getSourceProvider()));
         } else {
             target.setSourceProvider(null);
-        }           
-        
+        }
+
         if (source.getFamily() != null) {
             target.setFamily(retrieveCodelistFamily(source.getFamily().getUrn()));
         } else {
@@ -155,7 +155,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
         }
         return null;
     }
-    
+
     @Override
     public CodeMetamac codeDtoToDo(CodeMetamacDto source) throws MetamacException {
         if (source == null) {
@@ -301,6 +301,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
         }
 
         target.setShortName(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getShortName(), target.getShortName(), ServiceExceptionParameters.VARIABLE_ELEMENT_SHORT_NAME));
+        target.setStreamMessageStatus(source.getStreamMessageStatus());
         target.setComment(dto2DoMapperSdmxSrm.internationalStringToEntity(source.getComment(), target.getComment(), ServiceExceptionParameters.VARIABLE_ELEMENT_COMMENT));
         target.setValidFrom(CoreCommonUtil.transformDateToDateTime(source.getValidFrom()));
         target.setValidTo(CoreCommonUtil.transformDateToDateTime(source.getValidTo()));
@@ -386,7 +387,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
 
         return target;
     }
-    
+
     @Override
     public CodelistRestrictionVisualisation codelistRestrictionVisualisationDtoToDo(CodelistVisualisationDto source) throws MetamacException {
         if (source == null) {
@@ -494,7 +495,7 @@ public class CodesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Codes
         }
         return target;
     }
-    
+
     private Boolean guessIsCodelistVariableUpdated(CodelistMetamacDto source, CodelistVersionMetamac target) {
         String sourceVariableUrn = source.getVariable() != null ? source.getVariable().getUrn() : null;
         String targetVariableUrn = target.getVariable() != null ? target.getVariable().getNameableArtefact().getUrn() : null;

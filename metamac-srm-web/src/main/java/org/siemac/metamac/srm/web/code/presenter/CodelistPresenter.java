@@ -71,6 +71,8 @@ import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteCodelistsResult;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsAction;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsResult;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessResult;
@@ -111,6 +113,8 @@ import org.siemac.metamac.srm.web.shared.code.SaveCodelistOrderResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistResult;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
+import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeParentAction;
@@ -420,7 +424,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void exportCodelist(String urn, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CODELIST, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CODELIST, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override
@@ -1095,6 +1099,10 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
             @Override
             public void onWaitSuccess(UpdateCodesVariableElementsResult result) {
                 retrieveCodes();
+
+                if (result.getNotificationException() != null) {
+                    ShowMessageEvent.fireWarningMessageWithError(CodelistPresenter.this, getMessages().lifeCycleReSendStreamMessageError(), result.getNotificationException());
+                }
             }
         });
     }
@@ -1171,7 +1179,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
 
     @Override
     public void exportCategorisations(List<String> urns, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CATEGORISATION, detail, references), new WaitingAsyncCallbackHandlingExportResult(this));
+        dispatcher.execute(new ExportSDMXResourceAction(urns, RelatedResourceTypeEnum.CATEGORISATION, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override
@@ -1322,13 +1330,27 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     @Override
     public void exportCodes(String codelistUrn) {
         dispatcher.execute(new ExportCodesAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesResult>(this) {
-
             @Override
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
             }
             @Override
             public void onWaitSuccess(ExportCodesResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+    }
+
+    @Override
+    public void exportAnnotations(String codelistUrn) {
+        dispatcher.execute(new ExportAnnotationsAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportAnnotationsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportAnnotationsResult result) {
                 CommonUtils.downloadFile(result.getFileName());
             }
         });

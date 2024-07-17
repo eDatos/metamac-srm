@@ -56,6 +56,12 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     }
 
     @Override
+    public void processImportAnnotationsTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException {
+        TaskImportationInfo taskImportationInfo = getCodesMetamacService().importAnnotationsTsv(ctx, codelistUrn, file, fileName, CAN_NOT_BE_BACKGROUND);
+        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
+    }
+
+    @Override
     public void processImportCodeOrdersTsv(ServiceContext ctx, String codelistUrn, File file, String fileName, String jobKey) throws MetamacException {
         TaskImportationInfo taskImportationInfo = getCodesMetamacService().importCodeOrdersTsv(ctx, codelistUrn, file, fileName, CAN_NOT_BE_BACKGROUND);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, taskImportationInfo.getInformationItems());
@@ -96,6 +102,12 @@ public class TasksMetamacServiceFacadeImpl extends TasksMetamacServiceFacadeImpl
     @Override
     public void processPublishInternallyCodelist(ServiceContext ctx, String urn, boolean forceLatestFinal, String jobKey) throws MetamacException {
         getCodesMetamacService().publishInternallyCodelist(ctx, urn, forceLatestFinal, CAN_NOT_BE_BACKGROUND);
+        getTasksMetamacService().markTaskAsFinished(ctx, jobKey, null);
+    }
+
+    @Override
+    public void processResendkafkaMessageVariableElementJob(ServiceContext ctx, String jobKey, String user, String variableUrn, String localeLanguage) throws MetamacException {
+        getCodesMetamacService().notifyVariableElementPublicationByVariable(ctx, user, variableUrn, localeLanguage);
         getTasksMetamacService().markTaskAsFinished(ctx, jobKey, null);
     }
 

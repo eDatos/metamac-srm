@@ -52,6 +52,7 @@ import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariableElementOper
 import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariableElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariableFamiliesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.DeleteVariablesActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.ExportAnnotationsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ExportCodesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ExportCodesOpennessActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ExportCodesOrderActionHandler;
@@ -78,6 +79,8 @@ import org.siemac.metamac.srm.web.server.handlers.code.GetVariableFamilyActionHa
 import org.siemac.metamac.srm.web.server.handlers.code.GetVariablesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.NormaliseVariableElementsToCodesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.ReSendCodelistStreamMessageActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.ReSendMultipleVariableElementStreamMessageActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.code.ReSendVariableElementStreamMessageActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.RemoveCodelistsFromCodelistFamilyActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.RemoveVariablesFromVariableFamilyActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.code.SaveCodeActionHandler;
@@ -213,6 +216,7 @@ import org.siemac.metamac.srm.web.shared.code.DeleteVariableElementOperationsAct
 import org.siemac.metamac.srm.web.shared.code.DeleteVariableElementsAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteVariableFamiliesAction;
 import org.siemac.metamac.srm.web.shared.code.DeleteVariablesAction;
+import org.siemac.metamac.srm.web.shared.code.ExportAnnotationsAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOpennessAction;
 import org.siemac.metamac.srm.web.shared.code.ExportCodesOrderAction;
@@ -239,6 +243,8 @@ import org.siemac.metamac.srm.web.shared.code.GetVariableFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.GetVariablesAction;
 import org.siemac.metamac.srm.web.shared.code.NormaliseVariableElementsToCodesAction;
 import org.siemac.metamac.srm.web.shared.code.ReSendCodelistStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendMultipleVariableElementsStreamMessageAction;
+import org.siemac.metamac.srm.web.shared.code.ReSendVariableElementStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.code.RemoveCodelistsFromCodelistFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.RemoveVariablesFromVariableFamilyAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodeAction;
@@ -351,7 +357,6 @@ public class ServerModule extends HandlerModule {
 
     @Override
     protected void configureHandlers() {
-
         // DSDs
         bindHandler(GetDsdsAction.class, GetDsdsActionHandler.class);
         bindHandler(GetDsdAction.class, GetDsdActionHandler.class);
@@ -513,11 +518,14 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdateCodesVariableElementsAction.class, UpdateCodesVariableElementsActionHandler.class);
         bindHandler(CopyCodelistAction.class, CopyCodelistActionHandler.class);
         bindHandler(ExportCodesAction.class, ExportCodesActionHandler.class);
+        bindHandler(ExportAnnotationsAction.class, ExportAnnotationsActionHandler.class);
         bindHandler(ExportCodesOrderAction.class, ExportCodesOrderActionHandler.class);
         bindHandler(ExportVariableElementsAction.class, ExportVariableElementsActionHandler.class);
         bindHandler(ReSendCodelistStreamMessageAction.class, ReSendCodelistStreamMessageActionHandler.class);
         bindHandler(ExportCodesRestrictionAction.class, ExportCodesRestrictionActionHandler.class);
         bindHandler(ExportCodesOpennessAction.class, ExportCodesOpennessActionHandler.class);
+        bindHandler(ReSendVariableElementStreamMessageAction.class, ReSendVariableElementStreamMessageActionHandler.class);
+        bindHandler(ReSendMultipleVariableElementsStreamMessageAction.class, ReSendMultipleVariableElementStreamMessageActionHandler.class);
 
         // Master Tables
         bindHandler(GetEniSchemaCatalogsAction.class, GetEniSchemaCatalogsActionHandler.class);

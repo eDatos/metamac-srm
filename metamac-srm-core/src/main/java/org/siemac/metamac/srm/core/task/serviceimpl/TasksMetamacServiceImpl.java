@@ -227,6 +227,18 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
     }
 
     @Override
+    public String plannifyImportAnnotationsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
+        // Validation
+        TasksMetamacInvocationValidator.checkImportAnnotationsTsvInBackground(codelistUrn, file, fileName, null);
+
+        // Plan job
+        JobDataMap jobDataAdditional = new JobDataMap();
+        jobDataAdditional.put(ImportationTsvJob.ITEM_SCHEME_URN, codelistUrn);
+        jobDataAdditional.put(ImportationTsvJob.OPERATION, ImportationTsvJob.OPERATION_IMPORT_ANNOTATIONS);
+        return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
+    }
+
+    @Override
     public String plannifyImportCodeRestrictionsTsvInBackground(ServiceContext ctx, String codelistUrn, File file, String fileName) throws MetamacException {
         // Validation
         TasksMetamacInvocationValidator.checkImportCodeRestrictionsTsvInBackground(codelistUrn, file, fileName, null);
@@ -455,6 +467,39 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
 
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling resend all published last version srm resources kafka messages job", e);
+        }
+    }
+
+    @Override
+    public synchronized String plannifyResendKafkaVariableElementsMessages(ServiceContext ctx, String variableUrn, String localeLanguage) throws MetamacException {
+        try {
+            // Plan job
+            String jobKey = "job_resend_kafka_message_variable_element_" + java.util.UUID.randomUUID().toString();
+
+            // Mark task in progress
+            createTaskInProgress(ctx, jobKey, null);
+
+            // Scheduler a job
+            Scheduler sched = SchedulerRepository.getInstance().lookup("SdmxSrmScheduler"); // get a reference to a scheduler
+
+            // put triggers in group named after the cluster node instance just to distinguish (in logging) what was scheduled from where
+            // @formatter:off
+            JobDetail job = newJob(ResendkafkaMessageVariableElementJob.class).withIdentity(jobKey, "merge")
+                                                          .usingJobData(ResendkafkaMessageVariableElementJob.USER, ctx.getUserId())
+                                                          .usingJobData(ResendkafkaMessageVariableElementJob.VARIABLE_URN, variableUrn)
+                                                          .usingJobData(ResendkafkaMessageVariableElementJob.LOCALE_LANGUAGE, localeLanguage)
+                                                            .requestRecovery()
+                                                          .build();
+            // @formatter:on
+
+            SimpleTrigger trigger = newTrigger().withIdentity("trigger_" + jobKey, "merge").startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+
+            sched.scheduleJob(job, trigger);
+
+            return jobKey;
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
         }
     }
 }

@@ -143,7 +143,7 @@ Application SrmFacadeCore {
 		     @return
 		     @throws org.siemac.metamac.core.common.exception.MetamacException
 		    "
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	
 	    	"
 	    	 Publishes externally a dsd  		
@@ -152,7 +152,7 @@ Application SrmFacadeCore {
 		     @return
 		     @throws org.siemac.metamac.core.common.exception.MetamacException
 		    "
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@DataStructureDefinitionMetamacDto> publishDataStructureDefinitionExternally(String urn) throws MetamacException;
 
 	    	"
 	    	 Resend a data structure definition
@@ -339,9 +339,9 @@ Application SrmFacadeCore {
 	    	"Rejects diffusion validation of organisation scheme"
 	    	@OrganisationSchemeMetamacDto rejectOrganisationSchemeDiffusionValidation(String urn) throws MetamacException; 
 	    	"Publishes internally a organisation scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a organisation scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@OrganisationSchemeMetamacDto> publishOrganisationSchemeExternally(String urn) throws MetamacException;
 	    	"Resend a organisation scheme"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendOrganisationScheme(String urn) throws MetamacException;
     		"Copies a organisation scheme version, creating a new organisation scheme, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -416,9 +416,9 @@ Application SrmFacadeCore {
 	    	"Rejects diffusion validation of concept scheme"
 	    	@ConceptSchemeMetamacDto rejectConceptSchemeDiffusionValidation(String urn) throws MetamacException; 
 	    	"Publishes internally a concept scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a concept scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@ConceptSchemeMetamacDto> publishConceptSchemeExternally(String urn) throws MetamacException;
 	    	"Resend a concept scheme"
 	    	org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendConceptScheme(String urn) throws MetamacException;
     		"Copies a concept scheme version, creating a new concept scheme, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -515,9 +515,9 @@ Application SrmFacadeCore {
 	    	"Rejects diffusion validation of category scheme"
 	    	@CategorySchemeMetamacDto rejectCategorySchemeDiffusionValidation(String urn) throws MetamacException; 
 	    	"Publishes internally a category scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a category scheme"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CategorySchemeMetamacDto> publishCategorySchemeExternally(String urn) throws MetamacException;
 	    	"Resend a category scheme"
             org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCategoryScheme(String urn) throws MetamacException;
     		"Copies a category scheme version, creating a new category scheme, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -616,7 +616,7 @@ Application SrmFacadeCore {
 	    	"Publishes internally a Codelist"
 	    	TaskInfo publishCodelistInternally(String urn, Boolean forceLatestFinal) throws MetamacException;
 	    	"Publishes externally a Codelist"
-	    	org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult<@CodelistMetamacDto> publishCodelistExternally(String urn) throws MetamacException;
+	    	ResourceVersionPublicationResult<@CodelistMetamacDto> publishCodelistExternally(String urn) throws MetamacException;
 	    	"Resend a Codelist"
 	    	org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendCodelist(String urn) throws MetamacException;
     		"Copies a codelist version, creating a new codelist, newCode is optional, skip to reuse before, but if the maintainer of source and target are the same the newCode is mandatory"
@@ -637,7 +637,7 @@ Application SrmFacadeCore {
 			"Change variable element to code"
 			@CodeMetamacDto updateCodeVariableElement(String codeUrn, String variableElementUrn) throws MetamacException;
 			"Change variable elements to codes"
-			updateCodesVariableElements(String codelistUrn, Map<Long,Long> variableElementsIdByCodeId) throws MetamacException;
+			org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult updateCodesVariableElements(String codelistUrn, Map<Long,Long> variableElementsIdByCodeId) throws MetamacException;
 			"Updates parent of code. parentUrn is null when code is moved to first level. Code is moved at the end of new level"
 			updateCodeParent(String codeUrn, String newParentUrn) throws MetamacException;
 			"Updates position of code to visualisation requested"
@@ -660,12 +660,16 @@ Application SrmFacadeCore {
     		TaskImportationInfo importCodesTsv(String codelistUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		TaskImportationInfo importCodeOrdersTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
+    		"Imports annotations in tsv format"
+    		TaskImportationInfo importAnnotationsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
     		"Imports code openness levels in tsv format"
     		TaskImportationInfo importCodeOpennessLevelsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
     		"Imports code restrictions in tsv format"
     		TaskImportationInfo importCodeRestrictionsTsv(String codelistUrn, InputStream tsvStream, String fileName) throws MetamacException;
 			"Exports codes in tsv format"
     		String exportCodesTsv(String codelistUrn) throws MetamacException;
+    		"Exports annotations in tsv format"
+    		String exportAnnotationsTsv(String codelistUrn) throws MetamacException;
 			"Exports code orders in tsv format"
     		String exportCodeOrdersTsv(String codelistUrn) throws MetamacException;
     		"Exports code openness levels in tsv format"
@@ -751,9 +755,9 @@ Application SrmFacadeCore {
     		removeVariableFromVariableFamily(String variableUrn, String familyUrn) throws MetamacException;
     		
     		"Creates variable element"
-			@VariableElementDto createVariableElement(@VariableElementDto variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElementDto> createVariableElement(@VariableElementDto variableElement) throws MetamacException;
 			"Updates variable element"
-			@VariableElementDto updateVariableElement(@VariableElementDto variableElement) throws MetamacException;
+			ResourceVersionPublicationResult<@VariableElementDto> updateVariableElement(@VariableElementDto variableElement) throws MetamacException;
     		"Retrieves variable element by urn"
     		@VariableElementDto retrieveVariableElementByUrn(String urn) throws MetamacException;
     		"Finds variable elements by criteria"
@@ -786,6 +790,12 @@ Application SrmFacadeCore {
     		TaskImportationInfo importVariableElementsPoints(String variableUrn, URL shapeFileUrl) throws MetamacException;
 			"Exports variable elements in tsv format"
     		String exportVariableElementsTsv(String variableUrn) throws MetamacException;
+    		"Resend a updated variable element"
+            org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult resendUpdatedVariableElement(String variableElementUrn) throws MetamacException;
+            "Resend all variable elements by variablUrn"
+            TaskInfo publishVariableElementInBackground(String variableUrn, String localeLanguage) throws MetamacException;
+            
+    		
     		    		
     		"ENI scheme catalogs"
     		List<@EniSchemaCatalogDto> findAllEniSchemaCatalogs() throws MetamacException;
@@ -848,6 +858,8 @@ Application SrmFacadeCore {
     		processImportCategoryElementsTsv(java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
     		"Imports codes in tsv format"
     		processImportCodesTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
+    		"Imports codes in tsv format"
+    		processImportAnnotationsTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
 			"Imports code orders in tsv format"
     		processImportCodeOrdersTsv(String codelistUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
     		"Imports code openness levels in tsv format"
@@ -862,6 +874,8 @@ Application SrmFacadeCore {
     		TaskImportationInfo processImportVariableElementsPoints(String variableUrn, URL shapeFileUrl, String jobKey) throws MetamacException;
     		"Perform a merge with temporal codelist"
 			processPublishInternallyCodelist(String urnToCopy, boolean forceLatestFinal, String jobKey) throws MetamacException;
+			"Perform kafka variable element message sending"
+			processResendkafkaMessageVariableElementJob(String jobKey, String user, String variableUrn, String localeLanguage) throws MetamacException;
 			
 			// Schedule Job resend kafka messages for all resources
     		scheduleResendKafkaResourcesMessageJob();  		

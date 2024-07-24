@@ -1,13 +1,7 @@
 package org.siemac.metamac.srm.rest.external.v1_0.service;
 
-import static org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils.hasField;
-
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -89,7 +83,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElements
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElementsGeoInfo;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamily;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Variables;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.*;
 import org.siemac.metamac.srm.core.base.serviceapi.MiscMetamacService;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
@@ -98,32 +92,14 @@ import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
-import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
-import org.siemac.metamac.srm.core.code.domain.CodeMetamacProperties;
-import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultSelection;
-import org.siemac.metamac.srm.core.code.domain.CodelistFamilyProperties;
-import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
-import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
-import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
-import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
-import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
-import org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection;
-import org.siemac.metamac.srm.core.code.domain.RelatedCode;
-import org.siemac.metamac.srm.core.code.domain.VariableElementProperties;
-import org.siemac.metamac.srm.core.code.domain.VariableElementResult;
-import org.siemac.metamac.srm.core.code.domain.VariableElementResultSelection;
-import org.siemac.metamac.srm.core.code.domain.VariableFamilyProperties;
-import org.siemac.metamac.srm.core.code.domain.VariableProperties;
+import org.siemac.metamac.srm.core.code.domain.*;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
-import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
-import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacProperties;
-import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
-import org.siemac.metamac.srm.core.concept.domain.ConceptType;
+import org.siemac.metamac.srm.core.concept.domain.*;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
@@ -152,11 +128,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.arte.statistic.sdmx.srm.core.category.domain.CategorisationProperties;
+import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersionProperties;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
+import com.arte.statistic.sdmx.srm.core.constraint.domain.ContentConstraintProperties;
 import com.arte.statistic.sdmx.srm.core.constraint.domain.RegionValue;
 import com.arte.statistic.sdmx.srm.core.constraint.serviceapi.ConstraintsService;
+import com.arte.statistic.sdmx.srm.core.structure.domain.DataStructureDefinitionVersionProperties;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
+
+import static org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils.hasField;
 
 @Service("srmRestExternalFacadeV10")
 public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
@@ -304,6 +286,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
             // Find. Retrieve concepts paginated
             SculptorCriteria sculptorCriteria = conceptsRest2DoMapper.getConceptCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(ConceptMetamac.class, ConceptMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=");
+
             PagedResult<ConceptMetamac> entitiesPagedResult = findConceptsCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
@@ -437,6 +423,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
             // Find. Retrieve categories paginated
             SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(CategoryMetamac.class, CategoryMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=");
+
             PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
@@ -596,6 +586,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
             // Find. Retrieve organisations paginated
             SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(OrganisationMetamac.class, OrganisationMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=");
+
             PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(null, agencyID, resourceID, version, null, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
 
@@ -674,6 +668,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+                List<String> selectedLanguages = configurationService.retrieveLanguages();
+                sculptorCriteria.setOrderByCaseCondition(OrganisationMetamac.class, OrganisationMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=");
+
                 PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(OrganisationTypeEnum.AGENCY, agencyID, resourceID, version, null, sculptorCriteria.getConditions(),
                         sculptorCriteria.getPagingParameter());
 
@@ -756,6 +754,12 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
                 // Find. Retrieve organisations paginated
                 SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+                List<String> selectedLanguages = configurationService.retrieveLanguages();
+                sculptorCriteria.setOrderByCaseCondition(OrganisationMetamac.class,
+                        OrganisationMetamacProperties.nameableArtefact().name().texts().locale(),
+                        selectedLanguages, "=");
+
                 PagedResult<OrganisationMetamac> entitiesPagedResult = findOrganisationsCore(OrganisationTypeEnum.ORGANISATION_UNIT, agencyID, resourceID, version, null,
                         sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
@@ -1160,6 +1164,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             Set<String> fieldsToShow) throws MetamacException {
         // Find. Retrieve codes paginated
         SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+        List<String> selectedLanguages = configurationService.retrieveLanguages();
+        sculptorCriteria.setOrderByCaseCondition(CodeMetamac.class, CodeMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=");
+
         PagedResult<CodeMetamac> entitiesPagedResult = findCodesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
         // Transform
@@ -1346,6 +1354,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Retrieve codelistFamilies by criteria
             SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodelistFamilyCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(org.siemac.metamac.srm.core.code.domain.CodelistFamily.class, CodelistFamilyProperties.nameableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
             // Retrieve
             PagedResult<org.siemac.metamac.srm.core.code.domain.CodelistFamily> entitiesPagedResult = findCodelistFamiliesCore(null, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
@@ -1578,6 +1589,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = conceptsRest2DoMapper.getConceptSchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(ConceptSchemeVersionMetamac.class, ConceptSchemeVersionMetamacProperties.maintainableArtefact().name().texts().locale(), selectedLanguages, "=");
+
             // Find
             PagedResult<ConceptSchemeVersionMetamac> entitiesPagedResult = findConceptSchemesCore(agencyID, resourceID, version, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
@@ -1624,6 +1638,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategorySchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(CategorySchemeVersionMetamac.class, CategorySchemeVersionProperties.maintainableArtefact().name().texts().locale(), selectedLanguages, "=");
             // Find
             PagedResult<CategorySchemeVersionMetamac> entitiesPagedResult = findCategorySchemesCore(agencyID, resourceID, version, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
@@ -1639,6 +1655,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategorisationCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(com.arte.statistic.sdmx.srm.core.category.domain.Categorisation.class, CategorisationProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
+
             // Find
             PagedResult<com.arte.statistic.sdmx.srm.core.category.domain.Categorisation> entitiesPagedResult = findCategorisationsCore(agencyID, resourceID, version, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
@@ -1651,6 +1671,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     private CategorySchemeVersionMetamac retrieveCategorySchemePublished(String agencyID, String resourceID, String version) throws MetamacException {
+
+        SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategorisationCriteriaMapper().restCriteriaToSculptorCriteria(null, null, null, null);
+
+        List<String> selectedLanguages = configurationService.retrieveLanguages();
+        sculptorCriteria.setOrderByCaseCondition(com.arte.statistic.sdmx.srm.core.category.domain.Categorisation.class,
+                CategoryMetamacProperties.itemSchemeVersion().maintainableArtefact().name().texts().locale(), selectedLanguages, "=");
+
         PagedResult<CategorySchemeVersionMetamac> entitiesPagedResult = findCategorySchemesCore(agencyID, resourceID, version, null, pagingParameterOneResult);
         if (entitiesPagedResult.getValues().size() != 1) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_SCHEME_NOT_FOUND, resourceID, version, agencyID);
@@ -1695,6 +1722,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationSchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(OrganisationSchemeVersionMetamac.class, OrganisationSchemeVersionMetamacProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
+
             // Find
             PagedResult<OrganisationSchemeVersionMetamac> entitiesPagedResult = findOrganisationSchemesCore(null, agencyID, resourceID, version, sculptorCriteria.getConditions(),
                     sculptorCriteria.getPagingParameter());
@@ -1738,8 +1769,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         List<ConditionalCriteria> conditionalCriteria = SrmRestInternalUtils.buildConditionalCriteriaItemSchemes(agencyID, resourceID, version, conditionalCriteriaQuery,
                 OrganisationSchemeVersionMetamac.class);
         if (type != null) {
-            conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(OrganisationSchemeVersionMetamac.class).withProperty(OrganisationSchemeVersionMetamacProperties.organisationSchemeType())
-                    .eq(type).buildSingle());
+            conditionalCriteria.add(
+                    ConditionalCriteriaBuilder.criteriaFor(OrganisationSchemeVersionMetamac.class).withProperty(OrganisationSchemeVersionMetamacProperties.organisationSchemeType()).eq(type)
+                            .buildSingle());
         }
 
         // Find
@@ -1749,6 +1781,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private AgencySchemes findAgencySchemes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
         try {
             SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationSchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(OrganisationSchemeVersionMetamac.class, OrganisationSchemeVersionMetamacProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
 
             // Find
             PagedResult<OrganisationSchemeVersionMetamac> entitiesPagedResult = findOrganisationSchemesCore(OrganisationSchemeTypeEnum.AGENCY_SCHEME, agencyID, resourceID, version,
@@ -1765,6 +1801,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationSchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(OrganisationSchemeVersionMetamac.class, OrganisationSchemeVersionMetamacProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
+
             // Find
             PagedResult<OrganisationSchemeVersionMetamac> entitiesPagedResult = findOrganisationSchemesCore(OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME, agencyID, resourceID, version,
                     sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -1779,6 +1819,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private DataConsumerSchemes findDataConsumerSchemes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
         try {
             SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationSchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(OrganisationSchemeVersionMetamac.class, OrganisationSchemeVersionMetamacProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
 
             // Find
             PagedResult<OrganisationSchemeVersionMetamac> entitiesPagedResult = findOrganisationSchemesCore(OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME, agencyID, resourceID, version,
@@ -1795,6 +1839,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = organisationsRest2DoMapper.getOrganisationSchemeCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(OrganisationSchemeVersionMetamac.class, OrganisationSchemeVersionMetamacProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
+
             // Find
             PagedResult<OrganisationSchemeVersionMetamac> entitiesPagedResult = findOrganisationSchemesCore(OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME, agencyID, resourceID, version,
                     sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -1809,6 +1857,9 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private Codelists findCodelists(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
         try {
             SculptorCriteria sculptorCriteria = codesRest2DoMapper.getCodelistCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(CodelistVersionMetamac.class, CodelistVersionMetamacProperties.maintainableArtefact().name().texts().locale(), selectedLanguages, "=");
 
             // Find
             PagedResult<CodelistVersionMetamac> entitiesPagedResult = findCodelistsCore(agencyID, resourceID, version, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -1880,8 +1931,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
 
         // Only Codelists with access-type = PUBLIC, are public. But in LLCC-75, the codelist that are access-type = RESTRICTED never were marked as publicLogic=true,
         // for this is unnecessary to check this condition.
-        conditionalCriteria
-                .add(ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
+        conditionalCriteria.add(
+                ConditionalCriteriaBuilder.criteriaFor(CodelistVersionMetamac.class).withProperty(CodelistVersionMetamacProperties.accessType()).eq(AccessTypeEnum.PUBLIC).buildSingle());
 
         // Find
         return codesService.findCodelistsByCondition(ctx, conditionalCriteria, pagingParameter);
@@ -1931,6 +1982,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         try {
             SculptorCriteria sculptorCriteria = contentConstraintsRest2DoMapper.getContentConstraintCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(com.arte.statistic.sdmx.srm.core.constraint.domain.ContentConstraint.class,
+                    ContentConstraintProperties.maintainableArtefact().name().texts().locale(), selectedLanguages, "=");
+
             // Find
             PagedResult<com.arte.statistic.sdmx.srm.core.constraint.domain.ContentConstraint> entitiesPagedResult = findContentConstraintsCore(agencyID, resourceID, version,
                     sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -1945,6 +2000,10 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     private DataStructures findDataStructures(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset) {
         try {
             SculptorCriteria sculptorCriteria = dataStructuresRest2DoMapper.getDataStructureDefinitionCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            sculptorCriteria.setOrderByCaseCondition(DataStructureDefinitionVersionMetamac.class, DataStructureDefinitionVersionProperties.maintainableArtefact().name().texts().locale(),
+                    selectedLanguages, "=");
 
             // Find
             PagedResult<DataStructureDefinitionVersionMetamac> entitiesPagedResult = findDataStructuresCore(agencyID, resourceID, version, sculptorCriteria.getConditions(),
@@ -2128,8 +2187,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     /**
-     * Throws response error, logging exception
-     * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
+     * Throws response error, logging exception When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */
     private Response manageExceptionResponse(Exception e) {
         RestException errorResponse = manageException(e);

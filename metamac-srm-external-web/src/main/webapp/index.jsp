@@ -38,14 +38,14 @@
        <h2><%=rs.getString("api.doc.versions") %></h2>
        <ul>
            <li>
-               <h3 class="version-title"><a href="${apiBaseURL}/latest" alt="Última versión de la API">/latest</a></h3>
+               <h3 class="version-title"><a href="${apiBaseURL}/latest">/latest</a></h3>
                <div class="version-description">
                    <p><strong>latest</strong> <%=rs.getString("api.doc.latest") %></p>
                </div>
            </li>
            
            <li>
-               <h3 class="version-title"><a href="${apiBaseURL}/v1.0" alt="Versión 1.0">/v1.0</a></h3>
+               <h3 class="version-title"><a href="${apiBaseURL}/v1.0">/v1.0</a></h3>
                <div class="version-description">
                     <p><%=rs.getString("api.doc.version.1_0") %></p>
                </div>

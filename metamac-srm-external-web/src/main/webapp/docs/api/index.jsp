@@ -1,10 +1,19 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="org.apache.commons.lang.LocaleUtils" %>
+<%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
+<%@ page import="org.siemac.metamac.core.common.util.MessagesResourceBundle"%>
 <!DOCTYPE html>
+<%
+    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+    String appName = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("app.name");
+ %>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>API de Recursos Estructurales</title>
+  <title><%=appName %></title>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/typography.css" media='screen' rel='stylesheet' type='text/css'/>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/reset.css" media='screen' rel='stylesheet' type='text/css'/>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/screen.css" media='screen' rel='stylesheet' type='text/css'/>
@@ -26,7 +35,7 @@
 
   <!-- Some basic translations -->
   <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/translator.js" type='text/javascript'></script>
-  <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/es.js" type='text/javascript'></script>
+  <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/<%=locale %>.js" type='text/javascript'></script>
 
   <c:if test="${!empty apiStyleCssUrl}">
     <link href="<c:out value='${apiStyleCssUrl}'/>" media='screen' rel='stylesheet' type='text/css' />
@@ -114,6 +123,7 @@
 	
 	<c:if test="${!empty apiStyleFooterUrl}">
 	   <c:import charEncoding="UTF-8" url="${apiStyleFooterUrl}">
+	      <c:param name="appName" value="<%= appName %>" />
 	      <c:param name="appId" value="structural-resources-external"/>
 	   </c:import>
 	</c:if>

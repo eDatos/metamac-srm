@@ -4,7 +4,6 @@
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="org.apache.commons.lang.LocaleUtils" %>
 <%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
-<%@ page import="org.siemac.metamac.core.common.util.MessagesResourceBundle"%>
 <!DOCTYPE html>
 <%
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);

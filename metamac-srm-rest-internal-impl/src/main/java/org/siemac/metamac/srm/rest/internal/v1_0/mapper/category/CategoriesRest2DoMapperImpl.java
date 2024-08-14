@@ -155,6 +155,9 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
                     return buildSculptorPropertyCriteria(CategoryMetamacProperties.categoryElement().shortName().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
                 case CATEGORY_ELEMENT_URN:
                     return buildSculptorPropertyCriteria(CategoryMetamacProperties.categoryElement().identifiableArtefact().urn(), PropertyTypeEnum.STRING, propertyRestriction);
+                case CATEGORY_ELEMENT_VISIBLE:
+                    return buildSculptorPropertyCriteria(CategoryMetamacProperties.categoryElement().isVisible(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

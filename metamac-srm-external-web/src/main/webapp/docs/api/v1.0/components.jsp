@@ -50,6 +50,7 @@ String categorySchemeLatest = messagesBundle.getString("api.doc.swagger.componen
 String categoryElementCode = messagesBundle.getString("api.doc.swagger.components.categoryElementCode");
 String categoryElementUrn = messagesBundle.getString("api.doc.swagger.components.categoryElementUrn");
 String categoryElementShortName = messagesBundle.getString("api.doc.swagger.components.categoryElementShortName");
+String categoryElementVisible = messagesBundle.getString("api.doc.swagger.components.categoryElementVisible");
 String variableType = messagesBundle.getString("api.doc.swagger.components.variableType");
 String familyUrn = messagesBundle.getString("api.doc.swagger.components.familyUrn");
 String shortName = messagesBundle.getString("api.doc.swagger.components.shortName");
@@ -228,7 +229,7 @@ public String queryDescriptionWithParams(String... a) {
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest, categoryElementCode, categoryElementUrn, categoryElementShortName) %>"
+            "description":"<%= queryDescriptionWithParams(id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest, categoryElementCode, categoryElementUrn, categoryElementShortName, categoryElementVisible) %>"
         },
         "categoryOrderByParam": {
           "name":"orderBy",

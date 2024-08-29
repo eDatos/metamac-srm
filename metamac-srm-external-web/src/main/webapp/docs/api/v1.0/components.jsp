@@ -19,7 +19,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
 
 <%
    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-   MessagesResourceBundle messagesBundle = new MessagesResourceBundle(locale, "i18n.messages-swagger");
+   MessagesResourceBundle messagesBundle = new MessagesResourceBundle(locale, "i18n.messages");
    pageContext.setAttribute("msg", messagesBundle);
 
    String id = messagesBundle.getString("api.doc.swagger.components.id");

@@ -8,12 +8,13 @@
 <%
     String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-    String appName = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
+    ResourceBundle rs = ResourceBundle.getBundle("i18n.messages" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
+    String appName = rs.getString("apps.api_catalog.name");
  %>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title><%=appName %></title>
+  <title><%=rs.getString("app.name") %></title>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/typography.css" media='screen' rel='stylesheet' type='text/css'/>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/reset.css" media='screen' rel='stylesheet' type='text/css'/>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/screen.css" media='screen' rel='stylesheet' type='text/css'/>

@@ -5,7 +5,7 @@
 <%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
 <%
    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-   MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages-swagger");
+   MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages");
    pageContext.setAttribute("msg", messagesResource);
 %>
 	{

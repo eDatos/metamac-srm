@@ -282,7 +282,9 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
             } else {
                 i++; // code
                 i++; // urn
+                i++; // visible
             }
+
             String locale = getString(categoryElementResultSqlArray[i++]);
             if (locale == null) {
                 i++;

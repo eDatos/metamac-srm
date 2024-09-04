@@ -204,7 +204,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     }
 
     @Override
-    public void deleteCategoryElementLogo(String categoryElementUrn) {
+    public void deleteCategoryElementLogo(final String categoryElementUrn) {
 
         dispatcher.execute(new DeleteCategoryElementLogoAction(categoryElementUrn), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementLogoResult>(this) {
 
@@ -216,8 +216,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
             @Override
             public void onWaitSuccess(DeleteCategoryElementLogoResult result) {
                 fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementLogoDeleted());
-                getView().cleanFileName();
-
+                retrieveCategoryElementByUrn(categoryElementUrn, false);
             }
         });
 

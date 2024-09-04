@@ -114,12 +114,10 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
             @Override
             public void onClick(ClickEvent event) {
                 if (identifiersEditionForm.validate(false) && diffusionDescriptorsEditionForm.validate(false) && annotationsEditionForm.validate(false)) {
-                    getCategoryElementDto();
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
                         @Override
                         public void execute() {
-                            getCategoryElementDto();
                             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
                                 @Override
@@ -183,7 +181,9 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
     public void cleanFileName() {
         otherDataEditionForm.setValue(ResourceElementDS.LOGO, "");
         otherDataForm.setValue(ResourceElementDS.LOGO, "");
-        importCategoryElementLogoWindow.destroy();
+        if (importCategoryElementLogoWindow != null) {
+            importCategoryElementLogoWindow.destroy();
+        }
 
     }
 
@@ -285,7 +285,8 @@ public class CategoryElementViewImpl extends ViewWithUiHandlers<CategoryElementU
         diffusionDescriptorsEditionForm.setValue(ResourceElementDS.VALID_TO, categoryElementDto.getValidTo());
 
         // Other data
-        otherDataEditionForm.setValue(ResourceElementDS.IS_VISIBLE, BooleanWebUtils.getBooleanLabel(categoryElementDto.getIsVisible()));
+        ((BooleanSelectItem) otherDataEditionForm.getItem(ResourceElementDS.IS_VISIBLE)).setBooleanValue(categoryElementDto.getIsVisible());
+        Boolean d = ((BooleanSelectItem) otherDataEditionForm.getItem(ResourceElementDS.IS_VISIBLE)).getBooleanValue();
         otherDataEditionForm.setValue(ResourceElementDS.LOGO, categoryElementDto.getLogo() != null ? categoryElementDto.getLogo().getFullFileName() : null);
 
         // Annotations

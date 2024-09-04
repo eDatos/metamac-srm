@@ -3334,12 +3334,7 @@
                "application/xml"
             ],
              "parameters":[
-               {
-                  "name":"categoryElementID",
-                  "in":"path",
-                  "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.parameters.1.description" bundle="${i18n}"/>"
-               }
+                {"$ref":"#/components/parameters/resourceIdParam"}
             ],
             "responses":{
                "200":{

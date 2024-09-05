@@ -1,9 +1,9 @@
-code	short_name#es	short_name#en	short_name#it
-categoryElement1	Nombre corto 1	Short name 1	Nombre corto it 1
+code	short_name#es	short_name#en	short_name#it	is_visible
+categoryElement1	Nombre corto 1	Short name 1	Nombre corto it 1	true
 categoryElement2	Nombre corto 2
-categoryElement3	Nombre corto 3	Short name 3	
-categoryElement4WithoutShortName			
-#categoryElementNotSemanticCode			Nombre corto it 5
-categoryElement6	Nombre corto 6	Short name 6	Nombre corto it 6
-	Nombre corto 6	Short name 6	Nombre corto it 6
-categoryElementIncorrectColumns	nombre		
+categoryElement3	Nombre corto 3	Short name 3		false
+categoryElement4WithoutShortName				
+#categoryElementNotSemanticCode			Nombre corto it 5	false
+categoryElement6	Nombre corto 6	Short name 6	Nombre corto it 6	true
+	Nombre corto 6	Short name 6	Nombre corto it 6	false
+categoryElementIncorrectColumns	nombre			true

@@ -17,13 +17,19 @@ import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.client.enums.ToolStripButtonEnum;
 import org.siemac.metamac.srm.web.client.events.SelectMenuButtonEvent;
 import org.siemac.metamac.srm.web.client.presenter.MainPagePresenter;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementLogoAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementLogoResult;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementLogoAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementLogoResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementResult;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementAction;
 import org.siemac.metamac.srm.web.shared.category.SaveCategoryElementResult;
+import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -69,7 +75,8 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
 
     public interface CategoryElementView extends View, HasUiHandlers<CategoryElementUiHandlers> {
 
-        void setCategoryElement(CategoryElementDto categoryElementDto);
+        void setCategoryElement(CategoryElementDto categoryElementDto, boolean onlyUpdate);
+        void cleanFileName();
     }
 
     @ContentSlot
@@ -116,11 +123,11 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
     private void retrieveCategoryElement(String elementIdentifier) {
         String urn = UrnUtils.generateUrn(UrnConstants.URN_SIEMAC_CLASS_CATEGORY_ELEMENT_PREFIX, elementIdentifier);
         if (!StringUtils.isBlank(urn)) {
-            retrieveCategoryElementByUrn(urn);
+            retrieveCategoryElementByUrn(urn, false);
         }
     }
 
-    private void retrieveCategoryElementByUrn(String urn) {
+    private void retrieveCategoryElementByUrn(String urn, final boolean onlyUpdate) {
 
         dispatcher.execute(new GetCategoryElementAction(urn), new WaitingAsyncCallbackHandlingError<GetCategoryElementResult>(this) {
 
@@ -131,7 +138,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
             @Override
             public void onWaitSuccess(GetCategoryElementResult result) {
                 CategoryElementPresenter.this.categoryElementDto = result.getCategoryElementDto();
-                getView().setCategoryElement(result.getCategoryElementDto());
+                getView().setCategoryElement(result.getCategoryElementDto(), onlyUpdate);
             }
         });
 
@@ -151,7 +158,7 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
                 CategoryElementPresenter.this.categoryElementDto = result.getSavedCategoryElementDto();
                 fireSuccessMessage(getMessages().categoryElementSaved());
                 CategoryElementDto categoryElementDto = result.getSavedCategoryElementDto();
-                getView().setCategoryElement(categoryElementDto);
+                getView().setCategoryElement(categoryElementDto, false);
                 // Update URL
                 PlaceRequest placeRequest = PlaceRequestUtils.buildRelativeCategoryElementPlaceRequest(result.getSavedCategoryElementDto().getCode());
                 placeManager.updateHistory(placeRequest, true);
@@ -176,6 +183,65 @@ public class CategoryElementPresenter extends Presenter<CategoryElementPresenter
             }
         });
 
+    }
+
+    @Override
+    public void retrieveCategoryElementLogo(String categoryElementUrn) {
+
+        dispatcher.execute(new GetCategoryElementLogoAction(categoryElementUrn), new WaitingAsyncCallbackHandlingError<GetCategoryElementLogoResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(GetCategoryElementLogoResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
+
+    }
+
+    @Override
+    public void deleteCategoryElementLogo(final String categoryElementUrn) {
+
+        dispatcher.execute(new DeleteCategoryElementLogoAction(categoryElementUrn), new WaitingAsyncCallbackHandlingError<DeleteCategoryElementLogoResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(DeleteCategoryElementLogoResult result) {
+                fireSuccessMessage(MetamacSrmWeb.getMessages().categoryElementLogoDeleted());
+                retrieveCategoryElementByUrn(categoryElementUrn, false);
+            }
+        });
+
+    }
+
+    //
+    // LOGO IMPORTATION
+    //
+
+    @Override
+    public void resourceImportationSucceed(String successMessage, String categoryElementUrn) {
+        ShowMessageEvent.fireSuccessMessage(CategoryElementPresenter.this, successMessage);
+        retrieveCategoryElementByUrn(categoryElementUrn, true);
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void resourceImportationFailed(String errorMessage) {
+        ShowMessageEvent.fireErrorMessage(CategoryElementPresenter.this, errorMessage);
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void showWaitPopup() {
+        ChangeWaitPopupVisibilityEvent.fire(this, true);
     }
 
     //

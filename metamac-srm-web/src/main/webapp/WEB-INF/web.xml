@@ -124,9 +124,21 @@
         <welcome-file>MetamacSrmWeb.jsp</welcome-file>
     </welcome-file-list>
 
+ <!-- Establish custom accept header for certains urls. Two parameters.
+   - first parameter: Start with "url-path" + any description. This parameters are urls separated by commas in the case that more than one pattern exists.
+   - second parameter: Start with "default-type-" + the name of the parameters with the urls.
+  -->
 	<filter>
         <filter-name>HttpWrapperFilter</filter-name>
         <filter-class>org.siemac.metamac.rest.request.filter.HttpWrapperFilter</filter-class>
+        <init-param>
+            <param-name>url-path-images</param-name>
+            <param-value>*/logo</param-value> <!-- urls separated by commas -->
+        </init-param>
+        <init-param>
+            <param-name>default-type-url-path-images</param-name>
+            <param-value>image/*</param-value> 
+        </init-param>
     </filter>
     
     <filter-mapping>

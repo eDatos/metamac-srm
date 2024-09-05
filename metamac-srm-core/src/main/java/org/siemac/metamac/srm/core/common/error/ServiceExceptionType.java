@@ -167,7 +167,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.importation.tsv.error.header.column_unexpected");
     public static final CommonServiceExceptionType IMPORTATION_TSV_LINE_INCORRECT                                                        = create("exception.srm.importation.tsv.error.line.incorrect");
     public static final CommonServiceExceptionType IMPORTATION_TSV_CODE_INCORRECT                                                        = create("exception.srm.importation.tsv.error.code.incorrect");
-    public static final CommonServiceExceptionType IMPORTATION_TSV_ANNOTATION_TYPE_INCORRECT                                             = create("exception.srm.importation.tsv.error.annotation_type.incorrect");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ANNOTATION_TYPE_INCORRECT                                             = create(
+            "exception.srm.importation.tsv.error.annotation_type.incorrect");
     public static final CommonServiceExceptionType IMPORTATION_TSV_METADATA_REQUIRED                                                     = create(
             "exception.srm.importation.tsv.error.metadata_required");
     public static final CommonServiceExceptionType IMPORTATION_TSV_METADATA_INCORRECT                                                    = create(
@@ -225,6 +226,14 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
     public static final CommonServiceExceptionType IMPORTATION_TSV_INFO_CATEGORY_ELEMENT_NOT_FOUND                                       = create(
             "info.srm.importation.tsv.error.category_element.not_found");
     public static final CommonServiceExceptionType EXPORTATION_TSV_ERROR                                                                 = create("exception.srm.exportation.tsv.error");
+    public static final CommonServiceExceptionType IMPORTATION_LOGO_CATEGORY_ELEMENT_ERROR                                               = create(
+            "info.srm.importation.logo.error.category_element.error");
+    public static final CommonServiceExceptionType IMPORTATION_LOGO_CATEGORY_ELEMENT_EXTENSION_ERROR                                     = create(
+            "info.srm.importation.logo.error.category_element_extension.error");
+    public static final CommonServiceExceptionType IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR                                      = create(
+            "info.srm.importation.logo.error.category_element_max_size.error");
+    public static final CommonServiceExceptionType EXPORTATION_LOGO_CATEGORY_ELEMENT                                                     = create(
+            "exception.srm.exportation.category_element.logo.error");
 
     // Notices
     public static final CommonServiceExceptionType IMPORT_TSV_JOB_ERROR                                                                  = create("notice_message.srm.exception.import_tsv_job.fails");

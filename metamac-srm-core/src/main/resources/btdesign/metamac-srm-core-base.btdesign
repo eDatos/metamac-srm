@@ -90,6 +90,34 @@ Application BaseCore {
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
 
-		}	  			  	
+		}	 
+		
+		Entity ResourceMetadataFile {
+		databaseTable="TB_RESOURCE_METADATA_FILE"
+		hint="idSequence=M_RESOURCE_METADATA_FILE"	
+		
+		"File name"
+		String fileName;
+		"Extension"
+		String extension;
+	    - @ResourceFile file not nullable cascade="all-delete-orphan" fetch="lazy" databaseColumn="FILE_FK";
+		
+		Repository ResourceMetadataFileRepository {
+		        findById;
+				save;
+				delete;
+			}	
+		}
+		
+		Entity ResourceFile {
+		
+		databaseTable="TB_RESOURCE_FILE"
+		hint="idSequence=M_RESOURCE_FILE"
+		not auditable
+		gap
+		
+		Long id key;		
+		Bytea fileData;	  	
 	}
+
 }

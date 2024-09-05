@@ -11,6 +11,7 @@ import org.siemac.metamac.srm.web.server.handlers.category.CreateCategorisationA
 import org.siemac.metamac.srm.web.server.handlers.category.CreateCategorySchemeTemporalVersionActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategorisationsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategoryActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategoryElementLogoActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategoryElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.DeleteCategorySchemesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.ExportCategoriesActionHandler;
@@ -21,6 +22,7 @@ import org.siemac.metamac.srm.web.server.handlers.category.GetCategorisationActi
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorisationsByArtefactActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementLogoActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategoryElementsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.category.GetCategorySchemeVersionsActionHandler;
@@ -175,6 +177,7 @@ import org.siemac.metamac.srm.web.shared.category.CreateCategorisationAction;
 import org.siemac.metamac.srm.web.shared.category.CreateCategorySchemeTemporalVersionAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorisationsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementLogoAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorySchemesAction;
 import org.siemac.metamac.srm.web.shared.category.ExportCategoriesAction;
@@ -185,6 +188,7 @@ import org.siemac.metamac.srm.web.shared.category.GetCategorisationAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategoryElementLogoAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoryElementsAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeVersionsAction;
@@ -457,6 +461,8 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdateCategoryElementOfCategoryAction.class, UpdateCategoryElementOfCategoryActionHandler.class);
         bindHandler(UpdateCodesCategoryElementsAction.class, UpdateCodesCategoryElementsActionHandler.class);
         bindHandler(NormaliseCategoryElementsToCategoriesAction.class, NormaliseCategoryElementsToCategoriesActionHandler.class);
+        bindHandler(GetCategoryElementLogoAction.class, GetCategoryElementLogoActionHandler.class);
+        bindHandler(DeleteCategoryElementLogoAction.class, DeleteCategoryElementLogoActionHandler.class);
 
         // Codes
         bindHandler(DeleteCodelistsAction.class, DeleteCodelistsActionHandler.class);

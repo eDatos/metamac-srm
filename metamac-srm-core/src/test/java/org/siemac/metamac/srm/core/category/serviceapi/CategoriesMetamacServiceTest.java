@@ -14,9 +14,11 @@ import static org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMe
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +30,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -45,6 +48,7 @@ import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
@@ -76,7 +80,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
-import com.arte.statistic.sdmx.srm.core.base.serviceapi.utils.BaseAsserts;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.Category;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategoryProperties;
@@ -2101,15 +2104,18 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         categoryElement.setValidTo(endDate);
         categoryElement.setValidFrom(iniDate);
         categoryElement.getIdentifiableArtefact().setIsCodeUpdated(false);
+        categoryElement.setIsVisible(false);
         // Create
         CategoryElement categoryElementUpdated = categoriesService.updateCategoryElement(ctx, categoryElement);
         assertEqualsDate(iniDate, categoryElementUpdated.getValidFrom());
         assertEqualsDate(endDate, categoryElementUpdated.getValidTo());
+        assertEquals(false, categoryElementUpdated.getIsVisible());
         // Validate
 
         CategoryElement categoryElementRetrieved = categoriesService.retrieveCategoryElementByUrn(ctx, CATEGORY_ELEMENT_1_URN);
         assertEqualsDate(iniDate, categoryElementRetrieved.getValidFrom());
         assertEqualsDate(endDate, categoryElementRetrieved.getValidTo());
+        assertEquals(false, categoryElement.getIsVisible());
 
     }
 
@@ -2128,6 +2134,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals("user1", categoryElement.getCreatedBy());
         assertEquals("user2", categoryElement.getLastUpdatedBy());
         assertEquals(Long.valueOf(1), categoryElement.getVersion());
+        assertEquals(true, categoryElement.getIsVisible());
     }
 
     @Test
@@ -2233,12 +2240,12 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
         Iterator<String> iterator = lines.iterator();
 
-        assertEquals("code\tshort_name#es\tshort_name#pt\tshort_name#en\tshort_name#ca", iterator.next());
+        assertEquals("code\tshort_name#es\tshort_name#pt\tshort_name#en\tshort_name#ca\tis_visible", iterator.next());
 
-        assertTrue(lines.contains("CATEGORY_ELEMENT_01\tshortName category_element-1\t\t\t"));
-        assertTrue(lines.contains("CATEGORY_ELEMENT_02\tshortName category_element-2\t\t\t"));
-        assertTrue(lines.contains("CATEGORY_ELEMENT_03\tshortName category_element-3\t\t\t"));
-        assertTrue(lines.contains("CATEGORY_ELEMENT_04\tshortname-at-element categoryScheme-1-v2-category-1\t\t\t"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_01\tshortName category_element-1\t\t\t\ttrue"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_02\tshortName category_element-2\t\t\t\tfalse"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_03\tshortName category_element-3\t\t\t\tfalse"));
+        assertTrue(lines.contains("CATEGORY_ELEMENT_04\tshortname-at-element categoryScheme-1-v2-category-1\t\t\t\ttrue"));
 
         bufferedReader.close();
     }
@@ -2270,6 +2277,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                     "shortName category_element_imp_01 ca");
             assertEquals(null, categoryElement.getValidFrom());
             assertEquals(null, categoryElement.getValidTo());
+            assertEquals(Boolean.TRUE, categoryElement.getIsVisible());
             BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
         }
         {
@@ -2281,6 +2289,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element_imp_02 es", "en", "shortName category_element_imp_02 en", null, null);
             assertEquals(null, categoryElement.getValidFrom());
             assertEquals(null, categoryElement.getValidTo());
+            assertEquals(Boolean.FALSE, categoryElement.getIsVisible());
             BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
         }
         {
@@ -2293,6 +2302,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
                     "shortName category_element_imp_03 ca");
             assertEquals(null, categoryElement.getValidFrom());
             assertEquals(null, categoryElement.getValidTo());
+            assertEquals(Boolean.FALSE, categoryElement.getIsVisible());
             BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
         }
         {
@@ -2304,6 +2314,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEqualsInternationalString(categoryElement.getShortName(), "es", "shortName category_element_imp_04 es", "en", "shortName category_element_imp_04 en", null, null);
             assertEquals(null, categoryElement.getValidFrom());
             assertEquals(null, categoryElement.getValidTo());
+            assertEquals(Boolean.TRUE, categoryElement.getIsVisible());
             BaseAsserts.assertEqualsDay(new DateTime(), categoryElement.getCreatedDate());
         }
     }
@@ -3262,14 +3273,105 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // in services of categorised artefacts
     }
 
-    @Override
-    protected String getDataSetFile() {
-        return "dbunit/SrmCategoriesTest.xml";
-    }
-
     @Test
     @Override
     public void testResendKafkaMessageExternallyCategorySchemes() {
         // No test. cron job process
+    }
+
+    @Override
+    public void testRetrieveCategoryElementLogo() throws Exception {
+        // check in testImportCategoryElementLogo test.
+
+    }
+
+    @Test
+    @Override
+    public void testDeleteCategoryElementLogo() throws Exception {
+        String fileName = "02_AdministracionPublica.svg";
+        File file = new File(this.getClass().getResource("/images/" + fileName).getFile());
+        CategoryElement categoryElement = null;
+        try (InputStream imageStream = new FileInputStream(file)) {
+
+            // save a logo.
+            categoriesService.importCategoryElementLogo(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN, fileName, imageStream, false);
+
+            // check logo exists
+            categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+            assertEquals("02_AdministracionPublica", categoryElement.getLogo().getFileName());
+            assertEquals("svg", categoryElement.getLogo().getExtension());
+            assertNotNull(categoryElement.getLogo().getFile().getId());
+
+            // delete logo
+            categoriesService.deleteCategoryElementLogo(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+
+            // check logo not exists
+            categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+            assertNull(categoryElement.getLogo());
+        }
+    }
+
+    @Test
+    @Override
+    public void testImportCategoryElementLogo() throws Exception {
+        String fileName = "02_AdministracionPublica.svg";
+        File file = new File(this.getClass().getResource("/images/" + fileName).getFile());
+        CategoryElement categoryElement = null;
+        try (InputStream imageStream = new FileInputStream(file)) {
+
+            TaskImportationInfo taskResult = categoriesService.importCategoryElementLogo(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN, fileName, imageStream, false);
+            assertEquals(true, taskResult.getInformationItems().isEmpty());
+
+            categoryElement = categoriesService.retrieveCategoryElementByUrn(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN);
+
+            assertEquals("02_AdministracionPublica", categoryElement.getLogo().getFileName());
+            assertEquals("svg", categoryElement.getLogo().getExtension());
+
+        }
+        try (InputStream imageStream = new FileInputStream(file)) {
+            byte[] sourceLogoData = IOUtils.toByteArray(imageStream);
+            byte[] savedLogoData = categoryElement.getLogo().getFile().getFileData();
+            assertTrue(Arrays.equals(sourceLogoData, savedLogoData));
+        }
+
+    }
+
+    @Test
+    public void testImportCategoryElementLogoNotAllowed() throws Exception {
+        String fileName = "02_AdministracionPublica.err";
+        File file = new File(this.getClass().getResource("/images/" + fileName).getFile());
+
+        try (InputStream imageStream = new FileInputStream(file)) {
+
+            categoriesService.importCategoryElementLogo(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN, fileName, imageStream, false);
+            fail("logo is not allowed");
+
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_EXTENSION_ERROR.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+
+    }
+
+    @Test
+    public void testImportCategoryElementLogoMaxSizeError() throws Exception {
+        String fileName = "poblacion.svg";
+        File file = new File(this.getClass().getResource("/images/" + fileName).getFile());
+
+        try (InputStream imageStream = new FileInputStream(file)) {
+
+            categoriesService.importCategoryElementLogo(getServiceContextAdministrador(), CATEGORY_ELEMENT_1_URN, fileName, imageStream, false);
+            fail("logo exceeds max size");
+
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+
+    }
+
+    @Override
+    protected String getDataSetFile() {
+        return "dbunit/SrmCategoriesTest.xml";
     }
 }

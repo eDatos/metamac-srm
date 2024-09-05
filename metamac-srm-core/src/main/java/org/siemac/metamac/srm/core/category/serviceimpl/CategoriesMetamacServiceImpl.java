@@ -8,6 +8,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -30,12 +34,16 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
+import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.shared.VersionUtil;
+import org.siemac.metamac.srm.core.base.domain.ResourceFile;
+import org.siemac.metamac.srm.core.base.domain.ResourceMetadataFile;
+import org.siemac.metamac.srm.core.base.domain.ResourceMetadataFileRepository;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.base.serviceimpl.utils.BaseReplaceFromTemporalMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
@@ -99,7 +107,6 @@ import com.arte.statistic.sdmx.srm.core.base.serviceimpl.ItemSchemesCopyCallback
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorisationRepository;
 import com.arte.statistic.sdmx.srm.core.category.domain.Category;
-import com.arte.statistic.sdmx.srm.core.category.domain.CategoryRepository;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.CategoriesService;
 import com.arte.statistic.sdmx.srm.core.category.serviceimpl.utils.CategoriesInvocationValidator;
@@ -166,9 +173,6 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     private ItemSchemeVersionRepository               itemSchemeVersionRepository;
 
     @Autowired
-    private CategoryRepository                        categoryRepository;
-
-    @Autowired
     private CategorisationRepository                  categorisationRepository;
 
     @Autowired
@@ -182,6 +186,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
     @Autowired
     private IdentifiableArtefactRepository            identifiableArtefactRepository;
+
+    @Autowired
+    private ResourceMetadataFileRepository            resourceMetadataFileRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                           entityManager;
@@ -1074,8 +1081,15 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         // Create
         setCategoryElementUrnUnique(categoryElement, Boolean.TRUE);
+        setIsVisible(categoryElement);
         categoryElement = getCategoryElementRepository().save(categoryElement);
         return categoryElement;
+    }
+
+    private void setIsVisible(CategoryElement categoryElement) {
+        if (categoryElement.getIsVisible() == null) {
+            categoryElement.setIsVisible(false);
+        }
     }
 
     public CategoryElement updateCategoryElement(ServiceContext ctx, CategoryElement categoryElement) throws MetamacException {
@@ -1090,6 +1104,8 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         if (categoryElement.getIdentifiableArtefact().getIsCodeUpdated()) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.METADATA_UNMODIFIABLE).withMessageParameters(ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE).build();
         }
+
+        setIsVisible(categoryElement);
         categoryElement.setUpdateDate(new DateTime()); // Optimistic locking: Update "update date" attribute to force update to root entity, to increase attribute "version"
 
         // Update
@@ -1333,10 +1349,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
         // short name
         categoryElement.setShortName(TsvImportationUtils.tsvLineToInternationalString(header.getShortName(), columns, categoryElement.getShortName()));
+
         if (categoryElement.getShortName() == null) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, categoryElement.getIdentifiableArtefact().getCode(),
                     ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_SHORT_NAME));
         }
+
+        fillCategoryElementIsVisibleField(header, columns, categoryElement);
 
         // Do not persist if any error ocurrs
         if (!CollectionUtils.isEmpty(exceptionItems)) {
@@ -1357,6 +1376,15 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             exceptionItems.add(metamacExceptionItem);
         }
         return categoryElement;
+    }
+
+    private void fillCategoryElementIsVisibleField(ImportationCategoryElementsTsvHeader header, String[] columns, CategoryElement categoryElement) {
+        String isVisible = columns[header.getIsVisiblePosition()];
+        if (!StringUtils.isBlank(isVisible)) {
+            categoryElement.setIsVisible(Boolean.valueOf(isVisible));
+        } else {
+            categoryElement.setIsVisible(false);
+        }
     }
 
     @Override
@@ -1507,5 +1535,120 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         return exceptionsItems;
 
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, String categoryElementUrn, String fileName, InputStream imageStream, Boolean canBeBackground) throws MetamacException {
+
+        List<MetamacExceptionItem> informationItems = new ArrayList<>();
+
+        // Validation
+        CategoriesMetamacInvocationValidator.checkImportCategoryElementLogo(categoryElementUrn, fileName, informationItems);
+        checkAllowedImageExtension(categoryElementUrn, fileName);
+
+        CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
+
+        try {
+            byte[] logoData = IOUtils.toByteArray(imageStream);
+
+            checkMaxImageSize(categoryElementUrn, logoData);
+
+            saveCategoryElementLogo(categoryElement, logoData, fileName);
+
+        } catch (IOException e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_ERROR).withMessageParameters(categoryElementUrn).build();
+        } finally {
+            IOUtils.closeQuietly(imageStream);
+        }
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+
+    }
+
+    private void checkAllowedImageExtension(String categoryElementUrn, String fileName) throws MetamacException {
+        String allowedImageExtensions = srmConfiguration.retrieveAllowedImageExtensions();
+        String extensionFile = FilenameUtils.getExtension(fileName);
+        String[] imageExtensions = StringUtils.split(allowedImageExtensions, ",");
+
+        for (String extension : imageExtensions) {
+            if (extension.trim().equals(extensionFile)) {
+                return;
+            }
+        }
+        throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_EXTENSION_ERROR)
+                .withMessageParameters(categoryElementUrn, allowedImageExtensions).build();
+    }
+
+    private void checkMaxImageSize(String categoryElementUrn, byte[] logoData) throws MetamacException {
+        int maxImageSizeInKB = Integer.parseInt(srmConfiguration.retrieveImageMaxSize());
+
+        double sizeInKB = (double) logoData.length / (double) 1024;
+
+        if (sizeInKB > maxImageSizeInKB) {
+
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR)
+                    .withMessageParameters(categoryElementUrn, maxImageSizeInKB).build();
+        }
+    }
+
+    private void saveCategoryElementLogo(CategoryElement categoryElement, byte[] logoData, String logoFilePath) {
+        if (categoryElement.getLogo() != null && categoryElement.getLogo().getId() != null) {
+            resourceMetadataFileRepository.delete(categoryElement.getLogo());
+        }
+
+        ResourceMetadataFile resourceMetadataFile = new ResourceMetadataFile();
+        resourceMetadataFile.setFileName(FilenameUtils.getBaseName(logoFilePath));
+        resourceMetadataFile.setExtension(FilenameUtils.getExtension(logoFilePath));
+        ResourceFile resourceFile = new ResourceFile();
+        resourceFile.setFileData(logoData);
+        resourceMetadataFile.setFile(resourceFile);
+
+        categoryElement.setLogo(resourceMetadataFile);
+
+        getCategoryElementRepository().save(categoryElement);
+
+    }
+
+    @Override
+    public String retrieveCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+        try {
+            CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
+
+            if (categoryElement.getLogo() != null && categoryElement.getLogo().getFile() != null) {
+                Path fileName = Files.createTempFile(categoryElement.getLogo().getFileName(), "." + categoryElement.getLogo().getExtension());
+
+                Files.write(fileName, categoryElement.getLogo().getFile().getFileData(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                return fileName.getFileName().toString();
+            }
+
+            return null;
+        } catch (IOException e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_LOGO_CATEGORY_ELEMENT).withMessageParameters(e).build();
+        }
+    }
+
+    @Override
+    public void deleteCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+
+        CategoryElement categoryElement = findCategoryElementByUrn(categoryElementUrn);
+
+        if (categoryElement.getLogo() != null && categoryElement.getLogo().getId() != null) {
+            resourceMetadataFileRepository.delete(categoryElement.getLogo());
+        }
+        categoryElement.setLogo(null);
+        getCategoryElementRepository().save(categoryElement);
+
+    }
+
+    private CategoryElement findCategoryElementByUrn(String categoryElementUrn) throws MetamacException {
+        CategoriesMetamacInvocationValidator.checkRetrieveCategoryElement(categoryElementUrn, null);
+        CategoryElement categoryElement = getCategoryElementRepository().findByUrn(categoryElementUrn);
+
+        if (categoryElement == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(categoryElementUrn)
+                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
+
+        return categoryElement;
     }
 }

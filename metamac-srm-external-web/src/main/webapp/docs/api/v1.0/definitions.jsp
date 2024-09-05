@@ -1268,7 +1268,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"<fmt:message key="api.doc.swagger.definitions.Category.properties.categoryElement.description" bundle="${i18n}"/>",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CategoryElementResource"
                   }
                }
             }
@@ -1468,7 +1468,7 @@
                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                     },
                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryResource.properties.categoryElement.description" bundle="${i18n}"/>",
-                    "$ref":"#/definitions/Resource"
+                    "$ref":"#/definitions/CategoryElementResource"
                   },
                }
             }
@@ -5104,6 +5104,20 @@
                      },
                      "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElementResource.properties.validTo.description" bundle="${i18n}"/>",
                      "type":"string"
+                  },
+                  "visible":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElementResource.properties.visible.description" bundle="${i18n}"/>",
+                     "type":"boolean"
+                  },
+                  "logo":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"<fmt:message key="api.doc.swagger.definitions.CategoryElementResource.properties.logo.description" bundle="${i18n}"/>",
+                     "$ref":"#/definitions/ResourceLink"
                   }
                }
             }

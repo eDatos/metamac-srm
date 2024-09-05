@@ -19,6 +19,9 @@
                 <cdomain:text xml:lang="es">shortName-categoryElement-category1 en Español</cdomain:text>
             </cdomain:name>
             <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categoryElement;id=categoryElement-category1</sr:managementAppLink>
+            <sr:validFrom>2012-10-01T10:12:13.014+01:00</sr:validFrom>
+            <sr:validTo>2013-10-01T10:12:13.014+01:00</sr:validTo>
+            <sr:logoLink kind="structuralResources#categoryElement#logo" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryelements/categoryElement-category1/logo"/>
         </sr:categoryElement>
     </sr:category>
     <sr:category kind="structuralResources#category">
@@ -27,8 +30,8 @@
         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2"/>
         <cdomain:name>
-            <cdomain:text xml:lang="en">name-category2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2 en Español</cdomain:text>
+            <cdomain:text xml:lang="en">name-category2 in English</cdomain:text>
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categorySchemes/categoryScheme;id=agency1:itemScheme1(01.000)/category;id=category2</sr:managementAppLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
@@ -40,6 +43,9 @@
                 <cdomain:text xml:lang="en">shortName-categoryElement-category2 in English</cdomain:text>
             </cdomain:name>
             <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categoryElement;id=categoryElement-category2</sr:managementAppLink>
+            <sr:validFrom>2012-10-01T10:12:13.014+01:00</sr:validFrom>
+            <sr:validTo>2013-10-01T10:12:13.014+01:00</sr:validTo>
+            <sr:logoLink kind="structuralResources#categoryElement#logo" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryelements/categoryElement-category2/logo"/>
         </sr:categoryElement>
     </sr:category>
     <sr:category kind="structuralResources#category">
@@ -48,8 +54,8 @@
         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2.category2A</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2.category2A"/>
         <cdomain:name>
-            <cdomain:text xml:lang="en">name-category2A in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2A en Español</cdomain:text>
+            <cdomain:text xml:lang="en">name-category2A in English</cdomain:text>
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categorySchemes/categoryScheme;id=agency1:itemScheme1(01.000)/category;id=category2.category2A</sr:managementAppLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
@@ -58,10 +64,13 @@
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category2A</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#categoryElement" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryelements/categoryElement-category2A"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">shortName-categoryElement-category2A en Español</cdomain:text>
                 <cdomain:text xml:lang="en">shortName-categoryElement-category2A in English</cdomain:text>
+                <cdomain:text xml:lang="es">shortName-categoryElement-category2A en Español</cdomain:text>
             </cdomain:name>
             <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categoryElement;id=categoryElement-category2A</sr:managementAppLink>
+            <sr:validFrom>2012-10-01T10:12:13.014+01:00</sr:validFrom>
+            <sr:validTo>2013-10-01T10:12:13.014+01:00</sr:validTo>
+            <sr:logoLink kind="structuralResources#categoryElement#logo" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryelements/categoryElement-category2A/logo"/>
         </sr:categoryElement>
     </sr:category>
     <sr:category kind="structuralResources#category">
@@ -70,8 +79,8 @@
         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme2(01.000).category1</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryschemes/agency1/itemScheme2/01.000/categories/category1"/>
         <cdomain:name>
-            <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
+            <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categorySchemes/categoryScheme;id=agency1:itemScheme2(01.000)/category;id=category1</sr:managementAppLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
@@ -79,10 +88,13 @@
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category1</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#categoryElement" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryelements/categoryElement-category1"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">shortName-categoryElement-category1 en Español</cdomain:text>
                 <cdomain:text xml:lang="en">shortName-categoryElement-category1 in English</cdomain:text>
+                <cdomain:text xml:lang="es">shortName-categoryElement-category1 en Español</cdomain:text>
             </cdomain:name>
             <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categoryElement;id=categoryElement-category1</sr:managementAppLink>
+            <sr:validFrom>2012-10-01T10:12:13.014+01:00</sr:validFrom>
+            <sr:validTo>2013-10-01T10:12:13.014+01:00</sr:validTo>
+            <sr:logoLink kind="structuralResources#categoryElement#logo" href="http://data.istac.es/apis/structural-resources-internal/v1.0/categoryelements/categoryElement-category1/logo"/>
         </sr:categoryElement>
     </sr:category>
 </sr:categories>

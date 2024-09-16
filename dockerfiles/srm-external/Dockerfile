@@ -21,7 +21,7 @@
 ###
 
 FROM tomcat:8.5.93-jdk8
-LABEL MAINTAINER=apersan@arte-consultores.com
+LABEL MAINTAINER=info@arte-consultores.com
 
 RUN mkdir -p /data/edatos/srm/conf
 

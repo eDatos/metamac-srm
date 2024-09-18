@@ -21,10 +21,6 @@
   <title><fmt:message key="api.doc.title" bundle="${i18n}"/></title>
  
   <link href="<%=WebUtils.getFavicon()%>" rel="shortcut icon"/>
-
-  <c:if test="${!empty apiStyleCssUrl}">
-    <link href="<c:out value='${apiStyleCssUrl}'/>" media='screen' rel='stylesheet' type='text/css' />
-  </c:if>
   
 </head>
 <body>

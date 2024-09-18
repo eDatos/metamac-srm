@@ -877,6 +877,8 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                 case VALID_TO_DATE:
                     return new SculptorPropertyCriteria(getDatetimeLeafPropertyEmbedded(CategoryElementProperties.validTo(), CategoryElement.class), propertyRestriction.getDateValue(),
                             propertyRestriction.getOperationType());
+                case VISIBLE:
+                    return new SculptorPropertyCriteria(CategoryElementProperties.isVisible(), propertyRestriction.getBooleanValue(), propertyRestriction.getOperationType());
                 default:
                     throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
             }

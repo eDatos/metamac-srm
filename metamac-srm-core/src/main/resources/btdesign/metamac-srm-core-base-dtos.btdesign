@@ -88,7 +88,28 @@ Application SrmDtosBaseCore {
             JAVADATE validTo nullable;
 			"Version to optimistic locking"
 			Long versionOptimisticLocking;
-		}	
+		}
+		
+		"Dto for ResourceFile"
+		DataTransferObject ResourceFileDto extends @IdentityDto {	
+		    "File name"
+		    String fileName;
+		    "Extension"
+		    String extension;
+		    "fileName + . + extension"
+		    String fullFileName;
+		}
+		
+		"Dto for ResourceMetadataFile"
+		DataTransferObject ResourceMetadataFileDto extends @AuditableDto {
+		    "File name"
+		    String fileName;
+		    "Extension"
+		    String extension;
+		    "fileName + . + extension"
+	        String fullFileName;
+		}		
+			
 	}	
 	}
 }

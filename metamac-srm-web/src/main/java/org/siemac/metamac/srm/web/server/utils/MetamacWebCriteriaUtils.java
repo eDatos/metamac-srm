@@ -644,6 +644,10 @@ public class MetamacWebCriteriaUtils {
                 conjunctionRestriction.getRestrictions()
                         .add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.VALID_TO_DATE.name(), criteria.getValidToDate(), OperationType.LE));
             }
+
+            if (criteria.getVisible() != null) {
+                conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(CategoryElementCriteriaPropertyEnum.VISIBLE.name(), criteria.getVisible(), OperationType.EQ));
+            }
         }
 
         return conjunctionRestriction;

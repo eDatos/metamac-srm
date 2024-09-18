@@ -127,6 +127,8 @@ public class CategoriesDto2DoMapperImpl extends BaseDto2DoMapperImpl implements 
         }
 
         resourceElementDto2DoMapper.resourceElementDtoToDo(source, target);
+        target.setIsVisible(source.getIsVisible());
+        // logo is updated independently.
 
         return target;
     }

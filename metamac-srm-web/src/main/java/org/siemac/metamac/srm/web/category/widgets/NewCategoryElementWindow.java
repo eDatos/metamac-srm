@@ -62,6 +62,7 @@ public class NewCategoryElementWindow extends CustomWindow {
         CategoryElementDto categoryElementDto = new CategoryElementDto();
         categoryElementDto.setCode(form.getValueAsString(CODE));
         categoryElementDto.setShortName(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(SHORT_NAME)));
+        categoryElementDto.setIsVisible(true);
         return categoryElementDto;
     }
 

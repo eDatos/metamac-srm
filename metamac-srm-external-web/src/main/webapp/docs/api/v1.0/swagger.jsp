@@ -3293,7 +3293,7 @@
                "application/json",
                "application/xml"
             ],
-            "parameters":[              
+             "parameters":[
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryElementQueryParam"},
@@ -3321,7 +3321,76 @@
                }
             }
          }
-      }
+      },
+      "/v1.0/categoryelements/{resourceID}":{
+         "get":{
+            "tags":[
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
+            ],
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.description']}",
+             "operationId":"resource__v1.0__categoryelements__resourceID_retrieveCategoryElement_GET",
+           "produces":[
+               "application/json",
+               "application/xml"
+            ],
+             "parameters":[
+                {"$ref":"#/components/parameters/resourceIdParam"}
+            ],
+            "responses":{
+               "200":{
+                  "schema":{
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.responses.200.schema.description']}",
+                  },
+                  "headers":{
+                  },
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
+               },
+               "406":{
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
+               },
+               "500":{
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
+               },
+               "503":{
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
+               }
+            }
+         }
+      },
+       "/v1.0/categoryelements/{resourceID}/logo":{
+         "get":{
+            "tags":[
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
+            ],
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.description']}",
+            "operationId":"resource__v1.0__categoryelements__resourceID__logo_retrieveCategoryElementLogo_GET",
+            "produces":[
+                "image/*"
+            ],
+            "parameters":[
+                {"$ref":"#/components/parameters/resourceIdParam"}
+            ],
+            "responses":{
+               "200":{
+                  "schema":{
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.responses.200.schema.description']}",
+                  },
+                  "headers":{
+                  },
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
+               },
+               "406":{
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
+               },
+               "500":{
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
+               },
+               "503":{
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
+               }
+            }
+         }
+      },
       
    }
 }

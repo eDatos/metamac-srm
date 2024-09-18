@@ -4226,6 +4226,33 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     // ------------------------------------------------------------------------
 
     @Override
+    public String retrieveCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canRetrieveVariableElementLogo(ctx);
+
+        // Import in background
+        return getCategoriesMetamacService().retrieveCategoryElementLogo(ctx, categoryElementUrn);
+    }
+
+    @Override
+    public void deleteCategoryElementLogo(ServiceContext ctx, String categoryElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canDeleteVariableElementLogo(ctx);
+
+        // Import in background
+        getCategoriesMetamacService().deleteCategoryElementLogo(ctx, categoryElementUrn);
+    }
+
+    @Override
+    public TaskImportationInfo importCategoryElementLogo(ServiceContext ctx, InputStream inputStream, String fileName, String categoryElementUrn) throws MetamacException {
+        // Security
+        CodesSecurityUtils.canSaveVariableElementLogo(ctx);
+
+        // Import in background
+        return getCategoriesMetamacService().importCategoryElementLogo(ctx, categoryElementUrn, fileName, inputStream, Boolean.FALSE);
+    }
+
+    @Override
     public CategoryElementDto retrieveCategoryElementByUrn(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         CategoriesSecurityUtils.canRetrieveOrFindCategoryElement(ctx);

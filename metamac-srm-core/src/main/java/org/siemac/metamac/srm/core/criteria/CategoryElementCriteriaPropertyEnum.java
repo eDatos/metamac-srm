@@ -7,7 +7,8 @@ public enum CategoryElementCriteriaPropertyEnum {
     URN, 
     SHORT_NAME, 
     VALID_FROM_DATE,
-    VALID_TO_DATE;
+    VALID_TO_DATE,
+    VISIBLE;
     // @formatter:on
 
     public String value() {

@@ -1268,7 +1268,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.Category.properties.categoryElement.description']}",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CategoryElementResource"
                   }
                }
             }
@@ -1468,7 +1468,7 @@
                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                     },
                     "description":"${msg['api.doc.swagger.definitions.CategoryResource.properties.categoryElement.description']}",
-                    "$ref":"#/definitions/Resource"
+                    "$ref":"#/definitions/CategoryElementResource"
                   },
                }
             }
@@ -5104,6 +5104,20 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CategoryElementResource.properties.validTo.description']}",
                      "type":"string"
+                  },
+                  "visible":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CategoryElementResource.properties.visible.description']}",
+                     "type":"boolean"
+                  },
+                  "logo":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CategoryElementResource.properties.logo.description']}",
+                     "$ref":"#/definitions/ResourceLink"
                   }
                }
             }

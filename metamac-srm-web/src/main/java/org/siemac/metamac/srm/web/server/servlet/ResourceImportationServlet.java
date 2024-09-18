@@ -136,10 +136,10 @@ public class ResourceImportationServlet extends HttpServlet {
                 TaskImportationInfo taskImportationInfo = importCodes(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
 
-            } else if (ImportableResourceTypeEnum.ANNOTATIONS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) { 
+            } else if (ImportableResourceTypeEnum.ANNOTATIONS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
                 TaskImportationInfo taskImportationInfo = importAnnotations(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
-            }else if (ImportableResourceTypeEnum.CODES_ORDER.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
+            } else if (ImportableResourceTypeEnum.CODES_ORDER.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
                 TaskImportationInfo taskImportationInfo = importCodeOrders(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
@@ -182,6 +182,10 @@ public class ResourceImportationServlet extends HttpServlet {
 
                 TaskImportationInfo taskImportationInfo = importCategoryElements(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+            } else if (ImportableResourceTypeEnum.CATEGORY_ELEMENT_LOGO.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
+
+                importCategoryElementLogo(srmCoreServiceFacade, fileName, inputStream, args);
+                successMessage = getTranslatedMessage(WebMessageExceptionsConstants.SIMPLE_RESOURCE_SUCCESSFUL_IMPORTATION);
             }
             sendSuccessImportationResponse(response, successMessage);
 
@@ -334,8 +338,8 @@ public class ResourceImportationServlet extends HttpServlet {
         return srmCoreServiceFacade.importCodesTsv(ServiceContextHolder.getCurrentServiceContext(), codelistUrn, inputStream, fileName, updateAlreadyExisting);
     }
 
-    //Annotations
-    
+    // Annotations
+
     private TaskImportationInfo importAnnotations(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
 
         String codelistUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CODELIST_URN);
@@ -397,6 +401,17 @@ public class ResourceImportationServlet extends HttpServlet {
             return srmCoreServiceFacade.importVariableElementsPoints(ServiceContextHolder.getCurrentServiceContext(), variableUrn, shapeFileUrl);
         }
         return null;
+    }
+
+    // Variable element shape
+
+    private TaskImportationInfo importCategoryElementLogo(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args)
+            throws MetamacException, IOException {
+
+        String categoryElementUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_ELEMENT_URN);
+
+        return srmCoreServiceFacade.importCategoryElementLogo(ServiceContextHolder.getCurrentServiceContext(), inputStream, fileName, categoryElementUrn);
+
     }
 
     //

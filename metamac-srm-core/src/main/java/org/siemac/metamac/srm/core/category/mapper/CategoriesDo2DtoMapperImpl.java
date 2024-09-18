@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
 import org.siemac.metamac.srm.core.resource.element.mapper.ResourceElementDo2DtoMapper;
+import org.siemac.metamac.srm.core.resource.metadata.file.mapper.ResourceMetadataFileDo2DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
@@ -32,6 +33,9 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
 
     @Autowired
     private ResourceElementDo2DtoMapper                                             resourceElementDo2DtoMapper;
+
+    @Autowired
+    private ResourceMetadataFileDo2DtoMapper                                        resourceMetadataFileDo2DtoMapper;
 
     @Override
     public CategorySchemeMetamacDto categorySchemeMetamacDoToDto(CategorySchemeVersionMetamac source) {
@@ -137,6 +141,8 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         CategoryElementDto target = new CategoryElementDto();
 
         resourceElementDo2DtoMapper.resourceElementDoToDto(source, target);
+        target.setIsVisible(source.getIsVisible());
+        target.setLogo(resourceMetadataFileDo2DtoMapper.resourceMetadataFileDoToDto(source.getLogo()));
 
         return target;
     }

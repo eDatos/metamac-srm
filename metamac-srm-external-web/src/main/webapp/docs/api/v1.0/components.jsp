@@ -53,6 +53,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
    String categoryElementCode = messagesBundle.getString("api.doc.swagger.components.categoryElementCode");
    String categoryElementUrn = messagesBundle.getString("api.doc.swagger.components.categoryElementUrn");
    String categoryElementShortName = messagesBundle.getString("api.doc.swagger.components.categoryElementShortName");
+   String categoryElementVisible = messagesBundle.getString("api.doc.swagger.components.categoryElementVisible");
    String variableType = messagesBundle.getString("api.doc.swagger.components.variableType");
    String familyUrn = messagesBundle.getString("api.doc.swagger.components.familyUrn");
    String shortName = messagesBundle.getString("api.doc.swagger.components.shortName");
@@ -223,7 +224,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
             "name":"query",
             "in":"query",
             "type":"string",
-            "description":"<%= queryDescriptionWithParams(queryDescription, validOperators, messagesBundle, id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest, categoryElementCode, categoryElementUrn, categoryElementShortName) %>"
+            "description":"<%= queryDescriptionWithParams(queryDescription, validOperators, messagesBundle, id ,urn ,name , parent, description ,categorySchemeUrn ,categorySchemeLatest, categoryElementCode, categoryElementUrn, categoryElementShortName, categoryElementVisible) %>"
         },
         "categoryOrderByParam": {
           "name":"orderBy",

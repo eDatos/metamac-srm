@@ -60,6 +60,7 @@ public class SrmConstants {
     public static final String             TSV_HEADER_CONCEPT_EXTENDS                                             = "concept_extends";
     public static final String             TSV_HEADER_SDMX_RELATED_ARTEFACT                                       = "sdmx_role";
     public static final String             TSV_HEADER_CATEGORY_ELEMENT                                            = "category_element";
+    public static final String             TSV_HEADER_IS_VISIBLE                                                  = "is_visible";
 
     // QUANTITY
     public static final String             TSV_HEADER_QUANTITY_TYPE                                               = "quantity_type";

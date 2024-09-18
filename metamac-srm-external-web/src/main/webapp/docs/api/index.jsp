@@ -10,6 +10,7 @@
     String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
     String appName = ResourceBundle.getBundle("i18n.messages" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
+    String appVersion = ResourceBundle.getBundle("application").getString("app.version");
  %>
 <fmt:setLocale value="<%= locale %>"/>
 <fmt:setBundle basename="i18n.messages" var="i18n"/>
@@ -121,6 +122,7 @@
 	      <c:param name="appName" value="<%= appName %>" />
           <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
 	      <c:param name="appId" value="structural-resources-external"/>
+	      <c:param name="appVersion" value="<%= appVersion %>" />
 	   </c:import>
 	   
 	</c:if>

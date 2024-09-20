@@ -19,7 +19,7 @@
 # -p 5005:5005 \
 # structural-resources-internal:<version>
 ###
-FROM tomcat:8.5.93-jdk8
+FROM tomcat:9.0.95-jdk8
 LABEL MAINTAINER=info@arte-consultores.com
 
 RUN mkdir -p /data/edatos/srm/conf

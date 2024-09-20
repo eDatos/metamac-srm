@@ -66,7 +66,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
    String dimensionConceptUrn = messagesBundle.getString("api.doc.swagger.components.dimensionConceptUrn");
 
    String validOperators = messagesBundle.getString("api.doc.swagger.components.validOperators");
-   String criteriosDeOrden = messagesBundle.getString("api.doc.swagger.components.criteriosDeOrden");
+   String criteriosDeOrden = messagesBundle.getString("api.doc.swagger.components.orderCriteria");
    String queryDescription = messagesBundle.getString("api.doc.swagger.components.queryDescription");
    String orderByDescription = messagesBundle.getString("api.doc.swagger.components.orderByDescription");
 

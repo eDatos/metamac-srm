@@ -45,7 +45,7 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
         String allowedImageExtensions = CommonUtils.getMetamacAllowedImageExtensions();
 
         if (StringUtils.isNotEmpty(allowedImageExtensions)) {
-            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)));
+            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)) + " " + getMessages().warningLogoProperties());
             informationLabel.setWidth(getWidth());
             informationLabel.setMargin(5);
             body.addMember(informationLabel, 0);

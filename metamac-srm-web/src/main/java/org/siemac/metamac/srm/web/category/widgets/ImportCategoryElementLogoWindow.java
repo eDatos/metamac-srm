@@ -28,24 +28,15 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
 
         buildInformationLabel();
 
-        buildWarningLabel();
-
         UploadOrdersForm form = new UploadOrdersForm();
         setForm(form);
-    }
-
-    private void buildWarningLabel() {
-        warningLabel = new WarningLabel(getMessages().warningLogoProperties());
-        warningLabel.setWidth(getWidth());
-        warningLabel.setMargin(5);
-        body.addMember(warningLabel, 1);
     }
 
     private void buildInformationLabel() {
         String allowedImageExtensions = CommonUtils.getMetamacAllowedImageExtensions();
 
         if (StringUtils.isNotEmpty(allowedImageExtensions)) {
-            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)));
+            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)) + " " + getMessages().warningLogoProperties());
             informationLabel.setWidth(getWidth());
             informationLabel.setMargin(5);
             body.addMember(informationLabel, 0);

@@ -1,11 +1,14 @@
 package org.siemac.metamac.srm.web.client;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.siemac.edatos.core.common.constants.shared.ConfigurationConstants;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.dto.OrganisationMetamacDto;
 import org.siemac.metamac.srm.web.client.gin.MetamacSrmWebGinjector;
+import org.siemac.metamac.srm.web.client.utils.CommonUtils;
 import org.siemac.metamac.srm.web.shared.organisation.GetDefaultMaintainerAction;
 import org.siemac.metamac.srm.web.shared.organisation.GetDefaultMaintainerResult;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
@@ -123,5 +126,17 @@ public class MetamacSrmWeb extends MetamacSecurityEntryPoint {
     @Override
     protected String getBundleName() {
         return "messages-srm-web";
+    }
+
+    @Override
+    protected String[] getPropertiesToLoad() {
+        return new String[]{ConfigurationConstants.METAMAC_ALLOWED_IMAGE_EXTENSIONS};
+    }
+
+    @Override
+    protected void setConfigurationProperties(Map<String, String> propertyValues) {
+        super.setConfigurationProperties(propertyValues);
+        String metamacAllowedImageExtensions = propertyValues.get(ConfigurationConstants.METAMAC_ALLOWED_IMAGE_EXTENSIONS);
+        CommonUtils.setMetamacAllowedImageExtensions(metamacAllowedImageExtensions);
     }
 }

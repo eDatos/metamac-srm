@@ -24,6 +24,16 @@ import com.google.gwt.http.client.URL;
 
 public class CommonUtils {
 
+    private static String metamacAllowedImageExtensions;
+
+    public static void setMetamacAllowedImageExtensions(String imageExtensions) {
+        metamacAllowedImageExtensions = imageExtensions;
+    }
+
+    public static String getMetamacAllowedImageExtensions() {
+        return metamacAllowedImageExtensions;
+    }
+
     // EXPORT
 
     public static LinkedHashMap<String, String> getStructureParameterDetailTypeHashMap() {
@@ -136,7 +146,7 @@ public class CommonUtils {
         }
         return isDefaultMaintainer(maintainer);
     }
-    
+
     /**
      * Returns true if the artefactDto belongs to the default maintainer, and the version is not a temporal one
      * 
@@ -150,11 +160,11 @@ public class CommonUtils {
     public static boolean canSdmxMetadataAndStructureBeModified(MaintainableArtefactDto artefactDto, boolean checkTemporalVersion) {
         return canSdmxMetadataAndStructureBeModified(artefactDto.getUrn(), artefactDto.getMaintainer(), artefactDto.getVersionLogic(), checkTemporalVersion);
     }
-    
+
     public static boolean canSdmxMetadataAndStructureBeModified(String urn, RelatedResourceDto maintainer, String versionLogic, boolean checkTemporalVersion) {
         return hasDefaultMaintainerOrIsAgencySchemeSdmxResource(urn, maintainer) && (!checkTemporalVersion || !VersionUtil.isTemporalVersion(versionLogic));
     }
-    
+
     // EXPORTATION UTILS
 
     public static void downloadFile(String fileName) {

@@ -8,6 +8,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElementResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryElements;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
@@ -33,4 +34,5 @@ public interface CategoriesDo2RestMapperV10 {
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisation toCategorisation(Categorisation source);
 
     public CategoryElements toCategoryElements(PagedResult<CategoryElement> sourcesPagedResult, String query, String orderBy, Integer limit);
+    public CategoryElementResource toCategoryElementResource(CategoryElement source);
 }

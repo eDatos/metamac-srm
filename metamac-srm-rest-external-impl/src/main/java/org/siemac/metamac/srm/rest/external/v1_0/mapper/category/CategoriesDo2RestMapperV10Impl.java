@@ -133,7 +133,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setNestedId(source.getNameableArtefact().getCodeFull());
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT)) {
-            target.setCategoryElement(toResource(source.getCategoryElement()));
+            target.setCategoryElement(toCategoryElementResource(source.getCategoryElement()));
         }
 
         if (source.getEniSchemas() != null && !source.getEniSchemas().isEmpty()) {
@@ -390,7 +390,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         }
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT)) {
-            target.setCategoryElement(toResource(source.getCategoryElement()));
+            target.setCategoryElement(toCategoryElementResource(source.getCategoryElement()));
         }
 
     }
@@ -405,15 +405,26 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         }
     }
 
-    private Resource toResource(CategoryElementResult source) {
+    private CategoryElementResource toResource(CategoryElementResult source) {
 
         if (source == null) {
             return null;
         }
 
-        Resource target = new Resource();
+        CategoryElementResource target = new CategoryElementResource();
+
         toResource(source, SrmRestConstants.KIND_CATEGORY_ELEMENT, toCategoryElementSelfLink(source.getCode()), target, false);
         target.setName(toInternationalString(source.getShortName()));
+        target.setVisible(source.getIsVisible());
+        target.setLogoLink(toCategoryElementLogoLink(source.getCode()));
+
+        return target;
+    }
+
+    private ResourceLink toCategoryElementLogoLink(String codeCategoryElement) {
+        ResourceLink target = new ResourceLink();
+        target.setKind(SrmRestConstants.KIND_CATEGORY_ELEMENT_LOGO);
+        target.setHref(RestUtils.createLink(toCategoryElementLink(codeCategoryElement), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENT_LOGO));
 
         return target;
     }
@@ -430,7 +441,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
-    private CategoryElementResource toCategoryElementResource(CategoryElement source) {
+    public CategoryElementResource toCategoryElementResource(CategoryElement source) {
         if (source == null) {
             return null;
         }
@@ -440,6 +451,8 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setName(toInternationalString(source.getShortName()));
         target.setValidTo(toDate(source.getValidTo()));
         target.setValidFrom(toDate(source.getValidFrom()));
+        target.setVisible(source.getIsVisible());
+        target.setLogoLink(toCategoryElementLogoLink(source.getIdentifiableArtefact().getCode()));
 
         return target;
     }

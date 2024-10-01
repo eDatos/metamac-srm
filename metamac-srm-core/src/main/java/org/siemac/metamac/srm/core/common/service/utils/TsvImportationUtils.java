@@ -578,7 +578,8 @@ public class TsvImportationUtils {
             }
 
             if (SrmConstants.TSV_HEADER_ANNOTATION.equals(columnName)) {
-                importationAnnotationsTsvHeader.setAnnotation(columnHeaderToInternationalStringTsv(headerColumns, i, columnSplited, headerExpected, importationAnnotationsTsvHeader.getAnnotation(), exceptions));
+                importationAnnotationsTsvHeader
+                        .setAnnotation(columnHeaderToInternationalStringTsv(headerColumns, i, columnSplited, headerExpected, importationAnnotationsTsvHeader.getAnnotation(), exceptions));
                 if (importationAnnotationsTsvHeader.getAnnotation() == null) {
                     break;
                 }
@@ -604,7 +605,7 @@ public class TsvImportationUtils {
         }
         AnnotationType annotationType = getAnnotationType(annotationsTypes, annotationTypeCode);
         AnnotableArtefact annotableArtefact = getAnnotableArtefact(codes, codeIdentifier);
-        
+
         if (annotationType == null) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ANNOTATION_TYPE_INCORRECT, lineNumber));
             return null;
@@ -1374,7 +1375,7 @@ public class TsvImportationUtils {
     }
 
     public static ImportationCategoryElementsTsvHeader parseTsvHeaderToImportCategoryElements(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_SHORT_NAME);
+        List<String> headersExpected = Arrays.asList(SrmConstants.TSV_HEADER_CODE, SrmConstants.TSV_HEADER_SHORT_NAME, SrmConstants.TSV_HEADER_IS_VISIBLE);
 
         String[] headerColumns = StringUtils.splitPreserveAllTokens(line, SrmConstants.TSV_SEPARATOR);
         if (headerColumns == null || headerColumns.length < headersExpected.size()) {
@@ -1401,6 +1402,9 @@ public class TsvImportationUtils {
                 if (header.getShortName().isEndPositionSetted()) {
                     headerExpectedIndex++;
                 }
+            } else if (SrmConstants.TSV_HEADER_IS_VISIBLE.equals(columnName)) {
+                header.setIsVisiblePosition(i);
+                headerExpectedIndex++;
             } else {
                 exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, ServiceExceptionParameters.createCodeImportation(headerExpected)));
             }

@@ -1,5 +1,5 @@
-code	short_name#es	short_name#PT	short_name#EN	short_name#ca
-CATEGORY_ELEMENT_IMP_01	shortName category_element_imp_01 es		shortName category_element_imp_01 en	shortName category_element_imp_01 ca
-CATEGORY_ELEMENT_IMP_02	shortName category_element_imp_02 es		shortName category_element_imp_02 en	
-CATEGORY_ELEMENT_IMP_03	shortName category_element_imp_03 es		shortName category_element_imp_03 en	shortName category_element_imp_03 ca
-CATEGORY_ELEMENT_IMP_04	shortName category_element_imp_04 es		shortName category_element_imp_04 en	
+code	short_name#es	short_name#PT	short_name#EN	short_name#ca	is_visible
+CATEGORY_ELEMENT_IMP_01	shortName category_element_imp_01 es		shortName category_element_imp_01 en	shortName category_element_imp_01 ca	true
+CATEGORY_ELEMENT_IMP_02	shortName category_element_imp_02 es		shortName category_element_imp_02 en		false
+CATEGORY_ELEMENT_IMP_03	shortName category_element_imp_03 es		shortName category_element_imp_03 en	shortName category_element_imp_03 ca	false
+CATEGORY_ELEMENT_IMP_04	shortName category_element_imp_04 es		shortName category_element_imp_04 en		true

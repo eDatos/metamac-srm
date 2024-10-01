@@ -3293,7 +3293,7 @@
                "application/json",
                "application/xml"
             ],
-            "parameters":[              
+             "parameters":[
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryElementQueryParam"},
@@ -3321,7 +3321,76 @@
                }
             }
          }
-      }
+      },
+      "/v1.0/categoryelements/{resourceID}":{
+         "get":{
+            "tags":[
+              "Recursos auxiliares"
+            ],
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.description" bundle="${i18n}"/>",
+             "operationId":"resource__v1.0__categoryelements__resourceID_retrieveCategoryElement_GET",
+           "produces":[
+               "application/json",
+               "application/xml"
+            ],
+             "parameters":[
+                {"$ref":"#/components/parameters/resourceIdParam"}
+            ],
+            "responses":{
+               "200":{
+                  "schema":{
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                  },
+                  "headers":{
+                  },
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+               },
+               "406":{
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+               },
+               "500":{
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+               },
+               "503":{
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+               }
+            }
+         }
+      },
+       "/v1.0/categoryelements/{resourceID}/logo":{
+         "get":{
+            "tags":[
+              "Recursos auxiliares"
+            ],
+            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.description" bundle="${i18n}"/>",
+            "operationId":"resource__v1.0__categoryelements__resourceID__logo_retrieveCategoryElementLogo_GET",
+            "produces":[
+                "image/*"
+            ],
+            "parameters":[
+                {"$ref":"#/components/parameters/resourceIdParam"}
+            ],
+            "responses":{
+               "200":{
+                  "schema":{
+                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.responses.200.schema.description" bundle="${i18n}"/>",
+                  },
+                  "headers":{
+                  },
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+               },
+               "406":{
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+               },
+               "500":{
+                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+               },
+               "503":{
+                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+               }
+            }
+         }
+      },
       
    }
 }

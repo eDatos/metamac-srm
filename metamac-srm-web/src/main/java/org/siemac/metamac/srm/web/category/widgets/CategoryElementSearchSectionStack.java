@@ -8,10 +8,12 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.web.category.model.ds.CategoryElementDS;
 import org.siemac.metamac.srm.web.category.view.handlers.CategoryElementsUiHandlers;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
+import org.siemac.metamac.srm.web.resource.element.model.ds.ResourceElementDS;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryElementWebCriteria;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.BooleanSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 
@@ -40,6 +42,7 @@ public class CategoryElementSearchSectionStack extends BaseAdvancedSearchSection
 
         CustomDateItem validFrom = new CustomDateItem(CategoryElementDS.VALID_FROM, getConstants().categoryElementValidFrom());
         CustomDateItem validTo = new CustomDateItem(CategoryElementDS.VALID_TO, getConstants().categoryElementValidTo());
+        BooleanSelectItem isVisible = new BooleanSelectItem(ResourceElementDS.IS_VISIBLE, getConstants().categoryElementVisible(), false);
 
         CustomButtonItem searchItem = new CustomButtonItem(ADVANCED_SEARCH_ITEM_NAME, MetamacWebCommon.getConstants().search());
         searchItem.setColSpan(4);
@@ -51,7 +54,7 @@ public class CategoryElementSearchSectionStack extends BaseAdvancedSearchSection
             }
         });
 
-        FormItem[] advancedSearchFormItems = new FormItem[]{validFrom, validTo, searchItem};
+        FormItem[] advancedSearchFormItems = new FormItem[]{validFrom, validTo, isVisible, searchItem};
         setFormItemsInAdvancedSearchForm(advancedSearchFormItems);
     }
 
@@ -66,7 +69,7 @@ public class CategoryElementSearchSectionStack extends BaseAdvancedSearchSection
 
         categoryElementWebCriteria.setValidFromDate(advancedSearchForm.getValue(CategoryElementDS.VALID_FROM) != null ? (Date) advancedSearchForm.getValue(CategoryElementDS.VALID_FROM) : null);
         categoryElementWebCriteria.setValidToDate(advancedSearchForm.getValue(CategoryElementDS.VALID_TO) != null ? (Date) advancedSearchForm.getValue(CategoryElementDS.VALID_TO) : null);
-
+        categoryElementWebCriteria.setVisible(((BooleanSelectItem) advancedSearchForm.getItem(ResourceElementDS.IS_VISIBLE)).getBooleanValue());
         return categoryElementWebCriteria;
     }
 

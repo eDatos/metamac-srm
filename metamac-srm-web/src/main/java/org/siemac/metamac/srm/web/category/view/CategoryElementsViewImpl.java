@@ -127,8 +127,10 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
         ListGridField fieldCode = new ListGridField(CategoryElementDS.CODE, getConstants().identifiableArtefactCode());
         fieldCode.setAlign(Alignment.LEFT);
         ListGridField fieldShortName = new ListGridField(CategoryElementDS.SHORT_NAME, getConstants().categoryElementShortName());
+        ListGridField visible = new ListGridField(CategoryElementDS.IS_VISIBLE, getConstants().categoryElementVisible());
         ListGridField urn = new ListGridField(CategoryElementDS.URN, getConstants().identifiableArtefactUrn());
-        categoryElementsListGrid.getListGrid().setFields(fieldCode, fieldShortName, urn);
+
+        categoryElementsListGrid.getListGrid().setFields(fieldCode, fieldShortName, visible, urn);
 
         categoryElementsListGrid.setHeight100();
 
@@ -158,6 +160,7 @@ public class CategoryElementsViewImpl extends ViewWithUiHandlers<CategoryElement
     public void setUiHandlers(CategoryElementsUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         searchSectionStack.setUiHandlers(uiHandlers);
+        importCategoryElementsWindow.setUiHandlers(uiHandlers);
     }
 
     @Override

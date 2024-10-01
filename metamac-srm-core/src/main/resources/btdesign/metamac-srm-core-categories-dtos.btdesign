@@ -39,6 +39,10 @@ Application DtosMetamacCategoryDomain {
 		
 		"Dto for CategoryElementDto"		
 		DataTransferObject CategoryElementDto extends @ResourceElementDto {
+		"Is visible"
+			Boolean isVisible;
+		"Metadata file logo"
+		- @ResourceMetadataFileDto logo nullable;
 		}	
 	}
 }

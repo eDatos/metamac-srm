@@ -8,6 +8,7 @@ public class CategoryElementWebCriteria extends NameableArtefactWebCriteria {
 
     private Date              validFromDate;
     private Date              validToDate;
+    private Boolean           visible;
 
     public CategoryElementWebCriteria() {
     }
@@ -30,5 +31,13 @@ public class CategoryElementWebCriteria extends NameableArtefactWebCriteria {
 
     public void setValidToDate(Date validToDate) {
         this.validToDate = validToDate;
+    }
+
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
     }
 }

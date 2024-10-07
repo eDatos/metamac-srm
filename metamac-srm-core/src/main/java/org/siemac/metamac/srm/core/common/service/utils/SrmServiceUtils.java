@@ -537,14 +537,16 @@ public class SrmServiceUtils extends SdmxSrmUtils {
     }
 
     public static void copyCodeRestrictionVisualisations(CodelistVersionMetamac sourceCodelist, CodelistVersionMetamac targetCodelist) {
-        // 1) first step: take indexes that contain restrictions.
-        Set<Integer> restrictionIndexes = new HashSet<>();
-        for (CodelistRestrictionVisualisation restriction : targetCodelist.getRestrictionVisualisations()) {
-            restrictionIndexes.add(restriction.getColumnIndex());
+
+        if (targetCodelist.getRestrictionVisualisations() == null || targetCodelist.getRestrictionVisualisations().isEmpty()) {
+            return;
         }
 
-        if (restrictionIndexes.isEmpty()) {
-            return;
+        // 1) first step: take indexes that contain restrictions.
+        Set<Integer> restrictionIndexes = new HashSet<>();
+
+        for (CodelistRestrictionVisualisation restriction : targetCodelist.getRestrictionVisualisations()) {
+            restrictionIndexes.add(restriction.getColumnIndex());
         }
 
         // 2) second step: takes the codes in the source codelist that are selected for each restriction (each restriction is represented by its index.

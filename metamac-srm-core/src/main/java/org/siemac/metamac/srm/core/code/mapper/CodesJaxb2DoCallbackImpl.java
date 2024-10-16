@@ -64,8 +64,8 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
         // Fill metadata heritable
         if (previousMetamac != null) {
             // Inherit translations (for all international strings)
-            targetMetamac.getMaintainableArtefact().setName(
-                    BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getMaintainableArtefact().getName(), targetMetamac.getMaintainableArtefact().getName())); // Name
+            targetMetamac.getMaintainableArtefact()
+                    .setName(BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getMaintainableArtefact().getName(), targetMetamac.getMaintainableArtefact().getName())); // Name
             targetMetamac.getMaintainableArtefact().setDescription(
                     BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getMaintainableArtefact().getDescription(), targetMetamac.getMaintainableArtefact().getDescription())); // Description
             BaseJaxb2DoInheritUtils.inheritAnnotations(previousMetamac.getMaintainableArtefact().getAnnotations(), targetMetamac.getMaintainableArtefact().getAnnotations()); // Annotations
@@ -78,7 +78,7 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
             targetMetamac.setSourceProvider(previousMetamac.getSourceProvider()); // SourceProvider
             targetMetamac.setFamily(previousMetamac.getFamily()); // CodelistFamily
             targetMetamac.setVariable(previousMetamac.getVariable()); // Variable
-            
+
         } else {
             targetMetamac.setNormalizationType(NormalizationTypeEnum.STANDARDIZED); // Default NormalizationType (required)
         }
@@ -103,9 +103,13 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
             targetMetamac = codesMetamacService.versioningCodelistOrderVisualisations(ctx, previousMetamac, targetMetamac);
             // RestrictionVisualisation: Copy all RestrictionVisualisation and set the RestrictionVisualisation by default . Not update the codes index.
             targetMetamac = codesMetamacService.versioningCodelistRestrictionVisualisations(ctx, previousMetamac, targetMetamac);
-            
+
             // Update all order codes and openness visualisations
-            codesMetamacService.recalculateCodesVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), targetMetamac.getOpennessVisualisations(), targetMetamac.getRestrictionVisualisations(), true);
+            codesMetamacService.recalculateCodesVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), targetMetamac.getOpennessVisualisations(),
+                    targetMetamac.getRestrictionVisualisations(), true);
+
+            SrmServiceUtils.copyCodeRestrictionVisualisations(previousMetamac, targetMetamac);
+
         } else {
             targetMetamac = codesMetamacService.createCodelistOrderVisualisationAlphabetical(ctx, targetMetamac); // Add alphabetical order
             targetMetamac = codesMetamacService.createCodelistOpennessVisualisationAllOpened(ctx, targetMetamac); // Add all opened visualization
@@ -124,8 +128,8 @@ public class CodesJaxb2DoCallbackImpl extends ImportationMetamacCommonValidation
         // Fill metadata heritable
         if (previousMetamac != null) {
             // Inherit translations (for all international strings)
-            targetMetamac.getNameableArtefact().setName(
-                    BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getNameableArtefact().getName(), targetMetamac.getNameableArtefact().getName())); // Name
+            targetMetamac.getNameableArtefact()
+                    .setName(BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getNameableArtefact().getName(), targetMetamac.getNameableArtefact().getName())); // Name
             targetMetamac.getNameableArtefact().setDescription(
                     BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getNameableArtefact().getDescription(), targetMetamac.getNameableArtefact().getDescription())); // Description
             BaseJaxb2DoInheritUtils.inheritAnnotations(previousMetamac.getNameableArtefact().getAnnotations(), targetMetamac.getNameableArtefact().getAnnotations()); // Annotations

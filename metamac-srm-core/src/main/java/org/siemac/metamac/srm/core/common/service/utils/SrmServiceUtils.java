@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,7 @@ import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.enume.domain.CopyOperationTypeEnum;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
+import com.arte.statistic.sdmx.srm.core.code.domain.Code;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.common.service.utils.SdmxSrmUtils;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
@@ -531,6 +533,44 @@ public class SrmServiceUtils extends SdmxSrmUtils {
                 return code.getRestriction20();
             default:
                 throw new IllegalArgumentException("Restriction not supported: " + columnIndex);
+        }
+    }
+
+    public static void copyCodeRestrictionVisualisations(CodelistVersionMetamac sourceCodelist, CodelistVersionMetamac targetCodelist) {
+
+        if (targetCodelist.getRestrictionVisualisations() == null || targetCodelist.getRestrictionVisualisations().isEmpty()) {
+            return;
+        }
+
+        // 1) first step: take indexes that contain restrictions.
+        Set<Integer> restrictionIndexes = new HashSet<>();
+
+        for (CodelistRestrictionVisualisation restriction : targetCodelist.getRestrictionVisualisations()) {
+            restrictionIndexes.add(restriction.getColumnIndex());
+        }
+
+        // 2) second step: takes the codes in the source codelist that are selected for each restriction (each restriction is represented by its index.
+        // source codelist and target codelist should have the restriction in the same position (same index)
+        Set<String> restrictionsByCode = new HashSet<>();
+        for (Code sourceCode : sourceCodelist.getItems()) {
+            CodeMetamac sourceCodeMetamac = (CodeMetamac) sourceCode;
+            for (Integer i : restrictionIndexes) {
+                Boolean restriction = SrmServiceUtils.getCodeRestriction(sourceCodeMetamac, i);
+                if (Boolean.TRUE.equals(restriction)) {
+                    restrictionsByCode.add(sourceCode.getNameableArtefact().getCode() + "_" + i);
+                }
+            }
+        }
+
+        // 3) third step: for each code in target codelist check if in the source codelist was selected in any restriction. If so, this code will be selected in the same restriction in the target
+        // codelist.
+        for (Code targetCode : targetCodelist.getItems()) {
+            CodeMetamac targetCodeMetamac = (CodeMetamac) targetCode;
+            for (Integer i : restrictionIndexes) {
+                if (restrictionsByCode.contains(targetCode.getNameableArtefact().getCode() + "_" + i)) {
+                    SrmServiceUtils.setCodeRestriction(targetCodeMetamac, i, true);
+                }
+            }
         }
     }
 

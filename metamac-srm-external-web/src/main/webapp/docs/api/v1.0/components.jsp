@@ -69,6 +69,7 @@ String orderByDescription = messagesBundle.getString("api.doc.swagger.components
 
 String exampleOrderBy = messagesBundle.getString("api.doc.swagger.components.exampleOrderBy");
 String validFieldId = messagesBundle.getString("api.doc.swagger.components.validFieldId");
+String validFieldIdAux = messagesBundle.getString("api.doc.swagger.components.validFieldId.aux");
 
 public String queryDescriptionWithParams(String... a) {
     String result = "" + queryDescription + validOperators + messagesBundle.getString("api.doc.swagger.components.validFields");
@@ -247,7 +248,7 @@ public String queryDescriptionWithParams(String... a) {
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
+          "description":"<%=orderByDescription %><br><%=validFieldIdAux %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableQueryParam": {
             "name":"query",
@@ -259,7 +260,7 @@ public String queryDescriptionWithParams(String... a) {
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
+          "description":"<%=orderByDescription %><br><%=validFieldIdAux %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableElementQueryParam": {
             "name":"query",
@@ -283,7 +284,7 @@ public String queryDescriptionWithParams(String... a) {
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%= orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
+          "description":"<%= orderByDescription %><br><%=validFieldIdAux %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         
     }

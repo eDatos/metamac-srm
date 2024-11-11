@@ -43,7 +43,7 @@ public class StatisticalOperationsRestInternalFacadeImpl implements StatisticalO
             String offset = String.valueOf(firstResult);
             String query = buildQuery(operationCodes, criteria);
 
-            Operations findOperationsResult = restApiLocator.getStatisticalOperationsRestFacadeV10().findOperations(query, null, limit, offset);
+            Operations findOperationsResult = restApiLocator.getStatisticalOperationsRestFacadeV10().findOperations(query, null, limit, offset, null);
             return findOperationsResult;
         } catch (Exception e) {
             throw manageRestException(serviceContext, e);

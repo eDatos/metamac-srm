@@ -89,6 +89,8 @@ public class DataStructuresRest2DoMapperImpl extends BaseRest2DoMapperV10Impl im
             switch (propertyNameCriteria) {
                 case ID:
                     return DataStructureDefinitionVersionMetamacProperties.maintainableArtefact().code();
+                case NAME:
+                    return DataStructureDefinitionVersionMetamacProperties.maintainableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-srm</groupId>
         <artifactId>metamac-srm-parent</artifactId>
-        <version>7.1.1-SNAPSHOT</version>
+        <version>7.1.2-SNAPSHOT</version>
         <relativePath>metamac-srm-parent/pom.xml</relativePath>
     </parent>
 

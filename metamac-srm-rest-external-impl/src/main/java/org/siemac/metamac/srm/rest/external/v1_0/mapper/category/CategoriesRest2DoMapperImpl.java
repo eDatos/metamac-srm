@@ -103,6 +103,8 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
             switch (propertyNameCriteria) {
                 case ID:
                     return CategorySchemeVersionMetamacProperties.maintainableArtefact().code();
+                case NAME:
+                    return CategorySchemeVersionMetamacProperties.maintainableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -156,6 +158,8 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
             switch (propertyNameCriteria) {
                 case ID:
                     return CategoryMetamacProperties.nameableArtefact().codeFull();
+                case NAME:
+                    return CategoryMetamacProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -198,6 +202,8 @@ public class CategoriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implem
             switch (propertyNameCriteria) {
                 case ID:
                     return CategorisationProperties.maintainableArtefact().code();
+                case NAME:
+                    return CategorisationProperties.maintainableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

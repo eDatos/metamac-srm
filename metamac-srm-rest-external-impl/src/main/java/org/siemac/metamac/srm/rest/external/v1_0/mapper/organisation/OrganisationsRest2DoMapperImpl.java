@@ -80,6 +80,8 @@ public class OrganisationsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
             switch (propertyNameCriteria) {
                 case ID:
                     return OrganisationSchemeVersionMetamacProperties.maintainableArtefact().code();
+                case NAME:
+                    return OrganisationSchemeVersionMetamacProperties.maintainableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -127,6 +129,8 @@ public class OrganisationsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
             switch (propertyNameCriteria) {
                 case ID:
                     return OrganisationMetamacProperties.nameableArtefact().code();
+                case NAME:
+                    return OrganisationMetamacProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

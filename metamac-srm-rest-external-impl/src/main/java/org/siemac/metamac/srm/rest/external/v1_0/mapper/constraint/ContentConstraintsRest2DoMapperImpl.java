@@ -72,6 +72,8 @@ public class ContentConstraintsRest2DoMapperImpl extends BaseRest2DoMapperV10Imp
             switch (propertyNameCriteria) {
                 case ID:
                     return CategorisationProperties.maintainableArtefact().code();
+                case NAME:
+                    return CategorisationProperties.maintainableArtefact().name().texts().label();   
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

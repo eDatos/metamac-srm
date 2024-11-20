@@ -18,7 +18,7 @@
     <properties>
         <metamac-srm-rest-internal-api.version>3.2.1</metamac-srm-rest-internal-api.version>
         <metamac-srm-rest-external-api.version>3.2.1</metamac-srm-rest-external-api.version>
-        <metamac-statistical-resources-rest-internal-api.version>9.1.2</metamac-statistical-resources-rest-internal-api.version>
+        <metamac-statistical-resources-rest-internal-api.version>10.0.0</metamac-statistical-resources-rest-internal-api.version>
         <metamac-web-common.version>5.8.2-SNAPSHOT</metamac-web-common.version>
         <metamac-statistical-operations-rest-internal-api.version>2.8.1</metamac-statistical-operations-rest-internal-api.version>
         <metamac-statistical-operations-rest-external-api.version>3.7.1</metamac-statistical-operations-rest-external-api.version>

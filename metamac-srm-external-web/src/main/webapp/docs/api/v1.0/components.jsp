@@ -6,14 +6,14 @@
 <%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
 <%@ page import="org.siemac.metamac.core.common.util.MessagesResourceBundle"%>
 
-<%! 
+<%!
 
 public String queryDescriptionWithParams(String queryDescription, String validOperators, MessagesResourceBundle messagesBundle, String... a) {
     String result = "" + queryDescription + validOperators + messagesBundle.getString("api.doc.swagger.components.validFields");
     for (int i = 0; i < a.length; i++) {
         result += "<li>" + a[i] + "</li>";
     }
-    return result + messagesBundle.getString("api.doc.swagger.components.example");    
+    return result + messagesBundle.getString("api.doc.swagger.components.example");
 }
 %>
 
@@ -72,6 +72,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
 
    String exampleOrderBy = messagesBundle.getString("api.doc.swagger.components.exampleOrderBy");
    String validFieldId = messagesBundle.getString("api.doc.swagger.components.validFieldId");
+   String validFieldIdAux = messagesBundle.getString("api.doc.swagger.components.validFieldId.aux");
 %>
 
 {
@@ -242,7 +243,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
+          "description":"<%=orderByDescription %><br><%=validFieldIdAux %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableQueryParam": {
             "name":"query",
@@ -254,7 +255,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
+          "description":"<%=orderByDescription %><br><%=validFieldIdAux %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         "variableElementQueryParam": {
             "name":"query",
@@ -278,7 +279,7 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
           "name":"orderBy",
           "in":"query",
           "type":"string",
-          "description":"<%= orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
+          "description":"<%= orderByDescription %><br><%=validFieldIdAux %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
         
     }

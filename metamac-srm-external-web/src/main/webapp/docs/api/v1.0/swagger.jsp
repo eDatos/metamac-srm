@@ -83,7 +83,7 @@
                   "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                 "description":"${msg['api.doc.swagger.paths.responses.503']}" 
+                 "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -640,7 +640,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"  
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -700,13 +700,13 @@
                   "in":"path",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.3.description']}"
-               },   
+               },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.4.description']}"
-               }           
+               }
             ],
             "responses":{
                "200":{
@@ -1109,7 +1109,7 @@
                "application/json",
                "application/xml",
                "text/tab-separated-values",
-               "text/csv"    
+               "text/csv"
             ],
             "parameters":[
                 {"$ref":"#/components/parameters/agencyIdParam"},
@@ -3293,7 +3293,7 @@
                "application/json",
                "application/xml"
             ],
-             "parameters":[
+            "parameters":[
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryElementQueryParam"},
@@ -3304,7 +3304,7 @@
                	  "schema":{
                      "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CategoryElements"
-                  },                
+                  },
                   "headers":{
 
                   },

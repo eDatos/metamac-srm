@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.siemac.edatos.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.statistical_operations.rest.internal.v1_0.service.StatisticalOperationsRestInternalFacadeV10;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,11 @@ public class RestApiLocator {
     private ConfigurationService                       configurationService;
 
     private StatisticalOperationsRestInternalFacadeV10 statisticalOperationsRestInternalFacadeV10 = null;
+    private String                                     apiKey;
 
     @PostConstruct
     public void initService() throws Exception {
+        apiKey = configurationService.retrieveSrmApiKey();
         String baseApi = configurationService.retrieveStatisticalOperationsInternalApiUrlBase();
         statisticalOperationsRestInternalFacadeV10 = JAXRSClientFactory.create(baseApi, StatisticalOperationsRestInternalFacadeV10.class, null, true); // true to do thread safe
     }
@@ -26,7 +29,7 @@ public class RestApiLocator {
     public StatisticalOperationsRestInternalFacadeV10 getStatisticalOperationsRestFacadeV10() {
         // Reset thread context
         WebClient.client(statisticalOperationsRestInternalFacadeV10).reset();
-        WebClient.client(statisticalOperationsRestInternalFacadeV10).accept("application/xml");
+        WebClient.client(statisticalOperationsRestInternalFacadeV10).accept("application/xml").header(CoreCommonConstants.API_KEY_PARAMETER, apiKey);
         return statisticalOperationsRestInternalFacadeV10;
     }
 }

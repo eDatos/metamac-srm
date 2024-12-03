@@ -10,5 +10,5 @@
     <!-- The following URN must be the same in the SQL script provided -->
     <entry key="metamac.organisation.urn">urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).SDMX01</entry>
     <entry key="metamac.organisation">SDMX01</entry>
-
+    <entry key="metamac.srm.rest.api_key">niQPxZJ656do4NhiptWLsz1DFFzyKvSAbamyrWsq8FC</entry>
 </properties>

@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.siemac.edatos.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.statistical_operations.rest.external.v1_0.service.StatisticalOperationsV1_0;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ public class MetamacRestExternalApisLocator {
 
     private StatisticalOperationsV1_0 statisticalOperationsV1_0 = null;
 
-    public static final String              FIELD_EXCLUDE_METADATA    = "-metadata";
-    public static final String              FIELD_EXCLUDE_DATA        = "-data";
+    public static final String        FIELD_EXCLUDE_METADATA    = "-metadata";
+    public static final String        FIELD_EXCLUDE_DATA        = "-data";
+    private String                    apiKey;
 
     @PostConstruct
     public void initService() throws Exception {
+        apiKey = srmConfiguration.retrieveSrmApiKey();
         String statisticalOperationsInternalApi = srmConfiguration.retrieveStatisticalOperationsExternalApiUrlBase();
         statisticalOperationsV1_0 = JAXRSClientFactory.create(statisticalOperationsInternalApi, StatisticalOperationsV1_0.class, null, true);
     }
@@ -29,7 +32,7 @@ public class MetamacRestExternalApisLocator {
     public StatisticalOperationsV1_0 getStatisticalOperationsV1_0() {
         // Reset thread context
         WebClient.client(statisticalOperationsV1_0).reset();
-        WebClient.client(statisticalOperationsV1_0).accept("application/xml");
+        WebClient.client(statisticalOperationsV1_0).accept("application/xml").header(CoreCommonConstants.API_KEY_PARAMETER, apiKey);
         return statisticalOperationsV1_0;
     }
 }

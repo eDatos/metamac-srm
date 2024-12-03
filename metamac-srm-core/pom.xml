@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-srm</groupId>
         <artifactId>metamac-srm-parent</artifactId>
-        <version>7.1.2-SNAPSHOT</version>
+        <version>8.0.2-SNAPSHOT</version>
         <relativePath>../metamac-srm-parent/pom.xml</relativePath>
     </parent>
 
@@ -110,11 +110,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>${jpa.version}</version>
-            <!-- Add scope provided when deployed in jboss -->
-            <!-- <scope>provided</scope> -->
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.siemac.edatos.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
@@ -25,9 +26,11 @@ public class MetamacRestApisLocator {
 
     public static final String                         FIELD_EXCLUDE_METADATA                      = "-metadata";
     public static final String                         FIELD_EXCLUDE_DATA                          = "-data";
+    private String                                     apiKey;
 
     @PostConstruct
     public void initService() throws Exception {
+        apiKey = srmConfiguration.retrieveSrmApiKey();
         String statisticalOperationsInternalApi = srmConfiguration.retrieveStatisticalOperationsInternalApiUrlBase();
         statisticalOperationsRestInternalFacadeV1_0 = JAXRSClientFactory.create(statisticalOperationsInternalApi, StatisticalOperationsRestInternalFacadeV10.class, null, true);
     }
@@ -40,7 +43,7 @@ public class MetamacRestApisLocator {
 
         // reset thread context
         WebClient.client(statisticalResourcesV1_0).reset();
-        WebClient.client(statisticalResourcesV1_0).accept("application/xml");
+        WebClient.client(statisticalResourcesV1_0).accept("application/xml").header(CoreCommonConstants.API_KEY_PARAMETER, apiKey);
 
         return statisticalResourcesV1_0;
     }
@@ -48,7 +51,7 @@ public class MetamacRestApisLocator {
     public StatisticalOperationsRestInternalFacadeV10 getStatisticalOperationsRestInternalFacadeV1_0() {
         // Reset thread context
         WebClient.client(statisticalOperationsRestInternalFacadeV1_0).reset();
-        WebClient.client(statisticalOperationsRestInternalFacadeV1_0).accept("application/xml");
+        WebClient.client(statisticalOperationsRestInternalFacadeV1_0).accept("application/xml").header(CoreCommonConstants.API_KEY_PARAMETER, apiKey);
         return statisticalOperationsRestInternalFacadeV1_0;
     }
 

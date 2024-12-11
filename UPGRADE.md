@@ -11,6 +11,11 @@
 ## 8.0.1 a 8.1.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.0.1/db](etc/changes-from-release/8.0.1/db) 
+ 
+ * Cambios en statistic-sdmx-srm. Se añade script con api key de sdmx
+  ```shell
+    etc/changes-from-release/3.7.0/db/postgresql/20242307_create_constant_properties_in_common_metadata.sql
+  ```shell
 
 ## 7.0.1 a 7.1.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.

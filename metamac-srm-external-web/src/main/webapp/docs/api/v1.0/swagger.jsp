@@ -1,19 +1,19 @@
 <%@page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
 <%@page pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.util.ResourceBundle"%>
+<%@ page import="org.siemac.metamac.core.common.util.MessagesResourceBundle"%>
 <%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
 <%
    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+   MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages");
+   pageContext.setAttribute("msg", messagesResource);
 %>
-<fmt:setLocale value="<%= locale %>"/>
-<fmt:setBundle basename="i18n.messages" var="i18n"/>
-<fmt:bundle basename="application"/>
 {
    "swagger":"2.0",
    "info":{
-      "description":"<fmt:message key="api.doc.swagger.info.description" bundle="${i18n}"/>",
+      "description":"${msg['api.doc.swagger.info.description']}",
       "version":"1.0",
-      "title":"API de recursos estructurales"
+      "title":"${msg['api.doc.swagger.title']}"
    },
    "host":"<%=SwaggerUtils.getApiBaseURLForSwagger()%>",
    "schemes":[
@@ -21,28 +21,28 @@
    ],
    "tags":[
       {
-         "name":"Organizaciones",
-         "description":"<fmt:message key="api.doc.swagger.tags.0.description" bundle="${i18n}"/>"
+         "name":"${msg['api.doc.swagger.tag.organisations']}",
+         "description":""
       },
       {
-         "name":"Temas",
-         "description":"<fmt:message key="api.doc.swagger.tags.1.description" bundle="${i18n}"/>"
+         "name":"${msg['api.doc.swagger.tag.categories']}",
+         "description":""
       },
       {
-         "name":"Clasificaciones",
-         "description":"<fmt:message key="api.doc.swagger.tags.2.description" bundle="${i18n}"/>"
+         "name":"${msg['api.doc.swagger.tag.codelists']}",
+         "description":""
       },
       {
-         "name":"Conceptos",
-         "description":"<fmt:message key="api.doc.swagger.tags.3.description" bundle="${i18n}"/>"
+         "name":"${msg['api.doc.swagger.tag.concepts']}",
+         "description":""
       },
       {
-         "name":"Definiciones de Estructuras de Datos (DSD)",
-         "description":"<fmt:message key="api.doc.swagger.tags.4.description" bundle="${i18n}"/>"
+         "name":"${msg['api.doc.swagger.tag.datastructures']}",
+         "description":""
       },
       {
-         "name":"Recursos auxiliares",
-         "description":"<fmt:message key="api.doc.swagger.tags.5.description" bundle="${i18n}"/>"
+         "name":"${msg['api.doc.swagger.tag.auxiliary.resources']}",
+         "description":""
       }
    ],
    "definitions": <jsp:include page="definitions.jsp" /> ,
@@ -51,9 +51,9 @@
       "/v1.0/agencyschemes":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.get.description']}",
             "operationId":"resource__v1.0_agencyschemes_findAgencySchemes_GET",
             "produces":[
                "application/json",
@@ -68,22 +68,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/AgencySchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                 "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -91,9 +91,9 @@
       "/v1.0/agencyschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_agencyschemes__agencyID__findAgencySchemes_GET",
             "produces":[
                "application/json",
@@ -109,22 +109,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/AgencySchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -132,9 +132,9 @@
       "/v1.0/agencyschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID__findAgencySchemes_GET",
             "produces":[
                "application/json",
@@ -151,22 +151,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/AgencySchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -174,9 +174,9 @@
       "/v1.0/agencyschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID___version__retrieveAgencyScheme_GET",
             "produces":[
                "application/json",
@@ -190,22 +190,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/AgencyScheme"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -213,9 +213,9 @@
       "/v1.0/agencyschemes/{agencyID}/{resourceID}/{version}/agencies":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.description']}",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID___version__agencies_findAgencies_GET",
             "produces":[
                "application/json",
@@ -233,28 +233,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Campos adicionales que se desean mostrar en la respuesta. Los valores pueden ser: <ul><li>+description: muestra la descripción de los códigos</li><li>+annotations: muestra las anotaciones</li></ul> Ejemplo: fields=\"+description,+annotations\""
+                  "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.parameters.7.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.parameters.7.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.get.parameters.7.description']}",
                      "$ref":"#/definitions/Agencies"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -262,9 +262,9 @@
       "/v1.0/agencyschemes/{agencyID}/{resourceID}/{version}/agencies/{organisationID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.description']}",
             "operationId":"resource__v1.0_agencyschemes__agencyID___resourceID___version__agencies__organisationID__retrieveAgency_GET",
             "produces":[
                "application/json",
@@ -278,29 +278,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.parameters.3.description']}"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.agencyschemes.agencyID.resourceID.version.agencies.organisationID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Agency"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -308,9 +308,9 @@
       "/v1.0/categorisations":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.get.description']}",
             "operationId":"resource__v1.0_categorisations_findCategorisations_GET",
             "produces":[
                "application/json",
@@ -325,22 +325,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Categorisations"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -348,9 +348,9 @@
       "/v1.0/categorisations/{agencyID}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.agencyID.get.description']}",
             "operationId":"resource__v1.0_categorisations__agencyID__findCategorisations_GET",
             "produces":[
                "application/json",
@@ -366,22 +366,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Categorisations"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -389,9 +389,9 @@
       "/v1.0/categorisations/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_categorisations__agencyID___resourceID__findCategorisations_GET",
             "produces":[
                "application/json",
@@ -408,22 +408,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Categorisations"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -431,9 +431,9 @@
       "/v1.0/categorisations/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_categorisations__agencyID___resourceID___version__retrieveCategorisation_GET",
             "produces":[
                "application/json",
@@ -447,22 +447,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categorisations.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Categorisation"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -470,9 +470,9 @@
       "/v1.0/categoryschemes":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.get.description']}",
             "operationId":"resource__v1.0_categoryschemes_findCategorySchemes_GET",
             "produces":[
                "application/json",
@@ -487,22 +487,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CategorySchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -510,9 +510,9 @@
       "/v1.0/categoryschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_categoryschemes__agencyID__findCategorySchemes_GET",
             "produces":[
                "application/json",
@@ -528,22 +528,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CategorySchemes"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -551,9 +551,9 @@
       "/v1.0/categoryschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID__findCategorySchemes_GET",
             "produces":[
                "application/json",
@@ -570,22 +570,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CategorySchemes"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -593,9 +593,9 @@
       "/v1.0/categoryschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__retrieveCategoryScheme_GET",
             "produces":[
                "application/json",
@@ -609,22 +609,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CategoryScheme"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -632,9 +632,9 @@
       "/v1.0/categoryschemes/{agencyID}/{resourceID}/{version}/categories":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.description']}",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories_findCategories_GET",
             "produces":[
                "application/json",
@@ -654,28 +654,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.parameters.7.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Categories"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -683,9 +683,9 @@
       "/v1.0/categoryschemes/{agencyID}/{resourceID}/{version}/categories/{categoryID}":{
          "get":{
             "tags":[
-               "Temas"
+               "${msg['api.doc.swagger.tag.categories']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.description']}",
             "operationId":"resource__v1.0_categoryschemes__agencyID___resourceID___version__categories__categoryID__retrieveCategory_GET",
             "produces":[
                "application/json",
@@ -699,34 +699,34 @@
                   "name":"categoryID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.3.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.4.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.parameters.4.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.categoryID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Category"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -734,9 +734,9 @@
       "/v1.0/codelistfamilies":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.get.description']}",
             "operationId":"resource__v1.0_codelistfamilies_findCodelistFamilies_GET",
             "produces":[
                "application/json",
@@ -749,34 +749,34 @@
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.parameters.2.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.get.parameters.2.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.get.parameters.3.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CodelistFamilies"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -784,9 +784,9 @@
       "/v1.0/codelistfamilies/{id}":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.id.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.id.get.description']}",
             "operationId":"resource__v1.0_codelistfamilies__id__retrieveCodelistFamilyById_GET",
             "produces":[
                "application/json",
@@ -797,28 +797,28 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.id.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.id.get.parameters.0.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelistfamilies.id.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelistfamilies.id.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CodelistFamily"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -826,9 +826,9 @@
       "/v1.0/codelists":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.get.description']}",
             "operationId":"resource__v1.0_codelists_findCodelists_GET",
             "produces":[
                "application/json",
@@ -843,22 +843,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Codelists"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -866,9 +866,9 @@
       "/v1.0/codelists/{agencyID}":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID__findCodelists_GET",
             "produces":[
                "application/json",
@@ -884,22 +884,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Codelists"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -907,9 +907,9 @@
       "/v1.0/codelists/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID__findCodelists_GET",
             "produces":[
                "application/json",
@@ -927,22 +927,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Codelists"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -950,9 +950,9 @@
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__retrieveCodelist_GET",
             "produces":[
                "application/json",
@@ -966,22 +966,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Codelist"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -989,9 +989,9 @@
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}/restrictions":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.restrictions.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.restrictions.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__restrictions_findCodelistRestrictions_GET",
             "produces":[
                "application/json",
@@ -1005,22 +1005,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.restrictions.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.restrictions.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CodelistRestrictions"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1028,9 +1028,9 @@
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}:recode":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__recode_retrieveRecodedCodes_GET",
             "produces":[
                "application/json",
@@ -1041,59 +1041,59 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.0.description']}"
             },
             {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.1.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.1.description']}"
             },
             {
                   "name":"version",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.2.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.2.description']}"
             },
             {
                   "name":"referenceAgencyID",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.3.description']}"
             },
             {
                   "name":"referenceResourceID",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.4.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.4.description']}"
             },
             {
                   "name":"referenceVersion",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.5.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.parameters.5.description']}"
             }
             
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.recode.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/RecodedCodes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1101,9 +1101,9 @@
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}/codes":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes_findCodes_GET",
             "produces":[
                "application/json",
@@ -1123,52 +1123,52 @@
                   "name":"openness",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.7.description']}"
                },
                {
                   "name":"order",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.8.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.8.description']}"
                },
                 {
                   "name":"restriction",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.9.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.9.description']}"
                },
                {
                   "name":"extended",
                   "in":"query",
                   "type":"boolean",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.10.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.10.description']}"
                },
               {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.11.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.parameters.11.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Codes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1176,9 +1176,9 @@
       "/v1.0/codelists/{agencyID}/{resourceID}/{version}/codes/{codeID}":{
          "get":{
             "tags":[
-               "Clasificaciones"
+               "${msg['api.doc.swagger.tag.codelists']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.description']}",
             "operationId":"resource__v1.0_codelists__agencyID___resourceID___version__codes__codeID__retrieveCode_GET",
             "produces":[
                "application/json",
@@ -1192,34 +1192,34 @@
                   "name":"codeID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.parameters.3.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.parameters.4.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.parameters.4.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.codelists.agencyID.resourceID.version.codes.codeID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Code"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1227,9 +1227,9 @@
       "/v1.0/conceptTypes":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptTypes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptTypes.get.description']}",
             "operationId":"resource__v1.0_conceptTypes_retrieveConceptTypes_GET",
             "produces":[
                "application/json",
@@ -1241,22 +1241,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptTypes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptTypes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ConceptTypes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1264,9 +1264,9 @@
       "/v1.0/conceptschemes":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.get.description']}",
             "operationId":"resource__v1.0_conceptschemes_findConceptSchemes_GET",
             "produces":[
                "application/json",
@@ -1281,22 +1281,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ConceptSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1304,9 +1304,9 @@
       "/v1.0/conceptschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_conceptschemes__agencyID__findConceptSchemes_GET",
             "produces":[
                "application/json",
@@ -1322,22 +1322,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ConceptSchemes"
                   },                 
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1345,9 +1345,9 @@
       "/v1.0/conceptschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID__findConceptSchemes_GET",
             "produces":[
                "application/json",
@@ -1364,22 +1364,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ConceptSchemes"
                   },                 
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1387,9 +1387,9 @@
       "/v1.0/conceptschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__retrieveConceptScheme_GET",
             "produces":[
                "application/json",
@@ -1403,22 +1403,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ConceptScheme"
                   },                 
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1426,9 +1426,9 @@
       "/v1.0/conceptschemes/{agencyID}/{resourceID}/{version}/concepts":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.description']}",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts_findConcepts_GET",
             "produces":[
                "application/json",
@@ -1448,28 +1448,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.parameters.7.description']}"
               }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Concepts"
                   },                   
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1477,9 +1477,9 @@
       "/v1.0/conceptschemes/{agencyID}/{resourceID}/{version}/concepts/{conceptID}":{
          "get":{
             "tags":[
-               "Conceptos"
+               "${msg['api.doc.swagger.tag.concepts']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.description']}",
             "operationId":"resource__v1.0_conceptschemes__agencyID___resourceID___version__concepts__conceptID__retrieveConcept_GET",
             "produces":[
                "application/json",
@@ -1493,29 +1493,29 @@
                   "name":"conceptID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.parameters.3.description']}"
                },
              
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.conceptID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Concept"
                   },                   
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1523,9 +1523,9 @@
       "/v1.0/contentConstraints":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.get.description']}",
             "operationId":"resource__v1.0_contentConstraints_findContentConstraints_GET",
             "produces":[
                "application/json",
@@ -1540,22 +1540,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ContentConstraints"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1563,9 +1563,9 @@
       "/v1.0/contentConstraints/{agencyID}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.get.description']}",
             "operationId":"resource__v1.0_contentConstraints__agencyID__findContentConstraints_GET",
             "produces":[
                "application/json",
@@ -1581,22 +1581,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ContentConstraints"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1604,9 +1604,9 @@
       "/v1.0/contentConstraints/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_contentConstraints__agencyID___resourceID__findContentConstraints_GET",
             "produces":[
                "application/json",
@@ -1623,22 +1623,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ContentConstraints"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1646,9 +1646,9 @@
       "/v1.0/contentConstraints/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_contentConstraints__agencyID___resourceID___version__retrieveContentConstraint_GET",
             "produces":[
                "application/json",
@@ -1662,22 +1662,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ContentConstraint"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1685,9 +1685,9 @@
       "/v1.0/contentConstraints/{agencyID}/{resourceID}/{version}/regions/{regionCode}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.description']}",
             "operationId":"resource__v1.0_contentConstraints__agencyID___resourceID___version__regions__regionCode__retrieveRegionForContentConstraint_GET",
             "produces":[
                "application/json",
@@ -1698,7 +1698,7 @@
                   "name":"regionCode",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.parameters.0.description']}"
                },
                 {"$ref":"#/components/parameters/agencyIdParam"},
                 {"$ref":"#/components/parameters/resourceIdParam"},
@@ -1707,22 +1707,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.contentConstraints.agencyID.resourceID.version.regions.regionCode.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/RegionReference"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1730,9 +1730,9 @@
       "/v1.0/dataconsumerschemes":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.get.description']}",
             "operationId":"resource__v1.0_dataconsumerschemes_findDataConsumerSchemes_GET",
             "produces":[
                "application/json",
@@ -1747,22 +1747,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataConsumerSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1770,9 +1770,9 @@
       "/v1.0/dataconsumerschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID__findDataConsumerSchemes_GET",
             "produces":[
                "application/json",
@@ -1788,22 +1788,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataConsumerSchemes"
                   },                  
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1811,9 +1811,9 @@
       "/v1.0/dataconsumerschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID__findDataConsumerSchemes_GET",
             "produces":[
                "application/json",
@@ -1830,22 +1830,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataConsumerSchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1853,9 +1853,9 @@
       "/v1.0/dataconsumerschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID___version__retrieveDataConsumerScheme_GET",
             "produces":[
                "application/json",
@@ -1869,22 +1869,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataConsumerScheme"
                   },                  
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1892,9 +1892,9 @@
       "/v1.0/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.description']}",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID___version__dataconsumers_findDataConsumers_GET",
             "produces":[
                "application/json",
@@ -1912,28 +1912,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.parameters.7.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataConsumers"
                   },                 
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1941,9 +1941,9 @@
       "/v1.0/dataconsumerschemes/{agencyID}/{resourceID}/{version}/dataconsumers/{organisationID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.description']}",
             "operationId":"resource__v1.0_dataconsumerschemes__agencyID___resourceID___version__dataconsumers__organisationID__retrieveDataConsumer_GET",
             "produces":[
                "application/json",
@@ -1957,29 +1957,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.parameters.3.description']}"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataconsumerschemes.agencyID.resourceID.version.dataconsumers.organisationID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataConsumer"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -1987,9 +1987,9 @@
       "/v1.0/dataproviderschemes":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.get.description']}",
             "operationId":"resource__v1.0_dataproviderschemes_findDataProviderSchemes_GET",
             "produces":[
                "application/json",
@@ -2004,22 +2004,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataProviderSchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2027,9 +2027,9 @@
       "/v1.0/dataproviderschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID__findDataProviderSchemes_GET",
             "produces":[
                "application/json",
@@ -2045,22 +2045,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataProviderSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2068,9 +2068,9 @@
       "/v1.0/dataproviderschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID__findDataProviderSchemes_GET",
             "produces":[
                "application/json",
@@ -2087,22 +2087,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataProviderSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2110,9 +2110,9 @@
       "/v1.0/dataproviderschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID___version__retrieveDataProviderScheme_GET",
             "produces":[
                "application/json",
@@ -2126,22 +2126,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataProviderScheme"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2149,9 +2149,9 @@
       "/v1.0/dataproviderschemes/{agencyID}/{resourceID}/{version}/dataproviders":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.description']}",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID___version__dataproviders_findDataProviders_GET",
             "produces":[
                "application/json",
@@ -2169,28 +2169,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.parameters.7.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataProviders"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2198,9 +2198,9 @@
       "/v1.0/dataproviderschemes/{agencyID}/{resourceID}/{version}/dataproviders/{organisationID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.description']}",
             "operationId":"resource__v1.0_dataproviderschemes__agencyID___resourceID___version__dataproviders__organisationID__retrieveDataProvider_GET",
             "produces":[
                "application/json",
@@ -2214,28 +2214,28 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.parameters.3.description']}"
                },
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.dataproviderschemes.agencyID.resourceID.version.dataproviders.organisationID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataProvider"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2243,9 +2243,9 @@
       "/v1.0/datastructures":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.get.description']}",
             "operationId":"resource__v1.0_datastructures_findDataStructures_GET",
             "produces":[
                "application/json",
@@ -2260,22 +2260,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataStructures"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2283,9 +2283,9 @@
       "/v1.0/datastructures/{agencyID}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.get.description']}",
             "operationId":"resource__v1.0_datastructures__agencyID__findDataStructures_GET",
             "produces":[
                "application/json",
@@ -2301,22 +2301,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataStructures"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2324,9 +2324,9 @@
       "/v1.0/datastructures/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_datastructures__agencyID___resourceID__findDataStructures_GET",
             "produces":[
                "application/json",
@@ -2343,22 +2343,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataStructures"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2366,9 +2366,9 @@
       "/v1.0/datastructures/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Definiciones de Estructuras de Datos (DSD)"
+               "${msg['api.doc.swagger.tag.datastructures']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datastructures__agencyID___resourceID___version__retrieveDataStructure_GET",
             "produces":[
                "application/json",
@@ -2382,28 +2382,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.parameters.3.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.datastructures.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/DataStructure"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2411,9 +2411,9 @@
       "/v1.0/organisationschemes":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.get.description']}",
             "operationId":"resource__v1.0_organisationschemes_findOrganisationSchemes_GET",
             "produces":[
                "application/json",
@@ -2428,22 +2428,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2451,9 +2451,9 @@
       "/v1.0/organisationschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_organisationschemes__agencyID__findOrganisationSchemes_GET",
             "produces":[
                "application/json",
@@ -2469,22 +2469,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationSchemes"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2492,9 +2492,9 @@
       "/v1.0/organisationschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID__findOrganisationSchemes_GET",
             "produces":[
                "application/json",
@@ -2511,22 +2511,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2534,9 +2534,9 @@
       "/v1.0/organisationschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__retrieveOrganisationScheme_GET",
             "produces":[
                "application/json",
@@ -2550,22 +2550,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationScheme"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2573,9 +2573,9 @@
       "/v1.0/organisationschemes/{agencyID}/{resourceID}/{version}/organisations":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.description']}",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations_findOrganisations_GET",
             "produces":[
                "application/json",
@@ -2595,28 +2595,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.parameters.7.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Organisations"
                   },                 
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2624,9 +2624,9 @@
       "/v1.0/organisationschemes/{agencyID}/{resourceID}/{version}/organisations/{organisationID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.description']}",
             "operationId":"resource__v1.0_organisationschemes__agencyID___resourceID___version__organisations__organisationID__retrieveOrganisation_GET",
             "produces":[
                "application/json",
@@ -2640,29 +2640,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.parameters.3.description']}"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationschemes.agencyID.resourceID.version.organisations.organisationID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Organisation"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2670,9 +2670,9 @@
       "/v1.0/organisationunitschemes":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.get.description']}",
             "operationId":"resource__v1.0_organisationunitschemes_findOrganisationUnitSchemes_GET",
             "produces":[
                "application/json",
@@ -2687,22 +2687,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationUnitSchemes"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2710,9 +2710,9 @@
       "/v1.0/organisationunitschemes/{agencyID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.get.description']}",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID__findOrganisationUnitSchemes_GET",
             "produces":[
                "application/json",
@@ -2728,22 +2728,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationUnitSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2751,9 +2751,9 @@
       "/v1.0/organisationunitschemes/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID__findOrganisationUnitSchemes_GET",
             "produces":[
                "application/json",
@@ -2770,22 +2770,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationUnitSchemes"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2793,9 +2793,9 @@
       "/v1.0/organisationunitschemes/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID___version__retrieveOrganisationUnitScheme_GET",
             "produces":[
                "application/json",
@@ -2809,22 +2809,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationUnitScheme"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2832,9 +2832,9 @@
       "/v1.0/organisationunitschemes/{agencyID}/{resourceID}/{version}/organisationunits":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.description']}",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID___version__organisationunits_findOrganisationUnits_GET",
             "produces":[
                "application/json",
@@ -2852,28 +2852,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.parameters.7.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.parameters.7.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationUnits"
                   },                      
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2881,9 +2881,9 @@
       "/v1.0/organisationunitschemes/{agencyID}/{resourceID}/{version}/organisationunits/{organisationID}":{
          "get":{
             "tags":[
-               "Organizaciones"
+               "${msg['api.doc.swagger.tag.organisations']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.description']}",
             "operationId":"resource__v1.0_organisationunitschemes__agencyID___resourceID___version__organisationunits__organisationID__retrieveOrganisationUnit_GET",
             "produces":[
                "application/json",
@@ -2897,29 +2897,29 @@
                   "name":"organisationID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.parameters.3.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.parameters.3.description']}"
                },
               
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.organisationunitschemes.agencyID.resourceID.version.organisationunits.organisationID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/OrganisationUnit"
                   },                  
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2927,9 +2927,9 @@
       "/v1.0/variablefamilies":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.get.description']}",
             "operationId":"resource__v1.0_variablefamilies_findVariableFamilies_GET",
             "produces":[
                "application/json",
@@ -2944,22 +2944,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/VariableFamilies"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -2967,9 +2967,9 @@
       "/v1.0/variablefamilies/{id}":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.id.get.description']}",
             "operationId":"resource__v1.0_variablefamilies__id__retrieveVariableFamilyById_GET",
             "produces":[
                "application/json",
@@ -2980,28 +2980,28 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.id.get.parameters.0.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.id.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/VariableFamily"
                   },                 
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3009,9 +3009,9 @@
       "/v1.0/variablefamilies/{id}/variables":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.description']}",
             "operationId":"resource__v1.0_variablefamilies__id__variables_findVariablesByFamily_GET",
             "produces":[
                "application/json",
@@ -3022,7 +3022,7 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.parameters.0.description']}"
                },
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
@@ -3032,22 +3032,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variablefamilies.id.variables.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Variables"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3055,9 +3055,9 @@
       "/v1.0/variables":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variables.get.description']}",
             "operationId":"resource__v1.0_variables_findVariables_GET",
             "produces":[
                "application/json",
@@ -3072,22 +3072,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variables.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Variables"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3095,9 +3095,9 @@
       "/v1.0/variables/{id}":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.id.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variables.id.get.description']}",
             "operationId":"resource__v1.0_variables__id__retrieveVariableById_GET",
             "produces":[
                "application/json",
@@ -3108,28 +3108,28 @@
                   "name":"id",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.id.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variables.id.get.parameters.0.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.id.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variables.id.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Variable"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3137,9 +3137,9 @@
       "/v1.0/variables/{variableID}/variableelements":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.description']}",
             "operationId":"resource__v1.0_variables__variableID__variableelements_findVariableElements_GET",
             "produces":[
                "application/json",
@@ -3150,7 +3150,7 @@
                   "name":"variableID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.parameters.0.description']}"
                },
                 {"$ref":"#/components/parameters/limitParam"},
                 {"$ref":"#/components/parameters/offsetParam"},
@@ -3160,28 +3160,28 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.parameters.5.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.parameters.5.description']}"
                 }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/VariableElements"
                   },                
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3189,9 +3189,9 @@
       "/v1.0/variables/{variableID}/variableelements/{resourceID}":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.description']}",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__retrieveVariableElementById_GET",
             "produces":[
                "application/json",
@@ -3203,28 +3203,28 @@
                   "name":"variableID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.parameters.1.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.parameters.1.description']}"
                }
             ],
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/VariableElement"
                   },               
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3232,9 +3232,9 @@
       "/v1.0/variables/{variableID}/variableelements/{resourceID}/geoinfo":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.description']}",
             "operationId":"resource__v1.0_variables__variableID__variableelements__resourceID__geoinfo_findVariableElementsGeoInfoXml_GET",
             "produces":[
                "application/xml",
@@ -3245,13 +3245,13 @@
                   "name":"variableID",
                   "in":"path",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.parameters.0.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.parameters.0.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.parameters.1.description" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.parameters.1.description']}"
                },
                 {"$ref":"#/components/parameters/resourceIdParam"},
                 {"$ref":"#/components/parameters/limitParam"},
@@ -3262,22 +3262,22 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.variables.variableID.variableelements.resourceID.geoinfo.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/VariableElementsGeoInfo"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3285,9 +3285,9 @@
        "/v1.0/categoryelements":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.get.description']}",
             "operationId":"resource__v1.0_categoryElements_findCategoryElements_GET",
             "produces":[
                "application/json",
@@ -3302,22 +3302,22 @@
             "responses":{
                "200":{
                	  "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/CategoryElements"
                   },
                   "headers":{
 
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3325,9 +3325,9 @@
       "/v1.0/categoryelements/{resourceID}":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.description']}",
              "operationId":"resource__v1.0__categoryelements__resourceID_retrieveCategoryElement_GET",
            "produces":[
                "application/json",
@@ -3339,20 +3339,20 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.get.responses.200.schema.description']}",
                   },
                   "headers":{
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }
@@ -3360,9 +3360,9 @@
        "/v1.0/categoryelements/{resourceID}/logo":{
          "get":{
             "tags":[
-              "Recursos auxiliares"
+              "${msg['api.doc.swagger.tag.auxiliary.resources']}"
             ],
-            "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.description" bundle="${i18n}"/>",
+            "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.description']}",
             "operationId":"resource__v1.0__categoryelements__resourceID__logo_retrieveCategoryElementLogo_GET",
             "produces":[
                 "image/*"
@@ -3373,20 +3373,20 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"<fmt:message key="api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.responses.200.schema.description" bundle="${i18n}"/>",
+                     "description":"${msg['api.doc.swagger.paths.v1_0.categoryelements.resourceID.logo.get.responses.200.schema.description']}",
                   },
                   "headers":{
                   },
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.200" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.200']}"
                },
                "406":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.406" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.406']}"
                },
                "500":{
-                  "description":"<fmt:message key="api.doc.swagger.paths.responses.500" bundle="${i18n}"/>"
+                  "description":"${msg['api.doc.swagger.paths.responses.500']}"
                },
                "503":{
-                   "description":"<fmt:message key="api.doc.swagger.paths.responses.503" bundle="${i18n}"/>"
+                   "description":"${msg['api.doc.swagger.paths.responses.503']}"
                }
             }
          }

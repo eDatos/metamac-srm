@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.core.invocation;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.siemac.edatos.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.notices.rest.internal.v1_0.service.NoticesV1_0;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
@@ -21,9 +22,10 @@ public class MetamacApisLocator {
             String baseApi = configurationService.retrieveNoticesInternalApiUrlBase();
             noticesV10 = JAXRSClientFactory.create(baseApi, NoticesV1_0.class, null, true); // true to do thread safe
         }
+        String apiKey = configurationService.retrieveSrmApiKey();
         // reset thread context
         WebClient.client(noticesV10).reset();
-        WebClient.client(noticesV10).accept("application/xml");
+        WebClient.client(noticesV10).accept("application/xml").header(CoreCommonConstants.API_KEY_PARAMETER, apiKey);
 
         return noticesV10;
     }

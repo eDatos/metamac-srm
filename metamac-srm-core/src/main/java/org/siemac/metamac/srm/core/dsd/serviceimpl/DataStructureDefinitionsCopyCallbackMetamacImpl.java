@@ -31,6 +31,10 @@ public class DataStructureDefinitionsCopyCallbackMetamacImpl extends DataStructu
     public void copyStructureVersion(DataStructureDefinitionVersion sourceSdmx, DataStructureDefinitionVersion targetSdmx) {
         super.copyStructureVersion(sourceSdmx, targetSdmx);
 
+        copyDatastructureVersionAttributes(sourceSdmx, targetSdmx);
+    }
+
+    private void copyDatastructureVersionAttributes(DataStructureDefinitionVersion sourceSdmx, DataStructureDefinitionVersion targetSdmx) {
         DataStructureDefinitionVersionMetamac source = (DataStructureDefinitionVersionMetamac) sourceSdmx;
         DataStructureDefinitionVersionMetamac target = (DataStructureDefinitionVersionMetamac) targetSdmx;
 
@@ -47,6 +51,13 @@ public class DataStructureDefinitionsCopyCallbackMetamacImpl extends DataStructu
         target.setLifeCycleMetadata(new SrmLifeCycleMetadata(ProcStatusEnum.DRAFT)); // New structure in draft version
         target.getMaintainableArtefact().setFinalLogicClient(Boolean.FALSE);
         target.setStreamMessageStatus(StreamMessageStatusEnum.PENDING);
+    }
+
+    @Override
+    public void copyStructureVersionWithoutUnmodifiedMetadata(DataStructureDefinitionVersion sourceSdmx, DataStructureDefinitionVersion targetSdmx) {
+        super.copyStructureVersionWithoutUnmodifiedMetadata(sourceSdmx, targetSdmx);
+
+        copyDatastructureVersionAttributes(sourceSdmx, targetSdmx);
     }
 
     @Override

@@ -629,6 +629,10 @@ public class TsvImportationUtils {
             if (codeIdentifier.equals(code.getNameableArtefact().getCode())) {
                 return code.getNameableArtefact();
             }
+            AnnotableArtefact result = getAnnotableArtefact(code.getChildren(), codeIdentifier);
+            if (result != null) {
+                return result;
+            }
         }
         return null;
     }

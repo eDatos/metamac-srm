@@ -145,6 +145,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
             switch (propertyNameCriteria) {
                 case ID:
                     return CodelistVersionMetamacProperties.maintainableArtefact().code();
+                case NAME:
+                    return CodelistVersionMetamacProperties.maintainableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -218,6 +220,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
             switch (propertyNameCriteria) {
                 case ID:
                     return CodeMetamacProperties.nameableArtefact().code();
+                case NAME:
+                    return CodeMetamacProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -254,6 +258,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
             switch (propertyNameCriteria) {
                 case ID:
                     return VariableFamilyProperties.nameableArtefact().code();
+                case NAME:
+                    return VariableFamilyProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -296,6 +302,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
             switch (propertyNameCriteria) {
                 case ID:
                     return VariableProperties.nameableArtefact().code();
+                case NAME:
+                    return VariableProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -336,6 +344,9 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
             switch (propertyNameCriteria) {
                 case ID:
                     return VariableElementProperties.identifiableArtefact().code();
+                case NAME:
+                    return VariableElementProperties.shortName().texts().label();
+                    
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }
@@ -372,6 +383,8 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
             switch (propertyNameCriteria) {
                 case ID:
                     return CodelistFamilyProperties.nameableArtefact().code();
+                case NAME:
+                    return CodelistFamilyProperties.nameableArtefact().name().texts().label();
                 default:
                     throw toRestExceptionParameterUnexpected(propertyNameCriteria.name());
             }

@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.web.shared.ImportableResourceTypeEnum;
 import org.siemac.metamac.srm.web.shared.utils.SrmSharedTokens;
 import org.siemac.metamac.web.common.client.widgets.ImportResourceWindow;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
+import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 
@@ -20,6 +21,7 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
     private CategoryElementUiHandlers uiHandlers;
     private String                    fileName = null;
     protected InformationLabel        informationLabel;
+    protected WarningLabel            warningLabel;
 
     public ImportCategoryElementLogoWindow() {
         super(getConstants().actionImportLogo());
@@ -34,7 +36,7 @@ public class ImportCategoryElementLogoWindow extends ImportResourceWindow {
         String allowedImageExtensions = CommonUtils.getMetamacAllowedImageExtensions();
 
         if (StringUtils.isNotEmpty(allowedImageExtensions)) {
-            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)));
+            informationLabel = new InformationLabel(getMessages().infoAllowedImageExtensions(getFormattedExtensions(allowedImageExtensions)) + " " + getMessages().warningLogoProperties());
             informationLabel.setWidth(getWidth());
             informationLabel.setMargin(5);
             body.addMember(informationLabel, 0);

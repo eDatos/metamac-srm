@@ -8,9 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -81,10 +79,7 @@ import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension;
 import com.arte.statistic.sdmx.srm.core.structure.domain.NoSpecifiedRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.serviceapi.utils.DataStructureDefinitionDoMocks;
-import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
-import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DescriptorDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEnum;
-import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.UsageStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)

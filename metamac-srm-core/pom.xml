@@ -38,11 +38,23 @@
             <artifactId>statistic-sdmx-srm-core</artifactId>
             <version>${statistic-sdmx-srm.version}</version>
             <classifier>client</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.siemac.metamac</groupId>
+                    <artifactId>metamac-core-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.siemac.metamac.metamac-sso</groupId>
             <artifactId>metamac-sso-client</artifactId>
             <version>${metamac-sso.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.siemac.metamac</groupId>
+                    <artifactId>metamac-core-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.siemac.metamac</groupId>

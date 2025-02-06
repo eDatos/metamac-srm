@@ -193,7 +193,7 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
                                 variableElementsCodeParameter.append(",");
                             }
                         }
-                        sbGeo.append("AND a.CODE IN (" + variableElementsCodeParameter.toString() + ") ");
+                        sbGeo.append(" AND a.CODE IN (" + variableElementsCodeParameter.toString() + ") ");
                     }
 
                     if (!CollectionUtils.isEmpty(geographicalGranularityUrns)) {
@@ -204,7 +204,7 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
                                 geographicalGranularityUrnsParameter.append(",");
                             }
                         }
-                        sbGeo.append("AND ac.URN IN (" + geographicalGranularityUrnsParameter.toString() + ") ");
+                        sbGeo.append(" AND ac.URN IN (" + geographicalGranularityUrnsParameter.toString() + ") ");
                     }
 
                     SQLQuery queryGeo = ((Session) getEntityManager().getDelegate()).createSQLQuery(sbGeo.toString());

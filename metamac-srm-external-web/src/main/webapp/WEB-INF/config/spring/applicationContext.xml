@@ -11,10 +11,6 @@
 
     <!-- Activates annotation-based bean configuration -->
     <context:annotation-config />
-    <!-- Configure externalized logging configuration file -->
-    <bean id="loggingSetup" class="org.siemac.metamac.core.common.logging.LoggingSetup">
-        <property name="logConfigurationFile" value="${environment.metamac.data}/srm/conf/logback.xml" />
-    </bean>
 
     <!-- Core -->
     <import resource="classpath:/spring/srm/applicationContext.xml" />

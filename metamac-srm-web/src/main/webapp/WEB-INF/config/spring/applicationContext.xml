@@ -48,11 +48,6 @@
         </constructor-arg>
     </bean>
 
-    <!-- Configure externalized logging configuration file -->
-    <bean id="loggingSetup" class="org.siemac.metamac.core.common.logging.LoggingSetup">
-        <property name="logConfigurationFile" value="${environment.metamac.data}/srm/conf/logback.xml" />
-    </bean>
-
     <!-- Metamac Business Spring Configuration -->
     <import resource="classpath:/spring/srm/applicationContext.xml" />
     <!-- Rest -->

@@ -3,29 +3,28 @@ package org.siemac.metamac.srm.core.base.repositoryimpl;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
-import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository("entityToDeleteRepository")
 public class EntityToDeleteRepositoryImpl extends EntityToDeleteRepositoryBase {
 
-    @Autowired
-    private SrmConfiguration srmConfiguration;
-    
+    private static Logger logger = LoggerFactory.getLogger(EntityToDeleteRepositoryImpl.class);
+
     public EntityToDeleteRepositoryImpl() {
     }
 
     @Override
     public void deleteEntitiesMarkedToDelete() throws MetamacException {
-                
+
         Session session = (Session) getEntityManager().getDelegate();
 
         try {
@@ -33,6 +32,8 @@ public class EntityToDeleteRepositoryImpl extends EntityToDeleteRepositoryBase {
 
                 @Override
                 public void execute(Connection connection) throws SQLException {
+
+                    logger.info("deleteEntitiesMarkedToDelete starting at {}", new Date());
 
                     // Delete rows
                     {
@@ -53,6 +54,8 @@ public class EntityToDeleteRepositoryImpl extends EntityToDeleteRepositoryBase {
                         sb.append("WHERE TABLE_NAME = '" + SrmConstants.TABLE_INTERNATIONAL_STRINGS + "'");
                         executeSqlStatement(connection, sb);
                     }
+
+                    logger.info("deleteEntitiesMarkedToDelete finished at {}", new Date());
                 }
             });
         } catch (Exception e) {

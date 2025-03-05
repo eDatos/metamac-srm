@@ -4859,8 +4859,10 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         // Find all
         {
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class).orderBy(ConceptProperties.itemSchemeVersion().id()).ascending().orderBy(ConceptProperties.id())
-                    .ascending().distinctRoot().build();
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class)
+                    .orderBy(ConceptProperties.itemSchemeVersion().id()).ascending()
+                    .orderBy(ConceptProperties.id()).ascending()
+                    .distinctRoot().build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<ConceptMetamac> conceptsPagedResult = conceptsService.findConceptsByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
@@ -4999,8 +5001,10 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         // Find all
         {
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class).orderBy(ConceptProperties.itemSchemeVersion().maintainableArtefact().urn()).ascending()
-                    .orderBy(ConceptProperties.id()).ascending().distinctRoot().build();
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class)
+                    .orderBy(ConceptProperties.itemSchemeVersion().maintainableArtefact().urn()).ascending()
+                    .orderBy(ConceptProperties.id()).ascending()
+                    .distinctRoot().build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<ConceptMetamac> conceptsPagedResult = conceptsService.findConceptsCanBeRoleByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 

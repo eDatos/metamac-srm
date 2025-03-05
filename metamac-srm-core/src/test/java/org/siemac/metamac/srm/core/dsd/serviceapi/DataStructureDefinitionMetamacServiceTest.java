@@ -1065,7 +1065,9 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdTimeDimensionByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
+                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot()
                 .build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
@@ -1143,7 +1145,9 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdDimensionByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
+                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot()
                 .build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
@@ -1338,7 +1342,9 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdAttributeByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
+                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot()
                 .build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
@@ -1396,7 +1402,9 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdSpatialAttributeByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
+                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot()
                 .build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
@@ -1452,7 +1460,9 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdTimeAttributeByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
+                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot()
                 .build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;

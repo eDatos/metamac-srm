@@ -12,9 +12,13 @@
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.2.3/db](etc/changes-from-release/8.2.3/db)
 
+
+
 * Script con índices en los campos con foreign key a international string para mejorar el proceso de borrado del job 'DeleteEntitiesMarkedToDeleteJob'
+Atención!!! El script "1_20252802_create_indexes_to_international_strings_constraint.sql" donde se crean índices ya se ha ejecutado en desarrollo, demo y pre y pro del ISTAC. Faltaría ejecutar en el resto de clientes.
   ```shell
     etc/changes-from-release/8.2.3/db/srm/postgresql/1_20252802_create_indexes_to_international_strings_constraint.sql
+    etc/changes-from-release/8.2.3/db/srm/postgresql/2_20250603_drop_index.sql
   ```shell
 
 ## 8.0.1 a 8.1.0

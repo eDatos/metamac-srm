@@ -11,6 +11,7 @@
 
     <!-- Activates annotation-based bean configuration -->
     <context:annotation-config />
+
     <!-- Core -->
     <import resource="classpath:/spring/srm/applicationContext.xml" />
     <!-- Rest -->

@@ -20,11 +20,13 @@
     <!-- Metamac environment configuration -->
     <bean id="configurationService" class="org.siemac.metamac.srm.core.conf.SrmConfigurationImpl">
         <property name="systemConfigurationFile">
-            <value>classpath:metamac/environment.xml</value>
+            <value>${SRMCONF_PATH:classpath:metamac/environment.xml}</value>
         </property>
     </bean>
     
     <bean id="propertyPlaceholderConfigurer" class="org.siemac.metamac.core.common.conf.ConfigurationServicePropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+        <property name="searchSystemEnvironment" value="true" />
         <property name="configurationService">
             <ref bean="configurationService" />
         </property>

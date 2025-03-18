@@ -20,6 +20,10 @@
     <!-- Avoid logging warning Unable to proxy method ... -->
     <logger name="org.springframework.aop.framework.Cglib2AopProxy" level="ERROR"/>
 
+    <logger name="metamc-srm" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>

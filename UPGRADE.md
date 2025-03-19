@@ -8,6 +8,20 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+
+## 8.3.1 a 8.3.2-SNAPSHOT
+* Existe un script de la release 8.3.0 de mejora de rendimiento en borrados que fueron ejecutados en PRE y PRO del ISTAC. Pero no en el resto de entornos. Ese script hay que ejecutarlo en el resto de entornos. Por tanto ejecutar en todos los entornos !!!menos en los de ISTAC!!
+
+  ```shell
+    etc/changes-from-release/8.2.3/db/srm/postgresql/1_20252802_create_indexes_to_international_strings_constraint.sql
+  ```shell
+
+* Hay otro script que hay que ejecutar en todos los entornos (en ISTAC incluido) que borra un índice introducido pero que realmente al final no se va a usar. Borrará el índice si existe:
+  ```shell
+    etc/changes-from-release/8.2.3/db/srm/postgresql/2_20250603_drop_index.sql
+  ```shell
+
+
 ## 8.2.3 a 8.3.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.2.3/db](etc/changes-from-release/8.2.3/db)

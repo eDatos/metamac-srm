@@ -9,7 +9,7 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 
-## 8.3.1 a 8.3.2-SNAPSHOT
+## 8.3.1 a 8.3.2
 * Existe un script de la release 8.3.0 de mejora de rendimiento en borrados que fueron ejecutados en PRE y PRO del ISTAC. Pero no en el resto de entornos. Ese script hay que ejecutarlo en el resto de entornos. Por tanto ejecutar en todos los entornos !!!menos en los de ISTAC!!
 
   ```shell

@@ -50,6 +50,8 @@
 
     <!-- Metamac Business Spring Configuration -->
     <import resource="classpath:/spring/srm/applicationContext.xml" />
+    <!-- job must be only scheduled in the web context --> 
+    <import resource="classpath:/spring/srm/include/quartz.xml" />
     <!-- Rest -->
     <import resource="classpath:/spring/srm-rest-internal/applicationContext.xml" />
 

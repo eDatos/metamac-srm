@@ -10,7 +10,7 @@
 
     <groupId>org.siemac.metamac.metamac-srm</groupId>
     <artifactId>metamac-srm-parent</artifactId>
-    <version>8.3.3</version>
+    <version>8.3.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SIEMAC :: METAMAC :: SRM :: PARENT</name>
     <description>SIEMAC :: METAMAC :: SRM :: PARENT</description>
@@ -49,8 +49,4 @@
 
         </dependencies>
     </dependencyManagement>
-
-  <scm>
-    <tag>20250324-1317-v8.3.3</tag>
-  </scm>
 </project>

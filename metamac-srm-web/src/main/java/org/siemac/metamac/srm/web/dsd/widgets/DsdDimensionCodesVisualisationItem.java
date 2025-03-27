@@ -54,6 +54,7 @@ public class DsdDimensionCodesVisualisationItem extends CustomCanvasItem {
     private static String                         OPENNESS_LEVEL_DTO            = "open-dto";
     private static String                         OPENNESS_LEVEL_EDITION_RECORD = "open-edition-record";
     private static String                         OPENNESS_LEVEL_CLEAR_RECORD   = "open-clear-record";
+    private static String                         DISPLAY_CODE                  = "display-code-edition-record";
 
     protected BaseCustomListGrid                  listGrid;
 
@@ -165,7 +166,13 @@ public class DsdDimensionCodesVisualisationItem extends CustomCanvasItem {
             }
         });
 
-        listGrid.setFields(dimensionField, orderField, editOrderField, clearOrderField, opennessLevelField, editOpennessLevelField, clearOpennessLevelField);
+        ListGridField displayCodeField = new ListGridField(DISPLAY_CODE, getConstants().dsdDisplayCode());
+        displayCodeField.setType(ListGridFieldType.BOOLEAN);
+        displayCodeField.setCanEdit(editionMode);
+        displayCodeField.setCanFilter(false);
+        displayCodeField.setShowHover(false);
+
+        listGrid.setFields(dimensionField, orderField, editOrderField, clearOrderField, opennessLevelField, editOpennessLevelField, clearOpennessLevelField, displayCodeField);
 
         HLayout hLayout = new HLayout();
         hLayout.addMember(listGrid);
@@ -260,6 +267,8 @@ public class DsdDimensionCodesVisualisationItem extends CustomCanvasItem {
                 record.setAttribute(OPENNESS_LEVEL, RelatedResourceUtils.getRelatedResourceName(currentDimensionVisualisationValues.getHierarchyLevelsOpen()));
                 record.setAttribute(OPENNESS_LEVEL_DTO, currentDimensionVisualisationValues.getHierarchyLevelsOpen());
             }
+            record.setAttribute(DISPLAY_CODE, currentDimensionVisualisationValues.getDisplayCode());
+
         }
 
         // to show the search and clear icons in the edition columns
@@ -309,16 +318,19 @@ public class DsdDimensionCodesVisualisationItem extends CustomCanvasItem {
             String dimensionUrn = record.getAttribute(DIMENSION_URN);
             String dimensionCode = record.getAttribute(DIMENSION_CODE);
 
+            Boolean displayCode = record.getAttributeAsBoolean(DISPLAY_CODE);
+
             RelatedResourceDto order = (RelatedResourceDto) record.getAttributeAsObject(ORDER_DTO);
             RelatedResourceDto opennessLevel = (RelatedResourceDto) record.getAttributeAsObject(OPENNESS_LEVEL_DTO);
 
-            if (order != null || opennessLevel != null) { // Only store the dimensions with some visualisation specified
+            if (order != null || opennessLevel != null || Boolean.TRUE.equals(displayCode)) { // Only store the dimensions with some visualisation specified
                 DimensionVisualisationInfoDto dimensionVisualisationInfoDto = new DimensionVisualisationInfoDto();
                 dimensionVisualisationInfoDto.setType(RelatedResourceTypeEnum.DIMENSION);
                 dimensionVisualisationInfoDto.setCode(dimensionCode);
                 dimensionVisualisationInfoDto.setUrn(dimensionUrn);
                 dimensionVisualisationInfoDto.setDisplayOrder(order);
                 dimensionVisualisationInfoDto.setHierarchyLevelsOpen(opennessLevel);
+                dimensionVisualisationInfoDto.setDisplayCode(displayCode);
                 dimensionVisualisationInfoDtos.add(dimensionVisualisationInfoDto);
             }
         }

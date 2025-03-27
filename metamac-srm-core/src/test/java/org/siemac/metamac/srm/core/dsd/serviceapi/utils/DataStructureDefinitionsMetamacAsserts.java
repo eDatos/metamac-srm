@@ -117,6 +117,7 @@ public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinit
     private static void assertDimensionVisualizationInfo(DimensionVisualisationInfoDto expected, DimensionVisualisationInfo actual) {
         assertEquals(expected.getDisplayOrder().getUrn(), actual.getDimension().getUrn());
         assertEquals(expected.getHierarchyLevelsOpen().getUrn(), actual.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+        assertEquals(expected.getDisplayCode(), actual.getDisplayCode());
     }
 
     private static void assertDimensionVisualizationInfoEntities(List<DimensionVisualisationInfo> expected, List<DimensionVisualisationInfo> actual) {

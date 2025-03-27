@@ -183,6 +183,7 @@ public class DataStructureDefinitionDo2DtoMapperImpl extends BaseDo2DtoMapperImp
         target.setUrnProvider(source.getDimension().getUrnProvider());
         target.setDisplayOrder(codesDo2DtoMapper.codelistOrderVisualisationDoToRelatedResourceDto(source.getDisplayOrder()));
         target.setHierarchyLevelsOpen(codesDo2DtoMapper.codelistOpennessVisualisationDoToRelatedResourceDto(source.getHierarchyLevelsOpen()));
+        target.setDisplayCode(source.getDisplayCode());
 
         return target;
     }

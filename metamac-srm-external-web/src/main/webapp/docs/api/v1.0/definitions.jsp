@@ -2648,6 +2648,27 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DimensionVisualisation.properties.dimension.description']}",
                      "type":"string"
+                  },
+                  "order":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.DimensionVisualisation.properties.dimension.order']}",
+                     "type":"string"
+                  },
+                  "openness":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.DimensionVisualisation.properties.dimension.openness']}",
+                     "type":"string"
+                  },
+                  "displayCode":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.DimensionVisualisation.properties.dimension.displayCode']}",
+                     "type":"boolean"
                   }
                }
             }

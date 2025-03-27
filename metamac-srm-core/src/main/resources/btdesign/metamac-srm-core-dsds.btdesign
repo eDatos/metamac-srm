@@ -257,6 +257,8 @@ Application DsdsMetamac {
 			"For variables with hierarchies, indicates how the tree will be displayed when first displayed"
 			- @CodelistOpennessVisualisation hierarchyLevelsOpen nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="HIERARCHY_LEVELS_OPEN_FK";
 			
+			Boolean displayCode;
+			
 			"DSD version"
 			- @DataStructureDefinitionVersionMetamac dsdVersion not nullable cascade="none" fetch="lazy" databaseColumn="DSD_VERSION_FK" <-> dimensionVisualisationInfos;
 		}

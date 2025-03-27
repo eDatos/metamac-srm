@@ -68,6 +68,8 @@ Application DtosMetamacDsdDomain {
 			
 			"For variables with hierarchies, indicates how the tree will be displayed when first displayed"
 			- @RelatedResourceDto hierarchyLevelsOpen nullable;
+			
+			Boolean displayCode;
 		}
 		
 	}

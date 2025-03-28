@@ -7,8 +7,8 @@
             <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
             <sr:url>url-code1</sr:url>
             <sr:text>
-                <cdomain:text xml:lang="es">text-code1 en Español</cdomain:text>
                 <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
+                <cdomain:text xml:lang="es">text-code1 en Español</cdomain:text>
             </sr:text>
         </sr:annotation>
     </sr:annotations>
@@ -18,12 +18,12 @@
     <sr:selfLink kind="structuralResources#dataStructure" href="http://data.istac.es/apis/structural-resources/v1.0/datastructures/agency1/artefact1/01.000"/>
     <sr:parentLink kind="structuralResources#dataStructures" href="http://data.istac.es/apis/structural-resources/v1.0/datastructures"/>
     <sr:name>
-        <cdomain:text xml:lang="en">name-artefact1v01.000 in English</cdomain:text>
         <cdomain:text xml:lang="es">name-artefact1v01.000 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">name-artefact1v01.000 in English</cdomain:text>
     </sr:name>
     <sr:description>
-        <cdomain:text xml:lang="en">description-artefact1v01.000 in English</cdomain:text>
         <cdomain:text xml:lang="es">description-artefact1v01.000 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">description-artefact1v01.000 in English</cdomain:text>
     </sr:description>
     <sr:version>01.000</sr:version>
     <sr:validFrom>2012-11-05T10:12:13.014Z</sr:validFrom>
@@ -62,8 +62,8 @@
                     <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept01</cdomain:urn>
                     <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/structural-resources/v1.0/conceptschemes/agency01/conceptScheme01/01.000/concepts/concept01"/>
                     <cdomain:name>
-                        <cdomain:text xml:lang="es">name-concept01 en Español</cdomain:text>
                         <cdomain:text xml:lang="en">name-concept01 in English</cdomain:text>
+                        <cdomain:text xml:lang="es">name-concept01 en Español</cdomain:text>
                     </cdomain:name>
                 </sr:conceptIdentity>
                 <sr:localRepresentation>
@@ -80,8 +80,8 @@
                         <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
                         <sr:url>url-code1</sr:url>
                         <sr:text>
-                            <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
                             <cdomain:text xml:lang="es">text-code1 en Español</cdomain:text>
+                            <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
                         </sr:text>
                     </sr:annotation>
                 </sr:annotations>
@@ -103,12 +103,21 @@
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Codelist=agency01:codelist01(01.000)</cdomain:urn>
                         <cdomain:selfLink kind="structuralResources#codelist" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/agency01/codelist01/01.000"/>
                         <cdomain:name>
-                            <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
                             <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
+                            <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
                         </cdomain:name>
                     </sr:enumerationCodelist>
                 </sr:localRepresentation>
                 <sr:roleConcepts kind="structuralResources#concepts" total="2">
+                    <sr:role kind="structuralResources#concept">
+                        <cdomain:id>concept02a</cdomain:id>
+                        <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02a</cdomain:urn>
+                        <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/structural-resources/v1.0/conceptschemes/agency01/conceptScheme01/01.000/concepts/concept02a"/>
+                        <cdomain:name>
+                            <cdomain:text xml:lang="es">name-concept02a en Español</cdomain:text>
+                            <cdomain:text xml:lang="en">name-concept02a in English</cdomain:text>
+                        </cdomain:name>
+                    </sr:role>
                     <sr:role kind="structuralResources#concept">
                         <cdomain:id>concept02b</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02b</cdomain:urn>
@@ -118,21 +127,12 @@
                             <cdomain:text xml:lang="en">name-concept02b in English</cdomain:text>
                         </cdomain:name>
                     </sr:role>
-                    <sr:role kind="structuralResources#concept">
-                        <cdomain:id>concept02a</cdomain:id>
-                        <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02a</cdomain:urn>
-                        <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/structural-resources/v1.0/conceptschemes/agency01/conceptScheme01/01.000/concepts/concept02a"/>
-                        <cdomain:name>
-                            <cdomain:text xml:lang="en">name-concept02a in English</cdomain:text>
-                            <cdomain:text xml:lang="es">name-concept02a en Español</cdomain:text>
-                        </cdomain:name>
-                    </sr:role>
                 </sr:roleConcepts>
             </sr:dimension>
         </sr:dimensions>
         <sr:groups>
             <sr:group>
-                <sr:id>componentList-wXjC4WJeg4</sr:id>
+                <sr:id>componentList-PGrjvpwBp1</sr:id>
                 <sr:dimensions total="1">
                     <sr:dimension>dimension01</sr:dimension>
                 </sr:dimensions>
@@ -148,8 +148,8 @@
                         <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
                         <sr:url>url-code1</sr:url>
                         <sr:text>
-                            <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
                             <cdomain:text xml:lang="es">text-code1 en Español</cdomain:text>
+                            <cdomain:text xml:lang="en">text-code1 in English</cdomain:text>
                         </sr:text>
                     </sr:annotation>
                 </sr:annotations>
@@ -171,8 +171,8 @@
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Codelist=agency01:codelist01(01.000)</cdomain:urn>
                         <cdomain:selfLink kind="structuralResources#codelist" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/agency01/codelist01/01.000"/>
                         <cdomain:name>
-                            <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                             <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
+                            <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                         </cdomain:name>
                     </sr:enumerationCodelist>
                 </sr:localRepresentation>
@@ -232,8 +232,8 @@
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Codelist=agency01:codelist01(01.000)</cdomain:urn>
                         <cdomain:selfLink kind="structuralResources#codelist" href="http://data.istac.es/apis/structural-resources/v1.0/codelists/agency01/codelist01/01.000"/>
                         <cdomain:name>
-                            <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                             <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
+                            <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                         </cdomain:name>
                     </sr:enumerationCodelist>
                 </sr:localRepresentation>
@@ -280,8 +280,8 @@
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:conceptScheme01(01.000).concept02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/structural-resources/v1.0/conceptschemes/agency01/conceptScheme01/01.000/concepts/concept02"/>
                 <cdomain:name>
-                    <cdomain:text xml:lang="es">name-concept02 en Español</cdomain:text>
                     <cdomain:text xml:lang="en">name-concept02 in English</cdomain:text>
+                    <cdomain:text xml:lang="es">name-concept02 en Español</cdomain:text>
                 </cdomain:name>
             </sr:concept>
             <sr:showDecimals>5</sr:showDecimals>
@@ -292,16 +292,19 @@
             <sr:dimension>dimension01</sr:dimension>
             <sr:order>order01</sr:order>
             <sr:openness>openness01</sr:openness>
+            <sr:showCode>true</sr:showCode>
         </sr:dimensionVisualisation>
         <sr:dimensionVisualisation>
             <sr:dimension>dimension02</sr:dimension>
             <sr:order>order02</sr:order>
             <sr:openness>openness02</sr:openness>
+            <sr:showCode>false</sr:showCode>
         </sr:dimensionVisualisation>
         <sr:dimensionVisualisation>
             <sr:dimension>dimension05</sr:dimension>
             <sr:order>order05</sr:order>
             <sr:openness>openness05</sr:openness>
+            <sr:showCode>false</sr:showCode>
         </sr:dimensionVisualisation>
     </sr:dimensionVisualisations>
 </sr:dataStructure>

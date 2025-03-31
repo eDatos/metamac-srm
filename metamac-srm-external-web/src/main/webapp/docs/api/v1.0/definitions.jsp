@@ -2663,7 +2663,7 @@
                      "description":"${msg['api.doc.swagger.definitions.DimensionVisualisation.properties.dimension.openness']}",
                      "type":"string"
                   },
-                  "displayCode":{
+                  "showCode":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },

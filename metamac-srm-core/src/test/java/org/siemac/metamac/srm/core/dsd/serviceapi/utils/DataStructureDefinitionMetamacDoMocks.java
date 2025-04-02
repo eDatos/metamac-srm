@@ -54,9 +54,9 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         target.addShowDecimalsPrecision(mockMeasureDimensionPrecision(Integer.valueOf(2), ConceptsMetamacDoMocks.mockConceptFixedValues("concept01", conceptSchemeVersion, null)));
         target.addShowDecimalsPrecision(mockMeasureDimensionPrecision(Integer.valueOf(5), ConceptsMetamacDoMocks.mockConceptFixedValues("concept02", conceptSchemeVersion, null)));
 
-        target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension01", "order01", "openness01"));
-        target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension02", "order02", "openness02"));
-        target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension05", "order05", "openness05"));
+        target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension01", "order01", "openness01", true));
+        target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension02", "order02", "openness02", false));
+        target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension05", "order05", "openness05", false));
         return target;
     }
 
@@ -91,14 +91,16 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         target.setDimension(dimension);
         target.setDisplayOrder(CodesMetamacDoMocks.mockCodelistOrderVisualisation(annotationType));
         target.setHierarchyLevelsOpen(CodesMetamacDoMocks.mockCodelistOpennessVisualisation(annotationType));
+        target.setDisplayCode(false);
         return target;
     }
 
-    public static DimensionVisualisationInfo mockDimensionVisualisationInfoFixedValues(String dimensionId, String displayOrder, String hierarchyLevelsOpen) {
+    public static DimensionVisualisationInfo mockDimensionVisualisationInfoFixedValues(String dimensionId, String displayOrder, String hierarchyLevelsOpen, boolean displayCode) {
         DimensionVisualisationInfo target = new DimensionVisualisationInfo();
         target.setDimension(mockDimensionFixedValues(dimensionId, null));
         target.setDisplayOrder(CodesMetamacDoMocks.mockCodelistOrderVisualisationFixedValues(displayOrder));
         target.setHierarchyLevelsOpen(CodesMetamacDoMocks.mockCodelistOpennessVisualisationFixedValues(hierarchyLevelsOpen));
+        target.setDisplayCode(displayCode);
         return target;
     }
 }

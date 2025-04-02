@@ -19,7 +19,6 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
-import org.siemac.metamac.core.common.criteria.SculptorPropertyCriteria;
 import org.siemac.metamac.core.common.enume.domain.VersionPatternEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
@@ -1630,6 +1629,9 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         DimensionVisualisationInfo newDimensionVisualizationInfo = new DimensionVisualisationInfo();
         newDimensionVisualizationInfo.setDimension((DimensionComponent) newDimensionMap.get(dimensionVisualizationInfo.getDimension().getCode()));
         boolean addDimensionVisualizationInfo = false;
+
+        newDimensionVisualizationInfo.setDisplayCode(dimensionVisualizationInfo.getDisplayCode());
+
         // If the codeList representation is the same as that of the DisplayOrder.
         if (codelistVersion != null && dimensionVisualizationInfo.getDisplayOrder() != null) {
             if (codelistVersion.getMaintainableArtefact().getUrn().equals(dimensionVisualizationInfo.getDisplayOrder().getCodelistVersion().getMaintainableArtefact().getUrn())) {
@@ -1645,7 +1647,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
             }
         }
         // Add new info
-        if (addDimensionVisualizationInfo) {
+        if (addDimensionVisualizationInfo || Boolean.TRUE.equals(newDimensionVisualizationInfo.getDisplayCode())) {
             dataStructureDefinitionVersionMetamacNewVersion.addDimensionVisualisationInfo(newDimensionVisualizationInfo);
         }
     }

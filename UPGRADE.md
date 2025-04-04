@@ -10,11 +10,9 @@
 
 
 ## 8.3.3 a 8.3.4-SNAPSHOT
-* * Se añade script de relocalización de las extensiones actualmente usadas al esquema de extensiones
-
-  ```shell
-    etc/changes-from-release/8.3.3/db/srm/postgresql/20250207_relocate_extensions_to_extensions_schema.sql
-  ```shell
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.3.3/db](etc/changes-from-release/8.3.3/db)
+  
   
 ## 8.3.1 a 8.3.2
 * Existe un script de la release 8.3.0 de mejora de rendimiento en borrados que fueron ejecutados en PRE y PRO del ISTAC. Pero no en el resto de entornos. Ese script hay que ejecutarlo en el resto de entornos. Por tanto ejecutar en todos los entornos !!!menos en los de ISTAC!!

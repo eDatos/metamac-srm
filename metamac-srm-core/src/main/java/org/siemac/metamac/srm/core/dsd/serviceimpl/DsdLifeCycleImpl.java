@@ -281,8 +281,10 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
 
             // Check mandatory attributes
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getAutoOpen(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_AUTOPEN, exceptions);
-            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowNullValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_NULL_VALUES_BY_DEFAULT, exceptions);
-            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowZeroValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_ZERO_VALUES_BY_DEFAULT, exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowNullValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_NULL_VALUES_BY_DEFAULT,
+                    exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowZeroValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_ZERO_VALUES_BY_DEFAULT,
+                    exceptions);
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowDecimals(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_DECIMALS, exceptions);
 
             // Check mutual exclusivity between dimensions in the heading and stub.
@@ -406,7 +408,7 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
             }
 
             // Save new metadata
-            if (isChanged == true) {
+            if (isChanged) {
                 dataStructureDefinitionVersionMetamac.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
                 dataStructureDefinitionMetamacService.updateDataStructureDefinition(ctx, dataStructureDefinitionVersionMetamac);
             }

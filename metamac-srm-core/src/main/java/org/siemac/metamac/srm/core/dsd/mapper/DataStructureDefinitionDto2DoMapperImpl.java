@@ -229,7 +229,7 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
             DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac) throws MetamacException {
 
         if (target == null) {
-            if (source.getDisplayOrder() == null && source.getHierarchyLevelsOpen() == null) {
+            if (source.getDisplayOrder() == null && source.getHierarchyLevelsOpen() == null && !Boolean.TRUE.equals(source.getDisplayCode())) {
                 return null;
             } else {
                 target = new DimensionVisualisationInfo();
@@ -250,6 +250,8 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
         } else {
             target.setHierarchyLevelsOpen(null);
         }
+
+        target.setDisplayCode(source.getDisplayCode());
 
         target.setDsdVersion(dataStructureDefinitionVersionMetamac);
 

@@ -26,7 +26,7 @@ ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 -- BBDD: metamac_structural_resources_bd
 -- extensiones: pg_trgm y uuid-ossp
 
--- psql -U postgres -d istac_structural_resources_bd
+-- psql -U postgres -d metamac_structural_resources_bd
 ALTER EXTENSION "pg_trgm" SET SCHEMA extensions;
 ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 
@@ -35,7 +35,7 @@ ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 -- BBDD: metamac_structural_resources_bd
 -- extensiones: pg_trgm y uuid-ossp
 
--- psql -U postgres -d istac_structural_resources_bd
+-- psql -U postgres -d metamac_structural_resources_bd
 ALTER EXTENSION "pg_trgm" SET SCHEMA extensions;
 ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 
@@ -44,7 +44,7 @@ ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 -- BBDD: metamac_structural_resources_bd
 -- extensiones: pg_trgm y uuid-ossp
 
--- psql -U postgres -d istac_structural_resources_bd
+-- psql -U postgres -d metamac_structural_resources_bd
 ALTER EXTENSION "pg_trgm" SET SCHEMA extensions;
 ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 
@@ -53,7 +53,7 @@ ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 -- BBDD: metamac_structural_resources_bd
 -- extensiones: pg_trgm y uuid-ossp
 
--- psql -U postgres -d istac_structural_resources_bd
+-- psql -U postgres -d metamac_structural_resources_bd
 ALTER EXTENSION "pg_trgm" SET SCHEMA extensions;
 ALTER EXTENSION "uuid-ossp" SET SCHEMA extensions;
 

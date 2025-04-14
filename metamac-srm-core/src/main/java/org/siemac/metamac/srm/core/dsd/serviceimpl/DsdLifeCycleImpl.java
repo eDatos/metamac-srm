@@ -392,6 +392,7 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
                 // Create new visualization info with new values.
                 visualizationInfoForCurrentDimension = new DimensionVisualisationInfo();
                 visualizationInfoForCurrentDimension.setDimension(dimensionTarget);
+                visualizationInfoForCurrentDimension.setDisplayCode(Boolean.FALSE);
                 dataStructureDefinitionVersionMetamac.addDimensionVisualisationInfo(visualizationInfoForCurrentDimension);
             }
 

@@ -8,6 +8,11 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 8.4.1 a 8.4.2-SNAPSHOT
+ * Cambios en statistic-sdmx-srm. Se añade script con api key de sdmx
+  ```shell
+    etc/changes-from-release/3.7.0/db/postgresql/20242307_create_constant_properties_in_common_metadata.sql
+  ```shell
 
 ## 8.3.3 a 8.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.

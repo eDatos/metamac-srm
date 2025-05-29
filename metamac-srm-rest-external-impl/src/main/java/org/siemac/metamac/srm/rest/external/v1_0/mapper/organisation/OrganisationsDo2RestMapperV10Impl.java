@@ -420,6 +420,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (source != null) {
             target.setNestedId(source.getIdAsMaintainer()); // Overrided nestedId to agencies
         }
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
         return (Agency) target;
     }
 
@@ -620,6 +621,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (OrganisationTypeEnum.AGENCY.equals(organisationType)) {
             target.setNestedId(getIdAsMaintainer(source));
         }
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
         return target;
     }
 

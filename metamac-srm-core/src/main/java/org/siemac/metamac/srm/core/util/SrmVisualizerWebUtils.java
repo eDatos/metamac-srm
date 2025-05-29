@@ -14,7 +14,17 @@ public class SrmVisualizerWebUtils {
     private static final String URL_QUERY_RESOURCE_TYPE_CONCEPT_SCHEME      = "concepts/schemes";
     private static final String URL_QUERY_RESOURCE_TYPE_DATA_STRUCTURE      = "dsd/codes";
     private static final String URL_QUERY_RESOURCE_TYPE_ORGANIZATION_SCHEME = "organisations/schemes";
+    private static final String URL_QUERY_RESOURCE_TYPE_ORGANIZATIONS       ="organisations/organisations";
     private static final String URL_DETAIL                                  = "detail";
+
+    public static String buildOrganizationsUnitUrl(MaintainableArtefact source, String code, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(URL_QUERY_RESOURCE_TYPE_ORGANIZATIONS);
+        buildQueryParametersForNoVersionableResource(source, code, builder);
+
+        return builder.toString();
+    }
 
     public static String buildConceptsUrl(MaintainableArtefact source, String code, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
@@ -36,7 +46,7 @@ public class SrmVisualizerWebUtils {
 
     private static void buildQueryParametersForNoVersionableResource(MaintainableArtefact source, String code, StringBuilder builder) {
         builder.append(URL_SEPARATOR);
-        builder.append(source.getMaintainer().getIdAsMaintainer());
+        builder.append(source.getMaintainer() != null ? source.getMaintainer().getIdAsMaintainer() : SdmxConstants.AGENCY_SDMX_CODE);
         builder.append(URL_SEPARATOR);
         builder.append(source.getCode());
         builder.append(URL_SEPARATOR);

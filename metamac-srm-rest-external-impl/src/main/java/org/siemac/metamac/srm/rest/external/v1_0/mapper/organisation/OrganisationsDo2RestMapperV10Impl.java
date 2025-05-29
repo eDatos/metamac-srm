@@ -509,6 +509,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         toItem(source, target);
 
         target.setContacts(toContacts(source.getContacts(), source.getOrganisationType()));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
 
         return target;
     }

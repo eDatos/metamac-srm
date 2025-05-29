@@ -18,6 +18,8 @@ public class HtmlLinkUtil {
             return SrmVisualizerWebUtils.buildConceptSchemeUrl(maintainableArtefact, "https://estadisticas.arte-consultores.com/edatos-srm-visualizer");
         case DATA_STRUCTURE:
             return SrmVisualizerWebUtils.buildDataStructureUrl(maintainableArtefact, "https://estadisticas.arte-consultores.com/edatos-srm-visualizer");
+        case ORGANISATION_SCHEME:
+            return SrmVisualizerWebUtils.buildOrganizationSchemeSchemeUrl(maintainableArtefact, "https://estadisticas.arte-consultores.com/edatos-srm-visualizer");
         default:
             return "";
     }

@@ -46,6 +46,7 @@ import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
 import org.siemac.metamac.srm.core.dsd.domain.MeasureDimensionPrecision;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.StructureBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.concept.ConceptsDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
@@ -65,6 +66,7 @@ import com.arte.statistic.sdmx.srm.core.structure.domain.GroupRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDescriptor;
 import com.arte.statistic.sdmx.srm.core.structure.domain.NoSpecifiedRelationship;
 import com.arte.statistic.sdmx.srm.core.structure.domain.PrimaryMeasureRelationship;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialAttributeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialDimensionTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
@@ -123,6 +125,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         target.setShowDecimals(source.getShowDecimals());
         target.setShowDecimalsPrecisions(toShowDecimalPrecisions(source.getShowDecimalsPrecisions()));
         target.setDimensionVisualisations(toDimensionVisualisations(source.getDimensionVisualisationInfos()));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.DATA_STRUCTURE));
 
         return target;
     }
@@ -408,6 +411,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_DATA_STRUCTURE, toDataStructureSelfLink(source), target);
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.DATA_STRUCTURE));
         return target;
     }
 

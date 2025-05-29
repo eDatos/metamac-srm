@@ -11,6 +11,7 @@ public class SrmVisualizerWebUtils {
     private static final String URL_QUERY_RESOURCE_TYPE_CONCEPTS       = "concepts/concepts";
     private static final String URL_QUERY_RESOURCE_TYPE_CODES          = "codelists/codes";
     private static final String URL_QUERY_RESOURCE_TYPE_CONCEPT_SCHEME = "concepts/schemes";
+    private static final String URL_QUERY_RESOURCE_TYPE_DATA_STRUCTURE = "dsd/codes";
     private static final String URL_DETAIL                             = "detail";
 
     public static String buildConceptsUrl(MaintainableArtefact source, String code, String urlBase) throws IllegalArgumentException {
@@ -48,6 +49,15 @@ public class SrmVisualizerWebUtils {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
         builder.append(URL_QUERY_RESOURCE_TYPE_CODELIST);
+        builder.append(URL_SEPARATOR);
+        builder.append(buildQueryParametersForVersionableResource(source));
+        return builder.toString();
+    }
+
+    public static String buildDataStructureUrl(MaintainableArtefact source, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(URL_QUERY_RESOURCE_TYPE_DATA_STRUCTURE);
         builder.append(URL_SEPARATOR);
         builder.append(buildQueryParametersForVersionableResource(source));
         return builder.toString();

@@ -11,6 +11,7 @@ public class SrmVisualizerWebUtils {
     private static final String URL_QUERY_RESOURCE_TYPE_CODELIST            = "codelists/codelists";
     private static final String URL_QUERY_RESOURCE_TYPE_CONCEPTS            = "concepts/concepts";
     private static final String URL_QUERY_RESOURCE_TYPE_CODES               = "codelists/codes";
+    private static final String URL_QUERY_RESOURCE_CODELIST_FAMILIES        = "codelists/families";
     private static final String URL_QUERY_RESOURCE_TYPE_CONCEPT_SCHEME      = "concepts/schemes";
     private static final String URL_QUERY_RESOURCE_TYPE_CATEGORY_SHCHEME    = "categories/schemes";
     private static final String URL_QUERY_RESOURCE_TYPE_CATEGORIES          = "categories/categories";
@@ -51,6 +52,18 @@ public class SrmVisualizerWebUtils {
         builder.append(buildEndpointUrl(urlBase));
         builder.append(URL_QUERY_RESOURCE_TYPE_CATEGORIES);
         buildQueryParametersForNoVersionableResource(source, code, builder);
+
+        return builder.toString();
+    }
+
+    public static String buildCodelistFamiliesUrl(String code, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(URL_QUERY_RESOURCE_CODELIST_FAMILIES);
+        builder.append(URL_SEPARATOR);
+        builder.append(code);
+        builder.append(URL_SEPARATOR);
+        builder.append(URL_DETAIL);
 
         return builder.toString();
     }

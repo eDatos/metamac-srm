@@ -630,6 +630,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setChildLinks(toCodelistFamilyChildLinks(source));
 
         target.setName(toInternationalString(source.getNameableArtefact().getName()));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.CODELIST_FAMILIES));
         return target;
     }
 
@@ -790,6 +791,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         Resource target = new Resource();
         toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_FAMILY, toCodelistFamilySelfLink(source), target, false, null);
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.CODELIST_FAMILIES));
         return target;
     }
 

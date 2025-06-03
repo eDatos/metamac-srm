@@ -1,6 +1,6 @@
 -- ---------------------------------------------------------------------------------------------------
 -- EDATOS-5038 Enlazar desde portal ciertos recursos cuya visualización se realiza en el srm-visualizer
-    -- "metamac.srm.rest.api_key"
+    -- "metamac.srm.srm-visualizer.url"
 -- ---------------------------------------------------------------------------------------------------
 
 

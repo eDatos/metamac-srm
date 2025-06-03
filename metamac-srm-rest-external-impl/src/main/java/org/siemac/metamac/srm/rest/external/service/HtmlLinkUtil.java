@@ -32,7 +32,7 @@ public class HtmlLinkUtil {
         case CODELIST_FAMILIES:
             return SrmVisualizerWebUtils.buildCodelistFamiliesUrl(code, url);
         default:
-            throw new IllegalArgumentException("StatisticalResourceTypeEnum " + resourceTypeEnum + " not valid.");
+            throw new IllegalArgumentException("Srm-RelatedResourceTypeEnum " + resourceTypeEnum + " not valid.");
     }
   }
 }

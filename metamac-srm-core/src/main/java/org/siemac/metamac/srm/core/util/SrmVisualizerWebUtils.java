@@ -6,9 +6,6 @@ import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
 
-/**
- * 
- */
 public class SrmVisualizerWebUtils {
 
     private static final String URL_SEPARATOR                               = "/";

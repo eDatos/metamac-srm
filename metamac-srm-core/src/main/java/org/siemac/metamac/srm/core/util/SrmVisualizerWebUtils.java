@@ -1,10 +1,14 @@
 package org.siemac.metamac.srm.core.util;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
 
+/**
+ * 
+ */
 public class SrmVisualizerWebUtils {
 
     private static final String URL_SEPARATOR                               = "/";
@@ -126,6 +130,12 @@ public class SrmVisualizerWebUtils {
         return builder.toString();
     }
 
+    /**
+     * @param source
+     * @return
+     * @throws IllegalArgumentException
+     * @see BaseDo2RestMapperV10Impl#toMaintainableArtefact(MaintainableArtefact, SrmLifeCycleMetadata, MaintainableArtefact)
+     */
     private static String buildQueryParametersForVersionableResource(MaintainableArtefact source) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(source.getMaintainer() != null ? source.getMaintainer().getIdAsMaintainer() : SdmxConstants.AGENCY_SDMX_CODE);

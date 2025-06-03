@@ -18,6 +18,11 @@ public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements Sr
     }
 
     @Override
+    public String retrieveSrmVisualizerUrl() throws MetamacException {
+        return retrieveProperty("metamac.srm.srm-visualizer.url");
+    }
+
+    @Override
     public String retrieveCodelistUrnForVariableElementGeographicalGranularity() throws MetamacException {
         return retrieveDefaultCodelistGeographicalGranularityUrn();
     }

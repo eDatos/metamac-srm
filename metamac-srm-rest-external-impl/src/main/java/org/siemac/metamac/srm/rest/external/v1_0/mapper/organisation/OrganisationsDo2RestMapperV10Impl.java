@@ -36,6 +36,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnit
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnitSchemes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.OrganisationUnits;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
@@ -43,6 +44,7 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -59,9 +61,12 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeE
 @Component
 public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements OrganisationsDo2RestMapperV10 {
 
+    @Autowired
+    private SrmConfiguration                    configurationService;
+
     @Override
     public OrganisationSchemes toOrganisationSchemes(PagedResult<OrganisationSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy,
-            Integer limit) {
+            Integer limit) throws MetamacException {
 
         OrganisationSchemeTypeEnum type = null;
 
@@ -81,7 +86,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public AgencySchemes toAgencySchemes(PagedResult<OrganisationSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public AgencySchemes toAgencySchemes(PagedResult<OrganisationSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         OrganisationSchemeTypeEnum type = OrganisationSchemeTypeEnum.AGENCY_SCHEME;
 
@@ -102,7 +107,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
     @Override
     public OrganisationUnitSchemes toOrganisationUnitSchemes(PagedResult<OrganisationSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy,
-            Integer limit) {
+            Integer limit) throws MetamacException {
 
         OrganisationSchemeTypeEnum type = OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME;
 
@@ -123,7 +128,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
     @Override
     public DataProviderSchemes toDataProviderSchemes(PagedResult<OrganisationSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy,
-            Integer limit) {
+            Integer limit) throws MetamacException {
 
         OrganisationSchemeTypeEnum type = OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME;
 
@@ -144,7 +149,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
 
     @Override
     public DataConsumerSchemes toDataConsumerSchemes(PagedResult<OrganisationSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy,
-            Integer limit) {
+            Integer limit) throws MetamacException {
 
         OrganisationSchemeTypeEnum type = OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME;
 
@@ -177,18 +182,18 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public OrganisationUnitScheme toOrganisationUnitScheme(OrganisationSchemeVersionMetamac source) {
+    public OrganisationUnitScheme toOrganisationUnitScheme(OrganisationSchemeVersionMetamac source) throws MetamacException {
         OrganisationScheme target = toOrganisationSchemeCommon(source);
         return (OrganisationUnitScheme) target;
     }
 
     @Override
-    public DataConsumerScheme toDataConsumerScheme(OrganisationSchemeVersionMetamac source) {
+    public DataConsumerScheme toDataConsumerScheme(OrganisationSchemeVersionMetamac source) throws MetamacException{
         OrganisationScheme target = toOrganisationSchemeCommon(source);
         return (DataConsumerScheme) target;
     }
     @Override
-    public DataProviderScheme toDataProviderScheme(OrganisationSchemeVersionMetamac source) {
+    public DataProviderScheme toDataProviderScheme(OrganisationSchemeVersionMetamac source) throws MetamacException {
         OrganisationScheme target = toOrganisationSchemeCommon(source);
         return (DataProviderScheme) target;
     }
@@ -213,7 +218,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    public Organisations toOrganisations(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
 
         Organisations targets = new Organisations();
         targets.setKind(toKindItemsFromOrganisationType(null)); // generic
@@ -279,7 +284,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public Agencies toAgencies(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    public Agencies toAgencies(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
 
         Agencies targets = new Agencies();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.AGENCY_SCHEME));
@@ -316,7 +321,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public OrganisationUnits toOrganisationUnits(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    public OrganisationUnits toOrganisationUnits(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
 
         OrganisationUnits targets = new OrganisationUnits();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.ORGANISATION_UNIT_SCHEME));
@@ -353,7 +358,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public DataProviders toDataProviders(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    public DataProviders toDataProviders(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
 
         DataProviders targets = new DataProviders();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_PROVIDER_SCHEME));
@@ -390,7 +395,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
     }
 
     @Override
-    public DataConsumers toDataConsumers(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    public DataConsumers toDataConsumers(List<ItemResult> sources, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
         DataConsumers targets = new DataConsumers();
         targets.setKind(toKindItems(OrganisationSchemeTypeEnum.DATA_CONSUMER_SCHEME));
 
@@ -420,23 +425,23 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (source != null) {
             target.setNestedId(source.getIdAsMaintainer()); // Overrided nestedId to agencies
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME, configurationService));
         return (Agency) target;
     }
 
     @Override
-    public OrganisationUnit toOrganisationUnit(OrganisationMetamac source) {
+    public OrganisationUnit toOrganisationUnit(OrganisationMetamac source) throws MetamacException {
         Organisation target = toOrganisationCommon(source);
         return (OrganisationUnit) target;
     }
 
     @Override
-    public DataConsumer toDataConsumer(OrganisationMetamac source) {
+    public DataConsumer toDataConsumer(OrganisationMetamac source) throws MetamacException{
         Organisation target = toOrganisationCommon(source);
         return (DataConsumer) target;
     }
     @Override
-    public DataProvider toDataProvider(OrganisationMetamac source) {
+    public DataProvider toDataProvider(OrganisationMetamac source) throws MetamacException {
         Organisation target = toOrganisationCommon(source);
         return (DataProvider) target;
     }
@@ -446,7 +451,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return true; // no additional conditions
     }
 
-    private OrganisationScheme toOrganisationSchemeCommon(OrganisationSchemeVersionMetamac source) {
+    private OrganisationScheme toOrganisationSchemeCommon(OrganisationSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -472,14 +477,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         target.setSelfLink(toOrganisationSchemeSelfLink(source));
         target.setParentLink(toOrganisationSchemeParentLink(source));
         target.setChildLinks(toOrganisationSchemeChildLinks(source));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.ORGANISATION_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.ORGANISATION_SCHEME, configurationService));
 
         toItemScheme(source, source.getLifeCycleMetadata(), target);
 
         return target;
     }
 
-    private Organisation toOrganisationCommon(OrganisationMetamac source) {
+    private Organisation toOrganisationCommon(OrganisationMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -509,7 +514,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         toItem(source, target);
 
         target.setContacts(toContacts(source.getContacts(), source.getOrganisationType()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME, configurationService));
 
         return target;
     }
@@ -589,13 +594,13 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return null;
     }
 
-    private Resource toResource(OrganisationSchemeVersionMetamac source) {
+    private Resource toResource(OrganisationSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), toKindItemScheme(source.getOrganisationSchemeType()), toOrganisationSchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.ORGANISATION_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.ORGANISATION_SCHEME, configurationService));
         return target;
     }
 
@@ -611,7 +616,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return target;
     }
 
-    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -622,7 +627,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (OrganisationTypeEnum.AGENCY.equals(organisationType)) {
             target.setNestedId(getIdAsMaintainer(source));
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME, configurationService));
         return target;
     }
 

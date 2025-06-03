@@ -40,6 +40,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.ShowDecimalPreci
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.TimeDimension;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionOrder;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
@@ -81,8 +82,11 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
     @Autowired
     private ConceptsMetamacService   conceptsService;
 
+    @Autowired
+    private SrmConfiguration                    configurationService;
+
     @Override
-    public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         DataStructures targets = new DataStructures();
         targets.setKind(SrmRestConstants.KIND_DATA_STRUCTURES);
@@ -125,7 +129,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         target.setShowDecimals(source.getShowDecimals());
         target.setShowDecimalsPrecisions(toShowDecimalPrecisions(source.getShowDecimalsPrecisions()));
         target.setDimensionVisualisations(toDimensionVisualisations(source.getDimensionVisualisationInfos()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.DATA_STRUCTURE));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.DATA_STRUCTURE, configurationService));
 
         return target;
     }
@@ -177,7 +181,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private Measure toMeasure(MeasureDescriptor source, Boolean isImported) {
+    private Measure toMeasure(MeasureDescriptor source, Boolean isImported) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -192,7 +196,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private PrimaryMeasure toPrimaryMeasure(com.arte.statistic.sdmx.srm.core.structure.domain.PrimaryMeasure source, Boolean isImported) {
+    private PrimaryMeasure toPrimaryMeasure(com.arte.statistic.sdmx.srm.core.structure.domain.PrimaryMeasure source, Boolean isImported) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -213,7 +217,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private Attributes toAttributes(AttributeDescriptor source, Boolean isImported) {
+    private Attributes toAttributes(AttributeDescriptor source, Boolean isImported) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -233,7 +237,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return target;
     }
 
-    private void toAttributeCommon(DataAttribute source, Attribute target, Boolean isImported) {
+    private void toAttributeCommon(DataAttribute source, Attribute target, Boolean isImported) throws MetamacException {
         if (source == null) {
             return;
         }
@@ -245,7 +249,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         target.setType(toAttributeQualifierType(source.getSpecialAttributeType()));
     }
 
-    private Attribute toAttribute(DataAttribute source, Boolean isImported) {
+    private Attribute toAttribute(DataAttribute source, Boolean isImported) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -354,7 +358,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return targets;
     }
 
-    private ShowDecimalPrecisions toShowDecimalPrecisions(List<MeasureDimensionPrecision> sources) {
+    private ShowDecimalPrecisions toShowDecimalPrecisions(List<MeasureDimensionPrecision> sources) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
@@ -405,13 +409,13 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return null;
     }
 
-    private Resource toResource(DataStructureDefinitionVersionMetamac source) {
+    private Resource toResource(DataStructureDefinitionVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_DATA_STRUCTURE, toDataStructureSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.DATA_STRUCTURE));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.DATA_STRUCTURE, configurationService));
         return target;
     }
 
@@ -464,7 +468,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         toIdentifiableArtefact(source, target, isImported);
     }
 
-    private void toComponent(Component source, org.siemac.metamac.rest.structural_resources.v1_0.domain.Component target, Boolean isImported) {
+    private void toComponent(Component source, org.siemac.metamac.rest.structural_resources.v1_0.domain.Component target, Boolean isImported) throws MetamacException {
         if (source == null) {
             return;
         }

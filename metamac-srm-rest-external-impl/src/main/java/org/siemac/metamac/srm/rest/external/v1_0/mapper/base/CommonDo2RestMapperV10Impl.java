@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.base;
 
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Representation;
@@ -23,7 +24,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private ConceptsDo2RestMapperV10 conceptsDo2RestMapperV10;
 
     @Override
-    public Representation toRepresentation(com.arte.statistic.sdmx.srm.core.base.domain.Representation source) {
+    public Representation toRepresentation(com.arte.statistic.sdmx.srm.core.base.domain.Representation source) throws MetamacException {
         if (source == null) {
             return null;
         }

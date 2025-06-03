@@ -19,7 +19,7 @@ public class SrmConfigurationImpl extends SdmxSrmConfigurationImpl implements Sr
 
     @Override
     public String retrieveSrmVisualizerUrl() throws MetamacException {
-        return retrieveProperty("metamac.srm.srm-visualizer.url");
+        return retrieveProperty(SrmConfigurationConstants.SRM_VISUALIZER_URL);
     }
 
     @Override

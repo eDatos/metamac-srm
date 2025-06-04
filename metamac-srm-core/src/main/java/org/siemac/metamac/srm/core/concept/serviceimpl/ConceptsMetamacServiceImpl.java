@@ -64,6 +64,7 @@ import org.siemac.metamac.srm.core.common.service.utils.TsvImportationUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacRepository;
@@ -2398,5 +2399,54 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 .withProperty(ConceptMetamacProperties.coreRepresentation().enumerationCodelist().maintainableArtefact().urn()).eq(codelistUrn).build();
         PagedResult<Concept> conceptWithCodelist = conceptsService.findConceptsByCondition(ctx, criteria, pagingParameter);
         return !conceptWithCodelist.getValues().isEmpty();
+    }
+
+    @Override
+    public ConceptSchemeOrderVisualisation createConceptSchemeOrderVisualisation(ServiceContext ctx, String conceptSchemeUrn, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation)
+            throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ConceptSchemeVersionMetamac createConceptSchemeOrderVisualisationAlphabetical(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ConceptSchemeOrderVisualisation updateConceptSchemeOrderVisualisation(ServiceContext ctx, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ConceptSchemeOrderVisualisation retrieveConceptSchemeOrderVisualisationByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ConceptSchemeOrderVisualisation retrieveConceptSchemeOrderVisualisationByCode(ServiceContext ctx, String conceptSchemeUrn, String code) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ConceptSchemeOrderVisualisation> retrieveConceptSchemeOrderVisualisationsByConceptScheme(ServiceContext ctx, String conceptSchemeUrn) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deleteConceptSchemeOrderVisualisation(ServiceContext ctx, String urn) throws MetamacException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public ConceptSchemeVersionMetamac versioningConceptSchemeOrderVisualisations(ServiceContext ctx, ConceptSchemeVersionMetamac source, ConceptSchemeVersionMetamac target) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

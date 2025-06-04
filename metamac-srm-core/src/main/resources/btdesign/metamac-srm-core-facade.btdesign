@@ -430,6 +430,17 @@ Application SrmFacadeCore {
     		"Ends the concept scheme validity"
     		@ConceptSchemeMetamacDto endConceptSchemeValidity(String urn) throws MetamacException;
     		
+    		"Creates order visualisation for concept schemes"
+    		@ConceptSchemeVisualisationDto createConceptSchemeOrderVisualisation(@ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) throws MetamacException;
+			"Updates order visualisation"
+			@ConceptSchemeVisualisationDto updateConceptSchemeOrderVisualisation(@ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) throws MetamacException;
+    		"Retrieves order visualisation by identifier"
+    		@ConceptSchemeVisualisationDto retrieveConceptSchemeOrderVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieve order visualisations by codelist"
+    		List<@ConceptSchemeVisualisationDto> retrieveConceptSchemeOrderVisualisationsByConceptScheme(String conceptSchemeUrn)  throws MetamacException;
+			"Deletes order visualisation"
+    		deleteConceptSchemeOrderVisualisation(String urn) throws MetamacException;
+    		
     		"Creates concept"
 	   		@ConceptMetamacDto createConcept(@ConceptMetamacDto conceptMetamacDto) throws MetamacException;
 	   		"Updates concept"

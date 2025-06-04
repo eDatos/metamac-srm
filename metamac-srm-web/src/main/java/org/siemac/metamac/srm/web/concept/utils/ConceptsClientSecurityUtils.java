@@ -184,6 +184,15 @@ public class ConceptsClientSecurityUtils {
         return SharedConceptsSecurityUtils.canUpdateConcept(MetamacSrmWeb.getCurrentUser(), procStatus, type, operationCode);
     }
 
+    public static boolean canUpdateConcept(ConceptSchemeMetamacDto conceptSchemeMetamacDto) {
+        if (isTaskInBackground(conceptSchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+
+        String operationCode = org.siemac.metamac.srm.web.concept.utils.CommonUtils.getRelatedOperationCode(conceptSchemeMetamacDto);
+        return canUpdateConcept(conceptSchemeMetamacDto.getLifeCycle().getProcStatus(), conceptSchemeMetamacDto.getType(), operationCode);
+    }
+
     public static boolean canDeleteConcept(ConceptSchemeMetamacDto conceptSchemeMetamacDto) {
         // Maintainer and temporal version are checked because the structure of an imported resource (or a resource in temporal version) can not be modified
         String operationCode = org.siemac.metamac.srm.web.concept.utils.CommonUtils.getRelatedOperationCode(conceptSchemeMetamacDto);
@@ -218,6 +227,43 @@ public class ConceptsClientSecurityUtils {
         return SharedConceptsSecurityUtils.canUpdateConcept(MetamacSrmWeb.getCurrentUser(), conceptSchemeMetamacDto.getLifeCycle().getProcStatus(), conceptSchemeMetamacDto.getType(), operationCode);
     }
 
+    // ORDERS
+
+    public static boolean canCreateConceptSchemeOrderVisualisation(ConceptSchemeMetamacDto ConceptSchemeMetamacDto) {
+        if (isTaskInBackground(ConceptSchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(MetamacSrmWeb.getCurrentUser(), ConceptSchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canImportConceptSchemeOrderVisualisations(ConceptSchemeMetamacDto ConceptSchemeMetamacDto) {
+        if (isTaskInBackground(ConceptSchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedConceptsSecurityUtils.canImportConceptSchemeOrderVisualisations(MetamacSrmWeb.getCurrentUser(), ConceptSchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canUpdateConceptSchemeOrderVisualisation(ConceptSchemeMetamacDto ConceptSchemeMetamacDto) {
+        if (isTaskInBackground(ConceptSchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(MetamacSrmWeb.getCurrentUser(), ConceptSchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canDeleteConceptSchemeOrderVisualisation(ConceptSchemeMetamacDto ConceptSchemeMetamacDto) {
+        if (isTaskInBackground(ConceptSchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(MetamacSrmWeb.getCurrentUser(), ConceptSchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canExportConceptsOrder(ConceptSchemeMetamacDto ConceptSchemeMetamacDto) {
+        if (isTaskInBackground(ConceptSchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedConceptsSecurityUtils.canExportConceptSchemeOrdersTsv(MetamacSrmWeb.getCurrentUser());
+    }
+
     //
     // PRIVATE METHODS
     //
@@ -225,4 +271,5 @@ public class ConceptsClientSecurityUtils {
     private static boolean isTaskInBackground(Boolean isTaskInBackground) {
         return BooleanUtils.isTrue(isTaskInBackground);
     }
+
 }

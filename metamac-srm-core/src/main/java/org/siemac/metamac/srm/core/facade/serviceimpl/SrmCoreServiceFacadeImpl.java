@@ -73,8 +73,8 @@ import org.siemac.metamac.srm.core.code.mapper.CodesDto2DoMapper;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
-import org.siemac.metamac.srm.core.common.service.utils.TsvExportationUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
@@ -82,6 +82,7 @@ import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.mapper.ConceptsDo2DtoMapper;
 import org.siemac.metamac.srm.core.concept.mapper.ConceptsDto2DoMapper;
@@ -3052,6 +3053,78 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
                 sculptorCriteria.getPageSize());
 
         return metamacCriteriaResult;
+    }
+
+    // ------------------------------------------------------------------------
+    // ORDER VISUALISATIONS FOR CONCEPT SCHEMES
+    // ------------------------------------------------------------------------
+
+    @Override
+    public ConceptSchemeVisualisationDto retrieveConceptSchemeOrderVisualisationByUrn(ServiceContext ctx, String conceptSchemeUrn) throws MetamacException {
+        // Security
+        ConceptsSecurityUtils.canRetrieveOrFindConceptSchemeOrderVisualisation(ctx);
+
+        // Retrieve
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = getConceptsMetamacService().retrieveConceptSchemeOrderVisualisationByUrn(ctx, conceptSchemeUrn);
+
+        // Transform
+        return conceptsDo2DtoMapper.conceptSchemeOrderVisualisationDoToDto(conceptSchemeOrderVisualisation);
+    }
+
+    @Override
+    public ConceptSchemeVisualisationDto createConceptSchemeOrderVisualisation(ServiceContext ctx, ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) throws MetamacException {
+        // Security
+        ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptsMetamacService().retrieveConceptSchemeByUrn(ctx, conceptSchemeOrderVisualisationDto.getConceptScheme().getUrn());
+        ConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(ctx, conceptSchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Transform
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsDto2DoMapper.conceptSchemeOrderVisualisationDtoToDo(conceptSchemeOrderVisualisationDto);
+
+        // Create
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisationCreated = getConceptsMetamacService().createConceptSchemeOrderVisualisation(ctx,
+                conceptSchemeOrderVisualisationDto.getConceptScheme().getUrn(), conceptSchemeOrderVisualisation);
+
+        // Transform to DTO
+        return conceptsDo2DtoMapper.conceptSchemeOrderVisualisationDoToDto(conceptSchemeOrderVisualisationCreated);
+    }
+
+    @Override
+    public ConceptSchemeVisualisationDto updateConceptSchemeOrderVisualisation(ServiceContext ctx, ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) throws MetamacException {
+        // Security
+        ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptsMetamacService().retrieveConceptSchemeByUrn(ctx, conceptSchemeOrderVisualisationDto.getConceptScheme().getUrn());
+        ConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(ctx, conceptSchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Transform
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisationToUpdate = conceptsDto2DoMapper.conceptSchemeOrderVisualisationDtoToDo(conceptSchemeOrderVisualisationDto);
+
+        // Update
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisationUpdated = getConceptsMetamacService().updateConceptSchemeOrderVisualisation(ctx, conceptSchemeOrderVisualisationToUpdate);
+
+        // Transform to DTO
+        return conceptsDo2DtoMapper.conceptSchemeOrderVisualisationDoToDto(conceptSchemeOrderVisualisationUpdated);
+
+    }
+
+    @Override
+    public void deleteConceptSchemeOrderVisualisation(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = getConceptsMetamacService().retrieveConceptSchemeOrderVisualisationByUrn(ctx, urn);
+        ConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(ctx, conceptSchemeOrderVisualisation.getConceptSchemeVersion().getLifeCycleMetadata().getProcStatus());
+
+        // Delete
+        getConceptsMetamacService().deleteConceptSchemeOrderVisualisation(ctx, urn);
+    }
+
+    @Override
+    public List<ConceptSchemeVisualisationDto> retrieveConceptSchemeOrderVisualisationsByConceptScheme(ServiceContext ctx, String conceptSchemeUrn) throws MetamacException {
+        // Security
+        ConceptsSecurityUtils.canRetrieveOrFindConceptSchemeOrderVisualisation(ctx);
+
+        // Retrieve
+        List<ConceptSchemeOrderVisualisation> conceptSchemeOrderVisualisations = getConceptsMetamacService().retrieveConceptSchemeOrderVisualisationsByConceptScheme(ctx, conceptSchemeUrn);
+
+        // Transform
+        return conceptsDo2DtoMapper.conceptSchemeOrderVisualisationsDoToDto(conceptSchemeOrderVisualisations);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisa
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.navigation.shared.NameTokens;
 import org.siemac.metamac.srm.web.client.LoggedInGatekeeper;
@@ -41,8 +42,6 @@ import org.siemac.metamac.srm.web.shared.category.DeleteCategorisationsAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorisationsResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactResult;
-import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
-import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.concept.CancelConceptSchemeValidityAction;
 import org.siemac.metamac.srm.web.shared.concept.CancelConceptSchemeValidityResult;
 import org.siemac.metamac.srm.web.shared.concept.CopyConceptSchemeAction;
@@ -51,11 +50,17 @@ import org.siemac.metamac.srm.web.shared.concept.CreateConceptSchemeTemporalVers
 import org.siemac.metamac.srm.web.shared.concept.CreateConceptSchemeTemporalVersionResult;
 import org.siemac.metamac.srm.web.shared.concept.DeleteConceptAction;
 import org.siemac.metamac.srm.web.shared.concept.DeleteConceptResult;
+import org.siemac.metamac.srm.web.shared.concept.DeleteConceptSchemeOrdersAction;
+import org.siemac.metamac.srm.web.shared.concept.DeleteConceptSchemeOrdersResult;
 import org.siemac.metamac.srm.web.shared.concept.DeleteConceptSchemesAction;
 import org.siemac.metamac.srm.web.shared.concept.DeleteConceptSchemesResult;
 import org.siemac.metamac.srm.web.shared.concept.ExportConceptsAction;
+import org.siemac.metamac.srm.web.shared.concept.ExportConceptsOrderAction;
+import org.siemac.metamac.srm.web.shared.concept.ExportConceptsOrderResult;
 import org.siemac.metamac.srm.web.shared.concept.ExportConceptsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeAction;
+import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeOrdersAction;
+import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeOrdersResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeVersionsAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeVersionsResult;
@@ -70,6 +75,8 @@ import org.siemac.metamac.srm.web.shared.concept.ReSendConceptSchemeStreamMessag
 import org.siemac.metamac.srm.web.shared.concept.SaveConceptAction;
 import org.siemac.metamac.srm.web.shared.concept.SaveConceptResult;
 import org.siemac.metamac.srm.web.shared.concept.SaveConceptSchemeAction;
+import org.siemac.metamac.srm.web.shared.concept.SaveConceptSchemeOrderAction;
+import org.siemac.metamac.srm.web.shared.concept.SaveConceptSchemeOrderResult;
 import org.siemac.metamac.srm.web.shared.concept.SaveConceptSchemeResult;
 import org.siemac.metamac.srm.web.shared.concept.UpdateConceptInOrderAction;
 import org.siemac.metamac.srm.web.shared.concept.UpdateConceptInOrderResult;
@@ -156,6 +163,10 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
         // Annotations
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
         boolean mustFillAnnotationTypeList();
+
+        // Orders
+        void setConceptsWithOrder(List<ConceptMetamacVisualisationResult> codes, ConceptSchemeVisualisationDto conceptSchemeOrder);
+        void setConceptSchemeOrders(List<ConceptSchemeVisualisationDto> orders);
     }
 
     @ContentSlot
@@ -315,7 +326,8 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
     @Override
     public void exportConceptScheme(String urn, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CONCEPT_SCHEME, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
+        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.CONCEPT_SCHEME, detail, references),
+                new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override
@@ -549,17 +561,18 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
     }
 
     private void retrieveConceptsByScheme(String conceptSchemeUrn) {
-        dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale()), new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(this) {
+        dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale(), null),
+                new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(this) {
 
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(GetConceptsBySchemeResult result) {
-                getView().setConcepts(result.getItemVisualisationResults());
-            }
-        });
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetConceptsBySchemeResult result) {
+                        getView().setConcepts(result.getItemVisualisationResults());
+                    }
+                });
     }
 
     @Override
@@ -819,5 +832,80 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
         } else {
             retrieveCompleteConceptSchemeByIdentifier(identifier);
         }
+    }
+
+    @Override
+    public void retrieveConceptsWithOrder(String orderIdentifier) {
+        dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale(), orderIdentifier),
+                new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(this) {
+
+                    @Override
+                    public void onWaitFailure(Throwable caught) {
+                        ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+                    }
+                    @Override
+                    public void onWaitSuccess(GetConceptsBySchemeResult result) {
+                        getView().setConceptsWithOrder(result.getItemVisualisationResults(), result.getConceptSchemeOrderVisualisationDto());
+                    }
+                });
+    }
+    @Override
+    public void retrieveConceptSchemeOrders(String conceptSchemeUrn) {
+        dispatcher.execute(new GetConceptSchemeOrdersAction(conceptSchemeUrn), new WaitingAsyncCallbackHandlingError<GetConceptSchemeOrdersResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(GetConceptSchemeOrdersResult result) {
+                getView().setConceptSchemeOrders(result.getOrders());
+            }
+        });
+    }
+    @Override
+    public void saveConceptSchemeOrder(ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) {
+        dispatcher.execute(new SaveConceptSchemeOrderAction(conceptSchemeDto.getUrn(), conceptSchemeOrderVisualisationDto), new WaitingAsyncCallbackHandlingError<SaveConceptSchemeOrderResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(SaveConceptSchemeOrderResult result) {
+                fireSuccessMessage(getMessages().conceptSchemeOrderSaved());
+                retrieveConceptSchemeOrders(conceptSchemeDto.getUrn());
+                retrieveConceptsWithOrder(result.getConceptSchemeOrderSaved().getUrn());
+            }
+        });
+    }
+    @Override
+    public void deleteConceptSchemeOrders(List<String> orderIdentifiers) {
+        dispatcher.execute(new DeleteConceptSchemeOrdersAction(orderIdentifiers), new WaitingAsyncCallbackHandlingError<DeleteConceptSchemeOrdersResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(DeleteConceptSchemeOrdersResult result) {
+                fireSuccessMessage(getMessages().codelistOrderDeleted());
+                retrieveConceptSchemeOrders(conceptSchemeDto.getUrn());
+            }
+        });
+    }
+    @Override
+    public void exportConceptsOrder(String conceptSchemeUrn) {
+        dispatcher.execute(new ExportConceptsOrderAction(conceptSchemeUrn), new WaitingAsyncCallbackHandlingError<ExportConceptsOrderResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(ConceptSchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportConceptsOrderResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
     }
 }

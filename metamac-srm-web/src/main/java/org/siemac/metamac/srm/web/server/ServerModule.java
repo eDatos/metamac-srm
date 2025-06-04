@@ -106,11 +106,14 @@ import org.siemac.metamac.srm.web.server.handlers.concept.CancelConceptSchemeVal
 import org.siemac.metamac.srm.web.server.handlers.concept.CopyConceptSchemeActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.CreateConceptSchemeTemporalVersionActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.DeleteConceptActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.concept.DeleteConceptSchemeOrdersActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.DeleteConceptSchemesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.ExportConceptsActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.concept.ExportConceptsOrderActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.FindAllConceptTypesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.GetConceptActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.GetConceptSchemeActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.concept.GetConceptSchemeOrdersActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.GetConceptSchemeVersionsActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.GetConceptSchemesActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.GetConceptsActionHandler;
@@ -119,6 +122,7 @@ import org.siemac.metamac.srm.web.server.handlers.concept.GetStatisticalOperatio
 import org.siemac.metamac.srm.web.server.handlers.concept.ReSendConceptSchemeStreamMessageActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.SaveConceptActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.SaveConceptSchemeActionHandler;
+import org.siemac.metamac.srm.web.server.handlers.concept.SaveConceptSchemeOrderActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.UpdateConceptInOrderActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.UpdateConceptParentActionHandler;
 import org.siemac.metamac.srm.web.server.handlers.concept.UpdateConceptSchemeProcStatusActionHandler;
@@ -272,11 +276,14 @@ import org.siemac.metamac.srm.web.shared.concept.CopyCategorySchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.CopyConceptSchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.CreateConceptSchemeTemporalVersionAction;
 import org.siemac.metamac.srm.web.shared.concept.DeleteConceptAction;
+import org.siemac.metamac.srm.web.shared.concept.DeleteConceptSchemeOrdersAction;
 import org.siemac.metamac.srm.web.shared.concept.DeleteConceptSchemesAction;
 import org.siemac.metamac.srm.web.shared.concept.ExportConceptsAction;
+import org.siemac.metamac.srm.web.shared.concept.ExportConceptsOrderAction;
 import org.siemac.metamac.srm.web.shared.concept.FindAllConceptTypesAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeAction;
+import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeOrdersAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemeVersionsAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemesAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsAction;
@@ -285,6 +292,7 @@ import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsAction;
 import org.siemac.metamac.srm.web.shared.concept.ReSendConceptSchemeStreamMessageAction;
 import org.siemac.metamac.srm.web.shared.concept.SaveConceptAction;
 import org.siemac.metamac.srm.web.shared.concept.SaveConceptSchemeAction;
+import org.siemac.metamac.srm.web.shared.concept.SaveConceptSchemeOrderAction;
 import org.siemac.metamac.srm.web.shared.concept.UpdateCodeVariableElementAction;
 import org.siemac.metamac.srm.web.shared.concept.UpdateConceptInOrderAction;
 import org.siemac.metamac.srm.web.shared.concept.UpdateConceptParentAction;
@@ -407,6 +415,10 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdateConceptInOrderAction.class, UpdateConceptInOrderActionHandler.class);
         bindHandler(UpdateConceptParentAction.class, UpdateConceptParentActionHandler.class);
         bindHandler(ReSendConceptSchemeStreamMessageAction.class, ReSendConceptSchemeStreamMessageActionHandler.class);
+        bindHandler(SaveConceptSchemeOrderAction.class, SaveConceptSchemeOrderActionHandler.class);
+        bindHandler(DeleteConceptSchemeOrdersAction.class, DeleteConceptSchemeOrdersActionHandler.class);
+        bindHandler(GetConceptSchemeOrdersAction.class, GetConceptSchemeOrdersActionHandler.class);
+        bindHandler(ExportConceptsOrderAction.class, ExportConceptsOrderActionHandler.class);
 
         // Organisations
         bindHandler(GetOrganisationSchemesAction.class, GetOrganisationSchemesActionHandler.class);

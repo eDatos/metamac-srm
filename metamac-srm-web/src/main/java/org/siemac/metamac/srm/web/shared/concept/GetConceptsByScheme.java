@@ -3,6 +3,7 @@ package org.siemac.metamac.srm.web.shared.concept;
 import java.util.List;
 
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 
 import com.gwtplatform.dispatch.annotation.GenDispatch;
 import com.gwtplatform.dispatch.annotation.In;
@@ -17,6 +18,12 @@ public class GetConceptsByScheme {
     @In(2)
     String                                  locale;
 
+    @In(3)
+    String                                  conceptSchemeOrderUrn;
+
     @Out(1)
     List<ConceptMetamacVisualisationResult> itemVisualisationResults;
+
+    @Out(2)
+    ConceptSchemeVisualisationDto           conceptSchemeOrderVisualisationDto;
 }

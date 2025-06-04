@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
 import org.siemac.metamac.srm.core.code.mapper.CodesDo2DtoMapper;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.Quantity;
@@ -14,11 +16,13 @@ import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.dto.QuantityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 @org.springframework.stereotype.Component("conceptsDo2DtoMapper")
@@ -40,6 +44,7 @@ public class ConceptsDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Co
         target.setType(source.getType());
         target.setRelatedOperation(externalItemStatisticalOperationsToExternalItemDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getRelatedOperation()));
         target.setLifeCycle(lifeCycleDoToDto(source.getLifeCycleMetadata()));
+        target.setDefaultOrderVisualisation(conceptSchemeOrderVisualisationDoToRelatedResourceDto(source.getDefaultOrderVisualisation()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
 
         do2DtoMapperSdmxSrm.conceptSchemeDoToDto(source, target);
@@ -178,4 +183,54 @@ public class ConceptsDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Co
         target.setBaseQuantity(conceptMetamacDoToRelatedResourceDto(source.getBaseQuantity()));
         return target;
     }
+
+    @Override
+    public List<ConceptSchemeVisualisationDto> conceptSchemeOrderVisualisationsDoToDto(List<ConceptSchemeOrderVisualisation> sources) {
+        if (sources == null) {
+            return null;
+        }
+        List<ConceptSchemeVisualisationDto> targets = new ArrayList<ConceptSchemeVisualisationDto>(sources.size());
+        for (ConceptSchemeOrderVisualisation source : sources) {
+            ConceptSchemeVisualisationDto target = conceptSchemeOrderVisualisationDoToDto(source);
+            targets.add(target);
+        }
+        return targets;
+    }
+
+    @Override
+    public ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDoToDto(ConceptSchemeOrderVisualisation source) {
+        if (source == null) {
+            return null;
+        }
+        ConceptSchemeVisualisationDto target = new ConceptSchemeVisualisationDto();
+        do2DtoMapperSdmxSrm.nameableArtefactToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getNameableArtefact(), target);
+        target.setConceptScheme(conceptSchemeDoToRelatedResourceDto(source.getConceptSchemeVersion()));
+
+        // Overwrite these values in the final DTO (if not, these values are taken from the AnnotableArtefact entity)
+        target.setId(source.getId());
+        target.setUuid(source.getUuid());
+        target.setVersion(source.getVersion());
+        target.setCreatedDate(CoreCommonUtil.transformDateTimeToDate(source.getCreatedDate()));
+        target.setCreatedBy(source.getCreatedBy());
+        target.setLastUpdated(CoreCommonUtil.transformDateTimeToDate(source.getLastUpdated()));
+        target.setLastUpdatedBy(source.getLastUpdatedBy());
+        target.setVersionOptimisticLocking(source.getVersion());
+        return target;
+    }
+
+    @Override
+    public RelatedResourceDto conceptSchemeOrderVisualisationDoToRelatedResourceDto(ConceptSchemeOrderVisualisation source) {
+        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+    }
+
+    private RelatedResourceDto conceptSchemeDoToRelatedResourceDto(ConceptSchemeVersionMetamac source) {
+        if (source == null) {
+            return null;
+        }
+        RelatedResourceDto target = new RelatedResourceDto();
+        do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(source.getMaintainableArtefact(), target);
+        target.setType(RelatedResourceTypeEnum.CONCEPT_SCHEME);
+        return target;
+    }
+
 }

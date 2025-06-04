@@ -1,7 +1,10 @@
 package org.siemac.metamac.srm.web.concept.view.handlers;
 
+import java.util.List;
+
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
 
@@ -42,4 +45,12 @@ public interface ConceptSchemeUiHandlers extends BaseConceptUiHandlers {
     void resourceImportationSucceed(String fileName);
 
     void showWaitPopup();
+
+    // visualisations
+    void retrieveConceptsWithOrder(String orderIdentifier);
+    void retrieveConceptSchemeOrders(String codelistUrn);
+    void saveConceptSchemeOrder(ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto);
+    void deleteConceptSchemeOrders(List<String> orderIdentifiers);
+    void exportConceptsOrder(String codelistUrn);
+
 }

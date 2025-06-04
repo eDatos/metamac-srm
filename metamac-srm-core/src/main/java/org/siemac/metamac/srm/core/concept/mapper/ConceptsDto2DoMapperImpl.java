@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.core.concept.mapper;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -15,6 +16,8 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacRepository;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisationRepository;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacRepository;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
@@ -23,10 +26,12 @@ import org.siemac.metamac.srm.core.concept.domain.Quantity;
 import org.siemac.metamac.srm.core.concept.domain.QuantityRepository;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.dto.QuantityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 
 @org.springframework.stereotype.Component("conceptsDto2DoMapper")
@@ -52,6 +57,9 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
 
     @Autowired
     private CodeMetamacRepository                                                codeMetamacRepository;
+
+    @Autowired
+    private ConceptSchemeOrderVisualisationRepository                            conceptSchemeOrderVisualisationRepository;
 
     // ------------------------------------------------------------
     // CONCEPTS
@@ -79,6 +87,12 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
         target.setRelatedOperation(
                 externalItemDtoStatisticalOperationsToExternalItemDo(source.getRelatedOperation(), target.getRelatedOperation(), ServiceExceptionParameters.CONCEPT_SCHEME_RELATED_OPERATION));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
+
+        if (source.getDefaultOrderVisualisation() != null) {
+            target.setDefaultOrderVisualisation(retrieveConceptSchemeOrderVisualisation(source.getDefaultOrderVisualisation().getUrn()));
+        } else {
+            target.setDefaultOrderVisualisation(null);
+        }
 
         dto2DoMapperSdmxSrm.conceptSchemeDtoToDo(source, target);
 
@@ -128,6 +142,33 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
         if (target.getCoreRepresentation() != null) {
             target.getCoreRepresentation().setIsExtended(MapperUtils.isCoreRepresentationExtends(source.getCoreRepresentation()));
         }
+
+        return target;
+    }
+
+    @Override
+    public ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisationDtoToDo(ConceptSchemeVisualisationDto source) throws MetamacException {
+        if (source == null) {
+            return null;
+        }
+
+        // If exists, retrieves existing entity. Otherwise, creates new entity.
+        ConceptSchemeOrderVisualisation target = null;
+        if (source.getUrn() == null) {
+            target = new ConceptSchemeOrderVisualisation();
+        } else {
+            target = retrieveConceptSchemeOrderVisualisation(source.getUrn());
+            OptimisticLockingUtils.checkVersion(target.getVersion(), source.getVersionOptimisticLocking());
+        }
+
+        if (target.getId() == null) {
+            target.setNameableArtefact(new NameableArtefact());
+        }
+
+        target.setNameableArtefact(dto2DoMapperSdmxSrm.nameableArtefactToEntity(source, target.getNameableArtefact()));
+
+        // Optimistic locking: Update "update date" attribute to force update to root entity, to increment "version" attribute
+        target.setUpdateDate(new DateTime());
 
         return target;
     }
@@ -216,6 +257,15 @@ public class ConceptsDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Co
 
     private CodeMetamac retrieveCode(String urn) throws MetamacException {
         CodeMetamac target = codeMetamacRepository.findByUrn(urn);
+        if (target == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
+        }
+        return target;
+    }
+
+    private ConceptSchemeOrderVisualisation retrieveConceptSchemeOrderVisualisation(String urn) throws MetamacException {
+        ConceptSchemeOrderVisualisation target = conceptSchemeOrderVisualisationRepository.findByUrn(urn);
         if (target == null) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();

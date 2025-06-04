@@ -210,28 +210,29 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
 
     @Override
     public void retrieveConceptsByScheme(String conceptSchemeUrn) {
-        dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale()), new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(this) {
-
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(GetConceptsBySchemeResult result) {
-                final List<ConceptMetamacVisualisationResult> itemVisualisationResults = result.getItemVisualisationResults();
-                dispatcher.execute(new GetConceptSchemeAction(ConceptPresenter.this.conceptSchemeUrn), new WaitingAsyncCallbackHandlingError<GetConceptSchemeResult>(ConceptPresenter.this) {
+        dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale(), null),
+                new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(this) {
 
                     @Override
                     public void onWaitFailure(Throwable caught) {
                         ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
                     }
                     @Override
-                    public void onWaitSuccess(GetConceptSchemeResult result) {
-                        getView().setConceptList(result.getConceptSchemeDto(), itemVisualisationResults);
+                    public void onWaitSuccess(GetConceptsBySchemeResult result) {
+                        final List<ConceptMetamacVisualisationResult> itemVisualisationResults = result.getItemVisualisationResults();
+                        dispatcher.execute(new GetConceptSchemeAction(ConceptPresenter.this.conceptSchemeUrn), new WaitingAsyncCallbackHandlingError<GetConceptSchemeResult>(ConceptPresenter.this) {
+
+                            @Override
+                            public void onWaitFailure(Throwable caught) {
+                                ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
+                            }
+                            @Override
+                            public void onWaitSuccess(GetConceptSchemeResult result) {
+                                getView().setConceptList(result.getConceptSchemeDto(), itemVisualisationResults);
+                            }
+                        });
                     }
                 });
-            }
-        });
     }
 
     /**

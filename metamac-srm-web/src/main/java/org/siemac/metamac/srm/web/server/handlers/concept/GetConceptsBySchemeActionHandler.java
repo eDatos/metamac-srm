@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsBySchemeAction;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsBySchemeResult;
@@ -30,7 +31,15 @@ public class GetConceptsBySchemeActionHandler extends SecurityActionHandler<GetC
         try {
             List<ConceptMetamacVisualisationResult> itemHierarchyDtos = srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(ServiceContextHolder.getCurrentServiceContext(),
                     action.getConceptSchemeUrn(), action.getLocale());
-            return new GetConceptsBySchemeResult(itemHierarchyDtos);
+
+            // Order
+            ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto = null;
+            if (action.getConceptSchemeOrderUrn() != null) {
+                conceptSchemeOrderVisualisationDto = srmCoreServiceFacade.retrieveConceptSchemeOrderVisualisationByUrn(ServiceContextHolder.getCurrentServiceContext(),
+                        action.getConceptSchemeOrderUrn());
+            }
+
+            return new GetConceptsBySchemeResult(itemHierarchyDtos, conceptSchemeOrderVisualisationDto);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

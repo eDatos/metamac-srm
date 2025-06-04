@@ -4,25 +4,30 @@ import javax.servlet.ServletContextEvent;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.listener.ApplicationStartupListener;
+import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.WebUtils;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConfigurationConstants;
+import org.siemac.metamac.srm.rest.external.utils.SrmWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ApplicationStartup extends ApplicationStartupListener {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationStartup.class);
+    private SrmConfiguration srmConfiguration;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         super.contextInitialized(sce);
         try {
+            srmConfiguration = ApplicationContextProvider.getApplicationContext().getBean(SrmConfiguration.class);
             WebUtils.setAppsBaseUrl(configurationService.retrieveAppsExternalWebApplicationUrlBase());
             WebUtils.setApiBaseURL(configurationService.retrieveSrmExternalApiUrlBase());
 
             WebUtils.setApiStyleHeaderUrl(configurationService.retrieveApiStyleHeaderUrl());
             WebUtils.setApiStyleFooterUrl(configurationService.retrieveApiStyleFooterUrl());
-            WebUtils.setSrmVisualizerUrl(configurationService.retrieveSrmVisualizerUrlBase());
+            SrmWebUtils.setSrmVisualizerUrl(srmConfiguration.retrieveSrmVisualizerUrl());
         } catch (MetamacException e) {
             log.error("Error retrieving application configuration", e);
         }

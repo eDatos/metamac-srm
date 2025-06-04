@@ -55,7 +55,7 @@ import com.arte.statistic.sdmx.srm.core.organisation.enume.domain.ContactItemTyp
 import com.arte.statistic.sdmx.srm.core.organisation.serviceimpl.utils.OrganisationsUtils;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationSchemeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.organisation.domain.OrganisationTypeEnum;
-import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSRMTypeEnum;
 
 @Component
 public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements OrganisationsDo2RestMapperV10 {
@@ -421,7 +421,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (source != null) {
             target.setNestedId(source.getIdAsMaintainer()); // Overrided nestedId to agencies
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSRMTypeEnum.ORGANISATION_UNIT_SCHEME));
         return (Agency) target;
     }
 
@@ -473,7 +473,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         target.setSelfLink(toOrganisationSchemeSelfLink(source));
         target.setParentLink(toOrganisationSchemeParentLink(source));
         target.setChildLinks(toOrganisationSchemeChildLinks(source));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.ORGANISATION_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSRMTypeEnum.ORGANISATION_SCHEME));
 
         toItemScheme(source, source.getLifeCycleMetadata(), target);
 
@@ -510,7 +510,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         toItem(source, target);
 
         target.setContacts(toContacts(source.getContacts(), source.getOrganisationType()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSRMTypeEnum.ORGANISATION_UNIT_SCHEME));
 
         return target;
     }
@@ -596,7 +596,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), toKindItemScheme(source.getOrganisationSchemeType()), toOrganisationSchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceTypeEnum.ORGANISATION_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSRMTypeEnum.ORGANISATION_SCHEME));
         return target;
     }
 
@@ -623,7 +623,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (OrganisationTypeEnum.AGENCY.equals(organisationType)) {
             target.setNestedId(getIdAsMaintainer(source));
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSRMTypeEnum.ORGANISATION_UNIT_SCHEME));
         return target;
     }
 

@@ -250,6 +250,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
                 retrieveConceptsByScheme(result.getConceptSchemeDto().getUrn());
                 retrieveConceptSchemeVersions(result.getConceptSchemeDto().getUrn());
+                retrieveConceptSchemeOrders(result.getConceptSchemeDto().getUrn());
             }
         });
     }
@@ -283,12 +284,14 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
             }
             @Override
             public void onWaitSuccess(SaveConceptSchemeResult result) {
+                conceptSchemeDto = result.getSavedConceptSchemeDto();
                 fireSuccessMessage(getMessages().conceptSchemeSaved());
                 ConceptSchemePresenter.this.conceptSchemeDto = result.getSavedConceptSchemeDto();
                 getView().setConceptScheme(result.getSavedConceptSchemeDto());
 
                 updateUrl();
                 retrieveConceptSchemeVersions(result.getSavedConceptSchemeDto().getUrn());
+                retrieveConceptSchemeOrders(result.getSavedConceptSchemeDto().getUrn());
             }
         });
     }
@@ -803,7 +806,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
     }
 
     @Override
-    public void updateConceptInOrder(String conceptUrn, String conceptSchemeUrn, int newConceptIndex) {
+    public void updateConceptInOrder(String conceptUrn, final String conceptSchemeUrn, int newConceptIndex) {
         dispatcher.execute(new UpdateConceptInOrderAction(conceptUrn, conceptSchemeUrn, newConceptIndex), new WaitingAsyncCallbackHandlingError<UpdateConceptInOrderResult>(this) {
 
             @Override
@@ -813,7 +816,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
             @Override
             public void onWaitSuccess(UpdateConceptInOrderResult result) {
-                retrieveConceptsByScheme(conceptSchemeDto.getUrn());
+                retrieveConceptsWithOrder(conceptSchemeUrn);
             }
         });
     }
@@ -876,6 +879,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
                 fireSuccessMessage(getMessages().conceptSchemeOrderSaved());
                 retrieveConceptSchemeOrders(conceptSchemeDto.getUrn());
                 retrieveConceptsWithOrder(result.getConceptSchemeOrderSaved().getUrn());
+
             }
         });
     }

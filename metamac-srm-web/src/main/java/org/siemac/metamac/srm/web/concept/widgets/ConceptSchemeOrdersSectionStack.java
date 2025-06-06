@@ -161,8 +161,6 @@ public class ConceptSchemeOrdersSectionStack extends BaseConceptSchemeVisualisat
 
     @Override
     protected void updateListGridImportButtonVisibility() {
-        importRestrictionConceptSchemeVisualisationButton.hide();
-        importOpennessConceptSchemeVisualisationButton.hide();
         if (ConceptsClientSecurityUtils.canImportConceptSchemeOrderVisualisations(ConceptSchemeMetamacDto)) {
             importConceptSchemeVisualisationButton.show();
         } else {
@@ -172,8 +170,6 @@ public class ConceptSchemeOrdersSectionStack extends BaseConceptSchemeVisualisat
 
     @Override
     protected void updateListGridExportButtonVisibility() {
-        exportRestrictionConceptSchemeVisualisationButton.hide();
-        exportOpennessConceptSchemeVisualisationButton.hide();
         if (ConceptsClientSecurityUtils.canExportConceptsOrder(ConceptSchemeMetamacDto)) {
             exportConceptSchemeVisualisationButton.show();
         } else {

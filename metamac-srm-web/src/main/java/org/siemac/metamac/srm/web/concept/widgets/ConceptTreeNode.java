@@ -2,10 +2,10 @@ package org.siemac.metamac.srm.web.concept.widgets;
 
 import java.util.Comparator;
 
-import org.siemac.metamac.srm.web.client.widgets.CodeNavigableTreeNode;
 import org.siemac.metamac.srm.web.concept.model.ds.ConceptDS;
+import org.siemac.metamac.web.common.client.widgets.NavigableTreeNode;
 
-public class ConceptTreeNode extends CodeNavigableTreeNode implements Comparable<ConceptTreeNode> {
+public class ConceptTreeNode extends NavigableTreeNode implements Comparable<ConceptTreeNode> {
 
     private Integer order;
 

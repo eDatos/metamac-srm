@@ -33,10 +33,6 @@ public abstract class BaseConceptSchemeVisualisationSectionStack extends CustomL
     protected ToolStripButton          deleteConceptSchemeVisualisationButton;
     protected ToolStripButton          importConceptSchemeVisualisationButton;
     protected ToolStripButton          exportConceptSchemeVisualisationButton;
-    protected ToolStripButton          importOpennessConceptSchemeVisualisationButton;
-    protected ToolStripButton          exportOpennessConceptSchemeVisualisationButton;
-    protected ToolStripButton          importRestrictionConceptSchemeVisualisationButton;
-    protected ToolStripButton          exportRestrictionConceptSchemeVisualisationButton;
 
     protected DeleteConfirmationWindow deleteConfirmationWindow;
 
@@ -93,22 +89,10 @@ public abstract class BaseConceptSchemeVisualisationSectionStack extends CustomL
         deleteConceptSchemeVisualisationButton = new ToolStripButton(getConstants().actionDelete(), RESOURCE.deleteListGrid().getURL());
         deleteConceptSchemeVisualisationButton.setVisible(false);
 
-        importConceptSchemeVisualisationButton = new ToolStripButton(getConstants().actionImportCodeOrdersTsv(),
+        importConceptSchemeVisualisationButton = new ToolStripButton(getConstants().actionImportConceptSchemeOrdersTsv(),
                 org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
 
-        exportConceptSchemeVisualisationButton = new ToolStripButton(getConstants().codesOrderExport(),
-                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
-
-        importRestrictionConceptSchemeVisualisationButton = new ToolStripButton(getConstants().actionImportCodeRestrictionsTsv(),
-                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
-
-        exportRestrictionConceptSchemeVisualisationButton = new ToolStripButton(getConstants().codesRestrictionExport(),
-                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
-
-        importOpennessConceptSchemeVisualisationButton = new ToolStripButton(getConstants().actionImportCodeOpennessLevelsTsv(),
-                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
-
-        exportOpennessConceptSchemeVisualisationButton = new ToolStripButton(getConstants().codesOpennessExport(),
+        exportConceptSchemeVisualisationButton = new ToolStripButton(getConstants().conceptsOrderExport(),
                 org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
 
         toolStrip.addButton(newConceptSchemeVisualisationButton);
@@ -116,10 +100,6 @@ public abstract class BaseConceptSchemeVisualisationSectionStack extends CustomL
         toolStrip.addButton(deleteConceptSchemeVisualisationButton);
         toolStrip.addButton(importConceptSchemeVisualisationButton);
         toolStrip.addButton(exportConceptSchemeVisualisationButton);
-        toolStrip.addButton(importRestrictionConceptSchemeVisualisationButton);
-        toolStrip.addButton(exportRestrictionConceptSchemeVisualisationButton);
-        toolStrip.addButton(importOpennessConceptSchemeVisualisationButton);
-        toolStrip.addButton(exportOpennessConceptSchemeVisualisationButton);
 
         deleteConfirmationWindow = new DeleteConfirmationWindow(getConstants().conceptSchemeVisualisationDeleteConfirmationTitle(), getConstants().conceptSchemeVisualisationDeleteConfirmation());
         deleteConfirmationWindow.setVisible(false);

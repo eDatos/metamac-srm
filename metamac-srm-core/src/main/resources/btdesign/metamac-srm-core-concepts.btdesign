@@ -94,6 +94,8 @@ Application ConceptsMetamac {
     		checkConceptSchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionsByResourceUrn) throws MetamacException;
 			"Checks related resources are externally published"
     		checkConceptSchemeWithRelatedResourcesExternallyPublished(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
+    		"Imports concept scheme orders in tsv format"
+    		TaskImportationInfo importConceptSchemeOrdersTsv(String conceptSchemeUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		
 			"Creates concept"
 			@ConceptMetamac createConcept(String conceptSchemeUrn, @ConceptMetamac concept) throws MetamacException;
@@ -112,7 +114,7 @@ Application ConceptsMetamac {
 			"Deletes concept"
     		deleteConcept(String urn) throws MetamacException;
     		"Retrieves concepts by concept scheme in locale requested"
-    		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale) throws MetamacException;
+    		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale, String conceptSchemeOrderVisualisationUrn) throws MetamacException;
     		"Retrieves concepts by concept scheme ordered"
     		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection itemMetamacResultSelection) throws MetamacException;
     		"Adds a concepts relation"
@@ -155,7 +157,7 @@ Application ConceptsMetamac {
     		"Updates parent of concept. parentUrn is null when concept is moved to first level. Concept is moved at the end of new level"
 			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
 			"Updates position of concept"
-			updateConceptInOrder(String conceptUrn, String conceptSchemeUrn, Integer newConceptIndex) throws MetamacException;			
+			updateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException;			
 			
 			// resend kafka message for the last number of version of published concept.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyConceptSchemes() throws MetamacException;
@@ -180,6 +182,9 @@ Application ConceptsMetamac {
 			"Deletes order visualisation"
     		deleteConceptSchemeOrderVisualisation(String urn) throws MetamacException;
     		@ConceptSchemeVersionMetamac versioningConceptSchemeOrderVisualisations(@ConceptSchemeVersionMetamac source, @ConceptSchemeVersionMetamac target) throws MetamacException;
+    		"Recalculates order when new concepts are added in concept scheme"
+    		recalculateConceptsVisualisations(List<@Concept> items, List<@ConceptSchemeOrderVisualisation> orderVisualisations, boolean executeSave);
+    		
    
 			
 		}
@@ -212,6 +217,7 @@ Application ConceptsMetamac {
 			
 			
 			Repository ConceptSchemeVersionMetamacRepository {
+				save;
 				findByQuery(String query, Map<String, Object> parameters, int maxResult);
 				findByCondition(PagingParameter pagingParameter);
 				@ConceptSchemeVersionMetamac findByUrn(String urn);
@@ -286,7 +292,7 @@ Application ConceptsMetamac {
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findConceptsByConceptSchemeUnordered(Long conceptSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
 				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection resultSelection) throws MetamacException;
-				List<ConceptMetamacVisualisationResult> findConceptsByConceptSchemeUnorderedToVisualisation(Long conceptSchemeVersionId, String locale) throws MetamacException;
+				List<ConceptMetamacVisualisationResult> findConceptsByConceptSchemeUnorderedToVisualisation(Long conceptSchemeVersionId, String locale, Integer orderColumnIndex) throws MetamacException;
 				checkConceptTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				@ConceptMetamac retrieveConceptWithQuantityId(Long quantityId);
 
@@ -295,9 +301,12 @@ Application ConceptsMetamac {
 				checkConceptsWithQuantityExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkConceptsWithRepresentationExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				
-				Integer getConceptMaximumOrderInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent);
-				Integer reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @ConceptMetamac concept);
-				Integer reorderConceptsAddingOneConceptInMiddle(@ConceptSchemeVersionMetamac conceptSchemeVersion, @ConceptMetamac concept, Integer sournewConceptIndex);
+				Integer getConceptMaximumOrderInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, Integer orderColumnIndex);
+				reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToDelete);	
+				reorderConceptsAddingOneConceptInMiddle(@ConceptSchemeVersionMetamac conceptSchemeVersion, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToAdd);
+				Integer getConceptAlphabeticPositionInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @Concept concept);
+				clearConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer orderColumnIndex);
+				copyConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer columnIndexSource, Integer columnIndexTarget);
 			}
 		}
 

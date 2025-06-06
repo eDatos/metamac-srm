@@ -20,7 +20,6 @@ import org.siemac.metamac.srm.web.dsd.model.ds.DataStructureDefinitionDS;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomLinkTreeGridField;
 
-import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ItemSchemeDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.smartgwt.client.data.Record;
@@ -38,6 +37,8 @@ import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
+
+    // TODO EDATOS-4957 VER ESTA CLASE COMO SE VE AFECTADA.
 
     private final static String                CONCEPT_FIELD = "concept-field";
 
@@ -86,10 +87,6 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
             }
         });
 
-        // Remove handlers that store the tree open state
-
-        folderOpenedHandlerRegistration.removeHandler();
-        folderClosedHandlerRegistration.removeHandler();
     }
 
     @Override
@@ -155,12 +152,12 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
         tree.linkNodes(treeNodes);
         setData(tree);
         getData().openAll();
-        recoverOpenState();
     }
 
     @Override
     public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
-        super.setConcepts(conceptSchemeMetamacDto, itemHierarchyDtos);
+        // TODO EDATOS-4957 VER QUÉ HACE
+        super.setItems(conceptSchemeMetamacDto, itemHierarchyDtos);
         updateRecords();
     }
 
@@ -176,16 +173,6 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
 
     @Override
     protected void onNodeClick(String nodeName, String conceptUrn) {
-        // Overwrite this method to do nothing
-    }
-
-    @Override
-    protected void onNodeContextClick(String nodeName, ItemVisualisationResult concept) {
-        // Overwrite this method to do nothing
-    }
-
-    @Override
-    protected void recoverOpenState() {
         // Overwrite this method to do nothing
     }
 }

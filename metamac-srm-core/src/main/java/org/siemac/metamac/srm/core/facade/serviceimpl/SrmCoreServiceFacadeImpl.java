@@ -3397,13 +3397,14 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(ServiceContext ctx, String conceptSchemeUrn, String locale) throws MetamacException {
+    public List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(ServiceContext ctx, String conceptSchemeUrn, String locale, String orderVisualisationUrn)
+            throws MetamacException {
 
         // Security
         ConceptsSecurityUtils.canRetrieveConceptsByConceptSchemeUrn(ctx);
 
         // Retrieve
-        List<ConceptMetamacVisualisationResult> concepts = getConceptsMetamacService().retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, locale);
+        List<ConceptMetamacVisualisationResult> concepts = getConceptsMetamacService().retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, locale, orderVisualisationUrn);
         return concepts;
     }
 
@@ -4212,13 +4213,13 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public void updateConceptInOrder(ServiceContext ctx, String conceptUrn, String conceptSchemeUrn, Integer newConceptIndex) throws MetamacException {
+    public void updateConceptInOrderVisualisation(ServiceContext ctx, String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException {
         // Security
         ConceptSchemeVersionMetamac conceptSchemeVersionMetamac = getConceptsMetamacService().retrieveConceptSchemeByConceptUrn(ctx, conceptUrn);
         ConceptsSecurityUtils.canUpdateConcept(ctx, conceptSchemeVersionMetamac);
 
         // Update order
-        getConceptsMetamacService().updateConceptInOrder(ctx, conceptUrn, conceptSchemeUrn, newConceptIndex);
+        getConceptsMetamacService().updateConceptInOrderVisualisation(ctx, conceptUrn, conceptSchemeOrderVisualisationUrn, newConceptIndex);
     }
 
     @Override
@@ -4485,6 +4486,12 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         // Publish
         return getCodesMetamacService().publishVariableElementInBackground(ctx, variableUrn, localeLanguage);
 
+    }
+
+    @Override
+    public TaskImportationInfo importConceptSchemeOrdersTsv(ServiceContext ctx, String conceptSchemeUrn, InputStream tsvStream, String fileName) throws MetamacException {
+        // TODO EDATOS-4957
+        return null;
     }
 
 }

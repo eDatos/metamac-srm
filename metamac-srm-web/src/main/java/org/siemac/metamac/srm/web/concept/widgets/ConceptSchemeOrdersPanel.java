@@ -15,7 +15,7 @@ public class ConceptSchemeOrdersPanel extends VLayout {
 
     private ConceptSchemeOrdersSectionStack conceptSchemeOrdersSectionStack;
     private TitleLabel                      orderTitle;
-    private ConceptSchemeOrderTreeGrid      codesOrderTreeGrid;
+    private ConceptsOrderTreeGrid           codesOrderTreeGrid;
 
     public ConceptSchemeOrdersPanel() {
         setMargin(15);
@@ -28,7 +28,7 @@ public class ConceptSchemeOrdersPanel extends VLayout {
         orderTitle.setStyleName("subsectionTitleWithNoLeftMargin");
         addMember(orderTitle);
 
-        codesOrderTreeGrid = new ConceptSchemeOrderTreeGrid();
+        codesOrderTreeGrid = new ConceptsOrderTreeGrid();
         addMember(codesOrderTreeGrid);
     }
 
@@ -60,7 +60,7 @@ public class ConceptSchemeOrdersPanel extends VLayout {
         return orderTitle;
     }
 
-    public ConceptSchemeOrderTreeGrid getCodesTreeGrid() {
+    public ConceptsOrderTreeGrid getCodesTreeGrid() {
         return codesOrderTreeGrid;
     }
 

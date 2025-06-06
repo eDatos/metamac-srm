@@ -26,6 +26,7 @@ public class SrmConstants {
     public static final Boolean            CODELIST_RESTRICTION_VISUALISATION_DEFAULT_VALUE                       = Boolean.FALSE;
 
     // Concept scheme
+    public static final int                CONCEPT_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER                      = 20;
     public static final String             CONCEPT_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE                   = "ALPHABETICAL";
     public static final Integer            CONCEPT_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX           = Integer.valueOf(1);
 

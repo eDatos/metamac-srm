@@ -30,7 +30,7 @@ public class GetConceptsBySchemeActionHandler extends SecurityActionHandler<GetC
     public GetConceptsBySchemeResult executeSecurityAction(GetConceptsBySchemeAction action) throws ActionException {
         try {
             List<ConceptMetamacVisualisationResult> itemHierarchyDtos = srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(ServiceContextHolder.getCurrentServiceContext(),
-                    action.getConceptSchemeUrn(), action.getLocale());
+                    action.getConceptSchemeUrn(), action.getLocale(), action.getConceptSchemeOrderUrn());
 
             // Order
             ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto = null;

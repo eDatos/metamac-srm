@@ -44,6 +44,8 @@ Application TaskMetamac {
     		String plannifyPublicationInternallyCodelist(String urn, Boolean forceLatestFinal) throws MetamacException;
     		"Prepare the variable elements kafka message sending"
     		String plannifyResendKafkaVariableElementsMessages(String variableUrn, String localeLanguage) throws MetamacException;
+    		"Prepares importation of concept scheme orders in tsv format"
+    		String plannifyImportConceptSchemeOrdersTsvInBackground(String conceptSchemeUrn, java.io.File file, String fileName) throws MetamacException;
 
 			// Process of resending kafka messages for all resources
 			processResendKafkaResourcesMessageTask() throws MetamacException;

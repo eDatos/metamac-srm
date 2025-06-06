@@ -1,38 +1,58 @@
 package org.siemac.metamac.srm.web.concept.widgets;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
+import org.siemac.metamac.srm.web.client.model.ds.ItemDS;
 import org.siemac.metamac.srm.web.client.utils.ResourceFieldUtils;
-import org.siemac.metamac.srm.web.client.widgets.ItemsTreeGrid;
 import org.siemac.metamac.srm.web.concept.utils.ConceptsClientSecurityUtils;
-import org.siemac.metamac.srm.web.concept.utils.ConceptsTreeGridUtils;
-import org.siemac.metamac.srm.web.concept.view.handlers.BaseConceptUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ItemSchemeDto;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.menu.events.ClickHandler;
 import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
-import com.smartgwt.client.widgets.tree.TreeNode;
+import com.smartgwt.client.widgets.tree.events.FolderClosedEvent;
+import com.smartgwt.client.widgets.tree.events.FolderClosedHandler;
+import com.smartgwt.client.widgets.tree.events.FolderOpenedEvent;
+import com.smartgwt.client.widgets.tree.events.FolderOpenedHandler;
 
-public class ConceptsTreeGrid extends ItemsTreeGrid {
+public class ConceptsTreeGrid extends BaseConceptsTreeGrid {
 
-    private NewConceptWindow          newConceptWindow;
-    private DeleteConfirmationWindow  deleteConfirmationWindow;
+    private NewConceptWindow         newConceptWindow;
+    private DeleteConfirmationWindow deleteConfirmationWindow;
 
-    private MenuItem                  createConceptMenuItem;
-    private MenuItem                  deleteConceptMenuItem;
+    private MenuItem                 createConceptMenuItem;
+    private MenuItem                 deleteConceptMenuItem;
 
-    protected ConceptSchemeMetamacDto conceptSchemeMetamacDto;
-    private ItemVisualisationResult   selectedConcept;
+    private ItemVisualisationResult  selectedConcept;
+
+    // Internal representation that helps us to recover opened nodes after reloading tree
+    private Map<String, String>      treeOpenStates = new HashMap<String, String>();
 
     public ConceptsTreeGrid() {
+        super(true, false);
+
+        getField(ItemDS.CODE).setWidth("45%");
+
+        setCanReorderRecords(true);
+        setCanAcceptDroppedRecords(true);
+        setCanDragRecordsOut(false);
+        setDragDataAction(DragDataAction.MOVE);
+        setShowOpenIcons(true);
+        setShowDropIcons(true);
+
         // Context menu
 
         createConceptMenuItem = new MenuItem(MetamacSrmWeb.getConstants().conceptCreate());
@@ -75,6 +95,23 @@ public class ConceptsTreeGrid extends ItemsTreeGrid {
         });
 
         addItemsToContextMenu(createConceptMenuItem, deleteConceptMenuItem);
+        // Tree open state
+
+        addFolderOpenedHandler(new FolderOpenedHandler() {
+
+            @Override
+            public void onFolderOpened(FolderOpenedEvent event) {
+                saveTreeOpenState();
+            }
+        });
+
+        addFolderClosedHandler(new FolderClosedHandler() {
+
+            @Override
+            public void onFolderClosed(FolderClosedEvent event) {
+                saveTreeOpenState();
+            }
+        });
     }
 
     public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> concepts) {
@@ -83,30 +120,9 @@ public class ConceptsTreeGrid extends ItemsTreeGrid {
     }
 
     @Override
-    public void updateItemScheme(ItemSchemeDto itemSchemeDto) {
-        this.conceptSchemeMetamacDto = (ConceptSchemeMetamacDto) itemSchemeDto;
-        super.updateItemScheme(itemSchemeDto);
-    }
-
-    public void setUiHandlers(BaseConceptUiHandlers uiHandlers) {
-        super.setUiHandlers(uiHandlers);
-    }
-
-    @Override
-    protected void onNodeClick(String nodeName, String urn) {
-        if (SCHEME_NODE_NAME.equals(nodeName)) {
-            getBaseConceptUiHandlers().goToConceptScheme(urn);
-        } else {
-            getBaseConceptUiHandlers().goToConcept(urn);
-        }
-    }
-
-    @Override
-    protected void onNodeContextClick(String nodeName, ItemVisualisationResult concept) {
-        selectedConcept = concept;
-        createConceptMenuItem.setEnabled(canCreateConcept());
-        deleteConceptMenuItem.setEnabled(canDeleteConcept(nodeName));
-        showContextMenu();
+    public void setItems(ItemSchemeDto itemSchemeDto, List<ConceptMetamacVisualisationResult> itemMetamacResults) {
+        super.setItems(itemSchemeDto, itemMetamacResults);
+        recoverOpenState();
     }
 
     private boolean canCreateConcept() {
@@ -118,16 +134,38 @@ public class ConceptsTreeGrid extends ItemsTreeGrid {
     }
 
     @Override
-    protected TreeNode createItemTreeNode(ItemVisualisationResult itemVisualisationResult) {
-        return ConceptsTreeGridUtils.createConceptTreeNode(SCHEME_NODE_NAME, (ConceptMetamacVisualisationResult) itemVisualisationResult);
-    }
-
-    @Override
     protected com.smartgwt.client.widgets.viewer.DetailViewerField[] getDetailViewerFields() {
         return ResourceFieldUtils.getConceptDetailViewerFields();
     }
 
-    protected BaseConceptUiHandlers getBaseConceptUiHandlers() {
-        return (BaseConceptUiHandlers) uiHandlers;
+    @Override
+    protected void onNodeContextClick(String nodeName, ConceptMetamacVisualisationResult itemMetamacResult) {
+        selectedConcept = itemMetamacResult;
+        createConceptMenuItem.setEnabled(canCreateConcept());
+        deleteConceptMenuItem.setEnabled(canDeleteConcept(nodeName));
+        showContextMenu();
+
+    }
+
+    private void recoverOpenState() {
+        if (treeOpenStates.containsKey(itemSchemeDto.getUrn()) && !StringUtils.isBlank(treeOpenStates.get(itemSchemeDto.getUrn()))) {
+            setOpenState(treeOpenStates.get(itemSchemeDto.getUrn()));
+        }
+    }
+
+    private void saveTreeOpenState() {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+            @Override
+            public void execute() {
+                treeOpenStates.put(itemSchemeDto.getUrn(), getOpenState());
+            }
+        });
+    }
+
+    @Override
+    public void removeHandlerRegistrations() {
+        super.removeHandlerRegistrations();
+        folderDropHandlerRegistration.removeHandler();
     }
 }

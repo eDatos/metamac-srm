@@ -502,4 +502,10 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
                     .build();
         }
     }
+
+    @Override
+    public String plannifyImportConceptSchemeOrdersTsvInBackground(ServiceContext ctx, String conceptSchemeUrn, File file, String fileName) throws MetamacException {
+        // TODO EDATOS-4957
+        return null;
+    }
 }

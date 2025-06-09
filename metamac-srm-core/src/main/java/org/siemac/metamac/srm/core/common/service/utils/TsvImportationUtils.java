@@ -795,7 +795,7 @@ public class TsvImportationUtils {
     // ---------------------------------------------------------------------------------------------------------------
 
     /**
-     * Imports header of tsv to import orders of codes.
+     * Imports header of tsv to import orders of codes and concepts.
      * Columns "label", "level" and "parent" are optionals.
      */
     public static ImportationCodeOrdersTsvHeader parseTsvHeaderToImportCodeOrders(String line, List<MetamacExceptionItem> exceptions) throws MetamacException {

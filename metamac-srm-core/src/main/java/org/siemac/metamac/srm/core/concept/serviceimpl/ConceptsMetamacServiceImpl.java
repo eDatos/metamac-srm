@@ -748,7 +748,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         concept = (ConceptMetamac) conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
         // Set order to created concept
         concept = initVisualisationsToCodeCreated(conceptSchemeVersion, concept);
-        // concept = setOrderToCodeCreated(conceptSchemeVersion, concept); // TODO EDATOS-4957 SE QUITA LO ANTIGUO
 
         return concept;
     }
@@ -2385,7 +2384,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         }
 
         // Update concept
-        // concept.setOrderValue(newConceptIndex); TODO EDATOS-4957 ELIMINAR
         getConceptMetamacRepository().save(concept);
         baseService.updateItemSchemeLastUpdated(ctx, conceptSchemeVersionMetamac);
     }
@@ -2618,7 +2616,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             conceptSchemeVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
             itemSchemeRepository.save(conceptSchemeVersion.getItemScheme());
 
-            String jobKey = tasksMetamacService.plannifyImportCodeOrdersTsvInBackground(ctx, conceptSchemeUrn, file, fileName);
+            String jobKey = tasksMetamacService.plannifyImportConceptSchemeOrdersTsvInBackground(ctx, conceptSchemeUrn, file, fileName);
             return new TaskImportationInfo(Boolean.TRUE, jobKey);
         }
 

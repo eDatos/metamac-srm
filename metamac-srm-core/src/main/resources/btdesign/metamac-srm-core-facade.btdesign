@@ -871,6 +871,8 @@ Application SrmFacadeCore {
 
 			"Imports concepts in tsv format"
     		processImportConceptsTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
+    		"Imports concept scheme orders in tsv format"
+    		processImportConceptSchemeOrdersTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;  	
 			"Imports categories in tsv format"
     		processImportCategoriesTsv(String categorySchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;    		
     		"Imports organisations in tsv format"

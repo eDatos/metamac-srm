@@ -116,7 +116,7 @@ Application ConceptsMetamac {
     		"Retrieves concepts by concept scheme in locale requested"
     		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale, String conceptSchemeOrderVisualisationUrn) throws MetamacException;
     		"Retrieves concepts by concept scheme ordered"
-    		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection itemMetamacResultSelection) throws MetamacException;
+    		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection itemMetamacResultSelection, String orderVisualisationCode) throws MetamacException;
     		"Adds a concepts relation"
     		addRelatedConcept(String urn1, String urn2) throws MetamacException;
     		"Deletes a concepts relation"
@@ -184,6 +184,8 @@ Application ConceptsMetamac {
     		@ConceptSchemeVersionMetamac versioningConceptSchemeOrderVisualisations(@ConceptSchemeVersionMetamac source, @ConceptSchemeVersionMetamac target) throws MetamacException;
     		"Recalculates order when new concepts are added in concept scheme"
     		recalculateConceptsVisualisations(List<@Concept> items, List<@ConceptSchemeOrderVisualisation> orderVisualisations, boolean executeSave);
+    		
+    		String exportConceptOrdersTsv(String conceptSchemeUrn) throws MetamacException;
     		
    
 			
@@ -291,7 +293,7 @@ Application ConceptsMetamac {
 				@ConceptMetamac findByUrn(String urn);
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findConceptsByConceptSchemeUnordered(Long conceptSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection resultSelection) throws MetamacException;
+				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, Integer orderColumnIndex, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection resultSelection) throws MetamacException;
 				List<ConceptMetamacVisualisationResult> findConceptsByConceptSchemeUnorderedToVisualisation(Long conceptSchemeVersionId, String locale, Integer orderColumnIndex) throws MetamacException;
 				checkConceptTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				@ConceptMetamac retrieveConceptWithQuantityId(Long quantityId);

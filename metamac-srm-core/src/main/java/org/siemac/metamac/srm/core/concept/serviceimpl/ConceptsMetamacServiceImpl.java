@@ -3,17 +3,23 @@ package org.siemac.metamac.srm.core.concept.serviceimpl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -85,6 +91,7 @@ import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
+import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationConceptsTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv.RepresentationEum;
@@ -986,7 +993,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         }
 
         recalculateConceptsVisualisations(ctx, allItemsToUpdate, conceptSchemeVersion.getOrderVisualisations(), false);
-        // sortConceptsByOrder(allItemsToUpdate); TODO EDATOS-4957 Ver qué hacía ésto.
 
         if (conceptsToPersist != null) {
             saveConceptsEfficiently(conceptsToPersist, conceptsToPersistByCode);
@@ -1484,7 +1490,14 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
         ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, conceptSchemetUrn);
 
-        List<ItemResult> items = getConceptMetamacRepository().findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersion.getId(), ConceptMetamacResultSelection.EXPORT);
+        ConceptSchemeOrderVisualisation orderVisualisationToRetrieveConcepts = conceptSchemeVersion.getDefaultOrderVisualisation();
+        if (orderVisualisationToRetrieveConcepts == null) {
+            orderVisualisationToRetrieveConcepts = conceptSchemeVersion.getOrderVisualisations().get(0); // any
+        }
+
+        Integer orderColumnIndex = orderVisualisationToRetrieveConcepts.getColumnIndex();
+
+        List<ItemResult> items = getConceptMetamacRepository().findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersion.getId(), orderColumnIndex, ConceptMetamacResultSelection.EXPORT);
 
         List<String> languages = srmConfiguration.retrieveLanguages();
 
@@ -1648,16 +1661,20 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
     }
 
     @Override
-    public List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(ServiceContext ctx, String conceptSchemeUrn, ConceptMetamacResultSelection itemMetamacResultSelection)
-            throws MetamacException {
+    public List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(ServiceContext ctx, String conceptSchemeUrn, ConceptMetamacResultSelection itemMetamacResultSelection,
+            String orderVisualisationCode) throws MetamacException {
         // Validation
-        ConceptsMetamacInvocationValidator.checkRetrieveConceptsByConceptSchemeUrnOrderedInDepth(conceptSchemeUrn, itemMetamacResultSelection, null);
+        ConceptsMetamacInvocationValidator.checkRetrieveConceptsByConceptSchemeUrnOrderedInDepth(conceptSchemeUrn, itemMetamacResultSelection, orderVisualisationCode, null);
 
         if (itemMetamacResultSelection == null) {
             itemMetamacResultSelection = ConceptMetamacResultSelection.RETRIEVE; // default
         }
         ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, conceptSchemeUrn);
-        return getConceptMetamacRepository().findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersion.getId(), itemMetamacResultSelection);
+
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = retrieveConceptSchemeOrderVisualisationByCode(conceptSchemeVersion, orderVisualisationCode);
+        Integer orderColumnIndex = conceptSchemeOrderVisualisation.getColumnIndex();
+
+        return getConceptMetamacRepository().findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersion.getId(), orderColumnIndex, itemMetamacResultSelection);
     }
 
     @Override
@@ -2588,8 +2605,259 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
 
     @Override
     public TaskImportationInfo importConceptSchemeOrdersTsv(ServiceContext ctx, String conceptSchemeUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
-        // TODO EDATOS-4957
-        return null;
+        // Validation
+        ConceptsMetamacInvocationValidator.checkImportConceptOrdersTsv(conceptSchemeUrn, file, fileName, canBeBackground, null);
+        ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, conceptSchemeUrn);
+        TsvImportationUtils.checkItemSchemeCanExecuteImportation(conceptSchemeVersion, conceptSchemeVersion.getLifeCycleMetadata(), canBeBackground);
+
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION);
+
+        // Plannify task if can be in background
+        if (executeInBackground) {
+            conceptSchemeVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
+            itemSchemeRepository.save(conceptSchemeVersion.getItemScheme());
+
+            String jobKey = tasksMetamacService.plannifyImportCodeOrdersTsvInBackground(ctx, conceptSchemeUrn, file, fileName);
+            return new TaskImportationInfo(Boolean.TRUE, jobKey);
+        }
+
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<MetamacExceptionItem>();
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        List<Concept> conceptsInConceptScheme = null;
+        Set<String> conceptsInTsvToCheckAllConceptsAreUpdated = null;
+        List<ConceptSchemeOrderVisualisation> orderVisualisations = null;
+        try {
+            InputStream stream = new FileInputStream(file);
+            String charset = FileUtils.guessCharset(file);
+            inputStreamReader = new InputStreamReader(stream, charset);
+            bufferedReader = new BufferedReader(inputStreamReader);
+
+            // Header
+            String line = bufferedReader.readLine();
+            ImportationCodeOrdersTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportCodeOrders(line, exceptionItems);
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                orderVisualisations = tsvHeadToOrderVisualisations(conceptSchemeVersion, header, exceptionItems);
+            }
+
+            // Orders
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+
+                // Codes in codelist
+                conceptsInConceptScheme = conceptSchemeVersion.getItems();
+                Map<String, ConceptMetamac> conceptsInConceptSchemeByCode = new HashMap<String, ConceptMetamac>();
+                for (Item item : conceptsInConceptScheme) {
+                    conceptsInConceptSchemeByCode.put(item.getNameableArtefact().getCode(), (ConceptMetamac) item);
+                }
+                conceptsInTsvToCheckAllConceptsAreUpdated = new HashSet<String>();
+
+                int lineNumber = 2;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (StringUtils.isBlank(line)) {
+                        continue;
+                    }
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
+                    if (columns.length != header.getColumnsSize()) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                        continue;
+                    }
+                    // Transform orders, setting value of columns
+                    ConceptMetamac code = tsvLineToConceptOrder(header, columns, lineNumber, conceptsInConceptSchemeByCode, orderVisualisations, exceptionItems);
+                    if (code != null) {
+                        if (conceptsInTsvToCheckAllConceptsAreUpdated.contains(code.getNameableArtefact().getCode())) {
+                            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_RESOURCE_DUPLICATED, code.getNameableArtefact().getCode(), lineNumber));
+                        } else {
+                            conceptsInTsvToCheckAllConceptsAreUpdated.add(code.getNameableArtefact().getCode());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error importing tsv file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } finally {
+            try {
+                inputStreamReader.close();
+                bufferedReader.close();
+            } catch (IOException e) {
+                // do not relaunch error
+                logger.error("Error closing streams", e);
+            }
+        }
+
+        if (CollectionUtils.isEmpty(exceptionItems) && conceptsInTsvToCheckAllConceptsAreUpdated.size() != conceptsInConceptScheme.size()) {
+            exceptionItems
+                    .add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CODES, conceptsInConceptScheme.size(), conceptsInTsvToCheckAllConceptsAreUpdated.size()));
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            // inform about errors
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+
+        // Re-calculate orders
+        for (ConceptSchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+            sortConceptsByOrder(conceptsInConceptScheme, orderVisualisation, false);
+        }
+
+        // Persist
+        for (Item code : conceptsInConceptScheme) {
+            ConceptMetamac conceptMetamac = (ConceptMetamac) code;
+            getConceptMetamacRepository().save(conceptMetamac);
+        }
+        baseService.updateItemSchemeLastUpdated(ctx, conceptSchemeVersion);
+        conceptSchemeVersion.getItemScheme().setIsTaskInBackground(Boolean.FALSE);
+        itemSchemeRepository.save(conceptSchemeVersion.getItemScheme());
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    /**
+     * Sorts all codes, ordered by index. Put codes with null index at the end off level
+     */
+    private void sortConceptsByOrder(List<Concept> items, final ConceptSchemeOrderVisualisation orderVisualisation, boolean executeSave) {
+        if (CollectionUtils.isEmpty(items)) {
+            return;
+        }
+        List<Concept> codesOrdered = new ArrayList<>(items);
+        Collections.sort(codesOrdered, new ConceptSchemeOrderIndexByLevelComparator(orderVisualisation.getColumnIndex()));
+        sortConcepts(orderVisualisation.getColumnIndex(), codesOrdered, executeSave);
+    }
+
+    /**
+     * Transforms tsv line to Code order. IMPORTANT: Do not execute save or update operation
+     */
+    private ConceptMetamac tsvLineToConceptOrder(ImportationCodeOrdersTsvHeader header, String[] columns, int lineNumber, Map<String, ConceptMetamac> codesInConceptScheme,
+            List<ConceptSchemeOrderVisualisation> orderVisualisations, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+
+        // semantic identifier
+        String codeIdentifier = columns[header.getCodePosition()];
+        if (StringUtils.isBlank(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null;
+        }
+        // update orders
+        ConceptMetamac code = codesInConceptScheme.get(codeIdentifier);
+        if (code == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CONCEPT_NOT_FOUND, codeIdentifier));
+            return null;
+        }
+        for (ConceptSchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+            int columnIndex = header.getOrderVisualisationColumn(orderVisualisation.getNameableArtefact().getCode());
+            String orderValueString = columns[columnIndex];
+            if (StringUtils.isBlank(orderValueString)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, code.getNameableArtefact().getCode(),
+                        ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_ORDER));
+
+                return null;
+            }
+            Integer orderValue = Integer.valueOf(orderValueString);
+            SrmServiceUtils.setConceptOrder(code, orderVisualisation.getColumnIndex(), orderValue);
+        }
+
+        // Do not persist if any error ocurrs
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+
+        return code;
+    }
+
+    private List<ConceptSchemeOrderVisualisation> tsvHeadToOrderVisualisations(ConceptSchemeVersionMetamac conceptSchemeVersion, ImportationCodeOrdersTsvHeader header,
+            List<MetamacExceptionItem> exceptionItems) {
+        List<ConceptSchemeOrderVisualisation> orderVisualisations = new ArrayList<>();
+        for (String orderVisualisationConcept : header.getOrderVisualisations()) {
+            ConceptSchemeOrderVisualisation orderVisualisation = getConceptSchemeOrderVisualisationRepository().findByCode(conceptSchemeVersion.getId(), orderVisualisationConcept);
+            if (orderVisualisation == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ORDER_VISUALISATION_NOT_FOUND, orderVisualisationConcept,
+                        conceptSchemeVersion.getMaintainableArtefact().getUrn()));
+                break;
+            } else if (SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ALPHABETICAL_VISUALISATION_NOT_SUPPORTED));
+                break;
+            } else {
+                orderVisualisations.add(orderVisualisation);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+        return orderVisualisations;
+    }
+
+    @Override
+    public String exportConceptOrdersTsv(ServiceContext ctx, String conceptShemeUrn) throws MetamacException {
+
+        ConceptsMetamacInvocationValidator.checkExportConceptsTsv(conceptShemeUrn, null);
+
+        ConceptSchemeVersionMetamac conceptSchemeVersion = retrieveConceptSchemeByUrn(ctx, conceptShemeUrn);
+        List<ConceptSchemeOrderVisualisation> orderVisualisations = conceptSchemeVersion.getOrderVisualisations();
+        String defaultLanguage = srmConfiguration.retrieveLanguageDefault();
+
+        // Retrieve items in depth
+        List<ItemResult> itemsResult = getConceptMetamacRepository().findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersion.getId(), null, ConceptMetamacResultSelection.EXPORT_ORDERS);
+        // Retrieve all items to retrieve all orders
+        List<Concept> codes = conceptSchemeVersion.getItems();
+        Map<Long, ConceptMetamac> codesById = new HashMap<Long, ConceptMetamac>(codes.size());
+        for (Item code : codes) {
+            codesById.put(code.getId(), (ConceptMetamac) code);
+        }
+
+        // Export
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+        File file = null;
+        try {
+            file = File.createTempFile("concepts-orders", ".tsv");
+            outputStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
+
+            // header
+            writer.write(SrmConstants.TSV_HEADER_CODE);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LABEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LEVEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_PARENT);
+            for (ConceptSchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(orderVisualisation.getNameableArtefact().getCode());
+            }
+
+            // codes
+            for (ItemResult itemResult : itemsResult) {
+                ConceptMetamac conceptMetamac = codesById.get(itemResult.getItemIdDatabase());
+
+                writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+                // Code
+                writer.write(itemResult.getCode());
+                // Label
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(itemResult.getName().get(defaultLanguage));
+                // Level
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(String.valueOf(((ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint()).getLevel()));
+                // Parent
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                if (itemResult.getParent() != null) {
+                    writer.write(itemResult.getParent().getCode());
+                }
+                // Order
+                for (ConceptSchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+                    writer.write(SrmConstants.TSV_SEPARATOR);
+                    writer.write(String.valueOf(SrmServiceUtils.getConceptSchemeOrder(conceptMetamac, orderVisualisation.getColumnIndex()) + 1)); // +1 to start in 1
+                }
+            }
+            writer.flush();
+            return file.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(writer);
+        }
     }
 
     @Override
@@ -2606,7 +2874,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         conceptSchemeVersion.addOrderVisualisation(alphabeticalOrderVisualisation);
         conceptSchemeVersion = getConceptSchemeVersionMetamacRepository().save(conceptSchemeVersion);
 
-        sortCodesInAlphabeticalOrder(conceptSchemeVersion.getItems(), alphabeticalOrderVisualisation, true);
+        sortConceptsInAlphabeticalOrder(conceptSchemeVersion.getItems(), alphabeticalOrderVisualisation, true);
         return conceptSchemeVersion;
     }
 
@@ -2666,7 +2934,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
     /**
      * Sorts all codes, ordered by semantic identifier
      */
-    private void sortCodesInAlphabeticalOrder(List<Concept> items, ConceptSchemeOrderVisualisation alphabeticalOrderVisualisation, boolean executeSave) {
+    private void sortConceptsInAlphabeticalOrder(List<Concept> items, ConceptSchemeOrderVisualisation alphabeticalOrderVisualisation, boolean executeSave) {
         if (CollectionUtils.isEmpty(items)) {
             return;
         }
@@ -2718,10 +2986,10 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         Boolean alphabeticalAlreadyUpdated = Boolean.FALSE; // to avoid select to compare code of nameable
         for (ConceptSchemeOrderVisualisation orderVisualisation : orderVisualisations) {
             if (!alphabeticalAlreadyUpdated && SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
-                sortCodesInAlphabeticalOrder(items, orderVisualisation, false);
+                sortConceptsInAlphabeticalOrder(items, orderVisualisation, false);
                 alphabeticalAlreadyUpdated = Boolean.TRUE;
             } else {
-                sortCodesByOrder(items, orderVisualisation, false);
+                sortConceptsByOrder(items, orderVisualisation, false);
             }
         }
 

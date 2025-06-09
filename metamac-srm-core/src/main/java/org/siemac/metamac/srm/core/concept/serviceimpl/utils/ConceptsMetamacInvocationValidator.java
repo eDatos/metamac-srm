@@ -91,13 +91,14 @@ public class ConceptsMetamacInvocationValidator extends ConceptsInvocationValida
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkRetrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, ItemResultSelection itemResultSelection, List<MetamacExceptionItem> exceptions)
-            throws MetamacException {
+    public static void checkRetrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, ItemResultSelection itemResultSelection, String orderVisualisationCode,
+            List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
 
         ValidationUtils.checkParameterRequired(conceptSchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(orderVisualisationCode, ServiceExceptionParameters.CONCEPT_SCHEME_ORDER_VISUALISATION, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
     }
@@ -455,4 +456,17 @@ public class ConceptsMetamacInvocationValidator extends ConceptsInvocationValida
             SemanticIdentifierValidationUtils.checkConceptSchemeVisualisationSemanticIdentifier(conceptSchemeOrderVisualisation.getNameableArtefact().getCode(), exceptions);
         }
     }
+
+    public static void checkImportConceptOrdersTsv(String conceptShemeUrn, File file, String fileName, Boolean canBeBackground, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(conceptShemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
+        ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.FILE_NAME, exceptions);
+        ValidationUtils.checkParameterRequired(canBeBackground, ServiceExceptionParameters.CAN_BE_BACKGROUND, exceptions);
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
 }

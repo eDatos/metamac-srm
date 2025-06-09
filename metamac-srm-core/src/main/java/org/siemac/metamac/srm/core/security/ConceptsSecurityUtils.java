@@ -254,4 +254,16 @@ public class ConceptsSecurityUtils extends CommonSecurityUtils {
         return conceptSchemeMetamac.getRelatedOperation() != null ? conceptSchemeMetamac.getRelatedOperation().getCode() : null;
     }
 
+    public static void canExportConceptOrdersTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedConceptsSecurityUtils.canExportConceptSchemeOrdersTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canImportConceptSchemeOrderVisualisations(ServiceContext ctx, ProcStatusEnum conceptSchemeProcStatus) throws MetamacException {
+        if (!SharedConceptsSecurityUtils.canImportConceptSchemeOrderVisualisations(getMetamacPrincipal(ctx), conceptSchemeProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
 }

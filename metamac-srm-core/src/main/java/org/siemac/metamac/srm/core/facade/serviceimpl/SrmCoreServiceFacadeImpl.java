@@ -4490,8 +4490,22 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
 
     @Override
     public TaskImportationInfo importConceptSchemeOrdersTsv(ServiceContext ctx, String conceptSchemeUrn, InputStream tsvStream, String fileName) throws MetamacException {
-        // TODO EDATOS-4957
-        return null;
+        // Security
+        ConceptSchemeVersionMetamac conceptSchemeVersion = this.getConceptsMetamacService().retrieveConceptSchemeByUrn(ctx, conceptSchemeUrn);
+        ConceptsSecurityUtils.canImportConceptSchemeOrderVisualisations(ctx, conceptSchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getConceptsMetamacService().importConceptSchemeOrdersTsv(ctx, conceptSchemeUrn, file, fileName, Boolean.TRUE);
+    }
+
+    @Override
+    public String exportConceptOrdersTsv(ServiceContext ctx, String conceptSchemeUrn) throws MetamacException {
+        // Security
+        ConceptsSecurityUtils.canExportConceptOrdersTsv(ctx);
+
+        // Export
+        return getConceptsMetamacService().exportConceptOrdersTsv(ctx, conceptSchemeUrn);
     }
 
 }

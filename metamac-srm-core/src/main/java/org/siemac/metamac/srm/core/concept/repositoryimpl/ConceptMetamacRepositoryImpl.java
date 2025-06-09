@@ -156,7 +156,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     }
 
     @Override
-    public List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, ConceptMetamacResultSelection resultSelection) throws MetamacException {
+    public List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, Integer orderColumnIndex, ConceptMetamacResultSelection resultSelection) throws MetamacException {
         // Find concepts
         List<ItemResult> concepts = conceptRepository.findConceptsByConceptSchemeUnordered(conceptSchemeVersionId, resultSelection);
 
@@ -187,17 +187,29 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             executeQueryRetrieveConceptInternationalString(conceptSchemeVersionId, mapConceptByItemId, ConceptExtensionPointUtilities.PLURAL_NAME);
         }
 
+        // Order selected
+        if (orderColumnIndex != null) {
+            executeQueryConceptVisualisationAndUpdateConceptMetamacResult(conceptSchemeVersionId, orderColumnIndex, mapConceptByItemId);
+        }
+        // Retrieve items id ordered
+        String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT); // get column name. any if no order is selected
+
         StringBuilder sb = new StringBuilder();
-        sb.append("WITH RECURSIVE parents(ID, OV) AS ");
-        sb.append("   (SELECT c1.ID, lpad(cast(mc1.ORDER_VALUE as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0') OV ");
+        int resultOrderIndex = -1;
+        resultOrderIndex = 2;
+        sb.append("WITH RECURSIVE parents(ID, R_SORT, R_SORT_STRING) AS ");
+        sb.append("   (SELECT c1.ID, mc1." + orderColumn + " AS R_SORT, ");
+        sb.append("concat('/', lpad(cast(mc1." + orderColumn + " as varchar), " + SrmConstants.CONCEPT_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
         sb.append("    FROM TB_CONCEPTS as c1, TB_M_CONCEPTS mc1  ");
         sb.append("    WHERE mc1.TB_CONCEPTS = c1.ID and c1.PARENT_FK is null and c1.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion ");
         sb.append("        UNION ALL ");
-        sb.append("    SELECT c2.ID, concat(p.OV, '-', lpad(cast(mc2.ORDER_VALUE as varchar), " + SrmConstants.CODE_QUERY_COLUMN_ORDER_LENGTH + ", '0')) OV ");
+        sb.append("    SELECT c2.ID, ");
+        sb.append("mc2." + orderColumn + ", ");
+        sb.append("concat(p.R_SORT_STRING, '/', lpad(cast(mc2." + orderColumn + " as varchar), " + SrmConstants.CONCEPT_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
         sb.append("    FROM TB_CONCEPTS as c2, TB_M_CONCEPTS mc2, parents p");
         sb.append("    WHERE mc2.TB_CONCEPTS = c2.ID and p.ID = c2.PARENT_FK) ");
-        sb.append("SELECT ID FROM parents ");
-        sb.append("ORDER BY OV ASC ");
+        sb.append("SELECT * FROM parents ");
+        sb.append("ORDER BY R_SORT_STRING ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("conceptSchemeVersion", conceptSchemeVersionId);
         @SuppressWarnings("rawtypes")
@@ -206,8 +218,13 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         // Order previous result list thanks to ordered list of items id
         List<ItemResult> ordered = new ArrayList<ItemResult>(concepts.size());
         for (Object resultOrder : resultsOrder) {
-            Long conceptId = getLong(resultOrder);
+            Object[] resultOrderArray = (Object[]) resultOrder;
+            Long conceptId = getLong(resultOrderArray[0]);
             ItemResult concept = mapConceptByItemId.get(conceptId);
+            Object order = resultOrderArray[resultOrderIndex];
+            if (order != null) {
+                ((ConceptMetamacResultExtensionPoint) concept.getExtensionPoint()).setOrderConfigurationConcatenatedByLevel(order.toString());
+            }
             ordered.add(concept);
         }
         return ordered;
@@ -1021,5 +1038,32 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         queryUpdate.setParameter("conceptSchemeVersion", conceptSchemeVersion.getId());
         queryUpdate.executeUpdate();
 
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    private void executeQueryConceptVisualisationAndUpdateConceptMetamacResult(Long idConceptScheme, Integer orderColumnIndex, Map<Long, ItemResult> mapConceptByItemId) throws MetamacException {
+        // get column names. any if no order is selected. NOT returned in result
+        String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT);
+
+        // find
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT cb.ID as ITEM_ID, c." + orderColumn + " ");
+        sb.append("FROM TB_M_CONCEPTS c ");
+        sb.append("INNER JOIN TB_CONCEPTS cb on cb.ID = c.TB_CONCEPTS ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion");
+        Query queryCodes = getEntityManager().createNativeQuery(sb.toString());
+        queryCodes.setParameter("conceptSchemeVersion", idConceptScheme);
+        List codesResultSql = queryCodes.getResultList();
+        for (Object codeResultSql : codesResultSql) {
+            Object[] codeResultSqlArray = (Object[]) codeResultSql;
+            int i = 0;
+            Long actualItemId = getLong(codeResultSqlArray[i++]);
+            ItemResult target = mapConceptByItemId.get(actualItemId);
+            if (orderColumnIndex != null) {
+                ((ConceptMetamacResultExtensionPoint) target.getExtensionPoint()).setOrderConfiguration(getInteger(codeResultSqlArray[i++]));
+            } else {
+                i++; // skip
+            }
+        }
     }
 }

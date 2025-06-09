@@ -25,8 +25,7 @@ public class ExportConceptsOrderActionHandler extends SecurityActionHandler<Expo
     @Override
     public ExportConceptsOrderResult executeSecurityAction(ExportConceptsOrderAction action) throws ActionException {
         try {
-            // TODO EDATOS-4957 Cambiar a exportConceptSchemeOrdersTsv
-            String fileName = srmCoreServiceFacade.exportCodeOrdersTsv(ServiceContextHolder.getCurrentServiceContext(), action.getConceptSchemeUrn());
+            String fileName = srmCoreServiceFacade.exportConceptOrdersTsv(ServiceContextHolder.getCurrentServiceContext(), action.getConceptSchemeUrn());
             return new ExportConceptsOrderResult(fileName);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);

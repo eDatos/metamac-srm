@@ -500,7 +500,8 @@ Application SrmFacadeCore {
 			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
 			"Updates position of concept"
 			updateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException;
-		
+			"Exports concept orders in tsv format"
+    		String exportConceptOrdersTsv(String conceptSchemeUrn) throws MetamacException;
 			
 	    	/**************************************************************************
 		     * CATEGORIES

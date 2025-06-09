@@ -1,7 +1,7 @@
 package org.siemac.metamac.srm.rest.external.service;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSRMTypeEnum;
+import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
 import org.siemac.metamac.srm.core.util.SrmVisualizerWebUtils;
 import org.siemac.metamac.srm.rest.external.utils.SrmWebUtils;
 
@@ -9,7 +9,7 @@ import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 
 public class HtmlLinkUtil {
-  public static String getCodelistVisualizerHtmlLink(MaintainableArtefact maintainableArtefact, String code, RelatedResourceSRMTypeEnum resourceTypeEnum) throws MetamacException {
+  public static String getCodelistVisualizerHtmlLink(MaintainableArtefact maintainableArtefact, String code, RelatedResourceSrmTypeEnum resourceTypeEnum) throws MetamacException {
       
       String url = SrmWebUtils.getSrmVisualizerUrl();
       switch (resourceTypeEnum) {

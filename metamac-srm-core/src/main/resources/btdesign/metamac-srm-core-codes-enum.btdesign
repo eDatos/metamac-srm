@@ -27,7 +27,7 @@ Application EnumsMetamacCodeDomain {
     		NOT_STANDARDIZED
     	}
     	
-    	enum RelatedResourceSRMTypeEnum {
+    	enum RelatedResourceSrmTypeEnum {
     		CATEGORY_SCHEME,
 		    CATEGORY,
 		    CODELIST,
@@ -37,7 +37,8 @@ Application EnumsMetamacCodeDomain {
 		    ORGANISATION_UNIT_SCHEME,
 		    CONCEPT_SCHEME,
 		    CONCEPT,
-		    DATA_STRUCTURE
+		    DATA_STRUCTURE,
+		    NONE
     	}
 	}
 }

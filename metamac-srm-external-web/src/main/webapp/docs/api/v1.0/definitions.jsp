@@ -808,6 +808,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Agencies.properties.agency.description']}",
                      "$ref":"#/definitions/ItemResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -834,7 +841,15 @@
                "$ref":"#/definitions/Organisation"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.Agency.description']}"
@@ -865,7 +880,15 @@
                "$ref":"#/definitions/OrganisationScheme"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.AgencyScheme.description']}"
@@ -885,6 +908,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.AgencySchemes.properties.agencyScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1155,6 +1185,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Categories.properties.category.description']}",
                      "$ref":"#/definitions/CategoryResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1269,6 +1306,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Category.properties.categoryElement.description']}",
                      "$ref":"#/definitions/CategoryElementResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1327,6 +1371,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CategoryScheme.properties.kind.description']}",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1348,6 +1399,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CategorySchemes.properties.categoryScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1393,6 +1451,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Code.properties.extended.description']}",
                      "type":"boolean"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1579,6 +1644,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.variable.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1600,6 +1672,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies_.properties.codelistFamily.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1628,6 +1707,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamily_.properties.kind.description']}",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1649,6 +1735,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Codelists_.properties.codelist.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1670,6 +1763,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Codes.properties.code.description']}",
                      "$ref":"#/definitions/CodeResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1931,6 +2031,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.ConceptScheme.properties.type.description']}",
                      "$ref":"#/definitions/ConceptSchemeType"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -1964,6 +2071,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.ConceptSchemes.properties.conceptScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -2205,7 +2319,15 @@
                "$ref":"#/definitions/Organisation"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.DataConsumer.description']}"
@@ -2236,7 +2358,15 @@
                "$ref":"#/definitions/OrganisationScheme"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.DataConsumerScheme.description']}"
@@ -2256,6 +2386,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataConsumerSchemes.properties.dataConsumerScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -2277,6 +2414,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataConsumers.properties.dataConsumer.description']}",
                      "$ref":"#/definitions/ItemResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -2303,7 +2447,15 @@
                "$ref":"#/definitions/Organisation"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.DataProvider.description']}"
@@ -2334,7 +2486,15 @@
                "$ref":"#/definitions/OrganisationScheme"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.DataProviderScheme.description']}"
@@ -2354,6 +2514,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataProviderSchemes.properties.dataProviderScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -2375,6 +2542,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataProviders.properties.dataProvider.description']}",
                      "$ref":"#/definitions/ItemResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -2465,6 +2639,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructure.properties.stub.description']}",
                      "$ref":"#/definitions/DimensionReferences"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -2525,6 +2706,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructures.properties.dataStructure.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -3320,6 +3508,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Organisation.properties.contacts.description']}",
                      "$ref":"#/definitions/Contacts"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -3357,6 +3552,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.OrganisationScheme.properties.kind.description']}",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -3378,6 +3580,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.OrganisationSchemes.properties.organisationScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -3404,7 +3613,15 @@
                "$ref":"#/definitions/Organisation"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.OrganisationUnit.description']}"
@@ -3435,7 +3652,15 @@
                "$ref":"#/definitions/OrganisationScheme"
             },
             {
-
+               "properties":{
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
+                  }
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.OrganisationUnitScheme.description']}"
@@ -3455,6 +3680,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.OrganisationUnitSchemes.properties.organisationUnitScheme.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -3476,6 +3708,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.OrganisationUnits.properties.organisationUnit.description']}",
                      "$ref":"#/definitions/ItemResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }
@@ -3497,6 +3736,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Organisations.properties.organisation.description']}",
                      "$ref":"#/definitions/ItemResource"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
+                     "$ref":"#/definitions/VisualizerHtmlLink"
                   }
                }
             }

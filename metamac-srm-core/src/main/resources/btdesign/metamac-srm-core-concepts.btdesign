@@ -30,6 +30,8 @@ Application ConceptsMetamac {
 			@ConceptSchemeVersionMetamac createConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
 			"Pre-Create concept scheme"
 			@ConceptSchemeVersionMetamac preCreateConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
+			"post-Create concept scheme"
+			@ConceptSchemeVersionMetamac postCreateConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersionSource, ConceptSchemeVersionMetamac conceptSchemeVersionTarget) throws MetamacException
 			"Updates concept scheme"
 			@ConceptSchemeVersionMetamac updateConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
 			"Retrieves concept scheme by urn"

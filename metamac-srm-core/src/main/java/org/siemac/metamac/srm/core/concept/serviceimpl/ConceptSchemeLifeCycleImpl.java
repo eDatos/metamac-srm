@@ -45,28 +45,28 @@ import com.arte.statistic.sdmx.srm.core.concept.serviceapi.ConceptsService;
 public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
 
     @Autowired
-    private ItemSchemeVersionRepository           itemSchemeVersionRepository;
+    private ItemSchemeVersionRepository              itemSchemeVersionRepository;
 
     @Autowired
-    private ItemRepository                        itemRepository;
+    private ItemRepository                           itemRepository;
 
     @Autowired
-    private ConceptRepository                     conceptRepository;
+    private ConceptRepository                        conceptRepository;
 
     @Autowired
-    private ConceptSchemeVersionMetamacRepository conceptSchemeVersionMetamacRepository;
+    private ConceptSchemeVersionMetamacRepository    conceptSchemeVersionMetamacRepository;
 
     @Autowired
-    private ConceptsService                       conceptsService;
+    private ConceptsService                          conceptsService;
 
     @Autowired
-    private ConceptsMetamacService                conceptsMetamacService;
+    private ConceptsMetamacService                   conceptsMetamacService;
 
     @Autowired
-    private BaseService                           baseService;
+    private BaseService                              baseService;
 
     @Autowired
-    private StreamMessagingService streamMessagingService;
+    private StreamMessagingService                   streamMessagingService;
 
     @Autowired
     private ConceptSchemeStreamMessagingCallbackImpl conceptSchemeStreamMessagingCallback;
@@ -191,9 +191,24 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void checkConcreteResourceInInternallyPublished(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum targetStatus) {
+        public void checkConcreteResourceInInternallyPublished(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum targetStatus) throws MetamacException {
             // nothing
             // note: role, extends, quantity concepts, representation... are already internally published when they are added
+
+            ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptSchemeVersionMetamac(srmResourceVersion);
+            String conceptSchemeUrn = conceptSchemeVersion.getMaintainableArtefact().getUrn();
+            Map<String, MetamacExceptionItem> exceptionsByResourceUrn = new HashMap<String, MetamacExceptionItem>();
+
+            // Check concept scheme
+            {
+                List<MetamacExceptionItem> exceptionsConceptScheme = new ArrayList<MetamacExceptionItem>();
+
+                ValidationUtils.checkMetadataRequired(conceptSchemeVersion.getDefaultOrderVisualisation(), ServiceExceptionParameters.CONCEPT_SCHEME_DEFAULT_ORDER_VISUALISATION,
+                        exceptionsConceptScheme);
+            }
+
+            // Throw exception if there is any exception
+            throwExceptionsInExceptionsMap(exceptionsByResourceUrn, conceptSchemeUrn);
         }
 
         @Override
@@ -232,11 +247,9 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
 
             ConceptSchemeVersionMetamac conceptSchemeVersion = getConceptSchemeVersionMetamac(srmResourceVersion);
 
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
-                    .withProperty(ConceptSchemeVersionMetamacProperties.itemScheme().id()).eq(conceptSchemeVersion.getItemScheme().getId())
-                    .withProperty(ConceptSchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
-                    .withProperty(ConceptSchemeVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(conceptSchemeVersion.getMaintainableArtefact().getVersionLogic())
-                    .build();
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).withProperty(ConceptSchemeVersionMetamacProperties.itemScheme().id())
+                    .eq(conceptSchemeVersion.getItemScheme().getId()).withProperty(ConceptSchemeVersionMetamacProperties.lifeCycleMetadata().procStatus()).in((Object[]) procStatus)
+                    .withProperty(ConceptSchemeVersionMetamacProperties.maintainableArtefact().versionLogic()).lessThan(conceptSchemeVersion.getMaintainableArtefact().getVersionLogic()).build();
             PagingParameter pagingParameter = PagingParameter.noLimits();
             PagedResult<ConceptSchemeVersionMetamac> conceptSchemeVersionPagedResult = conceptSchemeVersionMetamacRepository.findByCondition(conditions, pagingParameter);
             return conceptSchemeMetamacToObject(conceptSchemeVersionPagedResult.getValues());

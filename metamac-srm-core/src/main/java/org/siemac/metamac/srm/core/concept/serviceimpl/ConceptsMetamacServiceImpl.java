@@ -83,6 +83,7 @@ import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
+import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsUtils;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
@@ -548,6 +549,9 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         // Convert categorisations in no temporal
         categoriesMetamacService.createVersionFromTemporalCategorisations(ctx, conceptSchemeVersionTemporal.getMaintainableArtefact());
 
+        // Convert order in no temporal
+        createOrderVisualisationVersionFromTemporalOrderVisualisation(conceptSchemeVersionTemporal);
+
         TaskInfo versioningResult = new TaskInfo();
         versioningResult.setUrnResult(conceptSchemeVersionTemporal.getMaintainableArtefact().getUrn());
         return versioningResult;
@@ -651,8 +655,11 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             // Extends : can copy "extend" because they are concepts in another concept scheme
             concept.setConceptExtends(conceptTemp.getConceptExtends());
 
-            // Order value
-            concept.setOrderValue(conceptTemp.getOrderValue());
+            // Order Visualisation
+            for (int i = 1; i <= SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+                Integer order = SrmServiceUtils.getConceptSchemeOrder(conceptTemp, i);
+                SrmServiceUtils.setConceptSchemeOrder(conceptTemp, i, order);
+            }
 
             concept.removeAllRelatedConcepts(); // Clean related concepts, at the final the new related concepts will be added
         }
@@ -667,16 +674,18 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         versioningConceptsQuantity(ctx, conceptSchemeTemporalVersion, conceptSchemeVersion);
 
         // Add Categorisations
-        boolean thereAreNewCategorisations = false;
-        thereAreNewCategorisations = CategorisationsUtils.addCategorisationsTemporalToItemScheme(conceptSchemeTemporalVersion, conceptSchemeVersion);
-        if (thereAreNewCategorisations) {
-            // ===============================================================
-            // DANGEROUS CODE: In spite of to remove item from temporal scheme and then associate to another scheme, hibernate delete this item when delete item scheme. For this, we need to clear the
-            // context to avoid delete the temporary scheme with the previous temporary item when delete the temporary item scheme.
-            entityManager.flush();
-            entityManager.clear();
-            // ===============================================================
-        }
+
+        CategorisationsUtils.addCategorisationsTemporalToItemScheme(conceptSchemeTemporalVersion, conceptSchemeVersion);
+        ConceptsUtils.addConceptSchemeOrderVisualisationTemporalToItemScheme(conceptSchemeTemporalVersion, conceptSchemeVersion, internationalStringRepository);
+
+        setDefaultConceptSchemeOrderVisualisation(conceptSchemeTemporalVersion, conceptSchemeVersion);
+
+        // ===============================================================
+        // DANGEROUS CODE: In spite of to remove item from temporal scheme and then associate to another scheme, hibernate delete this item when delete item scheme. For this, we need to clear the
+        // context to avoid delete the temporary scheme with the previous temporary item when delete the temporary item scheme.
+        entityManager.flush();
+        entityManager.clear();
+        // ===============================================================
 
         // Delete temporal version
         deleteConceptScheme(ctx, conceptSchemeTemporalVersion.getMaintainableArtefact().getUrn());
@@ -2415,7 +2424,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         reorderConceptsAddingOneConceptInMiddle(conceptSchemeVersionMetamac, conceptSchemeOrderVisualisation, concept, newConceptIndex);
 
         // Update concept
-        SrmServiceUtils.setConceptOrder(concept, conceptSchemeOrderVisualisation.getColumnIndex(), newConceptIndex);
+        SrmServiceUtils.setConceptSchemeOrder(concept, conceptSchemeOrderVisualisation.getColumnIndex(), newConceptIndex);
         getConceptMetamacRepository().save(concept);
         baseService.updateItemSchemeLastUpdated(ctx, conceptSchemeVersionMetamac);
 
@@ -2751,7 +2760,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 return null;
             }
             Integer orderValue = Integer.valueOf(orderValueString);
-            SrmServiceUtils.setConceptOrder(code, orderVisualisation.getColumnIndex(), orderValue);
+            SrmServiceUtils.setConceptSchemeOrder(code, orderVisualisation.getColumnIndex(), orderValue);
         }
 
         // Do not persist if any error ocurrs
@@ -2968,7 +2977,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
                 previousParentUrn = code.getParent() != null ? code.getParent().getNameableArtefact().getUrn() : null;
             }
             int order = previousOrder == -1 ? 0 : previousOrder + 1;
-            SrmServiceUtils.setConceptOrder(code, orderVisualisationIndex, Integer.valueOf(order));
+            SrmServiceUtils.setConceptSchemeOrder(code, orderVisualisationIndex, Integer.valueOf(order));
             if (executeSave) {
                 // in some operations, save method must not be executed due to efficiency of inserts operations
                 getConceptMetamacRepository().save(code);
@@ -3017,7 +3026,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             alphabeticalPosition = Integer.valueOf(0);
         }
         reorderConceptsAddingOneConceptInMiddle(conceptSchemeVersion, conceptSchemeOrderVisualisation, concept, alphabeticalPosition);
-        SrmServiceUtils.setConceptOrder(concept, columnIndex, alphabeticalPosition);
+        SrmServiceUtils.setConceptSchemeOrder(concept, columnIndex, alphabeticalPosition);
     }
 
     private Integer setConceptOrderInLastPositionInLevel(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation, Concept parent,
@@ -3025,7 +3034,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         Integer columnIndex = conceptSchemeOrderVisualisation.getColumnIndex();
         Integer orderInNewLevel = null;
         if (precalculateOrder == null) {
-            SrmServiceUtils.setConceptOrder(concept, columnIndex, -1); // min value
+            SrmServiceUtils.setConceptSchemeOrder(concept, columnIndex, -1); // min value
             Integer actualMaximumOrderInLevel = getConceptMetamacRepository().getConceptMaximumOrderInLevel(conceptSchemeVersion, parent, columnIndex);
             if (actualMaximumOrderInLevel == null) {
                 orderInNewLevel = 0;
@@ -3035,7 +3044,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         } else {
             orderInNewLevel = precalculateOrder;
         }
-        SrmServiceUtils.setConceptOrder(concept, columnIndex, orderInNewLevel);
+        SrmServiceUtils.setConceptSchemeOrder(concept, columnIndex, orderInNewLevel);
         return orderInNewLevel;
     }
 
@@ -3068,4 +3077,34 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         return retrieveConceptSchemeByUrn(ctx, urnOriginal);
     }
 
+    @Override
+    public ConceptSchemeVersionMetamac postCreateConceptScheme(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeVersionSource, ConceptSchemeVersionMetamac conceptSchemeVersionTarget)
+            throws MetamacException {
+        versioningRelatedConcepts(ctx, conceptSchemeVersionSource, conceptSchemeVersionTarget);
+        versioningConceptsQuantity(ctx, conceptSchemeVersionSource, conceptSchemeVersionTarget);
+
+        return conceptSchemeVersionTarget;
+    }
+
+    private void setDefaultConceptSchemeOrderVisualisation(ConceptSchemeVersionMetamac temporaryConceptScheme, ConceptSchemeVersionMetamac conceptScheme) {
+        String defaultOrderVisualisationCode = temporaryConceptScheme.getDefaultOrderVisualisation() == null
+                ? null
+                : temporaryConceptScheme.getDefaultOrderVisualisation().getNameableArtefact().getCode();
+
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = null;
+        for (ConceptSchemeOrderVisualisation orderVisualisation : conceptScheme.getOrderVisualisations()) {
+            if (StringUtils.equals(defaultOrderVisualisationCode, orderVisualisation.getNameableArtefact().getCode())) {
+                conceptSchemeOrderVisualisation = orderVisualisation;
+            }
+        }
+        conceptScheme.setDefaultOrderVisualisation(conceptSchemeOrderVisualisation);
+    }
+
+    private void createOrderVisualisationVersionFromTemporalOrderVisualisation(ConceptSchemeVersionMetamac conceptSchemeVersionTemporal) throws MetamacException {
+        for (ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation : conceptSchemeVersionTemporal.getOrderVisualisations()) {
+            setConceptSchemeOrderVisualisationUrnUnique(conceptSchemeVersionTemporal, conceptSchemeOrderVisualisation, true);
+        }
+
+        getConceptSchemeVersionMetamacRepository().save(conceptSchemeVersionTemporal);
+    }
 }

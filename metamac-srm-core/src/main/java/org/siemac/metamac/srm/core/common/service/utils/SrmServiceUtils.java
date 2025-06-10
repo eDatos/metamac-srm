@@ -804,7 +804,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
      * Get concept scheme order.
      * Note: can not use reflection because set to null is necessary
      */
-    public static void setConceptOrder(ConceptMetamac code, int columnIndex, Integer codeIndex) {
+    public static void setConceptSchemeOrder(ConceptMetamac code, int columnIndex, Integer codeIndex) {
         switch (columnIndex) {
             case 1:
                 code.setOrder1(codeIndex);
@@ -876,7 +876,7 @@ public class SrmServiceUtils extends SdmxSrmUtils {
      */
     public static void clearConceptSchemeOrders(ConceptMetamac code) {
         for (int i = 0; i < SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
-            setConceptOrder(code, i + 1, null);
+            setConceptSchemeOrder(code, i + 1, null);
         }
     }
 
@@ -931,4 +931,12 @@ public class SrmServiceUtils extends SdmxSrmUtils {
         return SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE.equals(orderVisualisation.getNameableArtefact().getCode());
     }
 
+    public static Map<String, ConceptSchemeOrderVisualisation> createMapOfConceptSchemeOrderVisualisationByOriginalUrn(List<ConceptSchemeOrderVisualisation> orders) {
+        Map<String, ConceptSchemeOrderVisualisation> result = new HashMap<String, ConceptSchemeOrderVisualisation>(orders.size());
+        for (ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation : orders) {
+            String originalUrn = GeneratorUrnUtils.makeUrnFromTemporal(conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            result.put(originalUrn, conceptSchemeOrderVisualisation);
+        }
+        return result;
+    }
 }

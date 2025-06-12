@@ -285,13 +285,15 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
             @Override
             public void onWaitSuccess(SaveConceptSchemeResult result) {
                 conceptSchemeDto = result.getSavedConceptSchemeDto();
-                fireSuccessMessage(getMessages().conceptSchemeSaved());
-                ConceptSchemePresenter.this.conceptSchemeDto = result.getSavedConceptSchemeDto();
-                getView().setConceptScheme(result.getSavedConceptSchemeDto());
 
+                fireSuccessMessage(getMessages().conceptSchemeSaved());
+
+                getView().setConceptScheme(result.getSavedConceptSchemeDto());
+                retrieveConceptsByScheme(result.getSavedConceptSchemeDto().getUrn());
+                retrieveConceptSchemeOrders(result.getSavedConceptSchemeDto().getUrn());
                 updateUrl();
                 retrieveConceptSchemeVersions(result.getSavedConceptSchemeDto().getUrn());
-                retrieveConceptSchemeOrders(result.getSavedConceptSchemeDto().getUrn());
+
             }
         });
     }

@@ -505,6 +505,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         checkConceptSchemeCanBeModified(conceptSchemeVersion);
 
         // Delete
+        conceptSchemeVersion.setDefaultOrderVisualisation(null);
         conceptsService.deleteConceptScheme(ctx, urn);
     }
 
@@ -3082,6 +3083,8 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             throws MetamacException {
         versioningRelatedConcepts(ctx, conceptSchemeVersionSource, conceptSchemeVersionTarget);
         versioningConceptsQuantity(ctx, conceptSchemeVersionSource, conceptSchemeVersionTarget);
+
+        conceptSchemeVersionTarget = getConceptSchemeVersionMetamacRepository().save(conceptSchemeVersionTarget);
 
         return conceptSchemeVersionTarget;
     }

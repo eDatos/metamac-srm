@@ -90,7 +90,7 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
         if (previousMetamac != null) {
             // OrderVisualisation
             targetMetamac = conceptsMetamacService.versioningConceptSchemeOrderVisualisations(ctx, previousMetamac, targetMetamac);
-            // Update all order codes and openness visualisations
+            // Update all order codes visualisations
             conceptsMetamacService.recalculateConceptsVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), true);
         } else {
             targetMetamac = conceptsMetamacService.createConceptSchemeOrderVisualisationAlphabetical(ctx, targetMetamac); // Add alphabetical order

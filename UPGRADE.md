@@ -14,12 +14,7 @@
     etc/changes-from-release/4.4.0/db/postgresql/20250520_update_urn_field_length.sql
   ```shell
 
-Es necesario instalar previamente, en el orden indicado, las aplicaciones:
-* metamac-core-common
-* metamac-sso
-* metamac-web-common
-* complementos-apps
-* statistic-sdmx-srm
+* Esta versión tiene como dependencia complementos-apps en su versión 8.12.2-SNAPSHOT
 
 ## 8.3.3 a 8.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.

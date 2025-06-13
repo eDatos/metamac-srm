@@ -43,6 +43,10 @@ public class ConceptsTreeGrid extends BaseConceptsTreeGrid {
 
     public ConceptsTreeGrid() {
         super(true, false);
+        init(true);
+    }
+
+    public void init(boolean canCollapseGroup) {
 
         getField(ItemDS.CODE).setWidth("45%");
 

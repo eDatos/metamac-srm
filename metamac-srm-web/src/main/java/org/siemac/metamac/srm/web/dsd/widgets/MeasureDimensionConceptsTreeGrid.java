@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.srm.web.code.model.ds.CodeDS;
 import org.siemac.metamac.srm.web.concept.model.ds.ConceptDS;
 import org.siemac.metamac.srm.web.concept.view.handlers.BaseConceptUiHandlers;
+import org.siemac.metamac.srm.web.concept.widgets.ConceptTreeNode;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptsTreeGrid;
 import org.siemac.metamac.srm.web.dsd.model.ds.DataStructureDefinitionDS;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
@@ -38,8 +39,6 @@ import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
 
-    // TODO EDATOS-4957 VER ESTA CLASE COMO SE VE AFECTADA.
-
     private final static String                CONCEPT_FIELD = "concept-field";
 
     private List<MeasureDimensionPrecisionDto> measureDimensionPrecisionDtos;
@@ -48,7 +47,6 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
         super();
 
         setShowFilterEditor(false);
-        setCanCollapseGroup(false);
         setEditEvent(ListGridEditEvent.CLICK);
 
         // This field will show the code and the name of the concept
@@ -119,14 +117,56 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
     }
 
     private void updateRecords() {
-        ListGridRecord[] records = getRecords();
-        for (ListGridRecord record : records) {
-            // update concept
-            record.setAttribute(CONCEPT_FIELD, CommonWebUtils.getElementName(record.getAttribute(CodeDS.CODE), record.getAttribute(CodeDS.NAME)));
-            // update decimals
-            record.setAttribute(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getDecimalsByConcept(record.getAttribute(ItemDS.URN)));
+        Tree tree = getTree();
+        TreeNode[] allNodes = tree.getAllNodes();
+        TreeNode[] sortedTreeNode = sortTreeNodesRecursively(allNodes);
+
+        for (int i = 0; i < sortedTreeNode.length; i++) {
+            TreeNode node = sortedTreeNode[i];
+
+            String conceptField = CommonWebUtils.getElementName(node.getAttributeAsString(CodeDS.CODE), node.getAttribute(CodeDS.NAME));
+            node.setAttribute(CONCEPT_FIELD, conceptField);
+            node.setAttribute(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getDecimalsByConcept(node.getAttribute(ItemDS.URN)));
         }
+
+        tree.linkNodes(sortedTreeNode);
+        setData(tree);
+
         markForRedraw();
+    }
+
+    private TreeNode[] sortTreeNodesRecursively(TreeNode[] nodes) {
+        if (nodes == null || nodes.length == 0) {
+            return new TreeNode[0];
+        }
+
+        List<TreeNode> sortedNodes = new ArrayList<TreeNode>();
+
+        for (int i = 0; i < nodes.length; i++) {
+            TreeNode node = nodes[i];
+            TreeNode[] children = getData().getChildren(node);
+            TreeNode[] sortedChildren = sortTreeNodesRecursively(children);
+            node.setChildren(sortedChildren);
+            sortedNodes.add(node);
+        }
+
+        java.util.Collections.sort(sortedNodes, new java.util.Comparator<TreeNode>() {
+
+            public int compare(TreeNode n1, TreeNode n2) {
+                if (n1 instanceof ConceptTreeNode && n2 instanceof ConceptTreeNode) {
+                    Integer o1 = ((ConceptTreeNode) n1).getOrder();
+                    Integer o2 = ((ConceptTreeNode) n2).getOrder();
+                    if (o1 == null)
+                        o1 = 0;
+                    if (o2 == null)
+                        o2 = 0;
+                    return o1.compareTo(o2);
+                }
+                return 0;
+            }
+        });
+
+        return sortedNodes.toArray(new TreeNode[sortedNodes.size()]);
     }
 
     public Integer getDecimalsByConcept(String conceptUrn) {
@@ -156,14 +196,15 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
 
     @Override
     public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
-        // TODO EDATOS-4957 VER QUÉ HACE
-        super.setItems(conceptSchemeMetamacDto, itemHierarchyDtos);
+        super.updateItemScheme(conceptSchemeMetamacDto);
+        super.setConcepts(conceptSchemeMetamacDto, itemHierarchyDtos);
         updateRecords();
     }
 
     @Override
     public void updateItemScheme(ItemSchemeDto itemSchemeDto) {
-        // Overwrite this method to do nothing
+        // Update concept scheme in tree grid
+        super.updateItemScheme(itemSchemeDto);
     }
 
     @Override

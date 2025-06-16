@@ -130,7 +130,7 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
                     ? ((CodelistVersionMetamac) targetMetamac.getCoreRepresentation().getEnumerationCodelist()).getVariable()
                     : null;
 
-            if (previousVariable.getId().compareTo(targetVariable.getId()) != 0) {
+            if (previousVariable != null && targetVariable != null && previousVariable.getId().compareTo(targetVariable.getId()) != 0) {
                 // IDEA: METAMAC-2183
             }
 

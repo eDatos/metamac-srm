@@ -807,7 +807,12 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         ConceptsMetamacInvocationValidator.checkUpdateConcept(conceptSchemeVersion, concept, null);
         checkConceptToCreateOrUpdate(ctx, conceptSchemeVersion, concept);
 
-        return (ConceptMetamac) conceptsService.updateConcept(ctx, concept);
+        ConceptMetamac conceptMetamac = (ConceptMetamac) conceptsService.updateConcept(ctx, concept);
+
+        // Set order to update code concept
+        conceptMetamac = initVisualisationsToCodeCreated(conceptSchemeVersion, conceptMetamac);
+
+        return conceptMetamac;
     }
 
     /**
@@ -2952,18 +2957,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
     }
 
     /**
-     * Sorts all codes, ordered by index. Put codes with null index at the end off level
-     */
-    private void sortCodesByOrder(List<Concept> items, final ConceptSchemeOrderVisualisation orderVisualisation, boolean executeSave) {
-        if (CollectionUtils.isEmpty(items)) {
-            return;
-        }
-        List<Concept> codesOrdered = new ArrayList<>(items);
-        Collections.sort(codesOrdered, new ConceptSchemeOrderIndexByLevelComparator(orderVisualisation.getColumnIndex()));
-        sortConcepts(orderVisualisation.getColumnIndex(), codesOrdered, executeSave);
-    }
-
-    /**
      * Sorts all codes by level, sorting codes by comparator
      */
     private void sortConcepts(Integer orderVisualisationIndex, List<Concept> codesOrdered, boolean executeSave) {
@@ -3010,10 +3003,27 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         getConceptMetamacRepository().reorderConceptsDeletingOneConcept(conceptSchemeVersion, parent, concept, columnIndex, previousOrder);
     }
 
-    private void reorderConceptsAddingOneConceptInMiddle(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation, ConceptMetamac concept,
-            Integer order) throws MetamacException {
-        Integer columnIndex = conceptSchemeOrderVisualisation.getColumnIndex();
-        getConceptMetamacRepository().reorderConceptsAddingOneConceptInMiddle(conceptSchemeVersion, concept, columnIndex, order);
+    public void reorderConceptsAddingOneConceptInMiddle(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation, ConceptMetamac concept,
+            Integer newOrder) {
+
+        Integer orderColumnIndex = conceptSchemeOrderVisualisation.getColumnIndex();
+
+        Integer currentOrder = SrmServiceUtils.getConceptSchemeOrder(concept, orderColumnIndex);
+
+        // If it's null, it's new → we just scroll down from newOrder
+        if (currentOrder == null) {
+            getConceptMetamacRepository().shiftDownOrders(conceptSchemeVersion, concept.getParent(), orderColumnIndex, newOrder, null);
+        } else if (!newOrder.equals(currentOrder)) {
+            if (newOrder > currentOrder) {
+                // Move down → decrease to middle ones
+                getConceptMetamacRepository().shiftUpOrders(conceptSchemeVersion, concept.getParent(), orderColumnIndex, currentOrder, newOrder);
+            } else {
+                // Move up → increase to those in the middle
+                getConceptMetamacRepository().shiftDownOrders(conceptSchemeVersion, concept.getParent(), orderColumnIndex, newOrder, currentOrder);
+            }
+        }
+
+        SrmServiceUtils.setConceptSchemeOrder(concept, orderColumnIndex, newOrder);
     }
 
     private void setConceptOrderInAlphabeticalPositionAndReorderConceptsInLevel(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation,

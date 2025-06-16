@@ -306,8 +306,9 @@ Application ConceptsMetamac {
 				checkConceptsWithRepresentationExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				
 				Integer getConceptMaximumOrderInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, Integer orderColumnIndex);
+				shiftUpOrders(@ConceptSchemeVersionMetamac version, @Concept parent, Integer orderColumnIndex, Integer fromOrder, Integer toOrder);
+				shiftDownOrders(@ConceptSchemeVersionMetamac version, @Concept parent, Integer orderColumnIndex, Integer fromOrder, Integer toOrder);
 				reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToDelete);	
-				reorderConceptsAddingOneConceptInMiddle(@ConceptSchemeVersionMetamac conceptSchemeVersion, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToAdd);
 				Integer getConceptAlphabeticPositionInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @Concept concept);
 				clearConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer orderColumnIndex);
 				copyConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer columnIndexSource, Integer columnIndexTarget);

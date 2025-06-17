@@ -444,7 +444,11 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
 
     @Override
     public RelatedResourceDto codelistOrderVisualisationDoToRelatedResourceDto(CodelistOrderVisualisation source) {
-        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        RelatedResourceDto relatedResourceDto = source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        if (relatedResourceDto != null) {
+            relatedResourceDto.setType(RelatedResourceTypeEnum.CODELIST);
+        }
+        return relatedResourceDto;
     }
 
     @Override

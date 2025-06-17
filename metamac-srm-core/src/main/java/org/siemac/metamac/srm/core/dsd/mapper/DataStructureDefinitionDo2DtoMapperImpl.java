@@ -6,6 +6,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
 import org.siemac.metamac.srm.core.code.mapper.CodesDo2DtoMapper;
+import org.siemac.metamac.srm.core.concept.mapper.ConceptsDo2DtoMapper;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionOrder;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
@@ -36,6 +37,9 @@ public class DataStructureDefinitionDo2DtoMapperImpl extends BaseDo2DtoMapperImp
 
     @Autowired
     private CodesDo2DtoMapper                                                                     codesDo2DtoMapper;
+
+    @Autowired
+    private ConceptsDo2DtoMapper                                                                  conceptsDo2DtoMapper;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -181,11 +185,24 @@ public class DataStructureDefinitionDo2DtoMapperImpl extends BaseDo2DtoMapperImp
         target.setType(RelatedResourceTypeEnum.DIMENSION);
         target.setUrn(source.getDimension().getUrn());
         target.setUrnProvider(source.getDimension().getUrnProvider());
-        target.setDisplayOrder(codesDo2DtoMapper.codelistOrderVisualisationDoToRelatedResourceDto(source.getDisplayOrder()));
+        target.setDisplayOrder(setDisplayOrder(source));
         target.setHierarchyLevelsOpen(codesDo2DtoMapper.codelistOpennessVisualisationDoToRelatedResourceDto(source.getHierarchyLevelsOpen()));
         target.setDisplayCode(source.getDisplayCode());
 
         return target;
+    }
+
+    private RelatedResourceDto setDisplayOrder(DimensionVisualisationInfo source) {
+
+        if (source.getDisplayOrder() != null) {
+            return codesDo2DtoMapper.codelistOrderVisualisationDoToRelatedResourceDto(source.getDisplayOrder());
+        }
+
+        if (source.getDisplayConceptSchemeOrder() != null) {
+            return conceptsDo2DtoMapper.conceptSchemeOrderVisualisationDoToRelatedResourceDto(source.getDisplayConceptSchemeOrder());
+        }
+
+        return null;
     }
 
 }

@@ -89,6 +89,7 @@ import org.siemac.metamac.srm.core.concept.mapper.ConceptsDto2DoMapper;
 import org.siemac.metamac.srm.core.criteria.mapper.MetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.srm.core.criteria.mapper.SculptorCriteria2MetamacCriteriaMapper;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.domain.shared.OrderVisualisations;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacBasicDto;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacDto;
 import org.siemac.metamac.srm.core.dsd.mapper.DataStructureDefinitionDo2DtoMapper;
@@ -1165,13 +1166,11 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
         SculptorCriteria sculptorCriteria = metamacCriteria2SculptorCriteriaMapper.getCodelistMetamacCriteriaMapper().metamacCriteria2SculptorCriteria(criteria);
 
         // Find
-        PagedResult<CodelistOrderVisualisation> result = getDataStructureDefinitionMetamacService().findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(ctx,
-                sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter(), dimensionUrn);
+        OrderVisualisations orders = getDataStructureDefinitionMetamacService().findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(ctx, sculptorCriteria.getConditions(),
+                sculptorCriteria.getPagingParameter(), dimensionUrn);
 
         // Transform
-        MetamacCriteriaResult<RelatedResourceDto> metamacCriteriaResult = sculptorCriteria2MetamacCriteriaMapper.pageResultCodelistOrderVisualisationToMetamacCriteriaResultRelatedResource(result,
-                sculptorCriteria.getPageSize());
-        return metamacCriteriaResult;
+        return sculptorCriteria2MetamacCriteriaMapper.pageResultOrderVisualisationToMetamacCriteriaResultRelatedResource(orders, sculptorCriteria.getPageSize());
     }
 
     @Override

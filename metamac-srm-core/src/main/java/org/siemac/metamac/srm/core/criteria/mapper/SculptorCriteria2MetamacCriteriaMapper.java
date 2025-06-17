@@ -12,7 +12,6 @@ import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
-import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
@@ -28,6 +27,7 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.domain.shared.OrderVisualisations;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacBasicDto;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
@@ -76,8 +76,10 @@ public interface SculptorCriteria2MetamacCriteriaMapper {
     public MetamacCriteriaResult<VariableBasicDto> pageResultVariableToMetamacCriteriaResult(PagedResult<Variable> source, Integer pageSize);
     public MetamacCriteriaResult<VariableElementBasicDto> pageResultVariableElementToMetamacCriteriaResult(PagedResult<VariableElement> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultVariableElementToMetamacCriteriaResultRelatedResource(PagedResult<VariableElement> source, Integer pageSize);
-    public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOrderVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOrderVisualisation> source, Integer pageSize);
     public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOpennessVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOpennessVisualisation> source, Integer pageSize);
+
+    // codelist and concept-scheme
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultOrderVisualisationToMetamacCriteriaResultRelatedResource(OrderVisualisations source, Integer pageSize);
 
     public MetamacCriteriaResult<AnnotationTypeDto> pageResultAnnotationTypeToMetamacCriteriaResultRelatedResource(PagedResult<AnnotationType> source, Integer pageSize);
 }

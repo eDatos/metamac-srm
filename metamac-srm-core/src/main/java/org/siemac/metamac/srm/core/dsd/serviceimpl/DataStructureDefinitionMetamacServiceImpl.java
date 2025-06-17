@@ -52,6 +52,9 @@ import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacRepository;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisationProperties;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisationRepository;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacRepository;
@@ -65,7 +68,9 @@ import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMeta
 import org.siemac.metamac.srm.core.dsd.domain.DimensionOrder;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
 import org.siemac.metamac.srm.core.dsd.domain.MeasureDimensionPrecision;
+import org.siemac.metamac.srm.core.dsd.domain.shared.OrderVisualisations;
 import org.siemac.metamac.srm.core.dsd.serviceimpl.utils.DsdsMetamacInvocationValidator;
+import org.siemac.metamac.srm.core.dsd.serviceimpl.utils.OrderVisualisationUtils;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
@@ -117,74 +122,77 @@ import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialDimensionType
 public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefinitionMetamacServiceImplBase {
 
     @Autowired
-    private DataStructureDefinitionService          dataStructureDefinitionService;
+    private DataStructureDefinitionService            dataStructureDefinitionService;
 
     @Autowired
-    private CategoriesMetamacService                categoriesMetamacService;
+    private CategoriesMetamacService                  categoriesMetamacService;
 
     @Autowired
-    private ConceptMetamacRepository                conceptMetamacRepository;
+    private ConceptMetamacRepository                  conceptMetamacRepository;
 
     @Autowired
-    private ConceptSchemeVersionMetamacRepository   conceptSchemeVersionMetamacRepository;
+    private ConceptSchemeVersionMetamacRepository     conceptSchemeVersionMetamacRepository;
 
     @Autowired
-    private ConceptsMetamacService                  conceptsService;
+    private ConceptsMetamacService                    conceptsService;
 
     @Autowired
-    private CodelistVersionMetamacRepository        codelistVersionMetamacRepository;
+    private CodelistVersionMetamacRepository          codelistVersionMetamacRepository;
 
     @Autowired
-    private CodelistOrderVisualisationRepository    codelistOrderVisualisationRepository;
+    private CodelistOrderVisualisationRepository      codelistOrderVisualisationRepository;
 
     @Autowired
-    private CodelistOpennessVisualisationRepository codelistOpennessVisualisationRepository;
+    private CodelistOpennessVisualisationRepository   codelistOpennessVisualisationRepository;
+
+    @Autowired
+    private ConceptSchemeOrderVisualisationRepository conceptSchemeOrderVisualisationRepository;
 
     @Autowired
     @Qualifier("dsdLifeCycle")
-    private LifeCycle                               dsdLifeCycle;
+    private LifeCycle                                 dsdLifeCycle;
 
     @Autowired
-    private SrmValidation                           srmValidation;
+    private SrmValidation                             srmValidation;
 
     @Autowired
     @Qualifier("dataStructureDefinitionsVersioningCallbackMetamac")
-    private DataStructureDefinitionsCopyCallback    dataStructureDefinitionsVersioningCallback;
+    private DataStructureDefinitionsCopyCallback      dataStructureDefinitionsVersioningCallback;
 
     @Autowired
     @Qualifier("dataStructureDefinitionsDummyVersioningCallbackMetamac")
-    private DataStructureDefinitionsCopyCallback    dataStructureDefinitionsDummyVersioningCallback;
+    private DataStructureDefinitionsCopyCallback      dataStructureDefinitionsDummyVersioningCallback;
 
     @Autowired
     @Qualifier("dataStructureDefinitionsCopyCallbackMetamac")
-    private DataStructureDefinitionsCopyCallback    dataStructureDefinitionsCopyCallback;
+    private DataStructureDefinitionsCopyCallback      dataStructureDefinitionsCopyCallback;
 
     @Autowired
-    private DsdStreamMessagingCallbackImpl          dsdSchemeStreamMessagingCallback;
+    private DsdStreamMessagingCallbackImpl            dsdSchemeStreamMessagingCallback;
 
     @Autowired
-    private StreamMessagingService                  streamMessagingService;
+    private StreamMessagingService                    streamMessagingService;
 
     @Autowired
-    private StructureVersionRepository              structureVersionRepository;
+    private StructureVersionRepository                structureVersionRepository;
 
     @Autowired
-    private ComponentListRepository                 componentListRepository;
+    private ComponentListRepository                   componentListRepository;
 
     @Autowired
-    private ComponentRepository                     componentRepository;
+    private ComponentRepository                       componentRepository;
 
     @Autowired
-    private SrmConfiguration                        srmConfiguration;
+    private SrmConfiguration                          srmConfiguration;
 
     @Autowired
-    private InternationalStringRepository           internationalStringRepository;
+    private InternationalStringRepository             internationalStringRepository;
 
     @Autowired
-    private ExternalItemRepository                  externalItemRepository;
+    private ExternalItemRepository                    externalItemRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
-    protected EntityManager                         entityManager;
+    protected EntityManager                           entityManager;
 
     public DataStructureDefinitionMetamacServiceImpl() {
     }
@@ -836,17 +844,44 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
     }
 
     @Override
-    public PagedResult<CodelistOrderVisualisation> findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions,
-            PagingParameter pagingParameter, String dimensionUrn) throws MetamacException {
-        // Validation
-        DsdsMetamacInvocationValidator.findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(conditions, pagingParameter, dimensionUrn, null);
+    public OrderVisualisations findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter,
+            String dimensionUrn) throws MetamacException {
 
-        DimensionComponent dimensionComponent = (DimensionComponent) componentRepository.findByUrn(dimensionUrn);
+        OrderVisualisations orders = new OrderVisualisations();
 
-        Representation representation = dimensionComponent.getLocalRepresentation();
-        if (representation == null) {
-            representation = dimensionComponent.getCptIdRef().getCoreRepresentation();
+        Representation representation = OrderVisualisationUtils.findOrderVisualisationCanBeDisplayOrderForDsdDimension(componentRepository, conditions, pagingParameter, dimensionUrn);
+
+        List<CodelistOrderVisualisation> codelistOrderVisualisations = getCodelistOrderVisualisations(ctx, conditions, pagingParameter, representation);
+
+        orders.setCodelistOrderVisualisation(codelistOrderVisualisations);
+
+        List<ConceptSchemeOrderVisualisation> conceptSchemeOrderVisualisations = getConceptSchemeOrderVisualisations(ctx, conditions, pagingParameter, representation);
+
+        orders.setConceptSchemeOrderVisualisation(conceptSchemeOrderVisualisations);
+
+        return orders;
+    }
+
+    private List<ConceptSchemeOrderVisualisation> getConceptSchemeOrderVisualisations(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter,
+            Representation representation) {
+
+        Long conceptSchemeId = null;
+        if (representation != null && RepresentationTypeEnum.ENUMERATION.equals(representation.getRepresentationType()) && representation.getEnumerationConceptScheme() != null) {
+            conceptSchemeId = representation.getEnumerationConceptScheme().getId();
         }
+
+        if (conceptSchemeId == null) {
+            return new ArrayList<>();
+        }
+
+        PagedResult<ConceptSchemeOrderVisualisation> results = findConceptSchemeOrderVisualisationRepositoryByConditions(ctx, conditions, pagingParameter, conceptSchemeId);
+
+        return results.getValues();
+
+    }
+
+    private List<CodelistOrderVisualisation> getCodelistOrderVisualisations(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter, Representation representation)
+            throws MetamacException {
 
         Long codelistId = null;
         if (representation != null) {
@@ -856,10 +891,13 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         }
 
         if (codelistId == null) {
-            return new PagedResult<CodelistOrderVisualisation>(new ArrayList<CodelistOrderVisualisation>(), -1, -1, -1);
+            return new ArrayList<CodelistOrderVisualisation>();
         }
 
-        return findCodelistOrderVisualisationRepositoryByConditions(ctx, conditions, pagingParameter, codelistId);
+        PagedResult<CodelistOrderVisualisation> results = findCodelistOrderVisualisationRepositoryByConditions(ctx, conditions, pagingParameter, codelistId);
+
+        return results.getValues();
+
     }
 
     @Override
@@ -1875,6 +1913,22 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).build();
         }
         return dataStructureDefinitionVersion;
+    }
+
+    private PagedResult<ConceptSchemeOrderVisualisation> findConceptSchemeOrderVisualisationRepositoryByConditions(ServiceContext ctx, List<ConditionalCriteria> conditions,
+            PagingParameter pagingParameter, Long conceptSchemeId) {
+
+        // Prepare conditions
+        Class<ConceptSchemeOrderVisualisation> entitySearchedClass = ConceptSchemeOrderVisualisation.class;
+        if (conditions == null) {
+            conditions = new ArrayList<>();
+        }
+        // concept scheme internally or externally published
+        conditions
+                .add(ConditionalCriteriaBuilder.criteriaFor(entitySearchedClass).withProperty(ConceptSchemeOrderVisualisationProperties.conceptSchemeVersion().id()).eq(conceptSchemeId).buildSingle());
+        conditions.addAll(ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).distinctRoot().build());
+
+        return conceptSchemeOrderVisualisationRepository.findByCondition(conditions, pagingParameter);
     }
 
     protected void addSpatialConditionForConceptSchemes(List<ConditionalCriteria> conditions) {

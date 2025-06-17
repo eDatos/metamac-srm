@@ -1,8 +1,10 @@
 package org.siemac.metamac.srm.core.criteria.mapper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.criteria.MetamacCriteriaPaginatorResult;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.criteria.mapper.SculptorCriteria2MetamacCriteria;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -29,11 +31,13 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableFamilyBasicDto;
 import org.siemac.metamac.srm.core.code.mapper.CodesDo2DtoMapper;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.mapper.ConceptsDo2DtoMapper;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.domain.shared.OrderVisualisations;
 import org.siemac.metamac.srm.core.dsd.dto.DataStructureDefinitionMetamacBasicDto;
 import org.siemac.metamac.srm.core.dsd.mapper.DataStructureDefinitionDo2DtoMapper;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
@@ -400,16 +404,38 @@ public class SculptorCriteria2MetamacCriteriaMapperImpl implements SculptorCrite
     }
 
     @Override
-    public MetamacCriteriaResult<RelatedResourceDto> pageResultCodelistOrderVisualisationToMetamacCriteriaResultRelatedResource(PagedResult<CodelistOrderVisualisation> source, Integer pageSize) {
-        MetamacCriteriaResult<RelatedResourceDto> target = new MetamacCriteriaResult<RelatedResourceDto>();
-        target.setPaginatorResult(SculptorCriteria2MetamacCriteria.sculptorResultToMetamacCriteriaResult(source, pageSize));
-        if (source.getValues() != null) {
-            target.setResults(new ArrayList<RelatedResourceDto>(source.getValues().size()));
-            for (CodelistOrderVisualisation order : source.getValues()) {
-                target.getResults().add(codesDo2DtoMapper.codelistOrderVisualisationDoToRelatedResourceDto(order));
+    public MetamacCriteriaResult<RelatedResourceDto> pageResultOrderVisualisationToMetamacCriteriaResultRelatedResource(OrderVisualisations source, Integer pageSize) {
+        MetamacCriteriaResult<RelatedResourceDto> target = new MetamacCriteriaResult<>();
+        MetamacCriteriaPaginatorResult paginatorResult = new MetamacCriteriaPaginatorResult();
+        paginatorResult.setMaximumResultSize(pageSize);
+        paginatorResult.setTotalResults(source.getCodelistOrderVisualisation().size() + source.getConceptSchemeOrderVisualisation().size());
+        target.setPaginatorResult(paginatorResult);
+        target.setResults(new ArrayList<>(source.getCodelistOrderVisualisation().size() + source.getConceptSchemeOrderVisualisation().size()));
+
+        target.getResults().addAll(getCodelistOrderVisualisationToMetamacCriteriaResultRelatedResource(source.getCodelistOrderVisualisation()));
+        target.getResults().addAll(getConceptSchemeOrderVisualisationToMetamacCriteriaResultRelatedResource(source.getConceptSchemeOrderVisualisation()));
+
+        return target;
+    }
+
+    private List<RelatedResourceDto> getCodelistOrderVisualisationToMetamacCriteriaResultRelatedResource(List<CodelistOrderVisualisation> codelistOrderVisualisations) {
+        List<RelatedResourceDto> codelistOrdersRelatedResourceDto = new ArrayList<>();
+        if (codelistOrderVisualisations != null) {
+            for (CodelistOrderVisualisation order : codelistOrderVisualisations) {
+                codelistOrdersRelatedResourceDto.add(codesDo2DtoMapper.codelistOrderVisualisationDoToRelatedResourceDto(order));
             }
         }
-        return target;
+        return codelistOrdersRelatedResourceDto;
+    }
+
+    private List<RelatedResourceDto> getConceptSchemeOrderVisualisationToMetamacCriteriaResultRelatedResource(List<ConceptSchemeOrderVisualisation> conceptSchemeOrderVisualisations) {
+        List<RelatedResourceDto> conceptSchemeOrdersRelatedResourceDto = new ArrayList<>();
+        if (conceptSchemeOrderVisualisations != null) {
+            for (ConceptSchemeOrderVisualisation order : conceptSchemeOrderVisualisations) {
+                conceptSchemeOrdersRelatedResourceDto.add(conceptsDo2DtoMapper.conceptSchemeOrderVisualisationDoToRelatedResourceDto(order));
+            }
+        }
+        return conceptSchemeOrdersRelatedResourceDto;
     }
 
     @Override

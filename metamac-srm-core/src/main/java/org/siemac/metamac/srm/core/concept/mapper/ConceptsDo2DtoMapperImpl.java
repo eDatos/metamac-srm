@@ -220,7 +220,11 @@ public class ConceptsDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Co
 
     @Override
     public RelatedResourceDto conceptSchemeOrderVisualisationDoToRelatedResourceDto(ConceptSchemeOrderVisualisation source) {
-        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        RelatedResourceDto relatedResourceDto = source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        if (relatedResourceDto != null) {
+            relatedResourceDto.setType(RelatedResourceTypeEnum.CONCEPT_SCHEME);
+        }
+        return relatedResourceDto;
     }
 
     private RelatedResourceDto conceptSchemeDoToRelatedResourceDto(ConceptSchemeVersionMetamac source) {

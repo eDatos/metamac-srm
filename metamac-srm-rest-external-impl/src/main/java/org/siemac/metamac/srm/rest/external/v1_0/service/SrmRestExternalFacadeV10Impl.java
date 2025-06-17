@@ -2267,7 +2267,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
      */
     private void checkParameterEmpty(String parameterName, String parameterValue) {
         if (!StringUtils.isBlank(parameterValue)) {
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.PARAMETER_INCORRECT, parameterName);
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.PARAMETER_UNEXPECTED, parameterName);
             throw new RestException(exception, Status.BAD_REQUEST, new Throwable(exception.getMessage()));
         }
     }

@@ -285,6 +285,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
     private Concepts findConceptsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration,
             Set<String> fieldsToShow) throws MetamacException {
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_CONFIGURATION_ID, orderConfiguration);
             // Find. Retrieve concepts paginated
             SculptorCriteria sculptorCriteria = conceptsRest2DoMapper.getConceptCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
@@ -2359,7 +2360,7 @@ public class SrmRestInternalFacadeV10Impl implements SrmRestInternalFacadeV10 {
      */
     private void checkParameterEmpty(String parameterName, String parameterValue) {
         if (!StringUtils.isBlank(parameterValue)) {
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.PARAMETER_INCORRECT, parameterName);
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.PARAMETER_UNEXPECTED, parameterName);
             throw new RestException(exception, Status.BAD_REQUEST);
         }
     }

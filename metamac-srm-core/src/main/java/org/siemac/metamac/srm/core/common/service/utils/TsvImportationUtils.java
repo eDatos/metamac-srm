@@ -1358,7 +1358,6 @@ public class TsvImportationUtils {
         }
         target.setUpdateDate(source.getUpdateDate());
         target.setLastUpdated(source.getLastUpdated());
-        target.setOrderValue(source.getOrderValue());
         target.setPluralName(source.getPluralName());
         target.setAcronym(source.getAcronym());
         target.setDescriptionSource(source.getDescriptionSource());

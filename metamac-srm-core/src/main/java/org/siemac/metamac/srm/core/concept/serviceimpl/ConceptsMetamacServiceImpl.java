@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1313,74 +1312,6 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         } else {
             quantity.setBaseLocation(null);
         }
-    }
-
-    private void sortConceptsByOrder(List<Concept> allItemsToUpdate) {
-        if (CollectionUtils.isEmpty(allItemsToUpdate)) {
-            return;
-        }
-
-        List<Concept> conceptsOrdered = new ArrayList<Concept>(allItemsToUpdate);
-        Collections.sort(conceptsOrdered, new OrderComparator());
-
-        String previousParentUrn = null;
-        int previousOrder = -1;
-        for (Concept concept : conceptsOrdered) {
-
-            ConceptMetamac conceptMetamac = (ConceptMetamac) concept;
-
-            String actualParentUrn = conceptMetamac.getParent() != null ? conceptMetamac.getParent().getNameableArtefact().getUrn() : null;
-            if (!StringUtils.equals(previousParentUrn, actualParentUrn)) {
-                previousOrder = -1; // another level
-                previousParentUrn = conceptMetamac.getParent() != null ? conceptMetamac.getParent().getNameableArtefact().getUrn() : null;
-            }
-            int order = previousOrder == -1 ? 0 : previousOrder + 1;
-            conceptMetamac.setOrderValue(order);
-            previousOrder = order;
-        }
-    }
-
-    private class OrderComparator implements Comparator<Concept> {
-
-        @Override
-        public int compare(Concept c1, Concept c2) {
-            ConceptMetamac cm1 = (ConceptMetamac) c1;
-            ConceptMetamac cm2 = (ConceptMetamac) c2;
-
-            if (isConceptsSiblings(cm1, cm2)) {
-
-                Integer cm1OrderValue = cm1.getOrderValue();
-                Integer cm2OrderValue = cm2.getOrderValue();
-                if (cm1OrderValue == null && cm2OrderValue == null) {
-                    return calculeOrderConceptsSiblingsAlphabetical(cm1, cm2);
-                } else if (cm1OrderValue == null) {
-                    return 1;
-                } else if (cm2OrderValue == null) {
-                    return -1;
-                } else {
-                    return cm1OrderValue.compareTo(cm2OrderValue);
-                }
-            } else if (cm1.getParent() == null) {
-                return 1;
-            } else if (cm2.getParent() == null) {
-                return -1;
-            } else {
-                return cm1.getParent().getUuid().compareTo(cm2.getParent().getUuid());
-            }
-        }
-    };
-
-    private int calculeOrderConceptsSiblingsAlphabetical(Item i1, Item i2) {
-        return i1.getNameableArtefact().getCode().compareToIgnoreCase(i2.getNameableArtefact().getCode());
-    }
-    private boolean isConceptsSiblings(Item i1, Item i2) {
-        if (i1.getParent() == null && i2.getParent() == null) {
-            return true;
-            // id can be null when save operation is executed when transaction is closed
-        } else if (i1.getParent() != null && i2.getParent() != null && i1.getParent().getUuid().equals(i2.getParent().getUuid())) {
-            return true;
-        }
-        return false;
     }
 
     private ConceptType tsvLineToConceptType(ServiceContext ctx, ImportationConceptsTsvHeader conceptTsvHeader, String[] columns, Map<String, ConceptType> cachedConceptTypeMap)

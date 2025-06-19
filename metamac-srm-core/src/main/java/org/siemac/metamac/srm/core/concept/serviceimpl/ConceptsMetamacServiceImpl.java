@@ -658,7 +658,7 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
             // Order Visualisation
             for (int i = 1; i <= SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
                 Integer order = SrmServiceUtils.getConceptSchemeOrder(conceptTemp, i);
-                SrmServiceUtils.setConceptSchemeOrder(conceptTemp, i, order);
+                SrmServiceUtils.setConceptSchemeOrder(concept, i, order);
             }
 
             concept.removeAllRelatedConcepts(); // Clean related concepts, at the final the new related concepts will be added

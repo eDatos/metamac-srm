@@ -38,21 +38,16 @@ create table temp_create_visualisation_order(
 concept_scheme_id int8 NOT null,
 concept_scheme_urn varchar(4000),
 agency varchar(100),
-order_urn varchar(4000),
-custom_order_name varchar(100) --En cada entorno lo llaman diferente.
+order_urn varchar(4000)
 );
 
 ALTER TABLE temp_create_visualisation_order ADD CONSTRAINT PK_temp_create_visualisation_order PRIMARY KEY (concept_scheme_id);
 ALTER TABLE temp_create_visualisation_order ADD CONSTRAINT UQ_temp_create_visualisation_order UNIQUE (concept_scheme_urn);
 
 --4 Obtener los esquemas de conceptos afectadosy almacenarlos en tabla temporal. Sólo se cogeran aquellos a los que aún no se les haya creado una entrada para el orden alfabético.
---4.1)  En función del entorno rellenar el valor para FILL_ME_CUSTOM según lo siguiente:
----------si ISTAC -> 'CUSTOM'
----------si IBESTAT -> 'ORDINARIO'
----------si IESTADIS -> 'DEFAULT'
-
- insert into temp_create_visualisation_order(concept_scheme_id, concept_scheme_urn, agency, order_urn, custom_order_name) select cv.tb_item_schemes_versions,  n.urn, (SELECT substring(n.urn FROM 'ConceptScheme=([^:]+)')) 
-   ,  'urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=' || (SELECT substring(n.urn FROM 'ConceptScheme=([^:]+)')) || ':' || n.code || '(' || n.version_logic || ').ALPHABETICAL', FILL_ME_CUSTOM
+--4.1)  
+ insert into temp_create_visualisation_order(concept_scheme_id, concept_scheme_urn, agency, order_urn) select cv.tb_item_schemes_versions,  n.urn, (SELECT substring(n.urn FROM 'ConceptScheme=([^:]+)')) 
+   ,  'urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=' || (SELECT substring(n.urn FROM 'ConceptScheme=([^:]+)')) || ':' || n.code || '(' || n.version_logic || ').ALPHABETICAL'
  from tb_concept_schemes_versions cv
  inner join tb_item_schemes_versions iv on cv.tb_item_schemes_versions = iv.id
    inner join tb_annotable_artefacts n on iv.maintainable_artefact_fk =  n.id
@@ -64,6 +59,7 @@ ALTER TABLE temp_create_visualisation_order ADD CONSTRAINT UQ_temp_create_visual
   
   
 --5) Crear el orden alfabético para cada esquema de la tabla temp_create_visualisation_order  
+--5.1 Obtener las sentencias a ejecutar
 select  
 'INSERT INTO TB_INTERNATIONAL_STRINGS (ID, VERSION) VALUES (GET_NEXT_SEQUENCE_VALUE(''I18NSTRS''), 0);  
 INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (GET_NEXT_SEQUENCE_VALUE(''L10NSTRS''), ''' || 'Orden alfabético' || ''', ''es'', GET_NEXT_SEQUENCE_VALUE(''I18NSTRS''), 0);
@@ -86,6 +82,10 @@ UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQU
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''I18NSTRS'';
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''ANNOTABLE_ARTEFACTS'';'
 from temp_create_visualisation_order cv;
+ 
+-- 5.2 Copiar el resultado como copia avanzada -> texto. Quizás haya que quitar algún caracter especial como el ¶ y la primera fila que es cabecera.
+ 
+-- 5.3 Ejecutar las sentencias anteriores.
   
 --6) Obtener el orden de los códigos asociados al esquema de conceptos para el campo ORDER1 de la tabla TB_M_CONCEPTS que es donde siempre debe ir el orden alfabético.
 DO $$
@@ -109,5 +109,8 @@ $$;
  and cm.order1 is null
  order by code asc
 
--- 7 borrar tabla temporal 
+-- 8 borrar tabla temporal 
 drop table temp_create_visualisation_order;
+
+-- 9 Seguir con la ordenación "custom"
+-- Si todo ha ido bien seguir con el script "02-20250618-script_lanzamiento_inicial_crea_custom_order.sql"

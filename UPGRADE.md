@@ -8,8 +8,8 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 8.4.1 a 8.4.2-SNAPSHOT
-* Esta versión tiene como dependencia complementos-apps en su versión 8.12.2-SNAPSHOT
+## 8.4.1 a 8.5.0
+* Esta versión tiene como dependencia complementos-apps en su versión 8.13.0
 * Cambios en statistic-sdmx-srm. Se añade script con actualización de longitud de campos sdmx
 
   ```shell

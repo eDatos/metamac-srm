@@ -264,8 +264,6 @@ Application ConceptsMetamac {
 			- @Variable variable nullable cascade="none" fetch="lazy" databaseColumn="VARIABLE_FK" <-> concepts;
 			"Quantity"
 			- @Quantity quantity nullable cascade="all" fetch="lazy" databaseColumn="QUANTITY_FK";
-			"Order"
-			Integer orderValue nullable;
 
 			Integer order1 nullable;
 			Integer order2 nullable;

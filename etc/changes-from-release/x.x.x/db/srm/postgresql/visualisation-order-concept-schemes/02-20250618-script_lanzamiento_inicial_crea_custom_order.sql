@@ -160,6 +160,14 @@ from temp_create_visualisation_custom_order cv;
  and cm.order_value is not null
  order by code asc
 
--- 7 borrar tabla temporal 
+--7 Asignar a todos los esquemas de conceptos el orden custom por defecto. Campo  DEFAULT_ORDER_VISUAL_FK de TB_M_CONCEPT_SCHEMES_VERSIONS
+update TB_M_CONCEPT_SCHEMES_VERSIONS s
+   set DEFAULT_ORDER_VISUAL_FK = v.id
+  from tb_m_concept_scheme_order_vis v
+ where v.concept_scheme_fk = s.tb_concept_schemes_versions
+   and  v.column_index = 2;
+
+
+-- 8 borrar tabla temporal 
 drop table temp_create_visualisation_custom_order;
 

@@ -47,6 +47,7 @@ import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMeta
 import org.siemac.metamac.srm.core.dsd.domain.DimensionOrder;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
 import org.siemac.metamac.srm.core.dsd.domain.MeasureDimensionPrecision;
+import org.siemac.metamac.srm.core.dsd.domain.shared.OrderVisualisations;
 import org.siemac.metamac.srm.core.dsd.serviceapi.utils.DataStructureDefinitionMetamacDoMocks;
 import org.siemac.metamac.srm.core.dsd.serviceapi.utils.DataStructureDefinitionsMetamacAsserts;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
@@ -1065,10 +1066,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdTimeDimensionByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
-                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
-                .distinctRoot()
-                .build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot().build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
 
@@ -1145,10 +1144,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdDimensionByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
-                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
-                .distinctRoot()
-                .build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot().build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
 
@@ -1342,10 +1339,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdAttributeByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
-                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
-                .distinctRoot()
-                .build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot().build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
 
@@ -1402,10 +1397,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdSpatialAttributeByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
-                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
-                .distinctRoot()
-                .build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot().build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
 
@@ -1460,10 +1453,8 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
     @Override
     @Test
     public void testFindConceptSchemesWithConceptsCanBeDsdTimeAttributeByCondition() throws Exception {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class)
-                .orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
-                .distinctRoot()
-                .build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(ConceptSchemeVersionMetamac.class).orderBy(ConceptSchemeVersionMetamacProperties.maintainableArtefact().urn())
+                .distinctRoot().build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         String dsdUrn = DSD_1_V2;
 
@@ -1547,16 +1538,18 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
             String dimensionUrn = DSD_6_V1_DIMENSION_1;
             List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(CodelistOrderVisualisation.class).orderBy(CodelistOrderVisualisationProperties.nameableArtefact().urn())
                     .build();
-            PagedResult<CodelistOrderVisualisation> result = dataStructureDefinitionMetamacService.findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(getServiceContextAdministrador(),
-                    conditions, pagingParameter, dimensionUrn);
+            OrderVisualisations result = dataStructureDefinitionMetamacService.findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(getServiceContextAdministrador(), conditions,
+                    pagingParameter, dimensionUrn);
 
             // Validate
-            assertEquals(1, result.getTotalRows());
+            assertEquals(1, result.getCodelistOrderVisualisation().size());
             int i = 0;
-            assertEquals(CODELIST_7_V1_ORDER_VISUALISATION_01_ALPHABETICAL, result.getValues().get(i).getNameableArtefact().getUrn());
-            assertEquals(CODELIST_7_V1, result.getValues().get(i).getCodelistVersion().getMaintainableArtefact().getUrn());
+            assertEquals(CODELIST_7_V1_ORDER_VISUALISATION_01_ALPHABETICAL, result.getCodelistOrderVisualisation().get(i).getNameableArtefact().getUrn());
+            assertEquals(CODELIST_7_V1, result.getCodelistOrderVisualisation().get(i).getCodelistVersion().getMaintainableArtefact().getUrn());
         }
     }
+
+    // TODO EDATOS-4957 TEST IGUAL PARA CONCEPT testFindOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition
 
     @Override
     @Test

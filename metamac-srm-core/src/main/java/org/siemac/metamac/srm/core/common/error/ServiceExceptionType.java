@@ -255,6 +255,8 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.concept_schemes.order_visualisation.delete_not_supported.belonged_to_concept_scheme_was_published");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CONCEPT_NOT_FOUND                                                     = create(
             "exception.srm.importation.tsv.error.code.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CONCEPTS                                             = create(
+            "exception.srm.importation.tsv.error.incorrect_number_concepts");
 
     // Notices
     public static final CommonServiceExceptionType IMPORT_TSV_JOB_ERROR                                                                        = create(

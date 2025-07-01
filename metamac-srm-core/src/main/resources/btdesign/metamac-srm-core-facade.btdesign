@@ -497,7 +497,7 @@ Application SrmFacadeCore {
     		MetamacCriteriaResult<@RelatedResourceDto> findCodelistsCanBeEnumeratedRepresentationForConceptByCondition(MetamacCriteria criteria, String conceptUrn, String variableUrn) throws MetamacException;
     		
     		"Updates parent of concept. parentUrn is null when concept is moved to first level. Concept is moved at the end of new level"
-			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
+			updateConceptParent(String conceptUrn, String newConceptParentUrn) throws MetamacException;
 			"Updates position of concept"
 			updateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException;
 			"Exports concept orders in tsv format"

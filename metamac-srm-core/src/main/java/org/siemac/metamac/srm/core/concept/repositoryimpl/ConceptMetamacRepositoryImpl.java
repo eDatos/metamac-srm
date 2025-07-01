@@ -937,6 +937,31 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     }
 
     @Override
+    public void reorderConceptsAddingOneConceptInMiddle(ConceptSchemeVersionMetamac conceptSchemeVersion, ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToAdd) {
+        String orderColumn = getOrderColumnName(orderColumnIndex);
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE TB_M_CONCEPTS set " + orderColumn + " = " + orderColumn + " + 1 ");
+        sb.append("WHERE TB_CONCEPTS in (");
+        sb.append("SELECT cb.ID ");
+        sb.append("FROM TB_CONCEPTS cb ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :conceptSchemeVersion ");
+        if (concept.getParent() == null) {
+            sb.append("AND cb.PARENT_FK is null");
+        } else {
+            sb.append("AND cb.PARENT_FK = :parent");
+        }
+        sb.append(") AND " + orderColumn + " >= :order");
+
+        Query queryUpdate = getEntityManager().createNativeQuery(sb.toString());
+        queryUpdate.setParameter("conceptSchemeVersion", conceptSchemeVersion.getId());
+        queryUpdate.setParameter("order", orderConceptToAdd);
+        if (concept.getParent() != null) {
+            queryUpdate.setParameter("parent", concept.getParent().getId());
+        }
+        queryUpdate.executeUpdate();
+    }
+
+    @Override
     public void reorderConceptsDeletingOneConcept(ConceptSchemeVersionMetamac conceptSchemeVersion, Concept parent, ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToDelete) {
         String orderColumn = getOrderColumnName(orderColumnIndex);
 
@@ -960,61 +985,6 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
             queryUpdate.setParameter("parent", parent.getId());
         }
         queryUpdate.executeUpdate();
-    }
-
-    @Override
-    public void shiftDownOrders(ConceptSchemeVersionMetamac version, Concept parent, Integer orderColumnIndex, Integer fromOrder, Integer toOrder) {
-
-        String orderColumn = getOrderColumnName(orderColumnIndex);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("UPDATE TB_M_CONCEPTS SET " + orderColumn + " = " + orderColumn + " + 1 ");
-        sb.append("WHERE TB_CONCEPTS IN (");
-        sb.append("SELECT cb.ID FROM TB_CONCEPTS cb WHERE cb.ITEM_SCHEME_VERSION_FK = :version ");
-        if (parent == null) {
-            sb.append("AND cb.PARENT_FK IS NULL ");
-        } else {
-            sb.append("AND cb.PARENT_FK = :parent ");
-        }
-        sb.append(") AND " + orderColumn + " >= :fromOrder ");
-        if (toOrder != null) {
-            sb.append("AND " + orderColumn + " < :toOrder ");
-        }
-
-        Query query = getEntityManager().createNativeQuery(sb.toString());
-        query.setParameter("version", version.getId());
-        query.setParameter("fromOrder", fromOrder);
-        if (toOrder != null)
-            query.setParameter("toOrder", toOrder);
-        if (parent != null)
-            query.setParameter("parent", parent.getId());
-
-        query.executeUpdate();
-
-    }
-
-    @Override
-    public void shiftUpOrders(ConceptSchemeVersionMetamac version, Concept parent, Integer orderColumnIndex, Integer fromOrder, Integer toOrder) {
-        StringBuilder sb = new StringBuilder();
-        String orderColumn = getOrderColumnName(orderColumnIndex);
-        sb.append("UPDATE TB_M_CONCEPTS SET " + orderColumn + " = " + orderColumn + " - 1 ");
-        sb.append("WHERE TB_CONCEPTS IN (");
-        sb.append("SELECT cb.ID FROM TB_CONCEPTS cb WHERE cb.ITEM_SCHEME_VERSION_FK = :version ");
-        if (parent == null) {
-            sb.append("AND cb.PARENT_FK IS NULL ");
-        } else {
-            sb.append("AND cb.PARENT_FK = :parent ");
-        }
-        sb.append(") AND " + orderColumn + " > :fromOrder AND " + orderColumn + " <= :toOrder ");
-
-        Query query = getEntityManager().createNativeQuery(sb.toString());
-        query.setParameter("version", version.getId());
-        query.setParameter("fromOrder", fromOrder);
-        query.setParameter("toOrder", toOrder);
-        if (parent != null)
-            query.setParameter("parent", parent.getId());
-
-        query.executeUpdate();
     }
 
     @Override

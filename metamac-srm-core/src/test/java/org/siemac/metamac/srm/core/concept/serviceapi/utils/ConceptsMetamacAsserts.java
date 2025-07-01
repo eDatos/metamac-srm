@@ -1,10 +1,14 @@
 package org.siemac.metamac.srm.core.concept.serviceapi.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacAsserts;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.Quantity;
@@ -12,11 +16,14 @@ import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.dto.QuantityDto;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
+import com.arte.statistic.sdmx.srm.core.code.serviceapi.utils.CodesAsserts;
 import com.arte.statistic.sdmx.srm.core.concept.serviceapi.utils.ConceptsAsserts;
+import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 
 public class ConceptsMetamacAsserts extends ConceptsAsserts {
 
@@ -267,4 +274,71 @@ public class ConceptsMetamacAsserts extends ConceptsAsserts {
         }
         assertEquals(expected.getNameableArtefact().getUrn(), actual.getNameableArtefact().getUrn());
     }
+
+    // ------------------------------------------------------------------------------------
+    // ORDER VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    public static void assertEqualsConceptSchemeOrderVisualisation(ConceptSchemeOrderVisualisation expected, ConceptSchemeOrderVisualisation actual) {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        // other artefacts
+        assertEqualsNameableArtefact(expected.getNameableArtefact(), actual.getNameableArtefact());
+    }
+
+    public static void assertEqualsConceptSchemeOrderVisualisation(ConceptSchemeOrderVisualisation expected, ConceptSchemeVisualisationDto actual) {
+        assertEqualsConceptSchemeOrderVisualisation(expected, actual, MapperEnum.DO2DTO);
+    }
+
+    public static void assertEqualsConceptSchemeOrderVisualisation(ConceptSchemeVisualisationDto expected, ConceptSchemeOrderVisualisation actual) {
+        assertEqualsConceptSchemeOrderVisualisation(actual, expected, MapperEnum.DTO2DO);
+    }
+
+    public static void assertEqualsConceptSchemeOrderVisualisationDto(ConceptSchemeVisualisationDto expected, ConceptSchemeVisualisationDto actual) {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        // other artefacts
+        CodesAsserts.assertEqualsNameableArtefactDto(expected, actual);
+    }
+
+    private static void assertEqualsConceptSchemeOrderVisualisation(ConceptSchemeOrderVisualisation entity, ConceptSchemeVisualisationDto dto, MapperEnum mapperEnum) {
+        if (MapperEnum.DO2DTO.equals(mapperEnum)) {
+            assertEquals(entity.getId(), dto.getId());
+
+            assertNotNull(entity.getUuid());
+            assertEquals(entity.getUuid(), dto.getUuid());
+
+            assertNotNull(entity.getCreatedBy());
+            assertEquals(entity.getCreatedBy(), dto.getCreatedBy());
+
+            assertNotNull(entity.getCreatedDate());
+            assertTrue(DateUtils.isSameInstant(entity.getCreatedDate().toDate(), dto.getCreatedDate()));
+
+            assertNotNull(entity.getLastUpdatedBy());
+            assertEquals(entity.getLastUpdatedBy(), dto.getLastUpdatedBy());
+
+            assertNotNull(entity.getLastUpdated());
+            assertTrue(DateUtils.isSameInstant(entity.getLastUpdated().toDate(), dto.getLastUpdated()));
+
+            assertNotNull(entity.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersionOptimisticLocking());
+        }
+
+        // other artefacts
+        assertEqualsNameableArtefact(entity.getNameableArtefact(), dto, mapperEnum);
+    }
+
+    public static void assertEqualsConceptSchemeOrderVisualisationResourceDto(ConceptSchemeOrderVisualisation entity, RelatedResourceDto dto, MapperEnum mapperEnum) {
+        assertEqualsNullability(entity, dto);
+        if (entity == null) {
+            return;
+        }
+        assertEquals(entity.getNameableArtefact().getUrn(), dto.getUrn());
+    }
+
 }

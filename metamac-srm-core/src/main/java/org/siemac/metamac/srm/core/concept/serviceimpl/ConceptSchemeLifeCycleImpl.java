@@ -127,8 +127,7 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
                 List<MetamacExceptionItem> exceptionsConceptScheme = new ArrayList<MetamacExceptionItem>();
                 // Metadata required
                 ValidationUtils.checkMetadataRequired(conceptSchemeVersion.getIsPartial(), ServiceExceptionParameters.ITEM_SCHEME_IS_PARTIAL, exceptionsConceptScheme);
-                ValidationUtils.checkMetadataRequired(conceptSchemeVersion.getDefaultOrderVisualisation(), ServiceExceptionParameters.CONCEPT_SCHEME_DEFAULT_ORDER_VISUALISATION,
-                        exceptionsConceptScheme);
+
                 // One concept at least
                 Long itemsCount = conceptRepository.countItems(conceptSchemeVersion.getId());
                 if (itemsCount == 0) {

@@ -157,7 +157,7 @@ Application ConceptsMetamac {
     		PagedResult<@CodelistVersionMetamac> findCodelistsCanBeEnumeratedRepresentationForConceptByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String conceptUrn, String variableUrn) throws MetamacException;
     		
     		"Updates parent of concept. parentUrn is null when concept is moved to first level. Concept is moved at the end of new level"
-			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
+			updateConceptParent(String conceptUrn, String newConceptParentUrn) throws MetamacException;
 			"Updates position of concept"
 			updateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException;			
 			
@@ -304,9 +304,8 @@ Application ConceptsMetamac {
 				checkConceptsWithRepresentationExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				
 				Integer getConceptMaximumOrderInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, Integer orderColumnIndex);
-				shiftUpOrders(@ConceptSchemeVersionMetamac version, @Concept parent, Integer orderColumnIndex, Integer fromOrder, Integer toOrder);
-				shiftDownOrders(@ConceptSchemeVersionMetamac version, @Concept parent, Integer orderColumnIndex, Integer fromOrder, Integer toOrder);
-				reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToDelete);	
+				reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToDelete);
+			    reorderConceptsAddingOneConceptInMiddle(@ConceptSchemeVersionMetamac codelistVersion, @ConceptMetamac code, Integer orderColumnIndex, Integer orderConceptToAdd);	
 				Integer getConceptAlphabeticPositionInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @Concept concept);
 				clearConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer orderColumnIndex);
 				copyConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer columnIndexSource, Integer columnIndexTarget);

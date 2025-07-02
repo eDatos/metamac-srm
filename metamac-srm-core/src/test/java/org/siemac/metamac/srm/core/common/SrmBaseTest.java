@@ -27,6 +27,7 @@ import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisuali
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.shared.CodeMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.SrmRoleEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
@@ -601,6 +602,16 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
 
     protected CategoryMetamacVisualisationResult getCategoryMetamacVisualisationResult(List<CategoryMetamacVisualisationResult> actuals, String codeUrn) {
         for (CategoryMetamacVisualisationResult actual : actuals) {
+            if (actual.getUrn().equals(codeUrn)) {
+                return actual;
+            }
+        }
+        fail("code not found");
+        return null;
+    }
+
+    protected ConceptMetamacVisualisationResult getConceptMetamacVisualisationResult(List<ConceptMetamacVisualisationResult> actuals, String codeUrn) {
+        for (ConceptMetamacVisualisationResult actual : actuals) {
             if (actual.getUrn().equals(codeUrn)) {
                 return actual;
             }

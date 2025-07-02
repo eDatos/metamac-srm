@@ -7,8 +7,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsInternationalStringDto;
+import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
 import static org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts.assertEqualsConceptDto;
 import static org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts.assertEqualsConceptSchemeMetamacDto;
+import static org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts.assertEqualsConceptSchemeOrderVisualisationDto;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,10 +36,12 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacDtoMocks;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
@@ -451,8 +455,8 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
 
         // Find by external publication date > X
         {
-            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(ConceptSchemeVersionMetamacCriteriaPropertyEnum.EXTERNAL_PUBLICATION_DATE.name(), new DateTime(2011, 04, 3, 1, 1, 1,
-                    1).toDate(), OperationType.GT));
+            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(ConceptSchemeVersionMetamacCriteriaPropertyEnum.EXTERNAL_PUBLICATION_DATE.name(),
+                    new DateTime(2011, 04, 3, 1, 1, 1, 1).toDate(), OperationType.GT));
 
             MetamacCriteriaResult<ConceptSchemeMetamacBasicDto> result = srmCoreServiceFacade.findConceptSchemesByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(5, result.getPaginatorResult().getTotalResults().intValue());
@@ -482,8 +486,8 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
 
         // Find by external publication date < X
         {
-            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(ConceptSchemeVersionMetamacCriteriaPropertyEnum.EXTERNAL_PUBLICATION_DATE.name(), new DateTime(2012, 01, 1, 1, 1, 1,
-                    1).toDate(), OperationType.LT));
+            metamacCriteria.setRestriction(new MetamacCriteriaPropertyRestriction(ConceptSchemeVersionMetamacCriteriaPropertyEnum.EXTERNAL_PUBLICATION_DATE.name(),
+                    new DateTime(2012, 01, 1, 1, 1, 1, 1).toDate(), OperationType.LT));
 
             MetamacCriteriaResult<ConceptSchemeMetamacBasicDto> result = srmCoreServiceFacade.findConceptSchemesByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(4, result.getPaginatorResult().getTotalResults().intValue());
@@ -1385,8 +1389,8 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
 
             // Restrictions
             MetamacCriteriaConjunctionRestriction conjunctionRestriction = new MetamacCriteriaConjunctionRestriction();
-            conjunctionRestriction.getRestrictions().add(
-                    new MetamacCriteriaPropertyRestriction(ConceptMetamacCriteriaPropertyEnum.NAME.name(), "Nombre conceptScheme-1-v2-concept-2-", OperationType.LIKE));
+            conjunctionRestriction.getRestrictions()
+                    .add(new MetamacCriteriaPropertyRestriction(ConceptMetamacCriteriaPropertyEnum.NAME.name(), "Nombre conceptScheme-1-v2-concept-2-", OperationType.LIKE));
             conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(ConceptMetamacCriteriaPropertyEnum.CODE.name(), "CONCEPT02", OperationType.LIKE));
             conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(ConceptMetamacCriteriaPropertyEnum.CONCEPT_SCHEME_URN.name(), CONCEPT_SCHEME_1_V2, OperationType.EQ));
             metamacCriteria.setRestriction(conjunctionRestriction);
@@ -1927,6 +1931,116 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
             assertEquals(CODELIST_8_V1, result.getResults().get(i++).getUrn());
             assertEquals(result.getPaginatorResult().getTotalResults().intValue(), i);
         }
+    }
+
+    // ------------------------------------------------------------------------------------
+    // CONCEPT SCHEME ORDER VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    @Test
+    public void testRetrieveConceptSchemeOrderVisualisationByUrn() throws Exception {
+        // Retrieve
+        String urn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL;
+        ConceptSchemeVisualisationDto conceptSchemeOrderVisualisation = srmCoreServiceFacade.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), urn);
+
+        // Validate
+        assertNotNull(conceptSchemeOrderVisualisation);
+        assertEquals(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL, conceptSchemeOrderVisualisation.getUrn());
+        assertEqualsInternationalStringDto(conceptSchemeOrderVisualisation.getName(), "es", "visualización - órdenes 1-2-1", "en", "order - visualisation 1-2-1");
+    }
+
+    @Test
+    public void testCreateConceptSchemeOrderVisualisation() throws Exception {
+
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        ConceptSchemeVisualisationDto conceptSchemeOrderVisualisation = ConceptsMetamacDtoMocks.mockConceptSchemeOrderVisualisationDto();
+        conceptSchemeOrderVisualisation.setConceptScheme(ConceptsMetamacDtoMocks.mockConceptSchemeRelatedResourceDto("CONCEPTSCHEME01", CONCEPT_SCHEME_1_V2));
+
+        // Create
+        ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationCreated = srmCoreServiceFacade.createConceptSchemeOrderVisualisation(ctx, conceptSchemeOrderVisualisation);
+        assertNotNull(conceptSchemeOrderVisualisationCreated.getUrn());
+    }
+
+    @Test
+    public void testUpdateConceptSchemeOrderVisualisation() throws Exception {
+        ConceptSchemeVisualisationDto conceptSchemeOrderVisualisation = srmCoreServiceFacade.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+        conceptSchemeOrderVisualisation.setName(MetamacMocks.mockInternationalStringDto());
+
+        // Update
+        ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationUpdated = srmCoreServiceFacade.updateConceptSchemeOrderVisualisation(getServiceContextAdministrador(),
+                conceptSchemeOrderVisualisation);
+
+        // Validate
+        assertEqualsConceptSchemeOrderVisualisationDto(conceptSchemeOrderVisualisation, conceptSchemeOrderVisualisationUpdated);
+    }
+
+    @Test
+    public void testDeleteConceptSchemeOrderVisualisation() throws Exception {
+
+        String urn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02;
+
+        srmCoreServiceFacade.deleteConceptSchemeOrderVisualisation(getServiceContextAdministrador(), urn);
+
+        // Retrieve deleted visualisation
+        try {
+            srmCoreServiceFacade.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), urn);
+            fail("visualisation deleted");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND, 1, new String[]{urn}, e.getExceptionItems().get(0));
+        }
+    }
+
+    @Test
+    public void testRetrieveConceptSchemeOrderVisualisationsByCodelist() throws Exception {
+        String conceptSchemetUrn = CONCEPT_SCHEME_1_V2;
+
+        List<ConceptSchemeVisualisationDto> visualisations = srmCoreServiceFacade.retrieveConceptSchemeOrderVisualisationsByConceptScheme(getServiceContextAdministrador(), conceptSchemetUrn);
+
+        assertEquals(3, visualisations.size());
+        assertContainsConceptSchemeOrderVisualisation(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL, visualisations);
+        assertContainsConceptSchemeOrderVisualisation(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02, visualisations);
+        assertContainsConceptSchemeOrderVisualisation(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03, visualisations);
+    }
+
+    @Test
+    public void testUpdateConceptInOrderVisualisation() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_1;
+        String visualisationUrn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02;
+
+        // Before
+        {
+            List<ConceptMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es", visualisationUrn);
+            assertEquals(8, codes.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+        }
+        // Update
+        srmCoreServiceFacade.updateConceptInOrderVisualisation(getServiceContextAdministrador(), conceptUrn, visualisationUrn, Integer.valueOf(2));
+        // After
+        {
+            List<ConceptMetamacVisualisationResult> codes = srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es", visualisationUrn);
+
+            assertEquals(8, codes.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(codes, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+        }
+    }
+
+    private void assertContainsConceptSchemeOrderVisualisation(String conceptSchemeOrderVisualisationUrnExpected, List<ConceptSchemeVisualisationDto> actuals) {
+        for (ConceptSchemeVisualisationDto actual : actuals) {
+            if (actual.getUrn().equals(conceptSchemeOrderVisualisationUrnExpected)) {
+                return;
+            }
+        }
+        fail("order visualisation for concept scheme not found");
     }
 
     @Override

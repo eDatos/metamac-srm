@@ -33,7 +33,6 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisationProperties;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacProperties;
-import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamacRepository;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -104,9 +103,6 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
 
     @Autowired
     private ConceptSchemeVersionMetamacRepository   conceptSchemeVersionMetamacRepository;
-
-    @Autowired
-    private CodelistVersionMetamacRepository        codelistVersionMetamacRepository;
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager                         entityManager;
@@ -609,6 +605,7 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
 
         DataStructureDefinitionVersionMetamac dsdToCopy = dataStructureDefinitionMetamacService.retrieveDataStructureDefinitionByUrn(getServiceContextAdministrador(), urnToCopy);
         {
+
             // Metamac Metadata
             assertEquals(dsdToCopy.getAutoOpen(), dataStructureDefinitionVersionNewArtefact.getAutoOpen());
             assertEquals(dsdToCopy.getShowNullValuesByDefault(), dataStructureDefinitionVersionNewArtefact.getShowNullValuesByDefault());
@@ -637,14 +634,24 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
                 assertEquals(measureDimensionPrecisionToCopy.getConcept().getNameableArtefact().getUrn(), measureDimensionPrecisionToNewVersion.getConcept().getNameableArtefact().getUrn());
                 assertEquals(measureDimensionPrecisionToCopy.getShowDecimalPrecision(), measureDimensionPrecisionToNewVersion.getShowDecimalPrecision());
             }
+
             // DimensionVisualisationInfo
             for (int i = 0; i < dsdToCopy.getDimensionVisualisationInfos().size(); i++) {
                 DimensionVisualisationInfo dimensionVisualizationInfoToCopy = dsdToCopy.getDimensionVisualisationInfos().get(i);
                 DimensionVisualisationInfo dimensionVisualizationInfoToNew = dataStructureDefinitionVersionNewArtefact.getDimensionVisualisationInfos().get(i);
                 assertEquals(dimensionVisualizationInfoToCopy.getDimension().getCode(), dimensionVisualizationInfoToNew.getDimension().getCode());
-                assertEquals(dimensionVisualizationInfoToCopy.getDisplayOrder().getNameableArtefact().getUrn(), dimensionVisualizationInfoToNew.getDisplayOrder().getNameableArtefact().getUrn());
-                assertEquals(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn(),
-                        dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+                if (dimensionVisualizationInfoToCopy.getDisplayOrder() != null) {
+                    assertEquals(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn(),
+                            dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+                    assertEquals(dimensionVisualizationInfoToCopy.getDisplayOrder().getNameableArtefact().getUrn(), dimensionVisualizationInfoToNew.getDisplayOrder().getNameableArtefact().getUrn());
+                }
+
+                if (dimensionVisualizationInfoToCopy.getDisplayConceptSchemeOrder() != null) {
+                    assertNull(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen());
+                    assertEquals(dimensionVisualizationInfoToCopy.getDisplayConceptSchemeOrder().getNameableArtefact().getUrn(),
+                            dimensionVisualizationInfoToNew.getDisplayConceptSchemeOrder().getNameableArtefact().getUrn());
+
+                }
             }
         }
     }
@@ -703,9 +710,19 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
                 DimensionVisualisationInfo dimensionVisualizationInfoToCopy = dsdToCopy.getDimensionVisualisationInfos().get(i);
                 DimensionVisualisationInfo dimensionVisualizationInfoToNew = dsdNewVersion.getDimensionVisualisationInfos().get(i);
                 assertEquals(dimensionVisualizationInfoToCopy.getDimension().getCode(), dimensionVisualizationInfoToNew.getDimension().getCode());
-                assertEquals(dimensionVisualizationInfoToCopy.getDisplayOrder().getNameableArtefact().getUrn(), dimensionVisualizationInfoToNew.getDisplayOrder().getNameableArtefact().getUrn());
-                assertEquals(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn(),
-                        dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+
+                if (dimensionVisualizationInfoToCopy.getDisplayOrder() != null) {
+                    assertEquals(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn(),
+                            dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+                    assertEquals(dimensionVisualizationInfoToCopy.getDisplayOrder().getNameableArtefact().getUrn(), dimensionVisualizationInfoToNew.getDisplayOrder().getNameableArtefact().getUrn());
+                }
+
+                if (dimensionVisualizationInfoToCopy.getDisplayConceptSchemeOrder() != null) {
+                    assertNull(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen());
+                    assertEquals(dimensionVisualizationInfoToCopy.getDisplayConceptSchemeOrder().getNameableArtefact().getUrn(),
+                            dimensionVisualizationInfoToNew.getDisplayConceptSchemeOrder().getNameableArtefact().getUrn());
+
+                }
             }
         }
     }
@@ -802,9 +819,20 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
                 DimensionVisualisationInfo dimensionVisualizationInfoToCopy = dsdToCopy.getDimensionVisualisationInfos().get(i);
                 DimensionVisualisationInfo dimensionVisualizationInfoToNew = dsdNewVersion.getDimensionVisualisationInfos().get(i);
                 assertTrue(dimensionVisualizationInfoToNew.getDimension().getUrn().contains(UrnConstants.URN_SDMX_TEMPORAL_SUFFIX));
-                assertEquals(dimensionVisualizationInfoToCopy.getHierarchyLevelsOpen().getNameableArtefact().getUrn(),
-                        dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
-                assertEquals(dimensionVisualizationInfoToCopy.getDisplayOrder().getNameableArtefact().getUrn(), dimensionVisualizationInfoToNew.getDisplayOrder().getNameableArtefact().getUrn());
+
+                if (dimensionVisualizationInfoToCopy.getDisplayOrder() != null) {
+                    assertEquals(dimensionVisualizationInfoToCopy.getHierarchyLevelsOpen().getNameableArtefact().getUrn(),
+                            dimensionVisualizationInfoToNew.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+                    assertEquals(dimensionVisualizationInfoToCopy.getDisplayOrder().getNameableArtefact().getUrn(), dimensionVisualizationInfoToNew.getDisplayOrder().getNameableArtefact().getUrn());
+                }
+
+                if (dimensionVisualizationInfoToCopy.getDisplayConceptSchemeOrder() != null) {
+                    assertNull(dimensionVisualizationInfoToNew.getHierarchyLevelsOpen());
+                    assertEquals(dimensionVisualizationInfoToCopy.getDisplayConceptSchemeOrder().getNameableArtefact().getUrn(),
+                            dimensionVisualizationInfoToNew.getDisplayConceptSchemeOrder().getNameableArtefact().getUrn());
+
+                }
+
             }
         }
     }
@@ -1548,8 +1576,6 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
             assertEquals(CODELIST_7_V1, result.getCodelistOrderVisualisation().get(i).getCodelistVersion().getMaintainableArtefact().getUrn());
         }
     }
-
-    // TODO EDATOS-4957 TEST IGUAL PARA CONCEPT testFindOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition
 
     @Override
     @Test

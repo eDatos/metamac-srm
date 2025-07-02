@@ -12,9 +12,11 @@ import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacDtoMocks;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacDtoMocks;
@@ -107,6 +109,24 @@ public class ConceptsDto2DoMapperTest extends SrmBaseTest {
             assertEquals(1, e.getExceptionItems().get(0).getMessageParameters().length);
             assertEquals(ServiceExceptionParameters.CONCEPT_LEGAL_ACTS, e.getExceptionItems().get(0).getMessageParameters()[0]);
         }
+    }
+
+    @Test
+    public void testConceptSchemeDtoToDoWithLoad() throws MetamacException {
+        ConceptSchemeMetamacDto dto = ConceptsMetamacDtoMocks.mockConceptSchemeDtoTransversalType(AGENCY_ROOT_1_V1_CODE, AGENCY_ROOT_1_V1);
+        dto.setUrn(CONCEPT_SCHEME_1_V2);
+        dto.setDefaultOrderVisualisation(ConceptsMetamacDtoMocks.mockConceptSchemeOrderVisualisationRelatedResourceDto("VISUALISATION_02", CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03));
+        dto.setVersionOptimisticLocking(1L);
+        ConceptSchemeVersionMetamac entity = conceptsDto2DoMapper.conceptSchemeDtoToDo(dto);
+        ConceptsMetamacAsserts.assertEqualsConceptScheme(dto, entity);
+    }
+
+    @Test
+    public void testConceptSchemeOrderVisualisationDtoToDo() throws MetamacException {
+        ConceptSchemeVisualisationDto dto = ConceptsMetamacDtoMocks.mockConceptSchemeOrderVisualisationDto();
+
+        ConceptSchemeOrderVisualisation entity = conceptsDto2DoMapper.conceptSchemeOrderVisualisationDtoToDo(dto);
+        ConceptsMetamacAsserts.assertEqualsConceptSchemeOrderVisualisation(dto, entity);
     }
 
     @Override

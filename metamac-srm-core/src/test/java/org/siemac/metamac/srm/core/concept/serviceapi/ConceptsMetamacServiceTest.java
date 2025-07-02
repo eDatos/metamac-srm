@@ -5631,16 +5631,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
     }
 
-    private ConceptMetamacVisualisationResult getConceptMetamacVisualisationResult(List<ConceptMetamacVisualisationResult> actuals, String codeUrn) {
-        for (ConceptMetamacVisualisationResult actual : actuals) {
-            if (actual.getUrn().equals(codeUrn)) {
-                return actual;
-            }
-        }
-        fail("code not found");
-        return null;
-    }
-
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmConceptsTest.xml";

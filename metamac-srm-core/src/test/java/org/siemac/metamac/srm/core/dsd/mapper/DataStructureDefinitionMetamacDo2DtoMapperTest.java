@@ -33,6 +33,7 @@ import com.arte.statistic.sdmx.srm.core.base.serviceapi.utils.BaseAsserts.Mapper
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.concept.domain.Concept;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
+import com.arte.statistic.sdmx.srm.core.structure.domain.MeasureDimension;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/srm/applicationContext-test.xml"})
@@ -82,8 +83,8 @@ public class DataStructureDefinitionMetamacDo2DtoMapperTest extends SrmBaseTest 
                 .addHeadingDimension(DataStructureDefinitionMetamacDoMocks.mockDimensionOrder(2, DataStructureDefinitionMetamacDoMocks.mockTimeDimension(concept01, retrieveAnnotationType_1())));
 
         ConceptSchemeVersion conceptScheme = conceptSchemeVersionMetamacRepository.findByUrn(CONCEPT_SCHEME_3_V1);
-        dataStructureDefinitionVersionMetamac.addStubDimension(DataStructureDefinitionMetamacDoMocks.mockDimensionOrder(1,
-                DataStructureDefinitionMetamacDoMocks.mockMeasureDimension(concept01, Arrays.asList(concept01, concept02), conceptScheme, retrieveAnnotationType_1())));
+        MeasureDimension measureDimension = DataStructureDefinitionMetamacDoMocks.mockMeasureDimension(concept01, Arrays.asList(concept01, concept02), conceptScheme, retrieveAnnotationType_1());
+        dataStructureDefinitionVersionMetamac.addStubDimension(DataStructureDefinitionMetamacDoMocks.mockDimensionOrder(1, measureDimension));
 
         ConceptType conceptType = conceptsService.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
         dataStructureDefinitionVersionMetamac.addShowDecimalsPrecision(DataStructureDefinitionMetamacDoMocks.mockMeasureDimensionPrecision(5,
@@ -92,7 +93,8 @@ public class DataStructureDefinitionMetamacDo2DtoMapperTest extends SrmBaseTest 
                 ConceptsMetamacDoMocks.mockConcept(conceptType, codelist, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1())));
 
         dataStructureDefinitionVersionMetamac.addDimensionVisualisationInfo(DataStructureDefinitionMetamacDoMocks
-                .mockDimensionVisualizationInfo(dataStructureDefinitionVersionMetamac.getStubDimensions().iterator().next().getDimension(), retrieveAnnotationType_1()));
+                .mockDimensionVisualizationInfo(dataStructureDefinitionVersionMetamac.getHeadingDimensions().iterator().next().getDimension(), retrieveAnnotationType_1()));
+        dataStructureDefinitionVersionMetamac.addDimensionVisualisationInfo(DataStructureDefinitionMetamacDoMocks.mockMeasureDimensionVisualizationInfo(measureDimension, retrieveAnnotationType_1()));
 
         DataStructureDefinitionMetamacDto dto = dataStructureDefinitionDo2DtoMapper.dataStructureDefinitionMetamacDoToDto(dataStructureDefinitionVersionMetamac);
         DataStructureDefinitionsMetamacAsserts.assertEqualsDataStructureDefinition(dto, dataStructureDefinitionVersionMetamac, MapperEnum.DO2DTO);

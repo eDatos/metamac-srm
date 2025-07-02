@@ -290,6 +290,13 @@ public class DataStructuresDo2RestMapperTest {
             assertEquals("openness05", dimensionVisualisation.getOpenness());
         }
 
+        {
+            DimensionVisualisation dimensionVisualisation = target.getDimensionVisualisations().getDimensionVisualisations().get(3);
+            assertEquals("dimension03", dimensionVisualisation.getDimension());
+            assertEquals("order03", dimensionVisualisation.getOrder());
+            assertNull(dimensionVisualisation.getOpenness());
+        }
+
         // others
         // replaceX no tested, because it is necessary a repository access
         // assertEquals("replaceTo", target.getReplaceToVersion());

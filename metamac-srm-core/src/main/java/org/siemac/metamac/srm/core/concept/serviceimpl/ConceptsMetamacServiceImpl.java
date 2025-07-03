@@ -227,9 +227,9 @@ public class ConceptsMetamacServiceImpl extends ConceptsMetamacServiceImplBase {
         conceptSchemeVersion = (ConceptSchemeVersionMetamac) conceptsService.createConceptScheme(ctx, conceptSchemeVersion, SrmConstants.VERSION_PATTERN_METAMAC);
 
         // Post create actions
-        conceptSchemeVersion = createConceptSchemeOrderVisualisationAlphabetical(ctx, conceptSchemeVersion); // Add alphabetical order
+        ConceptSchemeVersionMetamac conceptSchemeVersion1 = createConceptSchemeOrderVisualisationAlphabetical(ctx, conceptSchemeVersion); // Add alphabetical order
 
-        return getConceptSchemeVersionMetamacRepository().save(conceptSchemeVersion);
+        return getConceptSchemeVersionMetamacRepository().save(conceptSchemeVersion1);
 
     }
 

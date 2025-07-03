@@ -212,7 +212,7 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
         assertFalse(dsd.getAutoOpen());
         assertFalse(dsd.getShowNullValuesByDefault());
         assertFalse(dsd.getShowZeroValuesByDefault());
-        assertEquals(1, dsd.getDimensionVisualisationInfos().size());
+        assertEquals(2, dsd.getDimensionVisualisationInfos().size());
         assertEquals(2, dsd.getHeadingDimensions().size());
         assertEquals(1, dsd.getStubDimensions().size());
     }

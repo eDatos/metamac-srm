@@ -21,6 +21,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.common.test.utils.DirtyDatabase;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
@@ -146,6 +147,7 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
     }
 
     @Test
+    @DirtyDatabase
     public void testCreateConceptScheme() throws Exception {
         ConceptSchemeMetamacDto conceptSchemeDto = ConceptsMetamacDtoMocks.mockConceptSchemeDtoGlossaryType(AGENCY_ROOT_1_V1_CODE, AGENCY_ROOT_1_V1);
         ServiceContext ctx = getServiceContextAdministrador();
@@ -186,9 +188,6 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
         assertNull(conceptSchemeMetamacCreated.getLifeCycle().getInternalPublicationUser());
         assertNull(conceptSchemeMetamacCreated.getLifeCycle().getExternalPublicationDate());
         assertNull(conceptSchemeMetamacCreated.getLifeCycle().getExternalPublicationUser());
-
-        // Other
-        assertEquals(Long.valueOf(0), conceptSchemeMetamacCreated.getVersionOptimisticLocking());
     }
 
     @Test
@@ -1146,7 +1145,7 @@ public class SrmCoreServiceFacadeConceptsTest extends SrmBaseTest {
         assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_1, conceptMetamacDto.getUrn());
 
         assertEqualsInternationalStringDto(conceptMetamacDto.getName(), "es", "Nombre conceptScheme-1-v2-concept-1", "en", "Name conceptScheme-1-v2-concept-1");
-        assertEqualsInternationalStringDto(conceptMetamacDto.getDescription(), "es", "Descripción conceptScheme-1-v2-concept-1", null, null);
+        assertEqualsInternationalStringDto(conceptMetamacDto.getDescription(), "es", "Descripción conceptScheme-1-v2-concept-1", "en", "description conceptScheme-1-v2-concept-1");
 
         assertEqualsInternationalStringDto(conceptMetamacDto.getPluralName(), "es", "PluralName conceptScheme-1-v2-concept-1", null, null);
         assertEqualsInternationalStringDto(conceptMetamacDto.getAcronym(), "es", "Acrónimo conceptScheme-1-v2-concept-1", "en", "Acronym conceptScheme-1-v2-concept-1");

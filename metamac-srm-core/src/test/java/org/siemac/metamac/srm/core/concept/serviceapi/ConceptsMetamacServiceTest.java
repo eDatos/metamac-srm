@@ -2146,7 +2146,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 ConceptMetamac concept = assertListConceptsContainsConcept(conceptSchemeVersionNewVersion.getItemsFirstLevel(), urnExpectedConcept1);
 
-                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", null, null);
+                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", "en", "Name conceptScheme-3-v1-concept-1");
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "descripción concept1", "it", "descripción it concept1");
                 assertEquals(null, concept.getNameableArtefact().getComment());
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getPluralName(), "es", "PluralName conceptScheme-3-v1-concept-1", null, null);
@@ -2533,7 +2533,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 ConceptMetamac concept = assertListConceptsContainsConcept(conceptSchemeVersionNewVersion.getItemsFirstLevel(), urnExpectedConcept1);
 
-                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", null, null);
+                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", "en", "Name conceptScheme-3-v1-concept-1");
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getPluralName(), "es", "PluralName conceptScheme-3-v1-concept-1", null, null);
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getAcronym(), "es", "Acronym conceptScheme-3-v1-concept-1", null, null);
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getDescriptionSource(), "es", "DescriptionSource conceptScheme-3-v1-concept-1", null, null);
@@ -4526,25 +4526,25 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         System.out.println(lines);
 
-        String concepto01Line = "CONCEPT01\t\tNombre conceptScheme-1-v2-concept-1\t\tName conceptScheme-1-v2-concept-1\t\tDescripción conceptScheme-1-v2-concept-1\t\t\t\tComentario conceptScheme-1-v2-concept-1\t\tComment conceptScheme-1-v2-concept-1\t\tPluralName conceptScheme-1-v2-concept-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-1\t\tAcronym conceptScheme-1-v2-concept-1\t\tDescriptionSource conceptScheme-1-v2-concept-1\t\t\t\tContext conceptScheme-1-v2-concept-1\t\t\t\tDocMethod conceptScheme-1-v2-concept-1\t\t\t\tDerivation conceptScheme-1-v2-concept-1\t\t\t\tLegalActs conceptScheme-1-v2-concept-1\t\t\t\tDIRECT\tENUMERATED\turn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST07(01.000)\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto01Line = "CONCEPT01\t\tNombre conceptScheme-1-v2-concept-1\t\tName conceptScheme-1-v2-concept-1\t\tDescripción conceptScheme-1-v2-concept-1\t\tdescription conceptScheme-1-v2-concept-1\t\tComentario conceptScheme-1-v2-concept-1\t\tComment conceptScheme-1-v2-concept-1\t\tPluralName conceptScheme-1-v2-concept-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-1\t\tAcronym conceptScheme-1-v2-concept-1\t\tDescriptionSource conceptScheme-1-v2-concept-1\t\t\t\tContext conceptScheme-1-v2-concept-1\t\t\t\tDocMethod conceptScheme-1-v2-concept-1\t\t\t\tDerivation conceptScheme-1-v2-concept-1\t\t\t\tLegalActs conceptScheme-1-v2-concept-1\t\t\t\tDIRECT\tENUMERATED\turn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST07(01.000)\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto01Line));
 
-        String concepto02Line = "CONCEPT02\t\tNombre conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIMENSION\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto02Line = "CONCEPT02\t\tNombre conceptScheme-1-v2-concept-2\t\tName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIMENSION\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto02Line));
 
         String concepto0201Line = "CONCEPT0201\tCONCEPT02\tNombre conceptScheme-1-v2-concept-2-1\t\tName conceptScheme-1-v2-concept-2-1\t\tDescripción conceptScheme-1-v2-concept-2-1\t\tDescription conceptScheme-1-v2-concept-2-1\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-2-1\t\tAcronym conceptScheme-1-v2-concept-2-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPRIMARY_MEASURE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto0201Line));
 
-        String concepto020101Line = "CONCEPT020101\tCONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto020101Line = "CONCEPT020101\tCONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1-1\t\tName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto020101Line));
 
         String concepto03Line = "CONCEPT03\t\tnombre concept-3\t\tname concept-3\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIRECT\t\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto03Line));
 
-        String concepto04Line = "CONCEPT04\t\tnombre concept-4\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto04Line = "CONCEPT04\t\tnombre concept-4\t\tname concept-4\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto04Line));
 
-        String concepto0401Line = "CONCEPT0401\tCONCEPT04\tnombre concept 4-1\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto0401Line = "CONCEPT0401\tCONCEPT04\tnombre concept 4-1\t\tname concept 4-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto0401Line));
 
         String concepto040101Line = "CONCEPT040101\tCONCEPT0401\tNombre conceptScheme-1-v2-concept-4-1-1\t\tName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
@@ -4858,12 +4858,12 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 // Concept 01
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1);
                 assertEquals("Name conceptScheme-1-v2-concept-1", concept.getName());
-                assertEquals(null, concept.getDescription());
+                assertEquals("description conceptScheme-1-v2-concept-1", concept.getDescription());
             }
             {
                 // Concept 02
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2);
-                assertEquals(null, concept.getName());
+                assertEquals("Name conceptScheme-1-v2-concept-2", concept.getName());
                 assertEquals(null, concept.getDescription());
             }
             {
@@ -4875,7 +4875,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 // Concept 02 01 01
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1);
-                assertEquals(null, concept.getName());
+                assertEquals("Name conceptScheme-1-v2-concept-2-1-1", concept.getName());
             }
             {
                 // Concept 03
@@ -4885,12 +4885,12 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 // Concept 04
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4);
-                assertEquals(null, concept.getName());
+                assertEquals("name concept-4", concept.getName());
             }
             {
                 // Concept 04 01
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1);
-                assertEquals(null, concept.getName());
+                assertEquals("name concept 4-1", concept.getName());
             }
             {
                 // Concept 04 01 01

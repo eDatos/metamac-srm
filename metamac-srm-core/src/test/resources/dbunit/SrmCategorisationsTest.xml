@@ -543,7 +543,6 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"
               TB_CONCEPTS="211"
-              ORDER_VALUE="0"
               
              />            
         
@@ -1056,7 +1055,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"
               TB_CONCEPTS="711"
-              ORDER_VALUE="0"
+              ORDER1="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 

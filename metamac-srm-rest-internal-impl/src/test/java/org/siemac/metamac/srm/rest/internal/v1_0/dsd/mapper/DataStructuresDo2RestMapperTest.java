@@ -290,7 +290,7 @@ public class DataStructuresDo2RestMapperTest {
             assertEquals("openness05", dimensionVisualisation.getOpenness());
         }
 
-        {
+        { // TODO EDATOS-4957 PROBAR
             DimensionVisualisation dimensionVisualisation = target.getDimensionVisualisations().getDimensionVisualisations().get(3);
             assertEquals("dimension03", dimensionVisualisation.getDimension());
             assertEquals("order03", dimensionVisualisation.getOrder());

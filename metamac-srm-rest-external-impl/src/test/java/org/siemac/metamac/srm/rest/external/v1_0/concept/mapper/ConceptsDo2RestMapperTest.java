@@ -210,9 +210,9 @@ public class ConceptsDo2RestMapperTest {
 
         ConceptSchemeVersionMetamac conceptScheme1 = mockConceptScheme(agencyID, conceptSchemeID, version);
         List<ItemResult> sources = new ArrayList<ItemResult>();
-        sources.add(mockConceptItemResult(ITEM_1_CODE, null));
-        sources.add(mockConceptItemResult(ITEM_2_CODE, null));
-        sources.add(mockConceptItemResult(ITEM_3_CODE, null));
+        sources.add(mockConceptItemResult(ITEM_1_CODE, null, 1));
+        sources.add(mockConceptItemResult(ITEM_2_CODE, null, 2));
+        sources.add(mockConceptItemResult(ITEM_3_CODE, null, 3));
 
         // Transform
         Concepts target = do2RestInternalMapper.toConcepts(sources, conceptScheme1, null);

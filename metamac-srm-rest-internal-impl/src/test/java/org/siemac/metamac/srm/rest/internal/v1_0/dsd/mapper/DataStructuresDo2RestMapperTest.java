@@ -270,7 +270,7 @@ public class DataStructuresDo2RestMapperTest {
         assertTrue(target.getDataStructureComponents().getAttributes().getAttributes().get(0) instanceof Attribute);
         assertEquals(AttributeQualifierType.SPATIAL, ((Attribute) target.getDataStructureComponents().getAttributes().getAttributes().get(0)).getType());
         // visualisation
-        assertEquals(3, target.getDimensionVisualisations().getTotal().intValue());
+        assertEquals(4, target.getDimensionVisualisations().getTotal().intValue());
         {
             DimensionVisualisation dimensionVisualisation = target.getDimensionVisualisations().getDimensionVisualisations().get(0);
             assertEquals("dimension01", dimensionVisualisation.getDimension());

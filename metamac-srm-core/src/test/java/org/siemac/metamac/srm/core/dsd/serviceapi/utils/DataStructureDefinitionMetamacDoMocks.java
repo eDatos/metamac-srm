@@ -57,7 +57,7 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension01", "order01", "openness01", true));
         target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension02", "order02", "openness02", false));
         target.addDimensionVisualisationInfo(mockDimensionVisualisationInfoFixedValues("dimension05", "order05", "openness05", false));
-        target.addDimensionVisualisationInfo(mockMeasureDimensionVisualisationInfoFixedValues("dimension03", "order03", null, false));
+        target.addDimensionVisualisationInfo(mockMeasureDimensionVisualisationInfoFixedValues("dimension03", "order03", false));
         return target;
     }
 
@@ -113,7 +113,7 @@ public class DataStructureDefinitionMetamacDoMocks extends DataStructureDefiniti
         return target;
     }
 
-    public static DimensionVisualisationInfo mockMeasureDimensionVisualisationInfoFixedValues(String dimensionId, String displayOrder, String hierarchyLevelsOpen, boolean displayCode) {
+    public static DimensionVisualisationInfo mockMeasureDimensionVisualisationInfoFixedValues(String dimensionId, String displayOrder, boolean displayCode) {
         DimensionVisualisationInfo target = new DimensionVisualisationInfo();
         target.setDimension(mockDimensionFixedValues(dimensionId, null));
         target.setDisplayConceptSchemeOrder(ConceptsMetamacDoMocks.mockConceptSchemeOrderVisualisationFixedValues(displayOrder));

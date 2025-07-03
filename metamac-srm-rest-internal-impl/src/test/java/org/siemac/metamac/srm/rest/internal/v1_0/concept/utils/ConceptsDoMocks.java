@@ -17,7 +17,10 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 public class ConceptsDoMocks {
 
     public static ConceptSchemeVersionMetamac mockConceptScheme(String agencyID, String resourceID, String version) {
-        return ConceptsMetamacDoMocks.mockConceptSchemeFixedValues(agencyID, resourceID, version);
+        ConceptSchemeVersionMetamac target = ConceptsMetamacDoMocks.mockConceptSchemeFixedValues(agencyID, resourceID, version);
+        addConfigurationsMetadatasToConceptScheme(target);
+
+        return target;
     }
 
     public static ConceptMetamac mockConcept(String resourceID, ConceptSchemeVersionMetamac conceptScheme, ConceptMetamac parent) {

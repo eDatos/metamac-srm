@@ -8,6 +8,12 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 8.4.1 a 8.5.0
+* Esta versión tiene como dependencia complementos-apps en su versión 8.13.0
+* Cambios en statistic-sdmx-srm. Se añade script con actualización de longitud de campos sdmx
+
+  ```shell
+    etc/changes-from-release/4.4.0/db/srm/postgresql/20250520_update_urn_field_length.sql   
 
 ## 8.3.3 a 8.4.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.

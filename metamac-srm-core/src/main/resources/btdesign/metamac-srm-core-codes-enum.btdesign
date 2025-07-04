@@ -37,8 +37,7 @@ Application EnumsMetamacCodeDomain {
 		    ORGANISATION_UNIT_SCHEME,
 		    CONCEPT_SCHEME,
 		    CONCEPT,
-		    DATA_STRUCTURE,
-		    NONE
+		    DATA_STRUCTURE
     	}
 	}
 }

@@ -61,3 +61,5 @@ from temp_create_dsd_visualisation_order cv;
 -- 7 borrar tabla temporal 
 drop table temp_create_dsd_visualisation_order;
 
+
+commit;

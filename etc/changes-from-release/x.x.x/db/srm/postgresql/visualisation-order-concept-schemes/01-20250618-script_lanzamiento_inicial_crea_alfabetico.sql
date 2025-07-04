@@ -114,3 +114,5 @@ drop table temp_create_visualisation_order;
 
 -- 9 Seguir con la ordenación "custom"
 -- Si todo ha ido bien seguir con el script "02-20250618-script_lanzamiento_inicial_crea_custom_order.sql"
+
+commit;

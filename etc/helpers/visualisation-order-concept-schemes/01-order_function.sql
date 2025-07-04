@@ -1,3 +1,6 @@
+-- --------------------------------------------------------------------------------------------------
+-- EDATOS-4957 - [srm] Añadir órdenes de visualización a los esquemas de conceptos.
+
 /*
 -- Para un conjunto específico de esquemas
 SELECT update_order_by_scheme_versions(ARRAY[61002, 61003, 61004]);
@@ -19,6 +22,7 @@ SELECT update_order2_by_scheme_versions(ARRAY(
   SELECT DISTINCT item_scheme_version_fk FROM tb_concepts
 ));
 */
+-- --------------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION update_order_by_scheme_versions(schemes bigint[])
 RETURNS void AS $$
 BEGIN

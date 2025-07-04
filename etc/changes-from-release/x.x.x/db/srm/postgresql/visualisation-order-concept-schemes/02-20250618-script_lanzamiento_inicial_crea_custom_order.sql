@@ -171,3 +171,5 @@ update TB_M_CONCEPT_SCHEMES_VERSIONS s
 -- 8 borrar tabla temporal 
 drop table temp_create_visualisation_custom_order;
 
+
+commit;

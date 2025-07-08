@@ -28,6 +28,7 @@ Application EnumsMetamacCodeDomain {
     	}
     	
     	enum RelatedResourceSrmTypeEnum {
+    		"@see com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum"
     		CATEGORY_SCHEME,
 		    CATEGORY,
 		    CODELIST,

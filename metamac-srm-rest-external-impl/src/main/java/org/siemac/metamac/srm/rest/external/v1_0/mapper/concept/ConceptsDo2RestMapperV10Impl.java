@@ -67,7 +67,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     private CodesDo2RestMapperV10 codesDo2RestMapper;
     
     @Override
-    public ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
+    public ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
         ConceptSchemes targets = new ConceptSchemes();
         targets.setKind(SrmRestConstants.KIND_CONCEPT_SCHEMES);
@@ -178,7 +178,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) throws MetamacException {
+    public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) {
 
         Concepts targets = new Concepts();
         targets.setKind(SrmRestConstants.KIND_CONCEPTS);
@@ -196,7 +196,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public Concept toConcept(ConceptMetamac source) throws MetamacException {
+    public Concept toConcept(ConceptMetamac source) {
         if (source == null) {
             return null;
         }

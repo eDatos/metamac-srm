@@ -47,7 +47,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
 public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements CategoriesDo2RestMapperV10 {
 
     @Override
-    public CategorySchemes toCategorySchemes(PagedResult<CategorySchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException{
+    public CategorySchemes toCategorySchemes(PagedResult<CategorySchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
         CategorySchemes targets = new CategorySchemes();
         targets.setKind(SrmRestConstants.KIND_CATEGORY_SCHEMES);
@@ -85,7 +85,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
     @Override
     public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
-            Set<String> fields) throws MetamacException {
+            Set<String> fields) {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -103,7 +103,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) throws MetamacException {
+    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -446,6 +446,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
+    @Override
     public CategoryElementResource toCategoryElementResource(CategoryElement source) {
         if (source == null) {
             return null;

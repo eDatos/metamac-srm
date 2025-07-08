@@ -409,7 +409,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return null;
     }
 
-    private Resource toResource(DataStructureDefinitionVersionMetamac source) throws MetamacException {
+    private Resource toResource(DataStructureDefinitionVersionMetamac source) {
         if (source == null) {
             return null;
         }

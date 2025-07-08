@@ -447,7 +447,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return true; // no additional conditions
     }
 
-    private OrganisationScheme toOrganisationSchemeCommon(OrganisationSchemeVersionMetamac source) throws MetamacException {
+    private OrganisationScheme toOrganisationSchemeCommon(OrganisationSchemeVersionMetamac source) {
         if (source == null) {
             return null;
         }
@@ -480,7 +480,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return target;
     }
 
-    private Organisation toOrganisationCommon(OrganisationMetamac source) throws MetamacException {
+    private Organisation toOrganisationCommon(OrganisationMetamac source) {
         if (source == null) {
             return null;
         }
@@ -590,7 +590,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return null;
     }
 
-    private Resource toResource(OrganisationSchemeVersionMetamac source) throws MetamacException {
+    private Resource toResource(OrganisationSchemeVersionMetamac source) {
         if (source == null) {
             return null;
         }
@@ -612,7 +612,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return target;
     }
 
-    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
+    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
         if (source == null) {
             return null;
         }

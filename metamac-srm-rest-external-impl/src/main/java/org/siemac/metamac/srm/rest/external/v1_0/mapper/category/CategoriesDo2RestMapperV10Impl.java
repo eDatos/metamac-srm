@@ -65,7 +65,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source) throws MetamacException {
+    public CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source) {
         if (source == null) {
             return null;
         }
@@ -121,7 +121,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Category toCategory(CategoryMetamac source, Set<String> fields) throws MetamacException {
+    public Category toCategory(CategoryMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
@@ -308,7 +308,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return null;
     }
 
-    private Resource toResource(CategorySchemeVersionMetamac source) throws MetamacException {
+    private Resource toResource(CategorySchemeVersionMetamac source) {
         if (source == null) {
             return null;
         }
@@ -318,7 +318,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
-    private CategoryResource toResource(CategoryMetamac source, Set<String> fields) throws MetamacException {
+    private CategoryResource toResource(CategoryMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
@@ -331,7 +331,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return target;
     }
 
-    private CategoryResource toResource(ItemResult source, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) throws MetamacException {
+    private CategoryResource toResource(ItemResult source, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
         if (source == null) {
             return null;
         }

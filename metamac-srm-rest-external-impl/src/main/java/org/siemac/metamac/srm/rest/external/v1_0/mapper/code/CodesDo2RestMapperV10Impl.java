@@ -134,7 +134,6 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setReplaceTo(toCodelistReplaceTo(source));
         target.setOrderConfigurations(toOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
         target.setOpennessConfigurations(toOpennessConfigurations(source.getOpennessVisualisations(), source.getDefaultOpennessVisualisation()));
-        
         target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST));
 
         return target;
@@ -178,7 +177,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Resource toResource(CodelistVersion source) throws MetamacException {
+    public Resource toResource(CodelistVersion source) {
         if (source == null) {
             return null;
         }
@@ -291,7 +290,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Code toCode(CodeMetamac source, Set<String> fields) throws MetamacException{
+    public Code toCode(CodeMetamac source, Set<String> fields) {
         if (source == null) {
             return null;
         }
@@ -374,7 +373,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setOrder(null);
     }
 
-    private CodeResource toCodeResource(ItemResult source, CodelistVersionMetamac codelistVersion, String variableID, Set<String> fields) throws MetamacException {
+    private CodeResource toCodeResource(ItemResult source, CodelistVersionMetamac codelistVersion, String variableID, Set<String> fields) {
         if (source == null) {
             return null;
         }
@@ -786,7 +785,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
-    private Resource toResource(org.siemac.metamac.srm.core.code.domain.CodelistFamily source) throws MetamacException {
+    private Resource toResource(org.siemac.metamac.srm.core.code.domain.CodelistFamily source) {
         if (source == null) {
             return null;
         }

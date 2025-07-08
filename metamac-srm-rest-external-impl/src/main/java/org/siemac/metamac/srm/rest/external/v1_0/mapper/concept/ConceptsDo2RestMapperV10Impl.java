@@ -85,7 +85,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source) throws MetamacException {
+    public ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source) {
         if (source == null) {
             return null;
         }
@@ -104,7 +104,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public Resource toResource(ConceptSchemeVersion source) throws MetamacException {
+    public Resource toResource(ConceptSchemeVersion source) {
         if (source == null) {
             return null;
         }
@@ -340,7 +340,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         return target;
     }
 
-    private ConceptResource toResource(ItemResult source, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) throws MetamacException {
+    private ConceptResource toResource(ItemResult source, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) {
         if (source == null) {
             return null;
         }

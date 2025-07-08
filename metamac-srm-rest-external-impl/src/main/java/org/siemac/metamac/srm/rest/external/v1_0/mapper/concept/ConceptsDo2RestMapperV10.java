@@ -25,7 +25,7 @@ public interface ConceptsDo2RestMapperV10 {
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sources, String agencyID, String resourceID, String query,
             String orderBy, Integer limit);
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source) throws MetamacException;
-    public Resource toResource(ConceptSchemeVersion source) throws MetamacException;
+    public Resource toResource(ConceptSchemeVersion source);
 
     public Concepts toConcepts(PagedResult<ConceptMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
     public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields);

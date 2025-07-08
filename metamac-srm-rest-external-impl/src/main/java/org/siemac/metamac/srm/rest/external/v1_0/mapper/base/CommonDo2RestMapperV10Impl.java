@@ -24,7 +24,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private ConceptsDo2RestMapperV10 conceptsDo2RestMapperV10;
 
     @Override
-    public Representation toRepresentation(com.arte.statistic.sdmx.srm.core.base.domain.Representation source) throws MetamacException {
+    public Representation toRepresentation(com.arte.statistic.sdmx.srm.core.base.domain.Representation source) {
         if (source == null) {
             return null;
         }

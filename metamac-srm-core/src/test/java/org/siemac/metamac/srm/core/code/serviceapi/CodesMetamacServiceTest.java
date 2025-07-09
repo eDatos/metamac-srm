@@ -2660,6 +2660,27 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     }
 
     @Test
+    public void testCreateCodeWithVariableElementAndShortName() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
+        code.setParent(null);
+        code.setVariableElement(codesService.retrieveVariableElementByUrn(ctx, VARIABLE_2_VARIABLE_ELEMENT_1));
+
+        String codelistUrn = CODELIST_1_V2;
+
+        // Create
+        CodeMetamac codeCreated = codesService.createCode(ctx, codelistUrn, code);
+        String urn = codeCreated.getNameableArtefact().getUrn();
+
+        // Validate (only metadata in SRM Metamac; the others are checked in sdmx project)
+        CodeMetamac codeRetrieved = codesService.retrieveCodeByUrn(ctx, urn);
+        assertNotNull(code.getShortName());
+        assertNotNull(codeRetrieved.getShortName());
+        assertEqualsCode(code, codeRetrieved);
+    }
+
+    @Test
     public void testCreateCodeExtended() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 

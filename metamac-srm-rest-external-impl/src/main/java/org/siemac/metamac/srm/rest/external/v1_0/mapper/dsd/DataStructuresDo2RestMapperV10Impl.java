@@ -86,7 +86,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
     private SrmConfiguration                    configurationService;
 
     @Override
-    public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
+    public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
         DataStructures targets = new DataStructures();
         targets.setKind(SrmRestConstants.KIND_DATA_STRUCTURES);

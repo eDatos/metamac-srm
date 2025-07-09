@@ -2767,22 +2767,19 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
     }
 
     @Test
-    public void testCreateCodeIncorrectMetadata() throws Exception {
+    public void testCreateCodeWithShortNameAndVariableElement() throws Exception {
         ServiceContext ctx = getServiceContextAdministrador();
 
         CodeMetamac code = CodesMetamacDoMocks.mockCode(retrieveAnnotationType_1());
-        code.setShortName(BaseDoMocks.mockInternationalString()); // must be null when variable element is not null
+        code.setShortName(BaseDoMocks.mockInternationalString());
         code.setVariableElement(codesService.retrieveVariableElementByUrn(ctx, VARIABLE_2_VARIABLE_ELEMENT_1));
         String codelistUrn = CODELIST_1_V2;
 
         // Create
-        try {
-            codesService.createCode(ctx, codelistUrn, code);
-            fail("incorrect metadata");
-        } catch (MetamacException e) {
-            assertEquals(1, e.getExceptionItems().size());
-            assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_UNEXPECTED, 1, new String[]{ServiceExceptionParameters.CODE_SHORT_NAME}, e.getExceptionItems().get(0));
-        }
+
+        CodeMetamac codeCreated = codesService.createCode(ctx, codelistUrn, code);
+        assertEqualsInternationalString(code.getShortName(), codeCreated.getShortName());
+
     }
 
     @Test
@@ -3316,9 +3313,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
         // Add variable element again to test short name was cleared
         codesService.updateCodeVariableElement(getServiceContextAdministrador(), code.getNameableArtefact().getUrn(), variableElementUrnNew);
-        code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), codeUrn);
-        assertEquals(variableElementUrnNew, code.getVariableElement().getIdentifiableArtefact().getUrn());
-        assertNull(code.getShortName());
+        CodeMetamac codeUpdated = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), codeUrn);
+        assertEquals(variableElementUrnNew, codeUpdated.getVariableElement().getIdentifiableArtefact().getUrn());
+        assertNotNull(codeUpdated.getShortName());
+        assertEqualsInternationalString(code.getShortName(), codeUpdated.getShortName());
     }
 
     @Override
@@ -3398,9 +3396,10 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         // Add variable element
         String variableElementUrnNew = VARIABLE_2_VARIABLE_ELEMENT_1;
         codesService.updateCodeVariableElement(getServiceContextAdministrador(), code.getNameableArtefact().getUrn(), variableElementUrnNew);
-        code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), codeUrn);
-        assertEquals(variableElementUrnNew, code.getVariableElement().getIdentifiableArtefact().getUrn());
-        assertNull(code.getShortName());
+        CodeMetamac codeUpdated = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), codeUrn);
+        assertEquals(variableElementUrnNew, codeUpdated.getVariableElement().getIdentifiableArtefact().getUrn());
+        assertNotNull(codeUpdated.getShortName());
+        assertEqualsInternationalString(code.getShortName(), codeUpdated.getShortName());
     }
 
     @Test
@@ -11361,19 +11360,18 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
                 "code\tparent\tis_extended\tvariable_element\tname#es\tname#pt\tname#en\tname#ca\tdescription#es\tdescription#pt\tdescription#en\tdescription#ca\tcomment#es\tcomment#pt\tcomment#en\tcomment#ca\tshort_name#es\tshort_name#pt\tshort_name#en\tshort_name#ca",
                 iterator.next());
         assertEquals(
-                "CODE01\t\ttrue\tVARIABLE_ELEMENT_02\tIsla de Tenerife\t\tName codelist-1-v2-code-1\t\tDescripción codelist-1-v2-code-1\t\t\t\tComentario codelist-1-v2-code-1\t\tComment codelist-1-v2-code-1\t\tFuerteventura\t\tShort name variableElement 2-2\t",
+                "CODE01\t\ttrue\tVARIABLE_ELEMENT_02\tIsla de Tenerife\t\tName codelist-1-v2-code-1\t\tDescripción codelist-1-v2-code-1\t\t\t\tComentario codelist-1-v2-code-1\t\tComment codelist-1-v2-code-1\t\t\t\t\t",
                 iterator.next());
         assertEquals("CODE02\t\ttrue\t\tNombre codelist-1-v2-code-2 Canaria, Gran\t\t\t\t\t\t\t\t\t\t\t\tnombre corto code2\t\tshort name code2\t", iterator.next());
         assertEquals(
-                "CODE0201\tCODE02\tfalse\tVARIABLE_ELEMENT_01\tcodelist-1-v2-code-2- Isla de La Gomera\t\tName codelist-1-v2-code-2-1\t\tdescripción CODELIST_1_V2_CODE_2_1\t\tdescription CODELIST_1_V2_CODE_2_1\t\tcomentarios CODELIST_1_V2_CODE_2_1\t\t\t\tEl Hierro\t\tshort name variableElement 2-1\t",
+                "CODE0201\tCODE02\tfalse\tVARIABLE_ELEMENT_01\tcodelist-1-v2-code-2- Isla de La Gomera\t\tName codelist-1-v2-code-2-1\t\tdescripción CODELIST_1_V2_CODE_2_1\t\tdescription CODELIST_1_V2_CODE_2_1\t\tcomentarios CODELIST_1_V2_CODE_2_1\t\t\t\t\t\t\t",
                 iterator.next());
         assertEquals("CODE020101\tCODE0201\tfalse\t\tSanta Cruz de La Palma codelist-1-v2-code-2-1-1\t\t\t\t\t\t\t\t\t\t\t\tnombre corto 2-1-1\t\t\t", iterator.next());
         assertEquals("CODE0202\tCODE02\t\t\tIsla de El Hierro\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", iterator.next());
-        assertEquals("CODE03\t\t\tVARIABLE_ELEMENT_03\tFuerteventura\t\tname code-3\t\t\t\t\t\t\t\t\t\tGran Canaria\t\t\t", iterator.next());
+        assertEquals("CODE03\t\t\tVARIABLE_ELEMENT_03\tFuerteventura\t\tname code-3\t\t\t\t\t\t\t\t\t\t\t\t\t", iterator.next());
         assertEquals("CODE04\t\t\t\tLanzarote\t\t\t\t\t\t\t\t\t\t\t\tLanzarote\t\tLanzarote en\t", iterator.next());
         assertEquals("CODE0401\tCODE04\t\t\tCanarias, Tenerife\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t", iterator.next());
-        assertEquals("CODE040101\tCODE0401\t\tVARIABLE_ELEMENT_01\tNombre codelist-1-v2-code-4-1-1\t\tName codelist-1-v2-code-4-1-1\t\t\t\t\t\t\t\t\t\tEl Hierro\t\tshort name variableElement 2-1\t",
-                iterator.next());
+        assertEquals("CODE040101\tCODE0401\t\tVARIABLE_ELEMENT_01\tNombre codelist-1-v2-code-4-1-1\t\tName codelist-1-v2-code-4-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t", iterator.next());
         bufferedReader.close();
     }
 

@@ -3356,12 +3356,12 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code2.getNameableArtefact().getUrn());
             assertEquals(variableElement1.getIdentifiableArtefact().getUrn(), code.getVariableElement().getIdentifiableArtefact().getUrn());
-            assertNull(code.getShortName()); // cleared
+            assertEqualsInternationalString(code.getShortName(), "es", "nombre corto code2", "en", "short name code2");
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code211.getNameableArtefact().getUrn());
             assertNull(code.getVariableElement());
-            assertNotNull(code.getShortName());
+            assertEqualsInternationalString(code.getShortName(), "es", "nombre corto 2-1-1", null, null);
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code22.getNameableArtefact().getUrn());
@@ -3376,7 +3376,7 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code4.getNameableArtefact().getUrn());
             assertEquals(variableElement3.getIdentifiableArtefact().getUrn(), code.getVariableElement().getIdentifiableArtefact().getUrn());
-            assertNull(code.getShortName()); // cleared
+            assertEqualsInternationalString(code.getShortName(), "es", "Lanzarote", "en", "Lanzarote en");
         }
         {
             CodeMetamac code = codesService.retrieveCodeByUrn(getServiceContextAdministrador(), code41.getNameableArtefact().getUrn());

@@ -106,8 +106,6 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     @Override
     public void updateCodesVariableElements(Map<Long, Long> variableElementsByCodes, Long codelistVersionId, Long variableId) throws MetamacException {
 
-        Map<Long, Long> shortNamesCandidateToDelete = executeSelectShortNamesByCodes(variableElementsByCodes.keySet());
-
         String sqlUpdateWithVariableElement = buildQueryUpdateCodeVariableElement(true);
         String sqlUpdateWithoutVariableElement = buildQueryUpdateCodeVariableElement(false);
 
@@ -131,13 +129,8 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             } else if (updateResult == 0) {
                 throw new MetamacException(ServiceExceptionType.UNKNOWN, "Code or variable element incorrect: code = " + codeId + "; variableElementId = " + variableElementId);
             }
-            if (variableElementId == null) {
-                // short name is not cleared
-                shortNamesCandidateToDelete.remove(codeId);
-            }
         }
-        // Delete short names
-        internationalStringRepository.deleteInternationalStringsEfficiently(shortNamesCandidateToDelete.values());
+
     }
 
     private String buildQueryUpdateCodeVariableElement(boolean variableElementNotNull) {

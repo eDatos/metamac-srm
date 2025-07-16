@@ -73,7 +73,7 @@ public class ConceptSchemeOrderTreeGrid extends BaseConceptsTreeGrid {
 
     @Override
     protected void onNodeContextClick(String nodeName, ConceptMetamacVisualisationResult itemMetamacResult) {
-        // TODO Auto-generated method stub
+        // Do nothing
 
     }
 }

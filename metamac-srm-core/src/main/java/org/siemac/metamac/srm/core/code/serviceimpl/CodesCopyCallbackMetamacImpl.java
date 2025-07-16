@@ -95,6 +95,11 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         copyCodeRestrictionVisualisations(source, target);
     }
 
+    @Override
+    public void copyItemWithoutUnmodifiedMetadata(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        this.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
+    }
+
     private void copyCodeOrderVisualisations(CodeMetamac source, CodeMetamac target) {
         for (int i = 1; i <= SrmConstants.CODELIST_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
             Integer order = SrmServiceUtils.getCodeOrder(source, i);

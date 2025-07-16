@@ -39,13 +39,13 @@ inner join tb_item_schemes_versions dimM on r.concept_scheme_fk = dimM.id
   where dimN.annotable_artefact_type = 'MEASURE_DIMENSION'
  and csOrderVis.column_index = 2
  and 0 = (select count(*) from tb_m_dim_vis_info info where info.dsd_version_fk = sv.id and info.display_concept_scheme_order_fk is not null)  
-order by n.urn
+order by n.urn;
 --5) Asociar el orden "custom" del esquema de conceptos asociado a la dimensión medida al orden de visualización por defecto en el dsd
 --5.1 Obtener las sentencias a ejecutar
 select  
 'INSERT INTO tb_m_dim_vis_info 
 (id, "uuid", "version", dim_component_fk, display_order_fk, hierarchy_levels_open_fk, dsd_version_fk, display_code, display_concept_scheme_order_fk)
-VALUES(GET_NEXT_SEQUENCE_VALUE(''M_DIM_VIS_INFO''),  uuid_generate_v4(), 0, ' || cv.dim_component_fk || ', null, null,' || cv.dsd_id || ', false,' || cv.display_concept_scheme_order_fk || ');
+VALUES(GET_NEXT_SEQUENCE_VALUE(''M_DIM_VIS_INFO''),  extensions.uuid_generate_v4(), 0, ' || cv.dim_component_fk || ', null, null,' || cv.dsd_id || ', false,' || cv.display_concept_scheme_order_fk || ');
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''M_DIM_VIS_INFO'';'
 from temp_create_dsd_visualisation_order cv;
   

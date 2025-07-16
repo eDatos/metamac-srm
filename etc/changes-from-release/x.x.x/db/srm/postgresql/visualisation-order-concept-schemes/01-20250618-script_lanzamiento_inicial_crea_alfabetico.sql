@@ -70,14 +70,14 @@ INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VE
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''L10NSTRS'';
 INSERT INTO TB_ANNOTABLE_ARTEFACTS	(ID, UUID, CREATED_DATE_TZ, CREATED_DATE, CREATED_BY, LAST_UPDATED_TZ, LAST_UPDATED, LAST_UPDATED_BY, VERSION, ANNOTABLE_ARTEFACT_TYPE, CODE, URI_PROVIDER, URN, URN_PROVIDER,	NAME_FK, VERSION_LOGIC)
 VALUES
-	(GET_NEXT_SEQUENCE_VALUE(''ANNOTABLE_ARTEFACTS''), uuid_generate_v4(),
+	(GET_NEXT_SEQUENCE_VALUE(''ANNOTABLE_ARTEFACTS''), extensions.uuid_generate_v4(),
 	 ''Europe/London'', current_timestamp, ''Metamac'', ''Europe/London'', current_timestamp, ''Metamac'',
  	1, ''NAMEABLE_ARTEFACT'', ''ALPHABETICAL'', null,''' || cv.order_urn || ''',''' || cv.order_urn || ''',
  	GET_NEXT_SEQUENCE_VALUE(''I18NSTRS''),
  	null);
 INSERT INTO tb_m_concept_scheme_order_vis 
 (id, update_date_tz, update_date, column_index, "uuid", created_date_tz, created_date, created_by, last_updated_tz, last_updated, last_updated_by, "version", nameable_artefact_fk, concept_scheme_fk)
-VALUES(GET_NEXT_SEQUENCE_VALUE(''M_CONCEPT_SCHEME_ORDER_VIS''), ''Europe/London'', current_timestamp, 1,  uuid_generate_v4(), ''Europe/London'', current_timestamp, ''Metamac'', ''Europe/London'' , current_timestamp, ''Metamac'', 0, GET_NEXT_SEQUENCE_VALUE(''ANNOTABLE_ARTEFACTS''),' || cv.concept_scheme_id || ');
+VALUES(GET_NEXT_SEQUENCE_VALUE(''M_CONCEPT_SCHEME_ORDER_VIS''), ''Europe/London'', current_timestamp, 1,  extensions.uuid_generate_v4(), ''Europe/London'', current_timestamp, ''Metamac'', ''Europe/London'' , current_timestamp, ''Metamac'', 0, GET_NEXT_SEQUENCE_VALUE(''ANNOTABLE_ARTEFACTS''),' || cv.concept_scheme_id || ');
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''M_CONCEPT_SCHEME_ORDER_VIS'';
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''I18NSTRS'';
 UPDATE TB_SEQUENCES SET SEQUENCE_NEXT_VALUE = SEQUENCE_NEXT_VALUE + 1 WHERE SEQUENCE_NAME = ''ANNOTABLE_ARTEFACTS'';'
@@ -107,7 +107,7 @@ $$;
  inner join tb_annotable_artefacts n on c.nameable_artefact_fk =  n.id
  where TB_CONCEPTS in (SELECT cb.ID FROM TB_CONCEPTS cb WHERE cb.ITEM_SCHEME_VERSION_FK in (select concept_scheme_id from temp_create_visualisation_order))
  and cm.order1 is null
- order by code asc
+ order by code asc;
 
 -- 8 borrar tabla temporal 
 drop table temp_create_visualisation_order;

@@ -82,6 +82,16 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
     public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
         super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
 
+        copyOrderOpennessAndRestrictions(sourceItem, sourceItemResult, targetItem);
+    }
+
+    @Override
+    public void copyItemWithoutUnmodifiedMetadata(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItemWithoutUnmodifiedMetadata(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
+        copyOrderOpennessAndRestrictions(sourceItem, sourceItemResult, targetItem);
+    }
+
+    private void copyOrderOpennessAndRestrictions(Item sourceItem, ItemResult sourceItemResult, Item targetItem) {
         CodeMetamac source = (CodeMetamac) sourceItem;
         CodeMetamac target = (CodeMetamac) targetItem;
 
@@ -93,11 +103,6 @@ public class CodesCopyCallbackMetamacImpl extends CodesCopyCallbackImpl {
         copyCodeOrderVisualisations(source, target);
         copyCodeOpennessVisualisations(source, target);
         copyCodeRestrictionVisualisations(source, target);
-    }
-
-    @Override
-    public void copyItemWithoutUnmodifiedMetadata(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
-        this.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
     }
 
     private void copyCodeOrderVisualisations(CodeMetamac source, CodeMetamac target) {

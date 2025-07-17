@@ -7,6 +7,7 @@ import org.siemac.metamac.rest.constants.RestConstants;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
 
     @Autowired
     private ItemSchemeVersionRepository itemSchemeVersionRepository;
+
+    @Autowired
+    protected SrmConfiguration            configurationService;
 
     protected void toItemScheme(ItemSchemeVersion source, SrmLifeCycleMetadata lifeCycleSource, org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemScheme target) {
 

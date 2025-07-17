@@ -50,6 +50,19 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
     public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
         super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
 
+        copyCategory(sourceItem, targetItem);
+    }
+
+    @Override
+    public void copyItemWithoutUnmodifiedMetadata(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItemWithoutUnmodifiedMetadata(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
+
+        copyCategory(sourceItem, targetItem);
+
+        // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from sourceItemResult
+    }
+
+    private void copyCategory(Item sourceItem, Item targetItem) {
         CategoryMetamac source = (CategoryMetamac) sourceItem;
         CategoryMetamac target = (CategoryMetamac) targetItem;
         target.setCategoryElement(source.getCategoryElement());

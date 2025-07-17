@@ -10,7 +10,7 @@
 
 ## 8.6.0 a 8.6.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
-  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.13.0/db]
+  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.6.0/db]
 
 ## 8.4.1 a 8.5.0
 * Esta versión tiene como dependencia complementos-apps en su versión 8.13.0

@@ -6,9 +6,10 @@
         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category1"/>
         <cdomain:name>
-            <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
             <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
+            <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category1/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category1</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category1</cdomain:urn>
@@ -28,9 +29,10 @@
         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2"/>
         <cdomain:name>
-            <cdomain:text xml:lang="en">name-category2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2 en Español</cdomain:text>
+            <cdomain:text xml:lang="en">name-category2 in English</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category2</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category2</cdomain:urn>
@@ -50,9 +52,10 @@
         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2.category2A</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2.category2A"/>
         <cdomain:name>
-            <cdomain:text xml:lang="en">name-category2A in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2A en Español</cdomain:text>
+            <cdomain:text xml:lang="en">name-category2A in English</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2A/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category2A</cdomain:id>
@@ -76,13 +79,14 @@
             <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme2/category1/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category1</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category1</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#categoryElement" href="http://data.istac.es/apis/structural-resources/v1.0/categoryelements/categoryElement-category1"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">shortName-categoryElement-category1 en Español</cdomain:text>
                 <cdomain:text xml:lang="en">shortName-categoryElement-category1 in English</cdomain:text>
+                <cdomain:text xml:lang="es">shortName-categoryElement-category1 en Español</cdomain:text>
             </cdomain:name>
             <sr:validFrom>2012-10-01T10:12:13.014+01:00</sr:validFrom>
             <sr:validTo>2013-10-01T10:12:13.014+01:00</sr:validTo>

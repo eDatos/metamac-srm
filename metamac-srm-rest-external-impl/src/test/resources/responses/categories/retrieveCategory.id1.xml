@@ -29,27 +29,28 @@
     <sr:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/item2.item1"/>
     <sr:parentLink kind="structuralResources#categories" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories"/>
     <sr:name>
-        <cdomain:text xml:lang="en">name-item1 in English</cdomain:text>
         <cdomain:text xml:lang="es">name-item1 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">name-item1 in English</cdomain:text>
     </sr:name>
     <sr:description>
         <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-item1 in English</cdomain:text>
     </sr:description>
+    <sr:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).item2</sr:parent>
     <sr:eniSchemaTypes total="2">
         <sr:eniSchemaType>
-            <cdomain:id>ID - item1-1</cdomain:id>
+            <cdomain:id>ID - item1-0</cdomain:id>
             <cdomain:name>
-                <cdomain:text xml:lang="es">desc-item1-1-3BDexBFUH1 en Español</cdomain:text>
-                <cdomain:text xml:lang="en">desc-item1-1-r2QPgT4VCD in English</cdomain:text>
+                <cdomain:text xml:lang="es">desc-item1-0-HPhR7faCKL en Español</cdomain:text>
+                <cdomain:text xml:lang="en">desc-item1-0-8FTSRGIFpJ in English</cdomain:text>
             </cdomain:name>
         </sr:eniSchemaType>
         <sr:eniSchemaType>
-            <cdomain:id>ID - item1-0</cdomain:id>
+            <cdomain:id>ID - item1-1</cdomain:id>
             <cdomain:name>
-                <cdomain:text xml:lang="es">desc-item1-0-IUGWUkVxu7 en Español</cdomain:text>
-                <cdomain:text xml:lang="en">desc-item1-0-ptzduMJli8 in English</cdomain:text>
+                <cdomain:text xml:lang="en">desc-item1-1-ulBdTB409d in English</cdomain:text>
+                <cdomain:text xml:lang="es">desc-item1-1-FRmN5rsYvB en Español</cdomain:text>
             </cdomain:name>
         </sr:eniSchemaType>
     </sr:eniSchemaTypes>

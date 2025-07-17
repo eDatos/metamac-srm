@@ -37,5 +37,6 @@ public interface SrmConfiguration extends SdmxSrmConfiguration {
     public String retrieveDsdTimeDimensionOrAttributeDefaultConceptIdUrn() throws MetamacException;
     public String retrieveDsdMeasureDimensionOrAttributeDefaultConceptIdUrn() throws MetamacException;
     public String retrieveCronExpressionForResendPublishedResourcesKafkaMessage() throws MetamacException;
+    public String retrieveSrmVisualizerUrl() throws MetamacException;
 
 }

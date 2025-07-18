@@ -35,6 +35,7 @@
         <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-item1 in English</cdomain:text>
     </sr:description>
+    <sr:visualizerHtmlLink>nullconcepts/concepts/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).item2</sr:parent>
     <sr:coreRepresentation>
         <sr:enumerationCodelist kind="structuralResources#codelist">
@@ -45,6 +46,7 @@
                 <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                 <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
             </cdomain:name>
+            <cdomain:visualizerHtmlLink>nullcodelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
         </sr:enumerationCodelist>
     </sr:coreRepresentation>
     <sr:pluralName>

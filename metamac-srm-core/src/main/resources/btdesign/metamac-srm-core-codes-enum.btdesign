@@ -26,5 +26,19 @@ Application EnumsMetamacCodeDomain {
     		STANDARDIZED,
     		NOT_STANDARDIZED
     	}
+    	
+    	enum RelatedResourceSrmTypeEnum {
+    		"@see com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum"
+    		CATEGORY_SCHEME,
+		    CATEGORY,
+		    CODELIST,
+		    CODELIST_FAMILIES,
+		    CODE,
+		    ORGANISATION_SCHEME,
+		    ORGANISATION_UNIT_SCHEME,
+		    CONCEPT_SCHEME,
+		    CONCEPT,
+		    DATA_STRUCTURE
+    	}
 	}
 }

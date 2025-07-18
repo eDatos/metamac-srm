@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sr:agencies xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"    xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" kind="structuralResources#agencies" total="4" selfLink="http://data.istac.es/apis/structural-resources/v1.0/agencyschemes/agency1/itemScheme1/01.000/agencies">
+<sr:agencies xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain" kind="structuralResources#agencies" total="4" selfLink="http://data.istac.es/apis/structural-resources/v1.0/agencyschemes/agency1/itemScheme1/01.000/agencies">
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation1</cdomain:id>
         <cdomain:nestedId>idAsMaintainerorganisation1</cdomain:nestedId>
@@ -9,6 +9,7 @@
             <cdomain:text xml:lang="en">name-organisation1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation1 en Español</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation1/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation2</cdomain:id>
@@ -19,6 +20,7 @@
             <cdomain:text xml:lang="en">name-organisation2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation2 en Español</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation2/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation2A</cdomain:id>
@@ -29,6 +31,7 @@
             <cdomain:text xml:lang="en">name-organisation2A in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation2A en Español</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation2A/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation2B</cdomain:id>
@@ -39,5 +42,6 @@
             <cdomain:text xml:lang="en">name-organisation2B in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation2B en Español</cdomain:text>
         </cdomain:name>
+        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation2B/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
 </sr:agencies>

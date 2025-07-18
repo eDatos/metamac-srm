@@ -24,7 +24,7 @@ public interface ConceptsDo2RestMapperV10 {
 
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sources, String agencyID, String resourceID, String query,
             String orderBy, Integer limit);
-    public org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source);
+    public org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source) throws MetamacException;
     public Resource toResource(ConceptSchemeVersion source);
 
     public Concepts toConcepts(PagedResult<ConceptMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Set<String> fields);
@@ -32,7 +32,7 @@ public interface ConceptsDo2RestMapperV10 {
     List<PlainTextResource> toPlainTextConcepts(Concepts source, List<String> languages, Set<String> fields, String format) throws MetamacException;
 
     public Concept toConcept(ConceptMetamac source);
-    public ItemResource toResource(com.arte.statistic.sdmx.srm.core.concept.domain.Concept source);
+    public ItemResource toResource(com.arte.statistic.sdmx.srm.core.concept.domain.Concept source) throws MetamacException;
     @SuppressWarnings("rawtypes")
     public RoleConcepts toRoleConcepts(Collection sources);
 

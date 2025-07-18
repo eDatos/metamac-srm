@@ -1,45 +1,49 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xmlversion="1.0"encoding="UTF-8"standalone="yes"?>
 <sr:categories xmlns:sr="http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"       xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" kind="structuralResources#categories" total="4" selfLink="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories">
-    <sr:category kind="structuralResources#category">
-        <cdomain:id>category1</cdomain:id>
-        <cdomain:nestedId>category1</cdomain:nestedId>
-        <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1</cdomain:urn>
-        <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category1"/>
-        <cdomain:name>
+	<sr:categorykind="structuralResources#category">
+		<cdomain:id>category1</cdomain:id>
+		<cdomain:nestedId>category1</cdomain:nestedId>
+		<cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category1</cdomain:urn>
+		<cdomain:selfLinkkind="structuralResources#category"href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category1"/>
+		<cdomain:name>
             <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
-        </cdomain:name>
-    </sr:category>
-    <sr:category kind="structuralResources#category">
-        <cdomain:id>category2</cdomain:id>
-        <cdomain:nestedId>category2</cdomain:nestedId>
-        <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</cdomain:urn>
-        <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2"/>
-        <cdomain:name>
+		</cdomain:name>
+		<cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category1/01.000/detail</cdomain:visualizerHtmlLink>
+	</sr:category>
+	<sr:categorykind="structuralResources#category">
+		<cdomain:id>category2</cdomain:id>
+		<cdomain:nestedId>category2</cdomain:nestedId>
+		<cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</cdomain:urn>
+		<cdomain:selfLinkkind="structuralResources#category"href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2"/>
+		<cdomain:name>
             <cdomain:text xml:lang="en">name-category2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2 en Español</cdomain:text>
-        </cdomain:name>
-    </sr:category>
-    <sr:category kind="structuralResources#category">
-        <cdomain:id>category2A</cdomain:id>
-        <cdomain:nestedId>category2.category2A</cdomain:nestedId>
-        <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2A</cdomain:urn>
-        <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2.category2A"/>
-        <cdomain:name>
+		</cdomain:name>
+		<cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2/01.000/detail</cdomain:visualizerHtmlLink>
+	</sr:category>
+	<sr:categorykind="structuralResources#category">
+		<cdomain:id>category2A</cdomain:id>
+		<cdomain:nestedId>category2.category2A</cdomain:nestedId>
+		<cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2A</cdomain:urn>
+		<cdomain:selfLinkkind="structuralResources#category"href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2.category2A"/>
+		<cdomain:name>
             <cdomain:text xml:lang="en">name-category2A in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2A en Español</cdomain:text>
-        </cdomain:name>
-        <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
-    </sr:category>
-    <sr:category kind="structuralResources#category">
-        <cdomain:id>category2B</cdomain:id>
-        <cdomain:nestedId>category2.category2B</cdomain:nestedId>
-        <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2B</cdomain:urn>
-        <cdomain:selfLink kind="structuralResources#category" href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2.category2B"/>
-        <cdomain:name>
+		</cdomain:name>
+		<cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2A/01.000/detail</cdomain:visualizerHtmlLink>
+		<sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
+	</sr:category>
+	<sr:categorykind="structuralResources#category">
+		<cdomain:id>category2B</cdomain:id>
+		<cdomain:nestedId>category2.category2B</cdomain:nestedId>
+		<cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2B</cdomain:urn>
+		<cdomain:selfLinkkind="structuralResources#category"href="http://data.istac.es/apis/structural-resources/v1.0/categoryschemes/agency1/itemScheme1/01.000/categories/category2.category2B"/>
+		<cdomain:name>
             <cdomain:text xml:lang="en">name-category2B in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category2B en Español</cdomain:text>
-        </cdomain:name>
-        <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
-    </sr:category>
+		</cdomain:name>
+		<cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2B/01.000/detail</cdomain:visualizerHtmlLink>
+		<sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
+	</sr:category>
 </sr:categories>

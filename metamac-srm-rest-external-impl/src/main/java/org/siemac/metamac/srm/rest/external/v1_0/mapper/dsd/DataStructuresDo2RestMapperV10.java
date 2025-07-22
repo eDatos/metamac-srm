@@ -1,10 +1,10 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.dsd;
 
+import java.util.Set;
+
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
-
-import java.util.Set;
 
 public interface DataStructuresDo2RestMapperV10 {
 

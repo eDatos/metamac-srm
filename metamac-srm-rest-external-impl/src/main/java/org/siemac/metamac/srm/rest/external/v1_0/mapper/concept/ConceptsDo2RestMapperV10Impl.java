@@ -48,6 +48,7 @@ import org.siemac.metamac.srm.core.concept.serviceimpl.utils.shared.QuantityUtil
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
@@ -57,13 +58,14 @@ import org.springframework.stereotype.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
+import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
 
 @Component
 public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements ConceptsDo2RestMapperV10 {
 
     @Autowired
     private CodesDo2RestMapperV10 codesDo2RestMapper;
-
+    
     @Override
     public ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
 
@@ -97,6 +99,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
 
         target.setType(toConceptSchemeTypeEnum(source.getType()));
         target.setStatisticalOperation(toResourceExternalItemStatisticalOperation(source.getRelatedOperation()));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME));
         return target;
     }
 
@@ -107,6 +110,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CONCEPT_SCHEME, toConceptSchemeSelfLink(source), target);
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME));
         return target;
     }
 
@@ -219,7 +223,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         target.setRelatedConcepts(toRelatedConcepts(source));
         target.setVariable(codesDo2RestMapper.toResource(source.getVariable()));
         target.setQuantity(toQuantity(source.getQuantity()));
-
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CONCEPT));
         return target;
     }
 
@@ -346,6 +350,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
             Map<String, String> sourcePluralName = ((ConceptMetamacResultExtensionPoint) source.getExtensionPoint()).getPluralName();
             target.setPluralName(toInternationalString(sourcePluralName));
         }
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(conceptSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CONCEPT));
         return target;
     }
 

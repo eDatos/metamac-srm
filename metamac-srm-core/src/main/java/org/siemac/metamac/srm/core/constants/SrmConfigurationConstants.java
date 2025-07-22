@@ -23,4 +23,7 @@ public class SrmConfigurationConstants extends ConfigurationConstants {
     public static final String VARIABLE_WORLD                                  = "metamac.srm.variables.variable_world.urn";
     public static final String VARIABLE_ELEMENT_WORLD                          = "metamac.srm.variables.variable_element_world.urn";
     public static final String CRON_EXPRESSION__RESEND_RESOURCES_KAFKA_MESSAGE = "metamac.srm.resend_resources_kafka_message.cron_expression";
+
+    // srm-visualizer
+    public static final String SRM_VISUALIZER_URL                              = "metamac.srm.srm-visualizer.url";
 }

@@ -36,6 +36,7 @@
         <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-item1 in English</cdomain:text>
     </sr:description>
+    <sr:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).item2</sr:parent>
     <sr:categoryElement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sr:CategoryElementResource" kind="structuralResources#categoryElement">
         <cdomain:id>categoryElement-item1</cdomain:id>
@@ -51,17 +52,17 @@
     </sr:categoryElement>
     <sr:eniSchemaTypes total="2">
         <sr:eniSchemaType>
-            <cdomain:id>ID - item1-1</cdomain:id>
+            <cdomain:id>ID - item1-0</cdomain:id>
             <cdomain:name>
-                <cdomain:text xml:lang="es">desc-item1-1-7IdF9j8yve en Español</cdomain:text>
-                <cdomain:text xml:lang="en">desc-item1-1-eRApRn0UVA in English</cdomain:text>
+                <cdomain:text xml:lang="es">desc-item1-0-HKFKWAFN5n en Español</cdomain:text>
+                <cdomain:text xml:lang="en">desc-item1-0-xYgag44KBq in English</cdomain:text>
             </cdomain:name>
         </sr:eniSchemaType>
         <sr:eniSchemaType>
-            <cdomain:id>ID - item1-0</cdomain:id>
+            <cdomain:id>ID - item1-1</cdomain:id>
             <cdomain:name>
-                <cdomain:text xml:lang="es">desc-item1-0-wmNC7OTyri en Español</cdomain:text>
-                <cdomain:text xml:lang="en">desc-item1-0-USLei76vD6 in English</cdomain:text>
+                <cdomain:text xml:lang="es">desc-item1-1-h3bkHJCnTY en Español</cdomain:text>
+                <cdomain:text xml:lang="en">desc-item1-1-i2699GC65v in English</cdomain:text>
             </cdomain:name>
         </sr:eniSchemaType>
     </sr:eniSchemaTypes>

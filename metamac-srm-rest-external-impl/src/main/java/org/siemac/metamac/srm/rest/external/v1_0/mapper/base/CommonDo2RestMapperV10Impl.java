@@ -1,5 +1,6 @@
 package org.siemac.metamac.srm.rest.external.v1_0.mapper.base;
 
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Representation;

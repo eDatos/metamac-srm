@@ -725,22 +725,5 @@ Application CodesMetamac {
 				@VariableElementOperation findVariableElementWithVariableElementAsTarget(String urn);
 			}
 		}
-		
-		Entity prueba {
-			databaseTable="TB_M_PRUEBA"
-			hint="idSequence=M_PRUEBA"
-			
-			"Code. It is a generated UUID, not semantic identifier"
-			String code not nullable;
-			
-			Repository PruebaRepository {
-				save;
-				delete;
-				findByQuery(String query, Map<String, Object> parameters, int maxResult);
-				findByQuery(String query, Map<String, Object> parameters);
-				findByCondition;
-				findByCondition(PagingParameter pagingParameter);
-			}
-		}
 	}
 }

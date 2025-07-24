@@ -30,6 +30,7 @@ public class InternationalStringUtils {
         InternationalString alphabeticalName = new InternationalString();
         alphabeticalName.addText(new LocalisedString("es", "Orden alfabético"));
         alphabeticalName.addText(new LocalisedString("en", "Alphabetical order"));
+        alphabeticalName.addText(new LocalisedString("ca", "Ordre alfabètic"));
         alphabeticalName.addText(new LocalisedString("pt", "Ordem alfabética"));
         return alphabeticalName;
     }

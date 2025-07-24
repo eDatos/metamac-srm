@@ -206,6 +206,7 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
 
                 ValidationUtils.checkMetadataRequired(conceptSchemeVersion.getDefaultOrderVisualisation(), ServiceExceptionParameters.CONCEPT_SCHEME_DEFAULT_ORDER_VISUALISATION,
                         exceptionsConceptScheme);
+                addOrUpdateExceptionItemByResourceUrnWhenExceptionsNonZero(exceptionsByResourceUrn, conceptSchemeUrn, exceptionsConceptScheme);
             }
 
             // Throw exception if there is any exception

@@ -101,10 +101,18 @@ public abstract class BaseConceptsTreeGrid extends BaseItemsTreeGrid {
                     for (int i = 0; i < siblings.length; i++) {
                         if (siblings[i] == droppedNode) {
                             pos = i;
+
                         }
                     }
+
                     if (pos >= 0 && pos < position) { // If moved node is before final position, the position must be updated
                         relativePosition--;
+                    }
+
+                    if (position == 0 && pos == 0 && relativePosition == 0) {
+                        // to avoid first item element can move to first scheme node element
+                        event.cancel();
+                        return;
                     }
 
                     String oldItemParent = droppedNode.getAttribute(ConceptDS.ITEM_PARENT_URN);

@@ -244,7 +244,8 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
 
     @Override
     public void exportDsd(String urn, ExportDetailEnum detail, ExportReferencesEnum references) {
-        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.DATA_STRUCTURE, detail, references), new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
+        dispatcher.execute(new ExportSDMXResourceAction(Arrays.asList(urn), RelatedResourceTypeEnum.DATA_STRUCTURE, detail, references),
+                new WaitingAsyncCallbackHandlingExportResult(this, dispatcher));
     }
 
     @Override
@@ -474,7 +475,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
             @Override
             public void onWaitSuccess(GetConceptSchemeResult result) {
                 final ConceptSchemeMetamacDto conceptSchemeMetamacDto = result.getConceptSchemeDto();
-                dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
+                dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale(), null),
                         new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(DsdGeneralTabPresenter.this) {
 
                             @Override

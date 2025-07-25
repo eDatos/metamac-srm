@@ -387,6 +387,9 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
             if (source.getHierarchyLevelsOpen() != null) {
                 target.setOpenness(source.getHierarchyLevelsOpen().getNameableArtefact().getCode());
             }
+            if (source.getDisplayConceptSchemeOrder() != null) {
+                target.setOrder(source.getDisplayConceptSchemeOrder().getNameableArtefact().getCode());
+            }
             target.setShowCode(source.getDisplayCode());
             targets.getDimensionVisualisations().add(target);
         }

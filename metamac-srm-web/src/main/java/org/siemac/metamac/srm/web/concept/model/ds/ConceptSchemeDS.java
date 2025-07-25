@@ -9,4 +9,5 @@ public class ConceptSchemeDS extends ItemSchemeDS {
     public static final String TYPE_VIEW         = "sch-type-view"; // Not mapped in DTO
     public static final String RELATED_OPERATION = "sch-operation";
     public static final String VARIABLE          = "sch-variable";
+    public static final String DEFAULT_ORDER     = "sch-def-order";
 }

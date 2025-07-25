@@ -217,6 +217,7 @@ public class SrmRestInternalUtils {
         Set<String> validFields = new HashSet<>();
         validFields.add(SrmRestConstants.FIELD_INCLUDE_OPENNES);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ORDER);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ORDER_CONFIGURATION);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_RENDERING_COLOR);

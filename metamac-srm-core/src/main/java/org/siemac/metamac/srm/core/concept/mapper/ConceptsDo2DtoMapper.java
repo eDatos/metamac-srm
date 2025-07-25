@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
@@ -31,4 +33,9 @@ public interface ConceptsDo2DtoMapper {
     // Concept type
     public ConceptTypeDto conceptTypeDoToDto(ConceptType source);
     public List<ConceptTypeDto> conceptTypeDoListToConceptTypeDtoList(List<ConceptType> sources);
+
+    // visualisations
+    public RelatedResourceDto conceptSchemeOrderVisualisationDoToRelatedResourceDto(ConceptSchemeOrderVisualisation source);
+    public List<ConceptSchemeVisualisationDto> conceptSchemeOrderVisualisationsDoToDto(List<ConceptSchemeOrderVisualisation> sources);
+    public ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDoToDto(ConceptSchemeOrderVisualisation source);
 }

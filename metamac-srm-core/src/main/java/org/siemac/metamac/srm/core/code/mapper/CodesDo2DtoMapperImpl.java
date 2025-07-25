@@ -33,7 +33,6 @@ import org.siemac.metamac.srm.core.code.dto.VariableFamilyDto;
 import org.siemac.metamac.srm.core.code.dto.VariableRelatedResourceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
@@ -445,7 +444,11 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
 
     @Override
     public RelatedResourceDto codelistOrderVisualisationDoToRelatedResourceDto(CodelistOrderVisualisation source) {
-        return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        RelatedResourceDto relatedResourceDto = source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        if (relatedResourceDto != null) {
+            relatedResourceDto.setType(RelatedResourceTypeEnum.CODELIST);
+        }
+        return relatedResourceDto;
     }
 
     @Override
@@ -550,12 +553,4 @@ public class CodesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Codes
     public RelatedResourceDto codelistRestrictionVisualisationDoToRelatedResourceDto(CodelistRestrictionVisualisation source) {
         return source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
     }
-
-    private RelatedResourceDto getRelatedResourceDto(NameableArtefact identifier) {
-        RelatedResourceDto target = new RelatedResourceDto();
-        do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(identifier, target);
-        target.setType(null);
-        return target;
-    }
-
 }

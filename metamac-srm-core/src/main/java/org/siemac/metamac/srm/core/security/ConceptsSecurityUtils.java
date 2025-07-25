@@ -4,6 +4,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
+import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.security.shared.SharedConceptsSecurityUtils;
 
 public class ConceptsSecurityUtils extends CommonSecurityUtils {
@@ -112,6 +113,20 @@ public class ConceptsSecurityUtils extends CommonSecurityUtils {
 
     public static void canEndConceptSchemeValidity(ServiceContext ctx, ConceptSchemeVersionMetamac conceptSchemeMetamac) throws MetamacException {
         if (!SharedConceptsSecurityUtils.canEndConceptSchemeValidity(getMetamacPrincipal(ctx), conceptSchemeMetamac.getType(), getOperationCode(conceptSchemeMetamac))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    // VISUALISATIONS
+
+    public static void canRetrieveOrFindConceptSchemeOrderVisualisation(ServiceContext ctx) throws MetamacException {
+        if (!SharedConceptsSecurityUtils.canRetrieveOrFindConceptSchemeOrderVisualisation(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canCrudConceptSchemeOrderVisualisation(ServiceContext ctx, ProcStatusEnum conceptSchemeProcStatus) throws MetamacException {
+        if (!SharedConceptsSecurityUtils.canCrudConceptSchemeOrderVisualisation(getMetamacPrincipal(ctx), conceptSchemeProcStatus)) {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
@@ -237,6 +252,18 @@ public class ConceptsSecurityUtils extends CommonSecurityUtils {
     //
     private static String getOperationCode(ConceptSchemeVersionMetamac conceptSchemeMetamac) {
         return conceptSchemeMetamac.getRelatedOperation() != null ? conceptSchemeMetamac.getRelatedOperation().getCode() : null;
+    }
+
+    public static void canExportConceptOrdersTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedConceptsSecurityUtils.canExportConceptSchemeOrdersTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canImportConceptSchemeOrderVisualisations(ServiceContext ctx, ProcStatusEnum conceptSchemeProcStatus) throws MetamacException {
+        if (!SharedConceptsSecurityUtils.canImportConceptSchemeOrderVisualisations(getMetamacPrincipal(ctx), conceptSchemeProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
     }
 
 }

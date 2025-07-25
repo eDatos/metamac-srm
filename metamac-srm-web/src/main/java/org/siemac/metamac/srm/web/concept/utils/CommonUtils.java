@@ -2,23 +2,27 @@ package org.siemac.metamac.srm.web.concept.utils;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.client.utils.FacetFormUtils;
+import org.siemac.metamac.srm.web.concept.model.record.ConceptSchemeVisualisationRecord;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
 
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.FacetValueTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class CommonUtils {
 
@@ -107,6 +111,39 @@ public class CommonUtils {
             }
         }
         return null;
+    }
+
+    // VISUALISATIONS
+
+    public static List<String> getUrnsFromSelectedConceptSchemeVisualisations(ListGridRecord[] records) {
+        List<String> urns = new ArrayList<String>();
+        for (ListGridRecord record : records) {
+            ConceptSchemeVisualisationRecord conceptSchemeRecord = (ConceptSchemeVisualisationRecord) record;
+            urns.add(conceptSchemeRecord.getUrn());
+        }
+        return urns;
+    }
+
+    public static List<String> getVisualisationCodesFromSelectedConceptSchemeVisualisations(ListGridRecord[] records) {
+        List<String> urns = new ArrayList<String>();
+        for (ListGridRecord record : records) {
+            ConceptSchemeVisualisationRecord conceptSchemeRecord = (ConceptSchemeVisualisationRecord) record;
+            urns.add(conceptSchemeRecord.getCode());
+        }
+        return urns;
+    }
+
+    public static String getConceptSchemeVisualisationName(ConceptSchemeVisualisationDto conceptSchemeVisualisationDto) {
+        return CommonWebUtils.getElementName(conceptSchemeVisualisationDto.getCode(), conceptSchemeVisualisationDto.getName());
+    }
+
+    public static LinkedHashMap<String, String> getConceptSchemeVisualisationsHashMap(List<ConceptSchemeVisualisationDto> visualisations) {
+        LinkedHashMap<String, String> hashMap = new LinkedHashMap<String, String>();
+        hashMap.put(StringUtils.EMPTY, StringUtils.EMPTY);
+        for (ConceptSchemeVisualisationDto visualisation : visualisations) {
+            hashMap.put(visualisation.getUrn(), getConceptSchemeVisualisationName(visualisation));
+        }
+        return hashMap;
     }
 
     /**

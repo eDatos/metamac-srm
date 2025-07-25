@@ -7,12 +7,14 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacDoMocks;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacDoMocks;
@@ -45,6 +47,7 @@ public class ConceptsDo2DtoMapperTest extends SrmBaseTest {
     @Test
     public void testConceptSchemeMetamacDoToBasicDto() throws MetamacException {
         ConceptSchemeVersionMetamac entity = ConceptsMetamacDoMocks.mockConceptSchemeFixedValues("agency01", "conceptScheme01", "01.000");
+        entity.setDefaultOrderVisualisation(mockConceptSchemeOrderVisualisationWithAllMetadata());
         ConceptSchemeMetamacBasicDto dto = conceptsDo2DtoMapper.conceptSchemeMetamacDoToBasicDto(entity);
         ConceptsMetamacAsserts.assertEqualsConceptScheme(entity, dto);
     }
@@ -77,6 +80,19 @@ public class ConceptsDo2DtoMapperTest extends SrmBaseTest {
         ConceptSchemeVersionMetamac conceptScheme = ConceptsMetamacDoMocks.mockConceptSchemeFixedValues("agency01", "conceptScheme01", "01.000");
         ConceptMetamac entity = ConceptsMetamacDoMocks.mockConceptFixedValues("concept01", conceptScheme, null);
         entity.setVariable(CodesMetamacDoMocks.mockVariableFixedValues("variable01"));
+        return entity;
+    }
+
+    @Test
+    public void testConceptSchemeOrderVisualisationDoToDto() {
+        ConceptSchemeOrderVisualisation entity = mockConceptSchemeOrderVisualisationWithAllMetadata();
+
+        ConceptSchemeVisualisationDto dto = conceptsDo2DtoMapper.conceptSchemeOrderVisualisationDoToDto(entity);
+        ConceptsMetamacAsserts.assertEqualsConceptSchemeOrderVisualisation(entity, dto);
+    }
+
+    private ConceptSchemeOrderVisualisation mockConceptSchemeOrderVisualisationWithAllMetadata() {
+        ConceptSchemeOrderVisualisation entity = ConceptsMetamacDoMocks.mockConceptSchemeOrderVisualisationFixedValues("order01");
         return entity;
     }
 

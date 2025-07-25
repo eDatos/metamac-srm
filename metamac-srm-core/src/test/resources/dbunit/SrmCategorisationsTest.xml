@@ -38,6 +38,7 @@
     <TB_SEQUENCES SEQUENCE_NAME="M_ORGANISATIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODELISTS_VERSIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODES" SEQUENCE_NEXT_VALUE="100000000" />
+    <TB_SEQUENCES SEQUENCE_NAME="M_CONCEPT_SCHEME_ORDER_VIS" SEQUENCE_NEXT_VALUE="100000000" />
     
     <!-- ************************************************************************************** -->
     <!-- ORGANISATION SCHEME 100 (ROOT ORGANISATION - MAINTAINER)                               -->
@@ -447,6 +448,8 @@
         RELATED_OPERATION_FK="[null]"
         PROC_STATUS="EXTERNALLY_PUBLISHED"
         
+        DEFAULT_ORDER_VISUAL_FK="[null]"
+        
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user1"
@@ -543,7 +546,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"
               TB_CONCEPTS="211"
-              ORDER_VALUE="0"
+              ORDER1="0"
               
              />            
         
@@ -961,6 +964,8 @@
         RELATED_OPERATION_FK="[null]"
         PROC_STATUS="DIFFUSION_VALIDATION"
         
+        DEFAULT_ORDER_VISUAL_FK="711"
+        
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user2"
@@ -1056,7 +1061,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"
               TB_CONCEPTS="711"
-              ORDER_VALUE="0"
+              ORDER1="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1082,7 +1087,49 @@
                 LAST_UPDATED_BY="user2"
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
-            />       
+            />    
+            
+               <!-- ALPHABETICAL -->
+                <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="711"
+                    CONCEPT_SCHEME_FK="71"
+                    NAMEABLE_ARTEFACT_FK="9997711"
+                    COLUMN_INDEX="1"
+                    
+                    UUID="concept-scheme-order-vis-711"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997711"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="ALPHABETICAL"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME02(01.000).ALPHABETICAL"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME02(01.000).ALPHABETICAL"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="201"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997711"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />          
     
     <!-- ************************************************************************************** -->
     <!-- CATEGORISATION 4                                                                       -->
@@ -1681,7 +1728,21 @@
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="17"
-    />          
+    />         
+    
+      <TB_INTERNATIONAL_STRINGS
+        ID="201"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="2011"
+        LABEL="Visualización 01"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="201"
+    />        
+     
      <!-- ************************************************************************************** -->
     <!-- TB_LIS_ANNOTATION_TYPES                                                             -->
     <!-- *************************************************************************************  -->  

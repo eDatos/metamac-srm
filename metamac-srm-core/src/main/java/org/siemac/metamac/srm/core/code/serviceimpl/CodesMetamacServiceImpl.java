@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -129,6 +128,9 @@ import org.siemac.metamac.srm.core.task.domain.ImportationCodeRestrictionsTsvHea
 import org.siemac.metamac.srm.core.task.domain.ImportationCodesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationVariableElementsTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
+import org.siemac.metamac.srm.core.util.AlphabeticalComparator.AlphabeticalByLevelComparator;
+import org.siemac.metamac.srm.core.util.AlphabeticalComparator.CodelistOrderIndexByLevelComparator;
+import org.siemac.metamac.srm.core.util.InternationalStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -3814,10 +3816,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         alphabeticalOrderVisualisation.setNameableArtefact(new NameableArtefact());
         alphabeticalOrderVisualisation.getNameableArtefact().setCode(SrmConstants.CODELIST_ORDER_VISUALISATION_ALPHABETICAL_CODE);
         // NameableArtefact
-        InternationalString name = new InternationalString();
-        name.addText(new LocalisedString("es", "Orden alfabético"));
-        name.addText(new LocalisedString("en", "Alphabetical order"));
-        name.addText(new LocalisedString("pt", "Ordem alfabética"));
+        InternationalString name = InternationalStringUtils.getAphabeticalInternationalString();
         alphabeticalOrderVisualisation.getNameableArtefact().setName(name);
         alphabeticalOrderVisualisation.setColumnIndex(SrmConstants.CODELIST_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX);
         setCodelistOrderVisualisationUrnUnique(codelistVersion, alphabeticalOrderVisualisation, true);
@@ -3829,34 +3828,34 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         return codelistVersion;
     }
 
-    private boolean isCodesSiblings(Item i1, Item i2) {
-        return (i1.getParent() == null && i2.getParent() == null) || (i1.getParent() != null && i2.getParent() != null && i1.getParent().getUuid().equals(i2.getParent().getUuid()));
-    }
-
     /**
      * Sorts all codes, ordered by semantic identifier
      */
     private void sortCodesInAlphabeticalOrder(List<Code> items, CodelistOrderVisualisation alphabeticalOrderVisualisation, boolean executeSave) {
-        sortCodes(items, alphabeticalOrderVisualisation, new AlphabeticalByLevelComparator(), executeSave);
+        if (CollectionUtils.isEmpty(items)) {
+            return;
+        }
+        List<Code> codesOrdered = new ArrayList<>(items);
+        Collections.sort(codesOrdered, new AlphabeticalByLevelComparator());
+        sortCodes(alphabeticalOrderVisualisation.getColumnIndex(), codesOrdered, executeSave);
     }
 
     /**
      * Sorts all codes, ordered by index. Put codes with null index at the end off level
      */
     private void sortCodesByOrder(List<Code> items, final CodelistOrderVisualisation orderVisualisation, boolean executeSave) {
-        sortCodes(items, orderVisualisation, new OrderIndexByLevelComparator(orderVisualisation), executeSave);
+        if (CollectionUtils.isEmpty(items)) {
+            return;
+        }
+        List<Code> codesOrdered = new ArrayList<>(items);
+        Collections.sort(codesOrdered, new CodelistOrderIndexByLevelComparator(orderVisualisation.getColumnIndex()));
+        sortCodes(orderVisualisation.getColumnIndex(), codesOrdered, executeSave);
     }
 
     /**
      * Sorts all codes by level, sorting codes by comparator
      */
-    private void sortCodes(List<Code> items, CodelistOrderVisualisation orderVisualisation, Comparator<Code> comparator, boolean executeSave) {
-        if (CollectionUtils.isEmpty(items)) {
-            return;
-        }
-
-        List<Code> codesOrdered = new ArrayList<>(items);
-        Collections.sort(codesOrdered, comparator);
+    private void sortCodes(int orderVisualisationIndex, List<Code> codesOrdered, boolean executeSave) {
 
         String previousParentUrn = null;
         int previousOrder = -1;
@@ -3868,7 +3867,7 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 previousParentUrn = code.getParent() != null ? code.getParent().getNameableArtefact().getUrn() : null;
             }
             int order = previousOrder == -1 ? 0 : previousOrder + 1;
-            SrmServiceUtils.setCodeOrder(code, orderVisualisation.getColumnIndex(), Integer.valueOf(order));
+            SrmServiceUtils.setCodeOrder(code, orderVisualisationIndex, Integer.valueOf(order));
             if (executeSave) {
                 // in some operations, save method must not be executed due to efficiency of inserts operations
                 getCodeMetamacRepository().save(code);
@@ -4519,64 +4518,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             throw new MetamacException(ServiceExceptionType.CODELIST_RESTRICTION_VISUALISATION_MAXIMUM_REACHED, codelistVersion.getMaintainableArtefact().getUrn());
         }
         return Integer.valueOf(index);
-    }
-
-    private class AlphabeticalByLevelComparator implements Comparator<Code> {
-
-        @Override
-        public int compare(Code i1, Code i2) {
-            if (isCodesSiblings(i1, i2)) {
-                return calculeOrderCodeSiblingsAlphabetical(i1, i2);
-            } else if (i1.getParent() == null) {
-                return 1;
-            } else if (i2.getParent() == null) {
-                return -1;
-            } else {
-                // return i1.getParent().getId().compareTo(i2.getParent().getId()); // not used because id can be null when save operation is executed when transaction is closed
-                return i1.getParent().getUuid().compareTo(i2.getParent().getUuid());
-            }
-        }
-    }
-
-    private class OrderIndexByLevelComparator implements Comparator<Code> {
-
-        private final int columnIndex;
-
-        public OrderIndexByLevelComparator(CodelistOrderVisualisation orderVisualisation) {
-            columnIndex = orderVisualisation.getColumnIndex();
-        }
-
-        @Override
-        public int compare(Code i1, Code i2) {
-            CodeMetamac c1 = (CodeMetamac) i1;
-            CodeMetamac c2 = (CodeMetamac) i2;
-            if (isCodesSiblings(i1, i2)) {
-                // The elements with order set as null will set to the end.
-                Integer c1Order = SrmServiceUtils.getCodeOrder(c1, columnIndex);
-                Integer c2Order = SrmServiceUtils.getCodeOrder(c2, columnIndex);
-                if (c1Order == null && c2Order == null) {
-                    return calculeOrderCodeSiblingsAlphabetical(i1, i2);
-                } else if (c1Order == null) {
-                    return 1;
-                } else if (c2Order == null) {
-                    return -1;
-                } else {
-                    return c1Order.compareTo(c2Order);
-                }
-            } else if (i1.getParent() == null) {
-                return 1;
-            } else if (i2.getParent() == null) {
-                return -1;
-            } else {
-                // return i1.getParent().getId().compareTo(i2.getParent().getId()); // not used because id can be null when save operation is executed when transaction is closed
-                return i1.getParent().getUuid().compareTo(i2.getParent().getUuid());
-            }
-        }
-
-    }
-
-    private int calculeOrderCodeSiblingsAlphabetical(Item i1, Item i2) {
-        return i1.getNameableArtefact().getCode().compareToIgnoreCase(i2.getNameableArtefact().getCode());
     }
 
     private List<CodelistOrderVisualisation> tsvHeadToOrderVisualisations(CodelistVersionMetamac codelistVersion, ImportationCodeOrdersTsvHeader header, List<MetamacExceptionItem> exceptionItems) {

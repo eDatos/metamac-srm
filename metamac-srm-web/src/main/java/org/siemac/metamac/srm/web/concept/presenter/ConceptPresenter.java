@@ -209,27 +209,29 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
     }
 
     @Override
-    public void retrieveConceptsByScheme(String conceptSchemeUrn) {
-        dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale()), new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(this) {
+    public void retrieveConceptsByScheme(final String conceptSchemeUrn) {
+        dispatcher.execute(new GetConceptSchemeAction(conceptSchemeUrn), new WaitingAsyncCallbackHandlingError<GetConceptSchemeResult>(this) {
 
             @Override
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
             }
             @Override
-            public void onWaitSuccess(GetConceptsBySchemeResult result) {
-                final List<ConceptMetamacVisualisationResult> itemVisualisationResults = result.getItemVisualisationResults();
-                dispatcher.execute(new GetConceptSchemeAction(ConceptPresenter.this.conceptSchemeUrn), new WaitingAsyncCallbackHandlingError<GetConceptSchemeResult>(ConceptPresenter.this) {
+            public void onWaitSuccess(GetConceptSchemeResult result) {
+                final ConceptSchemeMetamacDto conceptSchemeMetamacDto = result.getConceptSchemeDto();
+                String defaultOrderUrn = org.siemac.metamac.srm.web.code.utils.CommonUtils.getDefaultConceptSchemeOrderUrn(conceptSchemeMetamacDto);
+                dispatcher.execute(new GetConceptsBySchemeAction(conceptSchemeUrn, ApplicationEditionLanguages.getCurrentLocale(), defaultOrderUrn),
+                        new WaitingAsyncCallbackHandlingError<GetConceptsBySchemeResult>(ConceptPresenter.this) {
 
-                    @Override
-                    public void onWaitFailure(Throwable caught) {
-                        ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
-                    }
-                    @Override
-                    public void onWaitSuccess(GetConceptSchemeResult result) {
-                        getView().setConceptList(result.getConceptSchemeDto(), itemVisualisationResults);
-                    }
-                });
+                            @Override
+                            public void onWaitFailure(Throwable caught) {
+                                ShowMessageEvent.fireErrorMessage(ConceptPresenter.this, caught);
+                            }
+                            @Override
+                            public void onWaitSuccess(GetConceptsBySchemeResult result) {
+                                getView().setConceptList(conceptSchemeMetamacDto, result.getItemVisualisationResults());
+                            }
+                        });
             }
         });
     }
@@ -762,8 +764,8 @@ public class ConceptPresenter extends Presenter<ConceptPresenter.ConceptView, Co
     }
 
     @Override
-    public void updateConceptInOrder(final String conceptUrn, String conceptScheme, int newConceptIndex) {
-        dispatcher.execute(new UpdateConceptInOrderAction(conceptUrn, conceptScheme, newConceptIndex), new WaitingAsyncCallbackHandlingError<UpdateConceptInOrderResult>(this) {
+    public void updateConceptInOrder(final String conceptUrn, String codelistOrderUrn, int newConceptIndex) {
+        dispatcher.execute(new UpdateConceptInOrderAction(conceptUrn, codelistOrderUrn, newConceptIndex), new WaitingAsyncCallbackHandlingError<UpdateConceptInOrderResult>(this) {
 
             @Override
             public void onWaitFailure(Throwable caught) {

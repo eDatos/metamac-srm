@@ -6,6 +6,7 @@ import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.srm.core.base.utils.BaseDtoMocks;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptTypeDto;
 import org.siemac.metamac.srm.core.concept.dto.QuantityDto;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
@@ -25,6 +26,14 @@ public class ConceptsMetamacDtoMocks {
     // -----------------------------------------------------------------------------------
     // CONCEPT SCHEMES
     // -----------------------------------------------------------------------------------
+
+    public static ConceptSchemeMetamacDto mockConceptSchemeDtoTransversalType(String codeMaintainer, String urnMaintainer) {
+        ConceptSchemeMetamacDto conceptSchemeDto = new ConceptSchemeMetamacDto();
+        ConceptsDtoMocks.mockConceptSchemeDto(conceptSchemeDto);
+        conceptSchemeDto.setType(ConceptSchemeTypeEnum.TRANSVERSAL);
+        conceptSchemeDto.setMaintainer(OrganisationsMetamacDtoMocks.mockMaintainerDto(codeMaintainer, urnMaintainer));
+        return conceptSchemeDto;
+    }
 
     public static ConceptSchemeMetamacDto mockConceptSchemeDtoGlossaryType(String codeMaintainer, String urnMaintainer) {
         ConceptSchemeMetamacDto conceptSchemeDto = new ConceptSchemeMetamacDto();
@@ -141,5 +150,33 @@ public class ConceptsMetamacDtoMocks {
         en.setLocale("es");
         conceptTypeDto.getDescription().addText(es);
         return conceptTypeDto;
+    }
+
+    // -----------------------------------------------------------------------------------
+    // ORDER VISUALISATIONS
+    // -----------------------------------------------------------------------------------
+    public static ConceptSchemeVisualisationDto mockConceptSchemeOrderVisualisationDto() {
+        ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto = new ConceptSchemeVisualisationDto();
+        conceptSchemeOrderVisualisationDto.setCode("concept-" + MetamacMocks.mockString(10));
+        conceptSchemeOrderVisualisationDto.setName(MetamacMocks.mockInternationalStringDto());
+        return conceptSchemeOrderVisualisationDto;
+    }
+
+    public static RelatedResourceDto mockConceptSchemeOrderVisualisationRelatedResourceDto(String concept, String urn) {
+        RelatedResourceDto relatedResourceDto = new RelatedResourceDto();
+        relatedResourceDto.setCode(concept);
+        relatedResourceDto.setUrn(urn);
+        relatedResourceDto.setUrnProvider(urn);
+        relatedResourceDto.setType(null);
+        return relatedResourceDto;
+    }
+
+    public static RelatedResourceDto mockConceptSchemeRelatedResourceDto(String concept, String urn) {
+        RelatedResourceDto relatedResourceDto = new RelatedResourceDto();
+        relatedResourceDto.setCode(concept);
+        relatedResourceDto.setUrn(urn);
+        relatedResourceDto.setUrnProvider(urn);
+        relatedResourceDto.setType(RelatedResourceTypeEnum.CONCEPT_SCHEME);
+        return relatedResourceDto;
     }
 }

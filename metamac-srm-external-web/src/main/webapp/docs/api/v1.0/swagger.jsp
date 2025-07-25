@@ -1445,6 +1445,12 @@
                 {"$ref":"#/components/parameters/conceptQueryParam"},
                 {"$ref":"#/components/parameters/conceptOrderByParam"},
               {
+                  "name":"orderConfiguration",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1_0.conceptschemes.agencyID.resourceID.version.concepts.get.parameters.8.description']}"
+              },
+              {
                   "name":"fields",
                   "in":"query",
                   "type":"string",

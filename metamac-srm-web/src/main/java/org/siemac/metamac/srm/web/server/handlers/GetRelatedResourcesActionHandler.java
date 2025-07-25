@@ -13,11 +13,11 @@ import org.siemac.metamac.srm.web.shared.criteria.CategorySchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CategoryWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistOpennessLevelVisualisationWebCriteria;
-import org.siemac.metamac.srm.web.shared.criteria.CodelistOrderVisualisationWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.CodelistWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptSchemeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ConceptWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.ItemWebCriteria;
+import org.siemac.metamac.srm.web.shared.criteria.OrderVisualisationWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VersionableResourceWebCriteria;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
@@ -189,10 +189,10 @@ public class GetRelatedResourcesActionHandler extends SecurityActionHandler<GetR
                     break;
                 }
                 case CODELIST_ORDER_FOR_DSD_DIMENSION: {
-                    CodelistOrderVisualisationWebCriteria codelistOrderVisualisationWebCriteria = (CodelistOrderVisualisationWebCriteria) action.getCriteria();
+                    OrderVisualisationWebCriteria orderVisualisationWebCriteria = (OrderVisualisationWebCriteria) action.getCriteria();
                     // no criteria
                     result = srmCoreServiceFacade.findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria,
-                            codelistOrderVisualisationWebCriteria.getDsdDimensionUrn());
+                            orderVisualisationWebCriteria.getDsdDimensionUrn());
                     break;
                 }
                 case CODELIST_OPENNESS_LEVEL_FOR_DSD_DIMENSION: {

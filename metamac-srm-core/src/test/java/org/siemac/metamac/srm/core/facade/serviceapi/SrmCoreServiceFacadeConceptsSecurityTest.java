@@ -654,7 +654,7 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testPublishInternallyConceptScheme() throws Exception {
-        srmCoreServiceFacade.publishConceptSchemeInternally(getServiceContextJefeNormalizacion(), CONCEPT_SCHEME_11_V1, Boolean.FALSE);
+        srmCoreServiceFacade.publishConceptSchemeInternally(getServiceContextJefeNormalizacion(), CONCEPT_SCHEME_6_V1, Boolean.FALSE);
     }
 
     @Test

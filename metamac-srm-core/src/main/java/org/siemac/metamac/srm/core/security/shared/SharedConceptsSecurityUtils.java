@@ -54,9 +54,8 @@ public class SharedConceptsSecurityUtils extends SharedItemsSecurityUtils {
         if (isNonOperationConceptSchemeType(type)) {
             return canSendItemSchemeToProductionValidation(metamacPrincipal);
         } else if (isOperationConceptSchemeType(type)) {
-            return isAnySrmRole(metamacPrincipal)
-                    && isOperationAllowed(metamacPrincipal, operationCode, TECNICO_APOYO_PRODUCCION, TECNICO_APOYO_NORMALIZACION, TECNICO_PRODUCCION, TECNICO_NORMALIZACION, JEFE_PRODUCCION,
-                            JEFE_NORMALIZACION);
+            return isAnySrmRole(metamacPrincipal) && isOperationAllowed(metamacPrincipal, operationCode, TECNICO_APOYO_PRODUCCION, TECNICO_APOYO_NORMALIZACION, TECNICO_PRODUCCION,
+                    TECNICO_NORMALIZACION, JEFE_PRODUCCION, JEFE_NORMALIZACION);
         }
         return false;
     }
@@ -153,6 +152,26 @@ public class SharedConceptsSecurityUtils extends SharedItemsSecurityUtils {
             return isSrmRoleAllowed(metamacPrincipal, roles) && isOperationAllowed(metamacPrincipal, operationCode, roles);
         }
         return false;
+    }
+
+    public static boolean canRetrieveOrFindConceptSchemeOrderVisualisation(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
+    public static boolean canCrudConceptSchemeOrderVisualisation(MetamacPrincipal metamacPrincipal, ProcStatusEnum conceptSchemeProcStatus) {
+        return canUpdateItemScheme(metamacPrincipal, conceptSchemeProcStatus);
+    }
+
+    public static boolean canImportConceptSchemeOrderVisualisations(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canUpdateConcept(metamacPrincipal, procStatus);
+    }
+
+    public static boolean canUpdateConcept(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
+    }
+
+    public static boolean canExportConceptSchemeOrdersTsv(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
     }
 
     // Concepts
@@ -254,9 +273,8 @@ public class SharedConceptsSecurityUtils extends SharedItemsSecurityUtils {
             return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
         } else if (isOperationConceptSchemeType(type)) {
             if (ProcStatusEnum.DRAFT.equals(procStatus) || ProcStatusEnum.VALIDATION_REJECTED.equals(procStatus)) {
-                return isAnySrmRole(metamacPrincipal)
-                        && isOperationAllowed(metamacPrincipal, operationCode, TECNICO_APOYO_PRODUCCION, TECNICO_APOYO_NORMALIZACION, TECNICO_PRODUCCION, TECNICO_NORMALIZACION, JEFE_PRODUCCION,
-                                JEFE_NORMALIZACION);
+                return isAnySrmRole(metamacPrincipal) && isOperationAllowed(metamacPrincipal, operationCode, TECNICO_APOYO_PRODUCCION, TECNICO_APOYO_NORMALIZACION, TECNICO_PRODUCCION,
+                        TECNICO_NORMALIZACION, JEFE_PRODUCCION, JEFE_NORMALIZACION);
             } else if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(procStatus)) {
                 SrmRoleEnum[] roles = {TECNICO_PRODUCCION, TECNICO_NORMALIZACION, JEFE_NORMALIZACION, JEFE_PRODUCCION};
                 return isSrmRoleAllowed(metamacPrincipal, roles) && isOperationAllowed(metamacPrincipal, operationCode, roles);

@@ -319,7 +319,8 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
     public void testFindConceptsRetrieveAll() throws Exception {
 
         resetMocks();
-        Concepts concepts = getSrmRestInternalFacadeClientXml().findConcepts(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null);
+        String order = "ORDER1";
+        Concepts concepts = getSrmRestInternalFacadeClientXml().findConcepts(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, order, null);
 
         assertNotNull(concepts);
         assertEquals(SrmRestConstants.KIND_CONCEPTS, concepts.getKind());
@@ -328,7 +329,9 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
         // Verify with mockito
         ArgumentCaptor<String> conceptSchemeUrnArgument = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ConceptMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ConceptMetamacResultSelection.class);
-        verify(conceptsService).retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), conceptSchemeUrnArgument.capture(), itemResultSelectionArgument.capture());
+        ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
+        verify(conceptsService).retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), conceptSchemeUrnArgument.capture(), itemResultSelectionArgument.capture(),
+                orderArgument.capture());
         assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=agency1:itemScheme1(01.000)", conceptSchemeUrnArgument.getValue());
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
         assertEquals(false, itemResultSelectionArgument.getValue().isDescriptions());
@@ -600,7 +603,7 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
 
     private void testFindConcepts(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy) throws Exception {
         resetMocks();
-        Concepts concepts = getSrmRestInternalFacadeClientXml().findConcepts(agencyID, resourceID, version, query, orderBy, limit, offset, null);
+        Concepts concepts = getSrmRestInternalFacadeClientXml().findConcepts(agencyID, resourceID, version, query, orderBy, limit, offset, null, null);
 
         assertNotNull(concepts);
         assertEquals(SrmRestConstants.KIND_CONCEPTS, concepts.getKind());
@@ -658,7 +661,7 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
     }
 
     private void mockRetrieveConceptsByConceptScheme() throws MetamacException {
-        when(conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ConceptMetamacResultSelection.class)))
+        when(conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ConceptMetamacResultSelection.class), any(String.class)))
                 .thenAnswer(getRetrieveConceptSchemeUrnAnswer());
     }
 
@@ -668,10 +671,10 @@ public class SrmRestInternalFacadeV10ConceptsTest extends SrmRestInternalFacadeV
             @Override
             public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
                 // any
-                ItemResult concept1 = ConceptsDoMocks.mockConceptItemResult("concept1", null);
-                ItemResult concept2 = ConceptsDoMocks.mockConceptItemResult("concept2", null);
-                ItemResult concept2A = ConceptsDoMocks.mockConceptItemResult("concept2A", concept2);
-                ItemResult concept2B = ConceptsDoMocks.mockConceptItemResult("concept2B", concept2);
+                ItemResult concept1 = ConceptsDoMocks.mockConceptItemResult("concept1", null, 0);
+                ItemResult concept2 = ConceptsDoMocks.mockConceptItemResult("concept2", null, 1);
+                ItemResult concept2A = ConceptsDoMocks.mockConceptItemResult("concept2A", concept2, 0);
+                ItemResult concept2B = ConceptsDoMocks.mockConceptItemResult("concept2B", concept2, 1);
                 return Arrays.asList(concept1, concept2, concept2A, concept2B);
             };
         };

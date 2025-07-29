@@ -51,7 +51,7 @@ public abstract class EditCodelistVisualisationWindow extends CustomWindow {
 
         // Create form
         RequiredTextItem codeItem = new RequiredTextItem(CodelistVisualisationDS.CODE, getConstants().identifiableArtefactCode());
-        codeItem.setValidators(SemanticIdentifiersUtils.getCodelistVisualisationIdentifierCustomValidator());
+        codeItem.setValidators(SemanticIdentifiersUtils.getVisualisationIdentifierCustomValidator());
         codeItem.setWidth(FORM_ITEM_CUSTOM_WIDTH);
         codeItem.setShowIfCondition(new FormItemIfFunction() {
 

@@ -3,28 +3,40 @@ package org.siemac.metamac.srm.rest.internal.v1_0.concept.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacDoMocks;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
 public class ConceptsDoMocks {
 
     public static ConceptSchemeVersionMetamac mockConceptScheme(String agencyID, String resourceID, String version) {
-        return ConceptsMetamacDoMocks.mockConceptSchemeFixedValues(agencyID, resourceID, version);
+        ConceptSchemeVersionMetamac target = ConceptsMetamacDoMocks.mockConceptSchemeFixedValues(agencyID, resourceID, version);
+        addConfigurationsMetadatasToConceptScheme(target);
+
+        return target;
     }
 
     public static ConceptMetamac mockConcept(String resourceID, ConceptSchemeVersionMetamac conceptScheme, ConceptMetamac parent) {
         return ConceptsMetamacDoMocks.mockConceptFixedValues(resourceID, conceptScheme, parent);
     }
 
-    public static ItemResult mockConceptItemResult(String resourceID, ItemResult parent) {
+    public static ItemResult mockConceptItemResult(String resourceID, ItemResult parent, Integer order) {
         ItemResult itemResult = ConceptsMetamacDoMocks.mockConceptResultFixedValues(resourceID, parent);
         itemResult.setUriProvider(null);
         itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000)."));
         itemResult.setUrnProvider(itemResult.getUrn());
+
+        ConceptMetamacResultExtensionPoint extensionPoint = new ConceptMetamacResultExtensionPoint();
+        itemResult.setExtensionPoint(extensionPoint);
+        extensionPoint.setOrderConfiguration(order);
+
         return itemResult;
     }
 
@@ -94,5 +106,20 @@ public class ConceptsDoMocks {
         targets.add(mockConceptType("conceptType2"));
         targets.add(mockConceptType("conceptType3"));
         return targets;
+    }
+
+    private static void addConfigurationsMetadatasToConceptScheme(ConceptSchemeVersionMetamac target) {
+        target.addOrderVisualisation(mockConceptSchemeOrderVisualisation("order1"));
+        target.addOrderVisualisation(mockConceptSchemeOrderVisualisation("order2"));
+        target.addOrderVisualisation(mockConceptSchemeOrderVisualisation("order3"));
+        target.setDefaultOrderVisualisation(target.getOrderVisualisations().get(0));
+    }
+
+    private static ConceptSchemeOrderVisualisation mockConceptSchemeOrderVisualisation(String concept) {
+        ConceptSchemeOrderVisualisation target = new ConceptSchemeOrderVisualisation();
+        target.setNameableArtefact(new NameableArtefact());
+        target.getNameableArtefact().setCode(concept);
+        target.getNameableArtefact().setName(BaseDoMocks.mockInternationalStringFixedValues("order", concept));
+        return target;
     }
 }

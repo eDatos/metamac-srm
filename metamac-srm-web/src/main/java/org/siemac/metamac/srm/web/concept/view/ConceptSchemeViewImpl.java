@@ -9,6 +9,7 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.srm.core.concept.domain.shared.ConceptMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
@@ -32,12 +33,14 @@ import org.siemac.metamac.srm.web.concept.view.handlers.ConceptSchemeUiHandlers;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptSchemeCategorisationsPanel;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptSchemeConceptsPanel;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptSchemeMainFormLayout;
+import org.siemac.metamac.srm.web.concept.widgets.ConceptSchemeOrdersPanel;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptSchemeVersionsSectionStack;
 import org.siemac.metamac.srm.web.dsd.widgets.ExportSdmxResourceWindow;
 import org.siemac.metamac.srm.web.shared.CommonSharedUtils;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptSchemesResult;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsResult;
+import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.BooleanWebUtils;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
@@ -45,6 +48,7 @@ import org.siemac.metamac.web.common.client.utils.FormItemUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.TitleLabel;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
@@ -108,6 +112,8 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
     private final ConceptSchemeVersionsSectionStack versionsSectionStack;
     private final ConceptSchemeConceptsPanel        conceptSchemeConceptsPanel;
     private final ConceptSchemeCategorisationsPanel categorisationsPanel;
+    // Orders
+    private final ConceptSchemeOrdersPanel          conceptSchemeOrdersPanel;
 
     private ConceptSchemeMetamacDto                 conceptSchemeDto;
     private ConceptSchemeTypeEnum                   conceptSchemeType;               // this field stores the initial type of the concept scheme
@@ -155,6 +161,12 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         categorisationsPanel = new ConceptSchemeCategorisationsPanel();
 
         //
+        // ORDERS
+        //
+
+        conceptSchemeOrdersPanel = new ConceptSchemeOrdersPanel();
+
+        //
         // PANEL LAYOUT
         //
 
@@ -176,6 +188,11 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         Tab conceptsTab = new Tab(getConstants().concepts());
         conceptsTab.setPane(conceptSchemeConceptsPanel);
         tabSet.addTab(conceptsTab);
+
+        // Orders tab
+        Tab ordersTab = new Tab(getConstants().conceptSchemeOrders());
+        ordersTab.setPane(conceptSchemeOrdersPanel);
+        tabSet.addTab(ordersTab);
 
         // Categorisations tab
         Tab categorisationsTab = new Tab(getConstants().categorisations());
@@ -384,6 +401,7 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         super.setUiHandlers(uiHandlers);
         this.conceptSchemeConceptsPanel.setUiHandlers(uiHandlers);
         this.categorisationsPanel.setUiHandlers(uiHandlers);
+        this.conceptSchemeOrdersPanel.setUiHandlers(uiHandlers);
     }
 
     @Override
@@ -402,6 +420,8 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         this.conceptSchemeDto = conceptScheme;
         this.conceptSchemeType = conceptScheme.getType();
 
+        conceptSchemeOrdersPanel.getConceptSchemeOrdersSectionStack().setConceptScheme(conceptScheme);
+
         // Set title
         titleLabel.setContents(org.siemac.metamac.srm.web.client.utils.CommonUtils.getResourceTitle(conceptScheme));
 
@@ -414,6 +434,7 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         setConceptSchemeEditionMode(conceptScheme);
 
         conceptSchemeConceptsPanel.updateItemScheme(conceptScheme);
+        conceptSchemeOrdersPanel.updateItemScheme(conceptScheme);
     }
 
     @Override
@@ -424,6 +445,9 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
     @Override
     public void setConcepts(List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
         conceptSchemeConceptsPanel.setConcepts(conceptSchemeDto, itemHierarchyDtos);
+
+        // Every time new concepts are set, the visualization of concept scheme order should be reset (maybe there are new concepts, or its structure has changed)
+        conceptSchemeOrdersPanel.hideCodes();
     }
 
     @Override
@@ -497,11 +521,12 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
 
         // Diffusion descriptors
         diffusionDescriptorsForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
+        ViewTextItem defaultOrder = new ViewTextItem(ConceptSchemeDS.DEFAULT_ORDER, getConstants().conceptSchemeDefaultOrder());
         ViewTextItem replacedBy = new ViewTextItem(ConceptSchemeDS.REPLACED_BY_VERSION, getConstants().maintainableArtefactReplacedByVersion());
         ViewTextItem replaceTo = new ViewTextItem(ConceptSchemeDS.REPLACE_TO_VERSION, getConstants().maintainableArtefactReplaceToVersion());
         ViewTextItem validFrom = new ViewTextItem(ConceptSchemeDS.VALID_FROM, getConstants().maintainableArtefactValidFrom());
         ViewTextItem validTo = new ViewTextItem(ConceptSchemeDS.VALID_TO, getConstants().maintainableArtefactValidTo());
-        diffusionDescriptorsForm.setFields(replacedBy, replaceTo, validFrom, validTo);
+        diffusionDescriptorsForm.setFields(defaultOrder, replacedBy, replaceTo, validFrom, validTo);
 
         // Version responsibility
         versionResponsibilityForm = new GroupDynamicForm(getConstants().lifeCycleVersionResponsibility());
@@ -612,11 +637,12 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
 
         // Diffusion descriptors
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
+        CustomSelectItem defaultOrder = new CustomSelectItem(ConceptSchemeDS.DEFAULT_ORDER, getConstants().conceptSchemeDefaultOrder());
         ViewTextItem replacedBy = new ViewTextItem(ConceptSchemeDS.REPLACED_BY_VERSION, getConstants().maintainableArtefactReplacedByVersion());
         ViewTextItem replaceTo = new ViewTextItem(ConceptSchemeDS.REPLACE_TO_VERSION, getConstants().maintainableArtefactReplaceToVersion());
         ViewTextItem validFrom = new ViewTextItem(ConceptSchemeDS.VALID_FROM, getConstants().maintainableArtefactValidFrom());
         ViewTextItem validTo = new ViewTextItem(ConceptSchemeDS.VALID_TO, getConstants().maintainableArtefactValidTo());
-        diffusionDescriptorsEditionForm.setFields(replacedBy, replaceTo, validFrom, validTo);
+        diffusionDescriptorsEditionForm.setFields(defaultOrder, replacedBy, replaceTo, validFrom, validTo);
 
         // Version responsibility
         versionResponsibilityEditionForm = new GroupDynamicForm(getConstants().lifeCycleVersionResponsibility());
@@ -691,6 +717,8 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         productionDescriptorsForm.setValue(ConceptSchemeDS.RESOURCE_CREATION_DATE, conceptSchemeDto.getResourceCreatedDate());
 
         // Diffusion descriptors
+        diffusionDescriptorsForm.setValue(ConceptSchemeDS.DEFAULT_ORDER,
+                org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils.getRelatedResourceName(conceptSchemeDto.getDefaultOrderVisualisation()));
         diffusionDescriptorsForm.setValue(ConceptSchemeDS.REPLACED_BY_VERSION, conceptSchemeDto.getReplacedByVersion());
         diffusionDescriptorsForm.setValue(ConceptSchemeDS.REPLACE_TO_VERSION, conceptSchemeDto.getReplaceToVersion());
         diffusionDescriptorsForm.setValue(ConceptSchemeDS.VALID_FROM, conceptSchemeDto.getValidFrom());
@@ -762,6 +790,8 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
 
         // DIFFUSION DESCRIPTORS
 
+        diffusionDescriptorsEditionForm.setValue(ConceptSchemeDS.DEFAULT_ORDER,
+                conceptSchemeDto.getDefaultOrderVisualisation() != null ? conceptSchemeDto.getDefaultOrderVisualisation().getUrn() : StringUtils.EMPTY);
         diffusionDescriptorsEditionForm.setValue(ConceptSchemeDS.REPLACED_BY_VERSION, conceptSchemeDto.getReplacedByVersion());
         diffusionDescriptorsEditionForm.setValue(ConceptSchemeDS.REPLACE_TO_VERSION, conceptSchemeDto.getReplaceToVersion());
         diffusionDescriptorsEditionForm.setValue(ConceptSchemeDS.VALID_FROM, DateUtils.getFormattedDate(conceptSchemeDto.getValidFrom()));
@@ -799,6 +829,11 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
         // Class descriptors
         conceptSchemeDto.setType(ConceptSchemeTypeEnum.valueOf(classDescriptorsEditionForm.getValueAsString(ConceptSchemeDS.TYPE)));
         conceptSchemeDto.setRelatedOperation(classDescriptorsEditionForm.getValueAsExternalItemDto(ConceptSchemeDS.RELATED_OPERATION));
+
+        // Diffusion descriptors
+        conceptSchemeDto.setDefaultOrderVisualisation(!StringUtils.isBlank(diffusionDescriptorsEditionForm.getValueAsString(ConceptSchemeDS.DEFAULT_ORDER))
+                ? RelatedResourceUtils.createRelatedResourceDto(diffusionDescriptorsEditionForm.getValueAsString(ConceptSchemeDS.DEFAULT_ORDER))
+                : null);
 
         // Comments
         conceptSchemeDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(ConceptSchemeDS.COMMENTS));
@@ -966,5 +1001,20 @@ public class ConceptSchemeViewImpl extends ViewWithUiHandlers<ConceptSchemeUiHan
     @Override
     public boolean mustFillAnnotationTypeList() {
         return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
+    }
+
+    @Override
+    public void setConceptsWithOrder(List<ConceptMetamacVisualisationResult> codes, ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) {
+        conceptSchemeOrdersPanel.setCodes(conceptSchemeDto, codes, conceptSchemeOrderVisualisationDto);
+
+    }
+
+    @Override
+    public void setConceptSchemeOrders(List<ConceptSchemeVisualisationDto> orders) {
+        conceptSchemeOrdersPanel.setOrders(orders);
+
+        // Populate the form with the order list (to fill the default order)
+        diffusionDescriptorsEditionForm.getItem(ConceptSchemeDS.DEFAULT_ORDER).setValueMap(CommonUtils.getConceptSchemeVisualisationsHashMap(orders));
+
     }
 }

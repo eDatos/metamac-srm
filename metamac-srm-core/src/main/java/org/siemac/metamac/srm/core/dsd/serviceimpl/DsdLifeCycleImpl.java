@@ -23,6 +23,7 @@ import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.common.LifeCycleImpl;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamacProperties;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamacRepository;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Service;
 import com.arte.statistic.sdmx.srm.core.base.domain.Component;
 import com.arte.statistic.sdmx.srm.core.base.domain.ComponentList;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
+import com.arte.statistic.sdmx.srm.core.base.domain.Representation;
 import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersionRepository;
 import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.structure.domain.AttributeDescriptor;
@@ -317,16 +319,15 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
                         }
 
                         // DisplayOrder and HierarchyLevelsOpen are mandatory
-                        if (component instanceof Dimension) {
+                        if (component instanceof Dimension || component instanceof MeasureDimension) {
                             // Enumerated representation for Dimension always is a Codelist
                             if (component.getLocalRepresentation() != null && RepresentationTypeEnum.ENUMERATION.equals(component.getLocalRepresentation().getRepresentationType())) {
-                                checkMandatoryDimensionVisualizationInfo(ctx, dataStructureDefinitionVersionMetamac,
-                                        (CodelistVersionMetamac) component.getLocalRepresentation().getEnumerationCodelist(), (DimensionComponent) component);
+                                checkMandatoryDimensionVisualizationInfo(ctx, dataStructureDefinitionVersionMetamac, component.getLocalRepresentation(), (DimensionComponent) component);
                             } else {
                                 if (component.getCptIdRef().getCoreRepresentation() != null
                                         && RepresentationTypeEnum.ENUMERATION.equals(component.getCptIdRef().getCoreRepresentation().getRepresentationType())) {
-                                    checkMandatoryDimensionVisualizationInfo(ctx, dataStructureDefinitionVersionMetamac,
-                                            (CodelistVersionMetamac) component.getCptIdRef().getCoreRepresentation().getEnumerationCodelist(), (DimensionComponent) component);
+                                    checkMandatoryDimensionVisualizationInfo(ctx, dataStructureDefinitionVersionMetamac, component.getCptIdRef().getCoreRepresentation(),
+                                            (DimensionComponent) component);
                                 }
                             }
                         }
@@ -378,7 +379,7 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
             }
         }
 
-        private void checkMandatoryDimensionVisualizationInfo(ServiceContext ctx, DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac, CodelistVersionMetamac codelistTarget,
+        private void checkMandatoryDimensionVisualizationInfo(ServiceContext ctx, DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamac, Representation representationTarget,
                 DimensionComponent dimensionTarget) throws MetamacException {
             // DimensionVisualisationInfo
             DimensionVisualisationInfo visualizationInfoForCurrentDimension = null;
@@ -396,23 +397,49 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
                 dataStructureDefinitionVersionMetamac.addDimensionVisualisationInfo(visualizationInfoForCurrentDimension);
             }
 
-            // If the codeList representation is the same as that of the DisplayOrder.
-            boolean isChanged = false;
-            if (codelistTarget != null && visualizationInfoForCurrentDimension.getDisplayOrder() == null) {
-                visualizationInfoForCurrentDimension.setDisplayOrder(codelistTarget.getDefaultOrderVisualisation());
-                isChanged = true;
-            }
-            // If the codeList representation is the same as that of the OpenessLevel.
-            if (codelistTarget != null && visualizationInfoForCurrentDimension.getHierarchyLevelsOpen() == null) {
-                visualizationInfoForCurrentDimension.setHierarchyLevelsOpen(codelistTarget.getDefaultOpennessVisualisation());
-                isChanged = true;
-            }
+            boolean isChanged = setDisplayOrder(representationTarget, visualizationInfoForCurrentDimension);
 
             // Save new metadata
             if (isChanged) {
                 dataStructureDefinitionVersionMetamac.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
                 dataStructureDefinitionMetamacService.updateDataStructureDefinition(ctx, dataStructureDefinitionVersionMetamac);
             }
+        }
+
+        private boolean setDisplayOrder(Representation representationTarget, DimensionVisualisationInfo visualizationInfoForCurrentDimension) {
+            boolean isChanged = false;
+
+            if (representationTarget.getRepresentationType() == null) {
+                return false;
+            }
+
+            if (representationTarget.getEnumerationCodelist() != null) {
+                CodelistVersionMetamac codelistTarget = (CodelistVersionMetamac) representationTarget.getEnumerationCodelist();
+
+                // If the codeList representation is the same as that of the DisplayOrder.
+                if (codelistTarget != null && visualizationInfoForCurrentDimension.getDisplayOrder() == null) {
+                    visualizationInfoForCurrentDimension.setDisplayOrder(codelistTarget.getDefaultOrderVisualisation());
+                    isChanged = true;
+                }
+
+                // If the codeList representation is the same as that of the OpenessLevel.
+                if (codelistTarget != null && visualizationInfoForCurrentDimension.getHierarchyLevelsOpen() == null) {
+                    visualizationInfoForCurrentDimension.setHierarchyLevelsOpen(codelistTarget.getDefaultOpennessVisualisation());
+                    isChanged = true;
+                }
+            }
+
+            if (representationTarget.getEnumerationConceptScheme() != null) {
+                ConceptSchemeVersionMetamac conceptSchemeTarget = (ConceptSchemeVersionMetamac) representationTarget.getEnumerationConceptScheme();
+
+                // If the concept scheme representation is the same as that of the DisplayOrder.
+                if (conceptSchemeTarget != null && visualizationInfoForCurrentDimension.getDisplayConceptSchemeOrder() == null) {
+                    visualizationInfoForCurrentDimension.setDisplayConceptSchemeOrder(conceptSchemeTarget.getDefaultOrderVisualisation());
+                    isChanged = true;
+                }
+            }
+            return isChanged;
+
         }
     }
 }

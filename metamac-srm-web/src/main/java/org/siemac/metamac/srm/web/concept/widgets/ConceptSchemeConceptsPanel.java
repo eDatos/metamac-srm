@@ -22,17 +22,17 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class ConceptSchemeConceptsPanel extends VLayout {
 
-    private ToolStrip                    toolStrip;
-    private ToolStripButton              importConceptsButton;
-    private ToolStripButton              exportConceptsButton;
-    private ImportConceptsWindow         importConceptsWindow;
+    private ToolStrip               toolStrip;
+    private ToolStripButton         importConceptsButton;
+    private ToolStripButton         exportConceptsButton;
+    private ImportConceptsWindow    importConceptsWindow;
 
-    private final InformationLabel       conceptsNoVisibleInfoMessage;
-    private final ConceptsOrderTreeGrid conceptsTreeGrid;
+    private final InformationLabel  conceptsNoVisibleInfoMessage;
+    private final ConceptsTreeGrid  conceptsTreeGrid;
 
-    private ConceptSchemeUiHandlers      uiHandlers;
+    private ConceptSchemeUiHandlers uiHandlers;
 
-    private ConceptSchemeMetamacDto      conceptSchemeDto;
+    private ConceptSchemeMetamacDto conceptSchemeDto;
 
     public ConceptSchemeConceptsPanel() {
         setMargin(15);
@@ -57,7 +57,8 @@ public class ConceptSchemeConceptsPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                importConceptsWindow.initImportWindow(org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(conceptSchemeDto.getMaintainer()), VersionUtil.isTemporalVersion(conceptSchemeDto.getVersionLogic()));
+                importConceptsWindow.initImportWindow(org.siemac.metamac.srm.web.client.utils.CommonUtils.isDefaultMaintainer(conceptSchemeDto.getMaintainer()),
+                        VersionUtil.isTemporalVersion(conceptSchemeDto.getVersionLogic()));
                 importConceptsWindow.show();
             }
         });
@@ -76,7 +77,7 @@ public class ConceptSchemeConceptsPanel extends VLayout {
         conceptsNoVisibleInfoMessage = new InformationLabel(getConstants().conceptSchemeConceptsNoVisibleInfoMessage());
         conceptsNoVisibleInfoMessage.setMargin(10);
 
-        conceptsTreeGrid = new ConceptsOrderTreeGrid();
+        conceptsTreeGrid = new ConceptsTreeGrid();
 
         addMember(conceptsNoVisibleInfoMessage);
         addMember(toolStrip);
@@ -103,7 +104,7 @@ public class ConceptSchemeConceptsPanel extends VLayout {
 
     public void setConcepts(ConceptSchemeMetamacDto conceptSchemeDto, List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
         this.conceptSchemeDto = conceptSchemeDto;
-        conceptsTreeGrid.setConcepts(conceptSchemeDto, itemHierarchyDtos);
+        conceptsTreeGrid.setItems(conceptSchemeDto, itemHierarchyDtos);
         // Set the max records to the size of the items list (plus the item scheme node)
         conceptsTreeGrid.setAutoFitMaxRecords(itemHierarchyDtos.size() + 1);
     }

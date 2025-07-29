@@ -8,8 +8,10 @@ import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
 import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
+import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
 
 public class GeneratorUrnUtils extends com.arte.statistic.sdmx.srm.core.common.service.utils.GeneratorUrnUtils {
 
@@ -81,5 +83,17 @@ public class GeneratorUrnUtils extends com.arte.statistic.sdmx.srm.core.common.s
      */
     public static String generateCategoryElementUrn(CategoryElement categoryElement) {
         return generateSiemacStructuralResourcesCategoryElementUrn(categoryElement.getIdentifiableArtefact().getCode());
+    }
+
+    /**
+     * Generate order visualisation urn for concept scheme
+     */
+    public static String generateConceptSchemeOrderVisualisationUrn(ConceptSchemeVersion conceptSchemeVersion, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation) {
+        String[] maintainerCode = generateSdmxUrnMaintainerIdFragment(conceptSchemeVersion.getMaintainableArtefact().getMaintainer());
+        String conceptSchemeCode = conceptSchemeVersion.getMaintainableArtefact().getCode();
+        String conceptSchemeVersionNumber = conceptSchemeVersion.getMaintainableArtefact().getVersionLogic();
+
+        return generateSiemacStructuralResourcesConceptSchemeOrderVisualisationUrn(maintainerCode, conceptSchemeCode, conceptSchemeVersionNumber,
+                conceptSchemeOrderVisualisation.getNameableArtefact().getCode());
     }
 }

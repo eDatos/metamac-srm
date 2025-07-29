@@ -27,28 +27,29 @@ import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
 @DisallowConcurrentExecution
 public class ImportationTsvJob implements Job {
 
-    private static Logger             logger                                = LoggerFactory.getLogger(ImportationTsvJob.class);
+    private static Logger             logger                                 = LoggerFactory.getLogger(ImportationTsvJob.class);
 
     // Job Context Param
-    public static final String        USER                                  = "user";
-    public static final String        FILE_PATH                             = "filePath";
-    public static final String        FILE_NAME                             = "fileName";
-    public static final String        VARIABLE_URN                          = "variableUrn";
-    public static final String        ITEM_SCHEME_URN                       = "codelistUrn";
-    public static final String        UPDATE_ALREADY_EXISTING               = "updateAlreadyExisting";
-    public static final String        OPERATION                             = "operation";
-    public static final String        OPERATION_IMPORT_CONCEPTS             = "importConcepts";
-    public static final String        OPERATION_IMPORT_ORGANISATIONS        = "importOrganisations";
-    public static final String        OPERATION_IMPORT_CATEGORIES           = "importCategories";
-    public static final String        OPERATION_IMPORT_CODES                = "importCodes";
-    public static final String        OPERATION_IMPORT_CODE_ORDERS          = "importCodeOrdes";
-    public static final String        OPERATION_IMPORT_ANNOTATIONS          = "importAnnotations";
-    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS    = "importCodeRestrictions";
-    public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS = "importCodeOpennessLevels";
-    public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS    = "importVariableElements";
-    public static final String        OPERATION_IMPORT_CATEGORY_ELEMENTS    = "importCategoryElements";
+    public static final String        USER                                   = "user";
+    public static final String        FILE_PATH                              = "filePath";
+    public static final String        FILE_NAME                              = "fileName";
+    public static final String        VARIABLE_URN                           = "variableUrn";
+    public static final String        ITEM_SCHEME_URN                        = "itemSchemeUrn";
+    public static final String        UPDATE_ALREADY_EXISTING                = "updateAlreadyExisting";
+    public static final String        OPERATION                              = "operation";
+    public static final String        OPERATION_IMPORT_CONCEPTS              = "importConcepts";
+    public static final String        OPERATION_IMPORT_ORGANISATIONS         = "importOrganisations";
+    public static final String        OPERATION_IMPORT_CATEGORIES            = "importCategories";
+    public static final String        OPERATION_IMPORT_CODES                 = "importCodes";
+    public static final String        OPERATION_IMPORT_CODE_ORDERS           = "importCodeOrdes";
+    public static final String        OPERATION_IMPORT_ANNOTATIONS           = "importAnnotations";
+    public static final String        OPERATION_IMPORT_CODE_RESTRICTIONS     = "importCodeRestrictions";
+    public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS  = "importCodeOpennessLevels";
+    public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS     = "importVariableElements";
+    public static final String        OPERATION_IMPORT_CATEGORY_ELEMENTS     = "importCategoryElements";
+    public static final String        OPERATION_IMPORT_CONCEPT_SCHEME_ORDERS = "importConceptSchemeOrders";
 
-    private TasksMetamacServiceFacade tasksMetamacServiceFacade             = null;
+    private TasksMetamacServiceFacade tasksMetamacServiceFacade              = null;
 
     public TasksMetamacServiceFacade getTaskMetamacServiceFacade() {
         if (tasksMetamacServiceFacade == null) {
@@ -73,6 +74,8 @@ public class ImportationTsvJob implements Job {
             String operation = data.getString(OPERATION);
             if (OPERATION_IMPORT_CONCEPTS.equals(operation)) {
                 importConcepts(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_CONCEPT_SCHEME_ORDERS.equals(operation)) {
+                importConceptSchemeOrders(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_ORGANISATIONS.equals(operation)) {
                 importOrganisations(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CATEGORIES.equals(operation)) {
@@ -153,6 +156,19 @@ public class ImportationTsvJob implements Job {
         logger.info("ImportationJob [importConcepts]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportConceptsTsv(serviceContext, conceptSchemeUrn, new File(filePath), fileName, jobKey.getName(), updateAlreadyExisting);
         logger.info("ImportationJob [importConcepts]: " + jobKey + " finished at " + new Date());
+    }
+
+    private void importConceptSchemeOrders(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String conceptSchemeUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+
+        // Execution
+        logger.info("ImportationJob [importConceptSchemeOrders]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportConceptSchemeOrdersTsv(serviceContext, conceptSchemeUrn, new File(filePath), fileName, jobKey.getName());
+        logger.info("ImportationJob [importConceptSchemeOrders]: " + jobKey + " finished at " + new Date());
     }
 
     private void importOrganisations(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {

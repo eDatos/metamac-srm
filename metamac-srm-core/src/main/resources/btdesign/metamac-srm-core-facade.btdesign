@@ -430,6 +430,20 @@ Application SrmFacadeCore {
     		"Ends the concept scheme validity"
     		@ConceptSchemeMetamacDto endConceptSchemeValidity(String urn) throws MetamacException;
     		
+    		"Creates order visualisation for concept schemes"
+    		@ConceptSchemeVisualisationDto createConceptSchemeOrderVisualisation(@ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) throws MetamacException;
+			"Updates order visualisation"
+			@ConceptSchemeVisualisationDto updateConceptSchemeOrderVisualisation(@ConceptSchemeVisualisationDto conceptSchemeOrderVisualisationDto) throws MetamacException;
+    		"Retrieves order visualisation by identifier"
+    		@ConceptSchemeVisualisationDto retrieveConceptSchemeOrderVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieve order visualisations by codelist"
+    		List<@ConceptSchemeVisualisationDto> retrieveConceptSchemeOrderVisualisationsByConceptScheme(String conceptSchemeUrn)  throws MetamacException;
+			"Deletes order visualisation"
+    		deleteConceptSchemeOrderVisualisation(String urn) throws MetamacException;
+    		
+    		"Imports concept scheme orders in tsv format"
+    		TaskImportationInfo importConceptSchemeOrdersTsv(String conceptSchemeUrn, InputStream tsvStream, String fileName) throws MetamacException;
+    		
     		"Creates concept"
 	   		@ConceptMetamacDto createConcept(@ConceptMetamacDto conceptMetamacDto) throws MetamacException;
 	   		"Updates concept"
@@ -459,7 +473,7 @@ Application SrmFacadeCore {
 			"Deletes concept"
             deleteConcept(String urn) throws MetamacException;
     		"Retrieves concepts by concept scheme in locale requested"
-    		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale) throws MetamacException;
+    		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale, String conceptSchemeOrderVisualisationUrn) throws MetamacException;
     		
     		"Adds a concepts relation (related concepts)"
     		addRelatedConcept(String urn1, String urn2) throws MetamacException;
@@ -483,9 +497,11 @@ Application SrmFacadeCore {
     		MetamacCriteriaResult<@RelatedResourceDto> findCodelistsCanBeEnumeratedRepresentationForConceptByCondition(MetamacCriteria criteria, String conceptUrn, String variableUrn) throws MetamacException;
     		
     		"Updates parent of concept. parentUrn is null when concept is moved to first level. Concept is moved at the end of new level"
-			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
+			updateConceptParent(String conceptUrn, String newConceptParentUrn) throws MetamacException;
 			"Updates position of concept"
-			updateConceptInOrder(String conceptUrn, String conceptSchemeUrn, Integer newConceptIndex) throws MetamacException;
+			updateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException;
+			"Exports concept orders in tsv format"
+    		String exportConceptOrdersTsv(String conceptSchemeUrn) throws MetamacException;
 			
 	    	/**************************************************************************
 		     * CATEGORIES
@@ -855,6 +871,8 @@ Application SrmFacadeCore {
 
 			"Imports concepts in tsv format"
     		processImportConceptsTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
+    		"Imports concept scheme orders in tsv format"
+    		processImportConceptSchemeOrdersTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;  	
 			"Imports categories in tsv format"
     		processImportCategoriesTsv(String categorySchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;    		
     		"Imports organisations in tsv format"

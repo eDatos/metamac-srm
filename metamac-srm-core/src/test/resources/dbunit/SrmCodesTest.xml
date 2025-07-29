@@ -7287,6 +7287,8 @@
         RELATED_OPERATION_FK="[null]"
         PROC_STATUS="INTERNALLY_PUBLISHED"
         
+        DEFAULT_ORDER_VISUAL_FK="5312"
+        
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user1"
@@ -7381,7 +7383,8 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="3"
               TB_CONCEPTS="999802"
-              ORDER_VALUE="0"
+              ORDER1="0"
+     
             />
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -7409,7 +7412,47 @@
                 LAST_UPDATED_TZ="Europe/London"
             /> 
             
-            
+              <!-- ORDER VISUALISATION 02 -->
+                <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="5312"
+                    CONCEPT_SCHEME_FK="9998011"
+                    NAMEABLE_ARTEFACT_FK="9997412"
+                    COLUMN_INDEX="2"
+                    
+                    UUID="concept-scheme-order-vis-5312"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997412"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION02"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME01(01.000).VISUALISATION02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME01(01.000).VISUALISATION02"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="168"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997412"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />    
 
     <!-- ************************************************************************************** -->
     <!-- CATEGORY SCHEME 1                                                                       -->
@@ -10199,6 +10242,19 @@
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="167"
+    />          
+    
+     <TB_INTERNATIONAL_STRINGS
+        ID="168"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1681"
+        LABEL="Visualización 02"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="168"
     />          
      <!-- ************************************************************************************** -->
     <!-- TB_LIS_ANNOTATION_TYPES                                                             -->

@@ -11,6 +11,7 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacRepository;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,7 @@ public class ConceptsCopyCallbackMetamacImpl extends ConceptsCopyCallbackImpl {
         ConceptSchemeVersionMetamac source = (ConceptSchemeVersionMetamac) sourceItemSchemeVersion;
         ConceptSchemeVersionMetamac target = (ConceptSchemeVersionMetamac) targetItemSchemeVersion;
 
+        conceptsMetamacService.versioningConceptSchemeOrderVisualisations(ctx, source, target);
         conceptsMetamacService.versioningRelatedConcepts(ctx, source, target);
         conceptsMetamacService.versioningConceptsQuantity(ctx, source, target);
     }
@@ -92,7 +94,7 @@ public class ConceptsCopyCallbackMetamacImpl extends ConceptsCopyCallbackImpl {
         target.setSdmxRelatedArtefact(source.getSdmxRelatedArtefact());
         target.setConceptType(source.getConceptType());
         target.setVariable(source.getVariable());
-        target.setOrderValue(source.getOrderValue());
+        copyConceptSchemeOrderVisualisations(source, target);
 
         // can copy "extends" and "roles", because they are concepts in another concept scheme
         target.setConceptExtends(source.getConceptExtends());
@@ -104,6 +106,13 @@ public class ConceptsCopyCallbackMetamacImpl extends ConceptsCopyCallbackImpl {
 
         // Quantity: Do not copy quantity in this point, because related concepts can belong to same concept scheme, and new concept in new version must relate to versioned concept
         // They will be copied in createItemSchemeVersionRelations
+    }
+
+    private void copyConceptSchemeOrderVisualisations(ConceptMetamac source, ConceptMetamac target) {
+        for (int i = 1; i <= SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+            Integer order = SrmServiceUtils.getConceptSchemeOrder(source, i);
+            SrmServiceUtils.setConceptSchemeOrder(target, i, order);
+        }
     }
 
 }

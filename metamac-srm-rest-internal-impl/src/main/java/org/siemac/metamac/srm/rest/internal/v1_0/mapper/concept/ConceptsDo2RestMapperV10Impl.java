@@ -38,6 +38,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Quantit
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RelatedConcepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RoleConcepts;
+import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
@@ -351,11 +352,22 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         ConceptResourceInternal target = new ConceptResourceInternal();
         toResource(source, SrmRestConstants.KIND_CONCEPT, toConceptSelfLink(source, conceptSchemeVersion), toConceptManagementApplicationLink(conceptSchemeVersion, source), target,
                 conceptSchemeVersion.getMaintainableArtefact().getIsImported(), fields);
+
+        setVisibleFields(source, target, fields);
+
+        return target;
+    }
+
+    private void setVisibleFields(ItemResult source, ConceptResourceInternal target, Set<String> fields) {
+
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME)) {
             Map<String, String> sourcePluralName = ((ConceptMetamacResultExtensionPoint) source.getExtensionPoint()).getPluralName();
             target.setPluralName(toInternationalString(sourcePluralName));
         }
-        return target;
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ORDER_CONFIGURATION)) {
+            target.setOrderConfiguration(SrmServiceUtils.getConceptItemResultOrder(source) + 1); // add 1 to start in 1, instead of 0
+        }
     }
 
     private RelatedConcepts toRelatedConcepts(ConceptMetamac concept) {

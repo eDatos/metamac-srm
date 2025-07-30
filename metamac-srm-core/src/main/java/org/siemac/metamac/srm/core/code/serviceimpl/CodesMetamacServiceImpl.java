@@ -1813,7 +1813,6 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                     code.getVariableElement().removeCode(code);
                 }
                 variableElement.addCode(code);
-                code.setShortName(null); // reset short name
             }
             baseService.updateItemSchemeLastUpdated(ctx, code.getItemSchemeVersion());
             return getCodeMetamacRepository().save(code);

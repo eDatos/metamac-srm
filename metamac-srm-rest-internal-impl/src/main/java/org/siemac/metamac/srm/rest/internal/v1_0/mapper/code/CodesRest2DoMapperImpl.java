@@ -11,9 +11,7 @@ import org.siemac.metamac.rest.common.query.domain.OperationTypeEnum;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
-import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteria;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
-import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaDisjunction;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeCriteriaPropertyOrder;
@@ -183,10 +181,7 @@ public class CodesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implements 
                 case NAME:
                     return buildSculptorPropertyCriteria(CodeMetamacProperties.nameableArtefact().name().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
                 case SHORT_NAME:
-                    SculptorPropertyCriteria propertyCriteria1 = buildSculptorPropertyCriteria(CodeMetamacProperties.shortName().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
-                    SculptorPropertyCriteria propertyCriteria2 = buildSculptorPropertyCriteria(CodeMetamacProperties.variableElement().shortName().texts().label(), PropertyTypeEnum.STRING,
-                            propertyRestriction);
-                    return new SculptorPropertyCriteriaDisjunction(propertyCriteria1, propertyCriteria2);
+                    return buildSculptorPropertyCriteria(CodeMetamacProperties.shortName().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
                 case DESCRIPTION:
                     return buildSculptorPropertyCriteria(CodeMetamacProperties.nameableArtefact().description().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
                 case CODELIST_URN:

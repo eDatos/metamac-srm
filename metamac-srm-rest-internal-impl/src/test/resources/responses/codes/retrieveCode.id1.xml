@@ -42,16 +42,16 @@
     </sr:comment>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).item2</sr:parent>
     <sr:shortName>
-        <cdomain:text xml:lang="en">shortName-variableElement-item1 in English</cdomain:text>
-        <cdomain:text xml:lang="es">shortName-variableElement-item1 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">shortName-item1 in English</cdomain:text>
+        <cdomain:text xml:lang="es">shortName-item1 en Español</cdomain:text>
     </sr:shortName>
     <sr:variableElement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="sr:VariableElementResourceInternal" kind="structuralResources#variableElement">
         <cdomain:id>variableElement-item1</cdomain:id>
         <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.structuralresources.VariableElement=variable01.variableElement-item1</cdomain:urn>
         <cdomain:selfLink kind="structuralResources#variableElement" href="http://data.istac.es/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-item1"/>
         <cdomain:name>
-            <cdomain:text xml:lang="en">shortName-variableElement-item1 in English</cdomain:text>
             <cdomain:text xml:lang="es">shortName-variableElement-item1 en Español</cdomain:text>
+            <cdomain:text xml:lang="en">shortName-variableElement-item1 in English</cdomain:text>
         </cdomain:name>
         <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/variables/variable;id=variable01/variableElement;id=variableElement-item1</sr:managementAppLink>
     </sr:variableElement>

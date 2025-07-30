@@ -302,15 +302,9 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setChildLinks(toCodeChildLinks(source));
 
         toItem(source, target);
-
-        if (source.getVariableElement() == null) {
-            target.setShortName(toInternationalString(source.getShortName()));
-        } else {
-            if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
-                target.setVariableElement(toResource(source.getVariableElement()));
-            }
-
-            target.setShortName(toInternationalString(source.getVariableElement().getShortName()));
+        target.setShortName(toInternationalString(source.getShortName()));
+        if (source.getVariableElement() != null && SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT)) {
+            target.setVariableElement(toResource(source.getVariableElement()));
         }
         target.setExtended(source.getIsExtended());
         target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODE));

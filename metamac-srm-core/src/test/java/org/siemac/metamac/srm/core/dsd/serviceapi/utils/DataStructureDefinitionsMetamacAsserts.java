@@ -1,6 +1,8 @@
 package org.siemac.metamac.srm.core.dsd.serviceapi.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.siemac.metamac.srm.core.dsd.dto.MeasureDimensionPrecisionDto;
 
 import com.arte.statistic.sdmx.srm.core.structure.serviceapi.utils.DataStructureDefinitionAsserts;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 
 public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinitionAsserts {
 
@@ -115,8 +118,20 @@ public class DataStructureDefinitionsMetamacAsserts extends DataStructureDefinit
     }
 
     private static void assertDimensionVisualizationInfo(DimensionVisualisationInfoDto expected, DimensionVisualisationInfo actual) {
+
         assertEquals(expected.getDisplayOrder().getUrn(), actual.getDimension().getUrn());
-        assertEquals(expected.getHierarchyLevelsOpen().getUrn(), actual.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+
+        if (actual.getDisplayOrder() != null && RelatedResourceTypeEnum.CODELIST.equals(expected.getDisplayOrder().getType())) {
+            assertEquals(expected.getHierarchyLevelsOpen().getUrn(), actual.getHierarchyLevelsOpen().getNameableArtefact().getUrn());
+            assertNotNull(actual.getDisplayOrder());
+            assertNull(actual.getDisplayConceptSchemeOrder());
+            assertEquals(expected.getDisplayOrder().getCode(), actual.getDisplayOrder().getNameableArtefact().getCode());
+        }
+        if (actual.getDisplayConceptSchemeOrder() != null && RelatedResourceTypeEnum.CONCEPT_SCHEME.equals(expected.getDisplayOrder().getType())) {
+            assertNull(actual.getDisplayOrder());
+            assertNotNull(actual.getDisplayConceptSchemeOrder());
+            assertEquals(expected.getDisplayOrder().getCode(), actual.getDisplayConceptSchemeOrder().getNameableArtefact().getCode());
+        }
         assertEquals(expected.getDisplayCode(), actual.getDisplayCode());
     }
 

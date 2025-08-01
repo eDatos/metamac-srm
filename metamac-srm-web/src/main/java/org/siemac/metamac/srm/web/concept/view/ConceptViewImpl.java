@@ -36,7 +36,7 @@ import org.siemac.metamac.srm.web.concept.view.handlers.ConceptUiHandlers;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptFacetForm;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptMainFormLayout;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptsListItem;
-import org.siemac.metamac.srm.web.concept.widgets.ConceptsOrderTreeGrid;
+import org.siemac.metamac.srm.web.concept.widgets.ConceptsTreeGrid;
 import org.siemac.metamac.srm.web.concept.widgets.ConceptsTreeWindow;
 import org.siemac.metamac.srm.web.concept.widgets.QuantityForm;
 import org.siemac.metamac.srm.web.concept.widgets.ViewQuantityForm;
@@ -99,7 +99,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     private VLayout                                 panel;
     private ConceptMainFormLayout                   mainFormLayout;
 
-    private ConceptsOrderTreeGrid                   conceptsTreeGrid;
+    private ConceptsTreeGrid                        conceptsTreeGrid;
 
     // View forms
     private GroupDynamicForm                        identifiersForm;
@@ -145,7 +145,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
         // CONCEPTS HIERARCHY
         //
 
-        conceptsTreeGrid = new ConceptsOrderTreeGrid();
+        conceptsTreeGrid = new ConceptsTreeGrid();
         conceptsTreeGrid.setAutoFitMaxRecords(10);
 
         CustomVLayout conceptsListGridLayout = new CustomVLayout();
@@ -492,8 +492,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
 
     @Override
     public void setConceptList(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> itemVisualisationDtos) {
-        this.itemVisualisationResults = itemVisualisationDtos;
-        conceptsTreeGrid.setConcepts(conceptSchemeMetamacDto, itemVisualisationDtos);
+        conceptsTreeGrid.setItems(conceptSchemeMetamacDto, itemVisualisationDtos);
         conceptsTreeGrid.selectItem(conceptDto.getUrn());
     }
 

@@ -349,11 +349,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
 
         toItem(source, target);
 
-        if (source.getVariableElement() == null) {
-            target.setShortName(toInternationalString(source.getShortName()));
-        } else {
-            target.setShortName(toInternationalString(source.getVariableElement().getShortName()));
-        }
+        target.setShortName(toInternationalString(source.getShortName()));
         target.setVariableElement(toResource(source.getVariableElement()));
         target.setExtended(source.getIsExtended());
 

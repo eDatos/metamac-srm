@@ -79,11 +79,11 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         if (BooleanUtils.isTrue(codelistVersion.getIsPartial())) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.ITEM_SCHEME_IS_PARTIAL));
         }
-        
+
         if (NormalizationTypeEnum.NOT_STANDARDIZED.equals(codelistVersion.getNormalizationType()) && !AccessTypeEnum.RESTRICTED.equals(codelistVersion.getAccessType())) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CODELIST_NORMALIZATION_TYPE_NOT_STANDARDIZED_WITH_PUBLIC_ACCESS, ServiceExceptionParameters.CODELIST_NORMALIZATION_TYPE));
         }
-        
+
         if (SrmValidationUtils.mustValidateMetadataRequired(codelistVersion, creating)) {
             ValidationUtils.checkMetadataRequired(codelistVersion.getNormalizationType(), ServiceExceptionParameters.CODELIST_NORMALIZATION_TYPE, exceptions);
             if (NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
@@ -181,7 +181,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
 
         ExceptionUtils.throwIfException(exceptions);
     }
-    
+
     public static void checkUpdateCodeInOpennessVisualisation(String codelistOpennessVisualisationUrn, Map<String, Boolean> openness, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
@@ -193,7 +193,8 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkUpdateCodeInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction, List<MetamacExceptionItem> exceptions) throws MetamacException {
+    public static void checkUpdateCodeInRestrictionVisualisation(String codelistRestrictionVisualisationUrn, Map<String, Boolean> restriction, List<MetamacExceptionItem> exceptions)
+            throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
@@ -203,7 +204,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
 
         ExceptionUtils.throwIfException(exceptions);
     }
-    
+
     public static void checkRetrieveCodesByCodelistUrn(String codelistUrn, String locale, String orderVisualisationUrn, String opennessVisualisationUrn, String restrictionVisualisationCode,
             List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
@@ -282,7 +283,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ValidationUtils.checkParameterRequired(canBeBackground, ServiceExceptionParameters.CAN_BE_BACKGROUND, exceptions);
         ExceptionUtils.throwIfException(exceptions);
     }
-    
+
     public static void checkImportCodeOpennessLevelsTsv(String codelistUrn, File file, String fileName, Boolean canBeBackground, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
@@ -294,7 +295,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         ValidationUtils.checkParameterRequired(canBeBackground, ServiceExceptionParameters.CAN_BE_BACKGROUND, exceptions);
         ExceptionUtils.throwIfException(exceptions);
     }
-    
+
     public static void checkExportCodesTsv(String codelistUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
@@ -320,12 +321,11 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
         if (SrmValidationUtils.mustValidateMetadataRequired(codelistVersion, creating) && NormalizationTypeEnum.STANDARDIZED.equals(codelistVersion.getNormalizationType())) {
             ValidationUtils.checkMetadataRequired(codelistVersion.getVariable(), ServiceExceptionParameters.CODELIST_VARIABLE, exceptions);
         }
-        
-        if (code.getVariableElement() != null) {
-            ValidationUtils.checkMetadataEmpty(code.getShortName(), ServiceExceptionParameters.CODE_SHORT_NAME, exceptions);
-        } else {
+
+        ValidationUtils.checkInternationalStringMaximumLength(code.getShortName(), ServiceExceptionParameters.CODE_SHORT_NAME, SrmConstants.METADATA_SHORT_NAME_MAXIMUM_LENGTH, exceptions);
+
+        if (code.getVariableElement() == null) {
             ValidationUtils.checkMetadataOptionalIsValid(code.getShortName(), ServiceExceptionParameters.CODE_SHORT_NAME, exceptions);
-            ValidationUtils.checkInternationalStringMaximumLength(code.getShortName(), ServiceExceptionParameters.CODE_SHORT_NAME, SrmConstants.METADATA_SHORT_NAME_MAXIMUM_LENGTH, exceptions);
         }
 
         // common metadata in sdmx are checked in Sdmx module
@@ -446,7 +446,7 @@ public class CodesMetamacInvocationValidator extends CodesInvocationValidator {
             SemanticIdentifierValidationUtils.checkCodelistVisualisationSemanticIdentifier(codelistRestrictionVisualisation.getNameableArtefact().getCode(), exceptions);
         }
     }
-    
+
     // ---------------------------------------------------------------------------
     // CODELIST FAMILIES
     // ---------------------------------------------------------------------------

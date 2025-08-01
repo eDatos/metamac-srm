@@ -57,8 +57,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveConceptSchemeByUrn() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveConceptSchemeByUrn(ctx, CONCEPT_SCHEME_1_V1);
@@ -346,8 +346,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testFindConceptSchemesByCondition() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.findConceptSchemesByCondition(ctx, getMetamacCriteria());
@@ -654,7 +654,7 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testPublishInternallyConceptScheme() throws Exception {
-        srmCoreServiceFacade.publishConceptSchemeInternally(getServiceContextJefeNormalizacion(), CONCEPT_SCHEME_11_V1, Boolean.FALSE);
+        srmCoreServiceFacade.publishConceptSchemeInternally(getServiceContextJefeNormalizacion(), CONCEPT_SCHEME_6_V1, Boolean.FALSE);
     }
 
     @Test
@@ -919,7 +919,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
                 ConceptSchemeMetamacDto prodValidacionConceptSchemeDto = srmCoreServiceFacade.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_10_V3);
                 assertEquals(ConceptSchemeTypeEnum.OPERATION, prodValidacionConceptSchemeDto.getType());
                 {
-                    ServiceContext[] contexts = {getServiceContextTecnicoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextJefeProduccion(), getServiceContextJefeNormalizacion()};
+                    ServiceContext[] contexts = {getServiceContextTecnicoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextJefeProduccion(),
+                            getServiceContextJefeNormalizacion()};
                     for (ServiceContext ctx : contexts) {
                         ConceptsSecurityUtils.getMetamacPrincipal(ctx).getAccesses().get(0).setOperation(prodValidacionConceptSchemeDto.getRelatedOperation().getCode());
                         prodValidacionOperationConceptMetamacDto = srmCoreServiceFacade.updateConcept(ctx, prodValidacionOperationConceptMetamacDto);
@@ -1129,8 +1130,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveConceptByUrn() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveConceptByUrn(ctx, CONCEPT_SCHEME_1_V1_CONCEPT_1);
@@ -1178,11 +1179,11 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveConceptsByConceptSchemeUrn() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
-            srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(ctx, CONCEPT_SCHEME_1_V1, "es");
+            srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(ctx, CONCEPT_SCHEME_1_V1, "es", null);
         }
     }
 
@@ -1192,7 +1193,7 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
         for (ServiceContext ctx : contexts) {
             try {
-                srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(ctx, CONCEPT_SCHEME_1_V1, "es");
+                srmCoreServiceFacade.retrieveConceptsByConceptSchemeUrn(ctx, CONCEPT_SCHEME_1_V1, "es", null);
                 fail("action not allowed");
             } catch (MetamacException e) {
                 assertEquals(1, e.getExceptionItems().size());
@@ -1215,8 +1216,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveRelatedConcepts() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveRelatedConcepts(ctx, CONCEPT_SCHEME_1_V1_CONCEPT_1);
@@ -1252,8 +1253,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveRelatedConceptsRoles() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveRoleConcepts(ctx, CONCEPT_SCHEME_1_V1_CONCEPT_1);
@@ -1277,8 +1278,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveConceptTypeByIdentifier() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
@@ -1302,8 +1303,8 @@ public class SrmCoreServiceFacadeConceptsSecurityTest extends SrmBaseTest {
 
     @Test
     public void testFindAllConceptTypes() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.findAllConceptTypes(ctx);

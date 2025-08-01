@@ -1,6 +1,7 @@
 import "classpath:/btdesign/metamac-core-common-dtos.btdesign"
 import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-common.btdesign"
 import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-concepts.btdesign"
+import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-core.btdesign"
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-concepts-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base-dtos.btdesign"
@@ -17,6 +18,8 @@ Application DtosMetamacConceptDomain {
 			- @ConceptSchemeTypeEnum type required;
 			"Related operation, only when type is Operation"
 			- @ExternalItemDto relatedOperation nullable;
+			"Default order visualisation"
+			- @RelatedResourceDto defaultOrderVisualisation nullable;
 			"Life cycle"
 			- @LifeCycleDto lifeCycle required;
 			"Stream message status"
@@ -99,5 +102,21 @@ Application DtosMetamacConceptDomain {
             String identifier;
             - @InternationalStringDto description nullable;
         }
+        
+        "Dto for ConceptSchemeOrderVisualisation"		
+		DataTransferObject ConceptSchemeVisualisationDto extends @NameableArtefactDto {
+			"Concept scheme"
+			- @RelatedResourceDto conceptScheme not nullable;
+			"Version to optimistic locking"
+			Long versionOptimisticLocking;
+		}
+		
+		"Dto for ConceptSchemeOrderVisualisation"		
+		DataTransferObject ConceptSchemeVisualisationBasicDto extends @NameableArtefactMetamacBasicDto {
+			"Concept scheme"
+			- @RelatedResourceDto conceptScheme not nullable;
+			"Version to optimistic locking"
+			Long versionOptimisticLocking;
+		}
 	}
 }

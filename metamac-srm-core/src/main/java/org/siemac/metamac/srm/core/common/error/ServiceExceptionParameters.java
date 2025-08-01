@@ -21,6 +21,9 @@ public class ServiceExceptionParameters extends com.arte.statistic.sdmx.srm.core
     public static final String  CONCEPT_SCHEME_TYPE_MEASURE                                = createCode(CONCEPT_SCHEME_PREFIX, "type.measure");
 
     public static final String  CONCEPT_SCHEME_ORDER_INDEX                                 = createCode(CONCEPT_SCHEME_PREFIX, "concept_scheme_order.index");
+    public static final String  CONCEPT_SCHEME_ORDER_VISUALISATION                         = createCode(CONCEPT_SCHEME_PREFIX, "concept_scheme_order_visualisation");
+    public static final String  CONCEPT_SCHEME_ORDER_VISUALISATION_INDEX                   = createCode(CONCEPT_SCHEME_PREFIX, "concept_scheme_order_visualisation.index");
+    public static final String  CONCEPT_SCHEME_DEFAULT_ORDER_VISUALISATION                 = createCode(CONCEPT_SCHEME_PREFIX, "default_order_visualisation");
 
     // CONCEPT
     private static final String CONCEPT_PREFIX                                             = "concept";

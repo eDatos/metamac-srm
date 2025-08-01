@@ -2,16 +2,16 @@ package org.siemac.metamac.srm.web.shared.criteria;
 
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
-public class CodelistOrderVisualisationWebCriteria extends MetamacWebCriteria {
+public class OrderVisualisationWebCriteria extends MetamacWebCriteria {
 
     private String            dsdDimensionUrn;
 
     private static final long serialVersionUID = 1L;
 
-    public CodelistOrderVisualisationWebCriteria() {
+    public OrderVisualisationWebCriteria() {
     }
 
-    public CodelistOrderVisualisationWebCriteria(String criteria) {
+    public OrderVisualisationWebCriteria(String criteria) {
         super(criteria);
     }
 

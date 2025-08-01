@@ -2,12 +2,17 @@ package org.siemac.metamac.srm.web.concept.utils;
 
 import static org.siemac.metamac.web.common.client.utils.InternationalStringUtils.getLocalisedString;
 
+import java.util.List;
+
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacBasicDto;
+import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeVisualisationDto;
 import org.siemac.metamac.srm.web.concept.model.record.ConceptRecord;
 import org.siemac.metamac.srm.web.concept.model.record.ConceptSchemeRecord;
+import org.siemac.metamac.srm.web.concept.model.record.ConceptSchemeVisualisationRecord;
 
 import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationResult;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class ConceptsRecordUtils extends org.siemac.metamac.srm.web.client.utils.RecordUtils {
 
@@ -41,5 +46,21 @@ public class ConceptsRecordUtils extends org.siemac.metamac.srm.web.client.utils
         record.setName(concept.getName());
         record.setUrn(concept.getUrn());
         return record;
+    }
+
+    // CONCEPT SCHEME VISUALISATIONS
+
+    public static ConceptSchemeVisualisationRecord getConceptSchemeVisualisationRecord(ConceptSchemeVisualisationDto conceptSchemeVisualisationDto) {
+        return new ConceptSchemeVisualisationRecord(conceptSchemeVisualisationDto.getCode(), getLocalisedString(conceptSchemeVisualisationDto.getName()), conceptSchemeVisualisationDto.getUrn(),
+                conceptSchemeVisualisationDto);
+    }
+
+    public static ListGridRecord[] getConceptSchemeVisualisationRecords(List<ConceptSchemeVisualisationDto> conceptSchemeVisualisationDtos) {
+        ListGridRecord[] records = new ListGridRecord[conceptSchemeVisualisationDtos.size()];
+        for (int i = 0; i < conceptSchemeVisualisationDtos.size(); i++) {
+            records[i] = getConceptSchemeVisualisationRecord(conceptSchemeVisualisationDtos.get(i));
+        }
+        return records;
+
     }
 }

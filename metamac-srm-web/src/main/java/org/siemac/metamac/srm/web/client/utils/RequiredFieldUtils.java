@@ -19,7 +19,7 @@ public class RequiredFieldUtils {
 
     private static final String[] conceptSchemeFieldsToProductionValidation = new String[]{ConceptSchemeDS.IS_PARTIAL};
     private static final String[] conceptSchemeFieldsToDiffusionValidation  = conceptSchemeFieldsToProductionValidation;
-    private static final String[] conceptSchemeFieldsToInternalPublication  = conceptSchemeFieldsToDiffusionValidation;
+    private static final String[] conceptSchemeFieldsToInternalPublication  = ArrayUtils.addStringElementsToStringArray(conceptSchemeFieldsToDiffusionValidation, CodelistDS.DEFAULT_ORDER);
     private static final String[] conceptSchemeFieldsToExternalPublication  = conceptSchemeFieldsToInternalPublication;
 
     public static String[] getConceptSchemeRequiredFieldsToNextProcStatus(ProcStatusEnum currentProcStatus) {

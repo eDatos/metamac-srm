@@ -6,6 +6,7 @@ import java.util.Map;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptRoleEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.task.domain.RepresentationsTsv;
 
 public class ConceptMetamacResultExtensionPoint {
@@ -47,6 +48,8 @@ public class ConceptMetamacResultExtensionPoint {
     private String                               indexBaseLocationCode          = null;
     private String                               indexBaseQuantityConceptScheme = null;
     private String                               indexBaseQuantityConcept       = null;
+    private Integer                              orderConfiguration;
+    private String                               orderConfigurationConcatenatedByLevel;
 
     public Map<String, String> getPluralName() {
         return pluralName;
@@ -286,5 +289,25 @@ public class ConceptMetamacResultExtensionPoint {
 
     public void setIndexBaseLocationCodelistUrn(String indexBaseLocationCodelistUrn) {
         this.indexBaseLocationCodelistUrn = indexBaseLocationCodelistUrn;
+    }
+
+    public Integer getOrderConfiguration() {
+        return orderConfiguration;
+    }
+
+    public void setOrderConfiguration(Integer orderConfiguration) {
+        this.orderConfiguration = orderConfiguration;
+    }
+
+    public String getOrderConfigurationConcatenatedByLevel() {
+        return orderConfigurationConcatenatedByLevel;
+    }
+
+    public void setOrderConfigurationConcatenatedByLevel(String orderConfigurationConcatenatedByLevel) {
+        this.orderConfigurationConcatenatedByLevel = orderConfigurationConcatenatedByLevel;
+    }
+
+    public int getLevel() {
+        return orderConfigurationConcatenatedByLevel.length() / (SrmConstants.CONCEPT_QUERY_COLUMN_ORDER_LENGTH + 1); // 6 of order + 1 of dot
     }
 }

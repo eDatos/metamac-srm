@@ -502,4 +502,16 @@ public class TasksMetamacServiceImpl extends TasksMetamacServiceImplBase impleme
                     .build();
         }
     }
+
+    @Override
+    public String plannifyImportConceptSchemeOrdersTsvInBackground(ServiceContext ctx, String conceptSchemeUrn, File file, String fileName) throws MetamacException {
+        // Validation
+        TasksMetamacInvocationValidator.checkImportConceptSchemeOrdersTsvInBackground(conceptSchemeUrn, file, fileName, null);
+
+        // Plan job
+        JobDataMap jobDataAdditional = new JobDataMap();
+        jobDataAdditional.put(ImportationTsvJob.ITEM_SCHEME_URN, conceptSchemeUrn);
+        jobDataAdditional.put(ImportationTsvJob.OPERATION, ImportationTsvJob.OPERATION_IMPORT_CONCEPT_SCHEME_ORDERS);
+        return importTsvInBackground(ctx, file, fileName, jobDataAdditional);
+    }
 }

@@ -2,10 +2,13 @@ package org.siemac.metamac.srm.core.concept.serviceapi.utils;
 
 import java.util.UUID;
 
+import org.joda.time.DateTime;
+import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.code.serviceapi.utils.CodesMetamacDoMocks;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
 import org.siemac.metamac.srm.core.concept.domain.Quantity;
@@ -16,6 +19,7 @@ import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositi
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ExternalItem;
 import com.arte.statistic.sdmx.srm.core.concept.serviceapi.utils.ConceptsDoMocks;
@@ -120,6 +124,30 @@ public class ConceptsMetamacDoMocks extends ConceptsDoMocks {
         target.setBaseValue(Integer.valueOf(5));
         target.setBaseTime("2010");
         target.setBaseLocation(CodesMetamacDoMocks.mockCodeFixedValues("baseLocation01", CodesMetamacDoMocks.mockCodelistFixedValues("agency01", "codelist01", "01.000"), null));
+        return target;
+    }
+
+    // ------------------------------------------------------------------------------------
+    // CONCEPT SCHEME ORDER VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    public static ConceptSchemeOrderVisualisation mockConceptSchemeOrderVisualisation(AnnotationType annotationType) {
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = new ConceptSchemeOrderVisualisation();
+        conceptSchemeOrderVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
+        return conceptSchemeOrderVisualisation;
+    }
+
+    public static ConceptSchemeOrderVisualisation mockConceptSchemeOrderVisualisationFixedValues(String resourceID) {
+        ConceptSchemeOrderVisualisation target = new ConceptSchemeOrderVisualisation();
+        target.getUuid(); // generate uuid
+        target.setVersion(Long.valueOf(1));
+        target.setCreatedBy("userCreatedBy");
+        target.setCreatedDate(new DateTime(2012, 10, 1, 10, 12, 13, 14));
+        target.setLastUpdatedBy("userLastUpdated");
+        target.setLastUpdated(new DateTime(2012, 11, 5, 10, 12, 13, 14));
+        target.setUpdateDate(new DateTime(2012, 11, 5, 10, 12, 13, 14));
+        target.setNameableArtefact(new NameableArtefact());
+        mockNameableArtefactFixedValues(target.getNameableArtefact(), resourceID, null);
         return target;
     }
 

@@ -17,6 +17,8 @@ import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisationReposit
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisationRepository;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamacRepository;
 import org.siemac.metamac.srm.core.dsd.domain.DimensionOrder;
@@ -33,6 +35,7 @@ import com.arte.statistic.sdmx.srm.core.structure.domain.DimensionComponent;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentListDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponent;
 
 @org.springframework.stereotype.Component("dataStructureDefinitionDto2DoMapper")
@@ -49,6 +52,9 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
 
     @Autowired
     private CodelistOpennessVisualisationRepository                                               codelistOpennessVisualisationRepository;
+
+    @Autowired
+    private ConceptSchemeOrderVisualisationRepository                                             conceptSchemeOrderVisualisationRepository;
 
     // ------------------------------------------------------------
     // DATA STRUCTURE DEFINITIONS
@@ -239,11 +245,7 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
         DimensionComponent dimension = (DimensionComponent) dto2DoMapperSdmxSrm.relatedResourceDtoToEntity(source, ServiceExceptionParameters.DIMENSION);
         target.setDimension(dimension);
 
-        if (source.getDisplayOrder() != null) {
-            target.setDisplayOrder(retrieveCodelistOrderVisualisation(source.getDisplayOrder().getUrn()));
-        } else {
-            target.setDisplayOrder(null);
-        }
+        setDisplayOrder(source, target);
 
         if (source.getHierarchyLevelsOpen() != null) {
             target.setHierarchyLevelsOpen(retrieveCodelistOpennessVisualisation(source.getHierarchyLevelsOpen().getUrn()));
@@ -258,6 +260,23 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
         return target;
     }
 
+    private void setDisplayOrder(DimensionVisualisationInfoDto source, DimensionVisualisationInfo target) throws MetamacException {
+
+        if (source.getDisplayOrder() == null) {
+            target.setDisplayOrder(null);
+            target.setDisplayConceptSchemeOrder(null);
+            return;
+        }
+
+        if (RelatedResourceTypeEnum.CODELIST.equals(source.getDisplayOrder().getType())) {
+            target.setDisplayOrder(retrieveCodelistOrderVisualisation(source.getDisplayOrder().getUrn()));
+        }
+
+        if (RelatedResourceTypeEnum.CONCEPT_SCHEME.equals(source.getDisplayOrder().getType())) {
+            target.setDisplayConceptSchemeOrder(retrieveConceptSchemeOrderVisualisation(source.getDisplayOrder().getUrn()));
+        }
+    }
+
     private CodelistOrderVisualisation retrieveCodelistOrderVisualisation(String urn) throws MetamacException {
         CodelistOrderVisualisation target = codelistOrderVisualisationRepository.findByUrn(urn);
         if (target == null) {
@@ -269,6 +288,15 @@ public class DataStructureDefinitionDto2DoMapperImpl extends BaseDto2DoMapperImp
 
     private CodelistOpennessVisualisation retrieveCodelistOpennessVisualisation(String urn) throws MetamacException {
         CodelistOpennessVisualisation target = codelistOpennessVisualisationRepository.findByUrn(urn);
+        if (target == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
+        }
+        return target;
+    }
+
+    private ConceptSchemeOrderVisualisation retrieveConceptSchemeOrderVisualisation(String urn) throws MetamacException {
+        ConceptSchemeOrderVisualisation target = conceptSchemeOrderVisualisationRepository.findByUrn(urn);
         if (target == null) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();

@@ -14,8 +14,10 @@ import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.common.service.utils.SemanticIdentifierValidationUtils;
 import org.siemac.metamac.srm.core.common.service.utils.SrmValidationUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.Quantity;
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
@@ -89,13 +91,14 @@ public class ConceptsMetamacInvocationValidator extends ConceptsInvocationValida
         ExceptionUtils.throwIfException(exceptions);
     }
 
-    public static void checkRetrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, ItemResultSelection itemResultSelection, List<MetamacExceptionItem> exceptions)
-            throws MetamacException {
+    public static void checkRetrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, ItemResultSelection itemResultSelection, String orderVisualisationCode,
+            List<MetamacExceptionItem> exceptions) throws MetamacException {
         if (exceptions == null) {
             exceptions = new ArrayList<MetamacExceptionItem>();
         }
 
         ValidationUtils.checkParameterRequired(conceptSchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(orderVisualisationCode, ServiceExceptionParameters.CONCEPT_SCHEME_ORDER_VISUALISATION, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
     }
@@ -394,4 +397,76 @@ public class ConceptsMetamacInvocationValidator extends ConceptsInvocationValida
 
         ExceptionUtils.throwIfException(exceptions);
     }
+
+    public static void checkRetrieveConceptSchemeOrderVisualisationByCode(String conceptSchemeUrn, String code, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(conceptSchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(code, ServiceExceptionParameters.CONCEPT_SCHEME_ORDER_VISUALISATION, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkUpdateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newCodeIndex, List<MetamacExceptionItem> exceptions)
+            throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(conceptUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(conceptSchemeOrderVisualisationUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(newCodeIndex, ServiceExceptionParameters.CODELIST_ORDER_VISUALISATION_INDEX, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkCreateConceptSchemeOrderVisualisation(String codelistUrn, ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation, List<MetamacExceptionItem> exceptions)
+            throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+        ValidationUtils.checkParameterRequired(codelistUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(conceptSchemeOrderVisualisation, ServiceExceptionParameters.CONCEPT_SCHEME_ORDER_VISUALISATION, exceptions);
+        if (conceptSchemeOrderVisualisation != null) {
+            checkConceptSchemeOrderVisualisation(conceptSchemeOrderVisualisation, exceptions);
+        }
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkUpdateConceptSchemeOrderVisualisation(ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+        checkConceptSchemeOrderVisualisation(conceptSchemeOrderVisualisation, exceptions);
+        ValidationUtils.checkParameterRequired(conceptSchemeOrderVisualisation.getConceptSchemeVersion(), ServiceExceptionParameters.CONCEPT_SCHEME, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    private static void checkConceptSchemeOrderVisualisation(ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation, List<MetamacExceptionItem> exceptions) {
+        ValidationUtils.checkParameterRequired(conceptSchemeOrderVisualisation, ServiceExceptionParameters.CONCEPT_SCHEME_ORDER_VISUALISATION, exceptions);
+        if (conceptSchemeOrderVisualisation == null) {
+            return;
+        }
+        checkNameableArtefact(conceptSchemeOrderVisualisation.getNameableArtefact(), exceptions);
+        if (conceptSchemeOrderVisualisation.getNameableArtefact() != null) {
+            SemanticIdentifierValidationUtils.checkConceptSchemeVisualisationSemanticIdentifier(conceptSchemeOrderVisualisation.getNameableArtefact().getCode(), exceptions);
+        }
+    }
+
+    public static void checkImportConceptOrdersTsv(String conceptShemeUrn, File file, String fileName, Boolean canBeBackground, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(conceptShemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
+        ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.FILE_NAME, exceptions);
+        ValidationUtils.checkParameterRequired(canBeBackground, ServiceExceptionParameters.CAN_BE_BACKGROUND, exceptions);
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
 }

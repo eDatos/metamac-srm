@@ -13,6 +13,7 @@ import org.siemac.metamac.srm.core.code.domain.Variable;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
@@ -89,7 +90,7 @@ public class SrmValidationUtils extends SdmxSrmValidationUtils {
             throw new MetamacException(ServiceExceptionType.CODELIST_ALL_EXPANDED_OPENNESS_VISUALISATION_OPERATION_NOT_SUPPORTED, opennessVisualisation.getNameableArtefact().getUrn());
         }
     }
-    
+
     public static void checkVariableIsGeographical(Variable variable) throws MetamacException {
         if (!VariableTypeEnum.GEOGRAPHICAL.equals(variable.getType())) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.VARIABLE_MUST_BE_GEOGRAPHICAL).withMessageParameters(variable.getNameableArtefact().getUrn()).build();
@@ -107,5 +108,11 @@ public class SrmValidationUtils extends SdmxSrmValidationUtils {
         // creating not imported, updating...
         return true;
     }
-      
+
+    public static void checkNotAlphabeticalOrderVisualisation(ConceptSchemeOrderVisualisation orderVisualisation) throws MetamacException {
+        if (SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
+            throw new MetamacException(ServiceExceptionType.CONCEPT_SCHEME_ALPHABETICAL_ORDER_OPERATION_NOT_SUPPORTED, orderVisualisation.getNameableArtefact().getUrn());
+        }
+    }
+
 }

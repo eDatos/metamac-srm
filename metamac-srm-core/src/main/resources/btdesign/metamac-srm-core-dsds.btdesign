@@ -138,11 +138,11 @@ Application DsdsMetamac {
     		PagedResult<@CodelistVersionMetamac> findCodelistsCanBeEnumeratedRepresentationForDsdAttributeByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String conceptUrn) throws MetamacException;
 			"Find codelists belong to same variable of concept an the variable must be spatial"
     		PagedResult<@CodelistVersionMetamac> findCodelistsCanBeEnumeratedRepresentationForDsdSpatialAttributeByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String conceptUrn) throws MetamacException;
-			"Find orderVisualisation belong to same codelist representation of dimension"
-			PagedResult<@CodelistOrderVisualisation> findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String dimensionUrn) throws MetamacException;
+			"Find orderVisualisation belong to same codelist, concept-scheme representation of dimension"
+			OrderVisualisations findOrderVisualisationCanBeDisplayOrderForDsdDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String dimensionUrn) throws MetamacException;
             "Find openessVisualisation belong to same codelist representation of dimension"	
             PagedResult<@CodelistOpennessVisualisation> findOpennessVisualisationCanBeHierarchylevelopenForDsdDimensionByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String dimensionUrn) throws MetamacException;	
-			
+					
 			// Check related resources
 	    	checkPrimaryMeasure(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion, @Component component, List<MetamacExceptionItem> exceptions) throws MetamacException 
             checkTimeDimension(@DataStructureDefinitionVersionMetamac dataStructureDefinitionVersion, @Component component, List<MetamacExceptionItem> exceptions) throws MetamacException
@@ -250,12 +250,15 @@ Application DsdsMetamac {
 
 			"DSD dimension"
 			-@DimensionComponent dimension cascade="none" databaseColumn="DIM_COMPONENT_FK";
-			
-			"Display order of the categories of a dimension"
+									
+			"Display order of the categories of a dimension."
 			- @CodelistOrderVisualisation displayOrder nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="DISPLAY_ORDER_FK";
 
 			"For variables with hierarchies, indicates how the tree will be displayed when first displayed"
 			- @CodelistOpennessVisualisation hierarchyLevelsOpen nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="HIERARCHY_LEVELS_OPEN_FK";
+			
+			"Display order of the concept sheme of a dimension if the dimension is associated to this resource. If it is associated to codelist it will be null"
+			- @ConceptSchemeOrderVisualisation displayConceptSchemeOrder nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="DISPLAY_CONCEPT_SCHEME_ORDER_FK";
 			
 			Boolean displayCode;
 			

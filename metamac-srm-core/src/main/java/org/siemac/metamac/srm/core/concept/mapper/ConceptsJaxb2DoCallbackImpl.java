@@ -10,9 +10,11 @@ import org.sdmx.resources.sdmxml.schemas.v2_1.structure.ConceptsType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.domain.CodelistVersionMetamac;
 import org.siemac.metamac.srm.core.code.domain.Variable;
+import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.task.utils.ImportationMetamacCommonValidations;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,8 +66,8 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
         // Fill metadata heritable
         if (previousMetamac != null) {
             // Inherit translations (for all international strings)
-            targetMetamac.getMaintainableArtefact().setName(
-                    BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getMaintainableArtefact().getName(), targetMetamac.getMaintainableArtefact().getName())); // Name
+            targetMetamac.getMaintainableArtefact()
+                    .setName(BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getMaintainableArtefact().getName(), targetMetamac.getMaintainableArtefact().getName())); // Name
             targetMetamac.getMaintainableArtefact().setDescription(
                     BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getMaintainableArtefact().getDescription(), targetMetamac.getMaintainableArtefact().getDescription())); // Description
             BaseJaxb2DoInheritUtils.inheritAnnotations(previousMetamac.getMaintainableArtefact().getAnnotations(), targetMetamac.getMaintainableArtefact().getAnnotations()); // Annotations
@@ -85,9 +87,16 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
         ConceptSchemeVersionMetamac previousMetamac = (ConceptSchemeVersionMetamac) previous;
         ConceptSchemeVersionMetamac targetMetamac = (ConceptSchemeVersionMetamac) target;
 
-        // Versioning relations
-        conceptsMetamacService.versioningRelatedConcepts(ctx, previousMetamac, targetMetamac);
-        conceptsMetamacService.versioningConceptsQuantity(ctx, previousMetamac, targetMetamac);
+        if (previousMetamac != null) {
+            // OrderVisualisation
+            targetMetamac = conceptsMetamacService.versioningConceptSchemeOrderVisualisations(ctx, previousMetamac, targetMetamac);
+            // Update all order codes visualisations
+            conceptsMetamacService.recalculateConceptsVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), true);
+        } else {
+            targetMetamac = conceptsMetamacService.createConceptSchemeOrderVisualisationAlphabetical(ctx, targetMetamac); // Add alphabetical order
+        }
+
+        conceptsMetamacService.postCreateConceptScheme(ctx, previousMetamac, targetMetamac);
     }
 
     @Override
@@ -98,8 +107,8 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
         // Fill metadata heritable
         if (previousMetamac != null) {
             // Inherit translations (for all international strings)
-            targetMetamac.getNameableArtefact().setName(
-                    BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getNameableArtefact().getName(), targetMetamac.getNameableArtefact().getName())); // Name
+            targetMetamac.getNameableArtefact()
+                    .setName(BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getNameableArtefact().getName(), targetMetamac.getNameableArtefact().getName())); // Name
             targetMetamac.getNameableArtefact().setDescription(
                     BaseJaxb2DoInheritUtils.inheritInternationalStringAsNew(previousMetamac.getNameableArtefact().getDescription(), targetMetamac.getNameableArtefact().getDescription())); // Description
             BaseJaxb2DoInheritUtils.inheritAnnotations(previousMetamac.getNameableArtefact().getAnnotations(), targetMetamac.getNameableArtefact().getAnnotations()); // Annotations
@@ -121,7 +130,7 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
                     ? ((CodelistVersionMetamac) targetMetamac.getCoreRepresentation().getEnumerationCodelist()).getVariable()
                     : null;
 
-            if (previousVariable.getId().compareTo(targetVariable.getId()) != 0) {
+            if (previousVariable != null && targetVariable != null && previousVariable.getId().compareTo(targetVariable.getId()) != 0) {
                 // IDEA: METAMAC-2183
             }
 
@@ -130,6 +139,13 @@ public class ConceptsJaxb2DoCallbackImpl extends ImportationMetamacCommonValidat
             // Extends : can copy "extend" because they are concepts in another concept scheme
             targetMetamac.setConceptExtends(previousMetamac.getConceptExtends());
             targetMetamac.setLegalActs(BaseCopyAllMetadataUtils.copy(previousMetamac.getLegalActs()));
+
+            for (int i = 1; i <= SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+                Integer order = SrmServiceUtils.getConceptSchemeOrder(previousMetamac, i);
+                if (order != null) {
+                    SrmServiceUtils.setConceptSchemeOrder(targetMetamac, i, order);
+                }
+            }
 
         } else {
             if (targetMetamac.getCoreRepresentation() != null && RepresentationTypeEnum.ENUMERATION.equals(targetMetamac.getCoreRepresentation().getRepresentationType())) {

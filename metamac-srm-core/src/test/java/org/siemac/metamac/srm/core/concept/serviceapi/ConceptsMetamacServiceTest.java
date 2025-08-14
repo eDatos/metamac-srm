@@ -10,11 +10,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
+import static org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts.assertEqualsConceptSchemeOrderVisualisation;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -25,7 +27,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -35,6 +37,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.common.test.utils.DirtyDatabase;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
@@ -56,6 +59,7 @@ import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamacRepository;
+import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.concept.domain.ConceptType;
@@ -68,16 +72,23 @@ import org.siemac.metamac.srm.core.concept.enume.domain.QuantityTypeEnum;
 import org.siemac.metamac.srm.core.concept.enume.domain.QuantityUnitSymbolPositionEnum;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacAsserts;
 import org.siemac.metamac.srm.core.concept.serviceapi.utils.ConceptsMetamacDoMocks;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacRepository;
+import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
@@ -96,7 +107,11 @@ import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptProperties;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.concept.serviceapi.utils.ConceptsAsserts;
 import com.arte.statistic.sdmx.srm.core.concept.serviceapi.utils.ConceptsDoMocks;
+import com.arte.statistic.sdmx.srm.core.task.domain.Task;
+import com.arte.statistic.sdmx.srm.core.task.domain.TaskResult;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RepresentationTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskResultTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskStatusTypeEnum;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/srm/applicationContext-test.xml"})
@@ -129,6 +144,12 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager               entityManager;
 
+    @Autowired
+    protected PlatformTransactionManager  transactionManager;
+
+    @Autowired
+    private TasksMetamacService           tasksService;
+
     @Override
     @Test
     public void testCreateConceptScheme() throws Exception {
@@ -147,6 +168,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         ConceptSchemeVersionMetamac conceptSchemeVersionRetrieved = conceptsService.retrieveConceptSchemeByUrn(ctx, urn);
         assertEquals(ProcStatusEnum.DRAFT, conceptSchemeVersionRetrieved.getLifeCycleMetadata().getProcStatus());
         assertFalse(conceptSchemeVersionRetrieved.getMaintainableArtefact().getIsExternalReference());
+        assertNull(conceptSchemeVersionRetrieved.getDefaultOrderVisualisation());
         assertNull(conceptSchemeVersionRetrieved.getLifeCycleMetadata().getProductionValidationDate());
         assertNull(conceptSchemeVersionRetrieved.getLifeCycleMetadata().getProductionValidationUser());
         assertNull(conceptSchemeVersionRetrieved.getLifeCycleMetadata().getDiffusionValidationDate());
@@ -159,6 +181,15 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(ctx.getUserId(), conceptSchemeVersionRetrieved.getCreatedBy());
         assertEquals(ctx.getUserId(), conceptSchemeVersionRetrieved.getLastUpdatedBy());
         ConceptsMetamacAsserts.assertEqualsConceptScheme(conceptSchemeVersion, conceptSchemeVersionRetrieved);
+
+        // Check alphabetical order is created
+        assertEquals(1, conceptSchemeVersionRetrieved.getOrderVisualisations().size());
+        ConceptSchemeOrderVisualisation alphabetical = conceptSchemeVersionRetrieved.getOrderVisualisations().get(0);
+        assertEquals(SrmConstants.CONCEPT_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE, alphabetical.getNameableArtefact().getCode());
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=" + conceptSchemeVersion.getMaintainableArtefact().getMaintainer().getIdAsMaintainer() + ":"
+                + conceptSchemeVersion.getMaintainableArtefact().getCode() + "(01.000)." + alphabetical.getNameableArtefact().getCode(), alphabetical.getNameableArtefact().getUrn());
+        assertNotNull(alphabetical.getNameableArtefact().getName());
+
     }
 
     @Test
@@ -251,16 +282,45 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     }
 
     @Test
-    public void testUpdateConceptSchemeChangingCode() throws Exception {
-        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_2_V1);
+    public void testUpdateConceptSchemeChangingConcept() throws Exception {
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_3_V1);
+
+        // save to force incorrect metadata
+        conceptSchemeVersion.getLifeCycleMetadata().setProcStatus(ProcStatusEnum.DRAFT);
+        conceptSchemeVersion.getMaintainableArtefact().setFinalLogic(false);
+        itemSchemeRepository.save(conceptSchemeVersion);
+
+        conceptSchemeVersion.setIsTypeUpdated(Boolean.FALSE);
 
         // Change code
         conceptSchemeVersion.getMaintainableArtefact().setCode("codeNew");
         conceptSchemeVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.TRUE);
-        conceptSchemeVersion.setIsTypeUpdated(Boolean.FALSE);
 
-        ConceptSchemeVersion conceptSchemeVersionUpdated = conceptsService.updateConceptScheme(getServiceContextAdministrador(), conceptSchemeVersion);
+        ConceptSchemeVersionMetamac conceptSchemeVersionUpdated = conceptsService.updateConceptScheme(getServiceContextAdministrador(), conceptSchemeVersion);
         assertEquals("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=SDMX01:codeNew(01.000)", conceptSchemeVersionUpdated.getMaintainableArtefact().getUrn());
+        String urnUpdated = conceptSchemeVersionUpdated.getMaintainableArtefact().getUrn();
+
+        entityManager.clear(); // force update of codes urn
+        conceptSchemeVersionUpdated = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), urnUpdated);
+
+        // Assert URN of ConceptSchemeOrder
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:codeNew(01.000).ALPHABETICAL",
+                conceptSchemeVersionUpdated.getOrderVisualisations().iterator().next().getNameableArtefact().getUrn());
+    }
+
+    @Test
+    public void testUpdateConceptSchemeChangingDefaultOrderVisualisation() throws Exception {
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2);
+        assertEquals(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02, conceptSchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getUrn());
+
+        String visualisationUrnNew = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03;
+        conceptSchemeVersion.setIsTypeUpdated(Boolean.FALSE);
+        conceptSchemeVersion.getMaintainableArtefact().setIsCodeUpdated(Boolean.FALSE);
+        conceptSchemeVersion.setDefaultOrderVisualisation(conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), visualisationUrnNew));
+        conceptsService.updateConceptScheme(getServiceContextAdministrador(), conceptSchemeVersion);
+
+        ConceptSchemeVersionMetamac conceptSchemeVersionRetrieved = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2);
+        assertEquals(visualisationUrnNew, conceptSchemeVersionRetrieved.getDefaultOrderVisualisation().getNameableArtefact().getUrn());
     }
 
     @Test
@@ -443,6 +503,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals("user3", conceptSchemeVersion.getLifeCycleMetadata().getInternalPublicationUser());
         assertNull(conceptSchemeVersion.getLifeCycleMetadata().getExternalPublicationDate());
         assertNull(conceptSchemeVersion.getLifeCycleMetadata().getExternalPublicationUser());
+        assertEquals(CONCEPT_SCHEME_1_V1_ORDER_VISUALISATION_01_ALPHABETICAL, conceptSchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getUrn());
     }
 
     @Test
@@ -1393,7 +1454,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             conceptsService.publishInternallyConceptScheme(getServiceContextAdministrador(), urn, Boolean.FALSE);
             fail("ConceptScheme wrong translations");
         } catch (MetamacException e) {
-            assertEquals(5, e.getExceptionItems().size());
+            assertEquals(6, e.getExceptionItems().size());
             int i = 0;
             // ConceptScheme
             {
@@ -1406,6 +1467,18 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.ANNOTATION},
                         exceptionItem.getExceptionItems().get(1));
             }
+
+            // Concept scheme order visualisation
+            {
+                i++;
+                MetamacExceptionItem exceptionItem = assertListContainsExceptionItemOneParameter(e, ServiceExceptionType.RESOURCE_WITH_INCORRECT_METADATA,
+                        CONCEPT_SCHEME_14_V1_ORDER_VISUALISATION_01_ALPHABETICAL);
+                // children
+                assertEquals(1, exceptionItem.getExceptionItems().size());
+                assertEqualsMetamacExceptionItem(ServiceExceptionType.METADATA_WITHOUT_DEFAULT_LANGUAGE, 1, new String[]{ServiceExceptionParameters.NAMEABLE_ARTEFACT_NAME},
+                        exceptionItem.getExceptionItems().get(0));
+            }
+
             // Concepts
             {
                 // Concept01
@@ -1949,14 +2022,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             assertEquals(0, concept.getChildren().size());
         }
 
-        // Check order value of concepts was keeped when a concept scheme was copied
-        {
-            assertConceptOrderValue(urnExpectedConcept1, 0);
-            assertConceptOrderValue(urnExpectedConcept11, 0);
-            assertConceptOrderValue(urnExpectedConcept2, 1);
-            assertConceptOrderValue(urnExpectedConcept3, 2);
-        }
-
     }
 
     @Test
@@ -2081,7 +2146,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 ConceptMetamac concept = assertListConceptsContainsConcept(conceptSchemeVersionNewVersion.getItemsFirstLevel(), urnExpectedConcept1);
 
-                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", null, null);
+                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", "en", "Name conceptScheme-3-v1-concept-1");
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "descripción concept1", "it", "descripción it concept1");
                 assertEquals(null, concept.getNameableArtefact().getComment());
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getPluralName(), "es", "PluralName conceptScheme-3-v1-concept-1", null, null);
@@ -2154,14 +2219,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             assertEquals(urnExpected, allVersions.get(1).getMaintainableArtefact().getUrn());
         }
 
-        // Check order value of concepts was keeped when a concept scheme was versioned
-        {
-            assertConceptOrderValue(urnExpectedConcept1, 0);
-            assertConceptOrderValue(urnExpectedConcept2, 1);
-            assertConceptOrderValue(urnExpectedConcept21, 0);
-            assertConceptOrderValue(urnExpectedConcept211, 0);
-            assertConceptOrderValue(urnExpectedConcept22, 1);
-        }
     }
 
     @Test
@@ -2476,7 +2533,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 ConceptMetamac concept = assertListConceptsContainsConcept(conceptSchemeVersionNewVersion.getItemsFirstLevel(), urnExpectedConcept1);
 
-                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", null, null);
+                ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre conceptScheme-3-v1-concept-1", "en", "Name conceptScheme-3-v1-concept-1");
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getPluralName(), "es", "PluralName conceptScheme-3-v1-concept-1", null, null);
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getAcronym(), "es", "Acronym conceptScheme-3-v1-concept-1", null, null);
                 ConceptsMetamacAsserts.assertEqualsInternationalString(concept.getDescriptionSource(), "es", "DescriptionSource conceptScheme-3-v1-concept-1", null, null);
@@ -2631,7 +2688,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 LocalisedString localisedString = new LocalisedString("fr", "fr - text sample");
                 conceptTemporal.getPluralName().addText(localisedString);
 
-                conceptTemporal.setOrderValue(1);
             }
             // Item 2: Add legal acts and order value (1 -> 0)
             {
@@ -2642,7 +2698,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 conceptTemporal.getLegalActs().addText(new LocalisedString("fr", "fr - text sample legal acts"));
                 conceptTemporal.getLegalActs().addText(new LocalisedString("es", "es - text sample legal acts"));
 
-                conceptTemporal.setOrderValue(0);
             }
             // Merge
             conceptSchemeVersionTemporal = conceptsService.sendConceptSchemeToProductionValidation(getServiceContextAdministrador(), conceptSchemeVersionTemporal.getMaintainableArtefact().getUrn());
@@ -2668,12 +2723,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 assertEquals(2, conceptTemporal.getLegalActs().getTexts().size());
                 assertEquals("fr - text sample legal acts", conceptTemporal.getLegalActs().getLocalisedLabel("fr"));
                 assertEquals("es - text sample legal acts", conceptTemporal.getLegalActs().getLocalisedLabel("es"));
-            }
-
-            // Check order value of concepts was changed when a temporal concept scheme was merge with another one
-            {
-                assertConceptOrderValue(CONCEPT_SCHEME_3_V1_CONCEPT_1, 1);
-                assertConceptOrderValue(CONCEPT_SCHEME_3_V1_CONCEPT_2, 0);
             }
 
         }
@@ -2824,12 +2873,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), urnExpectedConcept3);
                 assertNull(concept.getQuantity());
             }
-
-            // Check order value of concepts was keeped when a temporal concept scheme was merge with another one
-            {
-                assertConceptOrderValue(urnExpectedConcept1, 0);
-                assertConceptOrderValue(urnExpectedConcept2, 1);
-            }
         }
     }
 
@@ -2936,8 +2979,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertListConceptsContainsConcept(conceptSchemeVersion.getItemsFirstLevel(), CONCEPT_SCHEME_1_V2_CONCEPT_4);
         assertListConceptsContainsConcept(conceptSchemeVersion.getItemsFirstLevel(), conceptRetrieved.getNameableArtefact().getUrn());
 
-        // Check order value of the new concept
-        assertConceptOrderValue(urn, 4);
     }
 
     @Test
@@ -3016,9 +3057,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         Concept concept1 = assertListConceptsContainsConcept(conceptSchemeVersion.getItemsFirstLevel(), CONCEPT_SCHEME_1_V2_CONCEPT_1);
         assertListConceptsContainsConcept(concept1.getChildren(), conceptRetrieved.getNameableArtefact().getUrn());
-
-        // Check order value of the new concept
-        assertConceptOrderValue(urn, 0);
     }
 
     @Test
@@ -3879,12 +3917,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         ConceptMetamac conceptMetamac = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), urn);
         assertEquals(conceptExtendsBeforeDeleteUrn, conceptMetamac.getConceptExtends().getNameableArtefact().getUrn());
 
-        // Check order value of the rest of concepts before delete concept
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-
         // Delete concept
         conceptsService.deleteConcept(getServiceContextAdministrador(), urn);
         entityManager.clear();
@@ -3916,11 +3948,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), CONCEPT_SCHEME_1_V2_CONCEPT_4);
         assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), CONCEPT_SCHEME_1_V2_CONCEPT_4_1);
         assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1);
-
-        // Check order value of the rest of concepts after delete concept
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 2);
     }
 
     @Test
@@ -3932,16 +3959,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
         assertEquals(4, conceptSchemeVersion.getItemsFirstLevel().size());
         assertEquals(8, conceptSchemeVersion.getItems().size());
-
-        // Check order value of the rest of concepts before delete concept
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
 
         // Delete concept
         conceptsService.deleteConcept(getServiceContextAdministrador(), urn);
@@ -3971,13 +3988,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), CONCEPT_SCHEME_1_V2_CONCEPT_3);
         assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), CONCEPT_SCHEME_1_V2_CONCEPT_4);
 
-        // Check order value of the rest of concepts after delete concept
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
     }
 
     @Test
@@ -4002,9 +4012,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(false, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
 
         // Validate concepts
-
-        List<ConceptMetamacVisualisationResult> result = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_9_V1, "es");
-        assertEquals(result.size(), 5);
 
         String conceptSchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME09(01.000).";
         {
@@ -4040,6 +4047,269 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     }
 
     @Test
+    @DirtyDatabase
+    public void testImportConceptsTsvAndOrders() throws Exception {
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String fileName = "importation-concept-03.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+        boolean updateAlreadyExisting = true;
+
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptsTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, updateAlreadyExisting, Boolean.TRUE);
+
+        // Validate
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+        assertEquals(4, taskImportTsvInfo.getInformationItems().size());
+
+        // Validate item scheme
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+        assertEqualsDate("2011-01-01 01:02:03", conceptSchemeVersion.getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), conceptSchemeVersion.getItemScheme().getResourceLastUpdated().toDate()));
+        assertEquals(false, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
+
+        String conceptSchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME01(02.000).";
+        ConceptMetamac concept1 = null;
+        ConceptMetamac concept2 = null;
+        {
+            // UPDATE EXISTING: CONCEPT01 nombre nuevo 1 new name 1 description new 1
+            String semanticIdentifier = "CONCEPT01";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(Long.valueOf("121"), concept.getId());
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "nombre nuevo 1", "en", "new name 1");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "en", "description new 1", null, null);
+            assertEqualsInternationalString(concept.getNameableArtefact().getComment(), "en", "Comentario EN", "es", "Comentario ES");
+            BaseAsserts.assertEqualsDay(new DateTime(2011, 01, 01, 01, 02, 03, 0), concept.getCreatedDate());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getLastUpdated()); // today
+            assertEquals(Integer.valueOf(0), concept.getOrder1());
+            assertEquals(Integer.valueOf(0), concept.getOrder2());
+            assertEquals(Integer.valueOf(1), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+
+        }
+        {
+            // concept1 Nombre 1 Name 1 Nombre it 1 Description 1 Descripción 1
+            String semanticIdentifier = "concept1";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            concept1 = concept;
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre 1", "en", "Name 1", "pt", "Nombre pt 1");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "Descripción 1", "en", "Description 1");
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(5), concept.getOrder1());
+            assertEquals(Integer.valueOf(5), concept.getOrder2());
+            assertEquals(Integer.valueOf(5), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // UPDATE EXISTING: CONCEPT02 nombre nuevo 2 con ácéntós new name 2 nombre nuevo it 2 descripción nueva 2 description new 2
+            String semanticIdentifier = "CONCEPT02";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "nombre nuevo con ácéntós 2", "en", "new name 2", "pt", "nombre nuevo pt 2");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "descripción nueva 2", "en", "description new 2");
+            BaseAsserts.assertEqualsDay(new DateTime(2011, 03, 02, 04, 05, 06, 0), concept.getCreatedDate());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getLastUpdated()); // today
+            assertEquals(Integer.valueOf(2), concept.getOrder1());
+            assertEquals(Integer.valueOf(1), concept.getOrder2());
+            assertEquals(Integer.valueOf(2), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // concept2 concept1 Nombre 2 Name 2 Description 2
+            String semanticIdentifier = "concept2";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            concept2 = concept;
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(concept1.getNameableArtefact().getUrn(), concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(concept1.getId(), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre 2", "en", "Name 2");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "Description 2", null, null);
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(0), concept.getOrder1());
+            assertEquals(Integer.valueOf(0), concept.getOrder2());
+            assertEquals(Integer.valueOf(0), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // concept1 Name 01B Nombre it 01B
+            String semanticIdentifier = "concept01b";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "en", "Name 01B", "pt", "Nombre pt 01B");
+            assertEquals(null, concept.getNameableArtefact().getDescription());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(1), concept.getOrder1());
+            assertEquals(Integer.valueOf(4), concept.getOrder2());
+            assertEquals(Integer.valueOf(4), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // concept8 CONCEPT01 Nombre 8
+            String semanticIdentifier = "concept8";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_1, concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(Long.valueOf("121"), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre 8", null, null);
+            assertEquals(null, concept.getNameableArtefact().getDescription());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(1), concept.getOrder1());
+            assertEquals(Integer.valueOf(1), concept.getOrder2());
+            assertEquals(Integer.valueOf(1), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // concept3 Name 3 Nombre it 3
+            String semanticIdentifier = "concept3";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "en", "Name 3", "pt", "Nombre pt 3");
+            assertEquals(null, concept.getNameableArtefact().getDescription());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(6), concept.getOrder1());
+            assertEquals(Integer.valueOf(6), concept.getOrder2());
+            assertEquals(Integer.valueOf(6), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // UPDATE EXISTING: CONCEPT03 nombre nuevo 03
+            String semanticIdentifier = "CONCEPT03";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(Long.valueOf("123"), concept.getId());
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "nombre nuevo 03", null, null);
+            assertEquals(null, concept.getNameableArtefact().getDescription());
+            BaseAsserts.assertEqualsDay(new DateTime(2011, 01, 01, 01, 02, 03, 0), concept.getCreatedDate());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getLastUpdated()); // today
+            assertEquals(Integer.valueOf(3), concept.getOrder1());
+            assertEquals(Integer.valueOf(2), concept.getOrder2());
+            assertEquals(Integer.valueOf(0), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // CONCEPT0400 CONCEPT04 Nombre 4 name 4 Nombre it 4 Description 4 Descripción 4
+            String semanticIdentifier = "CONCEPT0400";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_4, concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(Long.valueOf("124"), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre 4", "en", "name 4", "pt", "Nombre pt 4");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "en", "Description 4", "es", "Descripción 4");
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(0), concept.getOrder1());
+            assertEquals(Integer.valueOf(1), concept.getOrder2());
+            assertEquals(Integer.valueOf(1), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+
+        {
+            // CONCEPT040102 CONCEPT04 Nombre CONCEPT040102 name CONCEPT040102 Nombre it CONCEPT040102 Descripción CONCEPT040102
+            String semanticIdentifier = "CONCEPT040102";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(Long.valueOf("1241"), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre CONCEPT040102", "en", "name CONCEPT040102", "pt", "Nombre pt CONCEPT040102");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "Descripción CONCEPT040102", null, null);
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(1), concept.getOrder1());
+            assertEquals(Integer.valueOf(1), concept.getOrder2());
+            assertEquals(Integer.valueOf(1), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+        {
+            // concept5 concept1 Nombre 2 Nombre pt 5 Description 5 Descripción 5
+            String semanticIdentifier = "concept5";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(concept1.getNameableArtefact().getUrn(), concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(concept1.getId(), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "pt", "Nombre pt 5", null, null);
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "Descripción 5", "en", "Description 5");
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(1), concept.getOrder1());
+            assertEquals(Integer.valueOf(1), concept.getOrder2());
+            assertEquals(Integer.valueOf(1), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+        {
+            // concept6 concept2 Nombre pt 6
+            String semanticIdentifier = "concept6";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(concept2.getNameableArtefact().getUrn(), concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(concept2.getId(), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "pt", "Nombre pt 6", null, null);
+            assertEquals(null, concept.getNameableArtefact().getDescription());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(0), concept.getOrder1());
+            assertEquals(Integer.valueOf(0), concept.getOrder2());
+            assertEquals(Integer.valueOf(0), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+        {
+            // concept7 Nombre 7
+            String semanticIdentifier = "concept7";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(null, concept.getParent());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre 7", null, null);
+            assertEquals(null, concept.getNameableArtefact().getDescription());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getCreatedDate()); // today
+            assertEquals(Integer.valueOf(7), concept.getOrder1());
+            assertEquals(Integer.valueOf(7), concept.getOrder2());
+            assertEquals(Integer.valueOf(7), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+        {
+            // UPDATE EXISTING: CONCEPT0201 CONCEPT01 Nombre CONCEPT0201 name CONCEPT0201 Nombre pt CONCEPT0201 Descripción CODE0201
+            String semanticIdentifier = "CONCEPT0201";
+            ConceptMetamac concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptSchemeUrnPart + semanticIdentifier);
+            assertEquals(Long.valueOf(1221), concept.getId());
+            assertEquals(semanticIdentifier, concept.getNameableArtefact().getCode());
+            assertEquals(concept.getNameableArtefact().getUrn(), concept.getNameableArtefact().getUrnProvider());
+            assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_1, concept.getParent().getNameableArtefact().getUrn());
+            assertEquals(Long.valueOf(121), concept.getParent().getId());
+            assertEqualsInternationalString(concept.getNameableArtefact().getName(), "es", "Nombre CONCEPT0201", "en", "name CONCEPT0201", "pt", "Nombre pt CONCEPT0201");
+            assertEqualsInternationalString(concept.getNameableArtefact().getDescription(), "es", "Descripción CONCEPT0201", null, null);
+            BaseAsserts.assertEqualsDay(new DateTime(2011, 01, 01, 01, 02, 03, 0), concept.getCreatedDate());
+            BaseAsserts.assertEqualsDay(new DateTime(), concept.getLastUpdated()); // today
+            assertEquals(Integer.valueOf(0), concept.getOrder1());
+            assertEquals(Integer.valueOf(0), concept.getOrder2());
+            assertEquals(Integer.valueOf(0), concept.getOrder3());
+            assertEquals(null, concept.getOrder4());
+        }
+    }
+
+    @Test
     public void testImportConceptsTsvSdmxRole() throws Exception {
         String conceptSchemeUrn = CONCEPT_SCHEME_8_V1;
         String fileName = "importation-concept-02.tsv";
@@ -4061,7 +4331,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         // Validate concepts
 
-        List<ConceptMetamacVisualisationResult> result = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_8_V1, "es");
+        List<ConceptMetamacVisualisationResult> result = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_8_V1, "es", null);
         assertEquals(result.size(), 6);
 
         for (int i = 0; i < result.size(); i++) {
@@ -4256,25 +4526,25 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         System.out.println(lines);
 
-        String concepto01Line = "CONCEPT01\t\tNombre conceptScheme-1-v2-concept-1\t\tName conceptScheme-1-v2-concept-1\t\tDescripción conceptScheme-1-v2-concept-1\t\t\t\tComentario conceptScheme-1-v2-concept-1\t\tComment conceptScheme-1-v2-concept-1\t\tPluralName conceptScheme-1-v2-concept-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-1\t\tAcronym conceptScheme-1-v2-concept-1\t\tDescriptionSource conceptScheme-1-v2-concept-1\t\t\t\tContext conceptScheme-1-v2-concept-1\t\t\t\tDocMethod conceptScheme-1-v2-concept-1\t\t\t\tDerivation conceptScheme-1-v2-concept-1\t\t\t\tLegalActs conceptScheme-1-v2-concept-1\t\t\t\tDIRECT\tENUMERATED\turn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST07(01.000)\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto01Line = "CONCEPT01\t\tNombre conceptScheme-1-v2-concept-1\t\tName conceptScheme-1-v2-concept-1\t\tDescripción conceptScheme-1-v2-concept-1\t\tdescription conceptScheme-1-v2-concept-1\t\tComentario conceptScheme-1-v2-concept-1\t\tComment conceptScheme-1-v2-concept-1\t\tPluralName conceptScheme-1-v2-concept-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-1\t\tAcronym conceptScheme-1-v2-concept-1\t\tDescriptionSource conceptScheme-1-v2-concept-1\t\t\t\tContext conceptScheme-1-v2-concept-1\t\t\t\tDocMethod conceptScheme-1-v2-concept-1\t\t\t\tDerivation conceptScheme-1-v2-concept-1\t\t\t\tLegalActs conceptScheme-1-v2-concept-1\t\t\t\tDIRECT\tENUMERATED\turn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:CODELIST07(01.000)\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto01Line));
 
-        String concepto02Line = "CONCEPT02\t\tNombre conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIMENSION\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto02Line = "CONCEPT02\t\tNombre conceptScheme-1-v2-concept-2\t\tName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIMENSION\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto02Line));
 
         String concepto0201Line = "CONCEPT0201\tCONCEPT02\tNombre conceptScheme-1-v2-concept-2-1\t\tName conceptScheme-1-v2-concept-2-1\t\tDescripción conceptScheme-1-v2-concept-2-1\t\tDescription conceptScheme-1-v2-concept-2-1\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1\t\t\t\tAcrónimo conceptScheme-1-v2-concept-2-1\t\tAcronym conceptScheme-1-v2-concept-2-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPRIMARY_MEASURE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto0201Line));
 
-        String concepto020101Line = "CONCEPT020101\tCONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto020101Line = "CONCEPT020101\tCONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1-1\t\tName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-2-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto020101Line));
 
         String concepto03Line = "CONCEPT03\t\tnombre concept-3\t\tname concept-3\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-3\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tDIRECT\t\t\turn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX01:CONCEPTSCHEME07(01.000).CONCEPT01\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto03Line));
 
-        String concepto04Line = "CONCEPT04\t\tnombre concept-4\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto04Line = "CONCEPT04\t\tnombre concept-4\t\tname concept-4\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto04Line));
 
-        String concepto0401Line = "CONCEPT0401\tCONCEPT04\tnombre concept 4-1\t\t\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
+        String concepto0401Line = "CONCEPT0401\tCONCEPT04\tnombre concept 4-1\t\tname concept 4-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
         assertTrue(lines.contains(concepto0401Line));
 
         String concepto040101Line = "CONCEPT040101\tCONCEPT0401\tNombre conceptScheme-1-v2-concept-4-1-1\t\tName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\tPluralName conceptScheme-1-v2-concept-4-1-1\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tATTRIBUTE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tfalse\t\t\t\t\t\t\t\t\t\t";
@@ -4286,7 +4556,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
     @Test
     public void testRetrieveConceptsOrderedInDepthByConceptSchemeUrn() throws Exception {
 
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(Long.valueOf(12), new ConceptMetamacResultSelection(true, true, true, true, false));
+        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(Long.valueOf(12), null, new ConceptMetamacResultSelection(true, true, true, true, false));
 
         assertEquals(8, concepts.size());
 
@@ -4362,229 +4632,6 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
             ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
             urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
-        }
-
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(),
-                new ConceptMetamacResultSelection(true, true, true, true, false));
-
-        // Validation
-        // The number of concepts must be 11
-        assertFalse(concepts.isEmpty());
-        assertEquals(conceptsNumber, concepts.size());
-        assertEquals(conceptsNumber, urnConcepts.size());
-
-        // Concepts are in the expected position
-        for (int i = 0; i < conceptsNumber; i++) {
-            assertConceptOrderValue(urnConcepts.get(i), i);
-            assertNull(concepts.get(i).getParent());
-            assertEquals(urnConcepts.get(i), concepts.get(i).getUrn());
-        }
-
-    }
-
-    @Test
-    public void testRetrieveConceptsOrderedInDepthByConceptSchemeUrnMoreThanTenConceptsWithParent() throws Exception {
-        // @formatter:off
-        /*
-         * - CONCEPT_SCHEME
-         * - |_CONCEPT_PARENT
-         * -   |_ CONCEPT_0
-         * -   |_ CONCEPT_1
-         * -   |_ ....
-         * -   |_ CONCEPT_10
-         */
-        // @formatter:on
-
-        int conceptsNumber = 11;
-        ServiceContext ctx = getServiceContextAdministrador();
-
-        // Create concept scheme
-        OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        ConceptSchemeVersionMetamac conceptSchemeVersion = ConceptsMetamacDoMocks.mockConceptScheme(organisationMetamac, retrieveAnnotationType_1());
-
-        ConceptSchemeVersionMetamac conceptSchemeVersionCreated = conceptsService.createConceptScheme(ctx, conceptSchemeVersion);
-        String conceptSchemeUrn = conceptSchemeVersionCreated.getMaintainableArtefact().getUrn();
-
-        CodelistVersionMetamac coreRepresentation = codesService.retrieveCodelistByUrn(ctx, CODELIST_9_V1);
-        ConceptType conceptType = conceptsService.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
-        ConceptMetamac conceptExtends = conceptsService.retrieveConceptByUrn(ctx, CONCEPT_SCHEME_7_V1_CONCEPT_1);
-        Variable variable = codesService.retrieveVariableByUrn(ctx, VARIABLE_1);
-        CodelistVersion enumerationCodelist = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_7_V1);
-
-        Representation enumeratedRepresentation = new Representation();
-        enumeratedRepresentation.setRepresentationType(RepresentationTypeEnum.ENUMERATION);
-        enumeratedRepresentation.setEnumerationCodelist(enumerationCodelist);
-
-        List<String> urnConcepts = new ArrayList<>(conceptsNumber);
-
-        // Create parent concept
-        ConceptMetamac conceptParent = ConceptsMetamacDoMocks.mockConcept(conceptType, coreRepresentation, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1());
-        conceptParent.setParent(null);
-        conceptParent.setConceptExtends(conceptExtends);
-        conceptParent.setVariable(variable);
-        conceptParent.setCoreRepresentation(enumeratedRepresentation);
-
-        ConceptMetamac conceptParentCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, conceptParent);
-        String conceptParentUrn = conceptParentCreated.getNameableArtefact().getUrn();
-
-        // Create child concepts for parent concept
-        for (int i = 0; i < conceptsNumber; i++) {
-            ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, coreRepresentation, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1());
-            concept.setParent(conceptParentCreated);
-            concept.setConceptExtends(conceptExtends);
-            concept.setVariable(variable);
-            concept.setCoreRepresentation(enumeratedRepresentation);
-
-            ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
-            urnConcepts.add(conceptCreated.getNameableArtefact().getUrn());
-        }
-
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(),
-                new ConceptMetamacResultSelection(true, true, true, true, false));
-
-        // Validation
-        // The number of concepts must be 12: 1 parent concept and 11 child concepts
-        assertFalse(concepts.isEmpty());
-        assertEquals(conceptsNumber + 1, concepts.size());
-        assertEquals(conceptsNumber, urnConcepts.size());
-
-        // Parent concept is in the expected position
-        assertEquals(conceptParentUrn, concepts.get(0).getUrn());
-        assertNull(concepts.get(0).getParent());
-
-        // Child concepts are in the expected position
-        List<ItemResult> siblingsConcepts = concepts.subList(1, concepts.size());
-
-        for (int i = 0; i < conceptsNumber; i++) {
-            assertConceptOrderValue(urnConcepts.get(i), i);
-            assertEquals(urnConcepts.get(i), siblingsConcepts.get(i).getUrn());
-            assertNotNull(siblingsConcepts.get(i).getParent());
-            assertEquals(conceptParentUrn, siblingsConcepts.get(i).getParent().getUrn());
-        }
-    }
-
-    @Test
-    public void testRetrieveConceptsOrderedInDepthByConceptSchemeUrnMoreThanTenConceptsWithTwoParents() throws Exception {
-        // @formatter:off
-        /*
-         * - CONCEPT_SCHEME
-         * - |_PARENT_CONCEPT_0
-         * -   |_ CONCEPT_0
-         * -   |_ CONCEPT_1
-         * -   |_ ....
-         * -   |_ CONCEPT_10
-         * - |_PARENT_CONCEPT_1
-         * -   |_ CONCEPT_0
-         * -   |_ CONCEPT_1
-         * -   |_ ....
-         * -   |_ CONCEPT_10
-         */
-        // @formatter:on
-
-        int conceptsNumber = 11;
-        ServiceContext ctx = getServiceContextAdministrador();
-
-        // Create concept scheme
-        OrganisationMetamac organisationMetamac = organisationMetamacRepository.findByUrn(AGENCY_ROOT_1_V1);
-        ConceptSchemeVersionMetamac conceptSchemeVersion = ConceptsMetamacDoMocks.mockConceptScheme(organisationMetamac, retrieveAnnotationType_1());
-
-        ConceptSchemeVersionMetamac conceptSchemeVersionCreated = conceptsService.createConceptScheme(ctx, conceptSchemeVersion);
-        String conceptSchemeUrn = conceptSchemeVersionCreated.getMaintainableArtefact().getUrn();
-
-        CodelistVersionMetamac coreRepresentation = codesService.retrieveCodelistByUrn(ctx, CODELIST_9_V1);
-        ConceptType conceptType = conceptsService.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
-        ConceptMetamac conceptExtends = conceptsService.retrieveConceptByUrn(ctx, CONCEPT_SCHEME_7_V1_CONCEPT_1);
-        Variable variable = codesService.retrieveVariableByUrn(ctx, VARIABLE_1);
-        CodelistVersion enumerationCodelist = codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_7_V1);
-
-        Representation enumeratedRepresentation = new Representation();
-        enumeratedRepresentation.setRepresentationType(RepresentationTypeEnum.ENUMERATION);
-        enumeratedRepresentation.setEnumerationCodelist(enumerationCodelist);
-
-        List<String> urnConcepts1 = new ArrayList<>(conceptsNumber);
-
-        // Create parent concept 1
-        ConceptMetamac parentConcept1 = ConceptsMetamacDoMocks.mockConcept(conceptType, coreRepresentation, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1());
-        parentConcept1.setParent(null);
-        parentConcept1.setConceptExtends(conceptExtends);
-        parentConcept1.setVariable(variable);
-        parentConcept1.setCoreRepresentation(enumeratedRepresentation);
-
-        ConceptMetamac parentConcept1Created = conceptsService.createConcept(ctx, conceptSchemeUrn, parentConcept1);
-        String parentConcept1Urn = parentConcept1Created.getNameableArtefact().getUrn();
-
-        // Create child concepts for parent concept 1
-        for (int i = 0; i < conceptsNumber; i++) {
-            ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, coreRepresentation, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1());
-            concept.setParent(parentConcept1Created);
-            concept.setConceptExtends(conceptExtends);
-            concept.setVariable(variable);
-            concept.setCoreRepresentation(enumeratedRepresentation);
-
-            ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
-            urnConcepts1.add(conceptCreated.getNameableArtefact().getUrn());
-        }
-
-        List<String> urnConcepts2 = new ArrayList<>(conceptsNumber);
-
-        // Create parent concept 2
-        ConceptMetamac parentConcept2 = ConceptsMetamacDoMocks.mockConcept(conceptType, coreRepresentation, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1());
-        parentConcept2.setParent(null);
-        parentConcept2.setConceptExtends(conceptExtends);
-        parentConcept2.setVariable(variable);
-        parentConcept2.setCoreRepresentation(enumeratedRepresentation);
-
-        ConceptMetamac parentConcept2Created = conceptsService.createConcept(ctx, conceptSchemeUrn, parentConcept2);
-        String parentConcept2Urn = parentConcept2Created.getNameableArtefact().getUrn();
-
-        // Create child concepts for parent concept 2
-        for (int i = 0; i < conceptsNumber; i++) {
-            ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, coreRepresentation, ConceptRoleEnum.ATTRIBUTE, retrieveAnnotationType_1());
-            concept.setParent(parentConcept2Created);
-            concept.setConceptExtends(conceptExtends);
-            concept.setVariable(variable);
-            concept.setCoreRepresentation(enumeratedRepresentation);
-
-            ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
-            urnConcepts2.add(conceptCreated.getNameableArtefact().getUrn());
-        }
-
-        List<ItemResult> concepts = conceptMetamacRepository.findConceptsByConceptSchemeOrderedInDepth(conceptSchemeVersionCreated.getId(),
-                new ConceptMetamacResultSelection(true, true, true, true, false));
-
-        // Validation
-        // The number of concepts must be 24: 2 parent concepts and 11 child concepts for each parent
-        assertFalse(concepts.isEmpty());
-        assertEquals(conceptsNumber * 2 + 2, concepts.size());
-        assertEquals(conceptsNumber, urnConcepts1.size());
-        assertEquals(conceptsNumber, urnConcepts2.size());
-
-        // Parent concepts are in the expected position
-        assertEquals(parentConcept1Urn, concepts.get(0).getUrn());
-        assertNull(concepts.get(0).getParent());
-
-        assertEquals(parentConcept2Urn, concepts.get(conceptsNumber + 1).getUrn());
-        assertNull(concepts.get(0).getParent());
-
-        // Child concepts are in the expected position
-        List<ItemResult> siblingsConcepts1 = concepts.subList(1, conceptsNumber + 1);
-        List<ItemResult> siblingsConcepts2 = concepts.subList(conceptsNumber + 2, concepts.size());
-
-        assertEquals(conceptsNumber, siblingsConcepts1.size());
-        assertEquals(conceptsNumber, siblingsConcepts2.size());
-
-        for (int i = 0; i < conceptsNumber; i++) {
-            assertConceptOrderValue(urnConcepts1.get(i), i);
-            assertEquals(urnConcepts1.get(i), siblingsConcepts1.get(i).getUrn());
-            assertNotNull(siblingsConcepts1.get(i).getParent());
-            assertEquals(parentConcept1Urn, siblingsConcepts1.get(i).getParent().getUrn());
-        }
-
-        for (int i = 0; i < conceptsNumber; i++) {
-            assertConceptOrderValue(urnConcepts2.get(i), i);
-            assertEquals(urnConcepts2.get(i), siblingsConcepts2.get(i).getUrn());
-            assertNotNull(siblingsConcepts2.get(i).getParent());
-            assertEquals(parentConcept2Urn, siblingsConcepts2.get(i).getParent().getUrn());
         }
     }
 
@@ -4712,7 +4759,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         // LOCALE = 'es'
         {
             String locale = "es";
-            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, locale);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, locale, null);
 
             // Validate
             assertEquals(8, concepts.size());
@@ -4803,7 +4850,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         // LOCALE = 'en'
         {
             String locale = "en";
-            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, locale);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, locale, null);
 
             // Validate
             assertEquals(8, concepts.size());
@@ -4811,12 +4858,12 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
                 // Concept 01
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1);
                 assertEquals("Name conceptScheme-1-v2-concept-1", concept.getName());
-                assertEquals(null, concept.getDescription());
+                assertEquals("description conceptScheme-1-v2-concept-1", concept.getDescription());
             }
             {
                 // Concept 02
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2);
-                assertEquals(null, concept.getName());
+                assertEquals("Name conceptScheme-1-v2-concept-2", concept.getName());
                 assertEquals(null, concept.getDescription());
             }
             {
@@ -4828,7 +4875,7 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 // Concept 02 01 01
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1);
-                assertEquals(null, concept.getName());
+                assertEquals("Name conceptScheme-1-v2-concept-2-1-1", concept.getName());
             }
             {
                 // Concept 03
@@ -4838,12 +4885,12 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
             {
                 // Concept 04
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4);
-                assertEquals(null, concept.getName());
+                assertEquals("name concept-4", concept.getName());
             }
             {
                 // Concept 04 01
                 ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1);
-                assertEquals(null, concept.getName());
+                assertEquals("name concept 4-1", concept.getName());
             }
             {
                 // Concept 04 01 01
@@ -4859,10 +4906,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         // Find all
         {
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class)
-                    .orderBy(ConceptProperties.itemSchemeVersion().id()).ascending()
-                    .orderBy(ConceptProperties.id()).ascending()
-                    .distinctRoot().build();
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class).orderBy(ConceptProperties.itemSchemeVersion().id()).ascending().orderBy(ConceptProperties.id())
+                    .ascending().distinctRoot().build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<ConceptMetamac> conceptsPagedResult = conceptsService.findConceptsByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
@@ -5001,10 +5046,8 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
         // Find all
         {
-            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class)
-                    .orderBy(ConceptProperties.itemSchemeVersion().maintainableArtefact().urn()).ascending()
-                    .orderBy(ConceptProperties.id()).ascending()
-                    .distinctRoot().build();
+            List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Concept.class).orderBy(ConceptProperties.itemSchemeVersion().maintainableArtefact().urn()).ascending()
+                    .orderBy(ConceptProperties.id()).ascending().distinctRoot().build();
             PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
             PagedResult<ConceptMetamac> conceptsPagedResult = conceptsService.findConceptsCanBeRoleByCondition(getServiceContextAdministrador(), conditions, pagingParameter);
 
@@ -5583,464 +5626,9 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
 
     @Test
     @Override
-    public void testUpdateConceptParent() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1;
-        String newConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_1;
-        String previousConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
-        Integer newConceptIndex = 0;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Validate previous parent concept
-        assertParentConcept(conceptUrn, previousConceptParentUrn);
-
-        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newConceptParentUrn, newConceptIndex);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newConceptIndex);
-
-        // Validate parent concept updated
-        assertParentConcept(conceptUrn, newConceptParentUrn);
-
-        // Validate reordered concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptParentNoParentFirstPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1;
-        String newConceptParentUrn = null;
-        String previousConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
-        Integer newConceptIndex = 0;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Validate previous parent concept
-        assertParentConcept(conceptUrn, previousConceptParentUrn);
-
-        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newConceptParentUrn, newConceptIndex);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newConceptIndex);
-
-        // Validate parent concept updated
-        assertParentConcept(conceptUrn, newConceptParentUrn);
-
-        // Validate reordered concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 4);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptParentNoParentLastPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1;
-        String newConceptParentUrn = null;
-        String previousConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
-        Integer newConceptIndex = 4;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Validate previous parent concept
-        assertParentConcept(conceptUrn, previousConceptParentUrn);
-
-        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newConceptParentUrn, newConceptIndex);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newConceptIndex);
-
-        // Validate parent concept updated
-        assertParentConcept(conceptUrn, newConceptParentUrn);
-
-        // Validate reordered concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptParentConceptWithChildMoveToAnotherChild() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_4_1;
-        String newConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1;
-        String previousConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_4;
-        Integer newConceptIndex = 0;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Validate previous parent concept
-        assertParentConcept(conceptUrn, previousConceptParentUrn);
-
-        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newConceptParentUrn, newConceptIndex);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newConceptIndex);
-
-        // Validate parent concept updated
-        assertParentConcept(conceptUrn, newConceptParentUrn);
-
-        // Validate reordered concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-
-        // Validate child concept parent not updated
-        assertParentConcept(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, conceptUrn);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptParentConceptWithChildMoveToConceptWithChild() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_4_1;
-        String newConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2;
-        String previousConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_4;
-        Integer newConceptIndex = 0;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Validate previous parent concept
-        assertParentConcept(conceptUrn, previousConceptParentUrn);
-
-        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newConceptParentUrn, newConceptIndex);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newConceptIndex);
-
-        // Validate parent concept updated
-        assertParentConcept(conceptUrn, newConceptParentUrn);
-
-        // Validate reordered concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-
-        // Validate child concept parent not updated
-        assertParentConcept(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, conceptUrn);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptParentNoParentThirdPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
-        String newConceptParentUrn = null;
-        String previousConceptParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2;
-        Integer newConceptIndex = 2;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Validate previous parent concept
-        assertParentConcept(conceptUrn, previousConceptParentUrn);
-
-        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newConceptParentUrn, newConceptIndex);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newConceptIndex);
-
-        // Validate parent concept updated
-        assertParentConcept(conceptUrn, newConceptParentUrn);
-
-        // Validate reordered concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 4);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-
-        // Validate child concept parent not updated
-        assertParentConcept(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, conceptUrn);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    @Override
-    public void testUpdateConceptInOrder() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_3;
-        Integer newOrderValue = 0;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Update the order value of the concept
-        conceptsService.updateConceptInOrder(getServiceContextAdministrador(), conceptUrn, conceptSchemeUrn, newOrderValue);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newOrderValue);
-
-        // Validate reordered concepts at same level
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptInOrderUpThirdToSecondPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_3;
-        Integer newOrderValue = 1;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Update the order value of the concept
-        conceptsService.updateConceptInOrder(getServiceContextAdministrador(), conceptUrn, conceptSchemeUrn, newOrderValue);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newOrderValue);
-
-        // Validate reordered concepts at same level
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptInOrderFirstDownToLastPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_1;
-        Integer newOrderValue = 3;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Update the order value of the concept
-        conceptsService.updateConceptInOrder(getServiceContextAdministrador(), conceptUrn, conceptSchemeUrn, newOrderValue);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newOrderValue);
-
-        // Validate reordered concepts at same level
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 2);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptInOrderSecondDownToThirdPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2;
-        Integer newOrderValue = 2;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Update the order value of the concept
-        conceptsService.updateConceptInOrder(getServiceContextAdministrador(), conceptUrn, conceptSchemeUrn, newOrderValue);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newOrderValue);
-
-        // Validate reordered concepts at same level
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptInOrderLastUpToFirstPosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_4;
-        Integer newOrderValue = 0;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Update the order value of the concept
-        conceptsService.updateConceptInOrder(getServiceContextAdministrador(), conceptUrn, conceptSchemeUrn, newOrderValue);
-        entityManager.clear();
-
-        // Validate concept order value updated
-        assertConceptOrderValue(conceptUrn, newOrderValue);
-
-        // Validate reordered concepts at same level
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 3);
-
-        // Validate concept scheme updated
-        assertConceptSchemeItemSchemeLastUpdated(previousResourceLastUpdated, getConceptResourceLastUpdated(conceptSchemeUrn));
-    }
-
-    @Test
-    public void testUpdateConceptInOrderMoveToTheSamePosition() throws Exception {
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
-        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_3;
-        Integer newOrderValue = 2;
-
-        DateTime previousResourceLastUpdated = getConceptResourceLastUpdated(conceptSchemeUrn);
-
-        // Validate the previous order value of the concepts
-        validateOrderValuePreviousConcepts();
-
-        // Try to update the order value of the concept with the current value
-        conceptsService.updateConceptInOrder(getServiceContextAdministrador(), conceptUrn, conceptSchemeUrn, newOrderValue);
-        entityManager.clear();
-
-        // Validate that nothing has happens: the order value of the concepts has not been modified
-        validateOrderValuePreviousConcepts();
-
-        // Validate concept scheme not updated
-        assertTrue(previousResourceLastUpdated.isEqual(getConceptResourceLastUpdated(conceptSchemeUrn)));
-    }
-
-    private void assertParentConcept(String conceptUrn, String expectedNewConceptParentUrn) throws MetamacException {
-        ConceptMetamac conceptMetamac = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
-        String actualNewConceptParentUrn = conceptMetamac.getParent() != null ? conceptMetamac.getParent().getNameableArtefact().getUrn() : null;
-        assertTrue(StringUtils.equals(expectedNewConceptParentUrn, actualNewConceptParentUrn));
-    }
-
-    private DateTime getConceptResourceLastUpdated(String conceptSchemeUrn) throws MetamacException {
-        ConceptSchemeVersionMetamac conceptSchemeVersionMetamac = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
-        return conceptSchemeVersionMetamac.getItemScheme().getResourceLastUpdated();
-    }
-
-    private void validateOrderValuePreviousConcepts() throws MetamacException {
-        // Validate previous concepts
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2, 1);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_3, 2);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4, 3);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, 0);
-        assertConceptOrderValue(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, 0);
-    }
-
-    private void assertConceptOrderValue(String conceptUrn, int expectedOrderValue) throws MetamacException {
-        ConceptMetamac conceptMetamac = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
-        assertNotNull(conceptMetamac.getOrderValue());
-        assertEquals(expectedOrderValue, conceptMetamac.getOrderValue().intValue());
-    }
-
-    private void assertConceptSchemeItemSchemeLastUpdated(DateTime previousResourceLastUpdated, DateTime currentResourceLastUpdated) {
-        assertNotNull(previousResourceLastUpdated);
-        assertTrue(previousResourceLastUpdated.isBefore(currentResourceLastUpdated));
-    }
-
-    @Test
-    @Override
     public void testRetrieveConceptsByConceptSchemeUrnOrderedInDepth() throws Exception {
-        // Retrieve
-        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        // in CodesMetamacRepositoryTest
 
-        List<ItemResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrnOrderedInDepth(getServiceContextAdministrador(), conceptSchemeUrn, ConceptMetamacResultSelection.API);
-
-        // Validate
-        assertEquals(8, concepts.size());
-
-        assertEquals("CONCEPT01", concepts.get(0).getCode());
-        assertEquals("CONCEPT02", concepts.get(1).getCode());
-        assertEquals("CONCEPT0201", concepts.get(2).getCode());
-        assertEquals("CONCEPT020101", concepts.get(3).getCode());
-        assertEquals("CONCEPT03", concepts.get(4).getCode());
-        assertEquals("CONCEPT04", concepts.get(5).getCode());
-        assertEquals("CONCEPT0401", concepts.get(6).getCode());
-        assertEquals("CONCEPT040101", concepts.get(7).getCode());
-
-    }
-
-    private ConceptMetamacVisualisationResult getConceptMetamacVisualisationResult(List<ConceptMetamacVisualisationResult> actuals, String codeUrn) {
-        for (ConceptMetamacVisualisationResult actual : actuals) {
-            if (actual.getUrn().equals(codeUrn)) {
-                return actual;
-            }
-        }
-        fail("code not found");
-        return null;
     }
 
     @Override
@@ -6062,4 +5650,1159 @@ public class ConceptsMetamacServiceTest extends SrmBaseTest implements ConceptsM
         assertEquals(isUsed, true);
     }
 
+    @Override
+    public void testPostCreateConceptScheme() throws Exception {
+        // tested in createConceptScheme
+
+    }
+
+    @Test
+    @DirtyDatabase
+    @Override
+    public void testImportConceptSchemeOrdersTsv() throws Exception {
+
+        String conceptSchemetUrn = CONCEPT_SCHEME_1_V2;
+        String fileName = "importation-concept-orders-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemetUrn, file, fileName, Boolean.TRUE);
+
+        // Validate
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+        assertEquals(0, taskImportTsvInfo.getInformationItems().size());
+
+        // Validate item scheme
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemetUrn);
+        assertEqualsDate("2011-01-01 01:02:03", conceptSchemeVersion.getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), conceptSchemeVersion.getItemScheme().getResourceLastUpdated().toDate()));
+        assertEquals(false, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
+
+        // Validate orders
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_1);
+            assertEquals(Integer.valueOf(0), code.getOrder1());
+            assertEquals(Integer.valueOf(3), code.getOrder2());
+            assertEquals(Integer.valueOf(1), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2);
+            assertEquals(Integer.valueOf(1), code.getOrder1());
+            assertEquals(Integer.valueOf(2), code.getOrder2());
+            assertEquals(Integer.valueOf(0), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_3);
+            assertEquals(Integer.valueOf(2), code.getOrder1());
+            assertEquals(Integer.valueOf(1), code.getOrder2());
+            assertEquals(Integer.valueOf(3), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_4);
+            assertEquals(Integer.valueOf(3), code.getOrder1());
+            assertEquals(Integer.valueOf(0), code.getOrder2());
+            assertEquals(Integer.valueOf(2), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2_1);
+            assertEquals(Integer.valueOf(0), code.getOrder1());
+            assertEquals(Integer.valueOf(0), code.getOrder2());
+            assertEquals(Integer.valueOf(0), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1);
+            assertEquals(Integer.valueOf(0), code.getOrder1());
+            assertEquals(Integer.valueOf(0), code.getOrder2());
+            assertEquals(Integer.valueOf(0), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_4_1);
+            assertEquals(Integer.valueOf(0), code.getOrder1());
+            assertEquals(Integer.valueOf(0), code.getOrder2());
+            assertEquals(Integer.valueOf(0), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+        {
+            ConceptMetamac code = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1);
+            assertEquals(Integer.valueOf(0), code.getOrder1());
+            assertEquals(Integer.valueOf(0), code.getOrder2());
+            assertEquals(Integer.valueOf(0), code.getOrder3());
+            assertEquals(null, code.getOrder4());
+        }
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvInBackground() throws Exception {
+
+        // Import
+        final String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        final String fileName = "importation-concept-orders-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        // force background
+        long numBytesPlannifyPrevious = SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION;
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION = 1;
+        final StringBuilder jobKey = new StringBuilder();
+
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+                    jobKey.append(taskImportTsvInfo.getJobKey());
+
+                    ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+                    assertEquals(true, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
+                } catch (MetamacException e) {
+                    fail("concept orders importation failed: " + e.getHumanReadableMessage());
+                }
+            }
+        });
+        waitUntilJobFinished();
+
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION = numBytesPlannifyPrevious;
+
+        // Validate
+        Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
+        assertNotNull(task);
+        assertEquals(TaskStatusTypeEnum.FINISHED, task.getStatus());
+        assertEquals(0, task.getTaskResults().size());
+
+        // Validate item scheme
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+        assertEquals(false, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorHeaderIncorrectConceptNotFound() throws Exception {
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String fileName = "importation-concept-orders-02-errors-header-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+
+        // Validate item scheme
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+        assertTrue(BooleanUtils.isNotTrue(conceptSchemeVersion.getItemScheme().getIsTaskInBackground()));
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorHeaderIncorrectConceptNotFoundInBackground() throws Exception {
+
+        final String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        // Import
+        final String fileName = "importation-concept-orders-02-errors-header-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        // force background
+        long numBytesPlannifyPrevious = SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION;
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION = 1;
+        final StringBuilder jobKey = new StringBuilder();
+
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    TaskImportationInfo taskImportTsvInfo = conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+                    jobKey.append(taskImportTsvInfo.getJobKey());
+
+                    ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+                    assertEquals(true, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
+                } catch (MetamacException e) {
+                    fail("importation failed: " + e.getHumanReadableMessage());
+                }
+            }
+        });
+        waitUntilJobFinished();
+
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION = numBytesPlannifyPrevious;
+
+        // Validate
+        Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
+        assertNotNull(task);
+        assertEquals(TaskStatusTypeEnum.FAILED, task.getStatus());
+        assertEquals(2, task.getTaskResults().size());
+        int i = 0;
+        TaskResultTypeEnum type = TaskResultTypeEnum.ERROR;
+        assertEqualsTaskResult(ServiceExceptionType.IMPORTATION_TSV_ERROR.getCode(), fileName, Boolean.TRUE, type, task.getTaskResults().get(i++));
+        assertEqualsTaskResult(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN.getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE, Boolean.FALSE, type,
+                task.getTaskResults().get(i++));
+        assertEquals(task.getTaskResults().size(), i);
+
+        // Validate item scheme
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+        assertEquals(false, conceptSchemeVersion.getItemScheme().getIsTaskInBackground());
+    }
+
+    private void assertEqualsTaskResult(String codeExpected, String infoExpected, Boolean isPrincipalExpected, TaskResultTypeEnum typeExpected, TaskResult actual) {
+        assertEquals(codeExpected, actual.getCode());
+        assertEquals(infoExpected, actual.getParameters());
+        assertEquals(isPrincipalExpected, actual.isPrincipal());
+        assertEquals(typeExpected, actual.getResultType());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorHeaderColumnVisualisationNotFound() throws Exception {
+
+        String conceptSchemetUrn = CONCEPT_SCHEME_1_V2;
+        String fileName = "importation-concept-orders-02-errors-header-02.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemetUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_ORDER},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorHeaderIncorrectVisualisationAlphabetical() throws Exception {
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String fileName = "importation-concept-orders-02-errors-header-03-alphabetical.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ALPHABETICAL_VISUALISATION_NOT_SUPPORTED, 0, null, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorBodyIncorrectNumberConcepts() throws Exception {
+
+        final String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        final String fileName = "importation-concept-orders-03-errors-body-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CONCEPTS, 2, new Serializable[]{8, 5}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorBodyVisualisationNotFound() throws Exception {
+
+        final String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        final String fileName = "importation-concept-orders-03-errors-body-02.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ORDER_VISUALISATION_NOT_FOUND, 2,
+                    new Serializable[]{"VISUALISATION001", "urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=SDMX01:CONCEPTSCHEME01(02.000)"}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportConceptOrdersTsvErrorBodyOrderEmpty() throws Exception {
+
+        final String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        final String fileName = "importation-concept-orders-03-errors-body-03.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            conceptsService.importConceptSchemeOrdersTsv(getServiceContextAdministrador(), conceptSchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(2, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"CONCEPT0201", "parameter.srm.importation.order"},
+                    e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"CONCEPT04", "parameter.srm.importation.order"},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testUpdateConceptParent() throws Exception {
+        // in other tests 'testUpdateConceptParent*
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testUpdateConceptParentSourceWithParentTargetWithoutParent() throws Exception {
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
+        String newParentUrn = null; // first level
+
+        Concept concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
+        assertNotNull(concept.getParent());
+        assertNull(concept.getItemSchemeVersionFirstLevel());
+
+        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newParentUrn);
+
+        // Validate new parent
+        concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
+        assertNull(concept.getParent());
+        assertEquals(concept.getItemSchemeVersion().getMaintainableArtefact().getUrn(), concept.getItemSchemeVersionFirstLevel().getMaintainableArtefact().getUrn());
+
+        // Validate visualisation 01, alphabetic
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (change level, put in alphabetical order)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder()); // change (down)
+            assertEquals(Integer.valueOf(4), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder()); // change (down)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+        // Validate visualisation 02
+        {
+
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+            assertEquals(Integer.valueOf(4), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (change level, put at the end)
+        }
+
+        // Validate visualisation 03
+        {
+
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+            assertEquals(Integer.valueOf(4), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (change level, put at the end)
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testUpdateConceptParentSourceWithParentTargetWithParent() throws Exception {
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2_1;
+        String newParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_4;
+
+        Concept concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
+        assertNotNull(concept.getParent());
+        assertNull(concept.getItemSchemeVersionFirstLevel());
+
+        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newParentUrn);
+
+        // Validate new parent
+        concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
+        assertEquals(newParentUrn, concept.getParent().getNameableArtefact().getUrn());
+        assertNull(concept.getItemSchemeVersionFirstLevel());
+
+        // Validate hierarchy
+        ConceptSchemeVersion conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+        assertEquals(4, conceptSchemeVersion.getItemsFirstLevel().size());
+        // new parent
+        Concept newParent = assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), newParentUrn);
+        assertEquals(2, newParent.getChildren().size());
+        assertListConceptsContainsConcept(newParent.getChildren(), conceptUrn);
+
+        // Validate visualisation 01, alphabetic
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (change level, put in alphabetical order)
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder()); // changed (down)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+
+        // Validate visualisation 02
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (change level, put at the end)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+
+        // Validate visualisation 03
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (change level, put at the end)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testUpdateConceptParentSourceWithoutParentTargetWithoutParent() throws Exception {
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_1;
+        String newParentUrn = CONCEPT_SCHEME_1_V2_CONCEPT_2;
+
+        Concept concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
+        assertNull(concept.getParent());
+        assertNotNull(concept.getItemSchemeVersionFirstLevel());
+
+        conceptsService.updateConceptParent(getServiceContextAdministrador(), conceptUrn, newParentUrn);
+
+        // Validate new parent
+        concept = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), conceptUrn);
+        assertEquals(newParentUrn, concept.getParent().getNameableArtefact().getUrn());
+        assertNull(concept.getItemSchemeVersionFirstLevel());
+
+        // Validate hierarchy
+        ConceptSchemeVersion conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), conceptSchemeUrn);
+        Concept newParent = assertListConceptsContainsConcept(conceptSchemeVersion.getItems(), newParentUrn);
+        assertEquals(2, newParent.getChildren().size());
+        assertListConceptsContainsConcept(newParent.getChildren(), conceptUrn);
+
+        // Validate visualisation 01, alphabetic
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder()); // changed (change level, put in alphabetical order)
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // changed (down)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+
+        // Validate visualisation 02
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // in same position, due to it is before moved code
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder()); // changed (change level, put at the end)
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+
+        // Validate visualisation 03
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder()); // in same position, due to it is before moved code
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder()); // changed (change level, put at the end)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder()); // in same position, due to it is before moved code
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder()); // changed (up)
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testUpdateConceptInOrderVisualisation() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String conceptUrn = CONCEPT_SCHEME_1_V2_CONCEPT_1;
+        String visualisationUrn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02;
+
+        conceptsService.updateConceptInOrderVisualisation(getServiceContextAdministrador(), conceptUrn, visualisationUrn, Integer.valueOf(2));
+
+        // Validate visualisation
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), visualisationUrn);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder()); // changed
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder()); // changed
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder()); // changed
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+
+        // Validate other visualisation does not change
+        {
+            ConceptSchemeOrderVisualisation visualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, concepts.size());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testCreateConceptSchemeOrderVisualisation() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = ConceptsMetamacDoMocks.mockConceptSchemeOrderVisualisation(retrieveAnnotationType_1());
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        // Create
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisationCreated = conceptsService.createConceptSchemeOrderVisualisation(ctx, conceptSchemeUrn, conceptSchemeOrderVisualisation);
+        assertNotNull(conceptSchemeOrderVisualisationCreated.getId());
+        assertNotNull(conceptSchemeOrderVisualisationCreated.getNameableArtefact().getUrn());
+        assertEqualsConceptSchemeOrderVisualisation(conceptSchemeOrderVisualisation, conceptSchemeOrderVisualisationCreated);
+        assertEqualsDate("2011-01-01 01:02:03", conceptSchemeOrderVisualisationCreated.getConceptSchemeVersion().getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), conceptSchemeOrderVisualisationCreated.getConceptSchemeVersion().getItemScheme().getResourceLastUpdated().toDate()));
+
+        // Validate codes
+
+        List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, "es",
+                conceptSchemeOrderVisualisationCreated.getNameableArtefact().getUrn());
+        assertEquals(8, concepts.size());
+        assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+        assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+        assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder());
+        assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1).getOrder());
+        assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+        assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+        assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1).getOrder());
+        assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1).getOrder());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testCreateConceptSchemeOrderVisualisationAlphabetical() throws Exception {
+        // Already tested
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testUpdateConceptSchemeOrderVisualisation() throws Exception {
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+        conceptSchemeOrderVisualisation.getNameableArtefact().setName(BaseDoMocks.mockInternationalString());
+        conceptSchemeOrderVisualisation.getNameableArtefact().setIsCodeUpdated(Boolean.FALSE);
+
+        // Update
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisationUpdated = conceptsService.updateConceptSchemeOrderVisualisation(getServiceContextAdministrador(),
+                conceptSchemeOrderVisualisation);
+
+        // Validate
+        assertEqualsConceptSchemeOrderVisualisation(conceptSchemeOrderVisualisation, conceptSchemeOrderVisualisationUpdated);
+        assertEqualsDate("2011-01-01 01:02:03", conceptSchemeOrderVisualisationUpdated.getConceptSchemeVersion().getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), conceptSchemeOrderVisualisationUpdated.getConceptSchemeVersion().getItemScheme().getResourceLastUpdated().toDate()));
+
+    }
+
+    @Test
+    public void testUpdateConceptSchemeOrderVisualisationErrorDuplicatedConcept() throws Exception {
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+        conceptSchemeOrderVisualisation.getNameableArtefact().setCode("VISUALISATION02");
+        conceptSchemeOrderVisualisation.getNameableArtefact().setIsCodeUpdated(Boolean.TRUE);
+        try {
+            conceptsService.updateConceptSchemeOrderVisualisation(getServiceContextAdministrador(), conceptSchemeOrderVisualisation);
+            fail("duplicated concept");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_URN_DUPLICATED, 1, new String[]{CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02}, e.getExceptionItems().get(0));
+        }
+    }
+
+    @Test
+    public void testCreateConceptTestingOrderVisualisation() throws Exception {
+
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        ConceptType conceptType = conceptsService.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
+        ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_8_V1), ConceptRoleEnum.ATTRIBUTE,
+                retrieveAnnotationType_1());
+        concept.getNameableArtefact().setCode("concept029");
+        concept.setParent(null);
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        // Create
+        ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
+
+        // Validate visualisations
+        // Visualisation 01, alphabetic
+        {
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder()); // after CODE02
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(4), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+        }
+        // Visualisation 02
+        {
+
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(4), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 03
+        {
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1).getOrder());
+            assertEquals(Integer.valueOf(2), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2).getOrder());
+            assertEquals(Integer.valueOf(3), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4).getOrder());
+            assertEquals(Integer.valueOf(4), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+    }
+
+    @Test
+    public void testCreateConceptSubConceptTestingOrderVisualisation() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        ConceptType conceptType = conceptsService.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
+        ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_8_V1), ConceptRoleEnum.ATTRIBUTE,
+                retrieveAnnotationType_1());
+        concept.getNameableArtefact().setCode("concept0200");
+        ConceptMetamac conceptParent = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2);
+        concept.setParent(conceptParent);
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        // Create
+        ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
+
+        // Validate visualisations
+        // Visualisation 01, alphabetic
+        {
+
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder());
+        }
+        // Visualisation 02
+        {
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 03
+        {
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1).getOrder());
+            assertEquals(Integer.valueOf(1), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+    }
+
+    @Test
+    public void testCreateConceptSubConceptInLevelWithoutOtherConceptsTestingOrderVisualisation() throws Exception {
+
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        ConceptType conceptType = conceptsService.retrieveConceptTypeByIdentifier(ctx, CONCEPT_TYPE_DIRECT);
+        ConceptMetamac concept = ConceptsMetamacDoMocks.mockConcept(conceptType, codesService.retrieveCodelistByUrn(getServiceContextAdministrador(), CODELIST_8_V1), ConceptRoleEnum.ATTRIBUTE,
+                retrieveAnnotationType_1());
+        ConceptMetamac conceptParent = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1);
+        concept.setParent(conceptParent);
+
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        // Create
+        ConceptMetamac conceptCreated = conceptsService.createConcept(ctx, conceptSchemeUrn, concept);
+
+        // Validate visualisations
+        // Visualisation 01, alphabetic
+        {
+
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 02
+        {
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 03
+        {
+            ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            // Validate codes
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(ctx, conceptSchemeUrn, "es",
+                    conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, concepts.size());
+            assertEquals(Integer.valueOf(0), getConceptMetamacVisualisationResult(concepts, conceptCreated.getNameableArtefact().getUrn()).getOrder());
+
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testRetrieveConceptSchemeOrderVisualisationByUrn() throws Exception {
+        // Retrieve
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String orderVisualisationUrn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL;
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), orderVisualisationUrn);
+
+        // Validate
+        assertNotNull(conceptSchemeOrderVisualisation);
+        assertEquals("ALPHABETICAL", conceptSchemeOrderVisualisation.getNameableArtefact().getCode());
+        assertEquals(orderVisualisationUrn, conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+        assertEquals(conceptSchemeUrn, conceptSchemeOrderVisualisation.getConceptSchemeVersion().getMaintainableArtefact().getUrn());
+        assertEqualsInternationalString(conceptSchemeOrderVisualisation.getNameableArtefact().getName(), "es", "visualización - órdenes 1-2-1", "en", "order - visualisation 1-2-1");
+        assertEquals(Integer.valueOf(1), conceptSchemeOrderVisualisation.getColumnIndex());
+
+        assertEquals("user1", conceptSchemeOrderVisualisation.getCreatedBy());
+        assertEqualsDate("2011-01-01 01:02:03", conceptSchemeOrderVisualisation.getCreatedDate());
+        assertEquals("user2", conceptSchemeOrderVisualisation.getLastUpdatedBy());
+        assertEqualsDate("2011-01-22 01:02:03", conceptSchemeOrderVisualisation.getLastUpdated());
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testRetrieveConceptSchemeOrderVisualisationByCode() throws Exception {
+        // Retrieve
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+        String orderVisualisationCode = "ALPHABETICAL";
+        ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation = conceptsService.retrieveConceptSchemeOrderVisualisationByCode(getServiceContextAdministrador(), conceptSchemeUrn,
+                orderVisualisationCode);
+
+        // Validate
+        assertNotNull(conceptSchemeOrderVisualisation);
+        assertEquals(orderVisualisationCode, conceptSchemeOrderVisualisation.getNameableArtefact().getCode());
+        assertEquals(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL, conceptSchemeOrderVisualisation.getNameableArtefact().getUrn());
+        assertEquals(conceptSchemeUrn, conceptSchemeOrderVisualisation.getConceptSchemeVersion().getMaintainableArtefact().getUrn());
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testRetrieveConceptSchemeOrderVisualisationsByConceptScheme() throws Exception {
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        List<ConceptSchemeOrderVisualisation> visualisations = conceptsService.retrieveConceptSchemeOrderVisualisationsByConceptScheme(getServiceContextAdministrador(), conceptSchemeUrn);
+
+        assertEquals(3, visualisations.size());
+        assertContainsConceptSchemeOrderVisualisation(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL, visualisations);
+        assertContainsConceptSchemeOrderVisualisation(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02, visualisations);
+        assertContainsConceptSchemeOrderVisualisation(CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03, visualisations);
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testDeleteConceptSchemeOrderVisualisation() throws Exception {
+        String urn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03;
+
+        // Check any column of code
+        {
+            ConceptMetamac concept1 = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_1);
+            assertNotNull(concept1.getOrder1());
+            assertNotNull(concept1.getOrder2());
+            assertNotNull(concept1.getOrder3());
+
+            ConceptMetamac concept2 = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2);
+            assertNotNull(concept2.getOrder1());
+            assertNotNull(concept2.getOrder2());
+            assertNotNull(concept2.getOrder3());
+
+        }
+
+        //
+        conceptsService.deleteConceptSchemeOrderVisualisation(getServiceContextAdministrador(), urn);
+
+        // Retrieve deleted visualisation
+        try {
+            conceptsService.retrieveConceptSchemeOrderVisualisationByUrn(getServiceContextAdministrador(), urn);
+            fail("visualisation deleted");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND, 1, new String[]{urn}, e.getExceptionItems().get(0));
+        }
+
+        entityManager.clear();
+
+        // Check clear order
+
+        {
+            ConceptMetamac concept1 = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_1);
+            assertNotNull(concept1.getOrder1());
+            assertNotNull(concept1.getOrder2());
+            assertNull(concept1.getOrder3());
+
+            ConceptMetamac concept2 = conceptsService.retrieveConceptByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2_CONCEPT_2);
+            assertNotNull(concept2.getOrder1());
+            assertNotNull(concept2.getOrder2());
+            assertNull(concept2.getOrder3());
+
+        }
+    }
+
+    @Test
+    public void testDeleteConceptSchemeOrderVisualisationWhenIsDefault() throws Exception {
+
+        String urn = CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_02;
+
+        ConceptSchemeVersionMetamac conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2);
+        assertEquals(urn, conceptSchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getUrn());
+
+        conceptsService.deleteConceptSchemeOrderVisualisation(getServiceContextAdministrador(), urn);
+
+        // Check default is null
+        conceptSchemeVersion = conceptsService.retrieveConceptSchemeByUrn(getServiceContextAdministrador(), CONCEPT_SCHEME_1_V2);
+        assertNull(conceptSchemeVersion.getDefaultOrderVisualisation());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testVersioningConceptSchemeOrderVisualisations() throws Exception {
+        // Already tested
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testRecalculateConceptsVisualisations() throws Exception {
+        // tested in other operations
+
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testExportConceptOrdersTsv() throws Exception {
+        String conceptUrn = CONCEPT_SCHEME_1_V2;
+        String fileName = conceptsService.exportConceptOrdersTsv(getServiceContextAdministrador(), conceptUrn);
+        assertNotNull(fileName);
+
+        // Validate
+        File file = new File(tempDirPath() + File.separatorChar + fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        assertEquals("code\tlabel\tlevel\tparent\tALPHABETICAL\tVISUALISATION02\tVISUALISATION03", bufferedReader.readLine());
+        assertEquals("CONCEPT01\tNombre conceptScheme-1-v2-concept-1\t1\t\t1\t1\t2", bufferedReader.readLine());
+        assertEquals("CONCEPT02\tNombre conceptScheme-1-v2-concept-2\t1\t\t2\t2\t3", bufferedReader.readLine());
+        assertEquals("CONCEPT0201\tNombre conceptScheme-1-v2-concept-2-1\t2\tCONCEPT02\t1\t1\t1", bufferedReader.readLine());
+        assertEquals("CONCEPT020101\tNombre conceptScheme-1-v2-concept-2-1-1\t3\tCONCEPT0201\t1\t1\t1", bufferedReader.readLine());
+        assertEquals("CONCEPT03\tnombre concept-3\t1\t\t3\t3\t1", bufferedReader.readLine());
+        assertEquals("CONCEPT04\tnombre concept-4\t1\t\t4\t4\t4", bufferedReader.readLine());
+        assertEquals("CONCEPT0401\tnombre concept 4-1\t2\tCONCEPT04\t1\t1\t1", bufferedReader.readLine());
+        assertEquals("CONCEPT040101\tNombre conceptScheme-1-v2-concept-4-1-1\t3\tCONCEPT0401\t1\t1\t1", bufferedReader.readLine());
+        bufferedReader.close();
+
+    }
+
+    @Test
+    public void testRetrieveConceptsByConceptSchemeUrnCheckOrderVisualisationsAndMetadataInConceptMetamacVisualisationResult() throws Exception {
+        // Retrieve
+        String conceptSchemeUrn = CONCEPT_SCHEME_1_V2;
+
+        // LOCALE = 'es' and ORDER = '1'
+        {
+            String locale = "es";
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, locale,
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            // Validate
+            assertEquals(8, concepts.size());
+            {
+                // Code 01 (validate all metadata)
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_1, concept.getUrn());
+                assertEquals("CONCEPT01", concept.getCode());
+
+                assertEquals("Nombre conceptScheme-1-v2-concept-1", concept.getName());
+                assertEquals("Descripción conceptScheme-1-v2-concept-1", concept.getDescription());
+                assertEquals(Long.valueOf(121), concept.getItemIdDatabase());
+                assertEquals(null, concept.getParent());
+                assertEquals(null, concept.getParentIdDatabase());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+                MetamacAsserts.assertEqualsDate("2011-01-01 01:02:03", concept.getCreatedDate());
+            }
+            {
+                // Code 02
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_2, concept.getUrn());
+                assertEquals("CONCEPT02", concept.getCode());
+                assertEquals("Nombre conceptScheme-1-v2-concept-2", concept.getName());
+                assertEquals(null, concept.getDescription());
+                assertEquals(Integer.valueOf(1), concept.getOrder());
+                MetamacAsserts.assertEqualsDate("2011-03-02 04:05:06", concept.getCreatedDate());
+            }
+            {
+                // Code 02 01 (validate parent)
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_2_1, concept.getUrn());
+                assertEquals("CONCEPT02", concept.getParent().getCode());
+                assertEquals("Nombre conceptScheme-1-v2-concept-2-1", concept.getName());
+                assertEquals("Descripción conceptScheme-1-v2-concept-2-1", concept.getDescription());
+                assertEquals(Long.valueOf("122"), concept.getParentIdDatabase());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+
+                // Code 02 01 01
+
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1, concept.getUrn());
+                assertEquals("CONCEPT0201", concept.getParent().getCode());
+                assertEquals("Nombre conceptScheme-1-v2-concept-2-1-1", concept.getName());
+                assertEquals(Long.valueOf("1221"), concept.getParentIdDatabase());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+                // Code 03
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_3, concept.getUrn());
+                assertEquals("CONCEPT03", concept.getCode());
+                assertEquals("nombre concept-3", concept.getName());
+                assertEquals(Integer.valueOf(2), concept.getOrder());
+            }
+            {
+                // Code 04
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_4, concept.getUrn());
+                assertEquals("CONCEPT04", concept.getCode());
+                assertEquals("nombre concept-4", concept.getName());
+                assertEquals(Integer.valueOf(3), concept.getOrder());
+            }
+            {
+                // Code 04 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, concept.getUrn());
+                assertEquals("nombre concept 4-1", concept.getName());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+                // Code 04 01 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1);
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1, concept.getUrn());
+                assertEquals("CONCEPT0401", concept.getParent().getCode());
+                assertEquals("Nombre conceptScheme-1-v2-concept-4-1-1", concept.getName());
+                assertEquals(CONCEPT_SCHEME_1_V2_CONCEPT_4_1, concept.getParent().getUrn());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+        }
+
+        // LOCALE = 'en' and ORDER = '3'
+        {
+            String locale = "en";
+            List<ConceptMetamacVisualisationResult> concepts = conceptsService.retrieveConceptsByConceptSchemeUrn(getServiceContextAdministrador(), conceptSchemeUrn, locale,
+                    CONCEPT_SCHEME_1_V2_ORDER_VISUALISATION_03);
+
+            // Validate
+            assertEquals(8, concepts.size());
+            {
+                // Code 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_1);
+                assertEquals("Name conceptScheme-1-v2-concept-1", concept.getName());
+                assertEquals("description conceptScheme-1-v2-concept-1", concept.getDescription());
+                assertEquals(Integer.valueOf(1), concept.getOrder());
+            }
+            {
+                // Code 02
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2);
+                assertEquals("Name conceptScheme-1-v2-concept-2", concept.getName());
+                assertEquals(null, concept.getDescription());
+                assertEquals(Integer.valueOf(2), concept.getOrder());
+            }
+            {
+                // Code 02 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1);
+                assertEquals("Name conceptScheme-1-v2-concept-2-1", concept.getName());
+                assertEquals("Description conceptScheme-1-v2-concept-2-1", concept.getDescription());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+
+                // Code 02 01 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_2_1_1);
+                assertEquals("Name conceptScheme-1-v2-concept-2-1-1", concept.getName());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+                // Code 03
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_3);
+                assertEquals("name concept-3", concept.getName());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+                // Code 04
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4);
+                assertEquals("name concept-4", concept.getName());
+                assertEquals(Integer.valueOf(3), concept.getOrder());
+            }
+            {
+                // Code 04 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1);
+                assertEquals("name concept 4-1", concept.getName());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+            {
+                // Code 04 01 01
+                ConceptMetamacVisualisationResult concept = getConceptMetamacVisualisationResult(concepts, CONCEPT_SCHEME_1_V2_CONCEPT_4_1_1);
+                assertEquals("Name conceptScheme-1-v2-concept-4-1-1", concept.getName());
+                assertEquals(Integer.valueOf(0), concept.getOrder());
+            }
+        }
+    }
+
+    private ConceptSchemeOrderVisualisation assertContainsConceptSchemeOrderVisualisation(String conceptSchemeOrderVisualisationUrnExpected, List<ConceptSchemeOrderVisualisation> actuals) {
+        for (ConceptSchemeOrderVisualisation actual : actuals) {
+            if (actual.getNameableArtefact().getUrn().equals(conceptSchemeOrderVisualisationUrnExpected)) {
+                return actual;
+            }
+        }
+        fail("order visualisation not found");
+        return null;
+    }
 }

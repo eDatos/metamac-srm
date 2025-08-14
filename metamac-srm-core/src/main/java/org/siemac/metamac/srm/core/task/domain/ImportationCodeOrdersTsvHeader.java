@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Get information in import orders for codes of codelist and concept scheme
+ */
 public class ImportationCodeOrdersTsvHeader {
 
     private int                        columnsSize;

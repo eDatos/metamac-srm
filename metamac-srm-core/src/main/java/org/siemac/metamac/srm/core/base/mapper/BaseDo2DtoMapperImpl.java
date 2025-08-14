@@ -115,6 +115,13 @@ public class BaseDo2DtoMapperImpl implements org.siemac.metamac.srm.core.base.ma
         return do2DtoMapperSdmxSrm.annotationTypeToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source);
     }
 
+    protected RelatedResourceDto getRelatedResourceDto(NameableArtefact identifier) {
+        RelatedResourceDto target = new RelatedResourceDto();
+        do2DtoMapperSdmxSrm.nameableArtefactDoToRelatedResourceDto(identifier, target);
+        target.setType(null);
+        return target;
+    }
+
     private void nameableArtefactDoToNameableArtefactBasicDto(Item source, NameableArtefactMetamacBasicDto target) {
         nameableArtefactDoToNameableArtefactBasicDto(source.getNameableArtefact(), target);
     }

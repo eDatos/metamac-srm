@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-srm</groupId>
         <artifactId>metamac-srm-parent</artifactId>
-        <version>8.8.1-SNAPSHOT</version>
+        <version>8.8.1</version>
         <relativePath>metamac-srm-parent/pom.xml</relativePath>
     </parent>
 
@@ -26,7 +26,7 @@
         <connection>scm:git:https://git.arte-consultores.com/istac/metamac-srm</connection>
         <developerConnection>scm:git:https://git.arte-consultores.com/istac/metamac-srm</developerConnection>
         <url>https://git.arte-consultores.com/istac/metamac-srm</url>
-        <tag>HEAD</tag>
+        <tag>20250814-1137-v8.8.1</tag>
     </scm>
 
     <build>

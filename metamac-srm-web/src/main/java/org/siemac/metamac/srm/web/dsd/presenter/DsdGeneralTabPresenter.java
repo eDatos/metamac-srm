@@ -68,8 +68,11 @@ import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.AnnotationTypeDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ComponentDto;
+import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DataAttributeDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.DimensionComponentDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.SpecialAttributeTypeEnum;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeComponentList;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -201,6 +204,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
     private void retrieveCompleteDsd(final String dsdUrn, final boolean startDsdEdition) {
         Set<TypeComponentList> descriptorsToRetrieve = new HashSet<TypeComponentList>();
         descriptorsToRetrieve.add(TypeComponentList.DIMENSION_DESCRIPTOR);
+        descriptorsToRetrieve.add(TypeComponentList.ATTRIBUTE_DESCRIPTOR);
         dispatcher.execute(new GetDsdAndDescriptorsAction(dsdUrn, descriptorsToRetrieve), new WaitingAsyncCallbackHandlingError<GetDsdAndDescriptorsResult>(this) {
 
             @Override
@@ -211,8 +215,13 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
             public void onWaitSuccess(GetDsdAndDescriptorsResult result) {
 
                 List<DimensionComponentDto> dimensionComponentDtos = CommonUtils.getDimensionComponents(result.getDimensions());
-
-                setConceptSchemeOfTheMeasureDimension(dimensionComponentDtos);
+                DataAttributeDto dataAttributeDto = null;
+                for (ComponentDto componentDto : result.getAttributes().getComponents()) {
+                    if (SpecialAttributeTypeEnum.MEASURE_EXTENDS.equals(((DataAttributeDto) componentDto).getSpecialAttributeType())) {
+                        dataAttributeDto = (DataAttributeDto) componentDto;
+                    }
+                }
+                setConceptSchemeOfTheMeasureDimension(dimensionComponentDtos, dataAttributeDto);
                 getView().setDsd(result.getDsd(), dimensionComponentDtos);
                 if (startDsdEdition) {
                     getView().startDsdEdition();
@@ -492,7 +501,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
         });
     }
 
-    private void setConceptSchemeOfTheMeasureDimension(List<DimensionComponentDto> dimensionComponentDtos) {
+    private void setConceptSchemeOfTheMeasureDimension(List<DimensionComponentDto> dimensionComponentDtos, DataAttributeDto dataAttribute) {
         String conceptSchemeUrn = CommonUtils.getConceptSchemeUrnOfMeasureDimensionRepresentation(dimensionComponentDtos);
 
         // Load the concepts if the conceptScheme is not null and has not been retrieved previously
@@ -505,6 +514,8 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
             // If previous concepts scheme was not null and now is null, then clear the tree items
             this.conceptSchemeUrnOfMeasureDimensionRepresentation = conceptSchemeUrn;
             getView().resetMeasureDimensionConcepts();
+        } else if (dataAttribute != null){
+            retrieveConcepts(dataAttribute.getLocalRepresentation().getEnumeration().getUrn());
         } else {
             conceptSchemeUrn = null;
         }

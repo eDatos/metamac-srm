@@ -45,7 +45,6 @@
     <TB_SEQUENCES SEQUENCE_NAME="M_VARIABLES" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_DIMENSION_ORDERS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_MEASURE_DIM_PRECISIONS" SEQUENCE_NEXT_VALUE="100000000" />
-
     <!-- ************************************************************************************** -->
     <!-- ORGANISATION SCHEME 100 (ROOT ORGANISATION - MAINTAINER)                               -->
     <!--        - Version 1: no final (can not be final)                                        -->
@@ -670,6 +669,8 @@
         RELATED_OPERATION_FK="[null]"
         PROC_STATUS="EXTERNALLY_PUBLISHED"
         
+        DEFAULT_ORDER_VISUAL_FK="122"
+        
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user1"
@@ -752,7 +753,8 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"              
               TB_CONCEPTS="10211"
-              ORDER_VALUE="0"
+              ORDER1="0"
+              ORDER2="1"
              /> 
                          
             <TB_CONCEPTS
@@ -812,7 +814,8 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="1"              
               TB_CONCEPTS="10212"
-              ORDER_VALUE="1"
+              ORDER1="1"
+              ORDER2="0"
              /> 
                          
             <TB_CONCEPTS
@@ -857,6 +860,89 @@
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
             />               
+           
+              <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="121"
+                    CONCEPT_SCHEME_FK="1021"
+                    NAMEABLE_ARTEFACT_FK="9997121"
+                    COLUMN_INDEX="1"
+                    
+                    UUID="concept-scheme-order-vis-121"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+ 
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997121"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="ALPHABETICAL"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME02(01.000).ALPHABETICAL"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME02(01.000).ALPHABETICAL"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="169"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997121"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />     
+                
+                <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="122"
+                    CONCEPT_SCHEME_FK="1021"
+                    NAMEABLE_ARTEFACT_FK="9997122"
+                    COLUMN_INDEX="2"
+                    
+                    UUID="concept-scheme-order-vis-122"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997122"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION02"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME02(01.000).VISUALISATION02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME02(01.000).VISUALISATION02"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="170"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997122"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />    
+           
             
     <!-- ************************************************************************************** -->
     <!-- CONCEPT SCHEME 3                                                                      -->
@@ -901,6 +987,8 @@
         CONCEPT_SCHEME_TYPE="TRANSVERSAL"          
         RELATED_OPERATION_FK="13"
         PROC_STATUS="EXTERNALLY_PUBLISHED"
+        
+        DEFAULT_ORDER_VISUAL_FK="124"
         
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
@@ -992,7 +1080,8 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="1"              
               TB_CONCEPTS="10311"
-              ORDER_VALUE="0"
+              ORDER1="0"
+              ORDER2="1"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1052,7 +1141,8 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="1"              
               TB_CONCEPTS="10312"
-              ORDER_VALUE="1"
+              ORDER1="1"
+              ORDER2="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1112,7 +1202,8 @@
                   EXTENDS_FK="[null]"
                   VARIABLE_FK="2"              
                   TB_CONCEPTS="103121"
-                  ORDER_VALUE="0"
+                  ORDER1="0"
+                  ORDER2="0"
                  />            
             
                 <TB_ANNOTABLE_ARTEFACTS 
@@ -1139,7 +1230,89 @@
                     LAST_UPDATED="2011-01-22 01:02:03"
                     LAST_UPDATED_TZ="Europe/London"
                 />              
-                 
+                
+                
+                   <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="123"
+                    CONCEPT_SCHEME_FK="1031"
+                    NAMEABLE_ARTEFACT_FK="9997123"
+                    COLUMN_INDEX="1"
+                    
+                    UUID="concept-scheme-order-vis-123"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+ 
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997123"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="ALPHABETICAL"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME03(01.000).ALPHABETICAL"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME03(01.000).ALPHABETICAL"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="171"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997123"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />     
+                
+                <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="124"
+                    CONCEPT_SCHEME_FK="1031"
+                    NAMEABLE_ARTEFACT_FK="9997124"
+                    COLUMN_INDEX="2"
+                    
+                    UUID="concept-scheme-order-vis-124"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997124"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION02"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME03(01.000).VISUALISATION02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME03(01.000).VISUALISATION02"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="172"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997124"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />     
             
     <!-- ************************************************************************************** -->
     <!-- CONCEPT SCHEME 4                                                                       -->
@@ -1276,7 +1449,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"              
               TB_CONCEPTS="10411"
-              ORDER_VALUE="0"
+              ORDER1="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1438,7 +1611,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"              
               TB_CONCEPTS="10511"
-              ORDER_VALUE="0"
+              ORDER1="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1600,7 +1773,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"              
               TB_CONCEPTS="10611"
-              ORDER_VALUE="0"
+              ORDER1="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1671,6 +1844,8 @@
         CONCEPT_SCHEME_TYPE="MEASURE"          
         RELATED_OPERATION_FK="[null]"
         PROC_STATUS="EXTERNALLY_PUBLISHED"
+        
+        DEFAULT_ORDER_VISUAL_FK="127"
         
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
@@ -1762,7 +1937,8 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"              
               TB_CONCEPTS="10711"
-              ORDER_VALUE="0"
+              ORDER1="0"
+              ORDER2="1"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -1789,6 +1965,88 @@
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
             />        
+            
+               <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="127"
+                    CONCEPT_SCHEME_FK="1071"
+                    NAMEABLE_ARTEFACT_FK="9997127"
+                    COLUMN_INDEX="1"
+                    
+                    UUID="concept-scheme-order-vis-127"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+ 
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997127"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="ALPHABETICAL"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME07(01.000).ALPHABETICAL"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME07(01.000).ALPHABETICAL"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="173"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997127"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />     
+                
+                <TB_M_CONCEPT_SCHEME_ORDER_VIS 
+                    ID="128"
+                    CONCEPT_SCHEME_FK="1071"
+                    NAMEABLE_ARTEFACT_FK="9997128"
+                    COLUMN_INDEX="2"
+                    
+                    UUID="concept-scheme-order-vis-128"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                /> 
+                
+                <TB_ANNOTABLE_ARTEFACTS 
+                    ID="9997128"
+                    ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+                    
+                    CODE="VISUALISATION02"
+                    URI_PROVIDER="[null]"
+                    URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME07(01.000).VISUALISATION02"
+                    URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.ConceptSchemeOrder=SDMX01:CONCEPTSCHEME07(01.000).VISUALISATION02"
+                    REPLACED_BY_VERSION="[null]"
+                    REPLACE_TO_VERSION="[null]"
+                    
+                    NAME_FK="174"
+                    DESCRIPTION_FK="[null]"
+                    COMMENT_FK="[null]"
+                    
+                    UUID="annotableArtefact-9997128"
+                    VERSION="1"
+                    CREATED_BY="user1"
+                    CREATED_DATE="2011-01-01 01:02:03"
+                    CREATED_DATE_TZ="Europe/London"
+                    LAST_UPDATED_BY="user2"
+                    LAST_UPDATED="2011-01-22 01:02:03"
+                    LAST_UPDATED_TZ="Europe/London"
+                />    
             
     <!-- ************************************************************************************** -->
     <!-- CONCEPT SCHEME 8                                                                       -->
@@ -1924,7 +2182,7 @@
               EXTENDS_FK="[null]"
               VARIABLE_FK="[null]"              
               TB_CONCEPTS="10811"
-              ORDER_VALUE="0"
+              ORDER1="0"
              />            
         
             <TB_ANNOTABLE_ARTEFACTS 
@@ -3789,7 +4047,7 @@
         
         CONCEPT_IDENTITY_FK="10311"
         REPRESENTATION_FK="62"
-    />
+    />    
     
     <TB_DIMENSIONS_EI_ROLES
     	TB_DIMENSIONS="614"
@@ -3839,7 +4097,7 @@
         CONCEPT_IDENTITY_FK="10311"
         REPRESENTATION_FK="63"
     />
-    
+     
     <TB_ANNOTABLE_ARTEFACTS 
         ID="616"
         ANNOTABLE_ARTEFACT_TYPE="GROUP_DIMENSION_DESCRIPTOR"
@@ -4111,7 +4369,6 @@
     	DIMENSION_RELATIONSHIP_FK="61"
     />
     
-    
     <TB_STRVERSION_COMPONENTLIST
     	STRUCTURE_VERSION_FK="61"
     	COMPONENT_LIST_FK="613"
@@ -4236,6 +4493,16 @@
         TEXT_FORMAT_FK="65"
     />
     
+      <TB_REPRESENTATIONS
+    	ID="66"
+    	UUID="tb_representations-66"
+    	VERSION="0"
+        REPRESENTATION_TYPE="ENUMERATION"
+        CODELIST_FK="[null]"
+        CONCEPT_SCHEME_FK="1031"
+        TEXT_FORMAT_FK="[null]"
+    />
+    
     <TB_FACETS
     	ID="65"
     	IS_SEQUENCE_FT="[null]"
@@ -4312,7 +4579,19 @@
     	VERSION="1"
     	DIM_COMPONENT_FK="614"
     	DISPLAY_ORDER_FK="721"
+    	DISPLAY_CONCEPT_SCHEME_ORDER_FK="[null]"
     	HIERARCHY_LEVELS_OPEN_FK="721"
+    	DSD_VERSION_FK="61"
+    />
+    
+    <TB_M_DIM_VIS_INFO
+    	ID="612"
+    	UUID="dimMeasureVisualization"
+    	VERSION="1"
+    	DIM_COMPONENT_FK="612"
+    	DISPLAY_ORDER_FK="[null]"
+    	DISPLAY_CONCEPT_SCHEME_ORDER_FK="127"
+    	HIERARCHY_LEVELS_OPEN_FK="[null]"
     	DSD_VERSION_FK="61"
     />
     
@@ -7204,6 +7483,85 @@
         VERSION="1"
         INTERNATIONAL_STRING_FK="168"
     />          
+    
+     <TB_INTERNATIONAL_STRINGS
+        ID="169"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1691"
+        LABEL="visualización - órdenes 1-2-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="169"
+    />    
+    
+     <TB_INTERNATIONAL_STRINGS
+        ID="170"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1701"
+        LABEL="visualización - órdenes 1-2-2"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="170"
+    />    
+    
+    <TB_INTERNATIONAL_STRINGS
+        ID="171"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1711"
+        LABEL="visualización - órdenes 1-2-3"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="171"
+    />   
+    
+    <TB_INTERNATIONAL_STRINGS
+        ID="172"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1721"
+        LABEL="visualización - órdenes 1-2-4"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="172"
+    />   
+    
+     <TB_INTERNATIONAL_STRINGS
+        ID="173"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1731"
+        LABEL="visualización - órdenes 1-2-7"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="173"
+    />    
+    
+     <TB_INTERNATIONAL_STRINGS
+        ID="174"
+        VERSION="1"
+    />
+    
+    <TB_LOCALISED_STRINGS
+        ID="1741"
+        LABEL="visualización - órdenes 1-2-8"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="174"
+    />    
+    
      <!-- ************************************************************************************** -->
     <!-- TB_LIS_ANNOTATION_TYPES                                                             -->
     <!-- *************************************************************************************  -->  

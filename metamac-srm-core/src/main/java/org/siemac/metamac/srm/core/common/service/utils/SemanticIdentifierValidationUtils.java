@@ -46,4 +46,8 @@ public class SemanticIdentifierValidationUtils extends com.arte.statistic.sdmx.s
     public static void checkCategoryElementSemanticIdentifier(CategoryElement categoryElement, List<MetamacExceptionItem> exceptions) {
         ValidationUtils.checkSemanticIdentifierAsMetamacID(categoryElement.getIdentifiableArtefact().getCode(), ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE, exceptions);
     }
+
+    public static void checkConceptSchemeVisualisationSemanticIdentifier(String identifier, List<MetamacExceptionItem> exceptions) {
+        ValidationUtils.checkSemanticIdentifierAsMetamacID(identifier, ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE, exceptions);
+    }
 }

@@ -64,10 +64,10 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     @Autowired
     private InternationalStringRepository internationalStringRepository;
 
-    private final Integer                 ORDER_DEFAULT    = Integer.valueOf(1);
-    private final Integer                 OPENNESS_DEFAULT = Integer.valueOf(1);
+    private final Integer                 ORDER_DEFAULT       = Integer.valueOf(1);
+    private final Integer                 OPENNESS_DEFAULT    = Integer.valueOf(1);
     private final Integer                 RESTRICTION_DEFAULT = Integer.valueOf(1);
-    
+
     @Override
     public CodeMetamac findByUrn(String urn) {
         Map<String, Object> parameters = new HashMap<String, Object>();
@@ -106,8 +106,6 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     @Override
     public void updateCodesVariableElements(Map<Long, Long> variableElementsByCodes, Long codelistVersionId, Long variableId) throws MetamacException {
 
-        Map<Long, Long> shortNamesCandidateToDelete = executeSelectShortNamesByCodes(variableElementsByCodes.keySet());
-
         String sqlUpdateWithVariableElement = buildQueryUpdateCodeVariableElement(true);
         String sqlUpdateWithoutVariableElement = buildQueryUpdateCodeVariableElement(false);
 
@@ -126,25 +124,20 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             int updateResult = queryUpdate.executeUpdate();
 
             if (updateResult > 1) {
-                throw new MetamacException(ServiceExceptionType.UNKNOWN, "Update result can not be more than one when updating variable element of code: code = " + codeId + "; variableElementId = "
-                        + variableElementId);
+                throw new MetamacException(ServiceExceptionType.UNKNOWN,
+                        "Update result can not be more than one when updating variable element of code: code = " + codeId + "; variableElementId = " + variableElementId);
             } else if (updateResult == 0) {
                 throw new MetamacException(ServiceExceptionType.UNKNOWN, "Code or variable element incorrect: code = " + codeId + "; variableElementId = " + variableElementId);
             }
-            if (variableElementId == null) {
-                // short name is not cleared
-                shortNamesCandidateToDelete.remove(codeId);
-            }
         }
-        // Delete short names
-        internationalStringRepository.deleteInternationalStringsEfficiently(shortNamesCandidateToDelete.values());
+
     }
 
     private String buildQueryUpdateCodeVariableElement(boolean variableElementNotNull) {
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE TB_M_CODES SET ");
         if (variableElementNotNull) {
-            sb.append("VARIABLE_ELEMENT_FK = :variableElementId, SHORT_NAME_FK = null ");
+            sb.append("VARIABLE_ELEMENT_FK = :variableElementId ");
         } else {
             sb.append("VARIABLE_ELEMENT_FK = null ");
         }
@@ -271,12 +264,12 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         updateCodeColumnToLeafCodes(codes);
     }
     // RESTRICTION FUNCTIONS
-    
+
     @Override
     public void clearCodesRestrictionColumnByCodelist(CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex) {
         clearCodesColumnByCodelist(codelistVersion, getRestrictionColumnName(restrictionColumnIndex));
     }
-    
+
     @Override
     public void copyCodesRestrictionColumnByCodelist(CodelistVersionMetamac codelistVersion, Integer columnIndexSource, Integer columnIndexTarget) {
         copyCodesColumnByCodelist(codelistVersion, getRestrictionColumnName(columnIndexSource), getRestrictionColumnName(columnIndexTarget));
@@ -285,7 +278,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     @Override
     public void updateCodesRestrictionColumnByCodelist(CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException {
         String restrictionColumn = getRestrictionColumnName(restrictionColumnIndex);
-        updateCodesColumnByCodelist(codelistVersion, restrictionColumn + " = " + getDatabaseBooleanColumnValue(expanded) + " "); 
+        updateCodesColumnByCodelist(codelistVersion, restrictionColumn + " = " + getDatabaseBooleanColumnValue(expanded) + " ");
     }
 
     @Override
@@ -293,13 +286,13 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         String restrictionColumn = getRestrictionColumnName(restrictionColumnIndex);
         updateCodeColumn(codelistVersion, codeUrn, restrictionColumn + " = " + getDatabaseBooleanColumnValue(expanded) + " ");
     }
-    
+
     @Override
     public void updateCodeRestrictionColumnToLeafCodes(CodelistVersionMetamac codelistVersion, Integer restrictionColumnIndex, Boolean expanded) throws MetamacException {
         String restrictionColumn = getRestrictionColumnName(restrictionColumnIndex);
         updateCodeColumnToLeafCodes(codelistVersion, restrictionColumn + " = " + getDatabaseBooleanColumnValue(expanded) + " ");
     }
-    
+
     // GENERAL FUNCTIONS
 
     private void clearCodesColumnByCodelist(CodelistVersionMetamac codelistVersion, String columnToUpdated) {
@@ -310,8 +303,8 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         queryUpdate.setParameter("codelistVersion", codelistVersion.getId());
         queryUpdate.executeUpdate();
     }
-    
-    private void copyCodesColumnByCodelist(CodelistVersionMetamac codelistVersion, String columnSource, String columnTarget ) {
+
+    private void copyCodesColumnByCodelist(CodelistVersionMetamac codelistVersion, String columnSource, String columnTarget) {
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE TB_M_CODES set " + columnTarget + " = " + columnSource + " ");
         sb.append("WHERE TB_CODES in (SELECT cb.ID FROM TB_CODES cb WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion) ");
@@ -319,7 +312,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         queryUpdate.setParameter("codelistVersion", codelistVersion.getId());
         queryUpdate.executeUpdate();
     }
-    
+
     private void updateCodeColumn(CodelistVersionMetamac codelistVersion, String codeUrn, String columnToUpdated) throws MetamacException {
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE TB_M_CODES set " + columnToUpdated);
@@ -330,13 +323,13 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         queryUpdate.setParameter("codelistVersion", codelistVersion.getId());
         queryUpdate.executeUpdate();
     }
-    
+
     private void updateCodeColumnToLeafCodes(List<CodeMetamac> codes) throws MetamacException {
         for (CodeMetamac code : codes) {
             getEntityManager().merge(code);
         }
     }
-    
+
     private void updateCodeColumnToLeafCodes(CodelistVersionMetamac codelistVersion, String columnToUpdated) throws MetamacException {
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE TB_M_CODES set " + columnToUpdated);
@@ -348,7 +341,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         queryUpdate.setParameter("codelistVersion", codelistVersion.getId());
         queryUpdate.executeUpdate();
     }
-    
+
     private void updateCodesColumnByCodelist(CodelistVersionMetamac codelistVersion, String columnToUpdated) throws MetamacException {
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE TB_M_CODES set " + columnToUpdated);
@@ -424,15 +417,15 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         if (restrictionColumnIndex == null) {
             restrictionColumnIndex = RESTRICTION_DEFAULT;
         }
-        
+
         String orderColumn = getOrderColumnName(orderColumnIndex);
         String opennessColumn = getOpennessColumnName(opennessColumnIndex);
         String restrictionColumn = getRestrictionColumnName(restrictionColumnIndex);
 
         // Find. NOTE: this query return null label if locale not exits for a code
         StringBuilder sbCodes = new StringBuilder();
-        sbCodes.append("SELECT cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, ls.LABEL, c." 
-        + orderColumn + ", c." + opennessColumn + ", c." + restrictionColumn + " ");
+        sbCodes.append("SELECT cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, ls.LABEL, c." + orderColumn + ", c." + opennessColumn + ", c."
+                + restrictionColumn + " ");
         sbCodes.append("FROM TB_M_CODES c ");
         sbCodes.append("INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
         sbCodes.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS a on cb.NAMEABLE_ARTEFACT_FK = a.ID ");
@@ -500,20 +493,20 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             mapCodeByItemId.put(itemResult.getItemIdDatabase(), itemResult);
         }
 
-            // Fill extended fields (shortName, isExtended)
-            StringBuilder sb = new StringBuilder();
-            sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
-            sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
-            sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
-            sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
-            executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
+        // Fill extended fields (shortName, isExtended)
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
+        sb.append("FROM TB_M_CODES c INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
+        sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
+        executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
         return codes;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public List<ItemResult> findCodesByCodelistOrderedInDepth(Long idCodelist, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex, ItemMetamacResultSelection resultSelection)
-            throws MetamacException {
+    public List<ItemResult> findCodesByCodelistOrderedInDepth(Long idCodelist, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex,
+            ItemMetamacResultSelection resultSelection) throws MetamacException {
 
         // Find codes
         List<ItemResult> codes = codeRepository.findCodesByCodelistUnordered(idCodelist, resultSelection);
@@ -543,7 +536,6 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             executeQueryCodeVisualisationAndUpdateCodeMetamacResult(idCodelist, orderColumnIndex, opennessColumnIndex, restrictionColumnIndex, mapCodeByItemId);
         }
 
-        
         // Retrieve items id ordered
         String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT); // get column name. any if no order or openness is selected
         StringBuilder sb = new StringBuilder();
@@ -588,15 +580,15 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         getExtendedFieldsFromCode(idCodelist, resultSelection, mapCodeByItemId);
 
     }
-    
+
     private void getExtendedFieldsWithVariableElementCode(Long idCodelist, ItemMetamacResultSelection resultSelection, Map<Long, ItemResult> mapCodeByItemId) {
         // Try fill from variable element
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, ve.SHORT_NAME_FK, c.IS_EXTENDED ");
+        sb.append("SELECT c.TB_CODES, ls.LOCALE as LS_LOCALE, ls.LABEL as LS_LABEL, c.SHORT_NAME_FK, c.IS_EXTENDED ");
         sb.append("FROM TB_M_CODES c ");
         sb.append("INNER JOIN TB_CODES cb on cb.ID = c.TB_CODES ");
         sb.append("INNER JOIN TB_M_VARIABLE_ELEMENTS ve on ve.ID = c.VARIABLE_ELEMENT_FK ");
-        sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = ve.SHORT_NAME_FK ");
+        sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS ls on ls.INTERNATIONAL_STRING_FK = c.SHORT_NAME_FK ");
         sb.append("WHERE c.VARIABLE_ELEMENT_FK is not null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion");
         executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
     }
@@ -610,7 +602,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         sb.append("WHERE c.VARIABLE_ELEMENT_FK is null AND cb.ITEM_SCHEME_VERSION_FK = :codelistVersion ");
         executeQueryCodeExtendedFieldsAndUpdateCodeMetamacResult(idCodelist, sb.toString(), mapCodeByItemId, resultSelection.isInternationalStringsMetamac());
     }
-    
+
     @Override
     public void checkCodeTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException {
         // item common metadata
@@ -756,13 +748,13 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     }
 
     @SuppressWarnings({"rawtypes"})
-    private void executeQueryCodeVisualisationAndUpdateCodeMetamacResult(Long idCodelist, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex, Map<Long, ItemResult> mapCodeByItemId)
-            throws MetamacException {
+    private void executeQueryCodeVisualisationAndUpdateCodeMetamacResult(Long idCodelist, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex,
+            Map<Long, ItemResult> mapCodeByItemId) throws MetamacException {
         // get column names. any if no order or openness or restriction is selected. NOT returned in result
         String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT);
         String opennessColumn = getOpennessColumnName(opennessColumnIndex != null ? opennessColumnIndex : OPENNESS_DEFAULT);
         String restrictionColumn = getRestrictionColumnName(restrictionColumnIndex != null ? restrictionColumnIndex : RESTRICTION_DEFAULT);
-        
+
         // find
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT cb.ID as ITEM_ID, c." + orderColumn + ", c." + opennessColumn + ", c." + restrictionColumn + " ");
@@ -789,12 +781,12 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
             }
             if (restrictionColumnIndex != null) {
                 ((CodeMetamacResultExtensionPoint) target.getExtensionPoint()).setRestriction(getBoolean(codeResultSqlArray[i]));
-            } 
+            }
         }
     }
 
-    private CodeMetamacVisualisationResult codeResultSqlToCodeResult(Object[] source, CodeMetamacVisualisationResult target, Integer orderColumnIndex, Integer opennessColumnIndex, Integer restrictionColumnIndex)
-            throws MetamacException {
+    private CodeMetamacVisualisationResult codeResultSqlToCodeResult(Object[] source, CodeMetamacVisualisationResult target, Integer orderColumnIndex, Integer opennessColumnIndex,
+            Integer restrictionColumnIndex) throws MetamacException {
         if (target == null) {
             target = new CodeMetamacVisualisationResult();
         }
@@ -817,8 +809,8 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
         }
         if (restrictionColumnIndex != null) {
             target.setRestriction(getBoolean(source[i]));
-        } 
-        
+        }
+
         return target;
     }
 
@@ -854,7 +846,7 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
     private String getRestrictionColumnName(Integer columnIndex) {
         return "RESTRICTION" + columnIndex;
     }
-    
+
     private String getDatabaseBooleanColumnValue(Boolean expanded) throws MetamacException {
         return booleanToBooleanDatabase(expanded);
     }
@@ -1006,8 +998,8 @@ public class CodeMetamacRepositoryImpl extends CodeMetamacRepositoryBase {
      * Delete annotations
      */
     private void deleteCodeAnnotationsEfficiently(Connection connection, Long itemSchemeVersionId) throws SQLException {
-        executeSqlStatement(connection, "DELETE FROM TB_ANNOTATIONS WHERE ANNOTABLE_ARTEFACT_FK in (SELECT cb.NAMEABLE_ARTEFACT_FK FROM TB_CODES cb WHERE cb.ITEM_SCHEME_VERSION_FK = "
-                + itemSchemeVersionId + ")");
+        executeSqlStatement(connection,
+                "DELETE FROM TB_ANNOTATIONS WHERE ANNOTABLE_ARTEFACT_FK in (SELECT cb.NAMEABLE_ARTEFACT_FK FROM TB_CODES cb WHERE cb.ITEM_SCHEME_VERSION_FK = " + itemSchemeVersionId + ")");
     }
 
     /**

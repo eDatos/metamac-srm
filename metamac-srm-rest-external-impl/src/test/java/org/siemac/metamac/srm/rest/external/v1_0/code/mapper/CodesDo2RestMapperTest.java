@@ -376,7 +376,7 @@ public class CodesDo2RestMapperTest {
         assertNull(target.getChildLinks());
         assertNull(target.getManagementAppLink());
 
-        assertEqualsInternationalString("es", "shortName-variableElement-code2 en Español", "en", "shortName-variableElement-code2 in English", target.getShortName());
+        assertEqualsInternationalString("es", "shortName-code2 en Español", "en", "shortName-code2 in English", target.getShortName());
         assertEquals("urn:sdmx:org.sdmx.infomodel.codelist.Code=agencyID1:resourceID1(01.123).codeParent1", target.getParent());
     }
 

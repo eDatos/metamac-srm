@@ -1,6 +1,7 @@
 import "classpath:/btdesign/statistic-sdmx-core-common.btdesign"
 import "classpath:/btdesign/metamac-core-common-enum.btdesign"
 import "classpath:/btdesign/statistic-sdmx-core-concepts.btdesign"
+import "classpath:/btdesign/statistic-sdmx-core-base.btdesign"
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-concepts-enum.btdesign"
 import "classpath:/btdesign/statistic-sdmx-v2_1-domain-enums.btdesign"
@@ -23,11 +24,14 @@ Application ConceptsMetamac {
 			> @ConceptMetamacRepository
 			> @QuantityRepository
 			> @ConceptTypeRepository
+			> @ConceptSchemeOrderVisualisationRepository
 			
 			"Creates concept scheme"
 			@ConceptSchemeVersionMetamac createConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
 			"Pre-Create concept scheme"
 			@ConceptSchemeVersionMetamac preCreateConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
+			"post-Create concept scheme"
+			@ConceptSchemeVersionMetamac postCreateConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersionSource, ConceptSchemeVersionMetamac conceptSchemeVersionTarget) throws MetamacException
 			"Updates concept scheme"
 			@ConceptSchemeVersionMetamac updateConceptScheme(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
 			"Retrieves concept scheme by urn"
@@ -92,6 +96,8 @@ Application ConceptsMetamac {
     		checkConceptSchemeVersionTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionsByResourceUrn) throws MetamacException;
 			"Checks related resources are externally published"
     		checkConceptSchemeWithRelatedResourcesExternallyPublished(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
+    		"Imports concept scheme orders in tsv format"
+    		TaskImportationInfo importConceptSchemeOrdersTsv(String conceptSchemeUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
     		
 			"Creates concept"
 			@ConceptMetamac createConcept(String conceptSchemeUrn, @ConceptMetamac concept) throws MetamacException;
@@ -110,9 +116,9 @@ Application ConceptsMetamac {
 			"Deletes concept"
     		deleteConcept(String urn) throws MetamacException;
     		"Retrieves concepts by concept scheme in locale requested"
-    		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale) throws MetamacException;
+    		List<ConceptMetamacVisualisationResult> retrieveConceptsByConceptSchemeUrn(String conceptSchemeUrn, String locale, String conceptSchemeOrderVisualisationUrn) throws MetamacException;
     		"Retrieves concepts by concept scheme ordered"
-    		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection itemMetamacResultSelection) throws MetamacException;
+    		List<ItemResult> retrieveConceptsByConceptSchemeUrnOrderedInDepth(String conceptSchemeUrn, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection itemMetamacResultSelection, String orderVisualisationCode) throws MetamacException;
     		"Adds a concepts relation"
     		addRelatedConcept(String urn1, String urn2) throws MetamacException;
     		"Deletes a concepts relation"
@@ -151,15 +157,40 @@ Application ConceptsMetamac {
     		PagedResult<@CodelistVersionMetamac> findCodelistsCanBeEnumeratedRepresentationForConceptByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, String conceptUrn, String variableUrn) throws MetamacException;
     		
     		"Updates parent of concept. parentUrn is null when concept is moved to first level. Concept is moved at the end of new level"
-			updateConceptParent(String conceptUrn, String newConceptParentUrn, Integer newConceptIndex) throws MetamacException;
+			updateConceptParent(String conceptUrn, String newConceptParentUrn) throws MetamacException;
 			"Updates position of concept"
-			updateConceptInOrder(String conceptUrn, String conceptSchemeUrn, Integer newConceptIndex) throws MetamacException;
+			updateConceptInOrderVisualisation(String conceptUrn, String conceptSchemeOrderVisualisationUrn, Integer newConceptIndex) throws MetamacException;			
 			
 			// resend kafka message for the last number of version of published concept.
     		List<MetamacExceptionItem> resendKafkaMessageExternallyConceptSchemes() throws MetamacException;
     		
     		"Check codelist is used by concept"
 			boolean checkCodelistIsUsedByConcept(String codelistUrn) throws MetamacException;
+			
+			// VISUALISATIONS
+    		
+    		"Creates order visualisation"
+    		@ConceptSchemeOrderVisualisation createConceptSchemeOrderVisualisation(String conceptSchemeUrn, @ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation) throws MetamacException;
+    		"Creates alphabetical order visualisation"
+    		@ConceptSchemeVersionMetamac createConceptSchemeOrderVisualisationAlphabetical(@ConceptSchemeVersionMetamac conceptSchemeVersion) throws MetamacException;
+			"Updates order visualisation"
+			@ConceptSchemeOrderVisualisation updateConceptSchemeOrderVisualisation(@ConceptSchemeOrderVisualisation conceptSchemeOrderVisualisation) throws MetamacException;
+    		"Retrieves order visualisation by urn"
+    		@ConceptSchemeOrderVisualisation retrieveConceptSchemeOrderVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieves order visualisation by identifier"
+    		@ConceptSchemeOrderVisualisation retrieveConceptSchemeOrderVisualisationByCode(String conceptSchemeUrn, String code) throws MetamacException;
+    		"Retrieve order visualisations by concept scheme"
+    		List<@ConceptSchemeOrderVisualisation> retrieveConceptSchemeOrderVisualisationsByConceptScheme(String conceptSchemeUrn)  throws MetamacException;
+			"Deletes order visualisation"
+    		deleteConceptSchemeOrderVisualisation(String urn) throws MetamacException;
+    		@ConceptSchemeVersionMetamac versioningConceptSchemeOrderVisualisations(@ConceptSchemeVersionMetamac source, @ConceptSchemeVersionMetamac target) throws MetamacException;
+    		"Recalculates order when new concepts are added in concept scheme"
+    		recalculateConceptsVisualisations(List<@Concept> items, List<@ConceptSchemeOrderVisualisation> orderVisualisations, boolean executeSave);
+    		
+    		String exportConceptOrdersTsv(String conceptSchemeUrn) throws MetamacException;
+    		
+   
+			
 		}
 
 		// ----------------------------------------------------------------
@@ -183,7 +214,14 @@ Application ConceptsMetamac {
 			"Life cycle information"
 			- @SrmLifeCycleMetadata lifeCycleMetadata databaseColumn="";
 			
+			"Order visualisations"
+			- Bag<@ConceptSchemeOrderVisualisation> orderVisualisations cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> conceptSchemeVersion;
+			"Default order visualisation"
+			- @ConceptSchemeOrderVisualisation defaultOrderVisualisation nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="DEFAULT_ORDER_VISUAL_FK";
+			
+			
 			Repository ConceptSchemeVersionMetamacRepository {
+				save;
 				findByQuery(String query, Map<String, Object> parameters, int maxResult);
 				findByCondition(PagingParameter pagingParameter);
 				@ConceptSchemeVersionMetamac findByUrn(String urn);
@@ -226,8 +264,27 @@ Application ConceptsMetamac {
 			- @Variable variable nullable cascade="none" fetch="lazy" databaseColumn="VARIABLE_FK" <-> concepts;
 			"Quantity"
 			- @Quantity quantity nullable cascade="all" fetch="lazy" databaseColumn="QUANTITY_FK";
-			"Order"
-			Integer orderValue nullable;
+
+			Integer order1 nullable;
+			Integer order2 nullable;
+			Integer order3 nullable;
+			Integer order4 nullable;
+			Integer order5 nullable;
+			Integer order6 nullable;
+			Integer order7 nullable;
+			Integer order8 nullable;
+			Integer order9 nullable;
+			Integer order10 nullable;
+			Integer order11 nullable;
+			Integer order12 nullable;
+			Integer order13 nullable;
+			Integer order14 nullable;
+			Integer order15 nullable;
+			Integer order16 nullable;
+			Integer order17 nullable;
+			Integer order18 nullable;
+			Integer order19 nullable;
+			Integer order20 nullable;
 
 			Repository ConceptMetamacRepository {
 				save;
@@ -236,8 +293,8 @@ Application ConceptsMetamac {
 				@ConceptMetamac findByUrn(String urn);
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findConceptsByConceptSchemeUnordered(Long conceptSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection resultSelection) throws MetamacException;
-				List<ConceptMetamacVisualisationResult> findConceptsByConceptSchemeUnorderedToVisualisation(Long conceptSchemeVersionId, String locale) throws MetamacException;
+				List<ItemResult> findConceptsByConceptSchemeOrderedInDepth(Long conceptSchemeVersionId, Integer orderColumnIndex, org.siemac.metamac.srm.core.code.domain.ConceptMetamacResultSelection resultSelection) throws MetamacException;
+				List<ConceptMetamacVisualisationResult> findConceptsByConceptSchemeUnorderedToVisualisation(Long conceptSchemeVersionId, String locale, Integer orderColumnIndex) throws MetamacException;
 				checkConceptTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				@ConceptMetamac retrieveConceptWithQuantityId(Long quantityId);
 
@@ -246,9 +303,12 @@ Application ConceptsMetamac {
 				checkConceptsWithQuantityExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				checkConceptsWithRepresentationExternallyPublished(Long itemSchemeVersionId, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 				
-				Integer getConceptMaximumOrderInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent);
-				Integer reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @ConceptMetamac concept);
-				Integer reorderConceptsAddingOneConceptInMiddle(@ConceptSchemeVersionMetamac conceptSchemeVersion, @ConceptMetamac concept, Integer sournewConceptIndex);
+				Integer getConceptMaximumOrderInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, Integer orderColumnIndex);
+				reorderConceptsDeletingOneConcept(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @ConceptMetamac concept, Integer orderColumnIndex, Integer orderConceptToDelete);
+			    reorderConceptsAddingOneConceptInMiddle(@ConceptSchemeVersionMetamac codelistVersion, @ConceptMetamac code, Integer orderColumnIndex, Integer orderConceptToAdd);	
+				Integer getConceptAlphabeticPositionInLevel(@ConceptSchemeVersionMetamac conceptSchemeVersion, @Concept parent, @Concept concept);
+				clearConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer orderColumnIndex);
+				copyConceptsOrderColumn(@ConceptSchemeVersionMetamac conceptSchemeVersion, Integer columnIndexSource, Integer columnIndexTarget);
 			}
 		}
 
@@ -315,6 +375,31 @@ Application ConceptsMetamac {
     			findAll;
     			findByCondition;
     		}
-    	}		
+    	}	
+    	
+    	Entity ConceptSchemeOrderVisualisation {
+			databaseTable="TB_M_CONCEPT_SCHEME_ORDER_VIS"
+			hint="idSequence=M_CONCEPT_SCHEME_ORDER_VIS"
+			
+			"Nameable artefact"
+			- @NameableArtefact nameableArtefact not nullable cascade="all" fetch="lazy" databaseColumn="NAMEABLE_ARTEFACT_FK";
+			"Last update to optimistic locking"
+			DateTimeTZ updateDate nullable;
+			"Column with order in table of Codes"
+			Integer columnIndex not nullable;
+			"Relation to concept scheme"			
+			- @ConceptSchemeVersionMetamac conceptSchemeVersion not nullable cascade="none" fetch="lazy" databaseColumn="CONCEPT_SCHEME_FK" <-> orderVisualisations;
+			
+			Repository ConceptSchemeOrderVisualisationRepository {
+				save;
+				delete;
+				findByQuery(String query, Map<String, Object> parameters, int maxResult);
+				@ConceptSchemeOrderVisualisation findByUrn(String orderVisualisationUrn);
+				@ConceptSchemeOrderVisualisation findByCode(Long conceptSchemeId, String orderVisualisationCode);
+				findByCondition(PagingParameter pagingParameter);
+				updateUrnAllConceptSchemeOrderVisualisationsByConceptSchemeEfficiently(@ConceptSchemeVersionMetamac conceptSchemeVersionMetamac, String oldUrnExample);
+				checkConceptSchemeOrderVisualisationTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+			}			
+		}			
 	}
 }

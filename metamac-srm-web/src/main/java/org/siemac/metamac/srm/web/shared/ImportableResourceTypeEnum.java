@@ -12,6 +12,7 @@ public enum ImportableResourceTypeEnum implements Serializable {
     CODES_OPENNESS_LEVEL,
     VARIABLE_ELEMENT_SHAPE,
     CONCEPTS,
+    CONCEPTS_ORDER,
     ORGANISATIONS,
     CATEGORIES,
     CATEGORY_ELEMENTS,

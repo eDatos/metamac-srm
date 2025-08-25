@@ -49,6 +49,17 @@ public class OrganisationsCopyCallbackMetamacImpl extends OrganisationsCopyCallb
     public void copyItem(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
         super.copyItem(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
 
+        copySpecialOrganisation(sourceItem, targetItem);
+    }
+
+    @Override
+    public void copyItemWithoutUnmodifiedMetadata(Item sourceItem, ItemResult sourceItemResult, Item targetItem, boolean isDefaultMaintainer) {
+        super.copyItemWithoutUnmodifiedMetadata(sourceItem, sourceItemResult, targetItem, isDefaultMaintainer);
+
+        copySpecialOrganisation(sourceItem, targetItem);
+    }
+
+    private void copySpecialOrganisation(Item sourceItem, Item targetItem) {
         OrganisationMetamac source = (OrganisationMetamac) sourceItem;
         OrganisationMetamac target = (OrganisationMetamac) targetItem;
 
@@ -63,8 +74,7 @@ public class OrganisationsCopyCallbackMetamacImpl extends OrganisationsCopyCallb
                 target.setSpecialOrganisationHasBeenPublished(null); // do not copy. it will be true when scheme is published
                 break;
         }
-
-        // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from sourceItemResult
+     // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from sourceItemResult
     }
 
     @Override

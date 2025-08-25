@@ -270,7 +270,7 @@ public class DataStructuresDo2RestMapperTest {
         assertTrue(target.getDataStructureComponents().getAttributes().getAttributes().get(0) instanceof Attribute);
         assertEquals(AttributeQualifierType.SPATIAL, ((Attribute) target.getDataStructureComponents().getAttributes().getAttributes().get(0)).getType());
         // visualisation
-        assertEquals(3, target.getDimensionVisualisations().getTotal().intValue());
+        assertEquals(4, target.getDimensionVisualisations().getTotal().intValue());
         {
             DimensionVisualisation dimensionVisualisation = target.getDimensionVisualisations().getDimensionVisualisations().get(0);
             assertEquals("dimension01", dimensionVisualisation.getDimension());
@@ -288,6 +288,13 @@ public class DataStructuresDo2RestMapperTest {
             assertEquals("dimension05", dimensionVisualisation.getDimension());
             assertEquals("order05", dimensionVisualisation.getOrder());
             assertEquals("openness05", dimensionVisualisation.getOpenness());
+        }
+
+        {
+            DimensionVisualisation dimensionVisualisation = target.getDimensionVisualisations().getDimensionVisualisations().get(3);
+            assertEquals("dimension03", dimensionVisualisation.getDimension());
+            assertEquals("order03", dimensionVisualisation.getOrder());
+            assertNull(dimensionVisualisation.getOpenness());
         }
 
         // others

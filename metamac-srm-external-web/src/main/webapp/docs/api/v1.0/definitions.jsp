@@ -1982,6 +1982,26 @@
             },
             {
                "$ref":"#/definitions/ItemResource"
+            },
+            {
+               "properties":{
+                
+                  "orderConfiguration":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ConceptResource.properties.order.description']}",
+                     "type":"number"
+                  },
+                 "pluralName":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Concept.properties.pluralName.description']}",
+                     "$ref":"#/definitions/InternationalString"
+                  },
+                  
+               }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.ConceptResource.description']}"

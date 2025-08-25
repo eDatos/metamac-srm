@@ -514,7 +514,7 @@ public class DsdGeneralTabPresenter extends Presenter<DsdGeneralTabPresenter.Dsd
             // If previous concepts scheme was not null and now is null, then clear the tree items
             this.conceptSchemeUrnOfMeasureDimensionRepresentation = conceptSchemeUrn;
             getView().resetMeasureDimensionConcepts();
-        } else if (dataAttribute != null){
+        } else if (dataAttribute != null && dataAttribute.getLocalRepresentation() != null && dataAttribute.getLocalRepresentation().getEnumeration() != null){
             retrieveConcepts(dataAttribute.getLocalRepresentation().getEnumeration().getUrn());
         } else {
             conceptSchemeUrn = null;

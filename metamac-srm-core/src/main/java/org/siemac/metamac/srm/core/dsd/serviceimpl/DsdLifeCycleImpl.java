@@ -287,7 +287,7 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
                     exceptions);
             ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowZeroValuesByDefault(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_ZERO_VALUES_BY_DEFAULT,
                     exceptions);
-//            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowDecimals(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_DECIMALS, exceptions);
+            ValidationUtils.checkMetadataRequired(dataStructureDefinitionVersionMetamac.getShowDecimals(), ServiceExceptionParameters.DATA_STRUCTURE_DEFINITION_SHOW_DECIMALS, exceptions);
 
             // Check mutual exclusivity between dimensions in the heading and stub.
             for (DimensionOrder dimensionOrder : dataStructureDefinitionVersionMetamac.getHeadingDimensions()) {

@@ -96,6 +96,7 @@ import com.arte.statistic.sdmx.srm.core.common.service.utils.RepresentationConst
 import com.arte.statistic.sdmx.srm.core.common.service.utils.shared.SdmxVersionUtils;
 import com.arte.statistic.sdmx.srm.core.concept.domain.Concept;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
+import com.arte.statistic.sdmx.srm.core.structure.domain.AttributeDescriptor;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DataAttribute;
 import com.arte.statistic.sdmx.srm.core.structure.domain.DataStructureDefinitionVersion;
 import com.arte.statistic.sdmx.srm.core.structure.domain.Dimension;
@@ -1600,6 +1601,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
         // Nothing to inherit
         if (previousMeasureDimension == null) {
+            setMeasureAttributePrecision(dataStructureDefinitionVersionMetamacToCopy, dataStructureDefinitionVersionMetamacNewVersion);
             return dataStructureDefinitionVersionMetamacNewVersion;
         }
 
@@ -1626,15 +1628,34 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
         if (previousConceptSchemeRepresentationUrn.equals(newConceptSchemeRepresentationUrn)) {
             // showDecimalsPrecisions
-            for (MeasureDimensionPrecision measureDimensionPrecision : dataStructureDefinitionVersionMetamacToCopy.getShowDecimalsPrecisions()) {
-                MeasureDimensionPrecision targetMeasureDimensionPrecion = new MeasureDimensionPrecision();
-                targetMeasureDimensionPrecion.setConcept(measureDimensionPrecision.getConcept());
-                targetMeasureDimensionPrecion.setShowDecimalPrecision(measureDimensionPrecision.getShowDecimalPrecision());
-                dataStructureDefinitionVersionMetamacNewVersion.addShowDecimalsPrecision(targetMeasureDimensionPrecion);
-            }
+            copyMeasureDimensionPrecision(dataStructureDefinitionVersionMetamacToCopy, dataStructureDefinitionVersionMetamacNewVersion);
         }
 
         return dataStructureDefinitionVersionMetamacNewVersion;
+    }
+
+    private void setMeasureAttributePrecision(DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacToCopy,
+            DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacNewVersion) {
+        for (ComponentList componentList : dataStructureDefinitionVersionMetamacToCopy.getGrouping()) {
+            if (componentList instanceof AttributeDescriptor) {
+                for (Component component : componentList.getComponents()) {
+                    if (component instanceof DataAttribute && component.getLocalRepresentation() != null && component.getLocalRepresentation().getEnumerationConceptScheme() != null) {
+                        copyMeasureDimensionPrecision(dataStructureDefinitionVersionMetamacToCopy, dataStructureDefinitionVersionMetamacNewVersion);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void copyMeasureDimensionPrecision(DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacToCopy,
+            DataStructureDefinitionVersionMetamac dataStructureDefinitionVersionMetamacNewVersion) {
+        for (MeasureDimensionPrecision measureDimensionPrecision : dataStructureDefinitionVersionMetamacToCopy.getShowDecimalsPrecisions()) {
+            MeasureDimensionPrecision targetMeasureDimensionPrecion = new MeasureDimensionPrecision();
+            targetMeasureDimensionPrecion.setConcept(measureDimensionPrecision.getConcept());
+            targetMeasureDimensionPrecion.setShowDecimalPrecision(measureDimensionPrecision.getShowDecimalPrecision());
+            dataStructureDefinitionVersionMetamacNewVersion.addShowDecimalsPrecision(targetMeasureDimensionPrecion);
+        }
     }
 
     @Override

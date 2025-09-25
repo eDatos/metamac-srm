@@ -13,6 +13,7 @@ public class ConceptMetamacVisualisationResult extends ItemVisualisationResult {
     private RelatedResourceVisualisationResult variable;
     private ConceptRoleEnum                    sdmxRelatedArtefact;
     private Integer                            order;
+    private Integer                            decimals;
 
     public ConceptMetamacVisualisationResult() {
     }
@@ -48,4 +49,13 @@ public class ConceptMetamacVisualisationResult extends ItemVisualisationResult {
     public void setOrder(Integer order) {
         this.order = order;
     }
+
+    public Integer getDecimals() {
+        return decimals;
+    }
+
+    public void setDecimals(Integer decimals) {
+        this.decimals = decimals;
+    }
+
 }

@@ -176,9 +176,11 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
                 return measureDimensionPrecisionDto.getShowDecimalPrecision();
             }
         }
-        for (ConceptMetamacVisualisationResult concept : itemHierarchyDtos) {
-            if (StringUtils.equals(concept.getUrn(), conceptUrn)) {
-                return concept.getDecimals();
+        if (itemHierarchyDtos != null) {
+            for (ConceptMetamacVisualisationResult concept : itemHierarchyDtos) {
+                if (StringUtils.equals(concept.getUrn(), conceptUrn)) {
+                    return concept.getDecimals();
+                }
             }
         }
         return null;

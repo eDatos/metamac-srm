@@ -102,7 +102,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
         sb.append(" FROM TB_M_CONCEPTS c ");
         sb.append("INNER JOIN TB_CONCEPTS cb on c.TB_CONCEPTS = cb.ID ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS a on cb.NAMEABLE_ARTEFACT_FK = a.ID ");
-        sb.append("INNER JOIN tb_m_quantities tmq on tmq.id = c.quantity_fk ");
+        sb.append("left outer JOIN tb_m_quantities tmq on tmq.id = c.quantity_fk ");
         sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS lsName on lsName.INTERNATIONAL_STRING_FK = a.NAME_FK and lsName.locale = :locale ");
         sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS lsAcronym on lsAcronym.INTERNATIONAL_STRING_FK = c.ACRONYM_FK and lsAcronym.locale = :locale ");
         sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");

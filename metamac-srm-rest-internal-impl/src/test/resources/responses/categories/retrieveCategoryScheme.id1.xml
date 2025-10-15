@@ -17,8 +17,8 @@
             <sr:type>SDMX-ID1-ANNOTATION_TYPE</sr:type>
             <sr:url>url-code2</sr:url>
             <sr:text>
-                <cdomain:text xml:lang="es">text-code2 en Español</cdomain:text>
                 <cdomain:text xml:lang="en">text-code2 in English</cdomain:text>
+                <cdomain:text xml:lang="es">text-code2 en Español</cdomain:text>
             </sr:text>
         </sr:annotation>
     </sr:annotations>
@@ -32,8 +32,8 @@
     </sr:childLinks>
     <sr:managementAppLink>http://localhost:8080/metamac-srm-web/#structuralResources/categorySchemes/categoryScheme;id=agency1:itemScheme1(01.000)</sr:managementAppLink>
     <sr:name>
-        <cdomain:text xml:lang="en">name-itemScheme1v01.000 in English</cdomain:text>
         <cdomain:text xml:lang="es">name-itemScheme1v01.000 en Español</cdomain:text>
+        <cdomain:text xml:lang="en">name-itemScheme1v01.000 in English</cdomain:text>
     </sr:name>
     <sr:description>
         <cdomain:text xml:lang="en">description-itemScheme1v01.000 in English</cdomain:text>
@@ -50,6 +50,7 @@
     <sr:validTo>2013-10-04T10:12:13.014+01:00</sr:validTo>
     <sr:replaceToVersion>replaceTo</sr:replaceToVersion>
     <sr:replacedByVersion>replacedBy</sr:replacedByVersion>
+    <sr:lastUpdated>2012-11-05T10:12:13.014Z</sr:lastUpdated>
     <sr:agencyID>agency1</sr:agencyID>
     <sr:isFinal>true</sr:isFinal>
     <sr:isExternalReference>false</sr:isExternalReference>

@@ -236,8 +236,8 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
 
     @Test
     public void testFindCodelistsByCondition() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.findCodelistsByCondition(ctx, getMetamacCriteria());
@@ -649,8 +649,19 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
         // 2) CODELIST INTERNALLY_PUBLISHED
         {
             CodeMetamacDto internallyPublishedCodeMetamacDto = srmCoreServiceFacade.retrieveCodeByUrn(getServiceContextAdministrador(), CODELIST_7_V2_CODE_1);
-            srmCoreServiceFacade.updateCodeVariableElement(getServiceContextJefeNormalizacion(), internallyPublishedCodeMetamacDto.getUrn(), VARIABLE_5_VARIABLE_ELEMENT_1);
+            {
+                try {
+                    srmCoreServiceFacade.updateCodeVariableElement(getServiceContextJefeNormalizacion(), internallyPublishedCodeMetamacDto.getUrn(), VARIABLE_2_VARIABLE_ELEMENT_1);
+                    fail("action not allowed");
+                } catch (MetamacException e) {
+                    assertEquals(1, e.getExceptionItems().size());
+                    assertEquals(ServiceExceptionType.SECURITY_OPERATION_NOT_ALLOWED.getCode(), e.getExceptionItems().get(0).getCode());
+                }
+            }
         }
+
+        // Error
+
     }
 
     @Test
@@ -731,8 +742,8 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveCodeByUrn() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveCodeByUrn(ctx, CODELIST_1_V1_CODE_1);
@@ -777,8 +788,8 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
 
     @Test
     public void testRetrieveCodesByCodelistUrn() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.retrieveCodesByCodelistUrn(ctx, CODELIST_1_V1, "es", null, null, null);
@@ -802,8 +813,8 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
 
     @Test
     public void testFindCodesByCondition() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.findCodesByCondition(ctx, getMetamacCriteria());
@@ -851,8 +862,8 @@ public class SrmCoreServiceFacadeCodesSecurityTest extends SrmBaseTest {
 
     @Test
     public void testFindCodelistFamiliesByCondition() throws Exception {
-        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(),
-                getServiceContextTecnicoProduccion(), getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
+        ServiceContext[] ctxs = {getServiceContextTecnicoApoyoNormalizacion(), getServiceContextTecnicoApoyoProduccion(), getServiceContextTecnicoNormalizacion(), getServiceContextTecnicoProduccion(),
+                getServiceContextJefeNormalizacion(), getServiceContextJefeProduccion(), getServiceContextAdministrador()};
 
         for (ServiceContext ctx : ctxs) {
             srmCoreServiceFacade.findCodelistFamiliesByCondition(ctx, getMetamacCriteria());

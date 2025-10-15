@@ -112,11 +112,7 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
      * Determines if categorisations from an category scheme can be created or deleted
      */
     public static boolean canModifyCategorisationFromCategoryScheme(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
-        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(procStatus) || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(procStatus)) {
-            return canPublishCategorySchemeExternally(metamacPrincipal);
-        } else {
-            return canUpdateCategoryScheme(metamacPrincipal, procStatus);
-        }
+        return canUpdateCategoryScheme(metamacPrincipal, procStatus);
     }
 
     public static boolean canExportCategoriesTsv(MetamacPrincipal metamacPrincipal) {
@@ -143,11 +139,7 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
     }
 
     public static boolean canUpdateCategoryCategoryElement(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
-        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(procStatus) || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(procStatus)) {
-            return isSrmRoleAllowed(metamacPrincipal, JEFE_NORMALIZACION);
-        } else {
-            return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
-        }
+        return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
     }
 
     public static boolean canExportCategoryElementsTsv(MetamacPrincipal metamacPrincipal) {

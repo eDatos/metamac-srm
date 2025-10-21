@@ -95,7 +95,7 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
 
     public void setMeasureDimensionPrecisions(List<MeasureDimensionPrecisionDto> measureDimensionPrecisionDtos) {
         this.measureDimensionPrecisionDtos = measureDimensionPrecisionDtos;
-        updateRecords(null);
+        updateRecords(null, false);
     }
 
     public List<MeasureDimensionPrecisionDto> getMeasureDimensionPrecisionDtos() {
@@ -116,7 +116,7 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
         return measureDimensionPrecisionDtos;
     }
 
-    private void updateRecords(List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
+    private void updateRecords(List<ConceptMetamacVisualisationResult> itemHierarchyDtos, boolean isEditionMode) {
         Tree tree = getTree();
         TreeNode[] allNodes = tree.getAllNodes();
         TreeNode[] sortedTreeNode = sortTreeNodesRecursively(allNodes);
@@ -126,7 +126,7 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
 
             String conceptField = CommonWebUtils.getElementName(node.getAttributeAsString(CodeDS.CODE), node.getAttribute(CodeDS.NAME));
             node.setAttribute(CONCEPT_FIELD, conceptField);
-            node.setAttribute(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getDecimalsByConcept(node.getAttribute(ItemDS.URN), itemHierarchyDtos));
+            node.setAttribute(DataStructureDefinitionDS.SHOW_DECIMALS_PRECISION, getDecimalsByConcept(node.getAttribute(ItemDS.URN), itemHierarchyDtos, isEditionMode));
         }
 
         tree.linkNodes(sortedTreeNode);
@@ -170,13 +170,13 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
         return sortedNodes.toArray(new TreeNode[sortedNodes.size()]);
     }
 
-    public Integer getDecimalsByConcept(String conceptUrn, List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
+    public Integer getDecimalsByConcept(String conceptUrn, List<ConceptMetamacVisualisationResult> itemHierarchyDtos, boolean isEditionMode) {
         for (MeasureDimensionPrecisionDto measureDimensionPrecisionDto : measureDimensionPrecisionDtos) {
             if (StringUtils.equals(measureDimensionPrecisionDto.getUrn(), conceptUrn)) {
                 return measureDimensionPrecisionDto.getShowDecimalPrecision();
             }
         }
-        if (itemHierarchyDtos != null) {
+        if (itemHierarchyDtos != null && isEditionMode) {
             for (ConceptMetamacVisualisationResult concept : itemHierarchyDtos) {
                 if (StringUtils.equals(concept.getUrn(), conceptUrn)) {
                     return concept.getDecimals();
@@ -202,11 +202,10 @@ public class MeasureDimensionConceptsTreeGrid extends ConceptsTreeGrid {
         getData().openAll();
     }
 
-    @Override
-    public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> itemHierarchyDtos) {
+    public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> itemHierarchyDtos, boolean isEditionMode) {
         super.updateItemScheme(conceptSchemeMetamacDto);
         super.setConcepts(conceptSchemeMetamacDto, itemHierarchyDtos);
-        updateRecords(itemHierarchyDtos);
+        updateRecords(itemHierarchyDtos, isEditionMode);
     }
 
     @Override

@@ -45,8 +45,8 @@ public class ShowDecimalsPrecisionItem extends CustomCanvasItem {
         measureDimensionConceptsTreeGrid.setMeasureDimensionPrecisions(measureDimensionPrecisionDtos);
     }
 
-    public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> concepts) {
-        measureDimensionConceptsTreeGrid.setConcepts(conceptSchemeMetamacDto, concepts);
+    public void setConcepts(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> concepts, boolean isEditionMode) {
+        measureDimensionConceptsTreeGrid.setConcepts(conceptSchemeMetamacDto, concepts, isEditionMode);
     }
 
     public List<MeasureDimensionPrecisionDto> getMeasureDimensionPrecisionDtos() {

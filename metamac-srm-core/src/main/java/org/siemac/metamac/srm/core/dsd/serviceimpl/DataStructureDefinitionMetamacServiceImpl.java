@@ -1339,8 +1339,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
                     // Check: this type of attribute only supports a "not specified" relationship type
                     if (!(((DataAttribute) component).getRelateTo() instanceof NoSpecifiedRelationship)) {
-                        // FIXME EDATOS-2899 (comentado temporalmente hasta resolucion definitiva)
-                        // exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATA_STRUCTURE_DEFINITION_ATTR_RELATETO_INVALID));
+                        exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATA_STRUCTURE_DEFINITION_ATTR_RELATETO_INVALID));
                     }
                     return;
                 }
@@ -1362,8 +1361,7 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
 
                     // Check: this type of attribute only supports a "not specified" relationship type
                     if (!(((DataAttribute) component).getRelateTo() instanceof NoSpecifiedRelationship)) {
-                        // FIXME EDATOS-2899 (comentado temporalmente hasta resolucion definitiva)
-                        // exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATA_STRUCTURE_DEFINITION_ATTR_RELATETO_INVALID));
+                        exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATA_STRUCTURE_DEFINITION_ATTR_RELATETO_INVALID));
                     }
                     return;
                 }
@@ -1385,9 +1383,8 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
                     }
 
                     // Check: this type of attribute only supports a "not specified" relationship type
-                    if (!(((DataAttribute) component).getRelateTo() instanceof NoSpecifiedRelationship)) {
-                        // FIXME EDATOS-2899 (comentado temporalmente hasta resolucion definitiva)
-                        // exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATA_STRUCTURE_DEFINITION_ATTR_RELATETO_INVALID));
+                    if (!(((DataAttribute) component).getRelateTo() instanceof NoSpecifiedRelationship)) {                        
+                        exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATA_STRUCTURE_DEFINITION_ATTR_RELATETO_INVALID));
                     }
                     return;
                 }

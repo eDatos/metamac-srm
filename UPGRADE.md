@@ -8,6 +8,10 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 8.9.1 a 8.9.2-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/8.9.1/db/srm/postgresql/] 
+
 ## 8.7.0 a 8.8.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/8.7.0/db/srm/postgresql/visualisation-order-concept-schemes] 

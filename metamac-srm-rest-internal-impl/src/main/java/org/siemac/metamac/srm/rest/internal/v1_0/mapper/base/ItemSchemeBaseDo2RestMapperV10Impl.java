@@ -33,6 +33,7 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
         target.setReplacedByVersion(toItemSchemeReplacedByVersion(source));
         target.setResourceCreatedDate(toDate(source.getItemScheme().getResourceCreatedDate()));
         target.setVersionCreatedDate(toDate(source.getCreatedDate()));
+        target.setLastUpdated(toDate(source.getLastUpdated()));
 
         if (SrmRestInternalUtils.uriMustBeSelfLink(source.getMaintainableArtefact())) {
             target.setUri(target.getSelfLink().getHref());
@@ -81,7 +82,7 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
         MaintainableArtefact maintainableArtefact = itemSchemeVersion.getMaintainableArtefact();
         return toMaintainableArtefactLink(schemesSubPath, maintainableArtefact);
     }
-    
+
     // API/[ARTEFACT_TYPE]/{agencyID}/{resourceID}/{version}/[SUBARTEFACT_TYPES]
     protected String toItemsLink(String schemesSubPath, String itemsSubPath, String agencyID, String resourceID, String version) {
         String link = toMaintainableArtefactLink(schemesSubPath, agencyID, resourceID, version);
@@ -97,16 +98,16 @@ public abstract class ItemSchemeBaseDo2RestMapperV10Impl extends BaseDo2RestMapp
     protected String toRecodedCodesItemLink(String schemesSubPath, ItemSchemeVersion itemSchemeVersion1, ItemSchemeVersion itemSchemeVersion2) {
         MaintainableArtefact maintainableArtefact = itemSchemeVersion1.getMaintainableArtefact();
         String link = toMaintainableArtefactLink(schemesSubPath, getIdAsMaintainer(maintainableArtefact.getMaintainer()), getCode(maintainableArtefact), maintainableArtefact.getVersionLogic());
-        link += SrmRestConstants.LINK_SUBPATH_RECODED_CODES; 
-        
+        link += SrmRestConstants.LINK_SUBPATH_RECODED_CODES;
+
         MaintainableArtefact maintainableArtefact2 = itemSchemeVersion2.getMaintainableArtefact();
         link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_AGENCYID, getIdAsMaintainer(maintainableArtefact2.getMaintainer()));
         link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_RESOURCEID, getCode(maintainableArtefact2));
         link = RestUtils.createLinkWithQueryParam(link, SrmRestConstants.PARAMETER_REFERENCE_VERSION, maintainableArtefact2.getVersionLogic());
-        
+
         return link;
     }
-    
+
     // API/[ARTEFACT_TYPE]/{agencyID}/{resourceID}/{version}/[SUBARTEFACT_TYPES]/{itemID}
     protected String toItemLink(String schemesSubPath, String itemsSubPath, Item item) {
         String link = toItemsLink(schemesSubPath, itemsSubPath, item.getItemSchemeVersion());

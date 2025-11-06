@@ -214,11 +214,7 @@ public class SharedCodesSecurityUtils extends SharedItemsSecurityUtils {
     }
 
     public static boolean canUpdateCodeVariableElement(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
-        if (ProcStatusEnum.INTERNALLY_PUBLISHED.equals(procStatus) || ProcStatusEnum.EXTERNALLY_PUBLISHED.equals(procStatus)) {
-            return isSrmRoleAllowed(metamacPrincipal, JEFE_NORMALIZACION);
-        } else {
-            return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
-        }
+        return canModifyItemFromItemScheme(metamacPrincipal, procStatus);
     }
 
     public static boolean canAddVariablesToVariableFamily(MetamacPrincipal metamacPrincipal) {

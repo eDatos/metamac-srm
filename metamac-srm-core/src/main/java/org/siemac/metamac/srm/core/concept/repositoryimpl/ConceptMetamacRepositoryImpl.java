@@ -97,11 +97,12 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
 
         StringBuilder sb = new StringBuilder();
         sb.append(
-                "SELECT cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, lsName.LABEL as NAME, lsAcronym.LABEL as ACRONYM, c.SDMX_RELATED_ARTEFACT,"
+                "SELECT tmq.decimal_places, cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, lsName.LABEL as NAME, lsAcronym.LABEL as ACRONYM, c.SDMX_RELATED_ARTEFACT,"
                         + " c." + orderColumn);
         sb.append(" FROM TB_M_CONCEPTS c ");
         sb.append("INNER JOIN TB_CONCEPTS cb on c.TB_CONCEPTS = cb.ID ");
         sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS a on cb.NAMEABLE_ARTEFACT_FK = a.ID ");
+        sb.append("left outer JOIN tb_m_quantities tmq on tmq.id = c.quantity_fk ");
         sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS lsName on lsName.INTERNATIONAL_STRING_FK = a.NAME_FK and lsName.locale = :locale ");
         sb.append("LEFT OUTER JOIN TB_LOCALISED_STRINGS lsAcronym on lsAcronym.INTERNATIONAL_STRING_FK = c.ACRONYM_FK and lsAcronym.locale = :locale ");
         sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :itemSchemeVersionId ");
@@ -880,6 +881,7 @@ public class ConceptMetamacRepositoryImpl extends ConceptMetamacRepositoryBase {
     private ConceptMetamacVisualisationResult itemResultSqlToConceptVisualisationResult(Object[] source, Integer orderColumnIndex) throws MetamacException {
         ConceptMetamacVisualisationResult target = new ConceptMetamacVisualisationResult();
         int i = 0;
+        target.setDecimals(getInteger(source[i++]));
         target.setItemIdDatabase(getLong(source[i++]));
         target.setCreatedDate(getDate(source[i++], source[i++]));
         target.setUrn(getString(source[i++]));

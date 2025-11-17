@@ -44,6 +44,7 @@
     <sr:validTo>2013-10-04T10:12:13.014+01:00</sr:validTo>
     <sr:replaceToVersion>replaceTo</sr:replaceToVersion>
     <sr:replacedByVersion>replacedBy</sr:replacedByVersion>
+    <sr:lastUpdated>2012-11-05T10:12:13.014Z</sr:lastUpdated>
     <sr:agencyID>agency1</sr:agencyID>
     <sr:isFinal>true</sr:isFinal>
     <sr:isExternalReference>false</sr:isExternalReference>

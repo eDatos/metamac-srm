@@ -30,6 +30,7 @@ public abstract class StructureBaseDo2RestMapperV10Impl extends BaseDo2RestMappe
 
         target.setReplaceToVersion(toStructureReplaceToVersion(source));
         target.setReplacedByVersion(toStructureReplacedByVersion(source));
+        target.setLastUpdated(toDate(source.getLastUpdated()));
 
         if (SrmRestInternalUtils.uriMustBeSelfLink(source.getMaintainableArtefact())) {
             target.setUri(target.getSelfLink().getHref());

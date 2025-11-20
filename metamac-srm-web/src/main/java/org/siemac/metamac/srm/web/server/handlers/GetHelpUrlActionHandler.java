@@ -30,7 +30,7 @@ public class GetHelpUrlActionHandler extends SecurityActionHandler<GetHelpUrlAct
 			String userGuideFileName = configurationService.retrieveHelpUrl();
 			return new GetHelpUrlResult(userGuideFileName);
 		} catch (MetamacException e) {
-			log.debug("Error retrieving application notices OPTIONAL help url", e);
+			log.debug("Error retrieving application metamac-srm OPTIONAL help url", e);
 			return new GetHelpUrlResult("");
 		}
 	}

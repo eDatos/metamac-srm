@@ -8,6 +8,12 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+
+## 8.10.0 a 8.10.1-SNAPSHOT
+- Se han realizado cambios en la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente **EXCEPTO  istac pre e istac pro**: [etc/changes-from-release/8.10.0/db/common-metadata/postgresql/](etc/changes-from-release/8.10.0/db/common-metadata/postgresql)
+
+
 ## 8.9.1 a 8.9.2
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/8.9.1/db/srm/postgresql/] 

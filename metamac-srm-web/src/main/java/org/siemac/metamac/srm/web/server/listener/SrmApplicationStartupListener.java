@@ -76,7 +76,7 @@ public class SrmApplicationStartupListener extends InternalApplicationStartupLis
         checkRequiredOrganisationUrn();
 
         // SRM
-        checkRequiredProperty(SrmConfigurationConstants.HELP_URL);
+        checkOptionalProperty(SrmConfigurationConstants.HELP_URL);
         checkRequiredProperty(SrmConfigurationConstants.JOB_DELETE_DEPRECATED_ENTITIES_CRON_EXPRESSION);
         checkRequiredProperty(SrmConfigurationConstants.VARIABLE_WORLD);
         checkRequiredProperty(SrmConfigurationConstants.VARIABLE_ELEMENT_WORLD);

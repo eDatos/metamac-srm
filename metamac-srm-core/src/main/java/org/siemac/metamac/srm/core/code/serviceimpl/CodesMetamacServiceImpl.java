@@ -4671,12 +4671,9 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             return new TaskImportationInfo(Boolean.TRUE, jobKey);
         }
 
-        // Retrieve variable elements
+        // Load variable elements using optimized strategy for large datasets
+        Map<String, VariableElement> variableElementsByCode = loadVariableElementsForShapefileImport(variable, shapeFileUrl);
         List<VariableElement> variableElementsToPersist = new ArrayList<>();
-        Map<String, VariableElement> variableElementsByCode = new HashMap<>();
-        for (VariableElement variableElement : variable.getVariableElements()) {
-            variableElementsByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
-        }
 
         // Import
         List<MetamacExceptionItem> informationItems = new ArrayList<>();
@@ -4779,6 +4776,112 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
                 dataStore.dispose();
             }
         }
+    }
+
+    /**
+     * Loads variable elements for shapefile import using an optimized strategy based on dataset size.
+     * Shapefiles typically reference a small subset of total variable elements
+     * Why no line-by-line batch processing?
+     * - A single pre-extraction pass is sufficient and simpler than complex batching logic.
+     * - If the shapefile references 10,000+ codes, the selective loading still prevents OutOfMemoryError
+     * by loading only those codes instead of all elements
+     * - The shapefile is read twice (extract codes + process geometries), but this is
+     * faster than multiple batch passes and simpler to maintain
+     * - Note:If business requirements change and shapefiles start referencing large portions of
+     * variable elements (> 10,000 codes), consider implementing line-by-line batch processing.
+     * 
+     * @param variable Variable containing elements to load
+     * @param shapeFileUrl URL of the shapefile being imported
+     * @return Map of variable elements indexed by code
+     * @throws MetamacException if elements cannot be loaded
+     */
+    private Map<String, VariableElement> loadVariableElementsForShapefileImport(Variable variable, URL shapeFileUrl) throws MetamacException {
+        // Check count to decide loading strategy (prevent OutOfMemoryError with large datasets)
+        Long variableElementsCount = getVariableElementRepository().countVariableElementsByVariable(variable.getId());
+        Map<String, VariableElement> variableElementsByCode = new HashMap<>();
+
+        if (variableElementsCount < SrmConstants.NUM_VARIABLE_ELEMENTS_BY_VARIABLE_TO_PLANNIFY_TSV_CODES_IMPORTATION) {
+            // Small dataset: use traditional approach (load all in memory)
+            logger.info("Loading all {} variable elements in memory (below threshold)", new Object[]{variableElementsCount});
+            for (VariableElement variableElement : variable.getVariableElements()) {
+                variableElementsByCode.put(variableElement.getIdentifiableArtefact().getCode(), variableElement);
+            }
+        } else {
+            // Large dataset: extract codes first, then load selectively
+            logger.info("Variable has {} elements, using selective loading approach", new Object[]{variableElementsCount});
+            Set<String> codesInShapefile = extractVariableElementCodesFromShapefile(shapeFileUrl);
+
+            if (!codesInShapefile.isEmpty()) {
+                List<String> codesList = new ArrayList<>(codesInShapefile);
+                List<VariableElement> loadedElements = getVariableElementRepository().findByCodeAndVariableId(codesList, variable.getId());
+
+                for (VariableElement element : loadedElements) {
+                    variableElementsByCode.put(element.getIdentifiableArtefact().getCode(), element);
+                }
+                logger.info("Loaded {} variable elements from database (referenced in shapefile)", new Object[]{loadedElements.size()});
+            } else {
+                logger.warn("No valid variable element codes found in shapefile");
+            }
+        }
+
+        return variableElementsByCode;
+    }
+
+    /**
+     * Extracts variable element codes from shapefile without loading full geometries.
+     * Performs a fast streaming pass to identify which variable elements are referenced.
+     *
+     * @param shapeFileUrl URL of the shapefile
+     * @return Set of unique variable element codes found in shapefile
+     * @throws MetamacException if shapefile cannot be read
+     */
+    private Set<String> extractVariableElementCodesFromShapefile(URL shapeFileUrl) throws MetamacException {
+        Set<String> codes = new HashSet<>();
+        DataStore dataStore = null;
+
+        try {
+            // Connection parameters
+            Map<String, Serializable> datastoreParameters = new HashMap<>();
+            datastoreParameters.put(ShapefileDataStoreFactory.URLP.key, shapeFileUrl);
+            dataStore = DataStoreFinder.getDataStore(datastoreParameters);
+
+            String[] typeNames = dataStore.getTypeNames();
+            if (typeNames == null || typeNames.length == 0) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_SHAPE_ERROR_FILE_PARSING).withMessageParameters(shapeFileUrl).build();
+            }
+            String typeName = typeNames[0];
+
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = dataStore.getFeatureSource(typeName);
+            FeatureCollection<SimpleFeatureType, SimpleFeature> collection = featureSource.getFeatures();
+            FeatureIterator<SimpleFeature> iterator = collection.features();
+
+            // Lightweight pass: only extract codes
+            while (iterator.hasNext()) {
+                SimpleFeature feature = iterator.next();
+                Object code = feature.getAttribute(SrmConstants.SHAPE_VARIABLE_ELEMENT_ATTRIBUTE);
+
+                if (code != null && !StringUtils.isBlank(code.toString())) {
+                    codes.add(code.toString());
+                }
+            }
+            iterator.close();
+
+            logger.info("Extracted {} unique variable element codes from shapefile", new Object[]{codes.size()});
+
+        } catch (Exception e) {
+            logger.error("Error extracting codes from shapefile", e);
+            if (e instanceof MetamacException) {
+                throw (MetamacException) e;
+            } else {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_SHAPE_ERROR).withMessageParameters(e.getMessage()).build();
+            }
+        } finally {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
+        }
+
+        return codes;
     }
 
     private Predicate getShapeVariableElementColumnPredicate() {

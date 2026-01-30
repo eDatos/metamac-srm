@@ -819,4 +819,97 @@ Generar código **robusto y conforme al estándar SDMX** para el sistema de gest
 7. **Performance**: Queries optimizadas, uso eficiente de caché
 8. **Integridad**: Validaciones exhaustivas de datos y referencias
 
-¿Listo para trabajar en el módulo SRM Core? 📊
+---
+
+## Librería Base: statistic-sdmx-srm-core
+
+Este proyecto depende de la librería **statistic-sdmx-srm-core** que implementa el núcleo del estándar SDMX.
+
+### Ubicación
+Ruta relativa desde el directorio base del repositorio (mismo nivel que `metamac-srm`):
+```
+..\statistic-sdmx-srm\statistic-sdmx-srm-core
+```
+
+### Relación con metamac-srm-core
+```
+metamac-srm-core (este proyecto)
+    └── depende de → statistic-sdmx-srm-core (librería base SDMX)
+```
+
+- **statistic-sdmx-srm-core**: Proporciona entidades base, servicios y repositorios genéricos SDMX
+- **metamac-srm-core**: Extiende la librería base con lógica específica del ISTAC/Metamac
+
+### Componentes que proporciona la librería base
+
+#### Jerarquía de Entidades Base
+```
+AnnotableArtefact
+  └── IdentifiableArtefact (+ code, urn)
+      └── NameableArtefact (+ name, description)
+          └── MaintainableArtefact (+ versionLogic, status, validFrom, validTo)
+              ├── ItemScheme + ItemSchemeVersion
+              │   ├── CodelistVersion
+              │   ├── ConceptSchemeVersion
+              │   └── CategorySchemeVersion
+              ├── Structure + StructureVersion
+              │   └── DataStructureDefinitionVersion
+              └── ContentConstraintVersion
+```
+
+#### Servicios Base (paquete `com.arte.statistic.sdmx.srm.core`)
+- `CodesService` / `CodesServiceImpl`: Gestión de Codelists y Codes
+- `ConceptsService` / `ConceptsServiceImpl`: Gestión de ConceptSchemes y Concepts
+- `CategoriesService` / `CategoriesServiceImpl`: Gestión de CategorySchemes
+- `OrganisationsService` / `OrganisationsServiceImpl`: Gestión de Organisations
+- `DataStructureDefinitionService`: Gestión de DSDs
+- `ConstraintsService`: Gestión de ContentConstraints
+- `BaseService`: Operaciones comunes a todos los artefactos
+- `TasksService`: Operaciones asíncronas (copias, versionado en background)
+- `ExportService`: Exportación SDMX-ML
+
+#### Estructura de la Librería
+```
+statistic-sdmx-srm-core/
+├── src/main/java/com/arte/statistic/sdmx/srm/core/
+│   ├── base/           # Artefactos base SDMX
+│   ├── code/           # Codelists
+│   ├── concept/        # Concepts
+│   ├── category/       # Categories
+│   ├── organisation/   # Organisations
+│   ├── structure/      # DSDs
+│   ├── constraint/     # Constraints
+│   ├── common/         # Componentes comunes
+│   ├── io/             # Import/Export
+│   └── task/           # Tareas asíncronas
+├── src/main/resources/btdesign/  # Definiciones Sculptor
+└── src/generated/      # Código generado
+```
+
+### Cuándo modificar cada proyecto
+
+| Tipo de cambio | Proyecto |
+|----------------|----------|
+| Entidades base SDMX genéricas | statistic-sdmx-srm-core |
+| Lógica SDMX reutilizable | statistic-sdmx-srm-core |
+| Extensiones específicas ISTAC | metamac-srm-core |
+| Fachadas y APIs Metamac | metamac-srm-core |
+| Variables, familias, etc. (específico Metamac) | metamac-srm-core |
+
+### Consideraciones al trabajar con ambos proyectos
+
+1. **Las entidades de metamac-srm-core extienden las de la librería base**
+   - Ejemplo: `CodelistVersionMetamac` extiende `CodelistVersion`
+
+2. **Los servicios de metamac-srm-core invocan a los de la librería base**
+   - Reutilizan lógica común y añaden validaciones específicas
+
+3. **Ambos proyectos usan Sculptor Framework**
+   - Archivos `.btdesign` en `src/main/resources/btdesign/`
+   - Código generado en `src/generated/`
+
+4. **Mismas convenciones de código**
+   - Java 7/8, NO Java 8+ features
+   - Joda Time para fechas
+   - SLF4J para logging
+   - Dozer para mapeo Entity ↔ DTO

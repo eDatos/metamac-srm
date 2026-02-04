@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-srm</groupId>
         <artifactId>metamac-srm-parent</artifactId>
-        <version>8.10.4-SNAPSHOT</version>
+        <version>8.11.1-SNAPSHOT</version>
         <relativePath>../metamac-srm-parent/pom.xml</relativePath>
     </parent>
 
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.siemac.metamac.metamac-sso</groupId>
             <artifactId>metamac-sso-client</artifactId>
-            <version>${metamac-sso.version}</version>
+            <version>${metamac-sso-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.siemac.metamac</groupId>

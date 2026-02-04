@@ -1714,6 +1714,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
                      "$ref":"#/definitions/VisualizerHtmlLink"
+                  },
+                  "lastUpdatedDate":{
+                    "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                    },
+                    "description":"${msg['api.doc.swagger.definitions.CodelistFamily_.properties.lastUpdatedDate.description']}",
+                    "type":"string"
                   }
                }
             }
@@ -1985,7 +1992,7 @@
             },
             {
                "properties":{
-                
+
                   "orderConfiguration":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
@@ -2000,7 +2007,7 @@
                      "description":"${msg['api.doc.swagger.definitions.Concept.properties.pluralName.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
-                  
+
                }
             }
          ],
@@ -4335,7 +4342,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.VariableElements.description']}"
-      },      
+      },
       "VariableElementResource":{
          "type":"object",
          "title":"VariableElementResource",
@@ -5375,7 +5382,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.CategoryElements.description']}"
-      },      
+      },
       "CategoryElementResource":{
          "type":"object",
          "title":"CategoryElementResource",

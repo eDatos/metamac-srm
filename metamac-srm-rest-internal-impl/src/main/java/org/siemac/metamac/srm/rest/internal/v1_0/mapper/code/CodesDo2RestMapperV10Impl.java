@@ -670,6 +670,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setParentLink(toCodelistFamilyParentLink(source));
         target.setChildLinks(toCodelistFamilyChildLinks(source));
         target.setManagementAppLink(toCodelistFamilyManagementApplicationLink(source));
+        target.setLastUpdatedDate(toDate(source.getLastUpdated()));
 
         target.setName(toInternationalString(source.getNameableArtefact().getName()));
         return target;

@@ -913,3 +913,139 @@ statistic-sdmx-srm-core/
    - Joda Time para fechas
    - SLF4J para logging
    - Dozer para mapeo Entity ↔ DTO
+
+---
+
+## Librería de Acceso a Datos: arte-fornax-cartridges-sculptor-framework
+
+Framework runtime de Sculptor que actúa como **capa intermediaria entre Sculptor/Hibernate y la base de datos PostgreSQL**. Proporciona el motor de construcción y ejecución de queries SQL.
+
+### Ubicación
+Ruta relativa desde el directorio base del repositorio (mismo nivel que `metamac-srm`):
+```
+..\arte-fornax-cartridges-sculptor-framework
+```
+
+### Relación con el proyecto
+```
+metamac-srm-core (este proyecto)
+    └── depende de → statistic-sdmx-srm-core (librería base SDMX)
+        └── depende de → arte-fornax-cartridges-sculptor-framework (acceso a datos)
+```
+
+### Estructura de la Librería
+```
+arte-fornax-cartridges-sculptor-framework/
+└── src/main/java/org/fornax/cartridges/sculptor/framework/
+    ├── accessapi/              # Interfaces de acceso (FindByCondition, Save, Delete...)
+    ├── accessimpl/
+    │   ├── jpa/                # Implementaciones genéricas JPA
+    │   └── jpahibernate/       # Implementaciones Hibernate (queries PostgreSQL)
+    ├── domain/                 # Patrones de dominio
+    ├── errorhandling/          # Manejo de excepciones e interceptores
+    ├── persistence/            # Utilidades de persistencia
+    └── util/                   # Utilidades generales
+```
+
+### Componentes Clave
+
+#### 1. ConditionalCriteria - Modelo de Criterios
+
+Clase que representa una condicion/criterio individual para construir queries. Operadores disponibles:
+
+- **Comparacion**: `Equal`, `LessThan`, `LessThanOrEqual`, `GreatThan`, `GreatThanOrEqual`
+- **Strings**: `Like`, `IgnoreCaseLike`, `IgnoreCaseEqual`
+- **Logicos**: `Not`, `Or`, `And`
+- **Colecciones**: `In`, `Between`
+- **Nulos**: `IsNull`, `IsNotNull`, `IsEmpty`, `IsNotEmpty`
+- **Ordenacion**: `OrderAsc`, `OrderDesc`
+- **Fetch**: `FetchEager`, `FetchLazy`
+- **Proyeccion**: `DistinctRoot`, `ProjectionRoot`
+- **CASE**: `CaseOrderBy`, `CaseWhen`, `CaseElse`
+
+#### 2. ConditionalCriteriaBuilder - DSL Fluido para Queries
+
+Proporciona una interfaz fluida (builder) para construir criterios de busqueda de forma type-safe:
+
+```java
+List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(MyClass.class)
+    .withProperty(MyClassProperties.name()).eq("value")
+    .and()
+    .withProperty(MyClassProperties.age()).greaterThan(18)
+    .orderBy(MyClassProperties.createdDate()).descending()
+    .distinctRoot()
+    .build();
+```
+
+Caracteristicas del builder:
+- Constructor basado en pila (stack) para expresiones complejas
+- Soporte para parentesis con `lbrace()` / `rbrace()`
+- Concatenacion AND implicita entre propiedades encadenadas
+- Validacion de cierre de parentesis y operadores
+
+#### 3. JpaHibFindByConditionAccessImpl - Traductor de Queries a Hibernate
+
+Clase principal que traduce `ConditionalCriteria` a llamadas de la Hibernate Criteria API para generar SQL. Se encuentra en el paquete `accessimpl.jpahibernate`.
+
+Metodos clave:
+- `addConditionalCriteria()` - Convierte todas las condiciones a Hibernate Criterion
+- `addSubCriterias()` - Crea aliases para JOINs de asociaciones anidadas
+- `addFetchStrategy()` - Configura carga eager/lazy
+- `addOrderBy()` - Clausulas ORDER BY
+- `addCaseOrderBy()` - Sentencias CASE en ORDER BY
+- `makeCriterion()` - Traduccion de un criterio individual
+
+### Peculiaridades PostgreSQL
+
+#### Busqueda sin acentos (unaccent)
+La libreria aplica automaticamente la funcion PostgreSQL `unaccent()` para busquedas insensibles a diacriticos, pero **solo en campos InternationalString** (aquellos cuya propiedad termina en `.texts.label`):
+
+```sql
+-- SQL generado automaticamente para campos InternationalString
+lower(unaccent(column)) LIKE lower(unaccent(?))
+```
+
+Clases involucradas:
+- `CaseInsensitiveIgnoreAccentsRestriction` - Factoria de restricciones con unaccent
+- `RemoveDiacriticSimpleExpression` - Genera: `lower(unaccent(column)) op lower(unaccent(?))`
+- `RemoveDiacriticsInExpression` - Genera: `unaccent(lower(column)) in (unaccent(lower(?)), ...)`
+
+#### Paginacion con DISTINCT
+Usa un enfoque de dos queries para manejar paginacion con DISTINCT:
+1. **Query 1**: Obtiene los IDs con WHERE + DISTINCT + paginacion
+2. **Query 2**: Obtiene los resultados completos filtrados por esos IDs
+
+Para mantener el orden usa la funcion PostgreSQL `array_position()`:
+```sql
+array_position(ARRAY[id1,id2,...]::integer[], id::integer)
+```
+
+#### Aliases de tablas
+- Las asociaciones anidadas generan aliases reemplazando puntos por underscores: `parent.child.field` se convierte en alias `parent_child`
+- Los aliases de proyecciones CASE usan UUIDs aleatorios (42 caracteres max, compatible con limite de 63 de PostgreSQL)
+
+#### Clausulas IN vacias
+La libreria maneja clausulas IN vacias para evitar errores SQL (`column IN ()` no es valido).
+
+### Interfaces de Acceso Genericas
+
+La libreria proporciona interfaces genericas para todas las operaciones comunes de datos:
+
+| Interfaz | Uso |
+|----------|-----|
+| `FindByIdAccess<T>` | Buscar por clave primaria |
+| `FindByConditionAccess<T>` | Buscar por ConditionalCriteria (la mas usada) |
+| `FindByCriteriaAccess<T>` | Buscar por restricciones nombre/valor |
+| `FindByQueryAccess<T>` | Ejecutar HQL/SQL directo |
+| `SaveAccess<T>` | Crear/actualizar entidades |
+| `DeleteAccess<T>` | Eliminar entidades |
+| `CountAllAccess` | Contar registros |
+| `PopulateAssociationsAccess<T>` | Cargar lazy associations |
+
+### Consideraciones al Modificar esta Libreria
+
+1. **Los cambios aqui afectan a TODOS los proyectos del ecosistema** - no solo a metamac-srm
+2. **Performance critico**: optimizaciones de `unaccent()` limitadas a InternationalString para evitar degradacion
+3. **Compatibilidad**: Hibernate 3.5.5-Final, Spring 3.0.4.RELEASE, Java 5/6+
+4. **Scope provided**: todas las dependencias se marcan como `provided` - el framework se embebe en los proyectos consumidores
+5. **Extensibilidad**: las implementaciones de acceso se pueden extender sobreescribiendo metodos protegidos como `makeCriterion()`, `addFetchStrategy()`, etc.

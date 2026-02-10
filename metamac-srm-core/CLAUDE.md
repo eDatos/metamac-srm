@@ -1044,7 +1044,7 @@ La libreria proporciona interfaces genericas para todas las operaciones comunes 
 
 ### Consideraciones al Modificar esta Libreria
 
-1. **Los cambios aqui afectan a TODOS los proyectos del ecosistema** - no solo a metamac-srm
+1. **Los cambios aqui afectan a cualquiera de los proyectos del ecosistema** - no solo a metamac-srm
 2. **Performance critico**: optimizaciones de `unaccent()` limitadas a InternationalString para evitar degradacion
 3. **Compatibilidad**: Hibernate 3.5.5-Final, Spring 3.0.4.RELEASE, Java 5/6+
 4. **Scope provided**: todas las dependencias se marcan como `provided` - el framework se embebe en los proyectos consumidores

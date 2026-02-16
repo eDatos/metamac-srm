@@ -230,6 +230,11 @@ public class CategorySchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public void notifyDsd(ServiceContext ctx, Object srmResourceVersion) {
+            // No action required: DSD notification only applies to Codelist and ConceptScheme
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
             return notifyPublicationInternal((CategorySchemeVersionMetamac) message, Boolean.FALSE);
         }

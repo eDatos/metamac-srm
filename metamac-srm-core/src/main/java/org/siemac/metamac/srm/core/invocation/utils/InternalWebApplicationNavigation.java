@@ -15,6 +15,7 @@ public class InternalWebApplicationNavigation {
     private static final String RESOURCE_ID_PARAMETER     = "resourceParam";
 
     private UriTemplate         variableElementTemplate;
+    private UriTemplate         dsdTemplate;
 
     public InternalWebApplicationNavigation(String webApplicationPath) {
         // Publication
@@ -22,6 +23,9 @@ public class InternalWebApplicationNavigation {
         variableElementTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.variableListPage + SEPARATOR + NameTokens.variablePage + ";"
                 + PlaceRequestParams.variableParamId + "=" + "{" + VARIABLE_PARAMETER + "}" + SEPARATOR + NameTokens.variableElementPage + ";" + PlaceRequestParams.variableElementParamId + "=" + "{"
                 + RESOURCE_ID_PARAMETER + "}");
+        dsdTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STRUCTURAL_RESOURCES + SEPARATOR + NameTokens.dsdListPage + SEPARATOR + NameTokens.dsdPage + ";"
+                + PlaceRequestParams.dsdParamId + "=" + "{" + RESOURCE_ID_PARAMETER + "}");
+        // @formatter:on
     }
 
     public String buildVariableElementUrl(String variableID, String variableElementID) {
@@ -29,6 +33,12 @@ public class InternalWebApplicationNavigation {
         parameters.put(VARIABLE_PARAMETER, variableID);
         parameters.put(RESOURCE_ID_PARAMETER, variableElementID);
         return variableElementTemplate.expand(parameters).toString();
+    }
+
+    public String buildDsdUrl(String dsdCode) {
+        Map<String, String> parameters = new HashMap<>(1);
+        parameters.put(RESOURCE_ID_PARAMETER, dsdCode);
+        return dsdTemplate.expand(parameters).toString();
     }
 
 }

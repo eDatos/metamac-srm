@@ -25,6 +25,8 @@ import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacS
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
@@ -204,6 +206,13 @@ public abstract class LifeCycleImpl implements LifeCycle {
         } else {
             sendStreamMessageResult = callback.notifyPublicationAfterCommit(srmResourceVersion);
         }
+        final Object resourceVersionForDsd = srmResourceVersion;
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                callback.notifyDsd(ctx, resourceVersionForDsd);
+            }
+        });
 
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
@@ -473,6 +482,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public SendStreamMessageResult notifyPublicationAfterCommit(Object message);
         public SendStreamMessageResult notifyPublication(Object message);
+        public void notifyDsd(ServiceContext ctx, Object srmResourceVersion);
     }
 
     @Override

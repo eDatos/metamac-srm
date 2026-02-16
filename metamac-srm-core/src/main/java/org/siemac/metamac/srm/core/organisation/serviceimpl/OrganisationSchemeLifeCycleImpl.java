@@ -255,6 +255,11 @@ public class OrganisationSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public void notifyDsd(ServiceContext ctx, Object srmResourceVersion) {
+            // No action required: DSD notification only applies to Codelist and ConceptScheme
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
             return notifyPublicationInternal((OrganisationSchemeVersionMetamac) message, Boolean.FALSE);
         }

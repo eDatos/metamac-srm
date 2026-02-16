@@ -1,9 +1,14 @@
 package org.siemac.metamac.srm.core.code.serviceimpl;
 
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -39,6 +44,8 @@ import com.arte.statistic.sdmx.srm.core.code.serviceapi.CodesService;
 @Service("codelistLifeCycle")
 public class CodelistLifeCycleImpl extends LifeCycleImpl {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CodelistLifeCycleImpl.class);
+
     @Autowired
     private ItemSchemeVersionRepository      itemSchemeVersionRepository;
 
@@ -65,6 +72,15 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
 
     @Autowired
     private CodelistStreamMessagingCallbackImpl codelistStreamMessagingCallback;
+
+    @Autowired
+    private org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
+
+    @Autowired
+    private org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl dsdStreamMessagingCallback;
+
+    @Autowired
+    private org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService noticesRestInternalService;
 
     public CodelistLifeCycleImpl() {
         this.callback = new CodelistLifeCycleCallback();
@@ -269,6 +285,43 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
         public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
             CodelistVersionMetamac codelistMessage = (CodelistVersionMetamac) message;
             return notifyPublicationInternal(codelistMessage, Boolean.TRUE);
+        }
+
+        @Override
+        public void notifyDsd(ServiceContext ctx, Object srmResourceVersion) {
+            CodelistVersionMetamac codelist = getCodelistVersionMetamac(srmResourceVersion);
+            String urn = codelist.getMaintainableArtefact().getUrn();
+            try {
+                List<DataStructureDefinitionVersionMetamac> publishedDsds =
+                        dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, urn);
+                List<DataStructureDefinitionVersionMetamac> failedDsds = new ArrayList<DataStructureDefinitionVersionMetamac>();
+                for (DataStructureDefinitionVersionMetamac dsd : publishedDsds) {
+                    DataStructureDefinitionVersionMetamac failed = sendDsdNotification(dsd, urn);
+                    if (failed != null) {
+                        failedDsds.add(failed);
+                    }
+                }
+                if (!failedDsds.isEmpty()) {
+                    try {
+                        noticesRestInternalService.createDsdStreamMessageErrorNotification(ctx, urn, failedDsds);
+                    } catch (MetamacException noticeException) {
+                        LOG.error("Error sending error notification for DSD kafka messages after codelist {} temporal republish", urn, noticeException);
+                    }
+                }
+            } catch (MetamacException e) {
+                LOG.warn("Failed to find DSDs for codelist {} during temporal republish notification", urn, e);
+            }
+        }
+
+        private DataStructureDefinitionVersionMetamac sendDsdNotification(DataStructureDefinitionVersionMetamac dsd, String sourceUrn) {
+            try {
+                streamMessagingService.sendMessage(dsd, dsdStreamMessagingCallback);
+                return null;
+            } catch (Exception e) {
+                LOG.warn("Failed to send DSD notification for DSD {} after codelist {} temporal republish",
+                        new Object[]{dsd.getMaintainableArtefact().getUrn(), sourceUrn, e});
+                return dsd;
+            }
         }
 
         @Override

@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
+import org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -74,13 +77,13 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
     private CodelistStreamMessagingCallbackImpl codelistStreamMessagingCallback;
 
     @Autowired
-    private org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
+    private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
 
     @Autowired
-    private org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl dsdStreamMessagingCallback;
+    private DsdStreamMessagingCallbackImpl dsdStreamMessagingCallback;
 
     @Autowired
-    private org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService noticesRestInternalService;
+    private NoticesRestInternalService noticesRestInternalService;
 
     public CodelistLifeCycleImpl() {
         this.callback = new CodelistLifeCycleCallback();

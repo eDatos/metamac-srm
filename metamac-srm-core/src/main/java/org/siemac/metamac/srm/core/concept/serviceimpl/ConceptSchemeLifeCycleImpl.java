@@ -29,7 +29,10 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacRep
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
+import org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
@@ -78,13 +81,13 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
     private ConceptSchemeStreamMessagingCallbackImpl conceptSchemeStreamMessagingCallback;
 
     @Autowired
-    private org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
+    private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
 
     @Autowired
-    private org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl dsdStreamMessagingCallback;
+    private DsdStreamMessagingCallbackImpl dsdStreamMessagingCallback;
 
     @Autowired
-    private org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService noticesRestInternalService;
+    private NoticesRestInternalService noticesRestInternalService;
 
     public ConceptSchemeLifeCycleImpl() {
         this.callback = new ConceptSchemeLifeCycleCallback();

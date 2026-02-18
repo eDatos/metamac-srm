@@ -29,10 +29,6 @@ import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamacRep
 import org.siemac.metamac.srm.core.concept.enume.domain.ConceptSchemeTypeEnum;
 import org.siemac.metamac.srm.core.concept.serviceapi.ConceptsMetamacService;
 import org.siemac.metamac.srm.core.concept.serviceimpl.utils.ConceptsMetamacInvocationValidator;
-import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
-import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
-import org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
@@ -79,15 +75,6 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
 
     @Autowired
     private ConceptSchemeStreamMessagingCallbackImpl conceptSchemeStreamMessagingCallback;
-
-    @Autowired
-    private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
-
-    @Autowired
-    private DsdStreamMessagingCallbackImpl dsdStreamMessagingCallback;
-
-    @Autowired
-    private NoticesRestInternalService noticesRestInternalService;
 
     public ConceptSchemeLifeCycleImpl() {
         this.callback = new ConceptSchemeLifeCycleCallback();
@@ -308,43 +295,6 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
         @Override
         public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
             return notifyPublicationInternal((ConceptSchemeVersionMetamac) message, Boolean.TRUE);
-        }
-
-        @Override
-        public void notifyDsd(ServiceContext ctx, Object srmResourceVersion) {
-            ConceptSchemeVersionMetamac conceptScheme = getConceptSchemeVersionMetamac(srmResourceVersion);
-            String urn = conceptScheme.getMaintainableArtefact().getUrn();
-            try {
-                List<DataStructureDefinitionVersionMetamac> publishedDsds =
-                        dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, urn);
-                List<DataStructureDefinitionVersionMetamac> failedDsds = new ArrayList<DataStructureDefinitionVersionMetamac>();
-                for (DataStructureDefinitionVersionMetamac dsd : publishedDsds) {
-                    DataStructureDefinitionVersionMetamac failed = sendDsdNotification(dsd, urn);
-                    if (failed != null) {
-                        failedDsds.add(failed);
-                    }
-                }
-                if (!failedDsds.isEmpty()) {
-                    try {
-                        noticesRestInternalService.createDsdStreamMessageErrorNotification(ctx, urn, failedDsds);
-                    } catch (MetamacException noticeException) {
-                        LOG.error("Error sending error notification for DSD kafka messages after concept scheme {} temporal republish", urn, noticeException);
-                    }
-                }
-            } catch (MetamacException e) {
-                LOG.warn("Failed to find DSDs for concept scheme {} during temporal republish notification", urn, e);
-            }
-        }
-
-        private DataStructureDefinitionVersionMetamac sendDsdNotification(DataStructureDefinitionVersionMetamac dsd, String sourceUrn) {
-            try {
-                streamMessagingService.sendMessage(dsd, dsdStreamMessagingCallback);
-                return null;
-            } catch (Exception e) {
-                LOG.warn("Failed to send DSD notification for DSD {} after concept scheme {} temporal republish",
-                        new Object[]{dsd.getMaintainableArtefact().getUrn(), sourceUrn, e});
-                return dsd;
-            }
         }
 
         @Override

@@ -8,6 +8,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -15,13 +17,18 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItemBuilder;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
+import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
+import org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
+import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +45,8 @@ import com.arte.statistic.sdmx.srm.core.constants.SdmxConstants;
 import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 
 public abstract class LifeCycleImpl implements LifeCycle {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LifeCycleImpl.class);
 
     protected static final ProcStatusEnum[] procStatusToSendToProductionValidation = {ProcStatusEnum.DRAFT, ProcStatusEnum.VALIDATION_REJECTED};
     protected static final ProcStatusEnum[] procStatusToSendToDiffusionValidation  = {ProcStatusEnum.PRODUCTION_VALIDATION};
@@ -57,6 +66,18 @@ public abstract class LifeCycleImpl implements LifeCycle {
 
     @Autowired
     private SrmConfiguration                srmConfiguration;
+
+    @Autowired
+    private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
+
+    @Autowired
+    private StreamMessagingService          streamMessagingService;
+
+    @Autowired
+    private DsdStreamMessagingCallbackImpl  dsdStreamMessagingCallback;
+
+    @Autowired
+    private NoticesRestInternalService      noticesRestInternalService;
 
     public LifeCycleImpl() {
     }
@@ -210,7 +231,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
             @Override
             public void afterCommit() {
-                callback.notifyDsd(ctx, resourceVersionForDsd);
+                notifyAssociatedDsds(ctx, resourceVersionForDsd);
             }
         });
 
@@ -482,7 +503,45 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public SendStreamMessageResult notifyPublicationAfterCommit(Object message);
         public SendStreamMessageResult notifyPublication(Object message);
-        public void notifyDsd(ServiceContext ctx, Object srmResourceVersion);
+    }
+
+    /**
+     * Notifies associated externally-published DSDs when a resource is republished via temporal version.
+     * Sends Kafka messages for each associated DSD and creates an error notification if any fail.
+     */
+    private void notifyAssociatedDsds(ServiceContext ctx, Object srmResourceVersion) {
+        String urn = callback.getMaintainableArtefact(srmResourceVersion).getUrn();
+        try {
+            List<DataStructureDefinitionVersionMetamac> publishedDsds =
+                    dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, urn);
+            List<DataStructureDefinitionVersionMetamac> failedDsds = new ArrayList<DataStructureDefinitionVersionMetamac>();
+            for (DataStructureDefinitionVersionMetamac dsd : publishedDsds) {
+                DataStructureDefinitionVersionMetamac failed = sendDsdNotification(dsd, urn);
+                if (failed != null) {
+                    failedDsds.add(failed);
+                }
+            }
+            if (!failedDsds.isEmpty()) {
+                try {
+                    noticesRestInternalService.createDsdStreamMessageErrorNotification(ctx, urn, failedDsds);
+                } catch (MetamacException noticeException) {
+                    LOG.error("Error sending error notification for DSD kafka messages after resource {} temporal republish", urn, noticeException);
+                }
+            }
+        } catch (MetamacException e) {
+            LOG.warn("Failed to find DSDs for resource {} during temporal republish notification", urn, e);
+        }
+    }
+
+    private DataStructureDefinitionVersionMetamac sendDsdNotification(DataStructureDefinitionVersionMetamac dsd, String sourceUrn) {
+        try {
+            streamMessagingService.sendMessage(dsd, dsdStreamMessagingCallback);
+            return null;
+        } catch (Exception e) {
+            LOG.warn("Failed to send DSD notification for DSD {} after resource {} temporal republish",
+                    new Object[]{dsd.getMaintainableArtefact().getUrn(), sourceUrn, e});
+            return dsd;
+        }
     }
 
     @Override

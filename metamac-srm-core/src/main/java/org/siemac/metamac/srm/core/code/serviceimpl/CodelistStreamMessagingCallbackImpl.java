@@ -77,6 +77,11 @@ class CodelistStreamMessagingCallbackImpl implements StreamMessagingCallback<Cod
     }
 
     @Override
+    public CodelistVersionMetamac saveMessage(CodelistVersionMetamac messageContent) {
+        return codelistVersionMetamacRepository.save(messageContent);
+    }
+
+    @Override
     public String getTopic() throws MetamacException {
         return configurationService.retrieveKafkaTopicCodelistsPublication();
     }

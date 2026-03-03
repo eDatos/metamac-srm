@@ -266,12 +266,25 @@ public class CodelistLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
+            CodelistVersionMetamac codelistMessage = (CodelistVersionMetamac) message;
+            return notifyPublicationInternal(codelistMessage, Boolean.TRUE);
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
             CodelistVersionMetamac codelistMessage = (CodelistVersionMetamac) message;
+            return notifyPublicationInternal(codelistMessage, Boolean.FALSE);
+        }
+
+        private SendStreamMessageResult notifyPublicationInternal(CodelistVersionMetamac codelistMessage, Boolean afterCommit) {
             if (AccessTypeEnum.PUBLIC.equals(codelistMessage.getAccessType())) {
+                if (Boolean.TRUE.equals(afterCommit)) {
+                    return streamMessagingService.sendMessageAfterCommit(codelistMessage, codelistStreamMessagingCallback);
+                }
                 return streamMessagingService.sendMessage(codelistMessage, codelistStreamMessagingCallback);
             }
-           
+
             SendStreamMessageResult streamMessageWithoutSend = new SendStreamMessageResult();
             streamMessageWithoutSend.setContent(StreamMessageStatusEnum.WITHOUT_ACTION);
             codelistMessage.setStreamMessageStatus(StreamMessageStatusEnum.WITHOUT_ACTION);

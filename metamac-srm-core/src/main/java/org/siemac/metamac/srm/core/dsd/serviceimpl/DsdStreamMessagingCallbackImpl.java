@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.StructureVersionRepository;
+
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 @Component("dsdSchemeStreamMessagingCallback")
@@ -27,6 +29,9 @@ public class DsdStreamMessagingCallbackImpl implements StreamMessagingService.St
 
     @Autowired
     private DataStructureDefinitionVersionMetamacRepository dataStructureDefinitionVersionMetamacRepository;
+
+    @Autowired
+    private StructureVersionRepository                       structureVersionRepository;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -74,6 +79,11 @@ public class DsdStreamMessagingCallbackImpl implements StreamMessagingService.St
     @Override
     public void setStreamMessageStatus(DataStructureDefinitionVersionMetamac messageContent, StreamMessageStatusEnum streamMessageStatus) {
         messageContent.setStreamMessageStatus(streamMessageStatus);
+    }
+
+    @Override
+    public DataStructureDefinitionVersionMetamac saveMessage(DataStructureDefinitionVersionMetamac messageContent) {
+        return (DataStructureDefinitionVersionMetamac) structureVersionRepository.save(messageContent);
     }
 
     @Override

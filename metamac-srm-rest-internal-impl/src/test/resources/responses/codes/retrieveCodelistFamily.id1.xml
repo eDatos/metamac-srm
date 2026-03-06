@@ -39,4 +39,5 @@
         <cdomain:text xml:lang="en">comment-artefact1 in English</cdomain:text>
         <cdomain:text xml:lang="es">comment-artefact1 en Español</cdomain:text>
     </sr:comment>
+    <sr:lastUpdatedDate>2012-11-05T10:12:13.014Z</sr:lastUpdatedDate>
 </sr:codelistFamily>

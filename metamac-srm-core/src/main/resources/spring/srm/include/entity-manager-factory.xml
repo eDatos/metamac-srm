@@ -30,6 +30,9 @@
         <property name="persistenceUnitName" value="SrmCoreEntityManagerFactory" />
         <property name="jpaProperties">
             <props>
+                <!-- EDATOS-5522: Enable batch fetching to reduce N+1 queries -->
+                <prop key="hibernate.default_batch_fetch_size">25</prop>
+
                 <!-- These properties override persistence.xml -->
                 <prop key="hibernate.hbm2ddl.auto">none</prop>
 <!--                 <prop key="hibernate.show_sql">false</prop> -->

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
+
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 @Component("organisationSchemeStreamMessagingCallback")
@@ -27,6 +29,9 @@ public class OrganisationSchemeStreamMessagingCallbackImpl implements StreamMess
 
     @Autowired
     private OrganisationSchemeVersionMetamacRepository organisationSchemeVersionMetamacRepository;
+
+    @Autowired
+    private ItemSchemeVersionRepository                 itemSchemeVersionRepository;
 
     @Override
     public String getUniqueIdentifier(OrganisationSchemeVersionMetamac messageContent) {
@@ -74,6 +79,11 @@ public class OrganisationSchemeStreamMessagingCallbackImpl implements StreamMess
     @Override
     public void setStreamMessageStatus(OrganisationSchemeVersionMetamac messageContent, StreamMessageStatusEnum streamMessageStatus) {
         messageContent.setStreamMessageStatus(streamMessageStatus);
+    }
+
+    @Override
+    public OrganisationSchemeVersionMetamac saveMessage(OrganisationSchemeVersionMetamac messageContent) {
+        return (OrganisationSchemeVersionMetamac) itemSchemeVersionRepository.save(messageContent);
     }
 
     @Override

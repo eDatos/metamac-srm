@@ -250,8 +250,20 @@ public class DsdLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
+            return notifyPublicationInternal((DataStructureDefinitionVersionMetamac) message, Boolean.TRUE);
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
-            return streamMessagingService.sendMessage((DataStructureDefinitionVersionMetamac) message, dsdSchemeStreamMessagingCallback);
+            return notifyPublicationInternal((DataStructureDefinitionVersionMetamac) message, Boolean.FALSE);
+        }
+
+        private SendStreamMessageResult notifyPublicationInternal(DataStructureDefinitionVersionMetamac message, Boolean afterCommit) {
+            if (Boolean.TRUE.equals(afterCommit)) {
+                return streamMessagingService.sendMessageAfterCommit(message, dsdSchemeStreamMessagingCallback);
+            }
+            return streamMessagingService.sendMessage(message, dsdSchemeStreamMessagingCallback);
         }
 
         /**********************************************************************

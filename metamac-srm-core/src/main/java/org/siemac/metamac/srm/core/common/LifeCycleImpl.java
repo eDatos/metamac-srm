@@ -202,7 +202,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         if (isTemporalVersionWithExternalPublished) {
             sendStreamMessageResult = publishExternally(ctx, maintainableArtefact.getUrn());
         } else {
-            sendStreamMessageResult = callback.notifyPublication(srmResourceVersion);
+            sendStreamMessageResult = callback.notifyPublicationAfterCommit(srmResourceVersion);
         }
 
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
@@ -270,7 +270,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
             }
         }
 
-        SendStreamMessageResult sendStreamMessageResult = callback.notifyPublication(srmResourceVersion);
+        SendStreamMessageResult sendStreamMessageResult = callback.notifyPublicationAfterCommit(srmResourceVersion);
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
 
@@ -471,6 +471,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Boolean canHaveCategorisations();
         public Object mergeTemporal(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
+        public SendStreamMessageResult notifyPublicationAfterCommit(Object message);
         public SendStreamMessageResult notifyPublication(Object message);
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 public interface StreamMessagingService {
 
     <E, A extends SpecificRecordBase, M extends Do2AvroMapper<E, A>> SendStreamMessageResult sendMessage(E messageContent, StreamMessagingCallback<E, A, M> streamMessagingCallback);
+    <E, A extends SpecificRecordBase, M extends Do2AvroMapper<E, A>> SendStreamMessageResult sendMessageAfterCommit(E messageContent, StreamMessagingCallback<E, A, M> streamMessagingCallback);
     <E, A extends SpecificRecordBase, M extends Do2AvroMapper<E, A>> void resendAllPendingAndFailedMessages(StreamMessagingCallback<E, A, M> streamMessagingCallback) throws MetamacException;
 
     /**
@@ -26,6 +27,7 @@ public interface StreamMessagingService {
         M getMapper();
         StreamMessageStatusEnum getStreamMessageStatus(E messageContent);
         void setStreamMessageStatus(E messageContent, StreamMessageStatusEnum streamMessageStatus);
+        E saveMessage(E messageContent);
         String getTopic() throws MetamacException;
     }
 }

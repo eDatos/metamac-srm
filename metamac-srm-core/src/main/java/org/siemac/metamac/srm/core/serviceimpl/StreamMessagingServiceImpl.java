@@ -23,6 +23,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Collections;
@@ -56,6 +58,48 @@ public class StreamMessagingServiceImpl implements StreamMessagingService, Appli
             return new SendStreamMessageResult(streamMessagingCallback.getStreamMessageStatus(messageContent), null);
         } catch (MetamacException e) {
             updateMessageStatus(messageContent, StreamMessageStatusEnum.FAILED, streamMessagingCallback);
+            return new SendStreamMessageResult(streamMessagingCallback.getStreamMessageStatus(messageContent),
+                    Collections.singletonList(new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER)));
+        }
+    }
+
+    @Override
+    public <E, A extends SpecificRecordBase, M extends Do2AvroMapper<E, A>> SendStreamMessageResult sendMessageAfterCommit(final E messageContent,
+            final StreamMessagingCallback<E, A, M> streamMessagingCallback) {
+        try {
+            updateMessageStatus(messageContent, StreamMessageStatusEnum.PENDING, streamMessagingCallback);
+            if (messageContent != null) {
+                streamMessagingCallback.saveMessage(messageContent);
+            }
+
+            if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+                return sendMessage(messageContent, streamMessagingCallback);
+            }
+
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+                @Override
+                public void afterCommit() {
+                    try {
+                        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+
+                            @Override
+                            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                                sendMessageInNewTransaction(messageContent, streamMessagingCallback);
+                                return null;
+                            }
+                        });
+                    } catch (Exception e) {
+                        LOGGER.error("Unable to send message through Kafka after transaction commit. Message identifier: {}",
+                                streamMessagingCallback.getUniqueIdentifier(messageContent), e);
+                    }
+                }
+            });
+
+            return new SendStreamMessageResult(streamMessagingCallback.getStreamMessageStatus(messageContent), null);
+        } catch (Exception e) {
+            updateMessageStatus(messageContent, StreamMessageStatusEnum.FAILED, streamMessagingCallback);
+            persistMessageIgnoringErrors(messageContent, streamMessagingCallback);
             return new SendStreamMessageResult(streamMessagingCallback.getStreamMessageStatus(messageContent),
                     Collections.singletonList(new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER)));
         }
@@ -114,6 +158,32 @@ public class StreamMessagingServiceImpl implements StreamMessagingService, Appli
         String topic = streamMessagingCallback.getTopic();
 
         getProducer().sendMessage(message, topic);
+    }
+
+    private <E, A extends SpecificRecordBase, M extends Do2AvroMapper<E, A>> void sendMessageInNewTransaction(E messageContent,
+            StreamMessagingCallback<E, A, M> streamMessagingCallback) throws MetamacException {
+        E persistedMessage = streamMessagingCallback.saveMessage(messageContent);
+        try {
+            buildAndSendMessage(persistedMessage, streamMessagingCallback);
+            updateMessageStatus(persistedMessage, StreamMessageStatusEnum.SENT, streamMessagingCallback);
+        } catch (Exception e) {
+            updateMessageStatus(persistedMessage, StreamMessageStatusEnum.FAILED, streamMessagingCallback);
+            LOGGER.warn("Unable to send message through Kafka in post-commit transaction. Message identifier: "
+                    + streamMessagingCallback.getUniqueIdentifier(persistedMessage), e);
+        }
+        streamMessagingCallback.saveMessage(persistedMessage);
+    }
+
+    private <E, A extends SpecificRecordBase, M extends Do2AvroMapper<E, A>> void persistMessageIgnoringErrors(E messageContent,
+            StreamMessagingCallback<E, A, M> streamMessagingCallback) {
+        if (messageContent == null) {
+            return;
+        }
+        try {
+            streamMessagingCallback.saveMessage(messageContent);
+        } catch (Exception e) {
+            LOGGER.warn("Unable to persist message status for identifier {}", streamMessagingCallback.getUniqueIdentifier(messageContent), e);
+        }
     }
 
     private ProducerBase<Object, SpecificRecordBase> getProducer() throws MetamacException {

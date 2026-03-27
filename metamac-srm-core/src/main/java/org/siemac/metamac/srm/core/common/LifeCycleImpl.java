@@ -227,13 +227,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         } else {
             sendStreamMessageResult = callback.notifyPublicationAfterCommit(srmResourceVersion);
         }
-        final Object resourceVersionForDsd = srmResourceVersion;
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            @Override
-            public void afterCommit() {
-                notifyAssociatedDsds(ctx, resourceVersionForDsd);
-            }
-        });
+        scheduleAssociatedDsdsNotification(ctx, srmResourceVersion);
 
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
@@ -503,6 +497,18 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public SendStreamMessageResult notifyPublicationAfterCommit(Object message);
         public SendStreamMessageResult notifyPublication(Object message);
+    }
+
+    /**
+     * Registers an afterCommit hook to notify associated DSDs once the current transaction commits.
+     */
+    private void scheduleAssociatedDsdsNotification(final ServiceContext ctx, final Object srmResourceVersion) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            @Override
+            public void afterCommit() {
+                notifyAssociatedDsds(ctx, srmResourceVersion);
+            }
+        });
     }
 
     /**

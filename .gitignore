@@ -142,3 +142,6 @@ Desktop.ini
 /target/
 /bin/
 metamac-srm-core/src/test/resources/data/srm/conf/static/resources-LOCAL.xml
+metamac-srm-rest-external-impl/.claude/settings.local.json
+metamac-srm-core/.claude/settings.local.json
+metamac-srm-rest-internal-impl/.claude/settings.local.json

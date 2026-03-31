@@ -1,1 +1,1 @@
--- statistic-sdmx-srm scripts must be executed prior
+statistic-sdmx-srm scripts must be executed prior

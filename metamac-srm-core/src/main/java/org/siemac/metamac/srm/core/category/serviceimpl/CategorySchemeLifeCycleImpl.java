@@ -225,8 +225,20 @@ public class CategorySchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
+            return notifyPublicationInternal((CategorySchemeVersionMetamac) message, Boolean.TRUE);
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
-            return streamMessagingService.sendMessage((CategorySchemeVersionMetamac) message, categorySchemeStreamMessagingCallback);
+            return notifyPublicationInternal((CategorySchemeVersionMetamac) message, Boolean.FALSE);
+        }
+
+        private SendStreamMessageResult notifyPublicationInternal(CategorySchemeVersionMetamac message, Boolean afterCommit) {
+            if (Boolean.TRUE.equals(afterCommit)) {
+                return streamMessagingService.sendMessageAfterCommit(message, categorySchemeStreamMessagingCallback);
+            }
+            return streamMessagingService.sendMessage(message, categorySchemeStreamMessagingCallback);
         }
 
         private CategorySchemeVersionMetamac getCategorySchemeVersionMetamac(Object srmResource) {

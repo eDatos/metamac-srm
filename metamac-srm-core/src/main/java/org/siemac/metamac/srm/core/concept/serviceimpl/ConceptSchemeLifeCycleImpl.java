@@ -288,8 +288,20 @@ public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
+            return notifyPublicationInternal((ConceptSchemeVersionMetamac) message, Boolean.TRUE);
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
-            return streamMessagingService.sendMessage((ConceptSchemeVersionMetamac) message, conceptSchemeStreamMessagingCallback);
+            return notifyPublicationInternal((ConceptSchemeVersionMetamac) message, Boolean.FALSE);
+        }
+
+        private SendStreamMessageResult notifyPublicationInternal(ConceptSchemeVersionMetamac message, Boolean afterCommit) {
+            if (Boolean.TRUE.equals(afterCommit)) {
+                return streamMessagingService.sendMessageAfterCommit(message, conceptSchemeStreamMessagingCallback);
+            }
+            return streamMessagingService.sendMessage(message, conceptSchemeStreamMessagingCallback);
         }
 
         private ConceptSchemeVersionMetamac getConceptSchemeVersionMetamac(Object srmResource) {

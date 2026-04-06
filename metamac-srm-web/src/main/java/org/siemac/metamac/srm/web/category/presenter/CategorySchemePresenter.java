@@ -438,6 +438,8 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                         if (org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(urnToPublish)) {
                             retrieveCompleteCategorySchemeByUrn(categorySchemeMetamacDto.getUrn());
                             updateUrl();
+                        } else {
+                            retrieveCategorySchemeByUrn(categorySchemeMetamacDto.getUrn());
                         }
                     }
                 });
@@ -454,6 +456,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                                 result.getNotificationException());
                         categorySchemeMetamacDto = result.getCategorySchemeDto();
                         retrieveCategorySchemeVersions(categorySchemeMetamacDto.getUrn());
+                        retrieveCategorySchemeByUrn(categorySchemeMetamacDto.getUrn());
                         getView().setCategoryScheme(categorySchemeMetamacDto);
                     }
                 });

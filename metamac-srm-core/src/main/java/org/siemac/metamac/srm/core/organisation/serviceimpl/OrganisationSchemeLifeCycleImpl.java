@@ -250,8 +250,20 @@ public class OrganisationSchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
+        public SendStreamMessageResult notifyPublicationAfterCommit(Object message) {
+            return notifyPublicationInternal((OrganisationSchemeVersionMetamac) message, Boolean.TRUE);
+        }
+
+        @Override
         public SendStreamMessageResult notifyPublication(Object message) {
-            return streamMessagingService.sendMessage((OrganisationSchemeVersionMetamac) message, organisationSchemeStreamMessagingCallback);
+            return notifyPublicationInternal((OrganisationSchemeVersionMetamac) message, Boolean.FALSE);
+        }
+
+        private SendStreamMessageResult notifyPublicationInternal(OrganisationSchemeVersionMetamac message, Boolean afterCommit) {
+            if (Boolean.TRUE.equals(afterCommit)) {
+                return streamMessagingService.sendMessageAfterCommit(message, organisationSchemeStreamMessagingCallback);
+            }
+            return streamMessagingService.sendMessage(message, organisationSchemeStreamMessagingCallback);
         }
 
         private OrganisationSchemeVersionMetamac getOrganisationSchemeVersionMetamac(Object srmResource) {

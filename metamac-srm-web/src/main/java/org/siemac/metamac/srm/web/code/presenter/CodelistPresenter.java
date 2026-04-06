@@ -113,8 +113,6 @@ import org.siemac.metamac.srm.web.shared.code.SaveCodelistOrderResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionAction;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistRestrictionResult;
 import org.siemac.metamac.srm.web.shared.code.SaveCodelistResult;
-import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteAction;
-import org.siemac.metamac.srm.web.shared.code.TempFilesDeleteResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderAction;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeInOrderResult;
 import org.siemac.metamac.srm.web.shared.code.UpdateCodeParentAction;
@@ -568,6 +566,8 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                             if (org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(urnToPublish)) {
                                 retrieveCompleteCodelistByUrn(codelistMetamacDto.getUrn());
                                 updateUrl();
+                            } else {
+                                retrieveCodelistByUrn(codelistMetamacDto.getUrn());
                             }
                         }
                     }
@@ -588,6 +588,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
                         firePublicationMessage(getMessages().codelistPublishedExternally(), getMessages().codelistPublishedExternallyWithNotificationError(), result.getNotificationException());
                         codelistMetamacDto = result.getCodelistMetamacDto();
                         retrieveCodelistVersions(codelistMetamacDto.getUrn());
+                        retrieveCodelistByUrn(codelistMetamacDto.getUrn());
                         getView().setCodelist(codelistMetamacDto);
                     }
                 });
@@ -1330,6 +1331,7 @@ public class CodelistPresenter extends Presenter<CodelistPresenter.CodelistView,
     @Override
     public void exportCodes(String codelistUrn) {
         dispatcher.execute(new ExportCodesAction(codelistUrn), new WaitingAsyncCallbackHandlingError<ExportCodesResult>(this) {
+
             @Override
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(CodelistPresenter.this, caught);

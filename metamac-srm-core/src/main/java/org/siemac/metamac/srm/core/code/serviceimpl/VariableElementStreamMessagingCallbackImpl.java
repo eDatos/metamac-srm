@@ -70,6 +70,11 @@ class VariableElementStreamMessagingCallbackImpl implements StreamMessagingCallb
     }
 
     @Override
+    public VariableElement saveMessage(VariableElement messageContent) {
+        return variableElementRepository.save(messageContent);
+    }
+
+    @Override
     public String getTopic() throws MetamacException {
         return configurationService.retrieveKafkaTopicVariableElementPublication();
     }

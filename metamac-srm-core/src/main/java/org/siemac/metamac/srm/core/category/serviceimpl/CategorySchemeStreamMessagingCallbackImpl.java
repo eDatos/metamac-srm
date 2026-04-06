@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
+
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 @Component("categorySchemeStreamMessagingCallback")
@@ -27,6 +29,9 @@ public class CategorySchemeStreamMessagingCallbackImpl implements StreamMessagin
 
     @Autowired
     private CategorySchemeVersionMetamacRepository categorySchemeVersionMetamacRepository;
+
+    @Autowired
+    private ItemSchemeVersionRepository            itemSchemeVersionRepository;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -74,6 +79,11 @@ public class CategorySchemeStreamMessagingCallbackImpl implements StreamMessagin
     @Override
     public void setStreamMessageStatus(CategorySchemeVersionMetamac messageContent, StreamMessageStatusEnum streamMessageStatus) {
         messageContent.setStreamMessageStatus(streamMessageStatus);
+    }
+
+    @Override
+    public CategorySchemeVersionMetamac saveMessage(CategorySchemeVersionMetamac messageContent) {
+        return (CategorySchemeVersionMetamac) itemSchemeVersionRepository.save(messageContent);
     }
 
     @Override

@@ -444,6 +444,8 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
                         if (org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(urnToPublish)) {
                             retrieveCompleteOrganisationSchemeByUrn(organisationSchemeMetamacDto.getUrn());
                             updateUrl();
+                        } else {
+                            retrieveOrganisationSchemeByUrn(organisationSchemeMetamacDto.getUrn());
                         }
                     }
                 });
@@ -460,6 +462,7 @@ public class OrganisationSchemePresenter extends Presenter<OrganisationSchemePre
                                 result.getNotificationException());
                         organisationSchemeMetamacDto = result.getOrganisationSchemeDto();
                         retrieveOrganisationSchemeVersions(organisationSchemeMetamacDto.getUrn());
+                        retrieveOrganisationSchemeByUrn(organisationSchemeMetamacDto.getUrn());
                         getView().setOrganisationScheme(organisationSchemeMetamacDto);
                     }
                 });

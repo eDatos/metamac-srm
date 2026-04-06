@@ -461,6 +461,8 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
                         if (org.siemac.metamac.core.common.util.shared.UrnUtils.isTemporalUrn(conceptSchemeToPublish.getUrn())) {
                             retrieveCompleteConceptSchemeByUrn(conceptSchemeDto.getUrn());
                             updateUrl();
+                        } else {
+                            retrieveConceptSchemeByUrn(conceptSchemeDto.getUrn());
                         }
                     }
                 });
@@ -483,6 +485,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
 
                         ConceptSchemePresenter.this.conceptSchemeDto = result.getConceptSchemeDto();
                         retrieveConceptSchemeVersions(conceptSchemeDto.getUrn());
+                        retrieveConceptSchemeByUrn(conceptSchemeDto.getUrn());
                         getView().setConceptScheme(result.getConceptSchemeDto());
                     }
                 });

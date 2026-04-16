@@ -327,27 +327,6 @@
          ],
          "description":"${msg['api.doc.swagger.definitions.ReplaceToVariable.description']}"
       },
-      "VariableFamilyCodes":{
-         "type":"object",
-         "title":"VariableFamilyCodes",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "family":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamilyCodes.properties.family.description']}",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.VariableFamilyCodes.description']}"
-      },
       "Agencies":{
          "type":"object",
          "title":"Agencies",

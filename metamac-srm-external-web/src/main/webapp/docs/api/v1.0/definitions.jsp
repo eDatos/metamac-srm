@@ -306,7 +306,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -339,7 +339,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -378,7 +378,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -406,7 +406,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -683,7 +683,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -804,7 +804,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -869,7 +869,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -897,7 +897,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -949,7 +949,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1142,7 +1142,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1170,7 +1170,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1205,7 +1205,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   },
                   "lastUpdatedDate":{
                     "xml":{
@@ -1240,7 +1240,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1268,7 +1268,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1556,7 +1556,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1596,7 +1596,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1844,7 +1844,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1883,7 +1883,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1911,7 +1911,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1939,7 +1939,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1972,7 +1972,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2011,7 +2011,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2039,7 +2039,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2067,7 +2067,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2164,7 +2164,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2231,7 +2231,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3006,7 +3006,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3050,7 +3050,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3078,7 +3078,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3111,7 +3111,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3150,7 +3150,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3178,7 +3178,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3206,7 +3206,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3234,7 +3234,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }

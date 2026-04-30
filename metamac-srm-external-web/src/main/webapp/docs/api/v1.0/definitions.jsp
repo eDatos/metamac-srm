@@ -114,85 +114,6 @@
          ],
          "description":"${msg['api.doc.swagger.definitions.Exception.description']}"
       },
-      "InternationalString":{
-         "type":"object",
-         "title":"InternationalString",
-         "allOf":[
-            {
-               "properties":{
-                  "text":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.InternationalString.properties.text.description']}",
-                     "$ref":"#/definitions/LocalisedString"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.InternationalString.description']}"
-      },
-      "ListBase":{
-         "type":"object",
-         "title":"ListBase",
-         "allOf":[
-            {
-               "properties":{
-                  "limit":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.limit.description']}",
-                     "type":"number"
-                  },
-                  "offset":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.offset.description']}",
-                     "type":"number"
-                  },
-                  "total":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.total.description']}",
-                     "type":"number"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.ListBase.description']}"
-      },
-      "LocalisedString":{
-         "type":"object",
-         "title":"LocalisedString",
-         "allOf":[
-            {
-               "properties":{
-                  "lang":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":"http://www.w3.org/XML/1998/namespace"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.lang.description']}",
-                     "type":"string"
-                  },
-                  "(value)":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.value.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.LocalisedString.description']}"
-      },
       "MetamacCriteria":{
          "type":"object",
          "title":"MetamacCriteria",
@@ -343,206 +264,6 @@
          ],
          "description":"${msg['api.doc.swagger.definitions.OrderType.description']}"
       },
-      "Resource":{
-         "type":"object",
-         "title":"Resource",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "name":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.name.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "urn":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.urn.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.Resource.description']}"
-      },
-      "Codelist":{
-         "type":"object",
-         "title":"Codelist",
-         "allOf":[
-            {
-               "$ref":"#/definitions/CodelistType"
-            },
-            {
-               "properties":{
-                  "descriptionSource":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.descriptionSource.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "family":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.family.description']}",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "isRecommended":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.isRecommended.description']}",
-                     "type":"boolean"
-                  },
-                  "replaceTo":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.replaceTo.description']}",
-                     "$ref":"#/definitions/ReplaceToCodelist"
-                  },
-                  "replaceToVersion":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.replaceToVersion.description']}",
-                     "type":"string"
-                  },
-                  "replacedBy":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.replacedBy.description']}",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "replacedByVersion":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.replacedByVersion.description']}",
-                     "type":"string"
-                  },
-                  "shortName":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.shortName.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "urnProvider":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.urnProvider.description']}",
-                     "type":"string"
-                  },
-                  "variable":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.variable.description']}",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.Codelist.description']}"
-      },
-      "CodelistFamilies":{
-         "type":"object",
-         "title":"CodelistFamilies",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "codelistFamily":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.codelistFamily.description']}",
-                     "$ref":"#/definitions/CodelistFamily"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.description']}"
-      },
-      "CodelistFamily":{
-         "type":"object",
-         "title":"CodelistFamily",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamily.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "urn":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamily.properties.urn.description']}",
-                     "type":"string"
-                  },
-                  "name":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamily.properties.name.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "urnProvider":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamily.properties.urnProvider.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.CodelistFamily.description']}"
-      },
-      "Codelists":{
-         "type":"object",
-         "title":"Codelists",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "codelist":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Codelists.properties.codelist.description']}",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.Codelists.description']}"
-      },
       "CodelistRestrictions":{
          "type":"object",
          "title":"CodelistRestrictions",
@@ -563,235 +284,6 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.CodelistRestrictions.description']}"
-      },
-      "ReplaceToCodelist":{
-         "type":"object",
-         "title":"ReplaceToCodelist",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "replaceTo":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.ReplaceToCodelist.properties.replaceTo.description']}",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.ReplaceToCodelist.description']}"
-      },
-      "ReplaceToVariable":{
-         "type":"object",
-         "title":"ReplaceToVariable",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "replaceTo":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.ReplaceToVariable.properties.replaceTo.description']}",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.ReplaceToVariable.description']}"
-      },
-      "Variable":{
-         "type":"object",
-         "title":"Variable",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "urn":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.urn.description']}",
-                     "type":"string"
-                  },
-                  "families":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.families.description']}",
-                     "$ref":"#/definitions/VariableFamilyCodes"
-                  },
-                  "name":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.name.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "replaceTo":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.replaceTo.description']}",
-                     "$ref":"#/definitions/ReplaceToVariable"
-                  },
-                  "replacedBy":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.replacedBy.description']}",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "shortName":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.shortName.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "urnProvider":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.urnProvider.description']}",
-                     "type":"string"
-                  },
-                  "validFrom":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.validFrom.description']}",
-                     "type":"string"
-                  },
-                  "validTo":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.validTo.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.Variable.description']}"
-      },
-      "VariableFamilies":{
-         "type":"object",
-         "title":"VariableFamilies",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "variableFamily":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamilies.properties.variableFamily.description']}",
-                     "$ref":"#/definitions/VariableFamily"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.VariableFamilies.description']}"
-      },
-      "VariableFamily":{
-         "type":"object",
-         "title":"VariableFamily",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamily.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "urn":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamily.properties.urn.description']}",
-                     "type":"string"
-                  },
-                  "name":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamily.properties.name.description']}",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "urnProvider":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamily.properties.urnProvider.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.VariableFamily.description']}"
-      },
-      "VariableFamilyCodes":{
-         "type":"object",
-         "title":"VariableFamilyCodes",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "family":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamilyCodes.properties.family.description']}",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.VariableFamilyCodes.description']}"
-      },
-      "Variables":{
-         "type":"object",
-         "title":"Variables",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "variable":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Variables.properties.variable.description']}",
-                     "$ref":"#/definitions/Variable"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.Variables.description']}"
       },
       "Agencies":{
          "type":"object",
@@ -814,7 +306,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -847,7 +339,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -886,7 +378,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -914,7 +406,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1191,7 +683,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1312,7 +804,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1377,7 +869,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1405,7 +897,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1457,7 +949,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -1593,56 +1085,56 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.kind.description']}",
                      "type":"string"
                   },
                   "descriptionSource":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.descriptionSource.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.descriptionSource.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "isRecommended":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.isRecommended.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.isRecommended.description']}",
                      "type":"boolean"
                   },
                   "opennessConfigurations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.opennessConfigurations.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.opennessConfigurations.description']}",
                      "$ref":"#/definitions/VisualisationConfigurations"
                   },
                   "orderConfigurations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.orderConfigurations.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.orderConfigurations.description']}",
                      "$ref":"#/definitions/VisualisationConfigurations"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.replaceTo.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.replaceTo.description']}",
                      "$ref":"#/definitions/ReplaceToResources"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.shortName.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.shortName.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "variable":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelist_.properties.variable.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelist.properties.variable.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "visualizerHtmlLink":{
@@ -1650,12 +1142,12 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Codelist_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Codelist.description']}"
       },
       "CodelistFamilies":{
          "type":"object",
@@ -1670,7 +1162,7 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies_.properties.codelistFamily.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.codelistFamily.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "visualizerHtmlLink":{
@@ -1678,12 +1170,12 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CodelistFamilies_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.description']}"
       },
       "CodelistFamily":{
          "type":"object",
@@ -1705,7 +1197,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistFamily_.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.CodelistFamily.properties.kind.description']}",
                      "type":"string"
                   },
                   "visualizerHtmlLink":{
@@ -1713,19 +1205,19 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   },
                   "lastUpdatedDate":{
                     "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                     },
-                    "description":"${msg['api.doc.swagger.definitions.CodelistFamily_.properties.lastUpdatedDate.description']}",
+                    "description":"${msg['api.doc.swagger.definitions.CodelistFamily.properties.lastUpdatedDate.description']}",
                     "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CodelistFamily_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.CodelistFamily.description']}"
       },
       "Codelists":{
          "type":"object",
@@ -1740,7 +1232,7 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Codelists_.properties.codelist.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Codelists.properties.codelist.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "visualizerHtmlLink":{
@@ -1748,12 +1240,12 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Codelists_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Codelists.description']}"
       },
       "Codes":{
          "type":"object",
@@ -1776,7 +1268,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2064,7 +1556,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2104,7 +1596,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2352,7 +1844,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2391,7 +1883,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2419,7 +1911,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2447,7 +1939,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2480,7 +1972,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2519,7 +2011,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2547,7 +2039,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2575,7 +2067,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2672,7 +2164,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -2739,7 +2231,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3072,33 +2564,6 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.IdentifiableArtefact.description']}"
-      },
-      "Item":{
-         "type":"object",
-         "title":"Item",
-         "allOf":[
-            {
-               "$ref":"#/definitions/AnnotableArtefact"
-            },
-            {
-               "$ref":"#/definitions/IdentifiableArtefact"
-            },
-            {
-               "$ref":"#/definitions/NameableArtefact"
-            },
-            {
-               "properties":{
-                  "parent":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.Item.properties.parent.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.Item.description']}"
       },
       "ItemResource":{
          "type":"object",
@@ -3541,7 +3006,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3585,7 +3050,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3613,7 +3078,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3646,7 +3111,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3685,7 +3150,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3713,7 +3178,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3741,7 +3206,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -3769,7 +3234,7 @@
                         "namespace":""
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
-                     "$ref":"#/definitions/VisualizerHtmlLink"
+                     "type":"string"
                   }
                }
             }
@@ -4223,48 +3688,48 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variable_.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.kind.description']}",
                      "type":"string"
                   },
                   "families":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variable_.properties.families.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.families.description']}",
                      "$ref":"#/definitions/VariableFamiliesMetadata"
                   },
                   "replaceTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variable_.properties.replaceTo.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.replaceTo.description']}",
                      "$ref":"#/definitions/ReplaceToResources"
                   },
                   "replacedBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variable_.properties.replacedBy.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.replacedBy.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "shortName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variable_.properties.shortName.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.shortName.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variable_.properties.type.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variable.properties.type.description']}",
                      "$ref":"#/definitions/VariableType"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Variable_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Variable.description']}"
       },
       "VariableElement":{
          "type":"object",
@@ -4515,13 +3980,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamilies_.properties.variableFamily.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.VariableFamilies.properties.variableFamily.description']}",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.VariableFamilies_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.VariableFamilies.description']}"
       },
       "VariableFamiliesMetadata":{
          "type":"object",
@@ -4564,13 +4029,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.VariableFamily_.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.VariableFamily.properties.kind.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.VariableFamily_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.VariableFamily.description']}"
       },
       "VariableType":{
          "type":"string",
@@ -4593,13 +4058,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Variables_.properties.variable.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Variables.properties.variable.description']}",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Variables_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Variables.description']}"
       },
       "VersionableArtefact":{
          "type":"object",
@@ -4705,226 +4170,6 @@
          ],
          "description":"${msg['api.doc.swagger.definitions.VisualisationConfigurations.description']}"
       },
-      "QueryTextType":{
-         "type":"object",
-         "title":"QueryTextType",
-         "allOf":[
-            {
-               "$ref":"#/definitions/TextType"
-            },
-            {
-               "properties":{
-                  "operator":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.QueryTextType.properties.operator.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.QueryTextType.description']}"
-      },
-      "CodeType":{
-         "type":"object",
-         "title":"CodeType",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "uri":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.uri.description']}",
-                     "type":"string"
-                  },
-                  "urn":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.urn.description']}",
-                     "type":"string"
-                  },
-                  "Annotations":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.Annotations.description']}",
-                     "$ref":"#/definitions/AnnotationsType"
-                  },
-                  "Description":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.Description.description']}",
-                     "$ref":"#/definitions/TextType"
-                  },
-                  "Name":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.Name.description']}",
-                     "$ref":"#/definitions/TextType"
-                  },
-                  "Parent":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodeType.properties.Parent.description']}",
-                     "$ref":"#/definitions/LocalCodeReferenceType"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.CodeType.description']}"
-      },
-      "CodelistType":{
-         "type":"object",
-         "title":"CodelistType",
-         "allOf":[
-            {
-               "properties":{
-                  "agencyID":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.agencyID.description']}",
-                     "type":"string"
-                  },
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "isExternalReference":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.isExternalReference.description']}",
-                     "type":"boolean"
-                  },
-                  "isFinal":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.isFinal.description']}",
-                     "type":"boolean"
-                  },
-                  "isPartial":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.isPartial.description']}",
-                     "type":"boolean"
-                  },
-                  "serviceURL":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.serviceURL.description']}",
-                     "type":"string"
-                  },
-                  "structureURL":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.structureURL.description']}",
-                     "type":"string"
-                  },
-                  "uri":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.uri.description']}",
-                     "type":"string"
-                  },
-                  "urn":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.urn.description']}",
-                     "type":"string"
-                  },
-                  "validFrom":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.validFrom.description']}",
-                     "type":"string"
-                  },
-                  "validTo":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.validTo.description']}",
-                     "type":"string"
-                  },
-                  "version":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.version.description']}",
-                     "type":"string"
-                  },
-                  "Annotations":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.Annotations.description']}",
-                     "$ref":"#/definitions/AnnotationsType"
-                  },
-                  "Code":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/structure"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.Code.description']}",
-                     "$ref":"#/definitions/CodeType"
-                  },
-                  "Description":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.Description.description']}",
-                     "$ref":"#/definitions/TextType"
-                  },
-                  "Name":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.CodelistType.properties.Name.description']}",
-                     "$ref":"#/definitions/TextType"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.CodelistType.description']}"
-      },
       "ChildLinks":{
          "type":"object",
          "title":"ChildLinks",
@@ -4961,13 +4206,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.InternationalString_.properties.text.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.InternationalString.properties.text.description']}",
                      "$ref":"#/definitions/LocalisedString"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.InternationalString_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.InternationalString.description']}"
       },
       "Item":{
          "type":"object",
@@ -4979,20 +4224,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Item_.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Item.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Item_.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Item.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Item_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Item.description']}"
       },
       "ListBase":{
          "type":"object",
@@ -5005,7 +4250,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.firstLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.firstLink.description']}",
                      "type":"string"
                   },
                   "kind":{
@@ -5013,7 +4258,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.kind.description']}",
                      "type":"string"
                   },
                   "lastLink":{
@@ -5021,7 +4266,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.lastLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.lastLink.description']}",
                      "type":"string"
                   },
                   "limit":{
@@ -5029,7 +4274,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.limit.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.limit.description']}",
                      "type":"number"
                   },
                   "nextLink":{
@@ -5037,7 +4282,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.nextLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.nextLink.description']}",
                      "type":"string"
                   },
                   "offset":{
@@ -5045,7 +4290,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.offset.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.offset.description']}",
                      "type":"number"
                   },
                   "previousLink":{
@@ -5053,7 +4298,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.previousLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.previousLink.description']}",
                      "type":"string"
                   },
                   "selfLink":{
@@ -5061,7 +4306,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.selfLink.description']}",
                      "type":"string"
                   },
                   "total":{
@@ -5069,13 +4314,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase_.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.total.description']}",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.ListBase_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.ListBase.description']}"
       },
       "LocalisedString":{
          "type":"object",
@@ -5088,20 +4333,20 @@
                         "attribute":true,
                         "namespace":"http://www.w3.org/XML/1998/namespace"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.LocalisedString_.properties.lang.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.lang.description']}",
                      "type":"string"
                   },
                   "(value)":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.LocalisedString_.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.value.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.LocalisedString_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.LocalisedString.description']}"
       },
       "Resource":{
          "type":"object",
@@ -5114,48 +4359,48 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource_.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.kind.description']}",
                      "type":"string"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource_.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource_.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "nestedId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource_.properties.nestedId.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.nestedId.description']}",
                      "type":"string"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource_.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource_.properties.urn.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.urn.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Resource_.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Resource.description']}"
       },
       "ResourceLink":{
          "type":"object",
@@ -5183,184 +4428,6 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.ResourceLink.description']}"
-      },
-      "AnnotationType":{
-         "type":"object",
-         "title":"AnnotationType",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.AnnotationType.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "AnnotationText":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.AnnotationType.properties.AnnotationText.description']}",
-                     "$ref":"#/definitions/TextType"
-                  },
-                  "AnnotationTitle":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.AnnotationType.properties.AnnotationTitle.description']}",
-                     "type":"string"
-                  },
-                  "AnnotationType":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.AnnotationType.properties.AnnotationType.description']}",
-                     "type":"string"
-                  },
-                  "AnnotationURL":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.AnnotationType.properties.AnnotationURL.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.AnnotationType.description']}"
-      },
-      "AnnotationsType":{
-         "type":"object",
-         "title":"AnnotationsType",
-         "allOf":[
-            {
-               "properties":{
-                  "Annotation":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.AnnotationsType.properties.Annotation.description']}",
-                     "$ref":"#/definitions/AnnotationType"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.AnnotationsType.description']}"
-      },
-      "ItemSchemePackageTypeCodelistType":{
-         "type":"string",
-         "title":"ItemSchemePackageTypeCodelistType",
-         "enum":[
-            "BASE",
-            "CODELIST",
-            "CATEGORYSCHEME",
-            "CONCEPTSCHEME"
-         ],
-         "description":"${msg['api.doc.swagger.definitions.ItemSchemePackageTypeCodelistType.description']}"
-      },
-      "ItemTypeCodelistType":{
-         "type":"string",
-         "title":"ItemTypeCodelistType",
-         "enum":[
-            "AGENCY",
-            "CATEGORY",
-            "CODE",
-            "CONCEPT",
-            "DATA_CONSUMER",
-            "DATA_PROVIDER",
-            "ORGANISATION_UNIT",
-            "REPORTING_CATEGORY"
-         ],
-         "description":"${msg['api.doc.swagger.definitions.ItemTypeCodelistType.description']}"
-      },
-      "LocalCodeRefType":{
-         "type":"object",
-         "title":"LocalCodeRefType",
-         "allOf":[
-            {
-               "properties":{
-                  "class":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalCodeRefType.properties.class.description']}",
-                     "$ref":"#/definitions/ItemTypeCodelistType"
-                  },
-                  "id":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalCodeRefType.properties.id.description']}",
-                     "type":"string"
-                  },
-                  "local":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalCodeRefType.properties.local.description']}",
-                     "type":"boolean"
-                  },
-                  "package":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalCodeRefType.properties.package.description']}",
-                     "$ref":"#/definitions/ItemSchemePackageTypeCodelistType"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.LocalCodeRefType.description']}"
-      },
-      "LocalCodeReferenceType":{
-         "type":"object",
-         "title":"LocalCodeReferenceType",
-         "allOf":[
-            {
-               "properties":{
-                  "Ref":{
-                     "xml":{
-                        "namespace":""
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.LocalCodeReferenceType.properties.Ref.description']}",
-                     "$ref":"#/definitions/LocalCodeRefType"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.LocalCodeReferenceType.description']}"
-      },
-      "TextType":{
-         "type":"object",
-         "title":"TextType",
-         "allOf":[
-            {
-               "properties":{
-                  "lang":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":"http://www.w3.org/XML/1998/namespace"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.TextType.properties.lang.description']}",
-                     "type":"string"
-                  },
-                  "(value)":{
-                     "xml":{
-                        "namespace":"http://www.sdmx.org/resources/sdmxml/schemas/v2_1/common"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.TextType.properties.value.description']}",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":"${msg['api.doc.swagger.definitions.TextType.description']}"
       },
       "CategoryElements":{
          "type":"object",

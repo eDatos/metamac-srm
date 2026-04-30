@@ -75,28 +75,32 @@ public class SrmRestExternalCacheableResourceServiceImpl implements CacheableRes
                         .buildConditionalCriteriaItemSchemes(agencyID, resourceID, version, null, CodelistVersionMetamac.class);
                 PagedResult<CodelistVersionMetamac> result =
                         codesService.findCodelistsByCondition(ctx, criteria, pagingParameterOneResult);
-                return result.getValues().isEmpty() ? null : result.getValues().get(0).getLastUpdated();
+                CodelistVersionMetamac codelist = result.getValues().isEmpty() ? null : result.getValues().get(0);
+                return codelist != null ? codelist.getLastUpdated() : null;
             }
             if (ConceptSchemeCacheableResource.class.isAssignableFrom(resourceType)) {
                 List<ConditionalCriteria> criteria = SrmRestInternalUtils
                         .buildConditionalCriteriaItemSchemes(agencyID, resourceID, version, null, ConceptSchemeVersionMetamac.class);
                 PagedResult<ConceptSchemeVersionMetamac> result =
                         conceptsService.findConceptSchemesByCondition(ctx, criteria, pagingParameterOneResult);
-                return result.getValues().isEmpty() ? null : result.getValues().get(0).getLastUpdated();
+                ConceptSchemeVersionMetamac conceptScheme = result.getValues().isEmpty() ? null : result.getValues().get(0);
+                return conceptScheme != null ? conceptScheme.getLastUpdated() : null;
             }
             if (CategorySchemeCacheableResource.class.isAssignableFrom(resourceType)) {
                 List<ConditionalCriteria> criteria = SrmRestInternalUtils
                         .buildConditionalCriteriaItemSchemes(agencyID, resourceID, version, null, CategorySchemeVersionMetamac.class);
                 PagedResult<CategorySchemeVersionMetamac> result =
                         categoriesService.findCategorySchemesByCondition(ctx, criteria, pagingParameterOneResult);
-                return result.getValues().isEmpty() ? null : result.getValues().get(0).getLastUpdated();
+                CategorySchemeVersionMetamac categoryScheme = result.getValues().isEmpty() ? null : result.getValues().get(0);
+                return categoryScheme != null ? categoryScheme.getLastUpdated() : null;
             }
             if (OrganisationSchemeCacheableResource.class.isAssignableFrom(resourceType)) {
                 List<ConditionalCriteria> criteria = SrmRestInternalUtils
                         .buildConditionalCriteriaItemSchemes(agencyID, resourceID, version, null, OrganisationSchemeVersionMetamac.class);
                 PagedResult<OrganisationSchemeVersionMetamac> result =
                         organisationsService.findOrganisationSchemesByCondition(ctx, criteria, pagingParameterOneResult);
-                return result.getValues().isEmpty() ? null : result.getValues().get(0).getLastUpdated();
+                OrganisationSchemeVersionMetamac organisationScheme = result.getValues().isEmpty() ? null : result.getValues().get(0);
+                return organisationScheme != null ? organisationScheme.getLastUpdated() : null;
             }
         } catch (Exception e) {
             logger.warn("Error getting last modified date for {}/{}/{}", new Object[]{agencyID, resourceID, version}, e);

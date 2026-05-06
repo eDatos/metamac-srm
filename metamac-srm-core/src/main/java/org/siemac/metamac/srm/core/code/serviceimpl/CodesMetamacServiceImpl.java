@@ -2617,6 +2617,20 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public DateTime findMaxLastUpdatedVariableElement(ServiceContext ctx, String variableUrn) throws MetamacException {
+        Variable variable = retrieveVariableByUrn(variableUrn);
+        DateTime maxElementDate = getVariableElementRepository().findMaxLastUpdatedByVariable(variable.getId());
+        // TODO EDATOS-5569 Pendiente decisión A/B del equipo:
+        //   Opción A — actualizar Variable.lastUpdated en deleteVariableElement(), y aquí:
+        //              return DateUtils.max(maxElementDate, variable.getLastUpdated())
+        //              (findMaxLastUpdatedByVariable sigue siendo necesario)
+        //   Opción B — añadir Variable.elementsLastUpdated (campo dedicado, actualizado en create/update/delete),
+        //              eliminar findMaxLastUpdatedByVariable del repositorio y simplificar este método a:
+        //              return variable.getElementsLastUpdated()
+        return maxElementDate;
+    }
+
+    @Override
     public void deleteVariableElement(ServiceContext ctx, String urn) throws MetamacException {
         // Validation
         CodesMetamacInvocationValidator.checkDeleteArtefact(urn);

@@ -142,6 +142,7 @@ import org.siemac.metamac.srm.rest.external.domain.cache.CategorySchemeCacheable
 import org.siemac.metamac.srm.rest.external.domain.cache.CodelistCacheableResource;
 import org.siemac.metamac.srm.rest.external.domain.cache.ConceptSchemeCacheableResource;
 import org.siemac.metamac.srm.rest.external.domain.cache.OrganisationSchemeCacheableResource;
+import org.siemac.metamac.srm.rest.external.domain.cache.VariableElementCacheableResource;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesRest2DoMapper;
@@ -1337,6 +1338,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(VariableElementCacheableResource.class)
     @Override
     public VariableElements findVariableElements(String variableID, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -1364,7 +1366,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                     geographicalGranularityUrns = extractGeographicalGranularityUrnsFromQuery(sculptorCriteria.getConditions());
                 }
                 VariableElementResultSelection selection = new VariableElementResultSelection(); // do not retrieve nothing extra metadata as default
-                List<VariableElementResult> entities = codesService.findVariableElementsByVariableEfficiently(ctx, variableUrn, variableElementsCodes, selection, geographicalGranularityUrns);
+                List<VariableElementResult> entities;
+                try {
+                    entities = codesService.findVariableElementsByVariableEfficiently(ctx, variableUrn, variableElementsCodes, selection, geographicalGranularityUrns);
+                } catch (MetamacException metamacException) {
+                    org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_NOT_FOUND, variableID);
+                    throw new RestException(exception, Status.NOT_FOUND);
+                }
 
                 // Transform
                 return codesDo2RestMapper.toVariableElements(entities, variableID, query, fieldsToShow);

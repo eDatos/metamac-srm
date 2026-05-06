@@ -268,6 +268,8 @@ Application CodesMetamac {
     		List<VariableElementVisualisationResult> retrieveVariableElementsByVariable(String variableUrn, String locale) throws MetamacException;
     		"Finds efficiently variable elements by variable"
     		List<VariableElementResult> findVariableElementsByVariableEfficiently(String variableUrn, List<String> variableElementCodes, VariableElementResultSelection selection, List<String> geographicalGranularityUrns) throws MetamacException;
+    		"Finds MAX(lastUpdated) among all variable elements of a variable. Used for HTTP cache Last-Modified header."
+    		DateTime findMaxLastUpdatedVariableElement(String variableUrn) throws MetamacException;
 			"Deletes variable element"
     		deleteVariableElement(String urn) throws MetamacException;
     		"Adds variable element to a variable"
@@ -694,6 +696,7 @@ Application CodesMetamac {
 				List<VariableElementVisualisationResult> retrieveVariableElementsByVariableEfficientlyToVisualisation(Long variableId, String locale);
 				List<VariableElementResult> findVariableElementsByVariableEfficiently(Long variableUrn, List<String> variableElementCodes, VariableElementResultSelection selection, List<String> geographicalGranularityUrns) throws MetamacException;
 				Long countVariableElementsByVariable(Long variableId);
+				DateTime findMaxLastUpdatedByVariable(Long variableId);
 			}
 		}
 		

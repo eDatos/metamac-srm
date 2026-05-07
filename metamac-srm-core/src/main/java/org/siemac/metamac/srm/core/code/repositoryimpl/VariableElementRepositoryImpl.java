@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.siemac.metamac.core.common.constants.CoreCommonConstants;
@@ -281,21 +280,6 @@ public class VariableElementRepositoryImpl extends VariableElementRepositoryBase
         Query query = getEntityManager().createNativeQuery(sb.toString());
         query.setParameter("variableId", variableId);
         return getLong(query.getResultList().get(0));
-    }
-
-    @Override
-    public DateTime findMaxLastUpdatedByVariable(Long variableId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT MAX(LAST_UPDATED) ");
-        sb.append("FROM TB_M_VARIABLE_ELEMENTS ");
-        sb.append("WHERE VARIABLE_FK = :variableId");
-        Query query = getEntityManager().createNativeQuery(sb.toString());
-        query.setParameter("variableId", variableId);
-        Object result = query.getSingleResult();
-        if (result == null) {
-            return null;
-        }
-        return new DateTime(result);
     }
 
     private VariableElementVisualisationResult variableElementResultSqlToVariableElementVisualisationResult(Object[] source) {

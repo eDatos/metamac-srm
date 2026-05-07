@@ -414,7 +414,6 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
-    @CacheableMethod(CategorySchemeCacheableResource.class)
     @Override
     public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -426,19 +425,16 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
-    @CacheableMethod(CategorySchemeCacheableResource.class)
     @Override
     public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
     }
 
-    @CacheableMethod(CategorySchemeCacheableResource.class)
     @Override
     public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
     }
 
-    @CacheableMethod(CategorySchemeCacheableResource.class)
     @Override
     public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");

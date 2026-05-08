@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.siemac.metamac.metamac-srm</groupId>
 		<artifactId>metamac-srm-parent</artifactId>
-		<version>8.12.1-SNAPSHOT</version>
+		<version>8.14.1-SNAPSHOT</version>
 		<relativePath>../metamac-srm-parent/pom.xml</relativePath>
 	</parent>
 
@@ -103,13 +103,6 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
 			<version>${jackson.version}</version>
-		</dependency>
-
-		<!-- For JSONP -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-extension-providers</artifactId>
-			<version>${cxf.version}</version>
 		</dependency>
 
 		<!-- Test -->

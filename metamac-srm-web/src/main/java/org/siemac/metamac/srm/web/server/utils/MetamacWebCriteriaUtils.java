@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.server.utils;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaDisjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction;
@@ -706,17 +707,21 @@ public class MetamacWebCriteriaUtils {
                         criteria.getStatisticalOperationUrn(), OperationType.EQ));
             }
             if (criteria.getDimensionConceptUrn() != null && !criteria.getDimensionConceptUrn().isEmpty()) {
-                conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.DIMENSION_CONCEPT_URN.name(),
-                        criteria.getDimensionConceptUrn(), OperationType.IN));
+                MetamacCriteriaDisjunctionRestriction disjunction = new MetamacCriteriaDisjunctionRestriction();
+                for (String urn : criteria.getDimensionConceptUrn()) {
+                    disjunction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.DIMENSION_CONCEPT_URN.name(),
+                            UrnUtils.insertVersion(urn, "%"), OperationType.LIKE));
+                }
+                conjunctionRestriction.getRestrictions().add(disjunction);
             }
             if (StringUtils.isNotBlank(criteria.getAttributeConceptUrn())) {
                 conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.ATTRIBUTE_CONCEPT_URN.name(),
-                        criteria.getAttributeConceptUrn(), OperationType.EQ));
+                        UrnUtils.insertVersion(criteria.getAttributeConceptUrn(), "%"), OperationType.LIKE));
             }
 
             if (StringUtils.isNotBlank(criteria.getCodelistUrn())) {
-                conjunctionRestriction.getRestrictions()
-                        .add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.CODELIST_URN.name(), criteria.getCodelistUrn(), OperationType.EQ));
+                conjunctionRestriction.getRestrictions().add(new MetamacCriteriaPropertyRestriction(DataStructureDefinitionVersionMetamacCriteriaPropertyEnum.CODELIST_URN.name(),
+                        UrnUtils.insertVersion(criteria.getCodelistUrn(), "%"), OperationType.LIKE));
             }
 
             if (criteria.getInternalPublicationDate() != null) {

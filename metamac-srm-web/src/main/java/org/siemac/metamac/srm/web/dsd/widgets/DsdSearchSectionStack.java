@@ -19,6 +19,7 @@ import org.siemac.metamac.srm.web.dsd.view.handlers.DsdListUiHandlers;
 import org.siemac.metamac.srm.web.shared.code.GetCodelistsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetConceptsResult;
 import org.siemac.metamac.srm.web.shared.concept.GetStatisticalOperationsResult;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.web.shared.criteria.DataStructureDefinitionWebCriteria;
 import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
@@ -106,6 +107,7 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
     public void setDimensionConcepts(GetConceptsResult result) {
         if (searchDimensionConceptItem != null) {
             List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getConceptMetamacBasicDtosAsRelatedResourceDtos(result.getConcepts());
+            stripVersionFromUrns(relatedResourceDtos);
             searchDimensionConceptItem.setResources(relatedResourceDtos, result.getFirstResultOut(), result.getTotalResults());
         }
     }
@@ -113,6 +115,7 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
     public void setAttributeConcepts(GetConceptsResult result) {
         if (searchAttributeConceptWindow != null) {
             List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getConceptMetamacBasicDtosAsRelatedResourceDtos(result.getConcepts());
+            stripVersionFromUrns(relatedResourceDtos);
             searchAttributeConceptWindow.setRelatedResources(relatedResourceDtos);
             searchAttributeConceptWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), relatedResourceDtos.size(), result.getTotalResults());
         }
@@ -121,8 +124,17 @@ public class DsdSearchSectionStack extends VersionableResourceSearchSectionStack
     public void setCodelist(GetCodelistsResult result) {
         if (searchCodelistWindow != null) {
             List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getCodelistMetamacBasicDtoAsRelatedResourceDtos(result.getCodelists());
+            stripVersionFromUrns(relatedResourceDtos);
             searchCodelistWindow.setRelatedResources(relatedResourceDtos);
             searchCodelistWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), relatedResourceDtos.size(), result.getTotalResults());
+        }
+    }
+
+    private void stripVersionFromUrns(List<RelatedResourceDto> items) {
+        for (RelatedResourceDto item : items) {
+            if (item.getUrn() != null) {
+                item.setUrn(UrnUtils.removeVersion(item.getUrn()));
+            }
         }
     }
 

@@ -10,6 +10,7 @@ public class ConceptWebCriteria extends ItemWebCriteria {
     private String                acronym;
     private String                descriptionSource;
     private ConceptSchemeTypeEnum conceptSchemeTypeEnum;
+    private boolean               deduplicateIgnoringVersion;
 
     public ConceptWebCriteria() {
     }
@@ -48,5 +49,13 @@ public class ConceptWebCriteria extends ItemWebCriteria {
 
     public void setConceptSchemeTypeEnum(ConceptSchemeTypeEnum conceptSchemeTypeEnum) {
         this.conceptSchemeTypeEnum = conceptSchemeTypeEnum;
+    }
+
+    public boolean isDeduplicateIgnoringVersion() {
+        return deduplicateIgnoringVersion;
+    }
+
+    public void setDeduplicateIgnoringVersion(boolean deduplicateIgnoringVersion) {
+        this.deduplicateIgnoringVersion = deduplicateIgnoringVersion;
     }
 }

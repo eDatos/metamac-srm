@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 8.14.0 a 8.14.1-SNAPSHOT
+## 8.14.1 a 8.14.2-SNAPSHOT
 * Cambios en statistic-sdmx-srm. Deben ejecutarse los scripts de esta ubicación:
 
   ```shell

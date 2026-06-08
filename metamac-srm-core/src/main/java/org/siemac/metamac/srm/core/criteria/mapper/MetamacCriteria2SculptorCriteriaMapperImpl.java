@@ -312,9 +312,7 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                     return new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().externalPublicationUser(), propertyRestriction.getStringValue(),
                             propertyRestriction.getOperationType());
                 case DIMENSION_CONCEPT_URN: {
-                    SculptorPropertyCriteria propertyCriteria1 = new SculptorPropertyCriteria(
-                            DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(), new ArrayList<>(propertyRestriction.getListStringValue()),
-                            propertyRestriction.getOperationType());
+                    SculptorPropertyCriteria propertyCriteria1 = buildDimensionConceptUrnSculptorCriteria(propertyRestriction);
                     SculptorPropertyCriteria propertyCriteria2 = new SculptorPropertyCriteria(DataStructureDefinitionVersionMetamacProperties.grouping().components().componentType(),
                             TypeComponent.DIMENSION_COMPONENT, OperationType.EQ);
                     return new SculptorCriteriaConjunction(propertyCriteria1, propertyCriteria2);
@@ -334,6 +332,18 @@ public class MetamacCriteria2SculptorCriteriaMapperImpl implements MetamacCriter
                 }
                 default:
                     throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
+            }
+        }
+
+        private SculptorPropertyCriteria buildDimensionConceptUrnSculptorCriteria(MetamacCriteriaPropertyRestriction propertyRestriction) {
+            if (OperationType.LIKE.equals(propertyRestriction.getOperationType())) {
+                return new SculptorPropertyCriteria(
+                        DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(),
+                        propertyRestriction.getStringValue(), OperationType.LIKE);
+            } else {
+                return new SculptorPropertyCriteria(
+                        DataStructureDefinitionVersionMetamacProperties.grouping().components().cptIdRef().nameableArtefact().urn(),
+                        new ArrayList<>(propertyRestriction.getListStringValue()), propertyRestriction.getOperationType());
             }
         }
 

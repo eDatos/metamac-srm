@@ -1,9 +1,11 @@
 package org.siemac.metamac.srm.web.category.view.handlers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
@@ -39,6 +41,14 @@ public interface CategorySchemeUiHandlers extends BaseCategoryUiHandlers {
     void publishExternally(String urn, ProcStatusEnum currentProcStatus);
     void versioning(String urn, VersionTypeEnum versionType);
     void createTemporalVersion(String urn);
+
+    // Orders
+
+    void retrieveCategoriesWithOrder(String orderVisualisationUrn);
+    void saveCategorySchemeOrder(CategorySchemeVisualisationDto categorySchemeVisualisationDto);
+    void deleteCategorySchemeOrders(List<String> orderUrns);
+    void updateCategoryInOrder(String categoryUrn, String orderVisualisationUrn, int newCategoryIndex);
+    void exportCategoriesOrder(String categorySchemeUrn);
 
     // Importation
 

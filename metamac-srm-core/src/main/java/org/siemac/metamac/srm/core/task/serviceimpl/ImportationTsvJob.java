@@ -47,7 +47,8 @@ public class ImportationTsvJob implements Job {
     public static final String        OPERATION_IMPORT_CODE_OPENNESS_LEVELS  = "importCodeOpennessLevels";
     public static final String        OPERATION_IMPORT_VARIABLE_ELEMENTS     = "importVariableElements";
     public static final String        OPERATION_IMPORT_CATEGORY_ELEMENTS     = "importCategoryElements";
-    public static final String        OPERATION_IMPORT_CONCEPT_SCHEME_ORDERS = "importConceptSchemeOrders";
+    public static final String        OPERATION_IMPORT_CONCEPT_SCHEME_ORDERS  = "importConceptSchemeOrders";
+    public static final String        OPERATION_IMPORT_CATEGORY_SCHEME_ORDERS = "importCategorySchemeOrders";
 
     private TasksMetamacServiceFacade tasksMetamacServiceFacade              = null;
 
@@ -76,6 +77,8 @@ public class ImportationTsvJob implements Job {
                 importConcepts(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CONCEPT_SCHEME_ORDERS.equals(operation)) {
                 importConceptSchemeOrders(jobKey, data, serviceContext);
+            } else if (OPERATION_IMPORT_CATEGORY_SCHEME_ORDERS.equals(operation)) {
+                importCategorySchemeOrders(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_ORGANISATIONS.equals(operation)) {
                 importOrganisations(jobKey, data, serviceContext);
             } else if (OPERATION_IMPORT_CATEGORIES.equals(operation)) {
@@ -169,6 +172,19 @@ public class ImportationTsvJob implements Job {
         logger.info("ImportationJob [importConceptSchemeOrders]: " + jobKey + " starting at " + new Date());
         getTaskMetamacServiceFacade().processImportConceptSchemeOrdersTsv(serviceContext, conceptSchemeUrn, new File(filePath), fileName, jobKey.getName());
         logger.info("ImportationJob [importConceptSchemeOrders]: " + jobKey + " finished at " + new Date());
+    }
+
+    private void importCategorySchemeOrders(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {
+
+        // Parameters
+        String categorySchemeUrn = data.getString(ITEM_SCHEME_URN);
+        String filePath = data.getString(FILE_PATH);
+        String fileName = data.getString(FILE_NAME);
+
+        // Execution
+        logger.info("ImportationJob [importCategorySchemeOrders]: " + jobKey + " starting at " + new Date());
+        getTaskMetamacServiceFacade().processImportCategorySchemeOrdersTsv(serviceContext, categorySchemeUrn, new File(filePath), fileName, jobKey.getName());
+        logger.info("ImportationJob [importCategorySchemeOrders]: " + jobKey + " finished at " + new Date());
     }
 
     private void importOrganisations(JobKey jobKey, JobDataMap data, ServiceContext serviceContext) throws MetamacException {

@@ -7,6 +7,7 @@ public class CategoryMetamacVisualisationResult extends ItemVisualisationResult 
     private static final long                  serialVersionUID = 1L;
 
     private CategoryElementVisualisationResult categoryElement;
+    private Integer                            order;
 
     public CategoryMetamacVisualisationResult() {
     }
@@ -17,5 +18,13 @@ public class CategoryMetamacVisualisationResult extends ItemVisualisationResult 
 
     public void setCategoryElement(CategoryElementVisualisationResult categoryElement) {
         this.categoryElement = categoryElement;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 }

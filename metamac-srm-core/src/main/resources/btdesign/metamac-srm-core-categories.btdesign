@@ -18,10 +18,11 @@ Application CategoriesMetamac {
 		// ----------------------------------------------------------------  
 		"Provides access to Scheme Categories Artefacts"
 		Service CategoriesMetamacService {
-			
+
 			> @CategorySchemeVersionMetamacRepository
 			> @CategoryMetamacRepository
 			> @CategoryElementRepository
+			> @CategorySchemeOrderVisualisationRepository
 			
 			"Creates category scheme"
 			@CategorySchemeVersionMetamac createCategoryScheme(@CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException;
@@ -88,15 +89,46 @@ Application CategoriesMetamac {
     		PagedResult<@CategoryMetamac> findCategoriesCanBeCategorisationCategoryByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException;
 			"Deletes category"
     		deleteCategory(String urn) throws MetamacException;
+    		"Updates parent of category"
+    		updateCategoryParent(String categoryUrn, String newCategoryParentUrn) throws MetamacException;
     		"Retrieves categories by category scheme in locale requested"
-    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
+    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale, String categorySchemeOrderVisualisationUrn) throws MetamacException;
     		"Retrieves categories by category scheme unordered"
     		List<ItemResult> retrieveCategoriesByCategorySchemeUrnUnordered(String categorySchemeUrn, ItemResultSelection itemResultSelection) throws MetamacException;
+    		"Retrieves categories by category scheme ordered in depth by order visualisation"
+    		List<ItemResult> retrieveCategoriesByCategorySchemeUrnOrderedInDepth(String categorySchemeUrn, ItemMetamacResultSelection itemMetamacResultSelection, String orderVisualisationCode) throws MetamacException;
     		"Imports categories in TSV format"
     		TaskImportationInfo importCategoriesTsv(String categorySchemeUrn, java.io.File file, String fileName, boolean updateAlreadyExisting, Boolean canBeBackground) throws MetamacException;
 			"Exports categories in TSV format"
     		String exportCategoriesTsv(String categorySchemetUrn) throws MetamacException;
-    		
+
+    		// VISUALISATIONS
+
+    		"Creates order visualisation"
+    		@CategorySchemeOrderVisualisation createCategorySchemeOrderVisualisation(String categorySchemeUrn, @CategorySchemeOrderVisualisation categorySchemeOrderVisualisation) throws MetamacException;
+    		"Creates alphabetical order visualisation"
+    		@CategorySchemeVersionMetamac createCategorySchemeOrderVisualisationAlphabetical(@CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException;
+    		"Updates order visualisation"
+    		@CategorySchemeOrderVisualisation updateCategorySchemeOrderVisualisation(@CategorySchemeOrderVisualisation categorySchemeOrderVisualisation) throws MetamacException;
+    		"Retrieves order visualisation by urn"
+    		@CategorySchemeOrderVisualisation retrieveCategorySchemeOrderVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieves order visualisation by code"
+    		@CategorySchemeOrderVisualisation retrieveCategorySchemeOrderVisualisationByCode(String categorySchemeUrn, String code) throws MetamacException;
+    		"Retrieve order visualisations by category scheme"
+    		List<@CategorySchemeOrderVisualisation> retrieveCategorySchemeOrderVisualisationsByCategoryScheme(String categorySchemeUrn) throws MetamacException;
+    		"Deletes order visualisation"
+    		deleteCategorySchemeOrderVisualisation(String urn) throws MetamacException;
+    		@CategorySchemeVersionMetamac versioningCategorySchemeOrderVisualisations(@CategorySchemeVersionMetamac source, @CategorySchemeVersionMetamac target) throws MetamacException;
+    		"Recalculates order when new categories are added in category scheme"
+    		recalculateCategoriesVisualisations(List<@Category> items, List<@CategorySchemeOrderVisualisation> orderVisualisations, boolean executeSave);
+
+    		"Updates position of category in order visualisation"
+    		updateCategoryInOrderVisualisation(String categoryUrn, String categorySchemeOrderVisualisationUrn, Integer newCategoryIndex) throws MetamacException;
+
+    		"Imports category scheme orders in tsv format"
+    		TaskImportationInfo importCategorySchemeOrdersTsv(String categorySchemeUrn, java.io.File file, String fileName, Boolean canBeBackground) throws MetamacException;
+    		String exportCategoryOrdersTsv(String categorySchemeUrn) throws MetamacException;
+
     		// Categorisations
     		"Creates categorisation"
     		@Categorisation createCategorisation(String categoryUrn, String artefactCategorisedUrn, String maintainerUrn) throws MetamacException;
@@ -162,13 +194,19 @@ Application CategoriesMetamac {
 		Entity CategorySchemeVersionMetamac extends @CategorySchemeVersion {
 			databaseTable="TB_M_CAT_SCHEMES_VERSIONS"
 			hint="idSequence=M_CAT_SCHEMES_VERSIONS"
-			
+
 			"Life cycle information"
 			- @SrmLifeCycleMetadata lifeCycleMetadata databaseColumn="";
 			"Stream message status"
             - @StreamMessageStatusEnum streamMessageStatus;
-			
+
+			"Order visualisations"
+			- Bag<@CategorySchemeOrderVisualisation> orderVisualisations cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> categorySchemeVersion;
+			"Default order visualisation"
+			- @CategorySchemeOrderVisualisation defaultOrderVisualisation nullable cascade="persist,merge,refresh" fetch="lazy" databaseColumn="DEFAULT_ORDER_VISUAL_FK";
+
 			Repository CategorySchemeVersionMetamacRepository {
+				save;
 				findByQuery(String query, Map<String, Object> parameters, int maxResult);
 				findByCondition(PagingParameter pagingParameter);
 				@CategorySchemeVersionMetamac findByUrn(String urn);
@@ -181,12 +219,33 @@ Application CategoriesMetamac {
 		
 		Entity CategoryMetamac extends @Category {
 			databaseTable="TB_M_CATEGORIES"
-			hint="idSequence=M_CATEGORIES"	
+			hint="idSequence=M_CATEGORIES"
 
 			- @CategoryElement categoryElement nullable cascade="none" fetch="lazy" databaseColumn="CATEGORY_ELEMENT_FK"  <-> codes;
 			"Metadata ENI SCHEMA"
 			- Set<@EniSchemaCatalog> eniSchemas cascade="none" fetch="lazy" databaseJoinTable="TB_CAT_ENI_SCHEMA";
-			
+
+			Integer order1 nullable;
+			Integer order2 nullable;
+			Integer order3 nullable;
+			Integer order4 nullable;
+			Integer order5 nullable;
+			Integer order6 nullable;
+			Integer order7 nullable;
+			Integer order8 nullable;
+			Integer order9 nullable;
+			Integer order10 nullable;
+			Integer order11 nullable;
+			Integer order12 nullable;
+			Integer order13 nullable;
+			Integer order14 nullable;
+			Integer order15 nullable;
+			Integer order16 nullable;
+			Integer order17 nullable;
+			Integer order18 nullable;
+			Integer order19 nullable;
+			Integer order20 nullable;
+
 			Repository CategoryMetamacRepository {
 				save;
 				findByQuery;
@@ -194,18 +253,24 @@ Application CategoriesMetamac {
 				@CategoryMetamac findByUrn(String urn);
 				findByCondition(PagingParameter pagingParameter);
 				List<ItemResult> findCategoriesByCategorySchemeUnordered(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException;
-				List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException;
+				List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, Integer orderColumnIndex, ItemMetamacResultSelection resultSelection) throws MetamacException;
+				List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale, Integer orderColumnIndex) throws MetamacException;
 				updateCodesCategoryElements(Map<Long,Long> categoryElementsByCodes, Long categorySchemeId) throws MetamacException;
-
 				checkCategoryTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
+
+				Integer getMaximumOrderInLevel(@CategorySchemeVersionMetamac categorySchemeVersion, @Category parent, Integer orderColumnIndex);
+				reorderCategoriesDeletingOneCode(@CategorySchemeVersionMetamac categorySchemeVersion, @Category parent, @CategoryMetamac category, Integer orderColumnIndex, Integer orderCategoryToDelete);
+				reorderCategoriesAddingOneCodeInMiddle(@CategorySchemeVersionMetamac categorySchemeVersion, @CategoryMetamac category, Integer orderColumnIndex, Integer orderCategoryToAdd);
+				Integer getCategoryAlphabeticPositionInLevel(@CategorySchemeVersionMetamac categorySchemeVersion, @Category parent, @Category category);
+				clearCategoriesOrderColumn(@CategorySchemeVersionMetamac categorySchemeVersion, Integer orderColumnIndex);
+				copyCategoriesOrderColumn(@CategorySchemeVersionMetamac categorySchemeVersion, Integer columnIndexSource, Integer columnIndexTarget);
 			}
 		}
 				
 		Entity CategoryElement extends @ResourceElement {
 			databaseTable="TB_CAT_RESOURCE_ELEMENTS"
-			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"	
-			
+			hint="idSequence=M_CAT_RESOURCE_ELEMENTS"
+
 			- Bag<@CategoryMetamac> codes cascade="none" fetch="lazy" <-> categoryElement;
 			"Is visible"
 			Boolean isVisible;
@@ -222,6 +287,31 @@ Application CategoriesMetamac {
 				List<@CategoryElement> findByCodeIn(List<String> codes);
 				findByCondition(PagingParameter pagingParameter);
 
+			}
+		}
+
+		Entity CategorySchemeOrderVisualisation {
+			databaseTable="TB_M_CAT_SCHEME_ORDER_VIS"
+			hint="idSequence=M_CAT_SCHEME_ORDER_VIS"
+
+			"Nameable artefact"
+			- @NameableArtefact nameableArtefact not nullable cascade="all" fetch="lazy" databaseColumn="NAMEABLE_ARTEFACT_FK";
+			"Last update for optimistic locking"
+			DateTimeTZ updateDate nullable;
+			"Column with order in table of Categories"
+			Integer columnIndex not nullable;
+			"Relation to category scheme"
+			- @CategorySchemeVersionMetamac categorySchemeVersion not nullable cascade="none" fetch="lazy" databaseColumn="CATEGORY_SCHEME_FK" <-> orderVisualisations;
+
+			Repository CategorySchemeOrderVisualisationRepository {
+				save;
+				delete;
+				findByQuery(String query, Map<String, Object> parameters, int maxResult);
+				@CategorySchemeOrderVisualisation findByUrn(String orderVisualisationUrn);
+				@CategorySchemeOrderVisualisation findByCode(Long categorySchemeId, String orderVisualisationCode);
+				findByCondition(PagingParameter pagingParameter);
+				updateUrnAllCategorySchemeOrderVisualisationsByCategorySchemeEfficiently(@CategorySchemeVersionMetamac categorySchemeVersionMetamac, String oldUrnExample);
+				checkCategorySchemeOrderVisualisationTranslations(Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByUrn) throws MetamacException;
 			}
 		}
 	}

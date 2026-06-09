@@ -29,6 +29,7 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
@@ -37,6 +38,7 @@ import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.category.mapper.CategoriesDo2DtoMapper;
 import org.siemac.metamac.srm.core.category.mapper.CategoriesDto2DoMapper;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
@@ -3993,6 +3995,113 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
+    public CategorySchemeVisualisationDto retrieveCategorySchemeOrderVisualisationByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategorySchemeOrderVisualisation(ctx);
+
+        // Retrieve
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = getCategoriesMetamacService().retrieveCategorySchemeOrderVisualisationByUrn(ctx, urn);
+
+        // Transform
+        return categoriesDo2DtoMapper.categorySchemeOrderVisualisationDoToDto(categorySchemeOrderVisualisation);
+    }
+
+    @Override
+    public CategorySchemeVisualisationDto createCategorySchemeOrderVisualisation(ServiceContext ctx, CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersionToCheck = getCategoriesMetamacService().retrieveCategorySchemeByUrn(ctx, categorySchemeOrderVisualisationDto.getCategoryScheme().getUrn());
+        CategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(ctx, categorySchemeVersionToCheck.getLifeCycleMetadata().getProcStatus());
+
+        // Transform
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesDto2DoMapper.categorySchemeOrderVisualisationDtoToDo(categorySchemeOrderVisualisationDto);
+
+        // Create
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisationCreated = getCategoriesMetamacService().createCategorySchemeOrderVisualisation(ctx,
+                categorySchemeOrderVisualisationDto.getCategoryScheme().getUrn(), categorySchemeOrderVisualisation);
+
+        // Transform to DTO
+        return categoriesDo2DtoMapper.categorySchemeOrderVisualisationDoToDto(categorySchemeOrderVisualisationCreated);
+    }
+
+    @Override
+    public CategorySchemeVisualisationDto updateCategorySchemeOrderVisualisation(ServiceContext ctx, CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersionToCheck = getCategoriesMetamacService().retrieveCategorySchemeByUrn(ctx, categorySchemeOrderVisualisationDto.getCategoryScheme().getUrn());
+        CategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(ctx, categorySchemeVersionToCheck.getLifeCycleMetadata().getProcStatus());
+
+        // Transform
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisationToUpdate = categoriesDto2DoMapper.categorySchemeOrderVisualisationDtoToDo(categorySchemeOrderVisualisationDto);
+
+        // Update
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisationUpdated = getCategoriesMetamacService().updateCategorySchemeOrderVisualisation(ctx, categorySchemeOrderVisualisationToUpdate);
+
+        // Transform to DTO
+        return categoriesDo2DtoMapper.categorySchemeOrderVisualisationDoToDto(categorySchemeOrderVisualisationUpdated);
+    }
+
+    @Override
+    public void deleteCategorySchemeOrderVisualisation(ServiceContext ctx, String urn) throws MetamacException {
+        // Security
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = getCategoriesMetamacService().retrieveCategorySchemeOrderVisualisationByUrn(ctx, urn);
+        CategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(ctx, categorySchemeOrderVisualisation.getCategorySchemeVersion().getLifeCycleMetadata().getProcStatus());
+
+        // Delete
+        getCategoriesMetamacService().deleteCategorySchemeOrderVisualisation(ctx, urn);
+    }
+
+    @Override
+    public List<CategorySchemeVisualisationDto> retrieveCategorySchemeOrderVisualisationsByCategoryScheme(ServiceContext ctx, String categorySchemeUrn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canRetrieveOrFindCategorySchemeOrderVisualisation(ctx);
+
+        // Retrieve
+        List<CategorySchemeOrderVisualisation> categorySchemeOrderVisualisations = getCategoriesMetamacService().retrieveCategorySchemeOrderVisualisationsByCategoryScheme(ctx, categorySchemeUrn);
+
+        // Transform
+        return categoriesDo2DtoMapper.categorySchemeOrderVisualisationsDoToDto(categorySchemeOrderVisualisations);
+    }
+
+    @Override
+    public TaskImportationInfo importCategorySchemeOrdersTsv(ServiceContext ctx, String categorySchemeUrn, InputStream tsvStream, String fileName) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        CategoriesSecurityUtils.canImportCategorySchemeOrderVisualisations(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Import (can be in background)
+        File file = createTempFile(tsvStream, fileName);
+        return getCategoriesMetamacService().importCategorySchemeOrdersTsv(ctx, categorySchemeUrn, file, fileName, Boolean.TRUE);
+    }
+
+    @Override
+    public String exportCategoryOrdersTsv(ServiceContext ctx, String categorySchemeUrn) throws MetamacException {
+        // Security
+        CategoriesSecurityUtils.canExportCategoryOrdersTsv(ctx);
+
+        // Export
+        return getCategoriesMetamacService().exportCategoryOrdersTsv(ctx, categorySchemeUrn);
+    }
+
+    @Override
+    public void updateCategoryInOrderVisualisation(ServiceContext ctx, String categoryUrn, String categorySchemeOrderVisualisationUrn, Integer newCategoryIndex) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        CategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(ctx, categorySchemeVersion.getLifeCycleMetadata().getProcStatus());
+
+        // Update order
+        getCategoriesMetamacService().updateCategoryInOrderVisualisation(ctx, categoryUrn, categorySchemeOrderVisualisationUrn, newCategoryIndex);
+    }
+
+    @Override
+    public void updateCategoryParent(ServiceContext ctx, String categoryUrn, String newCategoryParentUrn) throws MetamacException {
+        // Security
+        CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        CategoriesSecurityUtils.canUpdateCategory(ctx, categorySchemeVersion);
+
+        // Update parent
+        getCategoriesMetamacService().updateCategoryParent(ctx, categoryUrn, newCategoryParentUrn);
+    }
+
+    @Override
     public void deleteCategory(ServiceContext ctx, String urn) throws MetamacException {
         // Security
         CategorySchemeVersionMetamac categorySchemeVersion = getCategoriesMetamacService().retrieveCategorySchemeByCategoryUrn(ctx, urn);
@@ -4003,12 +4112,13 @@ public class SrmCoreServiceFacadeImpl extends SrmCoreServiceFacadeImplBase {
     }
 
     @Override
-    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale, String categorySchemeOrderVisualisationUrn)
+            throws MetamacException {
         // Security
         CategoriesSecurityUtils.canRetrieveCategoriesByCategorySchemeUrn(ctx);
 
         // Retrieve
-        return getCategoriesMetamacService().retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, locale);
+        return getCategoriesMetamacService().retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, locale, categorySchemeOrderVisualisationUrn);
     }
 
     @Override

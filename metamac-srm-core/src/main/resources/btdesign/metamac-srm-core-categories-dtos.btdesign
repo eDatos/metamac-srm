@@ -1,5 +1,6 @@
 import "classpath:/btdesign/metamac-core-common-dtos.btdesign"
 import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-categories.btdesign"
+import "classpath:/btdesign/statistic-sdmx-v2_1-domain-dtos-core.btdesign"
 import "classpath:/btdesign/metamac-srm-core-enum.btdesign"
 import "classpath:/btdesign/metamac-srm-core-base-dtos.btdesign"
 import "classpath:/btdesign/metamac-srm-core-master-tables-dtos.btdesign"
@@ -13,6 +14,8 @@ Application DtosMetamacCategoryDomain {
 		
 		"Dto for CategorySchemeMetamac"
 		DataTransferObject CategorySchemeMetamacDto extends @CategorySchemeDto {
+			"Default order visualisation"
+			- @RelatedResourceDto defaultOrderVisualisation nullable;
 			"Life cycle"
 			- @LifeCycleDto lifeCycle required;
 			"Stream message status"
@@ -37,12 +40,20 @@ Application DtosMetamacCategoryDomain {
 		DataTransferObject CategoryMetamacBasicDto extends @ItemMetamacBasicDto {
 		}
 		
-		"Dto for CategoryElementDto"		
+		"Dto for CategoryElementDto"
 		DataTransferObject CategoryElementDto extends @ResourceElementDto {
 		"Is visible"
 			Boolean isVisible;
 		"Metadata file logo"
 		- @ResourceMetadataFileDto logo nullable;
-		}	
+		}
+
+		"Dto for CategorySchemeOrderVisualisation"
+		DataTransferObject CategorySchemeVisualisationDto extends @NameableArtefactDto {
+			"Category scheme"
+			- @RelatedResourceDto categoryScheme not nullable;
+			"Version for optimistic locking"
+			Long versionOptimisticLocking;
+		}
 	}
 }

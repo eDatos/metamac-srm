@@ -12,6 +12,7 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.NormalizationTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableElementOperationTypeEnum;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
 import org.siemac.metamac.srm.core.concept.dto.ConceptSchemeMetamacDto;
 import org.siemac.metamac.srm.web.client.MetamacSrmWeb;
 import org.siemac.metamac.srm.web.code.model.record.CodelistRecord;
@@ -187,6 +188,13 @@ public class CommonUtils {
 
     public static String getDefaultConceptSchemeOrderUrn(ConceptSchemeMetamacDto conceptSchemeMetamacDto) {
         return conceptSchemeMetamacDto.getDefaultOrderVisualisation() != null ? conceptSchemeMetamacDto.getDefaultOrderVisualisation().getUrn() : null;
+    }
+
+    public static String getDefaultCategorySchemeOrderUrn(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (categorySchemeMetamacDto == null) {
+            return null;
+        }
+        return categorySchemeMetamacDto.getDefaultOrderVisualisation() != null ? categorySchemeMetamacDto.getDefaultOrderVisualisation().getUrn() : null;
     }
 
 }

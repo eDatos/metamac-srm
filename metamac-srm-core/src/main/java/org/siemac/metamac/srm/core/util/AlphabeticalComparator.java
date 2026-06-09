@@ -2,11 +2,13 @@ package org.siemac.metamac.srm.core.util;
 
 import java.util.Comparator;
 
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
+import com.arte.statistic.sdmx.srm.core.category.domain.Category;
 import com.arte.statistic.sdmx.srm.core.code.domain.Code;
 import com.arte.statistic.sdmx.srm.core.concept.domain.Concept;
 
@@ -91,6 +93,42 @@ public class AlphabeticalComparator {
                 // The elements with order set as null will set to the end.
                 Integer c1Order = SrmServiceUtils.getConceptSchemeOrder(c1, columnIndex);
                 Integer c2Order = SrmServiceUtils.getConceptSchemeOrder(c2, columnIndex);
+                if (c1Order == null && c2Order == null) {
+                    return AlphabeticalComparator.calculeOrderCodeSiblingsAlphabetical(i1, i2);
+                } else if (c1Order == null) {
+                    return 1;
+                } else if (c2Order == null) {
+                    return -1;
+                } else {
+                    return c1Order.compareTo(c2Order);
+                }
+            } else if (i1.getParent() == null) {
+                return 1;
+            } else if (i2.getParent() == null) {
+                return -1;
+            } else {
+                return i1.getParent().getUuid().compareTo(i2.getParent().getUuid());
+            }
+        }
+
+    }
+
+    public static class CategorySchemeOrderIndexByLevelComparator implements Comparator<Category> {
+
+        private final int columnIndex;
+
+        public CategorySchemeOrderIndexByLevelComparator(int columnIndex) {
+            this.columnIndex = columnIndex;
+        }
+
+        @Override
+        public int compare(Category i1, Category i2) {
+            CategoryMetamac c1 = (CategoryMetamac) i1;
+            CategoryMetamac c2 = (CategoryMetamac) i2;
+            if (AlphabeticalComparator.isCodesSiblings(i1, i2)) {
+                // The elements with order set as null will set to the end.
+                Integer c1Order = SrmServiceUtils.getCategorySchemeOrder(c1, columnIndex);
+                Integer c2Order = SrmServiceUtils.getCategorySchemeOrder(c2, columnIndex);
                 if (c1Order == null && c2Order == null) {
                     return AlphabeticalComparator.calculeOrderCodeSiblingsAlphabetical(i1, i2);
                 } else if (c1Order == null) {

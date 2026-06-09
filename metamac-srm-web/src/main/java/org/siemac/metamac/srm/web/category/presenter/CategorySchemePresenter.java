@@ -51,10 +51,23 @@ import org.siemac.metamac.srm.web.shared.category.DeleteCategoryAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategoryResult;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorySchemesAction;
 import org.siemac.metamac.srm.web.shared.category.DeleteCategorySchemesResult;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategorySchemeOrdersAction;
+import org.siemac.metamac.srm.web.shared.category.DeleteCategorySchemeOrdersResult;
 import org.siemac.metamac.srm.web.shared.category.ExportCategoriesAction;
 import org.siemac.metamac.srm.web.shared.category.ExportCategoriesResult;
+import org.siemac.metamac.srm.web.shared.category.ExportCategoriesOrderAction;
+import org.siemac.metamac.srm.web.shared.category.ExportCategoriesOrderResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategoriesBySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoriesBySchemeResult;
+import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeOrdersAction;
+import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeOrdersResult;
+import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeOrderAction;
+import org.siemac.metamac.srm.web.shared.category.SaveCategorySchemeOrderResult;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryInOrderAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryInOrderResult;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryParentAction;
+import org.siemac.metamac.srm.web.shared.category.UpdateCategoryParentResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategorisationsByArtefactResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemeAction;
@@ -156,6 +169,10 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
         void setCategoriesForCategorisations(GetRelatedResourcesResult result);
         void setAnnotationTypeList(List<AnnotationTypeDto> annotationTypeDto);
         boolean mustFillAnnotationTypeList();
+
+        // Orders
+        void setCategorySchemeOrders(List<CategorySchemeVisualisationDto> orders);
+        void setCategoriesWithOrder(List<CategoryMetamacVisualisationResult> categories, CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto);
     }
 
     @ContentSlot
@@ -240,6 +257,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
                 retrieveCategoriesByScheme(result.getCategorySchemeMetamacDto().getUrn());
                 retrieveCategorySchemeVersions(result.getCategorySchemeMetamacDto().getUrn());
+                retrieveCategorySchemeOrders(result.getCategorySchemeMetamacDto().getUrn());
             }
         });
     }
@@ -280,6 +298,8 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                 fireSuccessMessage(getMessages().categorySchemeSaved());
                 getView().setCategoryScheme(categorySchemeMetamacDto);
 
+                retrieveCategoriesByScheme(result.getCategorySchemeSaved().getUrn());
+                retrieveCategorySchemeOrders(result.getCategorySchemeSaved().getUrn());
                 updateUrl();
                 retrieveCategorySchemeVersions(result.getCategorySchemeSaved().getUrn());
             }
@@ -502,7 +522,8 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
     //
 
     private void retrieveCategoriesByScheme(String categorySchemeUrn) {
-        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
+        String defaultOrderUrn = org.siemac.metamac.srm.web.code.utils.CommonUtils.getDefaultCategorySchemeOrderUrn(categorySchemeMetamacDto);
+        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale(), defaultOrderUrn),
                 new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
 
                     @Override
@@ -633,7 +654,8 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
     @Override
     public void retrieveCategories() {
-        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeMetamacDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale()),
+        String defaultOrderUrn = org.siemac.metamac.srm.web.code.utils.CommonUtils.getDefaultCategorySchemeOrderUrn(categorySchemeMetamacDto);
+        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeMetamacDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale(), defaultOrderUrn),
                 new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
 
                     @Override
@@ -704,6 +726,101 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
                     }
                 });
 
+    }
+
+    //
+    // CATEGORY SCHEME ORDERS
+    //
+
+    public void retrieveCategorySchemeOrders(String categorySchemeUrn) {
+        dispatcher.execute(new GetCategorySchemeOrdersAction(categorySchemeUrn), new WaitingAsyncCallbackHandlingError<GetCategorySchemeOrdersResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetCategorySchemeOrdersResult result) {
+                getView().setCategorySchemeOrders(result.getOrders());
+            }
+        });
+    }
+
+    @Override
+    public void saveCategorySchemeOrder(CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto) {
+        dispatcher.execute(new SaveCategorySchemeOrderAction(categorySchemeMetamacDto.getUrn(), categorySchemeOrderVisualisationDto),
+                new WaitingAsyncCallbackHandlingError<SaveCategorySchemeOrderResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(SaveCategorySchemeOrderResult result) {
+                        fireSuccessMessage(getMessages().categorySchemeOrderSaved());
+                        retrieveCategorySchemeOrders(categorySchemeMetamacDto.getUrn());
+                        retrieveCategoriesWithOrder(result.getCategorySchemeOrderSaved().getUrn());
+                    }
+                });
+    }
+
+    @Override
+    public void deleteCategorySchemeOrders(List<String> orderUrns) {
+        dispatcher.execute(new DeleteCategorySchemeOrdersAction(orderUrns), new WaitingAsyncCallbackHandlingError<DeleteCategorySchemeOrdersResult>(this) {
+
+            @Override
+            public void onWaitSuccess(DeleteCategorySchemeOrdersResult result) {
+                fireSuccessMessage(getMessages().codelistOrderDeleted());
+                retrieveCategorySchemeOrders(categorySchemeMetamacDto.getUrn());
+            }
+        });
+    }
+
+    @Override
+    public void retrieveCategoriesWithOrder(String orderVisualisationUrn) {
+        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeMetamacDto.getUrn(), ApplicationEditionLanguages.getCurrentLocale(), orderVisualisationUrn),
+                new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetCategoriesBySchemeResult result) {
+                        getView().setCategoriesWithOrder(result.getCategories(), result.getCategorySchemeOrderVisualisationDto());
+                    }
+                });
+    }
+
+    @Override
+    public void updateCategoryInOrder(String categoryUrn, final String categorySchemeOrderVisualisationUrn, int newCategoryIndex) {
+        dispatcher.execute(new UpdateCategoryInOrderAction(categoryUrn, categorySchemeOrderVisualisationUrn, newCategoryIndex),
+                new WaitingAsyncCallbackHandlingError<UpdateCategoryInOrderResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(UpdateCategoryInOrderResult result) {
+                        retrieveCategoriesWithOrder(categorySchemeOrderVisualisationUrn);
+                    }
+                });
+    }
+
+    @Override
+    public void updateCategoryParent(String categoryUrn, String newCategoryParentUrn) {
+        dispatcher.execute(new UpdateCategoryParentAction(categoryUrn, newCategoryParentUrn), new WaitingAsyncCallbackHandlingError<UpdateCategoryParentResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(UpdateCategoryParentResult result) {
+                retrieveCategoriesByScheme(categorySchemeMetamacDto.getUrn());
+            }
+        });
+    }
+
+    @Override
+    public void exportCategoriesOrder(String categorySchemeUrn) {
+        dispatcher.execute(new ExportCategoriesOrderAction(categorySchemeUrn), new WaitingAsyncCallbackHandlingError<ExportCategoriesOrderResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(CategorySchemePresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(ExportCategoriesOrderResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
     }
 
     //

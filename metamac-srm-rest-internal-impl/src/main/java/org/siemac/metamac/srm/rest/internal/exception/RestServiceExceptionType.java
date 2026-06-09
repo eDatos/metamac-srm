@@ -9,6 +9,7 @@ public class RestServiceExceptionType extends RestCommonServiceExceptionType {
     public static final RestCommonServiceExceptionType CONCEPT_SCHEME_ORDER_CONFIGURATION_NOT_FOUND       = create("exception.structural_resources.concept_scheme_order_configuration.not_found");
 
     public static final RestCommonServiceExceptionType CATEGORY_SCHEME_NOT_FOUND                          = create("exception.structural_resources.category_scheme.not_found");
+    public static final RestCommonServiceExceptionType CATEGORY_SCHEME_ORDER_CONFIGURATION_NOT_FOUND      = create("exception.structural_resources.category_scheme_order_configuration.not_found");
     public static final RestCommonServiceExceptionType CATEGORY_NOT_FOUND                                 = create("exception.structural_resources.category.not_found");
     public static final RestCommonServiceExceptionType CATEGORISATION_NOT_FOUND                           = create("exception.structural_resources.categorisation.not_found");
     public static final RestCommonServiceExceptionType CATEGORY_ELEMENT_NOT_FOUND                         = create("exception.structural_resources.category_element.not_found");

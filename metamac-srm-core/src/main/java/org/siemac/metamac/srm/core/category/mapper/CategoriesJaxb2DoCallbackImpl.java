@@ -94,6 +94,14 @@ public class CategoriesJaxb2DoCallbackImpl extends ImportationMetamacCommonValid
 
         // Fill Metadata
         categoriesMetamacService.preCreateCategoryScheme(ctx, targetMetamac);
+
+        // Order visualisations
+        if (previousMetamac != null) {
+            targetMetamac = categoriesMetamacService.versioningCategorySchemeOrderVisualisations(ctx, previousMetamac, targetMetamac);
+            categoriesMetamacService.recalculateCategoriesVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), true);
+        } else {
+            categoriesMetamacService.createCategorySchemeOrderVisualisationAlphabetical(ctx, targetMetamac);
+        }
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
@@ -407,6 +408,13 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
         if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT) && source.getExtensionPoint() != null) {
             target.setCategoryElement(toResource(((CategoryMetamacResultExtensionPoint) source.getExtensionPoint()).getCategoryElement()));
+        }
+
+        if (SrmRestInternalUtils.containsField(fields, SrmRestConstants.FIELD_INCLUDE_ORDER_CONFIGURATION)) {
+            Integer orderValue = SrmServiceUtils.getCategoryItemResultOrder(source);
+            if (orderValue != null) {
+                target.setOrderConfiguration(orderValue + 1); // add 1 to start in 1, instead of 0
+            }
         }
     }
 

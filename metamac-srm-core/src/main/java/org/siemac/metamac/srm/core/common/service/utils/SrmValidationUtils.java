@@ -7,6 +7,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItemBuilder;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.Variable;
@@ -112,6 +113,12 @@ public class SrmValidationUtils extends SdmxSrmValidationUtils {
     public static void checkNotAlphabeticalOrderVisualisation(ConceptSchemeOrderVisualisation orderVisualisation) throws MetamacException {
         if (SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
             throw new MetamacException(ServiceExceptionType.CONCEPT_SCHEME_ALPHABETICAL_ORDER_OPERATION_NOT_SUPPORTED, orderVisualisation.getNameableArtefact().getUrn());
+        }
+    }
+
+    public static void checkNotAlphabeticalOrderVisualisation(CategorySchemeOrderVisualisation orderVisualisation) throws MetamacException {
+        if (SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
+            throw new MetamacException(ServiceExceptionType.CATEGORY_SCHEME_ALPHABETICAL_ORDER_OPERATION_NOT_SUPPORTED, orderVisualisation.getNameableArtefact().getUrn());
         }
     }
 

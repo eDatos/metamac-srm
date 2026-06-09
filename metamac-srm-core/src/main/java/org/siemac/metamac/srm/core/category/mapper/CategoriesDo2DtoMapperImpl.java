@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.srm.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.master.mapper.MasterTablesDo2DtoMapper;
 import org.siemac.metamac.srm.core.resource.element.mapper.ResourceElementDo2DtoMapper;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.v2_1.domain.dto.category.CategorisationDto;
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TypeDozerCopyMode;
 
 @org.springframework.stereotype.Component("categoriesDo2DtoMapper")
 public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements CategoriesDo2DtoMapper {
@@ -44,6 +48,7 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         }
         CategorySchemeMetamacDto target = new CategorySchemeMetamacDto();
         target.setLifeCycle(lifeCycleDoToDto(source.getLifeCycleMetadata()));
+        target.setDefaultOrderVisualisation(categorySchemeOrderVisualisationDoToRelatedResourceDto(source.getDefaultOrderVisualisation()));
         target.setStreamMessageStatus(source.getStreamMessageStatus());
 
         do2DtoMapperSdmxSrm.categorySchemeDoToDto(source, target);
@@ -158,5 +163,44 @@ public class CategoriesDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements 
         resourceElementDo2DtoMapper.resourceElementDoToRelatedResourceDto(source, target);
 
         return target;
+    }
+
+    @Override
+    public List<CategorySchemeVisualisationDto> categorySchemeOrderVisualisationsDoToDto(List<CategorySchemeOrderVisualisation> sources) {
+        if (sources == null) {
+            return null;
+        }
+        List<CategorySchemeVisualisationDto> targets = new ArrayList<CategorySchemeVisualisationDto>(sources.size());
+        for (CategorySchemeOrderVisualisation source : sources) {
+            targets.add(categorySchemeOrderVisualisationDoToDto(source));
+        }
+        return targets;
+    }
+
+    @Override
+    public CategorySchemeVisualisationDto categorySchemeOrderVisualisationDoToDto(CategorySchemeOrderVisualisation source) {
+        if (source == null) {
+            return null;
+        }
+        CategorySchemeVisualisationDto target = new CategorySchemeVisualisationDto();
+        do2DtoMapperSdmxSrm.nameableArtefactToDto(TypeDozerCopyMode.COPY_ALL_METADATA, source.getNameableArtefact(), target);
+        target.setCategoryScheme(categorySchemeMetamacDoToRelatedResourceDto(source.getCategorySchemeVersion()));
+
+        // Overwrite these values in the final DTO
+        target.setId(source.getId());
+        target.setUuid(source.getUuid());
+        target.setVersion(source.getVersion());
+        target.setCreatedDate(CoreCommonUtil.transformDateTimeToDate(source.getCreatedDate()));
+        target.setCreatedBy(source.getCreatedBy());
+        target.setLastUpdated(CoreCommonUtil.transformDateTimeToDate(source.getLastUpdated()));
+        target.setLastUpdatedBy(source.getLastUpdatedBy());
+        target.setVersionOptimisticLocking(source.getVersion());
+        return target;
+    }
+
+    @Override
+    public RelatedResourceDto categorySchemeOrderVisualisationDoToRelatedResourceDto(CategorySchemeOrderVisualisation source) {
+        RelatedResourceDto relatedResourceDto = source == null ? null : getRelatedResourceDto(source.getNameableArtefact());
+        return relatedResourceDto;
     }
 }

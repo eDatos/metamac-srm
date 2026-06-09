@@ -349,7 +349,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     @Test
     public void testFindCategoriesWithCategoryElementExplicit() throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, "+categoryElement", null);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, "+categoryElement", null);
         assertNotNull(categories.getCategories().get(0).getCategoryElement());
     }
 
@@ -438,7 +438,9 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
         // Verify with mockito
         ArgumentCaptor<String> categorySchemeUrnArgument = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<ItemResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemResultSelection.class);
-        verify(categoriesService).retrieveCategoriesByCategorySchemeUrnUnordered(any(ServiceContext.class), categorySchemeUrnArgument.capture(), itemResultSelectionArgument.capture());
+        ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
+        verify(categoriesService).retrieveCategoriesByCategorySchemeUrnOrderedInDepth(any(ServiceContext.class), categorySchemeUrnArgument.capture(), itemResultSelectionArgument.capture(),
+                orderArgument.capture());
         assertEquals("urn:sdmx:org.sdmx.infomodel.categoryscheme.CategoryScheme=agency1:itemScheme1(01.000)", categorySchemeUrnArgument.getValue());
         assertEquals(true, itemResultSelectionArgument.getValue().isNames());
         assertEquals(false, itemResultSelectionArgument.getValue().isDescriptions());
@@ -613,7 +615,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
     private void testFindCategories(String agencyID, String resourceID, String version, String limit, String offset, String query, String orderBy, String fields) throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(agencyID, resourceID, version, query, orderBy, limit, offset, fields, null);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(agencyID, resourceID, version, query, orderBy, limit, offset, null, fields, null);
 
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
@@ -730,18 +732,19 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     }
 
     private void mockRetrieveCategoriesByCategoryScheme() throws MetamacException {
-        when(categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(any(ServiceContext.class), any(String.class), any(ItemResultSelection.class))).thenAnswer(new Answer<List<ItemResult>>() {
+        when(categoriesService.retrieveCategoriesByCategorySchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemResultSelection.class), any(String.class)))
+                .thenAnswer(new Answer<List<ItemResult>>() {
 
-            @Override
-            public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
-                // any
-                ItemResult category1 = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category1", null);
-                ItemResult category2 = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2", null);
-                ItemResult category2A = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2A", category2);
-                ItemResult category2B = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2B", category2);
-                return Arrays.asList(category1, category2, category2A, category2B);
-            };
-        });
+                    @Override
+                    public List<ItemResult> answer(InvocationOnMock invocation) throws Throwable {
+                        // any
+                        ItemResult category1 = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category1", null);
+                        ItemResult category2 = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2", null);
+                        ItemResult category2A = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2A", category2);
+                        ItemResult category2B = CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields("category2B", category2);
+                        return Arrays.asList(category1, category2, category2A, category2B);
+                    };
+                });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.core.base.serviceimpl.utils;
 
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistRestrictionVisualisation;
@@ -62,6 +63,14 @@ public class BaseReplaceFromTemporalMetamac extends BaseReplaceFromTemporal {
 
     public static ConceptSchemeOrderVisualisation replaceInternationalStringFromTemporalToConceptSchemeOrderVisualisation(ConceptSchemeOrderVisualisation target, ConceptSchemeOrderVisualisation temp,
             InternationalStringRepository internationalStringRepository) {
+
+        replaceInternationalStringFromTemporalToNameableArtefact(target.getNameableArtefact(), temp.getNameableArtefact(), internationalStringRepository);
+
+        return target;
+    }
+
+    public static CategorySchemeOrderVisualisation replaceInternationalStringFromTemporalToCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation target,
+            CategorySchemeOrderVisualisation temp, InternationalStringRepository internationalStringRepository) {
 
         replaceInternationalStringFromTemporalToNameableArtefact(target.getNameableArtefact(), temp.getNameableArtefact(), internationalStringRepository);
 

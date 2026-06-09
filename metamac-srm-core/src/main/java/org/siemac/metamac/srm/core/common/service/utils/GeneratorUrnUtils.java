@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.core.common.service.utils;
 
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistFamily;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodelistOrderVisualisation;
@@ -10,6 +11,7 @@ import org.siemac.metamac.srm.core.code.domain.VariableElement;
 import org.siemac.metamac.srm.core.code.domain.VariableFamily;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeOrderVisualisation;
 
+import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.code.domain.CodelistVersion;
 import com.arte.statistic.sdmx.srm.core.concept.domain.ConceptSchemeVersion;
 
@@ -95,5 +97,17 @@ public class GeneratorUrnUtils extends com.arte.statistic.sdmx.srm.core.common.s
 
         return generateSiemacStructuralResourcesConceptSchemeOrderVisualisationUrn(maintainerCode, conceptSchemeCode, conceptSchemeVersionNumber,
                 conceptSchemeOrderVisualisation.getNameableArtefact().getCode());
+    }
+
+    /**
+     * Generate order visualisation urn for category scheme
+     */
+    public static String generateCategorySchemeOrderVisualisationUrn(CategorySchemeVersion categorySchemeVersion, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation) {
+        String[] maintainerCode = generateSdmxUrnMaintainerIdFragment(categorySchemeVersion.getMaintainableArtefact().getMaintainer());
+        String categorySchemeCode = categorySchemeVersion.getMaintainableArtefact().getCode();
+        String categorySchemeVersionNumber = categorySchemeVersion.getMaintainableArtefact().getVersionLogic();
+
+        return generateSiemacStructuralResourcesCategorySchemeOrderVisualisationUrn(maintainerCode, categorySchemeCode, categorySchemeVersionNumber,
+                categorySchemeOrderVisualisation.getNameableArtefact().getCode());
     }
 }

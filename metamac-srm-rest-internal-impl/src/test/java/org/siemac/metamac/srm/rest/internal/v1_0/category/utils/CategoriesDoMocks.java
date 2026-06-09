@@ -1,18 +1,38 @@
 package org.siemac.metamac.srm.rest.internal.v1_0.category.utils;
 
+import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
 public class CategoriesDoMocks {
 
     public static CategorySchemeVersionMetamac mockCategoryScheme(String agencyID, String resourceID, String version) {
-        return CategoriesMetamacDoMocks.mockCategorySchemeFixedValues(agencyID, resourceID, version);
+        CategorySchemeVersionMetamac target = CategoriesMetamacDoMocks.mockCategorySchemeFixedValues(agencyID, resourceID, version);
+        addConfigurationsMetadatasToCategoryScheme(target);
+        return target;
+    }
+
+    private static void addConfigurationsMetadatasToCategoryScheme(CategorySchemeVersionMetamac target) {
+        target.addOrderVisualisation(mockCategorySchemeOrderVisualisation("order1"));
+        target.addOrderVisualisation(mockCategorySchemeOrderVisualisation("order2"));
+        target.addOrderVisualisation(mockCategorySchemeOrderVisualisation("order3"));
+        target.setDefaultOrderVisualisation(target.getOrderVisualisations().get(0));
+    }
+
+    private static CategorySchemeOrderVisualisation mockCategorySchemeOrderVisualisation(String code) {
+        CategorySchemeOrderVisualisation target = new CategorySchemeOrderVisualisation();
+        target.setNameableArtefact(new NameableArtefact());
+        target.getNameableArtefact().setCode(code);
+        target.getNameableArtefact().setName(BaseDoMocks.mockInternationalStringFixedValues("order", code));
+        return target;
     }
 
     public static CategoryMetamac mockCategory(String resourceID, CategorySchemeVersionMetamac categoryScheme, CategoryMetamac parent) {

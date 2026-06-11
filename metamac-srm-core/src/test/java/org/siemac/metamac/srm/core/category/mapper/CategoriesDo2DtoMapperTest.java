@@ -4,12 +4,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
@@ -41,6 +43,7 @@ public class CategoriesDo2DtoMapperTest extends SrmBaseTest {
     @Test
     public void testCategorySchemeMetamacDoToBasicDto() {
         CategorySchemeVersionMetamac entity = CategoriesMetamacDoMocks.mockCategorySchemeFixedValues("agency01", "categoryScheme01", "01.000");
+        entity.setDefaultOrderVisualisation(mockCategorySchemeOrderVisualisationWithAllMetadata());
         CategorySchemeMetamacBasicDto dto = categoriesDo2DtoMapper.categorySchemeMetamacDoToBasicDto(entity);
         CategoriesMetamacAsserts.assertEqualsCategoryScheme(entity, dto);
     }
@@ -67,6 +70,14 @@ public class CategoriesDo2DtoMapperTest extends SrmBaseTest {
     }
 
     @Test
+    public void testCategorySchemeOrderVisualisationDoToDto() {
+        CategorySchemeOrderVisualisation entity = mockCategorySchemeOrderVisualisationWithAllMetadata();
+
+        CategorySchemeVisualisationDto dto = categoriesDo2DtoMapper.categorySchemeOrderVisualisationDoToDto(entity);
+        CategoriesMetamacAsserts.assertEqualsCategorySchemeOrderVisualisation(entity, dto);
+    }
+
+    @Test
     public void testCategoryElementDoToDto() {
         CategoryElement entity = mockCategoryElementWithAllMetadata();
         mockCategoryElementWithAllMetadata();
@@ -78,6 +89,10 @@ public class CategoriesDo2DtoMapperTest extends SrmBaseTest {
     @Override
     protected String getDataSetFile() {
         return "dbunit/SrmCategoriesTest.xml";
+    }
+
+    private CategorySchemeOrderVisualisation mockCategorySchemeOrderVisualisationWithAllMetadata() {
+        return CategoriesMetamacDoMocks.mockCategorySchemeOrderVisualisationFixedValues("order01");
     }
 
     private CategoryElement mockCategoryElementWithAllMetadata() {

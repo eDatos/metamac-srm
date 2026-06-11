@@ -92,6 +92,14 @@ public class CategoriesDoMocks {
         return itemResult;
     }
 
+    public static ItemResult mockCategoryItemResultWithOrderConfiguration(String resourceID, ItemResult parent, int orderConfiguration) {
+        ItemResult itemResult = CategoriesMetamacDoMocks.mockCategoryResultFixedValuesWithOrderConfiguration(resourceID, parent, orderConfiguration);
+        itemResult.setUriProvider(null);
+        itemResult.setUrn(itemResult.getUrn().replace("urn:sdmx:org.sdmx.infomodel.xxx=", "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000)."));
+        itemResult.setUrnProvider(itemResult.getUrn());
+        return itemResult;
+    }
+
     public static ItemResult mockCategoryResultFixedValuesWithExtraFields(String resourceID, ItemResult parent) {
         ItemResult itemResult = CategoriesMetamacDoMocks.mockCategoryResultFixedValuesWithExtraFields(resourceID, parent);
         itemResult.setUriProvider(null);

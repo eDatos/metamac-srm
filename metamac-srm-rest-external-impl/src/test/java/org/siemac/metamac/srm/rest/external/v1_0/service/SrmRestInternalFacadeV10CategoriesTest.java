@@ -59,7 +59,7 @@ import org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMock
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
-import com.arte.statistic.sdmx.srm.core.common.domain.ItemResultSelection;
+import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 
 public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacadeV10BaseTest {
 
@@ -437,7 +437,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
 
         // Verify with mockito
         ArgumentCaptor<String> categorySchemeUrnArgument = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<ItemResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemResultSelection.class);
+        ArgumentCaptor<ItemMetamacResultSelection> itemResultSelectionArgument = ArgumentCaptor.forClass(ItemMetamacResultSelection.class);
         ArgumentCaptor<String> orderArgument = ArgumentCaptor.forClass(String.class);
         verify(categoriesService).retrieveCategoriesByCategorySchemeUrnOrderedInDepth(any(ServiceContext.class), categorySchemeUrnArgument.capture(), itemResultSelectionArgument.capture(),
                 orderArgument.capture());
@@ -732,7 +732,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     }
 
     private void mockRetrieveCategoriesByCategoryScheme() throws MetamacException {
-        when(categoriesService.retrieveCategoriesByCategorySchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemResultSelection.class), any(String.class)))
+        when(categoriesService.retrieveCategoriesByCategorySchemeUrnOrderedInDepth(any(ServiceContext.class), any(String.class), any(ItemMetamacResultSelection.class), any(String.class)))
                 .thenAnswer(new Answer<List<ItemResult>>() {
 
                     @Override

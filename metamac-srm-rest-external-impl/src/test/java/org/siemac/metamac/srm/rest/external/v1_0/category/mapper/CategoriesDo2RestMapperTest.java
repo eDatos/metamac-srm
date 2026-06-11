@@ -10,6 +10,7 @@ import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.Categorie
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategorisation;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategory;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategoryItemResult;
+import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategoryItemResultWithOrderConfiguration;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategoryResultFixedValuesWithExtraFields;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategoryScheme;
 import static org.siemac.metamac.srm.rest.external.v1_0.category.utils.CategoriesDoMocks.mockCategorySchemeWithCategories;
@@ -45,6 +46,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Category;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.VisualisationConfiguration;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
@@ -135,6 +137,26 @@ public class CategoriesDo2RestMapperTest {
         assertEquals(BigInteger.ONE, target.getChildLinks().getTotal());
         assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getChildLinks().getChildLinks().get(0).getKind());
         assertEquals(selfLink + "/categories", target.getChildLinks().getChildLinks().get(0).getHref());
+
+        assertEquals(BigInteger.valueOf(3), target.getOrderConfigurations().getTotal());
+        {
+            VisualisationConfiguration configuration = target.getOrderConfigurations().getVisualisationConfigurations().get(0);
+            assertEquals("order1", configuration.getId());
+            assertEqualsInternationalString("es", "order-order1 en Español", "en", "order-order1 in English", configuration.getName());
+            assertEquals(true, configuration.isDefault());
+        }
+        {
+            VisualisationConfiguration configuration = target.getOrderConfigurations().getVisualisationConfigurations().get(1);
+            assertEquals("order2", configuration.getId());
+            assertEqualsInternationalString("es", "order-order2 en Español", "en", "order-order2 in English", configuration.getName());
+            assertEquals(null, configuration.isDefault());
+        }
+        {
+            VisualisationConfiguration configuration = target.getOrderConfigurations().getVisualisationConfigurations().get(2);
+            assertEquals("order3", configuration.getId());
+            assertEqualsInternationalString("es", "order-order3 en Español", "en", "order-order3 in English", configuration.getName());
+            assertEquals(null, configuration.isDefault());
+        }
     }
 
     @Test
@@ -286,6 +308,41 @@ public class CategoriesDo2RestMapperTest {
         for (int i = 0; i < sources.size(); i++) {
             assertEqualsResource(categoryScheme1, null, sources.get(i), target.getCategories().get(i));
         }
+    }
+
+    @Test
+    public void testToCategoriesItemResultWithOrderConfigurationField() {
+
+        String agencyID = AGENCY_1;
+        String categorySchemeID = ITEM_SCHEME_1_CODE;
+        String version = VERSION_1;
+        Set<String> fields = new HashSet<>(Arrays.asList("+orderConfiguration"));
+
+        CategorySchemeVersionMetamac categoryScheme1 = mockCategoryScheme(agencyID, categorySchemeID, version);
+        List<ItemResult> sources = new ArrayList<ItemResult>();
+        sources.add(mockCategoryItemResultWithOrderConfiguration(ITEM_1_CODE, null, 0));
+        sources.add(mockCategoryItemResultWithOrderConfiguration(ITEM_2_CODE, null, 1));
+        sources.add(mockCategoryItemResultWithOrderConfiguration(ITEM_3_CODE, null, 2));
+
+        // Transform
+        Categories target = do2RestInternalMapper.toCategories(sources, categoryScheme1, fields);
+
+        // Validate
+        assertEquals(SrmRestConstants.KIND_CATEGORIES, target.getKind());
+        assertEquals("http://data.istac.es/apis/structural-resources/v1.0/categoryschemes" + "/" + agencyID + "/" + categorySchemeID + "/" + version + "/categories", target.getSelfLink());
+        assertEquals(null, target.getFirstLink());
+        assertEquals(null, target.getPreviousLink());
+        assertEquals(null, target.getNextLink());
+        assertEquals(null, target.getLastLink());
+        assertEquals(null, target.getLimit());
+        assertEquals(null, target.getOffset());
+        assertEquals(sources.size(), target.getTotal().intValue());
+
+        assertEquals(sources.size(), target.getCategories().size());
+        // orderConfiguration is exported starting at 1 (source value + 1)
+        assertEquals(Integer.valueOf(1), target.getCategories().get(0).getOrderConfiguration());
+        assertEquals(Integer.valueOf(2), target.getCategories().get(1).getOrderConfiguration());
+        assertEquals(Integer.valueOf(3), target.getCategories().get(2).getOrderConfiguration());
     }
 
     @Test

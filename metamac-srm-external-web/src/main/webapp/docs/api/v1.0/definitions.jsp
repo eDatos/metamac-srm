@@ -870,6 +870,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodelistFamilies.properties.visualizerHtmlLink.description']}",
                      "type":"string"
+                  },
+                  "orderConfigurations":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/structural-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.CategoryScheme.properties.orderConfigurations.description']}",
+                     "$ref":"#/definitions/VisualisationConfigurations"
                   }
                }
             }

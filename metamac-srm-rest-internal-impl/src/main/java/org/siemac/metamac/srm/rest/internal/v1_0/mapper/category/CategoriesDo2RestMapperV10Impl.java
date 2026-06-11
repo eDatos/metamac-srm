@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
@@ -22,11 +23,14 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.EniSchemaTypes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VisualisationConfiguration;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VisualisationConfigurations;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -37,6 +41,7 @@ import org.siemac.metamac.srm.rest.internal.v1_0.service.utils.SrmRestInternalUt
 import org.springframework.stereotype.Component;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
@@ -77,6 +82,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setManagementAppLink(toCategorySchemeManagementApplicationLink(source));
 
         toItemScheme(source, source.getLifeCycleMetadata(), target);
+        target.setOrderConfigurations(toCategorySchemeOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
 
         return target;
     }
@@ -535,6 +541,32 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     // API/categoryElements
     private String toCategoryElementsLink() {
         return RestUtils.createLink(getSrmApiInternalEndpointV10(), SrmRestConstants.LINK_SUBPATH_CATEGORY_ELEMENTS);
+    }
+
+    private VisualisationConfigurations toCategorySchemeOrderConfigurations(List<CategorySchemeOrderVisualisation> sources, CategorySchemeOrderVisualisation defaultOrderVisualisation) {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        VisualisationConfigurations targets = new VisualisationConfigurations();
+        for (CategorySchemeOrderVisualisation source : sources) {
+            VisualisationConfiguration target = toVisualisationConfiguration(source.getNameableArtefact());
+            if (target != null && defaultOrderVisualisation != null && defaultOrderVisualisation.getNameableArtefact().getCode().equals(source.getNameableArtefact().getCode())) {
+                target.setDefault(Boolean.TRUE);
+            }
+            targets.getVisualisationConfigurations().add(target);
+        }
+        targets.setTotal(BigInteger.valueOf(sources.size()));
+        return targets;
+    }
+
+    private VisualisationConfiguration toVisualisationConfiguration(NameableArtefact source) {
+        if (source == null) {
+            return null;
+        }
+        VisualisationConfiguration target = new VisualisationConfiguration();
+        target.setId(source.getCode());
+        target.setName(toInternationalString(source.getName()));
+        return target;
     }
 
 }

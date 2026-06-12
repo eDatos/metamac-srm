@@ -274,6 +274,12 @@ public class DsdListPresenter extends Presenter<DsdListPresenter.DsdListView, Ds
     @Override
     public void retrieveDimensionConceptsForSearchSection(int firstResult, int maxResults, String criteria) {
         ConceptWebCriteria conceptWebCriteria = new ConceptWebCriteria(criteria);
+
+        // Only last version to avoid duplicate entries in the popup after version is stripped from URNs.
+        // deduplicateIgnoringVersion is required because the isLastVersion OR filter can match multiple
+        conceptWebCriteria.setIsLastVersion(Boolean.TRUE);
+        conceptWebCriteria.setDeduplicateIgnoringVersion(true);
+
         dispatcher.execute(new GetConceptsAction(firstResult, maxResults, conceptWebCriteria), new WaitingAsyncCallbackHandlingError<GetConceptsResult>(this) {
 
             @Override
@@ -286,6 +292,9 @@ public class DsdListPresenter extends Presenter<DsdListPresenter.DsdListView, Ds
     @Override
     public void retrieveAttributeConceptsForSearchSection(int firstResult, int maxResults, String criteria) {
         ConceptWebCriteria conceptWebCriteria = new ConceptWebCriteria(criteria);
+        // See retrieveDimensionConceptsForSearchSection for explanation
+        conceptWebCriteria.setIsLastVersion(Boolean.TRUE);
+        conceptWebCriteria.setDeduplicateIgnoringVersion(true);
         dispatcher.execute(new GetConceptsAction(firstResult, maxResults, conceptWebCriteria), new WaitingAsyncCallbackHandlingError<GetConceptsResult>(this) {
 
             @Override
@@ -294,27 +303,29 @@ public class DsdListPresenter extends Presenter<DsdListPresenter.DsdListView, Ds
             }
         });
     }
-    
+
     @Override
     public void retrieveCodelistForSearchSection(int firstResult, int maxResults, String criteria) {
 
-        CodelistWebCriteria codelistWebCriteria = new CodelistWebCriteria(criteria); 
-        
-        dispatcher.execute(new GetCodelistsAction(firstResult, maxResults, codelistWebCriteria),
-                new WaitingAsyncCallbackHandlingError<GetCodelistsResult>(this) {
+        CodelistWebCriteria codelistWebCriteria = new CodelistWebCriteria(criteria);
 
-                    @Override
-                    public void onWaitFailure(Throwable caught) {
-                        ShowMessageEvent.fireErrorMessage(DsdListPresenter.this, caught);
-                    }
-                    
-                    @Override
-                    public void onWaitSuccess(GetCodelistsResult result) {
-                        getView().setCodelistsForSearchSection(result);
-                    }
-                });
+        codelistWebCriteria.setIsLastVersion(Boolean.TRUE);
+        codelistWebCriteria.setDeduplicateIgnoringVersion(true);
+
+        dispatcher.execute(new GetCodelistsAction(firstResult, maxResults, codelistWebCriteria), new WaitingAsyncCallbackHandlingError<GetCodelistsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(DsdListPresenter.this, caught);
+            }
+
+            @Override
+            public void onWaitSuccess(GetCodelistsResult result) {
+                getView().setCodelistsForSearchSection(result);
+            }
+        });
     }
-    
+
     //
     // NAVIGATION
     //

@@ -19,6 +19,7 @@ public class CodelistWebCriteria extends VersionableResourceWebCriteria {
     private String codelisUrnToReplaceCodelist;
     private NormalizationTypeEnum normalizationType;
     private List<Long> codeListIds;
+    private boolean deduplicateIgnoringVersion;
 
     public CodelistWebCriteria() {
     }
@@ -110,5 +111,13 @@ public class CodelistWebCriteria extends VersionableResourceWebCriteria {
 
     public void setCodeListIds(List<Long> codeListIds) {
         this.codeListIds = codeListIds;
+    }
+
+    public boolean isDeduplicateIgnoringVersion() {
+        return deduplicateIgnoringVersion;
+    }
+
+    public void setDeduplicateIgnoringVersion(boolean deduplicateIgnoringVersion) {
+        this.deduplicateIgnoringVersion = deduplicateIgnoringVersion;
     }
 }

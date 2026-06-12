@@ -655,7 +655,8 @@
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.parameters.7.description']}"
-                }
+                },
+                {"$ref":"#/components/parameters/langParam"}
             ],
             "responses":{
                "200":{

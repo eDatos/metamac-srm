@@ -1,7 +1,9 @@
 package org.siemac.metamac.srm.web.server.handlers.concept;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
@@ -10,6 +12,7 @@ import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.criteria.shared.MetamacCriteriaOrder;
 import org.siemac.metamac.core.common.criteria.shared.MetamacCriteriaOrder.OrderTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.srm.core.concept.dto.ConceptMetamacBasicDto;
 import org.siemac.metamac.srm.core.criteria.ConceptMetamacCriteriaOrderEnum;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
@@ -50,12 +53,17 @@ public class GetConceptsActionHandler extends SecurityActionHandler<GetConceptsA
         ConceptWebCriteria conceptWebCriteria = action.getCriteria();
 
         MetamacCriteriaConjunctionRestriction restriction = new MetamacCriteriaConjunctionRestriction();
-
-        // Concept criteria
         restriction.getRestrictions().add(MetamacWebCriteriaUtils.getConceptCriteriaRestriction(conceptWebCriteria));
         criteria.setRestriction(restriction);
 
-        // Pagination
+        // When deduplicateIgnoringVersion is set, multiple concept scheme versions may satisfy the
+        // isLastVersion OR filter simultaneously. Fetching all results and deduplicating by
+        // URN-without-version on the server guarantees a correct totalResults count.
+        if (conceptWebCriteria.isDeduplicateIgnoringVersion()) {
+            return executeWithDeduplication(action, criteria);
+        }
+
+        // Normal paginated flow
         criteria.setPaginator(new MetamacCriteriaPaginator());
         criteria.getPaginator().setFirstResult(action.getFirstResult());
         criteria.getPaginator().setMaximumResultSize(action.getMaxResults());
@@ -64,6 +72,38 @@ public class GetConceptsActionHandler extends SecurityActionHandler<GetConceptsA
         try {
             MetamacCriteriaResult<ConceptMetamacBasicDto> result = srmCoreServiceFacade.findConceptsByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria);
             return new GetConceptsResult(result.getResults(), result.getPaginatorResult().getFirstResult(), result.getPaginatorResult().getTotalResults());
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+    private GetConceptsResult executeWithDeduplication(GetConceptsAction action, MetamacCriteria criteria) throws ActionException {
+        try {
+            // Fetch all without pagination (capped to 1000 by MetamacCriteria2SculptorCriteria)
+            criteria.setPaginator(new MetamacCriteriaPaginator());
+            criteria.getPaginator().setFirstResult(0);
+            criteria.getPaginator().setMaximumResultSize(Integer.MAX_VALUE);
+            criteria.getPaginator().setCountTotalResults(false);
+            MetamacCriteriaResult<ConceptMetamacBasicDto> result = srmCoreServiceFacade.findConceptsByCondition(ServiceContextHolder.getCurrentServiceContext(), criteria);
+
+            // Deduplicate: first occurrence of each URN-without-version wins; LinkedHashMap preserves query order
+            Map<String, ConceptMetamacBasicDto> deduplicatedMap = new LinkedHashMap<String, ConceptMetamacBasicDto>();
+            for (ConceptMetamacBasicDto concept : result.getResults()) {
+                String versionlessUrn = UrnUtils.removeVersion(concept.getUrn());
+                if (!deduplicatedMap.containsKey(versionlessUrn)) {
+                    deduplicatedMap.put(versionlessUrn, concept);
+                }
+            }
+            List<ConceptMetamacBasicDto> deduplicatedList = new ArrayList<ConceptMetamacBasicDto>(deduplicatedMap.values());
+
+            // Apply pagination in Java
+            int totalResults = deduplicatedList.size();
+            int firstResult = action.getFirstResult();
+            int fromIndex = Math.min(firstResult, totalResults);
+            int toIndex = Math.min(firstResult + action.getMaxResults(), totalResults);
+            List<ConceptMetamacBasicDto> page = new ArrayList<ConceptMetamacBasicDto>(deduplicatedList.subList(fromIndex, toIndex));
+
+            return new GetConceptsResult(page, firstResult, totalResults);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

@@ -1,4 +1,11 @@
 ######################
+# Claude Code
+######################
+**/CLAUDE.local.md
+.claude/settings.local.json
+.claude/commands/
+
+######################
 # Project Specific
 ######################
 /src/main/webapp/content/css/main.css

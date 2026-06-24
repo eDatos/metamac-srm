@@ -7,6 +7,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
+import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 
 public interface NoticesRestInternalService {
 
@@ -21,5 +22,7 @@ public interface NoticesRestInternalService {
 
     public void createVariableElementStreamMessageErrorNotification(ServiceContext serviceContext, String user, List<VariableElement> variableElements, TypeExternalArtefactsEnum resourceType)
             throws MetamacException;
+
+    public void createDsdStreamMessageErrorNotification(ServiceContext serviceContext, String sourceResourceUrn, List<DataStructureDefinitionVersionMetamac> failedDsds) throws MetamacException;
 
 }

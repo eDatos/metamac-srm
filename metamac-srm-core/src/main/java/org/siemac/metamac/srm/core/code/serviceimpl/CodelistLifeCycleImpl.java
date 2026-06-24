@@ -1,6 +1,10 @@
 package org.siemac.metamac.srm.core.code.serviceimpl;
 
 import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arte.statistic.sdmx.srm.core.base.domain.Item;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
@@ -38,6 +42,8 @@ import com.arte.statistic.sdmx.srm.core.code.serviceapi.CodesService;
 
 @Service("codelistLifeCycle")
 public class CodelistLifeCycleImpl extends LifeCycleImpl {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CodelistLifeCycleImpl.class);
 
     @Autowired
     private ItemSchemeVersionRepository      itemSchemeVersionRepository;

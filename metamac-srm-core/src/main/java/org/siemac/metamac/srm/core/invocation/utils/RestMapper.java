@@ -4,10 +4,12 @@ import javax.annotation.PostConstruct;
 
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
+import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,6 +47,24 @@ public class RestMapper {
             resource.setManagementAppLink(
                     toVariableElementManagementApplicationLink(variableElement.getVariable().getNameableArtefact().getCode(), variableElement.getIdentifiableArtefact().getCode()));
             resource.setSelfLink(toVariableElementSelfLink(variableElement.getVariable().getNameableArtefact().getCode(), variableElement.getIdentifiableArtefact().getCode()));
+        }
+        return resource;
+    }
+
+    public ResourceInternal dsdToResourceInternal(DataStructureDefinitionVersionMetamac dsd) {
+        ResourceInternal resource = new ResourceInternal();
+        if (dsd != null) {
+            String agencyId = dsd.getMaintainableArtefact().getMaintainer().getIdAsMaintainer();
+            String code = dsd.getMaintainableArtefact().getCode();
+            String version = dsd.getMaintainableArtefact().getVersionLogic();
+            String urn = dsd.getMaintainableArtefact().getUrn();
+
+            resource.setId(code);
+            resource.setUrn(urn);
+            resource.setKind(SrmRestConstants.KIND_DATA_STRUCTURE);
+            resource.setName(toRestInternationalString(dsd.getMaintainableArtefact().getName()));
+            resource.setManagementAppLink(internalWebApplicationNavigation.buildDsdUrl(UrnUtils.removePrefix(urn)));
+            resource.setSelfLink(toDsdSelfLink(agencyId, code, version));
         }
         return resource;
     }
@@ -90,6 +110,25 @@ public class RestMapper {
         ResourceLink target = new ResourceLink();
         target.setKind(SrmRestConstants.KIND_VARIABLE_ELEMENT);
         target.setHref(toVariableElementLink(variableCode, variableElementCode));
+        return target;
+    }
+
+    // API/datastructures
+    private String toDataStructuresLink() {
+        return RestUtils.createLink(srmApiInternalEndpointV10, SrmRestConstants.LINK_SUBPATH_DATA_STRUCTURES);
+    }
+
+    private String toDataStructureLink(String agencyId, String dsdCode, String version) {
+        String link = RestUtils.createLink(toDataStructuresLink(), agencyId);
+        link = RestUtils.createLink(link, dsdCode);
+        link = RestUtils.createLink(link, version);
+        return link;
+    }
+
+    private ResourceLink toDsdSelfLink(String agencyId, String dsdCode, String version) {
+        ResourceLink target = new ResourceLink();
+        target.setKind(SrmRestConstants.KIND_DATA_STRUCTURE);
+        target.setHref(toDataStructureLink(agencyId, dsdCode, version));
         return target;
     }
 }

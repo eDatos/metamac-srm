@@ -57,7 +57,7 @@ public class MetamacRestApisLocator {
 
     public Dataset retrieveDatasetVersion(String agencyID, String resourceID, String version) throws MetamacException {
         try {
-            return getStatisticalResourcesV1_0().retrieveDataset(agencyID, resourceID, version, null, FIELD_EXCLUDE_METADATA + "," + FIELD_EXCLUDE_DATA, null, null);
+            return getStatisticalResourcesV1_0().retrieveDataset(agencyID, resourceID, version, null, FIELD_EXCLUDE_METADATA + "," + FIELD_EXCLUDE_DATA, null, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }

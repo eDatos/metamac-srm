@@ -16,5 +16,6 @@ public class ServiceNoticeMessage {
     // Errors
     public static final String STREAM_MESSAGE_SEND_ERROR                     = "notice_message.srm.action.stream_messaging.send.error";
     public static final String STREAM_MESSAGE_SEND_VARIABLE_ELEMENT_ERROR    = "notice_message.srm.action.stream_messaging.send_variable_elements.error";
+    public static final String STREAM_MESSAGE_SEND_DSD_ERROR                 = "notice_message.srm.action.stream_messaging.send_dsds.error";
 
 }

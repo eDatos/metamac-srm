@@ -1675,4 +1675,26 @@ public class DataStructureDefinitionMetamacServiceTest extends SrmBaseTest imple
         assertEquals(isUsed, true);
     }
 
+    @Override
+    @Test
+    public void testRetrievePublishedDataStructureDefinitionVersionsByComponentUrn() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        // Search by codelist URN: CODELIST_7_V1 is used by DSD_4_V1 (EXTERNALLY_PUBLISHED) and DSD_6_V1 (EXTERNALLY_PUBLISHED)
+        List<DataStructureDefinitionVersionMetamac> results = dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, CODELIST_7_V1);
+        assertNotNull(results);
+        assertEquals(2, results.size());
+
+        // Search by concept scheme URN: CONCEPT_SCHEME_7_V1 is used by DSD_6_V1 (EXTERNALLY_PUBLISHED). DSD_7_V1 uses it but is DIFFUSION_VALIDATION so excluded.
+        results = dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, CONCEPT_SCHEME_7_V1);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals(DSD_6_V1, results.get(0).getMaintainableArtefact().getUrn());
+
+        // Search with a URN not used by any published DSD
+        results = dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=SDMX01:NON_EXISTENT(01.000)");
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
+
 }

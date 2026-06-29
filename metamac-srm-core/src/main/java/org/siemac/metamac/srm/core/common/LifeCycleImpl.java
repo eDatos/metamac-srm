@@ -15,16 +15,30 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItemBuilder;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
+import org.siemac.metamac.srm.core.code.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
+import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
+import org.siemac.metamac.srm.core.dsd.serviceapi.DataStructureDefinitionMetamacService;
+import org.siemac.metamac.srm.core.dsd.serviceimpl.DsdStreamMessagingCallbackImpl;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
+import org.siemac.metamac.srm.core.serviceapi.StreamMessagingService;
 import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublicationResult;
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
@@ -37,24 +51,41 @@ import com.arte.statistic.sdmx.srm.core.organisation.domain.Organisation;
 
 public abstract class LifeCycleImpl implements LifeCycle {
 
-    protected static final ProcStatusEnum[] procStatusToSendToProductionValidation = {ProcStatusEnum.DRAFT, ProcStatusEnum.VALIDATION_REJECTED};
-    protected static final ProcStatusEnum[] procStatusToSendToDiffusionValidation  = {ProcStatusEnum.PRODUCTION_VALIDATION};
-    protected static final ProcStatusEnum[] procStatusToRejectProductionValidation = {ProcStatusEnum.PRODUCTION_VALIDATION};
-    protected static final ProcStatusEnum[] procStatusToRejectDiffusionValidation  = {ProcStatusEnum.DIFFUSION_VALIDATION};
-    protected static final ProcStatusEnum[] procStatusToPublishInternally          = {ProcStatusEnum.DIFFUSION_VALIDATION};
-    protected static final ProcStatusEnum[] procStatusToPublishExternally          = {ProcStatusEnum.INTERNALLY_PUBLISHED};
+    private static final Logger                   LOG                                    = LoggerFactory.getLogger(LifeCycleImpl.class);
+
+    protected static final ProcStatusEnum[]       procStatusToSendToProductionValidation = {ProcStatusEnum.DRAFT, ProcStatusEnum.VALIDATION_REJECTED};
+    protected static final ProcStatusEnum[]       procStatusToSendToDiffusionValidation  = {ProcStatusEnum.PRODUCTION_VALIDATION};
+    protected static final ProcStatusEnum[]       procStatusToRejectProductionValidation = {ProcStatusEnum.PRODUCTION_VALIDATION};
+    protected static final ProcStatusEnum[]       procStatusToRejectDiffusionValidation  = {ProcStatusEnum.DIFFUSION_VALIDATION};
+    protected static final ProcStatusEnum[]       procStatusToPublishInternally          = {ProcStatusEnum.DIFFUSION_VALIDATION};
+    protected static final ProcStatusEnum[]       procStatusToPublishExternally          = {ProcStatusEnum.INTERNALLY_PUBLISHED};
 
     // Due to java restrictions, this must be inialized out of constructor of LifeCycle
-    protected LifeCycleCallback             callback                               = null;
+    protected LifeCycleCallback                   callback                               = null;
 
     @Autowired
-    private OrganisationsMetamacService     organisationsService;
+    private OrganisationsMetamacService           organisationsService;
 
     @Autowired
-    private CategoriesMetamacService        categoriesService;
+    private CategoriesMetamacService              categoriesService;
 
     @Autowired
-    private SrmConfiguration                srmConfiguration;
+    private SrmConfiguration                      srmConfiguration;
+
+    @Autowired
+    private DataStructureDefinitionMetamacService dataStructureDefinitionMetamacService;
+
+    @Autowired
+    private StreamMessagingService                streamMessagingService;
+
+    @Autowired
+    private DsdStreamMessagingCallbackImpl        dsdStreamMessagingCallback;
+
+    @Autowired
+    private NoticesRestInternalService            noticesRestInternalService;
+
+    @Autowired
+    private PlatformTransactionManager            transactionManager;
 
     public LifeCycleImpl() {
     }
@@ -204,6 +235,7 @@ public abstract class LifeCycleImpl implements LifeCycle {
         } else {
             sendStreamMessageResult = callback.notifyPublicationAfterCommit(srmResourceVersion);
         }
+        scheduleAssociatedDsdsNotification(ctx, srmResourceVersion);
 
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), srmResourceVersion);
     }
@@ -473,6 +505,74 @@ public abstract class LifeCycleImpl implements LifeCycle {
         public Boolean isTemporalToPublishExternally(ServiceContext ctx, Object srmResourceVersion) throws MetamacException;
         public SendStreamMessageResult notifyPublicationAfterCommit(Object message);
         public SendStreamMessageResult notifyPublication(Object message);
+    }
+
+    /**
+     * Registers an afterCommit hook to notify associated DSDs once the current transaction commits.
+     * <p>
+     * The call to {@code notifyAssociatedDsds} is wrapped in a {@link TransactionTemplate} with
+     * {@code PROPAGATION_REQUIRES_NEW} because {@code afterCommit} runs while the outer transaction's
+     * synchronizations are still active on the thread (cleanup has not yet occurred). Using
+     * {@code PROPAGATION_REQUIRED} would reuse the existing synchronization context without binding a
+     * new {@code EntityManager}, causing {@code FlushingInterceptorBase} — an {@code @AfterReturning}
+     * AOP advice on {@code sendMessage} — to call {@code entityManager.flush()} with no active
+     * transaction, throwing {@code TransactionRequiredException}. {@code PROPAGATION_REQUIRES_NEW}
+     * suspends the existing synchronizations, creates a fresh transaction context with its own
+     * {@code EntityManager} binding, and restores the previous state on completion.
+     */
+    private void scheduleAssociatedDsdsNotification(final ServiceContext ctx, final Object srmResourceVersion) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+            @Override
+            public void afterCommit() {
+                TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
+                txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                txTemplate.execute(new TransactionCallbackWithoutResult() {
+
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        notifyAssociatedDsds(ctx, srmResourceVersion);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Notifies associated externally-published DSDs when a resource is republished via temporal version.
+     * Sends Kafka messages for each associated DSD and creates an error notification if any fail.
+     */
+    private void notifyAssociatedDsds(ServiceContext ctx, Object srmResourceVersion) {
+        String urn = callback.getMaintainableArtefact(srmResourceVersion).getUrn();
+        try {
+            List<DataStructureDefinitionVersionMetamac> publishedDsds = dataStructureDefinitionMetamacService.retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ctx, urn);
+            List<DataStructureDefinitionVersionMetamac> failedDsds = new ArrayList<DataStructureDefinitionVersionMetamac>();
+            for (DataStructureDefinitionVersionMetamac dsd : publishedDsds) {
+                DataStructureDefinitionVersionMetamac failed = sendDsdNotification(dsd, urn);
+                if (failed != null) {
+                    failedDsds.add(failed);
+                }
+            }
+            if (!failedDsds.isEmpty()) {
+                try {
+                    noticesRestInternalService.createDsdStreamMessageErrorNotification(ctx, urn, failedDsds);
+                } catch (MetamacException noticeException) {
+                    LOG.error("Error sending error notification for DSD kafka messages after resource {} temporal republish", urn, noticeException);
+                }
+            }
+        } catch (MetamacException e) {
+            LOG.warn("Failed to find DSDs for resource {} during temporal republish notification", urn, e);
+        }
+    }
+
+    private DataStructureDefinitionVersionMetamac sendDsdNotification(DataStructureDefinitionVersionMetamac dsd, String sourceUrn) {
+        try {
+            streamMessagingService.sendMessage(dsd, dsdStreamMessagingCallback);
+            return null;
+        } catch (Exception e) {
+            LOG.warn("Failed to send DSD notification for DSD {} after resource {} temporal republish", new Object[]{dsd.getMaintainableArtefact().getUrn(), sourceUrn, e});
+            return dsd;
+        }
     }
 
     @Override

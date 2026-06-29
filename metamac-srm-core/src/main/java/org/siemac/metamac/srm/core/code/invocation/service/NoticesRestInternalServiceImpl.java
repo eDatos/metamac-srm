@@ -22,6 +22,7 @@ import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.MessageBuilder;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.NoticeBuilder;
 import org.siemac.metamac.srm.core.code.domain.VariableElement;
+import org.siemac.metamac.srm.core.dsd.domain.DataStructureDefinitionVersionMetamac;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionUtils;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
@@ -193,6 +194,38 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         createNotificationForResources(serviceContext, user, ServiceNoticeAction.STREAM_MESSAGE_SEND, ServiceNoticeMessage.STREAM_MESSAGE_SEND_VARIABLE_ELEMENT_ERROR,
                 resources.toArray(new ResourceInternal[resources.size()]), resourceType, null);
 
+    }
+
+    @Override
+    public void createDsdStreamMessageErrorNotification(ServiceContext serviceContext, String sourceResourceUrn, List<DataStructureDefinitionVersionMetamac> failedDsds) throws MetamacException {
+
+        List<ResourceInternal> resources = new ArrayList<ResourceInternal>();
+        for (DataStructureDefinitionVersionMetamac dsd : failedDsds) {
+            resources.add(restMapper.dsdToResourceInternal(dsd));
+        }
+
+        Locale locale = ServiceContextUtils.getLocale(serviceContext);
+        String subject = getLocalizedMessage(locale, ServiceNoticeAction.STREAM_MESSAGE_SEND);
+        String messageText = getLocalizedMessage(locale, ServiceNoticeMessage.STREAM_MESSAGE_SEND_DSD_ERROR);
+        messageText = MessageFormat.format(messageText, sourceResourceUrn);
+
+        String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES.getName();
+        MetamacApplicationsEnum[] applications = {MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES};
+
+        Message message = MessageBuilder.message().withText(messageText).withResources(resources.toArray(new ResourceInternal[resources.size()])).build();
+
+        try {
+            Notice notification = NoticeBuilder.notification()
+                    .withMessages(message)
+                    .withSendingApplication(sendingApp)
+                    .withRoles(MetamacRolesEnum.ADMINISTRADOR)
+                    .withApplications(applications)
+                    .withSubject(subject)
+                    .build();
+            restApiLocator.getNoticesRestInternalFacadeV10().createNotice(notification);
+        } catch (Exception e) {
+            throw manageNoticesInternalRestException(e);
+        }
     }
 
     // -------------------------------------------------------------------------------------------------

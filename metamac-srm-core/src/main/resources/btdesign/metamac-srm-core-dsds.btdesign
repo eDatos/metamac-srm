@@ -157,6 +157,9 @@ Application DsdsMetamac {
 			"Check codelist is used by dsd"
 			boolean checkCodelistIsUsedByDsd(String codelistUrn) throws MetamacException;
 
+			"Retrieve externally published data structure definitions that reference a given component URN (codelist or concept scheme)"
+			List<@DataStructureDefinitionVersionMetamac> retrievePublishedDataStructureDefinitionVersionsByComponentUrn(String componentUrn) throws MetamacException;
+
 		}
 
 		// ----------------------------------------------------------------

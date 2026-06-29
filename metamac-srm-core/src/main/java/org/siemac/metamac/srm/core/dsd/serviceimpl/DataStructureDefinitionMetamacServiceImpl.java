@@ -2023,4 +2023,40 @@ public class DataStructureDefinitionMetamacServiceImpl extends DataStructureDefi
         return !dsdWithCodelist.getValues().isEmpty();
     }
 
+    @Override
+    public List<DataStructureDefinitionVersionMetamac> retrievePublishedDataStructureDefinitionVersionsByComponentUrn(ServiceContext ctx, String componentUrn) throws MetamacException {
+        componentUrn = GeneratorUrnUtils.makeUrnFromTemporal(componentUrn);
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        Set<Long> foundDsdIds = new HashSet<>();
+        List<DataStructureDefinitionVersionMetamac> result = new ArrayList<>();
+
+        // Search by codelist enumeration representation
+        List<ConditionalCriteria> criteriaCodelist = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
+                .withProperty(DataStructureDefinitionVersionMetamacProperties.grouping().components().localRepresentation().enumerationCodelist().maintainableArtefact().urn()).eq(componentUrn)
+                .and()
+                .withProperty(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().procStatus()).in(ProcStatusEnum.EXTERNALLY_PUBLISHED, ProcStatusEnum.INTERNALLY_PUBLISHED)
+                .build();
+        PagedResult<DataStructureDefinitionVersion> dsdsByCodelist = dataStructureDefinitionService.findDataStructureDefinitionByCondition(ctx, criteriaCodelist, pagingParameter);
+        for (DataStructureDefinitionVersion dsd : dsdsByCodelist.getValues()) {
+            if (foundDsdIds.add(dsd.getId())) {
+                result.add((DataStructureDefinitionVersionMetamac) dsd);
+            }
+        }
+
+        // Search by concept scheme enumeration representation
+        List<ConditionalCriteria> criteriaConceptScheme = ConditionalCriteriaBuilder.criteriaFor(DataStructureDefinitionVersionMetamac.class)
+                .withProperty(DataStructureDefinitionVersionMetamacProperties.grouping().components().localRepresentation().enumerationConceptScheme().maintainableArtefact().urn()).eq(componentUrn)
+                .and()
+                .withProperty(DataStructureDefinitionVersionMetamacProperties.lifeCycleMetadata().procStatus()).in(ProcStatusEnum.EXTERNALLY_PUBLISHED, ProcStatusEnum.INTERNALLY_PUBLISHED)
+                .build();
+        PagedResult<DataStructureDefinitionVersion> dsdsByConceptScheme = dataStructureDefinitionService.findDataStructureDefinitionByCondition(ctx, criteriaConceptScheme, pagingParameter);
+        for (DataStructureDefinitionVersion dsd : dsdsByConceptScheme.getValues()) {
+            if (foundDsdIds.add(dsd.getId())) {
+                result.add((DataStructureDefinitionVersionMetamac) dsd);
+            }
+        }
+
+        return result;
+    }
+
 }

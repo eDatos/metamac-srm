@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -43,6 +46,8 @@ import com.arte.statistic.sdmx.srm.core.concept.serviceapi.ConceptsService;
 
 @Service("conceptSchemeLifeCycle")
 public class ConceptSchemeLifeCycleImpl extends LifeCycleImpl {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConceptSchemeLifeCycleImpl.class);
 
     @Autowired
     private ItemSchemeVersionRepository              itemSchemeVersionRepository;

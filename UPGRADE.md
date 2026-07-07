@@ -11,6 +11,16 @@
 ## 8.X.X a 8.X.1.SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/X.X.X/db/srm/postgresql/] 
+  
+* **Deshabilitar sobreescritura de headers para srm (structural resources)** 
+  * En EDATOS-5431 que ya se desplegó se configuró haproxy para permitir deshabilita la sobrescritura de los headers de la caché en los servidores de eDatos para statistical-resources y srm externos. En el despliegue, como solo afectaba a las apis de statistical-resources esa tarea, no se realizó está configuración para srm. Por lo tanto, habrá que realizar la misma configuración que se realizó para statistical-resources en el módulo de structural resources.
+    
+    * Esta versión requiere de modificaciones en Apache, según corresponda, para que los headers que ahora sirve la aplicación para el cacheo de las peticiones no se vean sobrescritos. Concretamente, se deben modificar las siguientes líneas:
+      * **Apache**
+        * Se debe añadir la siguiente regla a los entornos afectados y por la URL adecuada:
+          ```
+          RewriteRule ^/structural-resources(.*) - [ENV=IGNORE_SET_CACHE]
+          ```
 
 
 ## 8.14.1 a 8.15.0

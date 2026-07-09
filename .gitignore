@@ -149,4 +149,8 @@ Desktop.ini
 /target/
 /bin/
 metamac-srm-core/src/test/resources/data/srm/conf/static/resources-LOCAL.xml
-**/.claude/*.local.*
+
+# Claude Code
+.claude/settings.local.json
+.claude/commands/
+*.local.md

@@ -1,8 +1,11 @@
 package org.siemac.metamac.srm.rest.external.constants;
 
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 
 public class SrmRestExternalConstants extends SrmRestConstants {
+
+    public static final ServiceContext SERVICE_CONTEXT = new ServiceContext("restInternal", "restInternal", "restInternal");
 
     public static final String VARIABLE_ELEMENT_FEATURE_COLLECTION_VALUE = "FeatureCollection";
     public static final String VARIABLE_ELEMENT_FEATURE_VALUE            = "Feature";

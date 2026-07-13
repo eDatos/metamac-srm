@@ -19,6 +19,13 @@
 <!--             <cxf:logging /> -->
 <!--         </jaxrs:features> -->
 
+        <jaxrs:inInterceptors>
+            <ref bean="cacheRequestInterceptor"/>
+        </jaxrs:inInterceptors>
+        <jaxrs:outInterceptors>
+            <ref bean="cacheResponseInterceptor"/>
+        </jaxrs:outInterceptors>
+
         <jaxrs:serviceBeans>
             <ref bean="srmRestExternalFacadeV10" />
         </jaxrs:serviceBeans>

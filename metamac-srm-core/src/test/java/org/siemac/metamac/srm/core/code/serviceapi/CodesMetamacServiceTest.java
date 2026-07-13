@@ -8056,6 +8056,13 @@ public class CodesMetamacServiceTest extends SrmBaseTest implements CodesMetamac
 
     @Override
     @Test
+    public void testFindMaxLastUpdatedVariableElement() throws Exception {
+        DateTime lastUpdated = codesService.findMaxLastUpdatedVariableElement(getServiceContextAdministrador(), VARIABLE_2);
+        assertNotNull(lastUpdated);
+    }
+
+    @Override
+    @Test
     public void testDeleteVariableElement() throws Exception {
 
         String variableElementUrn = VARIABLE_2_VARIABLE_ELEMENT_6;

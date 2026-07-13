@@ -2511,6 +2511,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         }
         variableElement = getVariableElementRepository().save(variableElement);
 
+        // Update elementsLastUpdated on variable to track changes for cache invalidation
+        Variable variableForCreate = variableElement.getVariable();
+        variableForCreate.setElementsLastUpdated(new DateTime());
+        getVariableRepository().save(variableForCreate);
+
         SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElement);
 
         return new ResourceVersionPublicationResult<>(sendStreamMessageResult.getContent(), sendStreamMessageResult.getExceptions(), variableElement);
@@ -2543,6 +2548,11 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
 
         // Update
         VariableElement variableElementResult = getVariableElementRepository().save(variableElement);
+
+        // Update elementsLastUpdated on variable to track changes for cache invalidation
+        Variable variableForUpdate = variableElementResult.getVariable();
+        variableForUpdate.setElementsLastUpdated(new DateTime());
+        getVariableRepository().save(variableForUpdate);
 
         SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElementResult);
 
@@ -2617,15 +2627,36 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
     }
 
     @Override
+    public DateTime findMaxLastUpdatedVariableElement(ServiceContext ctx, String variableUrn) throws MetamacException {
+        Variable variable = retrieveVariableByUrn(variableUrn);
+        DateTime variableLastUpdated = variable.getLastUpdated();
+        DateTime elementsLastUpdated = variable.getElementsLastUpdated();
+        if (variableLastUpdated == null) {
+            return elementsLastUpdated;
+        }
+        if (elementsLastUpdated == null) {
+            return variableLastUpdated;
+        }
+        return variableLastUpdated.isAfter(elementsLastUpdated) ? variableLastUpdated : elementsLastUpdated;
+    }
+
+    @Override
     public void deleteVariableElement(ServiceContext ctx, String urn) throws MetamacException {
         // Validation
         CodesMetamacInvocationValidator.checkDeleteArtefact(urn);
         VariableElement variableElementToDelete = retrieveVariableElementByUrn(urn);
         checkVariableElementCanBeDeleted(variableElementToDelete);
 
+        Variable variableForDelete = variableElementToDelete.getVariable();
+
         // Delete
         variableElementToDelete.removeAllReplaceToVariableElements(); // variable element can be deleted although it replaces to another variable element
         getVariableElementRepository().delete(variableElementToDelete);
+
+        // Update elementsLastUpdated on variable to track changes for cache invalidation
+        variableForDelete.setElementsLastUpdated(new DateTime());
+        getVariableRepository().save(variableForDelete);
+
         variableElementToDelete.setValidTo(new DateTime());
         SendStreamMessageResult sendStreamMessageResult = notifyVariableElementPublication(ctx, variableElementToDelete);
     }
@@ -2813,6 +2844,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
             notifyVariableElementPublication(ctx, variableElement);
             getVariableElementRepository().save(variableElement);
         }
+
+        // Update elementsLastUpdated on variable to track changes for cache invalidation
+        variable.setElementsLastUpdated(new DateTime());
+        getVariableRepository().save(variable);
 
         return new TaskImportationInfo(Boolean.FALSE, informationItems);
     }
@@ -4691,6 +4726,10 @@ public class CodesMetamacServiceImpl extends CodesMetamacServiceImplBase {
         for (VariableElement variableElement : variableElementsToPersist) {
             getVariableElementRepository().save(variableElement);
         }
+
+        // Update elementsLastUpdated on variable to track changes for cache invalidation
+        variable.setElementsLastUpdated(new DateTime());
+        getVariableRepository().save(variable);
 
         // Update global date of last update geographic information
         miscMetamacService.updateLastUpdatedVariableElementsGeographicalInformation(ctx, new DateTime());

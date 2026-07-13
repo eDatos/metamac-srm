@@ -135,7 +135,14 @@ import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamacProper
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.organisation.serviceapi.OrganisationsMetamacService;
+import org.siemac.metamac.rest.common.annotation.CacheableMethod;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.srm.rest.external.constants.SrmRestExternalConstants;
+import org.siemac.metamac.srm.rest.external.domain.cache.CategorySchemeCacheableResource;
+import org.siemac.metamac.srm.rest.external.domain.cache.CodelistCacheableResource;
+import org.siemac.metamac.srm.rest.external.domain.cache.ConceptSchemeCacheableResource;
+import org.siemac.metamac.srm.rest.external.domain.cache.OrganisationSchemeCacheableResource;
+import org.siemac.metamac.srm.rest.external.domain.cache.VariableElementCacheableResource;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.category.CategoriesRest2DoMapper;
@@ -228,7 +235,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     @Autowired
     private DataStructuresDo2RestMapperV10        dataStructuresDo2RestMapperV10;
 
-    private final ServiceContext                  ctx                      = new ServiceContext("restInternal", "restInternal", "restInternal");
+    private final ServiceContext                  ctx                      = SrmRestExternalConstants.SERVICE_CONTEXT;
     private final Logger                          logger                   = LoggerFactory.getLogger(SrmRestExternalFacadeV10Impl.class);
     private final PagingParameter                 pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
 
@@ -264,6 +271,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(ConceptSchemeCacheableResource.class)
     @Override
     public Concepts findConcepts(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields) {
         try {
@@ -274,16 +282,19 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(ConceptSchemeCacheableResource.class)
     @Override
     public Response findConceptsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields) {
         return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "tsv");
     }
 
+    @CacheableMethod(ConceptSchemeCacheableResource.class)
     @Override
     public Response findConceptsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields) {
         return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "csv");
     }
 
+    @CacheableMethod(ConceptSchemeCacheableResource.class)
     @Override
     public Response findConceptsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields) {
         return findConceptsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "xlsx");
@@ -570,6 +581,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public Organisations findOrganisations(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -580,16 +592,19 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public Response findOrganisationsTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public Response findOrganisationsCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public Response findOrganisationsXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         return findOrganisationsPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
@@ -690,6 +705,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             throw manageException(e);
         }
     }
+
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public Agencies findAgencies(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -776,6 +793,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public OrganisationUnits findOrganisationUnits(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -863,6 +881,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public DataProviders findDataProviders(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -946,6 +965,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(OrganisationSchemeCacheableResource.class)
     @Override
     public DataConsumers findDataConsumers(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -1029,6 +1049,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(CodelistCacheableResource.class)
     @Override
     public Codes findCodes(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
@@ -1040,18 +1061,21 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(CodelistCacheableResource.class)
     @Override
     public Response findCodesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
         return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "tsv");
     }
 
+    @CacheableMethod(CodelistCacheableResource.class)
     @Override
     public Response findCodesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
         return findCodesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, order, openness, restriction, extended, fields, "csv");
     }
 
+    @CacheableMethod(CodelistCacheableResource.class)
     @Override
     public Response findCodesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String order, String openness, String restriction,
             Boolean extended, String fields) {
@@ -1310,6 +1334,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
+    @CacheableMethod(VariableElementCacheableResource.class)
     @Override
     public VariableElements findVariableElements(String variableID, String query, String orderBy, String limit, String offset, String fields) {
         try {
@@ -1337,7 +1362,13 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
                     geographicalGranularityUrns = extractGeographicalGranularityUrnsFromQuery(sculptorCriteria.getConditions());
                 }
                 VariableElementResultSelection selection = new VariableElementResultSelection(); // do not retrieve nothing extra metadata as default
-                List<VariableElementResult> entities = codesService.findVariableElementsByVariableEfficiently(ctx, variableUrn, variableElementsCodes, selection, geographicalGranularityUrns);
+                List<VariableElementResult> entities;
+                try {
+                    entities = codesService.findVariableElementsByVariableEfficiently(ctx, variableUrn, variableElementsCodes, selection, geographicalGranularityUrns);
+                } catch (MetamacException metamacException) {
+                    org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.VARIABLE_NOT_FOUND, variableID);
+                    throw new RestException(exception, Status.NOT_FOUND);
+                }
 
                 // Transform
                 return codesDo2RestMapper.toVariableElements(entities, variableID, query, fieldsToShow);

@@ -36,6 +36,7 @@ import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
+import org.siemac.metamac.rest.utils.RestCommonUtil;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencyScheme;
@@ -415,37 +416,38 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, List<String> lang) {
         try {
             Set<String> fieldsToShow = getFieldsParameters(fields);
 
-            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow, lang);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
     @Override
-    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv", lang);
     }
 
     @Override
-    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv", lang);
     }
 
     @Override
-    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx", lang);
     }
 
-    private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+    private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format,
+            List<String> lang) {
         try {
 
             Set<String> fieldsToShow = getFieldsParameters(fields);
 
-            Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+            Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow, lang);
 
             // Transform
             List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow, format);
@@ -458,14 +460,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
-    public Categories findCategoriesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
+    public Categories findCategoriesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow, List<String> lang)
             throws MetamacException {
 
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
             // Find. Retrieve categories paginated
             SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
-            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             sculptorCriteria.setOrderByCaseCondition(CategoryMetamac.class, CategoryMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=", orderBy);
 
             PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());

@@ -762,7 +762,7 @@ public class CategorySchemePresenter extends Presenter<CategorySchemePresenter.C
 
             @Override
             public void onWaitSuccess(DeleteCategorySchemeOrdersResult result) {
-                fireSuccessMessage(getMessages().codelistOrderDeleted());
+                fireSuccessMessage(getMessages().categorySchemeOrderDeleted());
                 retrieveCategorySchemeOrders(categorySchemeMetamacDto.getUrn());
             }
         });

@@ -417,29 +417,33 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields, List<String> lang) {
+    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
         try {
             Set<String> fieldsToShow = getFieldsParameters(fields);
 
-            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fieldsToShow);
+            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fieldsToShow, lang);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
     @Override
-    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields, List<String> lang) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "tsv");
+    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "tsv", lang);
     }
 
     @Override
-    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields, List<String> lang) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "csv");
+    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "csv", lang);
     }
 
     @Override
-    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields, List<String> lang) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "xlsx");
+    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "xlsx", lang);
     }
 
     private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
@@ -2455,8 +2459,8 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
-    private String getOrderConfigurationToUseToRetrieveCategoryScheme(String agencyID, String resourceID, String version, String orderConfiguration,
-            CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException {
+    private String getOrderConfigurationToUseToRetrieveCategoryScheme(String agencyID, String resourceID, String version, String orderConfiguration, CategorySchemeVersionMetamac categorySchemeVersion)
+            throws MetamacException {
         String orderConfigurationToUse = null;
         if (orderConfiguration == null) {
             if (categorySchemeVersion.getDefaultOrderVisualisation() == null) {
@@ -2471,8 +2475,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         return orderConfigurationToUse;
     }
 
-    private void retrieveCategorySchemeOrderVisualisationByCode(String agencyID, String resourceID, String version, String categorySchemeUrn, String orderConfiguration)
-            throws MetamacException {
+    private void retrieveCategorySchemeOrderVisualisationByCode(String agencyID, String resourceID, String version, String categorySchemeUrn, String orderConfiguration) throws MetamacException {
         try {
             categoriesService.retrieveCategorySchemeOrderVisualisationByCode(ctx, categorySchemeUrn, orderConfiguration);
         } catch (MetamacException e) {

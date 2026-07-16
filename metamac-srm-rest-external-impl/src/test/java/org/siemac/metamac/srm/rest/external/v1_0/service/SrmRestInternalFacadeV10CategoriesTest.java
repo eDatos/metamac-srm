@@ -356,7 +356,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     @Test
     public void testFindCategoriesWithoutCategoryElementExplicit() throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, null, null, null, null, null, null);
         assertNull(categories.getCategories().get(0).getCategoryElement());
     }
 
@@ -429,7 +429,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     public void testFindCategoriesRetrieveAll() throws Exception {
 
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(AGENCY_1, ITEM_SCHEME_1_CODE, VERSION_1, null, null, null, null, null, null, null);
 
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
@@ -763,7 +763,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     @Test
     public void testFindCategoriesWithLangSingleLanguage() throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "NAME ASC", "2", "0", null, Arrays.asList("ca"));
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "NAME ASC", "2", "0", null, null, Arrays.asList("ca"));
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
     }
@@ -771,7 +771,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     @Test
     public void testFindCategoriesWithLangMultipleLanguages() throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "NAME ASC", "2", "0", null, Arrays.asList("ca,es"));
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "NAME ASC", "2", "0", null, null, Arrays.asList("ca,es"));
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
     }
@@ -779,7 +779,7 @@ public class SrmRestInternalFacadeV10CategoriesTest extends SrmRestInternalFacad
     @Test
     public void testFindCategoriesWithoutLang() throws Exception {
         resetMocks();
-        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "NAME ASC", "2", "0", null, null);
+        Categories categories = getSrmRestInternalFacadeClientXml().findCategories(WILDCARD_ALL, WILDCARD_ALL, WILDCARD_ALL, null, "NAME ASC", "2", "0", null, null, null);
         assertNotNull(categories);
         assertEquals(SrmRestConstants.KIND_CATEGORIES, categories.getKind());
     }

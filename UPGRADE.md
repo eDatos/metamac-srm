@@ -8,13 +8,13 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 8.x.x a 8.x.x-SNAPSHOT
+## 8.17.0 a 8.17.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
-  * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/8.x.0/db/common-metadata/postgresql/] 
+  * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/8.17.0/db/common-metadata/postgresql/] 
   
   * Orden de ejecución:
-    * Primero ejecutar scripts de creación de objetos fuera de la carpeta /metamac-srm/etc/changes-from-release/8.X.X/db/srm/postgresql/visualisation-order-category-schemes. 
-    * En último lugar realizar script de migración de la carpeta /metamac-srm/etc/changes-from-release/8.X.X/db/srm/postgresql/visualisation-order-category-schemes siguiendo los pasos indicados en ese fichero para añadir el orden alfabético por defecto a todos los esquemas de temas.
+    * Primero ejecutar scripts de creación de objetos fuera de la carpeta /metamac-srm/etc/changes-from-release/8.17.0/db/srm/postgresql/visualisation-order-category-schemes. 
+    * En último lugar realizar script de migración de la carpeta /metamac-srm/etc/changes-from-release/8.17.0/db/srm/postgresql/visualisation-order-category-schemes siguiendo los pasos indicados en ese fichero para añadir el orden alfabético por defecto a todos los esquemas de temas.
 
 
 ## 8.16.0 a 8.17.0

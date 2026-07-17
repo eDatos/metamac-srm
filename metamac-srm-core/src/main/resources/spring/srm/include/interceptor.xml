@@ -49,7 +49,11 @@
                                                                execution(public * com.arte.statistic.sdmx.srm..*Repository.findIfExistAPreviousVersion(..)) or
                                                                execution(public * org.siemac.metamac.srm..*Repository.findByCodeWithoutFlushing(..)) or
                                                                execution(public * org.siemac.metamac.srm..CodeMetamacRepository.*order*(..)) or
-                                                               execution(public * org.siemac.metamac.srm..CodeMetamacRepository.*Order*(..))
+                                                               execution(public * org.siemac.metamac.srm..CodeMetamacRepository.*Order*(..)) or
+                                                               execution(public * org.siemac.metamac.srm..CategoryMetamacRepository.*order*(..)) or
+                                                               execution(public * org.siemac.metamac.srm..CategoryMetamacRepository.*Order*(..)) or
+                                                               execution(public * org.siemac.metamac.srm..ConceptMetamacRepository.*order*(..)) or
+                                                               execution(public * org.siemac.metamac.srm..ConceptMetamacRepository.*Order*(..))
                                                                "/>
  
         <!-- Pointcut for the advice of jpa eager flush -->

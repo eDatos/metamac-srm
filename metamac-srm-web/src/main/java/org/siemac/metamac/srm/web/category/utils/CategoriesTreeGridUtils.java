@@ -43,6 +43,10 @@ public class CategoriesTreeGridUtils extends ItemsTreeGridUtils {
         node.setAttribute(CategoryDS.CATEGORY_ELEMENT_EDITION, org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.search().getURL());
         node.setAttribute(CategoryDS.CATEGORY_ELEMENT_CLEAR, org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.deleteListGrid().getURL());
 
+        if (code.getOrder() != null) {
+            node.setOrder(CategoryDS.ORDER, code.getOrder());
+        }
+
         return node;
     }
 

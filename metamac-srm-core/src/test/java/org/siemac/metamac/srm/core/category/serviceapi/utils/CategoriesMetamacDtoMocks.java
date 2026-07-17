@@ -6,9 +6,11 @@ import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.organisation.serviceapi.utils.OrganisationsMetamacDtoMocks;
 
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesDtoMocks;
+import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 
 public class CategoriesMetamacDtoMocks {
 
@@ -45,5 +47,25 @@ public class CategoriesMetamacDtoMocks {
         categoryElementDto.setValidFrom(new Date());
         categoryElementDto.setValidTo(new Date());
         return categoryElementDto;
+    }
+
+    // -----------------------------------------------------------------------------------
+    // ORDER VISUALISATIONS
+    // -----------------------------------------------------------------------------------
+
+    public static CategorySchemeVisualisationDto mockCategorySchemeOrderVisualisationDto() {
+        CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto = new CategorySchemeVisualisationDto();
+        categorySchemeOrderVisualisationDto.setCode("category-" + MetamacMocks.mockString(10));
+        categorySchemeOrderVisualisationDto.setName(MetamacMocks.mockInternationalStringDto());
+        return categorySchemeOrderVisualisationDto;
+    }
+
+    public static RelatedResourceDto mockCategorySchemeOrderVisualisationRelatedResourceDto(String code, String urn) {
+        RelatedResourceDto relatedResourceDto = new RelatedResourceDto();
+        relatedResourceDto.setCode(code);
+        relatedResourceDto.setUrn(urn);
+        relatedResourceDto.setUrnProvider(urn);
+        relatedResourceDto.setType(null);
+        return relatedResourceDto;
     }
 }

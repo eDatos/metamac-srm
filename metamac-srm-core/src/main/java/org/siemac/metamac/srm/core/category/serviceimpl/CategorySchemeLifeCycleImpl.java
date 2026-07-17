@@ -144,8 +144,22 @@ public class CategorySchemeLifeCycleImpl extends LifeCycleImpl {
         }
 
         @Override
-        public void checkConcreteResourceInInternallyPublished(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum targetStatus) {
-            // nothing
+        public void checkConcreteResourceInInternallyPublished(ServiceContext ctx, Object srmResourceVersion, ProcStatusEnum targetStatus) throws MetamacException {
+            CategorySchemeVersionMetamac categorySchemeVersion = getCategorySchemeVersionMetamac(srmResourceVersion);
+            String categorySchemeUrn = categorySchemeVersion.getMaintainableArtefact().getUrn();
+            Map<String, MetamacExceptionItem> exceptionsByResourceUrn = new HashMap<String, MetamacExceptionItem>();
+
+            // Check category scheme
+            {
+                List<MetamacExceptionItem> exceptionsCategoryScheme = new ArrayList<MetamacExceptionItem>();
+
+                ValidationUtils.checkMetadataRequired(categorySchemeVersion.getDefaultOrderVisualisation(), ServiceExceptionParameters.CATEGORY_SCHEME_DEFAULT_ORDER_VISUALISATION,
+                        exceptionsCategoryScheme);
+                addOrUpdateExceptionItemByResourceUrnWhenExceptionsNonZero(exceptionsByResourceUrn, categorySchemeUrn, exceptionsCategoryScheme);
+            }
+
+            // Throw exception if there is any exception
+            throwExceptionsInExceptionsMap(exceptionsByResourceUrn, categorySchemeUrn);
         }
 
         @Override

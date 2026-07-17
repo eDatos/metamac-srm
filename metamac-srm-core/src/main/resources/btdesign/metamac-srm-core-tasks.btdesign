@@ -46,6 +46,8 @@ Application TaskMetamac {
     		String plannifyResendKafkaVariableElementsMessages(String variableUrn, String localeLanguage) throws MetamacException;
     		"Prepares importation of concept scheme orders in tsv format"
     		String plannifyImportConceptSchemeOrdersTsvInBackground(String conceptSchemeUrn, java.io.File file, String fileName) throws MetamacException;
+    		"Prepares importation of category scheme orders in tsv format"
+    		String plannifyImportCategorySchemeOrdersTsvInBackground(String categorySchemeUrn, java.io.File file, String fileName) throws MetamacException;
 
 			// Process of resending kafka messages for all resources
 			processResendKafkaResourcesMessageTask() throws MetamacException;

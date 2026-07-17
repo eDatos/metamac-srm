@@ -154,4 +154,22 @@ public class SharedCategoriesSecurityUtils extends SharedItemsSecurityUtils {
         return canRetrieveOrFindResource(metamacPrincipal);
     }
 
+    // CATEGORY SCHEME ORDER VISUALISATIONS
+
+    public static boolean canRetrieveOrFindCategorySchemeOrderVisualisation(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
+    public static boolean canCrudCategorySchemeOrderVisualisation(MetamacPrincipal metamacPrincipal, ProcStatusEnum categorySchemeVersionProcStatus) {
+        return canUpdateItemScheme(metamacPrincipal, categorySchemeVersionProcStatus);
+    }
+
+    public static boolean canImportCategorySchemeOrderVisualisations(MetamacPrincipal metamacPrincipal, ProcStatusEnum procStatus) {
+        return canModifyCategoryFromCategoryScheme(metamacPrincipal, procStatus);
+    }
+
+    public static boolean canExportCategoryOrdersTsv(MetamacPrincipal metamacPrincipal) {
+        return canRetrieveOrFindResource(metamacPrincipal);
+    }
+
 }

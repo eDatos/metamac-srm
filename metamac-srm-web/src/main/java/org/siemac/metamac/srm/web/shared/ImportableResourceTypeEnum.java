@@ -13,6 +13,7 @@ public enum ImportableResourceTypeEnum implements Serializable {
     VARIABLE_ELEMENT_SHAPE,
     CONCEPTS,
     CONCEPTS_ORDER,
+    CATEGORIES_ORDER,
     ORGANISATIONS,
     CATEGORIES,
     CATEGORY_ELEMENTS,

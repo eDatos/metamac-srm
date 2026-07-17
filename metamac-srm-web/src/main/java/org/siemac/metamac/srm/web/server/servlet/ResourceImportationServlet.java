@@ -183,6 +183,12 @@ public class ResourceImportationServlet extends HttpServlet {
 
                 TaskImportationInfo taskImportationInfo = importCategories(srmCoreServiceFacade, fileName, inputStream, args);
                 successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+
+            } else if (ImportableResourceTypeEnum.CATEGORIES_ORDER.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
+
+                TaskImportationInfo taskImportationInfo = importCategoryOrders(srmCoreServiceFacade, fileName, inputStream, args);
+                successMessage = updateSuccessMessage(successMessage, taskImportationInfo);
+
             } else if (ImportableResourceTypeEnum.CATEGORY_ELEMENTS.name().equals(args.get(SrmSharedTokens.UPLOAD_PARAM_FILE_TYPE))) {
 
                 TaskImportationInfo taskImportationInfo = importCategoryElements(srmCoreServiceFacade, fileName, inputStream, args);
@@ -302,6 +308,15 @@ public class ResourceImportationServlet extends HttpServlet {
         Boolean updateAlreadyExisting = Boolean.parseBoolean(args.get(SrmSharedTokens.UPLOAD_PARAM_UPDATE_EXISTING));
 
         return srmCoreServiceFacade.importCategoriesTsv(ServiceContextHolder.getCurrentServiceContext(), categorySchemeUrn, inputStream, fileName, updateAlreadyExisting);
+    }
+
+    // Category orders
+
+    private TaskImportationInfo importCategoryOrders(SrmCoreServiceFacade srmCoreServiceFacade, String fileName, InputStream inputStream, HashMap<String, String> args) throws MetamacException {
+
+        String categorySchemeUrn = args.get(SrmSharedTokens.UPLOAD_PARAM_CATEGORY_SCHEME_URN);
+
+        return srmCoreServiceFacade.importCategorySchemeOrdersTsv(ServiceContextHolder.getCurrentServiceContext(), categorySchemeUrn, inputStream, fileName);
     }
 
     // Organisations

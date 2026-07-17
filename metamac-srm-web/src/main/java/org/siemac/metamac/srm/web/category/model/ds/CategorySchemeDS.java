@@ -4,4 +4,5 @@ import org.siemac.metamac.srm.web.client.model.ds.ItemSchemeDS;
 
 public class CategorySchemeDS extends ItemSchemeDS {
 
+    public static final String DEFAULT_ORDER = "catsch-def-order";
 }

@@ -6,6 +6,7 @@ public class CategoryMetamacResultSelection extends ItemMetamacResultSelection {
 
     public static final CategoryMetamacResultSelection API                 = new CategoryMetamacResultSelection(false, false, false, false, false, true, false, true);
     public static final CategoryMetamacResultSelection EXPORT              = new CategoryMetamacResultSelection(true, true, true, true, true, false, true, false);
+    public static final CategoryMetamacResultSelection RETRIEVE            = new CategoryMetamacResultSelection(true, false, true, true, false, false, false, false);
 
     private boolean                                    categoryElementFull = false;
     private boolean                                    categoryElementCode = false;

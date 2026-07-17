@@ -186,6 +186,12 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
     protected String              CATEGORY_SCHEME_7_V2                                     = "urn:sdmx:org.sdmx.infomodel.categoryscheme.CategoryScheme=SDMX01:CATEGORYSCHEME07(02.000)";
     protected String              CATEGORY_SCHEME_8_V1                                     = "urn:sdmx:org.sdmx.infomodel.categoryscheme.CategoryScheme=SDMX02:CATEGORYSCHEME08(01.000)";
 
+    // Category scheme order visualisations
+    protected static final String CATEGORY_SCHEME_1_V1_ORDER_VISUALISATION_01_ALPHABETICAL  = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(01.000).ALPHABETICAL";
+    protected static final String CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL  = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).ALPHABETICAL";
+    protected static final String CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).VISUALISATION02";
+    protected static final String CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03               = "urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).VISUALISATION03";
+
     // Categories
     protected String              CATEGORY_SCHEME_1_V1_CATEGORY_1                          = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME01(01.000).CATEGORY01";
     protected String              CATEGORY_SCHEME_1_V1_CATEGORY_2                          = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME01(01.000).CATEGORY02";
@@ -491,6 +497,7 @@ public abstract class SrmBaseTest extends SdmxSrmBaseTest {
         tables.add("TB_RESOURCE_ELEMENTS");
         tables.add("TB_CAT_RESOURCE_ELEMENTS");
         tables.add("TB_M_CATEGORIES");
+        tables.add("TB_M_CAT_SCHEME_ORDER_VIS");
         tables.add("TB_M_CAT_SCHEMES_VERSIONS");
         tables.add("TB_M_CODELIST_FAMILIES");
         tables.add("TB_M_VARIABLES");

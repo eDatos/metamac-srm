@@ -8,12 +8,14 @@ import org.apache.commons.lang.time.DateUtils;
 import org.siemac.metamac.srm.core.base.utils.BaseAsserts;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesAsserts;
 
@@ -161,6 +163,55 @@ public class CategoriesMetamacAsserts extends CategoriesAsserts {
 
     public static void assertEqualsCategoryElement(CategoryElementDto actual, CategoryElement expected) {
         assertEqualsCategoryElement(expected, actual, MapperEnum.DTO2DO);
+    }
+
+    // ------------------------------------------------------------------------------------
+    // ORDER VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    public static void assertEqualsCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation expected, CategorySchemeOrderVisualisation actual) {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        // other artefacts
+        assertEqualsNameableArtefact(expected.getNameableArtefact(), actual.getNameableArtefact());
+    }
+
+    public static void assertEqualsCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation expected, CategorySchemeVisualisationDto actual) {
+        assertEqualsCategorySchemeOrderVisualisation(expected, actual, MapperEnum.DO2DTO);
+    }
+
+    public static void assertEqualsCategorySchemeOrderVisualisation(CategorySchemeVisualisationDto expected, CategorySchemeOrderVisualisation actual) {
+        assertEqualsCategorySchemeOrderVisualisation(actual, expected, MapperEnum.DTO2DO);
+    }
+
+    private static void assertEqualsCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation entity, CategorySchemeVisualisationDto dto, MapperEnum mapperEnum) {
+        if (MapperEnum.DO2DTO.equals(mapperEnum)) {
+            assertEquals(entity.getId(), dto.getId());
+
+            assertNotNull(entity.getUuid());
+            assertEquals(entity.getUuid(), dto.getUuid());
+
+            assertNotNull(entity.getCreatedBy());
+            assertEquals(entity.getCreatedBy(), dto.getCreatedBy());
+
+            assertNotNull(entity.getCreatedDate());
+            assertTrue(DateUtils.isSameInstant(entity.getCreatedDate().toDate(), dto.getCreatedDate()));
+
+            assertNotNull(entity.getLastUpdatedBy());
+            assertEquals(entity.getLastUpdatedBy(), dto.getLastUpdatedBy());
+
+            assertNotNull(entity.getLastUpdated());
+            assertTrue(DateUtils.isSameInstant(entity.getLastUpdated().toDate(), dto.getLastUpdated()));
+
+            assertNotNull(entity.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersion());
+            assertEquals(entity.getVersion(), dto.getVersionOptimisticLocking());
+        }
+
+        // other artefacts
+        assertEqualsNameableArtefact(entity.getNameableArtefact(), dto, mapperEnum);
     }
 
 }

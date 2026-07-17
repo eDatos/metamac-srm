@@ -5,10 +5,12 @@ import org.junit.runner.RunWith;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts;
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDtoMocks;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
@@ -42,6 +44,24 @@ public class CategoriesDto2DoMapperTest extends SrmBaseTest {
         CategoryMetamacDto dto = CategoriesMetamacDtoMocks.mockCategoryDto();
         CategoryMetamac entity = categoriesDto2DoMapper.categoryMetamacDtoToDo(dto);
         CategoriesMetamacAsserts.assertEqualsCategory(dto, entity);
+    }
+
+    @Test
+    public void testCategorySchemeDtoToDoWithLoad() throws MetamacException {
+        CategorySchemeMetamacDto dto = CategoriesMetamacDtoMocks.mockCategorySchemeDto(AGENCY_ROOT_1_V1_CODE, AGENCY_ROOT_1_V1);
+        dto.setUrn(CATEGORY_SCHEME_1_V2);
+        dto.setDefaultOrderVisualisation(CategoriesMetamacDtoMocks.mockCategorySchemeOrderVisualisationRelatedResourceDto("VISUALISATION_02", CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03));
+        dto.setVersionOptimisticLocking(1L);
+        CategorySchemeVersionMetamac entity = categoriesDto2DoMapper.categorySchemeMetamacDtoToDo(dto);
+        CategoriesMetamacAsserts.assertEqualsCategoryScheme(dto, entity);
+    }
+
+    @Test
+    public void testCategorySchemeOrderVisualisationDtoToDo() throws MetamacException {
+        CategorySchemeVisualisationDto dto = CategoriesMetamacDtoMocks.mockCategorySchemeOrderVisualisationDto();
+
+        CategorySchemeOrderVisualisation entity = categoriesDto2DoMapper.categorySchemeOrderVisualisationDtoToDo(dto);
+        CategoriesMetamacAsserts.assertEqualsCategorySchemeOrderVisualisation(dto, entity);
     }
 
     @Test

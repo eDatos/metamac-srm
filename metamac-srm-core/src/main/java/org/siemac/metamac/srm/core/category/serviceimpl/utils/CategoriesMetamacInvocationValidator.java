@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
@@ -263,5 +264,93 @@ public class CategoriesMetamacInvocationValidator extends CategoriesInvocationVa
         ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.RESOURCE_ELEMENT_LOGO, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkRetrieveCategoriesByCategorySchemeUrnOrderedInDepth(String categorySchemeUrn, Object itemMetamacResultSelection, String orderVisualisationCode,
+            List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categorySchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(orderVisualisationCode, ServiceExceptionParameters.CATEGORY_SCHEME_ORDER_VISUALISATION, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkCreateCategorySchemeOrderVisualisation(String categorySchemeUrn, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation,
+            List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+        ValidationUtils.checkParameterRequired(categorySchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        checkCategorySchemeOrderVisualisation(categorySchemeOrderVisualisation, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkUpdateCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+        checkCategorySchemeOrderVisualisation(categorySchemeOrderVisualisation, exceptions);
+        ValidationUtils.checkParameterRequired(categorySchemeOrderVisualisation.getCategorySchemeVersion(), ServiceExceptionParameters.CATEGORY_SCHEME, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkRetrieveCategorySchemeOrderVisualisationByCode(String categorySchemeUrn, String code, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categorySchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(code, ServiceExceptionParameters.CATEGORY_SCHEME_ORDER_VISUALISATION, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkUpdateCategoryParent(String categoryUrn, String newParentUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categoryUrn, ServiceExceptionParameters.URN, exceptions);
+        // newParentUrn is optional. When it is null, move to first level
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkUpdateCategoryInOrder(String categoryUrn, String categorySchemeOrderVisualisationUrn, Integer newCategoryIndex, List<MetamacExceptionItem> exceptions)
+            throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categoryUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(categorySchemeOrderVisualisationUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(newCategoryIndex, ServiceExceptionParameters.CATEGORY_SCHEME_ORDER_INDEX, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public static void checkImportCategoryOrdersTsv(String categorySchemeUrn, File file, String fileName, Boolean canBeBackground, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        if (exceptions == null) {
+            exceptions = new ArrayList<MetamacExceptionItem>();
+        }
+
+        ValidationUtils.checkParameterRequired(categorySchemeUrn, ServiceExceptionParameters.URN, exceptions);
+        ValidationUtils.checkParameterRequired(file, ServiceExceptionParameters.STREAM, exceptions);
+        ValidationUtils.checkParameterRequired(fileName, ServiceExceptionParameters.FILE_NAME, exceptions);
+        ValidationUtils.checkParameterRequired(canBeBackground, ServiceExceptionParameters.CAN_BE_BACKGROUND, exceptions);
+
+        ExceptionUtils.throwIfException(exceptions);
+    }
+
+    private static void checkCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, List<MetamacExceptionItem> exceptions) {
+        ValidationUtils.checkParameterRequired(categorySchemeOrderVisualisation, ServiceExceptionParameters.CATEGORY_SCHEME_ORDER_VISUALISATION, exceptions);
+        if (categorySchemeOrderVisualisation.getNameableArtefact() != null) {
+            SemanticIdentifierValidationUtils.checkConceptSchemeVisualisationSemanticIdentifier(categorySchemeOrderVisualisation.getNameableArtefact().getCode(), exceptions);
+        }
     }
 }

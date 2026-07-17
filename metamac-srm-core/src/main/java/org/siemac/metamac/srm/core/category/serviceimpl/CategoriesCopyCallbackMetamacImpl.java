@@ -2,12 +2,15 @@ package org.siemac.metamac.srm.core.category.serviceimpl;
 
 import java.util.List;
 
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.base.domain.SrmLifeCycleMetadata;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacRepository;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
+import org.siemac.metamac.srm.core.category.serviceapi.CategoriesMetamacService;
 import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
@@ -23,6 +26,9 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
  */
 // @Component() defined in spring xml configuration to set class attributes
 public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImpl {
+
+    @Autowired
+    private CategoriesMetamacService  categoriesMetamacService;
 
     @Autowired
     private CategoryMetamacRepository categoryMetamacRepository;
@@ -67,8 +73,16 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
         CategoryMetamac target = (CategoryMetamac) targetItem;
         target.setCategoryElement(source.getCategoryElement());
         copyEniSchemas(source, target);
+        copyCategorySchemeOrderVisualisations(source, target);
 
         // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from sourceItemResult
+    }
+
+    private void copyCategorySchemeOrderVisualisations(CategoryMetamac source, CategoryMetamac target) {
+        for (int i = 1; i <= SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+            Integer order = SrmServiceUtils.getCategorySchemeOrder(source, i);
+            SrmServiceUtils.setCategorySchemeOrder(target, i, order);
+        }
     }
 
     private void copyEniSchemas(CategoryMetamac source, CategoryMetamac target) {
@@ -80,6 +94,15 @@ public class CategoriesCopyCallbackMetamacImpl extends CategoriesCopyCallbackImp
         for (EniSchemaCatalog eniSchema : source.getEniSchemas()) {
             target.addEniSchema(eniSchema);
         }
+    }
+
+    @Override
+    public void createItemSchemeVersionRelations(ServiceContext ctx, ItemSchemeVersion sourceItemSchemeVersion, ItemSchemeVersion targetItemSchemeVersion) throws MetamacException {
+        super.createItemSchemeVersionRelations(ctx, sourceItemSchemeVersion, targetItemSchemeVersion);
+        CategorySchemeVersionMetamac source = (CategorySchemeVersionMetamac) sourceItemSchemeVersion;
+        CategorySchemeVersionMetamac target = (CategorySchemeVersionMetamac) targetItemSchemeVersion;
+
+        categoriesMetamacService.versioningCategorySchemeOrderVisualisations(ctx, source, target);
     }
 
     @Override

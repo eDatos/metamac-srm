@@ -16,19 +16,19 @@
     <description>SIEMAC :: METAMAC :: SRM :: PARENT</description>
 
     <properties>
-        <metamac-srm-rest-internal-api.version>3.7.2-SNAPSHOT</metamac-srm-rest-internal-api.version>
-        <metamac-srm-rest-external-api.version>3.8.2-SNAPSHOT</metamac-srm-rest-external-api.version>
+        <metamac-srm-rest-internal-api.version>3.8.0</metamac-srm-rest-internal-api.version>
+        <metamac-srm-rest-external-api.version>3.9.0</metamac-srm-rest-external-api.version>
         <metamac-statistical-resources-rest-internal-api.version>11.5.1</metamac-statistical-resources-rest-internal-api.version>
-        <metamac-web-common.version>5.20.1-SNAPSHOT</metamac-web-common.version>
+        <metamac-web-common.version>5.20.1</metamac-web-common.version>
         <metamac-statistical-operations-rest-internal-api.version>4.3.0</metamac-statistical-operations-rest-internal-api.version>
         <metamac-statistical-operations-rest-external-api.version>5.3.0</metamac-statistical-operations-rest-external-api.version>
- 		<metamac-sso-client.version>5.3.1-SNAPSHOT</metamac-sso-client.version>
-        <metamac-core-common.version>8.12.1-SNAPSHOT</metamac-core-common.version>
-        <metamac-rest-common.version>2.10.1-SNAPSHOT</metamac-rest-common.version>
+ 		<metamac-sso-client.version>5.3.1</metamac-sso-client.version>
+        <metamac-core-common.version>8.12.1</metamac-core-common.version>
+        <metamac-rest-common.version>2.11.0</metamac-rest-common.version>
         <metamac-notifications-rest-internal-api.version>3.10.1</metamac-notifications-rest-internal-api.version>
         <metamac-rest-api.version>2.3.2</metamac-rest-api.version>
         <statistic-sdmx-v2_1.version>2.1.0</statistic-sdmx-v2_1.version>
-        <statistic-sdmx-srm.version>4.10.3-SNAPSHOT</statistic-sdmx-srm.version>
+        <statistic-sdmx-srm.version>4.11.0</statistic-sdmx-srm.version>
         <metamac-srm-rest-api-common.version>2.10.1</metamac-srm-rest-api-common.version>
 
         <!-- WEB -->

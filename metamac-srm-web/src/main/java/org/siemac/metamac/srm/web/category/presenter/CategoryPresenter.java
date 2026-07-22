@@ -251,7 +251,7 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
 
     @Override
     public void retrieveCategoryListByScheme(String categorySchemeUrn) {
-        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale()),
+        dispatcher.execute(new GetCategoriesBySchemeAction(categorySchemeUrn, ApplicationEditionLanguages.getCurrentLocale(), null),
                 new WaitingAsyncCallbackHandlingError<GetCategoriesBySchemeResult>(this) {
 
                     @Override
@@ -323,6 +323,11 @@ public class CategoryPresenter extends Presenter<CategoryPresenter.CategoryView,
     @Override
     public void goToCategoryScheme(String urn) {
         goTo(PlaceRequestUtils.buildAbsoluteCategorySchemePlaceRequest(urn));
+    }
+
+    @Override
+    public void updateCategoryParent(String categoryUrn, String newCategoryParentUrn) {
+        // Not used in the category detail view
     }
 
     @ProxyEvent

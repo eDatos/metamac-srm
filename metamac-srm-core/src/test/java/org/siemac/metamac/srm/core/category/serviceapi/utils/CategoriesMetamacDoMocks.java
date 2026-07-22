@@ -1,16 +1,20 @@
 package org.siemac.metamac.srm.core.category.serviceapi.utils;
 
+import org.joda.time.DateTime;
+import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.common.SrmResourceElementMock;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.AnnotationType;
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.category.serviceapi.utils.CategoriesDoMocks;
 import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 
@@ -77,6 +81,14 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         return itemResult;
     }
 
+    public static ItemResult mockCategoryResultFixedValuesWithOrderConfiguration(String resourceID, ItemResult parent, int orderConfiguration) {
+        ItemResult itemResult = mockCategoryResultFixedValues(resourceID, parent);
+        CategoryMetamacResultExtensionPoint extensionPoint = mockCategoryMetamacResultFixedValues();
+        extensionPoint.setOrderConfiguration(orderConfiguration);
+        itemResult.setExtensionPoint(extensionPoint);
+        return itemResult;
+    }
+
     public static CategoryElement mockCategoryElement() {
         CategoryElement categoryElement = new CategoryElement();
         SrmResourceElementMock.mockResourceElement(categoryElement);
@@ -87,5 +99,29 @@ public class CategoriesMetamacDoMocks extends CategoriesDoMocks {
         CategoryElement categoryElement = new CategoryElement();
         SrmResourceElementMock.mockResourceElementAllMetadata(categoryElement, codeCategoryElement);
         return categoryElement;
+    }
+
+    // ------------------------------------------------------------------------------------
+    // CATEGORY SCHEME ORDER VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    public static CategorySchemeOrderVisualisation mockCategorySchemeOrderVisualisation(AnnotationType annotationType) {
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = new CategorySchemeOrderVisualisation();
+        categorySchemeOrderVisualisation.setNameableArtefact(mockNameableArtefact("code-" + MetamacMocks.mockString(5), annotationType));
+        return categorySchemeOrderVisualisation;
+    }
+
+    public static CategorySchemeOrderVisualisation mockCategorySchemeOrderVisualisationFixedValues(String resourceID) {
+        CategorySchemeOrderVisualisation target = new CategorySchemeOrderVisualisation();
+        target.getUuid(); // generate uuid
+        target.setVersion(Long.valueOf(1));
+        target.setCreatedBy("userCreatedBy");
+        target.setCreatedDate(new DateTime(2012, 10, 1, 10, 12, 13, 14));
+        target.setLastUpdatedBy("userLastUpdated");
+        target.setLastUpdated(new DateTime(2012, 11, 5, 10, 12, 13, 14));
+        target.setUpdateDate(new DateTime(2012, 11, 5, 10, 12, 13, 14));
+        target.setNameableArtefact(new NameableArtefact());
+        mockNameableArtefactFixedValues(target.getNameableArtefact(), resourceID, null);
+        return target;
     }
 }

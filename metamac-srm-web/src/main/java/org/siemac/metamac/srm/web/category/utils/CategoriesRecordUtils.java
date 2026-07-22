@@ -2,12 +2,18 @@ package org.siemac.metamac.srm.web.category.utils;
 
 import static org.siemac.metamac.web.common.client.utils.InternationalStringUtils.getLocalisedString;
 
+import java.util.List;
+
 import org.siemac.metamac.srm.core.category.dto.CategoryElementDto;
 import org.siemac.metamac.srm.core.category.dto.CategoryMetamacBasicDto;
 import org.siemac.metamac.srm.core.category.dto.CategorySchemeMetamacBasicDto;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.web.category.model.record.CategoryElementRecord;
 import org.siemac.metamac.srm.web.category.model.record.CategoryRecord;
 import org.siemac.metamac.srm.web.category.model.record.CategorySchemeRecord;
+import org.siemac.metamac.srm.web.category.model.record.CategorySchemeVisualisationRecord;
+
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class CategoriesRecordUtils extends org.siemac.metamac.srm.web.client.utils.RecordUtils {
 
@@ -35,6 +41,21 @@ public class CategoriesRecordUtils extends org.siemac.metamac.srm.web.client.uti
     public static CategoryElementRecord getCategoryElementRecord(CategoryElementDto categoryElementDto) {
         return new CategoryElementRecord(categoryElementDto.getId(), categoryElementDto.getCode(), getLocalisedString(categoryElementDto.getShortName()), categoryElementDto.getUrn(),
                 categoryElementDto);
+    }
+
+    // CATEGORY SCHEME VISUALISATIONS
+
+    public static CategorySchemeVisualisationRecord getCategorySchemeVisualisationRecord(CategorySchemeVisualisationDto categorySchemeVisualisationDto) {
+        return new CategorySchemeVisualisationRecord(categorySchemeVisualisationDto.getCode(), getLocalisedString(categorySchemeVisualisationDto.getName()),
+                categorySchemeVisualisationDto.getUrn(), categorySchemeVisualisationDto);
+    }
+
+    public static ListGridRecord[] getCategorySchemeVisualisationRecords(List<CategorySchemeVisualisationDto> categorySchemeVisualisationDtos) {
+        ListGridRecord[] records = new ListGridRecord[categorySchemeVisualisationDtos.size()];
+        for (int i = 0; i < categorySchemeVisualisationDtos.size(); i++) {
+            records[i] = getCategorySchemeVisualisationRecord(categorySchemeVisualisationDtos.get(i));
+        }
+        return records;
     }
 
     public static CategoryElementRecord getVariableElementRecord(CategoryElementDto categoryElementDto) {

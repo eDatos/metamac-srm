@@ -5,19 +5,25 @@ import static org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils.a
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,6 +31,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -50,12 +57,14 @@ import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamacProperties;
 import org.siemac.metamac.srm.core.category.domain.shared.CategoryElementVisualisationResult;
 import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
 import org.siemac.metamac.srm.core.category.domain.shared.CodeCategoryElementNormalisationResult;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategoriesMetamacInvocationValidator;
+import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategoriesUtils;
 import org.siemac.metamac.srm.core.category.serviceimpl.utils.CategorisationsUtils;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.common.LifeCycle;
@@ -85,7 +94,10 @@ import org.siemac.metamac.srm.core.serviceimpl.result.ResourceVersionPublication
 import org.siemac.metamac.srm.core.serviceimpl.result.SendStreamMessageResult;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoriesTsvHeader;
 import org.siemac.metamac.srm.core.task.domain.ImportationCategoryElementsTsvHeader;
+import org.siemac.metamac.srm.core.task.domain.ImportationCodeOrdersTsvHeader;
 import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
+import org.siemac.metamac.srm.core.util.AlphabeticalComparator.AlphabeticalByLevelComparator;
+import org.siemac.metamac.srm.core.util.AlphabeticalComparator.CategorySchemeOrderIndexByLevelComparator;
 import org.siemac.metamac.srm.core.util.InternationalStringUtils;
 import org.siemac.metamac.srm.core.util.UtilsMap;
 import org.slf4j.Logger;
@@ -102,8 +114,10 @@ import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersion;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefactRepository;
+import com.arte.statistic.sdmx.srm.core.base.domain.NameableArtefact;
 import com.arte.statistic.sdmx.srm.core.base.serviceapi.BaseService;
 import com.arte.statistic.sdmx.srm.core.base.serviceimpl.ItemSchemesCopyCallback;
+import com.arte.statistic.sdmx.srm.core.base.serviceimpl.utils.BaseCopyAllMetadataUtils;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorisationRepository;
 import com.arte.statistic.sdmx.srm.core.category.domain.Category;
@@ -202,7 +216,12 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         preCreateCategoryScheme(ctx, categorySchemeVersion);
 
         // Save categoryScheme
-        return (CategorySchemeVersionMetamac) categoriesService.createCategoryScheme(ctx, categorySchemeVersion, SrmConstants.VERSION_PATTERN_METAMAC);
+        categorySchemeVersion = (CategorySchemeVersionMetamac) categoriesService.createCategoryScheme(ctx, categorySchemeVersion, SrmConstants.VERSION_PATTERN_METAMAC);
+
+        // Post create actions
+        CategorySchemeVersionMetamac categorySchemeVersionWithAlphabetical = createCategorySchemeOrderVisualisationAlphabetical(ctx, categorySchemeVersion);
+
+        return getCategorySchemeVersionMetamacRepository().save(categorySchemeVersionWithAlphabetical);
     }
 
     @Override
@@ -227,8 +246,20 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         CategoriesMetamacInvocationValidator.checkUpdateCategoryScheme(categorySchemeVersion, null);
         checkCategorySchemeToCreateOrUpdate(ctx, categorySchemeVersion);
 
+        String oldUrn = categorySchemeVersion.getMaintainableArtefact().getUrn();
+
         // Save categoryScheme
-        return (CategorySchemeVersionMetamac) categoriesService.updateCategoryScheme(ctx, categorySchemeVersion);
+        CategorySchemeVersionMetamac categorySchemeVersionMetamac = (CategorySchemeVersionMetamac) categoriesService.updateCategoryScheme(ctx, categorySchemeVersion);
+
+        // Updates URNs of CategorySchemeOrderVisualisations
+        // If code have been changed, update URN. In metamac not is possible to change the maintainer,
+        // if this were not so, the URN will also be updated when the maintainer changes.
+        if (categorySchemeVersionMetamac.getMaintainableArtefact().getIsCodeUpdated()) {
+            // IMPORTANT: Update order urn efficiently to avoid one update for each code
+            getCategorySchemeOrderVisualisationRepository().updateUrnAllCategorySchemeOrderVisualisationsByCategorySchemeEfficiently(categorySchemeVersionMetamac, oldUrn);
+            categorySchemeVersionMetamac = retrieveCategorySchemeByUrn(ctx, categorySchemeVersionMetamac.getMaintainableArtefact().getUrn());
+        }
+        return categorySchemeVersionMetamac;
     }
 
     @Override
@@ -317,6 +348,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         checkCategorySchemeCanBeModified(categorySchemeVersion);
 
         // Delete
+        categorySchemeVersion.setDefaultOrderVisualisation(null);
         categoriesService.deleteCategoryScheme(ctx, urn);
     }
 
@@ -361,6 +393,9 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         // Convert categorisations in no temporal
         createVersionFromTemporalCategorisations(ctx, categorySchemeVersionTemporal.getMaintainableArtefact());
 
+        // Convert order in no temporal
+        createOrderVisualisationVersionFromTemporalOrderVisualisation(categorySchemeVersionTemporal);
+
         TaskInfo versioningResult = new TaskInfo();
         versioningResult.setUrnResult(categorySchemeVersionTemporal.getMaintainableArtefact().getUrn());
         return versioningResult;
@@ -400,6 +435,12 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
             category.setCategoryElement(categoryTemp.getCategoryElement());
 
+            // Order Visualisation
+            for (int i = 1; i <= SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+                Integer order = SrmServiceUtils.getCategorySchemeOrder(categoryTemp, i);
+                SrmServiceUtils.setCategorySchemeOrder(category, i, order);
+            }
+
             // IMPORTANT! If any InternationalString is added, do an efficient query and retrieve from categoryTempItemResult
         }
 
@@ -417,9 +458,12 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         }
 
         // Add Categorisations
-        boolean thereAreNewCategorisations = false;
-        thereAreNewCategorisations = CategorisationsUtils.addCategorisationsTemporalToItemScheme(categorySchemeTemporalVersion, categorySchemeVersion);
-        if (thereAreNewCategorisations) {
+        boolean thereAreNewCategorisations = CategorisationsUtils.addCategorisationsTemporalToItemScheme(categorySchemeTemporalVersion, categorySchemeVersion);
+        boolean thereAreNewOrders = CategoriesUtils.addCategorySchemeOrderVisualisationTemporalToItemScheme(categorySchemeTemporalVersion, categorySchemeVersion, internationalStringRepository);
+
+        setDefaultCategorySchemeOrderVisualisation(categorySchemeTemporalVersion, categorySchemeVersion);
+
+        if (thereAreNewCategorisations || thereAreNewOrders) {
             // ===============================================================
             // DANGEROUS CODE: In spite of to remove item from temporal scheme and then associate to another scheme, hibernate delete this item when delete item scheme. For this, we need to clear the
             // context to avoid delete the temporary scheme with the previous temporary item when delete the temporary item scheme.
@@ -470,7 +514,11 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion);
 
         // Save category
-        return (CategoryMetamac) categoriesService.createCategory(ctx, categorySchemeUrn, category);
+        category = (CategoryMetamac) categoriesService.createCategory(ctx, categorySchemeUrn, category);
+        // Set order to created category
+        category = initVisualisationsToCategory(categorySchemeVersion, category, false);
+
+        return category;
     }
 
     @Override
@@ -492,7 +540,12 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByCategoryUrn(ctx, category.getNameableArtefact().getUrn());
         checkCategoryToCreateOrUpdate(ctx, categorySchemeVersion, category);
 
-        return (CategoryMetamac) categoriesService.updateCategory(ctx, category);
+        CategoryMetamac categoryMetamac = (CategoryMetamac) categoriesService.updateCategory(ctx, category);
+
+        // Set order to update category (recalculates alphabetical position if code changed)
+        categoryMetamac = initVisualisationsToCategory(categorySchemeVersion, categoryMetamac, true);
+
+        return categoryMetamac;
     }
 
     @Override
@@ -515,12 +568,68 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     public void deleteCategory(ServiceContext ctx, String urn) throws MetamacException {
 
         // Validation
+        CategoryMetamac category = retrieveCategoryByUrn(ctx, urn);
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByCategoryUrn(ctx, urn);
         checkCategorySchemeCanBeModified(categorySchemeVersion);
         srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion);
 
+        // Before delete category, update order of other categories in level
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisation : categorySchemeVersion.getOrderVisualisations()) {
+            reorderCategoriesDeletingOneCode(categorySchemeVersion, categorySchemeOrderVisualisation, (Category) category.getParent(), category);
+        }
+
         // Delete
         categoriesService.deleteCategory(ctx, urn);
+    }
+
+    @Override
+    public void updateCategoryParent(ServiceContext ctx, String categoryUrn, String newCategoryParentUrn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategoryParent(categoryUrn, newCategoryParentUrn, null);
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        checkCategorySchemeCanBeModified(categorySchemeVersion);
+        srmValidation.checkItemsStructureCanBeModified(ctx, categorySchemeVersion);
+
+        CategoryMetamac category = retrieveCategoryByUrn(ctx, categoryUrn);
+        Category parentActual = category.getParent() != null ? category.getParent() : null;
+        CategoryMetamac parentTarget = newCategoryParentUrn != null ? retrieveCategoryByUrn(ctx, newCategoryParentUrn) : null;
+        if (!SdmxSrmUtils.isItemParentChanged(parentActual, parentTarget)) {
+            // nothing
+            return;
+        }
+
+        // Check target parent is not a child of this category
+        if (newCategoryParentUrn != null) {
+            checkCategoryIsNotChildren(ctx, category, newCategoryParentUrn);
+        }
+
+        // Update target parent
+        if (parentTarget == null) {
+            category.setParent(null);
+            category.setItemSchemeVersionFirstLevel(categorySchemeVersion);
+        } else {
+            category.setParent(parentTarget);
+            category.setItemSchemeVersionFirstLevel(null);
+        }
+
+        // Update orders in previous and new level
+        Boolean alphabeticalAlreadyUpdated = Boolean.FALSE; // to avoid select to compare code of nameable
+        Integer orderInLastPosition = null; // to avoid unnecessary extra queries
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisation : categorySchemeVersion.getOrderVisualisations()) {
+            // remove from previous level
+            reorderCategoriesDeletingOneCode(categorySchemeVersion, categorySchemeOrderVisualisation, parentActual, category);
+            // add to new level
+            if (!alphabeticalAlreadyUpdated && SrmServiceUtils.isAlphabeticalOrderVisualisation(categorySchemeOrderVisualisation)) {
+                setCategoryOrderInAlphabeticalPositionAndReorderCategoriesInLevel(categorySchemeVersion, categorySchemeOrderVisualisation, category.getParent(), category);
+                alphabeticalAlreadyUpdated = Boolean.TRUE;
+            } else {
+                orderInLastPosition = setCategoryOrderInLastPositionInLevel(categorySchemeVersion, categorySchemeOrderVisualisation, category.getParent(), category, orderInLastPosition);
+            }
+        }
+
+        // Update category
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+        getCategoryMetamacRepository().save(category);
     }
 
     @Override
@@ -618,6 +727,17 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
             throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
         }
 
+        // Recalculate order visualisations: pre-existing items + newly imported items
+        List<Category> allItemsToUpdate = new ArrayList<Category>(categorySchemeVersion.getItems());
+        if (categtoriesToPersist != null) {
+            for (CategoryMetamac category : categtoriesToPersist) {
+                if (!categoriesPreviousInCategorySchemeByCode.containsKey(category.getNameableArtefact().getCodeFull())) {
+                    allItemsToUpdate.add(category);
+                }
+            }
+        }
+        recalculateCategoriesVisualisations(ctx, allItemsToUpdate, categorySchemeVersion.getOrderVisualisations(), false);
+
         // Save categories and scheme
         saveCategoriesEfficiently(categtoriesToPersist, categoriesToPersistByCode);
         baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
@@ -663,7 +783,13 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
 
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemetUrn);
 
-        List<ItemResult> items = getCategoryMetamacRepository().findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersion.getId(), CategoryMetamacResultSelection.EXPORT);
+        CategorySchemeOrderVisualisation orderVisualisationToRetrieveCategories = categorySchemeVersion.getDefaultOrderVisualisation();
+        if (orderVisualisationToRetrieveCategories == null) {
+            orderVisualisationToRetrieveCategories = categorySchemeVersion.getOrderVisualisations().get(0); // any
+        }
+        Integer orderColumnIndex = orderVisualisationToRetrieveCategories.getColumnIndex();
+
+        List<ItemResult> items = getCategoryMetamacRepository().findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersion.getId(), orderColumnIndex, CategoryMetamacResultSelection.EXPORT);
 
         List<String> languages = srmConfiguration.retrieveLanguages();
 
@@ -671,13 +797,26 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     }
 
     @Override
-    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(ServiceContext ctx, String categorySchemeUrn, String locale, String categorySchemeOrderVisualisationUrn)
+            throws MetamacException {
         // Validation
         CategoriesMetamacInvocationValidator.checkRetrieveCategoriesByCategorySchemeUrn(categorySchemeUrn, locale, null);
 
         // Retrieve
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
-        return getCategoryMetamacRepository().findCategoriesByCategorySchemeUnorderedToVisualisation(categorySchemeVersion.getId(), locale);
+
+        if (categorySchemeOrderVisualisationUrn == null) {
+            categorySchemeOrderVisualisationUrn = categorySchemeVersion.getDefaultOrderVisualisation() != null
+                    ? categorySchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getUrn()
+                    : null;
+        }
+        Integer orderColumnIndex = null;
+        if (categorySchemeOrderVisualisationUrn != null) {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = retrieveCategorySchemeOrderVisualisationByUrn(categorySchemeOrderVisualisationUrn);
+            orderColumnIndex = categorySchemeOrderVisualisation.getColumnIndex();
+        }
+
+        return getCategoryMetamacRepository().findCategoriesByCategorySchemeUnorderedToVisualisation(categorySchemeVersion.getId(), locale, orderColumnIndex);
     }
 
     @Override
@@ -710,6 +849,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     public void checkCategorySchemeVersionTranslations(ServiceContext ctx, Long itemSchemeVersionId, String locale, Map<String, MetamacExceptionItem> exceptionItemsByResourceUrn)
             throws MetamacException {
         getCategorySchemeVersionMetamacRepository().checkCategorySchemeVersionTranslations(itemSchemeVersionId, locale, exceptionItemsByResourceUrn);
+        getCategorySchemeOrderVisualisationRepository().checkCategorySchemeOrderVisualisationTranslations(itemSchemeVersionId, locale, exceptionItemsByResourceUrn);
         getCategoryMetamacRepository().checkCategoryTranslations(itemSchemeVersionId, locale, exceptionItemsByResourceUrn);
     }
 
@@ -1025,6 +1165,16 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
     private void checkCategorySchemeCanBeModified(CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException {
         SrmValidationUtils.checkArtefactCanBeModified(categorySchemeVersion.getLifeCycleMetadata(), categorySchemeVersion.getMaintainableArtefact().getUrn());
         SrmValidationUtils.checkArtefactWithoutTaskInBackground(categorySchemeVersion);
+    }
+
+    private void checkCategoryIsNotChildren(ServiceContext ctx, Item item, String newParentUrn) throws MetamacException {
+        Item parentTarget = retrieveCategoryByUrn(ctx, newParentUrn);
+        while (parentTarget != null) {
+            if (parentTarget.getId().equals(item.getId())) {
+                throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, ServiceExceptionParameters.ITEM_PARENT);
+            }
+            parentTarget = parentTarget.getParent();
+        }
     }
 
     private CategorySchemeVersionMetamac retrieveCategorySchemeVersionByUrn(String urn) throws MetamacException {
@@ -1433,7 +1583,7 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
 
         // Find codes and category elements
-        List<CategoryMetamacVisualisationResult> codes = retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, locale);
+        List<CategoryMetamacVisualisationResult> codes = retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, locale, null);
         List<CategoryElementVisualisationResult> categoryElements = retrieveCategoryElementsAll(locale);
         Map<String, CategoryElementVisualisationResult> categoryElementsByUrn = new HashMap<>(categoryElements.size());
         for (CategoryElementVisualisationResult categoryElement : categoryElements) {
@@ -1638,6 +1788,660 @@ public class CategoriesMetamacServiceImpl extends CategoriesMetamacServiceImplBa
         categoryElement.setLogo(null);
         getCategoryElementRepository().save(categoryElement);
 
+    }
+
+    @Override
+    public List<ItemResult> retrieveCategoriesByCategorySchemeUrnOrderedInDepth(ServiceContext ctx, String categorySchemeUrn, ItemMetamacResultSelection itemMetamacResultSelection,
+            String orderVisualisationCode) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkRetrieveCategoriesByCategorySchemeUrnOrderedInDepth(categorySchemeUrn, itemMetamacResultSelection, orderVisualisationCode, null);
+
+        if (itemMetamacResultSelection == null) {
+            itemMetamacResultSelection = CategoryMetamacResultSelection.RETRIEVE; // default
+        }
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = retrieveCategorySchemeOrderVisualisationByCode(categorySchemeVersion, orderVisualisationCode);
+        Integer orderColumnIndex = categorySchemeOrderVisualisation.getColumnIndex();
+
+        return getCategoryMetamacRepository().findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersion.getId(), orderColumnIndex, itemMetamacResultSelection);
+    }
+
+    @Override
+    public CategorySchemeOrderVisualisation createCategorySchemeOrderVisualisation(ServiceContext ctx, String categorySchemeUrn, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation)
+            throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkCreateCategorySchemeOrderVisualisation(categorySchemeUrn, categorySchemeOrderVisualisation, null);
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        checkCategorySchemeCanBeModified(categorySchemeVersion);
+
+        // Create order visualisation
+        categorySchemeOrderVisualisation.setColumnIndex(getCategoryOrderVisualisationAvailable(categorySchemeVersion));
+        categorySchemeOrderVisualisation.setCategorySchemeVersion(categorySchemeVersion);
+
+        // Assign default order to all categories, by level (copy from alphabetical)
+        getCategoryMetamacRepository().copyCategoriesOrderColumn(categorySchemeVersion, SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX,
+                categorySchemeOrderVisualisation.getColumnIndex());
+
+        // Create
+        setCategorySchemeOrderVisualisationUrnUnique(categorySchemeVersion, categorySchemeOrderVisualisation, true);
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+        return getCategorySchemeOrderVisualisationRepository().save(categorySchemeOrderVisualisation);
+    }
+
+    @Override
+    public CategorySchemeVersionMetamac createCategorySchemeOrderVisualisationAlphabetical(ServiceContext ctx, CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException {
+        CategorySchemeOrderVisualisation alphabeticalOrderVisualisation = new CategorySchemeOrderVisualisation();
+        alphabeticalOrderVisualisation.setNameableArtefact(new NameableArtefact());
+        alphabeticalOrderVisualisation.getNameableArtefact().setCode(SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE);
+        // NameableArtefact
+        alphabeticalOrderVisualisation.getNameableArtefact().setName(InternationalStringUtils.getAphabeticalInternationalString());
+        alphabeticalOrderVisualisation.setColumnIndex(SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX);
+        setCategorySchemeOrderVisualisationUrnUnique(categorySchemeVersion, alphabeticalOrderVisualisation, true);
+
+        categorySchemeVersion.addOrderVisualisation(alphabeticalOrderVisualisation);
+        categorySchemeVersion = getCategorySchemeVersionMetamacRepository().save(categorySchemeVersion);
+
+        sortCategoriesInAlphabeticalOrder(categorySchemeVersion.getItems(), alphabeticalOrderVisualisation, true);
+        return categorySchemeVersion;
+    }
+
+    @Override
+    public CategorySchemeOrderVisualisation updateCategorySchemeOrderVisualisation(ServiceContext ctx, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategorySchemeOrderVisualisation(categorySchemeOrderVisualisation, null);
+        CategorySchemeVersionMetamac categorySchemeVersion = categorySchemeOrderVisualisation.getCategorySchemeVersion();
+        checkCategorySchemeCanBeModified(categorySchemeVersion);
+
+        // If code has been changed, update URN
+        if (categorySchemeOrderVisualisation.getNameableArtefact().getIsCodeUpdated()) {
+            if (categorySchemeOrderVisualisation.getNameableArtefact().getUrn().endsWith("." + SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE)) {
+                throw new MetamacException(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.IDENTIFIABLE_ARTEFACT_CODE);
+            }
+            setCategorySchemeOrderVisualisationUrnUnique(categorySchemeOrderVisualisation.getCategorySchemeVersion(), categorySchemeOrderVisualisation, true);
+        }
+        categorySchemeOrderVisualisation.setUpdateDate(new DateTime()); // Optimistic locking
+
+        // Update
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+        return getCategorySchemeOrderVisualisationRepository().save(categorySchemeOrderVisualisation);
+    }
+
+    @Override
+    public CategorySchemeOrderVisualisation retrieveCategorySchemeOrderVisualisationByUrn(ServiceContext ctx, String urn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkRetrieveByUrn(urn);
+
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = getCategorySchemeOrderVisualisationRepository().findByUrn(urn);
+        if (categorySchemeOrderVisualisation == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).build();
+        }
+        return categorySchemeOrderVisualisation;
+    }
+
+    @Override
+    public CategorySchemeOrderVisualisation retrieveCategorySchemeOrderVisualisationByCode(ServiceContext ctx, String categorySchemeUrn, String code) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkRetrieveCategorySchemeOrderVisualisationByCode(categorySchemeUrn, code, null);
+
+        // Retrieve
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        return retrieveCategorySchemeOrderVisualisationByCode(categorySchemeVersion, code);
+    }
+
+    @Override
+    public List<CategorySchemeOrderVisualisation> retrieveCategorySchemeOrderVisualisationsByCategoryScheme(ServiceContext ctx, String categorySchemeUrn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkRetrieveByUrn(categorySchemeUrn);
+
+        // Retrieve
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        return categorySchemeVersion.getOrderVisualisations();
+    }
+
+    @Override
+    public void deleteCategorySchemeOrderVisualisation(ServiceContext ctx, String urn) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkDeleteArtefact(urn);
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisationToDelete = retrieveCategorySchemeOrderVisualisationByUrn(urn);
+        SrmValidationUtils.checkNotAlphabeticalOrderVisualisation(categorySchemeOrderVisualisationToDelete);
+
+        // Check category scheme can be modified
+        CategorySchemeVersionMetamac categorySchemeVersion = categorySchemeOrderVisualisationToDelete.getCategorySchemeVersion();
+        checkCategorySchemeCanBeModified(categorySchemeVersion);
+
+        // Check visualisation is not in original version
+        if (VersionUtil.isTemporalVersion(categorySchemeVersion.getMaintainableArtefact().getVersionLogic())) {
+            CategorySchemeVersionMetamac categorySchemeOriginalVersion = retrieveCategorySchemeOriginalFromUrnTemporal(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn());
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisationOriginal = getCategorySchemeOrderVisualisationRepository().findByCode(categorySchemeOriginalVersion.getId(),
+                    categorySchemeOrderVisualisationToDelete.getNameableArtefact().getCode());
+            if (categorySchemeOrderVisualisationOriginal != null) {
+                throw new MetamacException(ServiceExceptionType.CATEGORY_SCHEME_ORDER_VISUALISATION_DELETING_NOT_SUPPORTED_CATEGORY_SCHEME_WAS_EVER_PUBLISHED, urn);
+            }
+        }
+
+        // Clear if it is the default visualisation
+        if (categorySchemeVersion.getDefaultOrderVisualisation() != null && categorySchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getUrn().equals(urn)) {
+            categorySchemeVersion.setDefaultOrderVisualisation(null);
+            getCategorySchemeVersionMetamacRepository().save(categorySchemeVersion);
+        }
+
+        // Delete
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+        getCategorySchemeOrderVisualisationRepository().delete(categorySchemeOrderVisualisationToDelete);
+        // Clear orders in category columns
+        getCategoryMetamacRepository().clearCategoriesOrderColumn(categorySchemeVersion, categorySchemeOrderVisualisationToDelete.getColumnIndex());
+    }
+
+    @Override
+    public CategorySchemeVersionMetamac versioningCategorySchemeOrderVisualisations(ServiceContext ctx, CategorySchemeVersionMetamac source, CategorySchemeVersionMetamac target)
+            throws MetamacException {
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisationSource : source.getOrderVisualisations()) {
+            versioningCategorySchemeOrderVisualisation(categorySchemeOrderVisualisationSource, target);
+        }
+        target = getCategorySchemeVersionMetamacRepository().save(target);
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisationTarget : target.getOrderVisualisations()) {
+            if (source.getDefaultOrderVisualisation() != null
+                    && source.getDefaultOrderVisualisation().getNameableArtefact().getCode().equals(categorySchemeOrderVisualisationTarget.getNameableArtefact().getCode())) {
+                target.setDefaultOrderVisualisation(categorySchemeOrderVisualisationTarget);
+                break;
+            }
+        }
+        target = getCategorySchemeVersionMetamacRepository().save(target);
+        return target;
+    }
+
+    @Override
+    public void recalculateCategoriesVisualisations(ServiceContext ctx, List<Category> items, List<CategorySchemeOrderVisualisation> orderVisualisations, boolean executeSave) {
+
+        // Recalculate all order codes
+        Boolean alphabeticalAlreadyUpdated = Boolean.FALSE;
+        for (CategorySchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+            if (!alphabeticalAlreadyUpdated && SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
+                sortCategoriesInAlphabeticalOrder(items, orderVisualisation, false);
+                alphabeticalAlreadyUpdated = Boolean.TRUE;
+            } else {
+                sortCategoriesByOrder(items, orderVisualisation, false);
+            }
+        }
+    }
+
+    @Override
+    public void updateCategoryInOrderVisualisation(ServiceContext ctx, String categoryUrn, String categorySchemeOrderVisualisationUrn, Integer newCategoryIndex) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkUpdateCategoryInOrder(categoryUrn, categorySchemeOrderVisualisationUrn, newCategoryIndex, null);
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByCategoryUrn(ctx, categoryUrn);
+        checkCategorySchemeCanBeModified(categorySchemeVersion);
+
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = retrieveCategorySchemeOrderVisualisationByUrn(ctx, categorySchemeOrderVisualisationUrn);
+        SrmValidationUtils.checkNotAlphabeticalOrderVisualisation(categorySchemeOrderVisualisation);
+
+        CategoryMetamac category = retrieveCategoryByUrn(ctx, categoryUrn);
+
+        reorderCategoriesDeletingOneCode(categorySchemeVersion, categorySchemeOrderVisualisation, (Category) category.getParent(), category);
+
+        reorderCategoriesAddingOneInMiddle(categorySchemeVersion, categorySchemeOrderVisualisation, category, newCategoryIndex);
+
+        // Update category
+        SrmServiceUtils.setCategorySchemeOrder(category, categorySchemeOrderVisualisation.getColumnIndex(), newCategoryIndex);
+        getCategoryMetamacRepository().save(category);
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+    }
+
+    @Override
+    public TaskImportationInfo importCategorySchemeOrdersTsv(ServiceContext ctx, String categorySchemeUrn, File file, String fileName, Boolean canBeBackground) throws MetamacException {
+        // Validation
+        CategoriesMetamacInvocationValidator.checkImportCategoryOrdersTsv(categorySchemeUrn, file, fileName, canBeBackground, null);
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        TsvImportationUtils.checkItemSchemeCanExecuteImportation(categorySchemeVersion, categorySchemeVersion.getLifeCycleMetadata(), canBeBackground);
+
+        // Decide if task must be executed in background
+        boolean executeInBackground = SrmServiceUtils.taskMustBeBackground(file, canBeBackground, SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION);
+
+        // Plannify task if can be in background
+        if (executeInBackground) {
+            categorySchemeVersion.getItemScheme().setIsTaskInBackground(Boolean.TRUE);
+            itemSchemeRepository.save(categorySchemeVersion.getItemScheme());
+
+            String jobKey = tasksMetamacService.plannifyImportCategorySchemeOrdersTsvInBackground(ctx, categorySchemeUrn, file, fileName);
+            return new TaskImportationInfo(Boolean.TRUE, jobKey);
+        }
+
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        List<MetamacExceptionItem> informationItems = new ArrayList<MetamacExceptionItem>();
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        List<Category> categoriesInCategoryScheme = null;
+        Set<String> categoriesInTsvToCheckAllCategoriesAreUpdated = null;
+        List<CategorySchemeOrderVisualisation> orderVisualisations = null;
+        try {
+            InputStream stream = new FileInputStream(file);
+            String charset = FileUtils.guessCharset(file);
+            inputStreamReader = new InputStreamReader(stream, charset);
+            bufferedReader = new BufferedReader(inputStreamReader);
+
+            // Header
+            String line = bufferedReader.readLine();
+            ImportationCodeOrdersTsvHeader header = TsvImportationUtils.parseTsvHeaderToImportCodeOrders(line, exceptionItems);
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+                orderVisualisations = tsvHeaderToCategoryOrderVisualisations(categorySchemeVersion, header, exceptionItems);
+            }
+
+            // Orders
+            if (CollectionUtils.isEmpty(exceptionItems)) {
+
+                // Categories in category scheme
+                categoriesInCategoryScheme = categorySchemeVersion.getItems();
+                Map<String, CategoryMetamac> categoriesInSchemeByCode = new HashMap<String, CategoryMetamac>();
+                for (Item item : categoriesInCategoryScheme) {
+                    categoriesInSchemeByCode.put(item.getNameableArtefact().getCode(), (CategoryMetamac) item);
+                }
+                categoriesInTsvToCheckAllCategoriesAreUpdated = new HashSet<String>();
+
+                int lineNumber = 2;
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (StringUtils.isBlank(line)) {
+                        continue;
+                    }
+                    String[] columns = StringUtils.splitPreserveAllTokens(TsvImportationUtils.replaceSeparatorLineInText(line), SrmConstants.TSV_SEPARATOR);
+                    if (columns.length != header.getColumnsSize()) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+                        continue;
+                    }
+                    // Transform orders, setting value of columns
+                    CategoryMetamac categoryMetamac = tsvLineToCategoryOrder(header, columns, lineNumber, categoriesInSchemeByCode, orderVisualisations, exceptionItems);
+                    if (categoryMetamac != null) {
+                        if (categoriesInTsvToCheckAllCategoriesAreUpdated.contains(categoryMetamac.getNameableArtefact().getCode())) {
+                            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_RESOURCE_DUPLICATED, categoryMetamac.getNameableArtefact().getCode(), lineNumber));
+                        } else {
+                            categoriesInTsvToCheckAllCategoriesAreUpdated.add(categoryMetamac.getNameableArtefact().getCode());
+                        }
+                    }
+                    lineNumber++;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error importing tsv file", e);
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_FILE_PARSING, e.getMessage()));
+        } finally {
+            try {
+                if (inputStreamReader != null) {
+                    inputStreamReader.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (IOException e) {
+                // do not relaunch error
+                logger.error("Error closing streams", e);
+            }
+        }
+
+        if (CollectionUtils.isEmpty(exceptionItems) && categoriesInTsvToCheckAllCategoriesAreUpdated.size() != categoriesInCategoryScheme.size()) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CATEGORIES, categoriesInCategoryScheme.size(),
+                    categoriesInTsvToCheckAllCategoriesAreUpdated.size()));
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, fileName)).withExceptionItems(exceptionItems).build();
+        }
+
+        // Re-calculate orders
+        for (CategorySchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+            sortCategoriesByOrder(categoriesInCategoryScheme, orderVisualisation, false);
+        }
+
+        // Persist
+        for (Category category : categoriesInCategoryScheme) {
+            CategoryMetamac categoryMetamac = (CategoryMetamac) category;
+            getCategoryMetamacRepository().save(categoryMetamac);
+        }
+        baseService.updateItemSchemeLastUpdated(ctx, categorySchemeVersion);
+        categorySchemeVersion.getItemScheme().setIsTaskInBackground(Boolean.FALSE);
+        itemSchemeRepository.save(categorySchemeVersion.getItemScheme());
+
+        return new TaskImportationInfo(Boolean.FALSE, informationItems);
+    }
+
+    @Override
+    public String exportCategoryOrdersTsv(ServiceContext ctx, String categorySchemeUrn) throws MetamacException {
+
+        CategoriesMetamacInvocationValidator.checkExportCategoriesTsv(categorySchemeUrn, null);
+
+        CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemeByUrn(ctx, categorySchemeUrn);
+        List<CategorySchemeOrderVisualisation> orderVisualisations = categorySchemeVersion.getOrderVisualisations();
+        String defaultLanguage = srmConfiguration.retrieveLanguageDefault();
+
+        // Retrieve items in depth
+        List<ItemResult> itemsResult = getCategoryMetamacRepository().findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersion.getId(), null, CategoryMetamacResultSelection.EXPORT);
+        // Retrieve all items to retrieve all orders
+        List<Category> categories = categorySchemeVersion.getItems();
+        Map<Long, CategoryMetamac> categoriesById = new HashMap<Long, CategoryMetamac>(categories.size());
+        for (Item category : categories) {
+            categoriesById.put(category.getId(), (CategoryMetamac) category);
+        }
+
+        // Export
+        OutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+        try {
+            File file = File.createTempFile("categories-orders", ".tsv");
+            outputStream = new FileOutputStream(file);
+            writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
+
+            // header
+            writer.write(SrmConstants.TSV_HEADER_CODE);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LABEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_LEVEL);
+            writer.write(SrmConstants.TSV_SEPARATOR);
+            writer.write(SrmConstants.TSV_HEADER_PARENT);
+            for (CategorySchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(orderVisualisation.getNameableArtefact().getCode());
+            }
+
+            // categories
+            for (ItemResult itemResult : itemsResult) {
+                CategoryMetamac categoryMetamac = categoriesById.get(itemResult.getItemIdDatabase());
+
+                writer.write(SrmConstants.TSV_LINE_SEPARATOR);
+                // Code
+                writer.write(itemResult.getCode());
+                // Label
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(itemResult.getName().get(defaultLanguage));
+                // Level
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                writer.write(String.valueOf(((org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint) itemResult.getExtensionPoint()).getLevel()));
+                // Parent
+                writer.write(SrmConstants.TSV_SEPARATOR);
+                if (itemResult.getParent() != null) {
+                    writer.write(itemResult.getParent().getCode());
+                }
+                // Order
+                for (CategorySchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+                    writer.write(SrmConstants.TSV_SEPARATOR);
+                    writer.write(String.valueOf(SrmServiceUtils.getCategorySchemeOrder(categoryMetamac, orderVisualisation.getColumnIndex()) + 1)); // +1 to start in 1
+                }
+            }
+            writer.flush();
+            return file.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(writer);
+        }
+    }
+
+    /**
+     * Transforms tsv header to list of CategorySchemeOrderVisualisations to import.
+     */
+    private List<CategorySchemeOrderVisualisation> tsvHeaderToCategoryOrderVisualisations(CategorySchemeVersionMetamac categorySchemeVersion, ImportationCodeOrdersTsvHeader header,
+            List<MetamacExceptionItem> exceptionItems) {
+        List<CategorySchemeOrderVisualisation> orderVisualisations = new ArrayList<CategorySchemeOrderVisualisation>();
+        for (String orderVisualisationCode : header.getOrderVisualisations()) {
+            CategorySchemeOrderVisualisation orderVisualisation = getCategorySchemeOrderVisualisationRepository().findByCode(categorySchemeVersion.getId(), orderVisualisationCode);
+            if (orderVisualisation == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ORDER_VISUALISATION_NOT_FOUND, orderVisualisationCode,
+                        categorySchemeVersion.getMaintainableArtefact().getUrn()));
+                break;
+            } else if (SrmServiceUtils.isAlphabeticalOrderVisualisation(orderVisualisation)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ALPHABETICAL_VISUALISATION_NOT_SUPPORTED));
+                break;
+            } else {
+                orderVisualisations.add(orderVisualisation);
+            }
+        }
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+        return orderVisualisations;
+    }
+
+    /**
+     * Transforms tsv line to category order values. IMPORTANT: Does not execute save or update operation.
+     */
+    private CategoryMetamac tsvLineToCategoryOrder(ImportationCodeOrdersTsvHeader header, String[] columns, int lineNumber, Map<String, CategoryMetamac> categoriesInSchemeByCode,
+            List<CategorySchemeOrderVisualisation> orderVisualisations, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+
+        // semantic identifier
+        String codeIdentifier = columns[header.getCodePosition()];
+        if (StringUtils.isBlank(codeIdentifier)) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_LINE_INCORRECT, lineNumber));
+            return null;
+        }
+        // update orders
+        CategoryMetamac categoryMetamac = categoriesInSchemeByCode.get(codeIdentifier);
+        if (categoryMetamac == null) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_CATEGORY_NOT_FOUND, codeIdentifier));
+            return null;
+        }
+        for (CategorySchemeOrderVisualisation orderVisualisation : orderVisualisations) {
+            int columnIndex = header.getOrderVisualisationColumn(orderVisualisation.getNameableArtefact().getCode());
+            String orderValueString = columns[columnIndex];
+            if (StringUtils.isBlank(orderValueString)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, categoryMetamac.getNameableArtefact().getCode(),
+                        ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_ORDER));
+                return null;
+            }
+            Integer orderValue = Integer.valueOf(orderValueString);
+            SrmServiceUtils.setCategorySchemeOrder(categoryMetamac, orderVisualisation.getColumnIndex(), orderValue);
+        }
+
+        // Do not persist if any error occurred
+        if (!CollectionUtils.isEmpty(exceptionItems)) {
+            return null;
+        }
+
+        return categoryMetamac;
+    }
+
+    // -------------------------------------------------------------------------
+    // PRIVATE HELPERS - Category Scheme Order Visualisation
+    // -------------------------------------------------------------------------
+
+    private CategorySchemeOrderVisualisation versioningCategorySchemeOrderVisualisation(CategorySchemeOrderVisualisation source, CategorySchemeVersionMetamac categorySchemeTarget)
+            throws MetamacException {
+        CategorySchemeOrderVisualisation target = new CategorySchemeOrderVisualisation();
+        target.setColumnIndex(source.getColumnIndex());
+        target.setNameableArtefact(versioningCategorySchemeVisualisationNameableArtefact(source.getNameableArtefact()));
+        setCategorySchemeOrderVisualisationUrnUnique(categorySchemeTarget, target, false);
+        categorySchemeTarget.addOrderVisualisation(target);
+        return target;
+    }
+
+    private NameableArtefact versioningCategorySchemeVisualisationNameableArtefact(NameableArtefact source) {
+        NameableArtefact target = new NameableArtefact();
+        target.setName(BaseCopyAllMetadataUtils.copy(source.getName()));
+        target.setCode(source.getCode());
+        target.setCodeFull(source.getCodeFull());
+        return target;
+    }
+
+    private CategorySchemeOrderVisualisation retrieveCategorySchemeOrderVisualisationByUrn(String urn) throws MetamacException {
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = getCategorySchemeOrderVisualisationRepository().findByUrn(urn);
+        if (categorySchemeOrderVisualisation == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND).withMessageParameters(urn).build();
+        }
+        return categorySchemeOrderVisualisation;
+    }
+
+    private CategorySchemeOrderVisualisation retrieveCategorySchemeOrderVisualisationByCode(CategorySchemeVersionMetamac categorySchemeVersion, String code) throws MetamacException {
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = getCategorySchemeOrderVisualisationRepository().findByCode(categorySchemeVersion.getId(), code);
+        if (categorySchemeOrderVisualisation == null) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.CATEGORY_SCHEME_ORDER_VISUALISATION_NOT_FOUND)
+                    .withMessageParameters(code, categorySchemeVersion.getMaintainableArtefact().getUrn()).build();
+        }
+        return categorySchemeOrderVisualisation;
+    }
+
+    private void setCategorySchemeOrderVisualisationUrnUnique(CategorySchemeVersion categorySchemeVersion, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, boolean checkUrnUnique)
+            throws MetamacException {
+        String urn = GeneratorUrnUtils.generateCategorySchemeOrderVisualisationUrn(categorySchemeVersion, categorySchemeOrderVisualisation);
+
+        if (checkUrnUnique) {
+            identifiableArtefactRepository.checkUrnUnique(urn, categorySchemeOrderVisualisation.getNameableArtefact().getId());
+        }
+
+        categorySchemeOrderVisualisation.getNameableArtefact().setUrn(urn);
+        categorySchemeOrderVisualisation.getNameableArtefact().setUrnProvider(urn);
+    }
+
+    private void sortCategoriesInAlphabeticalOrder(List<Category> items, CategorySchemeOrderVisualisation alphabeticalOrderVisualisation, boolean executeSave) {
+        if (CollectionUtils.isEmpty(items)) {
+            return;
+        }
+        List<Category> categoriesOrdered = new ArrayList<Category>(items);
+        Collections.sort(categoriesOrdered, new AlphabeticalByLevelComparator());
+        sortCategories(alphabeticalOrderVisualisation.getColumnIndex(), categoriesOrdered, executeSave);
+    }
+
+    private void sortCategoriesByOrder(List<Category> items, CategorySchemeOrderVisualisation orderVisualisation, boolean executeSave) {
+        if (CollectionUtils.isEmpty(items)) {
+            return;
+        }
+        List<Category> categoriesOrdered = new ArrayList<Category>(items);
+        Collections.sort(categoriesOrdered, new CategorySchemeOrderIndexByLevelComparator(orderVisualisation.getColumnIndex()));
+        sortCategories(orderVisualisation.getColumnIndex(), categoriesOrdered, executeSave);
+    }
+
+    private void sortCategories(Integer orderVisualisationIndex, List<Category> categoriesOrdered, boolean executeSave) {
+
+        String previousParentUrn = null;
+        int previousOrder = -1;
+        for (Item item : categoriesOrdered) {
+            CategoryMetamac category = (CategoryMetamac) item;
+            String actualParentUrn = category.getParent() != null ? category.getParent().getNameableArtefact().getUrn() : null;
+            if (!StringUtils.equals(previousParentUrn, actualParentUrn)) {
+                previousOrder = -1; // another level
+                previousParentUrn = category.getParent() != null ? category.getParent().getNameableArtefact().getUrn() : null;
+            }
+            int order = previousOrder == -1 ? 0 : previousOrder + 1;
+            SrmServiceUtils.setCategorySchemeOrder(category, orderVisualisationIndex, Integer.valueOf(order));
+            if (executeSave) {
+                getCategoryMetamacRepository().save(category);
+            }
+            previousOrder = order;
+        }
+    }
+
+    private void reorderCategoriesDeletingOneCode(CategorySchemeVersionMetamac categorySchemeVersion, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, Category parent,
+            CategoryMetamac category) throws MetamacException {
+        Integer columnIndex = categorySchemeOrderVisualisation.getColumnIndex();
+        Integer previousOrder = SrmServiceUtils.getCategorySchemeOrder(category, columnIndex);
+        getCategoryMetamacRepository().reorderCategoriesDeletingOneCode(categorySchemeVersion, parent, category, columnIndex, previousOrder);
+    }
+
+    private void reorderCategoriesAddingOneInMiddle(CategorySchemeVersionMetamac categorySchemeVersion, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, CategoryMetamac category,
+            Integer order) throws MetamacException {
+        Integer columnIndex = categorySchemeOrderVisualisation.getColumnIndex();
+        getCategoryMetamacRepository().reorderCategoriesAddingOneCodeInMiddle(categorySchemeVersion, category, columnIndex, order);
+    }
+
+    private CategoryMetamac initVisualisationsToCategory(CategorySchemeVersionMetamac categorySchemeVersion, CategoryMetamac category, boolean categoryExists) throws MetamacException {
+
+        // Order visualisations
+        Boolean alphabeticalAlreadyUpdated = Boolean.FALSE; // to avoid select to compare code of nameable
+        Integer orderInLastPosition = null; // to avoid unnecessary extra queries
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisation : categorySchemeVersion.getOrderVisualisations()) {
+
+            // remove from previous position
+            if (categoryExists) {
+                reorderCategoriesDeletingOneCode(categorySchemeVersion, categorySchemeOrderVisualisation, category.getParent(), category);
+            }
+
+            if (!alphabeticalAlreadyUpdated && SrmServiceUtils.isAlphabeticalOrderVisualisation(categorySchemeOrderVisualisation)) {
+                setCategoryOrderInAlphabeticalPositionAndReorderCategoriesInLevel(categorySchemeVersion, categorySchemeOrderVisualisation, category.getParent(), category);
+                alphabeticalAlreadyUpdated = Boolean.TRUE;
+            } else {
+                orderInLastPosition = setCategoryOrderInLastPositionInLevel(categorySchemeVersion, categorySchemeOrderVisualisation, category.getParent(), category, orderInLastPosition);
+            }
+        }
+
+        category = getCategoryMetamacRepository().save(category);
+        return category;
+    }
+
+    private void setCategoryOrderInAlphabeticalPositionAndReorderCategoriesInLevel(CategorySchemeVersionMetamac categorySchemeVersion,
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, Category parent, CategoryMetamac category) throws MetamacException {
+        if (!SrmServiceUtils.isAlphabeticalOrderVisualisation(categorySchemeOrderVisualisation)) {
+            return;
+        }
+        Integer alphabeticalPosition = getCategoryMetamacRepository().getCategoryAlphabeticPositionInLevel(categorySchemeVersion, parent, category);
+        Integer columnIndex = SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX;
+        if (alphabeticalPosition == null) {
+            alphabeticalPosition = Integer.valueOf(0);
+        }
+        reorderCategoriesAddingOneInMiddle(categorySchemeVersion, categorySchemeOrderVisualisation, category, alphabeticalPosition);
+        SrmServiceUtils.setCategorySchemeOrder(category, columnIndex, alphabeticalPosition);
+    }
+
+    private Integer setCategoryOrderInLastPositionInLevel(CategorySchemeVersionMetamac categorySchemeVersion, CategorySchemeOrderVisualisation categorySchemeOrderVisualisation, Category parent,
+            CategoryMetamac category, Integer precalculateOrder) throws MetamacException {
+        Integer columnIndex = categorySchemeOrderVisualisation.getColumnIndex();
+        Integer orderInNewLevel = null;
+        if (precalculateOrder == null) {
+            SrmServiceUtils.setCategorySchemeOrder(category, columnIndex, -1); // min value
+            Integer actualMaximumOrderInLevel = getCategoryMetamacRepository().getMaximumOrderInLevel(categorySchemeVersion, parent, columnIndex);
+            if (actualMaximumOrderInLevel == null) {
+                orderInNewLevel = 0;
+            } else {
+                orderInNewLevel = actualMaximumOrderInLevel + 1;
+            }
+        } else {
+            orderInNewLevel = precalculateOrder;
+        }
+        SrmServiceUtils.setCategorySchemeOrder(category, columnIndex, orderInNewLevel);
+        return orderInNewLevel;
+    }
+
+    private Integer getCategoryOrderVisualisationAvailable(CategorySchemeVersionMetamac categorySchemeVersion) throws MetamacException {
+        int index = -1;
+        for (int i = 1; i <= SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+            boolean alreadyExists = false;
+            for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisationPrevious : categorySchemeVersion.getOrderVisualisations()) {
+                if (categorySchemeOrderVisualisationPrevious.getColumnIndex().intValue() == i) {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+            if (!alreadyExists) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            throw new MetamacException(ServiceExceptionType.CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_REACHED, categorySchemeVersion.getMaintainableArtefact().getUrn());
+        }
+        return Integer.valueOf(index);
+    }
+
+    private CategorySchemeVersionMetamac retrieveCategorySchemeOriginalFromUrnTemporal(ServiceContext ctx, String urnTemporal) throws MetamacException {
+        String urnOriginal = GeneratorUrnUtils.makeUrnFromTemporal(urnTemporal);
+        return retrieveCategorySchemeByUrn(ctx, urnOriginal);
+    }
+
+    private void setDefaultCategorySchemeOrderVisualisation(CategorySchemeVersionMetamac temporaryCategoryScheme, CategorySchemeVersionMetamac categoryScheme) {
+        String defaultOrderVisualisationCode = temporaryCategoryScheme.getDefaultOrderVisualisation() == null
+                ? null
+                : temporaryCategoryScheme.getDefaultOrderVisualisation().getNameableArtefact().getCode();
+
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = null;
+        for (CategorySchemeOrderVisualisation orderVisualisation : categoryScheme.getOrderVisualisations()) {
+            if (StringUtils.equals(defaultOrderVisualisationCode, orderVisualisation.getNameableArtefact().getCode())) {
+                categorySchemeOrderVisualisation = orderVisualisation;
+            }
+        }
+        categoryScheme.setDefaultOrderVisualisation(categorySchemeOrderVisualisation);
+    }
+
+    private void createOrderVisualisationVersionFromTemporalOrderVisualisation(CategorySchemeVersionMetamac categorySchemeVersionTemporal) throws MetamacException {
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisation : categorySchemeVersionTemporal.getOrderVisualisations()) {
+            setCategorySchemeOrderVisualisationUrnUnique(categorySchemeVersionTemporal, categorySchemeOrderVisualisation, true);
+        }
+        getCategorySchemeVersionMetamacRepository().save(categorySchemeVersionTemporal);
     }
 
     private CategoryElement findCategoryElementByUrn(String categoryElementUrn) throws MetamacException {

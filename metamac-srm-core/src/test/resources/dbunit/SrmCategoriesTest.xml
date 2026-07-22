@@ -38,6 +38,7 @@
     <TB_SEQUENCES SEQUENCE_NAME="M_ORGANISATIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODELISTS_VERSIONS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_CODES" SEQUENCE_NEXT_VALUE="100000000" />
+    <TB_SEQUENCES SEQUENCE_NAME="M_CAT_SCHEME_ORDER_VIS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_RESOURCE_ELEMENTS" SEQUENCE_NEXT_VALUE="100000000" />
     <TB_SEQUENCES SEQUENCE_NAME="M_RESOURCE_METADATA_FILE" SEQUENCE_NEXT_VALUE="100000000" />
     
@@ -323,7 +324,7 @@
     <TB_M_CAT_SCHEMES_VERSIONS
         TB_CAT_SCHEMES_VERSIONS="11"
         PROC_STATUS="INTERNALLY_PUBLISHED"
-        
+
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user1"
@@ -338,6 +339,7 @@
         EXTERNAL_PUBLICATION_USER="[null]"
 
         STREAM_MESSAGE_STATUS="PENDING"
+        DEFAULT_ORDER_VISUAL_FK="9996111"
     />
     
     <TB_ANNOTABLE_ARTEFACTS 
@@ -398,6 +400,9 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="111"
                 CATEGORY_ELEMENT_FK="1"
+                ORDER1="0"
+                ORDER2="[null]"
+                ORDER3="[null]"
             />
             
             <TB_CATEGORIES
@@ -453,6 +458,9 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="112"
                 CATEGORY_ELEMENT_FK="1"
+                ORDER1="1"
+                ORDER2="[null]"
+                ORDER3="[null]"
             />
             
             <TB_CATEGORIES
@@ -496,9 +504,53 @@
                 LAST_UPDATED_BY="user2"
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
-            />    
-        
-    <!-- **************************************************************************************  -->                
+            />
+
+            <!-- ORDER VISUALISATIONS -->
+
+            <!-- ALPHABETICAL -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996111"
+                CATEGORY_SCHEME_FK="11"
+                NAMEABLE_ARTEFACT_FK="9996111"
+                COLUMN_INDEX="1"
+
+                UUID="category-scheme-order-vis-9996111"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996111"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="ALPHABETICAL"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(01.000).ALPHABETICAL"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(01.000).ALPHABETICAL"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="117"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996111"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+    <!-- **************************************************************************************  -->
     <!-- VERSION 2                                                                               -->
     <!-- **************************************************************************************  -->
     <TB_ITEM_SCHEMES_VERSIONS
@@ -524,7 +576,7 @@
     <TB_M_CAT_SCHEMES_VERSIONS
         TB_CAT_SCHEMES_VERSIONS="12"
         PROC_STATUS="DRAFT"
-        
+
         PRODUCTION_VALIDATION_DATE_TZ="[null]"
         PRODUCTION_VALIDATION_DATE="[null]"
         PRODUCTION_VALIDATION_USER="[null]"
@@ -539,6 +591,7 @@
         EXTERNAL_PUBLICATION_USER="[null]"
 
         STREAM_MESSAGE_STATUS="PENDING"
+        DEFAULT_ORDER_VISUAL_FK="9996122"
     />       
     
     <TB_ANNOTABLE_ARTEFACTS 
@@ -602,9 +655,12 @@
                 TB_M_CATEGORIES="121"
             />
             
-	        <TB_M_CATEGORIES
+            <TB_M_CATEGORIES
                 TB_CATEGORIES="121"
                 CATEGORY_ELEMENT_FK="2"
+                ORDER1="0"
+                ORDER2="0"
+                ORDER3="1"
             />
             
             <TB_CATEGORIES
@@ -660,7 +716,9 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="122"
                 CATEGORY_ELEMENT_FK="3"
-                
+                ORDER1="1"
+                ORDER2="1"
+                ORDER3="2"
             />
             
             <TB_CATEGORIES
@@ -716,6 +774,9 @@
                 <TB_M_CATEGORIES
                     TB_CATEGORIES="1221"
                     CATEGORY_ELEMENT_FK="1"
+                    ORDER1="0"
+                    ORDER2="0"
+                    ORDER3="0"
                 />
                 
                 <TB_CATEGORIES
@@ -772,6 +833,9 @@
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="12211"
                         CATEGORY_ELEMENT_FK="1"
+                        ORDER1="0"
+                        ORDER2="0"
+                        ORDER3="0"
                     />
                     
                     <TB_CATEGORIES
@@ -827,6 +891,9 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="123"
                 CATEGORY_ELEMENT_FK="2"
+                ORDER1="2"
+                ORDER2="2"
+                ORDER3="0"
             />
             
             <TB_CATEGORIES
@@ -882,6 +949,9 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="124"
                 CATEGORY_ELEMENT_FK="1"
+                ORDER1="3"
+                ORDER2="3"
+                ORDER3="3"
             />
             
             <TB_CATEGORIES
@@ -937,6 +1007,9 @@
                 <TB_M_CATEGORIES
                     TB_CATEGORIES="1241"
                     CATEGORY_ELEMENT_FK="2"
+                    ORDER1="0"
+                    ORDER2="0"
+                    ORDER3="0"
                 />
                 
                 <TB_CATEGORIES
@@ -991,6 +1064,9 @@
             
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="12411"
+                        ORDER1="0"
+                        ORDER2="0"
+                        ORDER3="0"
                     />
                     
                     <TB_CATEGORIES
@@ -1036,6 +1112,134 @@
                         LAST_UPDATED_TZ="Europe/London"
                     />
     
+            <!-- ORDER VISUALISATIONS -->
+
+            <!-- ALPHABETICAL -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996121"
+                CATEGORY_SCHEME_FK="12"
+                NAMEABLE_ARTEFACT_FK="9996121"
+                COLUMN_INDEX="1"
+
+                UUID="category-scheme-order-vis-9996121"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996121"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="ALPHABETICAL"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).ALPHABETICAL"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).ALPHABETICAL"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="118"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996121"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <!-- VISUALISATION02 -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996122"
+                CATEGORY_SCHEME_FK="12"
+                NAMEABLE_ARTEFACT_FK="9996122"
+                COLUMN_INDEX="2"
+
+                UUID="category-scheme-order-vis-9996122"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996122"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="VISUALISATION02"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).VISUALISATION02"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).VISUALISATION02"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="[null]"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996122"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <!-- VISUALISATION03 -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996123"
+                CATEGORY_SCHEME_FK="12"
+                NAMEABLE_ARTEFACT_FK="9996123"
+                COLUMN_INDEX="3"
+
+                UUID="category-scheme-order-vis-9996123"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996123"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="VISUALISATION03"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).VISUALISATION03"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME01(02.000).VISUALISATION03"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="119"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996123"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
     <!-- ************************************************************************************** -->
     <!-- CATEGORY SCHEME 2                                                                      -->
     <!--        - Version 1: draft                                                              -->
@@ -1310,9 +1514,10 @@
         EXTERNAL_PUBLICATION_USER="[null]"
 
         STREAM_MESSAGE_STATUS="PENDING"
-    />     
-    
-    <TB_ANNOTABLE_ARTEFACTS 
+        DEFAULT_ORDER_VISUAL_FK="9996311"
+    />
+
+    <TB_ANNOTABLE_ARTEFACTS
         ID="31"
         ANNOTABLE_ARTEFACT_TYPE="MAINTAINABLE_ARTEFACT"
         
@@ -1823,8 +2028,49 @@
                 LAST_UPDATED_BY="user2"
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
-            />                        
-                
+            />
+
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996311"
+                CATEGORY_SCHEME_FK="31"
+                NAMEABLE_ARTEFACT_FK="9996311"
+                COLUMN_INDEX="1"
+
+                UUID="category-scheme-order-vis-9996311"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996311"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="ALPHABETICAL"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME03(01.000).ALPHABETICAL"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME03(01.000).ALPHABETICAL"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="[null]"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996311"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
     <!-- ************************************************************************************** -->
     <!-- CATEGORY SCHEME 4	                                                                    -->
     <!--        - Version 1: validation rejected                                                -->
@@ -2189,7 +2435,7 @@
     <TB_M_CAT_SCHEMES_VERSIONS
         TB_CAT_SCHEMES_VERSIONS="61"
         PROC_STATUS="DIFFUSION_VALIDATION"
-        
+
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user2"
@@ -2204,6 +2450,7 @@
         EXTERNAL_PUBLICATION_USER="[null]"
 
         STREAM_MESSAGE_STATUS="PENDING"
+        DEFAULT_ORDER_VISUAL_FK="9996611"
     />     
     
     <TB_ANNOTABLE_ARTEFACTS 
@@ -2261,6 +2508,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="611"
                 CATEGORY_ELEMENT_FK="2"
+                ORDER1="0"
             />
             
             <TB_CATEGORIES
@@ -2306,6 +2554,50 @@
                 LAST_UPDATED_TZ="Europe/London"
             />  
             
+            <!-- ORDER VISUALISATIONS -->
+
+            <!-- ALPHABETICAL -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996611"
+                CATEGORY_SCHEME_FK="61"
+                NAMEABLE_ARTEFACT_FK="9996611"
+                COLUMN_INDEX="1"
+
+                UUID="category-scheme-order-vis-9996611"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996611"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="ALPHABETICAL"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME06(01.000).ALPHABETICAL"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME06(01.000).ALPHABETICAL"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="120"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996611"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
     <!-- ************************************************************************************** -->
     <!-- CATEGORY SCHEME 7	                                                                    -->
     <!--        - Version 1: externally published                                               -->
@@ -2436,7 +2728,7 @@
     <TB_M_CAT_SCHEMES_VERSIONS
         TB_CAT_SCHEMES_VERSIONS="72"
         PROC_STATUS="INTERNALLY_PUBLISHED"
-        
+
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user1"
@@ -2451,6 +2743,7 @@
         EXTERNAL_PUBLICATION_USER="[null]"
 
         STREAM_MESSAGE_STATUS="PENDING"
+        DEFAULT_ORDER_VISUAL_FK="9996721"
     />     
     
     <TB_ANNOTABLE_ARTEFACTS 
@@ -2508,6 +2801,7 @@
             <TB_M_CATEGORIES
                 TB_CATEGORIES="721"
                 CATEGORY_ELEMENT_FK="[null]"
+                ORDER1="0"
             />
             
             <TB_CATEGORIES
@@ -2551,8 +2845,52 @@
                 LAST_UPDATED_BY="user2"
                 LAST_UPDATED="2011-01-22 01:02:03"
                 LAST_UPDATED_TZ="Europe/London"
-            />  
-            
+            />
+
+            <!-- ORDER VISUALISATIONS -->
+
+            <!-- ALPHABETICAL -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996721"
+                CATEGORY_SCHEME_FK="72"
+                NAMEABLE_ARTEFACT_FK="9996721"
+                COLUMN_INDEX="1"
+
+                UUID="category-scheme-order-vis-9996721"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996721"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="ALPHABETICAL"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME07(02.000).ALPHABETICAL"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX01:CATEGORYSCHEME07(02.000).ALPHABETICAL"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="[null]"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996721"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
     <!-- ************************************************************************************** -->
     <!-- CATEGORY SCHEME 8                                                                      -->
     <!--        - Version 1: diffusion validation                                               -->
@@ -2596,7 +2934,7 @@
     <TB_M_CAT_SCHEMES_VERSIONS
         TB_CAT_SCHEMES_VERSIONS="81"
         PROC_STATUS="DIFFUSION_VALIDATION"
-        
+
         PRODUCTION_VALIDATION_DATE_TZ="Europe/London"
         PRODUCTION_VALIDATION_DATE="2011-01-01 01:02:03"
         PRODUCTION_VALIDATION_USER="user2"
@@ -2611,6 +2949,7 @@
         EXTERNAL_PUBLICATION_USER="[null]"
 
         STREAM_MESSAGE_STATUS="PENDING"
+        DEFAULT_ORDER_VISUAL_FK="9996811"
     />     
     
     <TB_ANNOTABLE_ARTEFACTS 
@@ -2696,7 +3035,8 @@
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="811"
-             />
+                ORDER1="0"
+            />
             
             <TB_CATEGORIES
                 ID="811"
@@ -2749,6 +3089,7 @@
                     <!-- CATEGORY0101 -->
                     <TB_M_CATEGORIES
                         TB_CATEGORIES="8111"
+                        ORDER1="0"
                     />
                     
                     <TB_CATEGORIES
@@ -2818,6 +3159,7 @@
             
             <TB_M_CATEGORIES
                 TB_CATEGORIES="812"
+                ORDER1="1"
             />
             
             <TB_CATEGORIES
@@ -2894,6 +3236,7 @@
             <!-- CATEGORY03 -->
             <TB_M_CATEGORIES
                 TB_CATEGORIES="813"
+                ORDER1="2"
             />
             
             <TB_CATEGORIES
@@ -2952,9 +3295,53 @@
                 />                
 
 
+            <!-- ORDER VISUALISATIONS -->
+
+            <!-- ALPHABETICAL -->
+            <TB_M_CAT_SCHEME_ORDER_VIS
+                ID="9996811"
+                CATEGORY_SCHEME_FK="81"
+                NAMEABLE_ARTEFACT_FK="9996811"
+                COLUMN_INDEX="1"
+
+                UUID="category-scheme-order-vis-9996811"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
+            <TB_ANNOTABLE_ARTEFACTS
+                ID="9996811"
+                ANNOTABLE_ARTEFACT_TYPE="NAMEABLE_ARTEFACT"
+
+                CODE="ALPHABETICAL"
+                URI_PROVIDER="[null]"
+                URN_PROVIDER="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX02:CATEGORYSCHEME08(01.000).ALPHABETICAL"
+                URN="urn:siemac:org.siemac.metamac.infomodel.structuralresources.CategorySchemeOrder=SDMX02:CATEGORYSCHEME08(01.000).ALPHABETICAL"
+                REPLACED_BY_VERSION="[null]"
+                REPLACE_TO_VERSION="[null]"
+
+                NAME_FK="[null]"
+                DESCRIPTION_FK="[null]"
+                COMMENT_FK="[null]"
+
+                UUID="annotableArtefact-9996811"
+                VERSION="1"
+                CREATED_BY="user1"
+                CREATED_DATE="2011-01-01 01:02:03"
+                CREATED_DATE_TZ="Europe/London"
+                LAST_UPDATED_BY="user2"
+                LAST_UPDATED="2011-01-22 01:02:03"
+                LAST_UPDATED_TZ="Europe/London"
+            />
+
     <!-- ************************************************************************************** -->
     <!-- CATEGORY ELEMENTS                                                                      -->
-    <!-- *************************************************************************************  -->    
+    <!-- *************************************************************************************  -->
             <TB_RESOURCE_ELEMENTS
                 ID="1"
                 IDENTIFIABLE_ARTEFACT_FK="99991"
@@ -4227,14 +4614,92 @@
         ID="116"
         VERSION="1"
     />
-    
+
     <TB_LOCALISED_STRINGS
         ID="616"
         LABEL="Santa Cruz de Tenerife"
         LOCALE="es"
         VERSION="1"
         INTERNATIONAL_STRING_FK="116"
-    />                      
+    />
+
+    <!-- Names for category scheme order visualisations -->
+    <TB_INTERNATIONAL_STRINGS
+        ID="117"
+        VERSION="1"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1171"
+        LABEL="visualizacion - ordenes 1-1-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="117"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1172"
+        LABEL="order - visualisation 1-1-1"
+        LOCALE="en"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="117"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+        ID="118"
+        VERSION="1"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1181"
+        LABEL="visualizacion - ordenes 1-2-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="118"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1182"
+        LABEL="order - visualisation 1-2-1"
+        LOCALE="en"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="118"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+        ID="119"
+        VERSION="1"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1191"
+        LABEL="visualizacion - ordenes 1-2-3"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="119"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1192"
+        LABEL="order - visualisation 1-2-3"
+        LOCALE="en"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="119"
+    />
+
+    <TB_INTERNATIONAL_STRINGS
+        ID="120"
+        VERSION="1"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1201"
+        LABEL="visualizacion - ordenes 6-1-1"
+        LOCALE="es"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="120"
+    />
+    <TB_LOCALISED_STRINGS
+        ID="1202"
+        LABEL="order - visualisation 6-1-1"
+        LOCALE="en"
+        VERSION="1"
+        INTERNATIONAL_STRING_FK="120"
+    />
+
         <!-- ************************************************************************************** -->
     <!-- TB_LIS_ANNOTATION_TYPES                                                             -->
     <!-- *************************************************************************************  -->  

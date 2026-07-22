@@ -650,12 +650,19 @@
                 {"$ref":"#/components/parameters/offsetParam"},
                 {"$ref":"#/components/parameters/categoryQueryParam"},
                 {"$ref":"#/components/parameters/categoryOrderByParam"},
-                {
+              {
+                  "name":"orderConfiguration",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.parameters.8.description']}"
+              },
+              {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1_0.categoryschemes.agencyID.resourceID.version.categories.get.parameters.7.description']}"
-                }
+                },
+                {"$ref":"#/components/parameters/langParam"}
             ],
             "responses":{
                "200":{

@@ -17,9 +17,11 @@ import org.siemac.metamac.srm.web.category.model.record.CategorySchemeRecord;
 import org.siemac.metamac.srm.web.category.presenter.CategorySchemePresenter;
 import org.siemac.metamac.srm.web.category.utils.CategoriesFormUtils;
 import org.siemac.metamac.srm.web.category.view.handlers.CategorySchemeUiHandlers;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.web.category.widgets.CategorySchemeCategoriesPanel;
 import org.siemac.metamac.srm.web.category.widgets.CategorySchemeCategorisationsPanel;
 import org.siemac.metamac.srm.web.category.widgets.CategorySchemeMainFormLayout;
+import org.siemac.metamac.srm.web.category.widgets.CategorySchemeOrdersPanel;
 import org.siemac.metamac.srm.web.category.widgets.CategorySchemeVersionsSectionStack;
 import org.siemac.metamac.srm.web.client.enums.ExportDetailEnum;
 import org.siemac.metamac.srm.web.client.enums.ExportReferencesEnum;
@@ -35,12 +37,15 @@ import org.siemac.metamac.srm.web.dsd.widgets.ExportSdmxResourceWindow;
 import org.siemac.metamac.srm.web.shared.CommonSharedUtils;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.category.GetCategorySchemesResult;
+import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.BooleanWebUtils;
+import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.TitleLabel;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
@@ -97,6 +102,9 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
     private final CategorySchemeCategoriesPanel        categoriesPanel;
 
+    // Orders
+    private final CategorySchemeOrdersPanel            categorySchemeOrdersPanel;
+
     // Category elements assignment
     private final CategoriesCodesCategoryElementsPanel categoriesCodesCategoryElementsPanel;
 
@@ -142,6 +150,10 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         categoriesPanel = new CategorySchemeCategoriesPanel();
 
+        // ORDERS
+
+        categorySchemeOrdersPanel = new CategorySchemeOrdersPanel();
+
         // CATEGORIES ELEMENTS ASSIGNMENT
 
         categoriesCodesCategoryElementsPanel = new CategoriesCodesCategoryElementsPanel();
@@ -173,6 +185,11 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         categoriesTab.setPane(categoriesPanel);
         tabSet.addTab(categoriesTab);
 
+        // Orders tab
+        Tab ordersTab = new Tab(getConstants().categorySchemeOrders());
+        ordersTab.setPane(categorySchemeOrdersPanel);
+        tabSet.addTab(ordersTab);
+
         // Categories elements assignment
         Tab categoryElementsAssignment = new Tab(getConstants().categoriesCategoryElementAssignment());
         categoryElementsAssignment.setPane(categoriesCodesCategoryElementsPanel);
@@ -195,6 +212,7 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
     public void setUiHandlers(CategorySchemeUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         categoriesPanel.setUiHandlers(uiHandlers);
+        categorySchemeOrdersPanel.setUiHandlers(uiHandlers);
         this.categoriesCodesCategoryElementsPanel.setUiHandlers(uiHandlers);
         categorisationsPanel.setUiHandlers(uiHandlers);
     }
@@ -400,11 +418,12 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         // Diffusion descriptors
         diffusionDescriptorsForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
+        ViewTextItem defaultOrder = new ViewTextItem(CategorySchemeDS.DEFAULT_ORDER, getConstants().categorySchemeDefaultOrder());
         ViewTextItem replacedBy = new ViewTextItem(CategorySchemeDS.REPLACED_BY_VERSION, getConstants().maintainableArtefactReplacedByVersion());
         ViewTextItem replaceTo = new ViewTextItem(CategorySchemeDS.REPLACE_TO_VERSION, getConstants().maintainableArtefactReplaceToVersion());
         ViewTextItem validFrom = new ViewTextItem(CategorySchemeDS.VALID_FROM, getConstants().maintainableArtefactValidFrom());
         ViewTextItem validTo = new ViewTextItem(CategorySchemeDS.VALID_TO, getConstants().maintainableArtefactValidTo());
-        diffusionDescriptorsForm.setFields(replacedBy, replaceTo, validFrom, validTo);
+        diffusionDescriptorsForm.setFields(defaultOrder, replacedBy, replaceTo, validFrom, validTo);
 
         // Version responsibility
         versionResponsibilityForm = new GroupDynamicForm(getConstants().lifeCycleVersionResponsibility());
@@ -476,11 +495,12 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         // Diffusion descriptors
         diffusionDescriptorsEditionForm = new GroupDynamicForm(getConstants().formDiffusionDescriptors());
+        CustomSelectItem defaultOrderEdition = new CustomSelectItem(CategorySchemeDS.DEFAULT_ORDER, getConstants().categorySchemeDefaultOrder());
         ViewTextItem replacedBy = new ViewTextItem(CategorySchemeDS.REPLACED_BY_VERSION, getConstants().maintainableArtefactReplacedByVersion());
         ViewTextItem replaceTo = new ViewTextItem(CategorySchemeDS.REPLACE_TO_VERSION, getConstants().maintainableArtefactReplaceToVersion());
         ViewTextItem validFrom = new ViewTextItem(CategorySchemeDS.VALID_FROM, getConstants().maintainableArtefactValidFrom());
         ViewTextItem validTo = new ViewTextItem(CategorySchemeDS.VALID_TO, getConstants().maintainableArtefactValidTo());
-        diffusionDescriptorsEditionForm.setFields(replacedBy, replaceTo, validFrom, validTo);
+        diffusionDescriptorsEditionForm.setFields(defaultOrderEdition, replacedBy, replaceTo, validFrom, validTo);
 
         // Version responsibility
         versionResponsibilityEditionForm = new GroupDynamicForm(getConstants().lifeCycleVersionResponsibility());
@@ -550,8 +570,9 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         setCategorySchemeViewMode(categorySchemeDto);
         setCategorySchemeEditionMode(categorySchemeDto);
 
-        // Update category scheme in tree grid
+        // Update category scheme in tree grid and orders panel
         categoriesPanel.updateItemScheme(categorySchemeDto);
+        categorySchemeOrdersPanel.setCategoryScheme(categorySchemeDto);
         categoriesCodesCategoryElementsPanel.updateItemScheme(categorySchemeDto);
     }
 
@@ -618,6 +639,7 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
         productionDescriptorsForm.setValue(CategorySchemeDS.RESOURCE_CREATION_DATE, categorySchemeDto.getResourceCreatedDate());
 
         // Diffusion descriptors
+        diffusionDescriptorsForm.setValue(CategorySchemeDS.DEFAULT_ORDER, RelatedResourceUtils.getRelatedResourceName(categorySchemeDto.getDefaultOrderVisualisation()));
         diffusionDescriptorsForm.setValue(CategorySchemeDS.REPLACED_BY_VERSION, categorySchemeDto.getReplacedByVersion());
         diffusionDescriptorsForm.setValue(CategorySchemeDS.REPLACE_TO_VERSION, categorySchemeDto.getReplaceToVersion());
         diffusionDescriptorsForm.setValue(CategorySchemeDS.VALID_FROM, categorySchemeDto.getValidFrom());
@@ -684,6 +706,8 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         // DIFFUSION DESCRIPTORS
 
+        diffusionDescriptorsEditionForm.setValue(CategorySchemeDS.DEFAULT_ORDER,
+                categorySchemeDto.getDefaultOrderVisualisation() != null ? categorySchemeDto.getDefaultOrderVisualisation().getUrn() : StringUtils.EMPTY);
         diffusionDescriptorsEditionForm.setValue(CategorySchemeDS.REPLACED_BY_VERSION, categorySchemeDto.getReplacedByVersion());
         diffusionDescriptorsEditionForm.setValue(CategorySchemeDS.REPLACE_TO_VERSION, categorySchemeDto.getReplaceToVersion());
         diffusionDescriptorsEditionForm.setValue(CategorySchemeDS.VALID_FROM, DateUtils.getFormattedDate(categorySchemeDto.getValidFrom()));
@@ -722,6 +746,9 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
     public void setCategories(List<CategoryMetamacVisualisationResult> categoryDtos) {
         categoriesCodesCategoryElementsPanel.setCodes(categorySchemeDto, categoryDtos);
         categoriesPanel.setCategories(categoryDtos);
+
+        // Every time new categories are set, the visualisation of category scheme order should be reset (maybe there are new categories, or its structure has changed)
+        categorySchemeOrdersPanel.hideCodes();
     }
 
     public CategorySchemeMetamacDto getCategorySchemeDto() {
@@ -732,6 +759,11 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
 
         // Content descriptors
         categorySchemeDto.setDescription(contentDescriptorsEditionForm.getValueAsInternationalStringDto(CategorySchemeDS.DESCRIPTION));
+
+        // Diffusion descriptors
+        categorySchemeDto.setDefaultOrderVisualisation(!StringUtils.isBlank(diffusionDescriptorsEditionForm.getValueAsString(CategorySchemeDS.DEFAULT_ORDER))
+                ? RelatedResourceUtils.createRelatedResourceDto(diffusionDescriptorsEditionForm.getValueAsString(CategorySchemeDS.DEFAULT_ORDER))
+                : null);
 
         // Comments
         categorySchemeDto.setComment(commentsEditionForm.getValueAsInternationalStringDto(CategorySchemeDS.COMMENTS));
@@ -857,5 +889,23 @@ public class CategorySchemeViewImpl extends ViewWithUiHandlers<CategorySchemeUiH
     @Override
     public boolean mustFillAnnotationTypeList() {
         return !this.annotationsPanel.isAnnotationTypeFieldFill() || !this.annotationsEditionPanel.isAnnotationTypeFieldFill();
+    }
+
+    @Override
+    public void setCategoriesWithOrder(List<CategoryMetamacVisualisationResult> categories, CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto) {
+        categorySchemeOrdersPanel.setCategories(categorySchemeDto, categories, categorySchemeOrderVisualisationDto);
+    }
+
+    @Override
+    public void setCategorySchemeOrders(List<CategorySchemeVisualisationDto> orders) {
+        categorySchemeOrdersPanel.setOrders(orders);
+
+        // Populate the edition form with the order list (to fill the default order dropdown)
+        LinkedHashMap<String, String> ordersMap = new LinkedHashMap<String, String>();
+        ordersMap.put(StringUtils.EMPTY, StringUtils.EMPTY);
+        for (CategorySchemeVisualisationDto order : orders) {
+            ordersMap.put(order.getUrn(), CommonWebUtils.getElementName(order.getCode(), order.getName()));
+        }
+        diffusionDescriptorsEditionForm.getItem(CategorySchemeDS.DEFAULT_ORDER).setValueMap(ordersMap);
     }
 }

@@ -35,8 +35,8 @@
         <cdomain:text xml:lang="es">name-itemScheme1v01.000 en Español</cdomain:text>
     </sr:name>
     <sr:description>
-        <cdomain:text xml:lang="es">description-itemScheme1v01.000 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-itemScheme1v01.000 in English</cdomain:text>
+        <cdomain:text xml:lang="es">description-itemScheme1v01.000 en Español</cdomain:text>
     </sr:description>
     <sr:visualizerHtmlLink>nullcategories/schemes/agency1/itemScheme1/01.000/detail</sr:visualizerHtmlLink>
     <sr:version>01.000</sr:version>
@@ -54,4 +54,28 @@
         <sr:lastUpdatedDate>2012-12-04T01:01:01.001Z</sr:lastUpdatedDate>
     </sr:lifeCycle>
     <sr:isPartial>false</sr:isPartial>
+    <sr:orderConfigurations total="3">
+        <sr:visualisationConfiguration>
+            <cdomain:id>order1</cdomain:id>
+            <cdomain:name>
+                <cdomain:text xml:lang="es">order-order1 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">order-order1 in English</cdomain:text>
+            </cdomain:name>
+            <sr:default>true</sr:default>
+        </sr:visualisationConfiguration>
+        <sr:visualisationConfiguration>
+            <cdomain:id>order2</cdomain:id>
+            <cdomain:name>
+                <cdomain:text xml:lang="es">order-order2 en Español</cdomain:text>
+                <cdomain:text xml:lang="en">order-order2 in English</cdomain:text>
+            </cdomain:name>
+        </sr:visualisationConfiguration>
+        <sr:visualisationConfiguration>
+            <cdomain:id>order3</cdomain:id>
+            <cdomain:name>
+                <cdomain:text xml:lang="en">order-order3 in English</cdomain:text>
+                <cdomain:text xml:lang="es">order-order3 en Español</cdomain:text>
+            </cdomain:name>
+        </sr:visualisationConfiguration>
+    </sr:orderConfigurations>
 </sr:categoryScheme>

@@ -30,6 +30,12 @@ public class SrmConstants {
     public static final String             CONCEPT_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE                   = "ALPHABETICAL";
     public static final Integer            CONCEPT_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX           = Integer.valueOf(1);
 
+    // Category scheme
+    public static final int                CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER                    = 20;
+    public static final String             CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE                 = "ALPHABETICAL";
+    public static final Integer            CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_COLUMN_INDEX         = Integer.valueOf(1);
+    public static final int                CATEGORY_QUERY_COLUMN_ORDER_LENGTH                                    = 6;
+
     // Importation and exportation
     public static final String             TSV_SEPARATOR                                                          = "\t";
     public static final String             TSV_LINE_SEPARATOR                                                     = "\n";
@@ -118,6 +124,7 @@ public class SrmConstants {
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_RESOURCE_ELEMENTS_IMPORTATION                = 150000;
     public static long                     NUM_VARIABLE_ELEMENTS_BY_VARIABLE_TO_PLANNIFY_TSV_CODES_IMPORTATION    = 2000;
     public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CONCEPTS_ORDERS_IMPORTATION                  = 50000;
+    public static long                     NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION                = 50000;
 
     public static final int                VARIABLE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;
     public static final int                RESOURCE_ELEMENT_CACHE_SIZE_TSV_IMPORT                                 = 200;

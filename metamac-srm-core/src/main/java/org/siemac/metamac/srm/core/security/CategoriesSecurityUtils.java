@@ -209,4 +209,30 @@ public class CategoriesSecurityUtils extends CommonSecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
+
+    // CATEGORY SCHEME ORDER VISUALISATIONS
+
+    public static void canRetrieveOrFindCategorySchemeOrderVisualisation(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canRetrieveOrFindCategorySchemeOrderVisualisation(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canCrudCategorySchemeOrderVisualisation(ServiceContext ctx, ProcStatusEnum categorySchemeVersionProcStatus) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(getMetamacPrincipal(ctx), categorySchemeVersionProcStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canImportCategorySchemeOrderVisualisations(ServiceContext ctx, ProcStatusEnum procStatus) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canImportCategorySchemeOrderVisualisations(getMetamacPrincipal(ctx), procStatus)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canExportCategoryOrdersTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedCategoriesSecurityUtils.canExportCategoryOrdersTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
 }

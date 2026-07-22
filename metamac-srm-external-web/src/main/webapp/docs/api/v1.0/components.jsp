@@ -233,6 +233,12 @@ public String queryDescriptionWithParams(String queryDescription, String validOp
           "type":"string",
           "description":"<%=orderByDescription %><br><%=validFieldId %><%= criteriosDeOrden %><br><%=exampleOrderBy %>"
         },
+        "langParam":{
+            "name":"lang",
+            "in":"query",
+            "type":"string",
+            "description":"${msg['api.doc.swagger.components.parameters.langParam.description']}"
+        },
         "variableFamilyQueryParam": {
             "name":"query",
             "in":"query",

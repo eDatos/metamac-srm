@@ -253,10 +253,22 @@ public class ServiceExceptionType extends com.arte.statistic.sdmx.srm.core.commo
             "exception.srm.concept_schemes.order_visualisation.maximum_reached");
     public static final CommonServiceExceptionType CONCEPT_SCHEME_ORDER_VISUALISATION_DELETING_NOT_SUPPORTED_CONCEPT_SCHEME_WAS_EVER_PUBLISHED = create(
             "exception.srm.concept_schemes.order_visualisation.delete_not_supported.belonged_to_concept_scheme_was_published");
+    public static final CommonServiceExceptionType CATEGORY_SCHEME_ORDER_VISUALISATION_NOT_FOUND                                               = create(
+            "exception.srm.category_scheme.order_visualisation.not_found");
+    public static final CommonServiceExceptionType CATEGORY_SCHEME_ALPHABETICAL_ORDER_OPERATION_NOT_SUPPORTED                                  = create(
+            "exception.srm.category_schemes.order_visualisation.alphabetical.operation_not_supported");
+    public static final CommonServiceExceptionType CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_REACHED                                         = create(
+            "exception.srm.category_schemes.order_visualisation.maximum_reached");
+    public static final CommonServiceExceptionType CATEGORY_SCHEME_ORDER_VISUALISATION_DELETING_NOT_SUPPORTED_CATEGORY_SCHEME_WAS_EVER_PUBLISHED = create(
+            "exception.srm.category_schemes.order_visualisation.delete_not_supported.belonged_to_category_scheme_was_published");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CONCEPT_NOT_FOUND                                                     = create(
             "exception.srm.importation.tsv.error.code.not_found");
     public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CONCEPTS                                             = create(
             "exception.srm.importation.tsv.error.incorrect_number_concepts");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_CATEGORY_NOT_FOUND                                                   = create(
+            "exception.srm.importation.tsv.error.code.not_found");
+    public static final CommonServiceExceptionType IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CATEGORIES                                           = create(
+            "exception.srm.importation.tsv.error.incorrect_number_categories");
 
     // Notices
     public static final CommonServiceExceptionType IMPORT_TSV_JOB_ERROR                                                                        = create(

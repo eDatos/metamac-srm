@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
 import static org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts.assertEqualsCategoryeElement;
+import static org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAsserts.assertEqualsCategorySchemeOrderVisualisation;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -53,6 +55,7 @@ import org.siemac.metamac.srm.core.base.utils.BaseDoMocks;
 import org.siemac.metamac.srm.core.category.domain.CategoryElement;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementProperties;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacRepository;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
@@ -64,6 +67,8 @@ import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacAs
 import org.siemac.metamac.srm.core.category.serviceapi.utils.CategoriesMetamacDoMocks;
 import org.siemac.metamac.srm.core.code.domain.TaskImportationInfo;
 import org.siemac.metamac.srm.core.common.SrmBaseTest;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
+import org.siemac.metamac.srm.core.task.serviceapi.TasksMetamacService;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
@@ -76,11 +81,20 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemRepository;
 import com.arte.statistic.sdmx.srm.core.base.domain.ItemSchemeVersionRepository;
 import com.arte.statistic.sdmx.srm.core.category.domain.Categorisation;
+import com.arte.statistic.sdmx.srm.core.task.domain.Task;
+import com.arte.statistic.sdmx.srm.core.task.domain.TaskResult;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskResultTypeEnum;
+import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.TaskStatusTypeEnum;
 import com.arte.statistic.sdmx.srm.core.category.domain.Category;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategoryProperties;
 import com.arte.statistic.sdmx.srm.core.category.domain.CategorySchemeVersion;
@@ -114,6 +128,12 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
     @PersistenceContext(unitName = "SrmCoreEntityManagerFactory")
     protected EntityManager               entityManager;
+
+    @Autowired
+    protected PlatformTransactionManager  transactionManager;
+
+    @Autowired
+    private TasksMetamacService           tasksService;
 
     @Override
     @Test
@@ -1861,7 +1881,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // LOCALE = 'es'
         {
             String locale = "es";
-            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale, null);
 
             // Validate
             assertEquals(8, categories.size());
@@ -2622,7 +2642,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
 
         // Validate categories
 
-        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
+        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es", null);
         assertEquals(result.size(), 16);
 
         String categorySchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME02(01.000).";
@@ -2683,7 +2703,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         assertEquals(false, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
 
         // Validate categories
-        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es");
+        List<CategoryMetamacVisualisationResult> result = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_2_V1, "es", null);
         assertEquals(result.size(), 42);
         String categorySchemeUrnPart = "urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=SDMX01:CATEGORYSCHEME02(01.000).";
         assertEqualsImportedCategory(categorySchemeUrnPart + "cat2", null, "cat2", "Estadísticas económicas", "Economic statistics");
@@ -2784,7 +2804,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
     @Test
     public void testRetrieveCategoriesOrderedInDepthByCategorySchemeUrn() throws Exception {
 
-        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12),
+        List<ItemResult> categories = categoryMetamacRepository.findCategoriesByCategorySchemeOrderedInDepth(Long.valueOf(12), null,
                 new CategoryMetamacResultSelection(true, true, true, true, false, true, false, true));
 
         assertEquals(8, categories.size());
@@ -2818,7 +2838,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // LOCALE = 'es'
         {
             String locale = "es";
-            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale, null);
 
             // Validate
             assertEquals(8, categories.size());
@@ -2901,7 +2921,7 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
         // LOCALE = 'en'
         {
             String locale = "en";
-            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale, null);
 
             // Validate
             assertEquals(8, categories.size());
@@ -3368,6 +3388,917 @@ public class CategoriesMetamacServiceTest extends SrmBaseTest implements Categor
             assertEquals(ServiceExceptionType.IMPORTATION_LOGO_CATEGORY_ELEMENT_MAX_SIZE_ERROR.getCode(), e.getExceptionItems().get(0).getCode());
         }
 
+    }
+
+    // ------------------------------------------------------------------------------------
+    // ORDER VISUALISATIONS
+    // ------------------------------------------------------------------------------------
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testCreateCategorySchemeOrderVisualisation() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = CategoriesMetamacDoMocks.mockCategorySchemeOrderVisualisation(retrieveAnnotationType_1());
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // Create
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisationCreated = categoriesService.createCategorySchemeOrderVisualisation(ctx, categorySchemeUrn,
+                categorySchemeOrderVisualisation);
+        assertNotNull(categorySchemeOrderVisualisationCreated.getId());
+        assertNotNull(categorySchemeOrderVisualisationCreated.getNameableArtefact().getUrn());
+        assertEqualsCategorySchemeOrderVisualisation(categorySchemeOrderVisualisation, categorySchemeOrderVisualisationCreated);
+        assertEqualsDate("2011-01-01 01:02:03", categorySchemeOrderVisualisationCreated.getCategorySchemeVersion().getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), categorySchemeOrderVisualisationCreated.getCategorySchemeVersion().getItemScheme().getResourceLastUpdated().toDate()));
+
+        // Validate categories order (new visualisation uses alphabetical order)
+        List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, "es",
+                categorySchemeOrderVisualisationCreated.getNameableArtefact().getUrn());
+        assertEquals(8, categories.size());
+        assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1).getOrder());
+        assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2).getOrder());
+        assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1).getOrder());
+        assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1).getOrder());
+        assertEquals(Integer.valueOf(2), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3).getOrder());
+        assertEquals(Integer.valueOf(3), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4).getOrder());
+        assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1).getOrder());
+        assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1).getOrder());
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testCreateCategorySchemeOrderVisualisationAlphabetical() throws Exception {
+        // Already tested
+
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testUpdateCategorySchemeOrderVisualisation() throws Exception {
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02);
+        categorySchemeOrderVisualisation.getNameableArtefact().setName(BaseDoMocks.mockInternationalString());
+        categorySchemeOrderVisualisation.getNameableArtefact().setIsCodeUpdated(Boolean.FALSE);
+
+        // Update
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisationUpdated = categoriesService.updateCategorySchemeOrderVisualisation(getServiceContextAdministrador(),
+                categorySchemeOrderVisualisation);
+
+        // Validate
+        assertEqualsCategorySchemeOrderVisualisation(categorySchemeOrderVisualisation, categorySchemeOrderVisualisationUpdated);
+        assertEqualsDate("2011-01-01 01:02:03", categorySchemeOrderVisualisationUpdated.getCategorySchemeVersion().getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), categorySchemeOrderVisualisationUpdated.getCategorySchemeVersion().getItemScheme().getResourceLastUpdated().toDate()));
+    }
+
+    @Test
+    public void testUpdateCategorySchemeOrderVisualisationErrorDuplicatedCategory() throws Exception {
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03);
+        categorySchemeOrderVisualisation.getNameableArtefact().setCode("VISUALISATION02");
+        categorySchemeOrderVisualisation.getNameableArtefact().setIsCodeUpdated(Boolean.TRUE);
+        try {
+            categoriesService.updateCategorySchemeOrderVisualisation(getServiceContextAdministrador(), categorySchemeOrderVisualisation);
+            fail("duplicated category");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_URN_DUPLICATED, 1, new String[]{CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02},
+                    e.getExceptionItems().get(0));
+        }
+    }
+
+    @Test
+    public void testCreateCategoryTestingOrderVisualisation() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
+        category.getNameableArtefact().setCode("category029");
+        category.setParent(null);
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // Create
+        CategoryMetamac categoryCreated = categoriesService.createCategory(ctx, categorySchemeUrn, category);
+
+        // Validate visualisations
+        // Visualisation 01, alphabetic
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2).getOrder());
+            assertEquals(Integer.valueOf(2), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder()); // after CATEGORY02
+            assertEquals(Integer.valueOf(3), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3).getOrder());
+            assertEquals(Integer.valueOf(4), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4).getOrder());
+        }
+        // Visualisation 02
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02);
+
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2).getOrder());
+            assertEquals(Integer.valueOf(2), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3).getOrder());
+            assertEquals(Integer.valueOf(3), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4).getOrder());
+            assertEquals(Integer.valueOf(4), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 03
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03);
+
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1).getOrder());
+            assertEquals(Integer.valueOf(2), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2).getOrder());
+            assertEquals(Integer.valueOf(3), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4).getOrder());
+            assertEquals(Integer.valueOf(4), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+    }
+
+    @Test
+    public void testCreateCategorySubCategoryTestingOrderVisualisation() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
+        category.getNameableArtefact().setCode("category0200");
+        CategoryMetamac categoryParent = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2);
+        category.setParent(categoryParent);
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // Create
+        CategoryMetamac categoryCreated = categoriesService.createCategory(ctx, categorySchemeUrn, category);
+
+        // Validate visualisations
+        // Visualisation 01, alphabetic
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1).getOrder());
+        }
+        // Visualisation 02
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 03
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+    }
+
+    @Test
+    public void testCreateCategorySubCategoryInLevelWithoutOtherCategoriesTestingOrderVisualisation() throws Exception {
+        ServiceContext ctx = getServiceContextAdministrador();
+
+        CategoryMetamac category = CategoriesMetamacDoMocks.mockCategory(retrieveAnnotationType_1());
+        CategoryMetamac categoryParent = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+        category.setParent(categoryParent);
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // Create
+        CategoryMetamac categoryCreated = categoriesService.createCategory(ctx, categorySchemeUrn, category);
+
+        // Validate visualisations
+        // Visualisation 01, alphabetic
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 02
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+        // Visualisation 03
+        {
+            CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(ctx, categorySchemeUrn, "es",
+                    categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            assertEquals(9, categories.size());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, categoryCreated.getNameableArtefact().getUrn()).getOrder());
+        }
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testRetrieveCategorySchemeOrderVisualisationByUrn() throws Exception {
+        // Retrieve
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String orderVisualisationUrn = CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL;
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                orderVisualisationUrn);
+
+        // Validate
+        assertNotNull(categorySchemeOrderVisualisation);
+        assertEquals("ALPHABETICAL", categorySchemeOrderVisualisation.getNameableArtefact().getCode());
+        assertEquals(orderVisualisationUrn, categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+        assertEquals(categorySchemeUrn, categorySchemeOrderVisualisation.getCategorySchemeVersion().getMaintainableArtefact().getUrn());
+        assertEqualsInternationalString(categorySchemeOrderVisualisation.getNameableArtefact().getName(), "es", "visualizacion - ordenes 1-2-1", "en", "order - visualisation 1-2-1");
+        assertEquals(Integer.valueOf(1), categorySchemeOrderVisualisation.getColumnIndex());
+
+        assertEquals("user1", categorySchemeOrderVisualisation.getCreatedBy());
+        assertEqualsDate("2011-01-01 01:02:03", categorySchemeOrderVisualisation.getCreatedDate());
+        assertEquals("user2", categorySchemeOrderVisualisation.getLastUpdatedBy());
+        assertEqualsDate("2011-01-22 01:02:03", categorySchemeOrderVisualisation.getLastUpdated());
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testRetrieveCategorySchemeOrderVisualisationByCode() throws Exception {
+        // Retrieve
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String orderVisualisationCode = "ALPHABETICAL";
+        CategorySchemeOrderVisualisation categorySchemeOrderVisualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByCode(getServiceContextAdministrador(), categorySchemeUrn,
+                orderVisualisationCode);
+
+        // Validate
+        assertNotNull(categorySchemeOrderVisualisation);
+        assertEquals(orderVisualisationCode, categorySchemeOrderVisualisation.getNameableArtefact().getCode());
+        assertEquals(CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL, categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+        assertEquals(categorySchemeUrn, categorySchemeOrderVisualisation.getCategorySchemeVersion().getMaintainableArtefact().getUrn());
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testRetrieveCategorySchemeOrderVisualisationsByCategoryScheme() throws Exception {
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        List<CategorySchemeOrderVisualisation> visualisations = categoriesService.retrieveCategorySchemeOrderVisualisationsByCategoryScheme(getServiceContextAdministrador(), categorySchemeUrn);
+
+        assertEquals(3, visualisations.size());
+        assertContainsCategorySchemeOrderVisualisation(CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL, visualisations);
+        assertContainsCategorySchemeOrderVisualisation(CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02, visualisations);
+        assertContainsCategorySchemeOrderVisualisation(CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03, visualisations);
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testDeleteCategorySchemeOrderVisualisation() throws Exception {
+        String urn = CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03;
+
+        // Check that order columns exist before delete
+        {
+            CategoryMetamac category1 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_1);
+            assertNotNull(category1.getOrder1());
+            assertNotNull(category1.getOrder2());
+            assertNotNull(category1.getOrder3());
+
+            CategoryMetamac category2 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2);
+            assertNotNull(category2.getOrder1());
+            assertNotNull(category2.getOrder2());
+            assertNotNull(category2.getOrder3());
+        }
+
+        categoriesService.deleteCategorySchemeOrderVisualisation(getServiceContextAdministrador(), urn);
+
+        // Retrieve deleted visualisation
+        try {
+            categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(), urn);
+            fail("visualisation deleted");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IDENTIFIABLE_ARTEFACT_NOT_FOUND, 1, new String[]{urn}, e.getExceptionItems().get(0));
+        }
+
+        entityManager.clear();
+
+        // Check order column was cleared
+        {
+            CategoryMetamac category1 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_1);
+            assertNotNull(category1.getOrder1());
+            assertNotNull(category1.getOrder2());
+            assertNull(category1.getOrder3());
+
+            CategoryMetamac category2 = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2);
+            assertNotNull(category2.getOrder1());
+            assertNotNull(category2.getOrder2());
+            assertNull(category2.getOrder3());
+        }
+    }
+
+    @Test
+    public void testDeleteCategorySchemeOrderVisualisationWhenIsDefault() throws Exception {
+        String urn = CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02;
+
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2);
+        assertEquals(urn, categorySchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getUrn());
+
+        categoriesService.deleteCategorySchemeOrderVisualisation(getServiceContextAdministrador(), urn);
+
+        // Check default is null
+        categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2);
+        assertNull(categorySchemeVersion.getDefaultOrderVisualisation());
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testVersioningCategorySchemeOrderVisualisations() throws Exception {
+        // Already tested
+
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testRecalculateCategoriesVisualisations() throws Exception {
+        // tested in other operations
+
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testUpdateCategoryParent() throws Exception {
+        // tested in other operations
+
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testUpdateCategoryInOrderVisualisation() throws Exception {
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String categoryUrn = CATEGORY_SCHEME_1_V2_CATEGORY_1;
+        String visualisationUrn = CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_02;
+
+        categoriesService.updateCategoryInOrderVisualisation(getServiceContextAdministrador(), categoryUrn, visualisationUrn, Integer.valueOf(2));
+
+        // Validate visualisation
+        {
+            CategorySchemeOrderVisualisation visualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(), visualisationUrn);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, categories.size());
+            assertEquals(Integer.valueOf(2), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1).getOrder()); // changed
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2).getOrder()); // changed
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3).getOrder()); // changed
+            assertEquals(Integer.valueOf(3), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1).getOrder());
+        }
+
+        // Validate other visualisation does not change
+        {
+            CategorySchemeOrderVisualisation visualisation = categoriesService.retrieveCategorySchemeOrderVisualisationByUrn(getServiceContextAdministrador(),
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03);
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, "es",
+                    visualisation.getNameableArtefact().getUrn());
+            assertEquals(8, categories.size());
+            assertEquals(Integer.valueOf(1), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1).getOrder());
+            assertEquals(Integer.valueOf(2), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3).getOrder());
+            assertEquals(Integer.valueOf(3), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1).getOrder());
+            assertEquals(Integer.valueOf(0), getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1).getOrder());
+        }
+    }
+
+    @Override
+    @Test
+    @DirtyDatabase
+    public void testExportCategoryOrdersTsv() throws Exception {
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String fileName = categoriesService.exportCategoryOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn);
+        assertNotNull(fileName);
+
+        // Validate
+        File file = new File(tempDirPath() + File.separatorChar + fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        assertEquals("code\tlabel\tlevel\tparent\tALPHABETICAL\tVISUALISATION02\tVISUALISATION03", bufferedReader.readLine());
+        assertEquals("CATEGORY01\tNombre categoryScheme-1-v2-category-1\t1\t\t1\t1\t2", bufferedReader.readLine());
+        assertEquals("CATEGORY02\tNombre categoryScheme-1-v2-category-2\t1\t\t2\t2\t3", bufferedReader.readLine());
+        assertEquals("CATEGORY0201\tNombre categoryScheme-1-v2-category-2-1\t2\tCATEGORY02\t1\t1\t1", bufferedReader.readLine());
+        assertEquals("CATEGORY020101\tNombre categoryScheme-1-v2-category-2-1-1\t3\tCATEGORY0201\t1\t1\t1", bufferedReader.readLine());
+        assertEquals("CATEGORY03\tnombre category-3\t1\t\t3\t3\t1", bufferedReader.readLine());
+        assertEquals("CATEGORY04\tLanzarote\t1\t\t4\t4\t4", bufferedReader.readLine());
+        assertEquals("CATEGORY0401\tLa Gomera\t2\tCATEGORY04\t1\t1\t1", bufferedReader.readLine());
+        assertEquals("CATEGORY040101\tNombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife\t3\tCATEGORY0401\t1\t1\t1", bufferedReader.readLine());
+        bufferedReader.close();
+    }
+
+    @Test
+    @DirtyDatabase
+    @Override
+    public void testImportCategorySchemeOrdersTsv() throws Exception {
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String fileName = "importation-category-orders-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        TaskImportationInfo taskImportTsvInfo = categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+
+        // Validate
+        assertEquals(false, taskImportTsvInfo.getIsPlannedInBackground());
+        assertNull(taskImportTsvInfo.getJobKey());
+        assertEquals(0, taskImportTsvInfo.getInformationItems().size());
+
+        // Validate item scheme
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+        assertEqualsDate("2011-01-01 01:02:03", categorySchemeVersion.getItemScheme().getResourceCreatedDate().toDate());
+        assertTrue(DateUtils.isSameDay(new Date(), categorySchemeVersion.getItemScheme().getResourceLastUpdated().toDate()));
+        assertEquals(false, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
+
+        // Validate orders
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_1);
+            assertEquals(Integer.valueOf(0), category.getOrder1());
+            assertEquals(Integer.valueOf(3), category.getOrder2());
+            assertEquals(Integer.valueOf(1), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2);
+            assertEquals(Integer.valueOf(1), category.getOrder1());
+            assertEquals(Integer.valueOf(2), category.getOrder2());
+            assertEquals(Integer.valueOf(0), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_3);
+            assertEquals(Integer.valueOf(2), category.getOrder1());
+            assertEquals(Integer.valueOf(1), category.getOrder2());
+            assertEquals(Integer.valueOf(3), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_4);
+            assertEquals(Integer.valueOf(3), category.getOrder1());
+            assertEquals(Integer.valueOf(0), category.getOrder2());
+            assertEquals(Integer.valueOf(2), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+            assertEquals(Integer.valueOf(0), category.getOrder1());
+            assertEquals(Integer.valueOf(0), category.getOrder2());
+            assertEquals(Integer.valueOf(0), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+            assertEquals(Integer.valueOf(0), category.getOrder1());
+            assertEquals(Integer.valueOf(0), category.getOrder2());
+            assertEquals(Integer.valueOf(0), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+            assertEquals(Integer.valueOf(0), category.getOrder1());
+            assertEquals(Integer.valueOf(0), category.getOrder2());
+            assertEquals(Integer.valueOf(0), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+        {
+            CategoryMetamac category = categoriesService.retrieveCategoryByUrn(getServiceContextAdministrador(), CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+            assertEquals(Integer.valueOf(0), category.getOrder1());
+            assertEquals(Integer.valueOf(0), category.getOrder2());
+            assertEquals(Integer.valueOf(0), category.getOrder3());
+            assertEquals(null, category.getOrder4());
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvInBackground() throws Exception {
+
+        // Import
+        final String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        final String fileName = "importation-category-orders-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        // force background
+        long numBytesPlannifyPrevious = SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION;
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION = 1;
+        final StringBuilder jobKey = new StringBuilder();
+
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    TaskImportationInfo taskImportTsvInfo = categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+                    jobKey.append(taskImportTsvInfo.getJobKey());
+
+                    CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+                    assertEquals(true, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
+                } catch (MetamacException e) {
+                    fail("category orders importation failed: " + e.getHumanReadableMessage());
+                }
+            }
+        });
+        waitUntilJobFinished();
+
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION = numBytesPlannifyPrevious;
+
+        // Validate
+        Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
+        assertNotNull(task);
+        assertEquals(TaskStatusTypeEnum.FINISHED, task.getStatus());
+        assertEquals(0, task.getTaskResults().size());
+
+        // Validate item scheme
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+        assertEquals(false, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorHeaderIncorrectCategoryNotFound() throws Exception {
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String fileName = "importation-category-orders-02-errors-header-01.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+
+        // Validate item scheme
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+        assertTrue(BooleanUtils.isNotTrue(categorySchemeVersion.getItemScheme().getIsTaskInBackground()));
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorHeaderIncorrectCategoryNotFoundInBackground() throws Exception {
+
+        final String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // Import
+        final String fileName = "importation-category-orders-02-errors-header-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        // force background
+        long numBytesPlannifyPrevious = SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION;
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION = 1;
+        final StringBuilder jobKey = new StringBuilder();
+
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    TaskImportationInfo taskImportTsvInfo = categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+                    jobKey.append(taskImportTsvInfo.getJobKey());
+
+                    CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+                    assertEquals(true, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
+                } catch (MetamacException e) {
+                    fail("importation failed: " + e.getHumanReadableMessage());
+                }
+            }
+        });
+        waitUntilJobFinished();
+
+        SrmConstants.NUM_BYTES_TO_PLANNIFY_TSV_CATEGORIES_ORDERS_IMPORTATION = numBytesPlannifyPrevious;
+
+        // Validate
+        Task task = tasksService.retrieveTaskByJob(getServiceContextAdministrador(), jobKey.toString());
+        assertNotNull(task);
+        assertEquals(TaskStatusTypeEnum.FAILED, task.getStatus());
+        assertEquals(2, task.getTaskResults().size());
+        int i = 0;
+        TaskResultTypeEnum type = TaskResultTypeEnum.ERROR;
+        assertEqualsTaskResult(ServiceExceptionType.IMPORTATION_TSV_ERROR.getCode(), fileName, Boolean.TRUE, type, task.getTaskResults().get(i++));
+        assertEqualsTaskResult(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN.getCode(), ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_CODE, Boolean.FALSE, type,
+                task.getTaskResults().get(i++));
+        assertEquals(task.getTaskResults().size(), i);
+
+        // Validate item scheme
+        CategorySchemeVersionMetamac categorySchemeVersion = categoriesService.retrieveCategorySchemeByUrn(getServiceContextAdministrador(), categorySchemeUrn);
+        assertEquals(false, categorySchemeVersion.getItemScheme().getIsTaskInBackground());
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorHeaderColumnVisualisationNotFound() throws Exception {
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String fileName = "importation-category-orders-02-errors-header-02.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_HEADER_INCORRECT_COLUMN, 1, new Serializable[]{ServiceExceptionParameters.IMPORTATION_TSV_COLUMN_ORDER},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorHeaderIncorrectVisualisationAlphabetical() throws Exception {
+
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        String fileName = "importation-category-orders-02-errors-header-03-alphabetical.tsv";
+        File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ALPHABETICAL_VISUALISATION_NOT_SUPPORTED, 0, null, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorBodyIncorrectNumberCategories() throws Exception {
+
+        final String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        final String fileName = "importation-category-orders-03-errors-body-01.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_INCORRECT_NUMBER_CATEGORIES, 2, new Serializable[]{8, 5}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorBodyVisualisationNotFound() throws Exception {
+
+        final String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        final String fileName = "importation-category-orders-03-errors-body-02.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(1, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR_ORDER_VISUALISATION_NOT_FOUND, 2,
+                    new Serializable[]{"VISUALISATION001", "urn:sdmx:org.sdmx.infomodel.categoryscheme.CategoryScheme=SDMX01:CATEGORYSCHEME01(02.000)"}, e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    @DirtyDatabase
+    public void testImportCategoryOrdersTsvErrorBodyOrderEmpty() throws Exception {
+
+        final String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+        final String fileName = "importation-category-orders-03-errors-body-03.tsv";
+        final File file = new File(this.getClass().getResource("/tsv/" + fileName).getFile());
+
+        try {
+            categoriesService.importCategorySchemeOrdersTsv(getServiceContextAdministrador(), categorySchemeUrn, file, fileName, Boolean.TRUE);
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_ERROR, 1, new Serializable[]{fileName}, e.getPrincipalException());
+            assertEquals(2, e.getExceptionItems().size());
+            int i = 0;
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"CATEGORY0201", "parameter.srm.importation.order"},
+                    e.getExceptionItems().get(i++));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.IMPORTATION_TSV_METADATA_REQUIRED, 2, new Serializable[]{"CATEGORY04", "parameter.srm.importation.order"},
+                    e.getExceptionItems().get(i++));
+            assertEquals(e.getExceptionItems().size(), i);
+        }
+    }
+
+    @Test
+    public void testRetrieveCategoriesBySchemeUrnCheckOrderVisualisationsAndMetadataInCategoryMetamacVisualisationResult() throws Exception {
+        // Retrieve
+        String categorySchemeUrn = CATEGORY_SCHEME_1_V2;
+
+        // LOCALE = 'es' and ORDER = ALPHABETICAL (1)
+        {
+            String locale = "es";
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale,
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_01_ALPHABETICAL);
+
+            // Validate
+            assertEquals(8, categories.size());
+            {
+                // Category 01 (validate all metadata)
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_1, category.getUrn());
+                assertEquals("CATEGORY01", category.getCode());
+                assertEquals("Nombre categoryScheme-1-v2-category-1", category.getName());
+                assertEquals("Descripción categoryScheme-1-v2-category-1", category.getDescription());
+                assertEquals(Long.valueOf(121), category.getItemIdDatabase());
+                assertEquals(null, category.getParent());
+                assertEquals(null, category.getParentIdDatabase());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+                MetamacAsserts.assertEqualsDate("2011-01-01 01:02:03", category.getCreatedDate());
+            }
+            {
+                // Category 02
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                assertEquals("CATEGORY02", category.getCode());
+                assertEquals("Nombre categoryScheme-1-v2-category-2", category.getName());
+                assertEquals(null, category.getDescription());
+                assertEquals(Integer.valueOf(1), category.getOrder());
+                MetamacAsserts.assertEqualsDate("2011-03-02 04:05:06", category.getCreatedDate());
+            }
+            {
+                // Category 02 01 (validate parent)
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                assertEquals("CATEGORY02", category.getParent().getCode());
+                assertEquals("Nombre categoryScheme-1-v2-category-2-1", category.getName());
+                assertEquals("Descripción cat2-1", category.getDescription());
+                assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_2, category.getParent().getUrn());
+                assertEquals(Long.valueOf("122"), category.getParentIdDatabase());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 02 01 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                assertEquals("CATEGORY0201", category.getParent().getCode());
+                assertEquals("Nombre categoryScheme-1-v2-category-2-1-1", category.getName());
+                assertEquals(Long.valueOf("1221"), category.getParentIdDatabase());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 03
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                assertEquals("nombre category-3", category.getName());
+                assertEquals(Integer.valueOf(2), category.getOrder());
+            }
+            {
+                // Category 04
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                assertEquals("Lanzarote", category.getName());
+                assertEquals(Integer.valueOf(3), category.getOrder());
+            }
+            {
+                // Category 04 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                assertEquals("La Gomera", category.getName());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 04 01 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                assertEquals("CATEGORY0401", category.getParent().getCode());
+                assertEquals("Nombre categoryScheme-1-v2-category-4-1-1 Santa Cruz de Tenerife", category.getName());
+                assertEquals(CATEGORY_SCHEME_1_V2_CATEGORY_4_1, category.getParent().getUrn());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+        }
+
+        // LOCALE = 'en' and ORDER = VISUALISATION03 (3)
+        {
+            String locale = "en";
+            List<CategoryMetamacVisualisationResult> categories = categoriesService.retrieveCategoriesByCategorySchemeUrn(getServiceContextAdministrador(), categorySchemeUrn, locale,
+                    CATEGORY_SCHEME_1_V2_ORDER_VISUALISATION_03);
+
+            // Validate
+            assertEquals(8, categories.size());
+            {
+                // Category 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_1);
+                assertEquals("Name categoryScheme-1-v2-category-1", category.getName());
+                assertEquals(null, category.getDescription()); // no English description
+                assertEquals(Integer.valueOf(1), category.getOrder());
+            }
+            {
+                // Category 02
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2);
+                assertEquals(null, category.getName()); // no English name
+                assertEquals(null, category.getDescription());
+                assertEquals(Integer.valueOf(2), category.getOrder());
+            }
+            {
+                // Category 02 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1);
+                assertEquals("Name categoryScheme-1-v2-category-2-1", category.getName());
+                assertEquals("Description cat2-1", category.getDescription());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 02 01 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_2_1_1);
+                assertEquals(null, category.getName()); // no English name
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 03
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_3);
+                assertEquals("name category-3", category.getName());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 04
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4);
+                assertEquals(null, category.getName()); // no English name
+                assertEquals(Integer.valueOf(3), category.getOrder());
+            }
+            {
+                // Category 04 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1);
+                assertEquals(null, category.getName()); // no English name
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+            {
+                // Category 04 01 01
+                CategoryMetamacVisualisationResult category = getCategoryMetamacVisualisationResult(categories, CATEGORY_SCHEME_1_V2_CATEGORY_4_1_1);
+                assertEquals("CATEGORY0401", category.getParent().getCode());
+                assertEquals("Name categoryScheme-1-v2-category-4-1-1", category.getName());
+                assertEquals(Integer.valueOf(0), category.getOrder());
+            }
+        }
+    }
+
+    @Override
+    @Test
+    public void testRetrieveCategoriesByCategorySchemeUrnOrderedInDepth() throws Exception {
+        // tested in CategoriesMetamacRepositoryTest
+
+    }
+
+    private void assertEqualsTaskResult(String codeExpected, String infoExpected, Boolean isPrincipalExpected, TaskResultTypeEnum typeExpected, TaskResult actual) {
+        assertEquals(codeExpected, actual.getCode());
+        assertEquals(infoExpected, actual.getParameters());
+        assertEquals(isPrincipalExpected, actual.isPrincipal());
+        assertEquals(typeExpected, actual.getResultType());
+    }
+
+    private CategorySchemeOrderVisualisation assertContainsCategorySchemeOrderVisualisation(String categorySchemeOrderVisualisationUrnExpected,
+            List<CategorySchemeOrderVisualisation> actuals) {
+        for (CategorySchemeOrderVisualisation actual : actuals) {
+            if (actual.getNameableArtefact().getUrn().equals(categorySchemeOrderVisualisationUrnExpected)) {
+                return actual;
+            }
+        }
+        fail("order visualisation not found");
+        return null;
     }
 
     @Override

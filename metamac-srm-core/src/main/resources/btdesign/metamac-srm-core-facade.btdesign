@@ -558,12 +558,32 @@ Application SrmFacadeCore {
 			"Deletes category"
             deleteCategory(String urn) throws MetamacException;
     		"Retrieves categories by category scheme in locale requested"
-    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale) throws MetamacException;
+    		List<CategoryMetamacVisualisationResult> retrieveCategoriesByCategorySchemeUrn(String categorySchemeUrn, String locale, String categorySchemeOrderVisualisationUrn) throws MetamacException;
     		"Imports categories in tsv format"
     		TaskImportationInfo importCategoriesTsv(String categorySchemeUrn, InputStream tsvStream, String fileName, boolean updateAlreadyExisting) throws MetamacException;
             "Exports categories in TSV format"
     		String exportCategoriesTsv(String categorySchemeUrn) throws MetamacException;
-    		
+
+    		"Creates order visualisation for category schemes"
+    		@CategorySchemeVisualisationDto createCategorySchemeOrderVisualisation(@CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto) throws MetamacException;
+    		"Updates order visualisation"
+    		@CategorySchemeVisualisationDto updateCategorySchemeOrderVisualisation(@CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto) throws MetamacException;
+    		"Retrieves order visualisation by urn"
+    		@CategorySchemeVisualisationDto retrieveCategorySchemeOrderVisualisationByUrn(String urn) throws MetamacException;
+    		"Retrieve order visualisations by category scheme"
+    		List<@CategorySchemeVisualisationDto> retrieveCategorySchemeOrderVisualisationsByCategoryScheme(String categorySchemeUrn) throws MetamacException;
+    		"Deletes order visualisation"
+    		deleteCategorySchemeOrderVisualisation(String urn) throws MetamacException;
+
+    		"Imports category scheme orders in tsv format"
+    		TaskImportationInfo importCategorySchemeOrdersTsv(String categorySchemeUrn, InputStream tsvStream, String fileName) throws MetamacException;
+    		"Exports category orders in tsv format"
+    		String exportCategoryOrdersTsv(String categorySchemeUrn) throws MetamacException;
+    		"Updates position of category in order visualisation"
+    		updateCategoryInOrderVisualisation(String categoryUrn, String categorySchemeOrderVisualisationUrn, Integer newCategoryIndex) throws MetamacException;
+    		"Updates parent of category"
+    		updateCategoryParent(String categoryUrn, String newCategoryParentUrn) throws MetamacException;
+
     		// Categorisations
     		"Creates categorisation"
     		@CategorisationDto createCategorisation(String categoryUrn, String artefactCategorisedUrn, String maintainerUrn) throws MetamacException;
@@ -872,7 +892,9 @@ Application SrmFacadeCore {
 			"Imports concepts in tsv format"
     		processImportConceptsTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;
     		"Imports concept scheme orders in tsv format"
-    		processImportConceptSchemeOrdersTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;  	
+    		processImportConceptSchemeOrdersTsv(String conceptSchemeUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
+    		"Imports category scheme orders in tsv format"
+    		processImportCategorySchemeOrdersTsv(String categorySchemeUrn, java.io.File tsvFile, String fileName, String jobKey) throws MetamacException;
 			"Imports categories in tsv format"
     		processImportCategoriesTsv(String categorySchemeUrn, java.io.File tsvFile, String fileName, String jobKey, boolean updateAlreadyExisting) throws MetamacException;    		
     		"Imports organisations in tsv format"

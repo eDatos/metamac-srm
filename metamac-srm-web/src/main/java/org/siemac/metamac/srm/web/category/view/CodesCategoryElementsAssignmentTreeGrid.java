@@ -43,7 +43,7 @@ public class CodesCategoryElementsAssignmentTreeGrid extends BaseCategoriesTreeG
     private SearchRelatedResourcePaginatedWindow searchCategoryElementWindow;
 
     public CodesCategoryElementsAssignmentTreeGrid() {
-        super();
+        super(false, false);
 
         setShowFilterEditor(false);
         setCanReorderRecords(false);

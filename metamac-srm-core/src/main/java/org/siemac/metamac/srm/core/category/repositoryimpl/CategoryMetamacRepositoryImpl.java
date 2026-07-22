@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.core.category.repositoryimpl;
 
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getBoolean;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getDate;
+import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getInteger;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getLong;
 import static com.arte.statistic.sdmx.srm.core.common.repository.utils.SdmxSrmRepositoryUtils.getString;
 
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -19,8 +21,10 @@ import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultSelection;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeVersionMetamac;
 import org.siemac.metamac.srm.core.category.domain.shared.CategoryElementVisualisationResult;
 import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.conf.SrmConfiguration;
@@ -41,6 +45,8 @@ import com.arte.statistic.sdmx.srm.core.common.domain.shared.ItemVisualisationRe
  */
 @Repository("categoryMetamacRepository")
 public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase {
+
+    private final Integer ORDER_DEFAULT = Integer.valueOf(1);
 
     @Autowired
     private CategoryRepository         categoryRepository;
@@ -71,14 +77,12 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
 
     @Override
     public List<ItemResult> findCategoriesByCategorySchemeUnordered(Long categorySchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException {
-        // Find items
-
-        return findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersionId, resultSelection);
-
+        // Delegate to ordered method with no specific order column (uses default tree order)
+        return findCategoriesByCategorySchemeOrderedInDepth(categorySchemeVersionId, null, resultSelection);
     }
 
     @Override
-    public List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, ItemMetamacResultSelection resultSelection) throws MetamacException {
+    public List<ItemResult> findCategoriesByCategorySchemeOrderedInDepth(Long itemSchemeVersionId, Integer orderColumnIndex, ItemMetamacResultSelection resultSelection) throws MetamacException {
         // Find categories
         List<ItemResult> categories = categoryRepository.findCategoriesByCategorySchemeUnordered(itemSchemeVersionId, resultSelection);
 
@@ -104,37 +108,57 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
             }
         }
 
+        // Order configuration: populate per-item order value on extension point (used by REST API +orderConfiguration field)
+        if (orderColumnIndex != null) {
+            executeQueryCategoryVisualisationAndUpdateCategoryMetamacResult(itemSchemeVersionId, orderColumnIndex, mapCategoriesByItemId);
+        }
+
+        // Order by specific column using recursive CTE (default to first column if none specified)
+        String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT);
         StringBuilder sb = new StringBuilder();
-        sb.append("WITH RECURSIVE parents(ID) AS ");
-        sb.append("   (SELECT ID ");
-        sb.append("    FROM TB_CATEGORIES ");
-        sb.append("    WHERE PARENT_FK is null and ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
+        sb.append("WITH RECURSIVE parents(ID, R_SORT, R_SORT_STRING) AS ");
+        sb.append("   (SELECT c1.ID, mc1." + orderColumn + " AS R_SORT, ");
+        sb.append("concat('/', lpad(cast(mc1." + orderColumn + " as varchar), " + SrmConstants.CATEGORY_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
+        sb.append("    FROM TB_CATEGORIES as c1, TB_M_CATEGORIES mc1  ");
+        sb.append("    WHERE mc1.TB_CATEGORIES = c1.ID and c1.PARENT_FK is null and c1.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
         sb.append("        UNION ALL ");
-        sb.append("    SELECT c2.ID ");
-        sb.append("    FROM TB_CATEGORIES as c2, parents ");
-        sb.append("    WHERE parents.ID = c2.PARENT_FK) ");
-        sb.append("SELECT ID FROM parents ");
+        sb.append("    SELECT c2.ID, ");
+        sb.append("mc2." + orderColumn + ", ");
+        sb.append("concat(p.R_SORT_STRING, '/', lpad(cast(mc2." + orderColumn + " as varchar), " + SrmConstants.CATEGORY_QUERY_COLUMN_ORDER_LENGTH + ", '0')) AS R_SORT_STRING ");
+        sb.append("    FROM TB_CATEGORIES as c2, TB_M_CATEGORIES mc2, parents p");
+        sb.append("    WHERE mc2.TB_CATEGORIES = c2.ID and p.ID = c2.PARENT_FK) ");
+        sb.append("SELECT * FROM parents ");
+        sb.append("ORDER BY R_SORT_STRING ");
         Query queryOrder = getEntityManager().createNativeQuery(sb.toString());
         queryOrder.setParameter("categorySchemeVersion", itemSchemeVersionId);
         @SuppressWarnings("rawtypes")
         List resultsOrder = queryOrder.getResultList();
 
-        // Order previous result list thanks to ordered list of items id
         List<ItemResult> ordered = new ArrayList<ItemResult>(categories.size());
         for (Object resultOrder : resultsOrder) {
-            Long categoryId = getLong(resultOrder);
+            Object[] resultOrderArray = (Object[]) resultOrder;
+            Long categoryId = getLong(resultOrderArray[0]);
             ItemResult category = mapCategoriesByItemId.get(categoryId);
+            Object sortString = resultOrderArray[2];
+            if (sortString != null) {
+                ((CategoryMetamacResultExtensionPoint) category.getExtensionPoint()).setOrderConfigurationConcatenatedByLevel(sortString.toString());
+            }
             ordered.add(category);
         }
         return ordered;
     }
 
     @Override
-    public List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale) throws MetamacException {
+    public List<CategoryMetamacVisualisationResult> findCategoriesByCategorySchemeUnorderedToVisualisation(Long itemSchemeVersionId, String locale, Integer orderColumnIndex)
+            throws MetamacException {
+
+        // Determine the order column to select (default to first if none specified)
+        Integer effectiveOrderColumnIndex = orderColumnIndex != null ? orderColumnIndex : Integer.valueOf(1);
+        String orderColumn = getOrderColumnName(effectiveOrderColumnIndex);
 
         // Find. NOTE: this query return null label if locale not exits for a code
         StringBuilder sbCategories = new StringBuilder();
-        sbCategories.append("SELECT cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, ls.LABEL ");
+        sbCategories.append("SELECT cb.ID as ITEM_ID, cb.CREATED_DATE, cb.CREATED_DATE_TZ, a.URN, a.CODE, cb.PARENT_FK as ITEM_PARENT_ID, ls.LABEL, c." + orderColumn + " as ORDER_VALUE ");
         sbCategories.append("FROM TB_M_CATEGORIES c ");
         sbCategories.append("INNER JOIN TB_CATEGORIES cb on cb.ID = c.TB_CATEGORIES ");
         sbCategories.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS a on cb.NAMEABLE_ARTEFACT_FK = a.ID ");
@@ -150,7 +174,7 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         Map<Long, ItemVisualisationResult> mapCodeByItemId = new HashMap<Long, ItemVisualisationResult>(categoriesResultSql.size());
         for (Object categoryResultSql : categoriesResultSql) {
             Object[] categoryResultSqlArray = (Object[]) categoryResultSql;
-            CategoryMetamacVisualisationResult target = categoryResultSqlToCategoryResult(categoryResultSqlArray, null);
+            CategoryMetamacVisualisationResult target = categoryResultSqlToCategoryResult(categoryResultSqlArray, effectiveOrderColumnIndex);
             targets.add(target);
             mapCodeByItemId.put(target.getItemIdDatabase(), target);
         }
@@ -205,10 +229,8 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         return target;
     }
 
-    private CategoryMetamacVisualisationResult categoryResultSqlToCategoryResult(Object[] source, CategoryMetamacVisualisationResult target) throws MetamacException {
-        if (target == null) {
-            target = new CategoryMetamacVisualisationResult();
-        }
+    private CategoryMetamacVisualisationResult categoryResultSqlToCategoryResult(Object[] source, Integer orderColumnIndex) throws MetamacException {
+        CategoryMetamacVisualisationResult target = new CategoryMetamacVisualisationResult();
         int i = 0;
         target.setItemIdDatabase(getLong(source[i++]));
         target.setCreatedDate(getDate(source[i++], source[i++]));
@@ -216,8 +238,164 @@ public class CategoryMetamacRepositoryImpl extends CategoryMetamacRepositoryBase
         target.setCode(getString(source[i++]));
         target.setParentIdDatabase(getLong(source[i++]));
         target.setName(getString(source[i++]));
-
+        if (orderColumnIndex != null) {
+            target.setOrder(getInteger(source[i++]));
+        }
         return target;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void executeQueryCategoryVisualisationAndUpdateCategoryMetamacResult(Long categorySchemeVersionId, Integer orderColumnIndex, Map<Long, ItemResult> mapCategoriesByItemId) {
+        String orderColumn = getOrderColumnName(orderColumnIndex != null ? orderColumnIndex : ORDER_DEFAULT);
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT cb.ID as ITEM_ID, c." + orderColumn + " ");
+        sb.append("FROM TB_M_CATEGORIES c ");
+        sb.append("INNER JOIN TB_CATEGORIES cb on cb.ID = c.TB_CATEGORIES ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion");
+        Query query = getEntityManager().createNativeQuery(sb.toString());
+        query.setParameter("categorySchemeVersion", categorySchemeVersionId);
+        List categoriesResultSql = query.getResultList();
+        for (Object categoryResultSql : categoriesResultSql) {
+            Object[] categoryResultSqlArray = (Object[]) categoryResultSql;
+            int i = 0;
+            Long actualItemId = getLong(categoryResultSqlArray[i++]);
+            ItemResult target = mapCategoriesByItemId.get(actualItemId);
+            if (orderColumnIndex != null) {
+                ((CategoryMetamacResultExtensionPoint) target.getExtensionPoint()).setOrderConfiguration(getInteger(categoryResultSqlArray[i++]));
+            } else {
+                i++; // skip
+            }
+        }
+    }
+
+    private String getOrderColumnName(Integer columnIndex) {
+        return "ORDER" + columnIndex;
+    }
+
+    @Override
+    public Integer getMaximumOrderInLevel(CategorySchemeVersionMetamac categorySchemeVersion, Category parent, Integer orderColumnIndex) {
+        String orderColumn = getOrderColumnName(orderColumnIndex);
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT max(" + orderColumn + ") ");
+        sb.append("FROM TB_M_CATEGORIES c INNER JOIN TB_CATEGORIES cb on cb.ID = c.TB_CATEGORIES WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
+        if (parent == null) {
+            sb.append("AND cb.PARENT_FK is null");
+        } else {
+            sb.append("AND cb.PARENT_FK = :parent");
+        }
+        Query query = getEntityManager().createNativeQuery(sb.toString());
+        if (parent != null) {
+            query.setParameter("parent", parent.getId());
+        }
+        query.setParameter("categorySchemeVersion", categorySchemeVersion.getId());
+        List resultsOrder = query.getResultList();
+        if (CollectionUtils.isEmpty(resultsOrder) || resultsOrder.get(0) == null) {
+            return null;
+        } else {
+            return Integer.valueOf(resultsOrder.get(0).toString());
+        }
+    }
+
+    @Override
+    public void reorderCategoriesAddingOneCodeInMiddle(CategorySchemeVersionMetamac categorySchemeVersion, CategoryMetamac category, Integer orderColumnIndex, Integer orderCategoryToAdd) {
+        String orderColumn = getOrderColumnName(orderColumnIndex);
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE TB_M_CATEGORIES set " + orderColumn + " = " + orderColumn + " + 1 ");
+        sb.append("WHERE TB_CATEGORIES in (");
+        sb.append("SELECT cb.ID ");
+        sb.append("FROM TB_CATEGORIES cb ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
+        if (category.getParent() == null) {
+            sb.append("AND cb.PARENT_FK is null");
+        } else {
+            sb.append("AND cb.PARENT_FK = :parent");
+        }
+        sb.append(") AND " + orderColumn + " >= :order");
+
+        Query queryUpdate = getEntityManager().createNativeQuery(sb.toString());
+        queryUpdate.setParameter("categorySchemeVersion", categorySchemeVersion.getId());
+        queryUpdate.setParameter("order", orderCategoryToAdd);
+        if (category.getParent() != null) {
+            queryUpdate.setParameter("parent", category.getParent().getId());
+        }
+        queryUpdate.executeUpdate();
+    }
+
+    @Override
+    public void reorderCategoriesDeletingOneCode(CategorySchemeVersionMetamac categorySchemeVersion, Category parent, CategoryMetamac category, Integer orderColumnIndex,
+            Integer orderCategoryToDelete) {
+        String orderColumn = getOrderColumnName(orderColumnIndex);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE TB_M_CATEGORIES set " + orderColumn + " = " + orderColumn + " - 1 ");
+        sb.append("WHERE TB_CATEGORIES in ");
+        sb.append("(SELECT cb.ID ");
+        sb.append("FROM TB_CATEGORIES cb ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
+        if (parent == null) {
+            sb.append("AND cb.PARENT_FK is null");
+        } else {
+            sb.append("AND cb.PARENT_FK = :parent");
+        }
+        sb.append(") AND " + orderColumn + " > :order");
+
+        Query queryUpdate = getEntityManager().createNativeQuery(sb.toString());
+        queryUpdate.setParameter("categorySchemeVersion", categorySchemeVersion.getId());
+        queryUpdate.setParameter("order", orderCategoryToDelete);
+        if (parent != null) {
+            queryUpdate.setParameter("parent", parent.getId());
+        }
+        queryUpdate.executeUpdate();
+    }
+
+    @Override
+    public Integer getCategoryAlphabeticPositionInLevel(CategorySchemeVersionMetamac categorySchemeVersion, Category parent, Category category) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT COUNT(1) ");
+        sb.append("FROM TB_CATEGORIES cb ");
+        sb.append("INNER JOIN TB_ANNOTABLE_ARTEFACTS a on cb.NAMEABLE_ARTEFACT_FK = a.ID ");
+        sb.append("WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion ");
+        sb.append("AND lower(a.CODE) < lower('" + category.getNameableArtefact().getCode() + "') ");
+        if (parent == null) {
+            sb.append("AND cb.PARENT_FK is null");
+        } else {
+            sb.append("AND cb.PARENT_FK = :parent");
+        }
+        Query query = getEntityManager().createNativeQuery(sb.toString());
+        query.setParameter("categorySchemeVersion", categorySchemeVersion.getId());
+        if (parent != null) {
+            query.setParameter("parent", parent.getId());
+        }
+        List resultsOrder = query.getResultList();
+        if (CollectionUtils.isEmpty(resultsOrder) || resultsOrder.get(0) == null) {
+            return null;
+        } else {
+            return Integer.valueOf(resultsOrder.get(0).toString());
+        }
+    }
+
+    @Override
+    public void clearCategoriesOrderColumn(CategorySchemeVersionMetamac categorySchemeVersion, Integer orderColumnIndex) {
+        String orderColumn = getOrderColumnName(orderColumnIndex);
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE TB_M_CATEGORIES set " + orderColumn + " = null ");
+        sb.append("WHERE TB_CATEGORIES in (SELECT cb.ID FROM TB_CATEGORIES cb WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion) ");
+        Query queryUpdate = getEntityManager().createNativeQuery(sb.toString());
+        queryUpdate.setParameter("categorySchemeVersion", categorySchemeVersion.getId());
+        queryUpdate.executeUpdate();
+    }
+
+    @Override
+    public void copyCategoriesOrderColumn(CategorySchemeVersionMetamac categorySchemeVersion, Integer columnIndexSource, Integer columnIndexTarget) {
+        String columnSource = getOrderColumnName(columnIndexSource);
+        String columnTarget = getOrderColumnName(columnIndexTarget);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE TB_M_CATEGORIES set " + columnTarget + " = " + columnSource + " ");
+        sb.append("WHERE TB_CATEGORIES in (SELECT cb.ID FROM TB_CATEGORIES cb WHERE cb.ITEM_SCHEME_VERSION_FK = :categorySchemeVersion) ");
+        Query queryUpdate = getEntityManager().createNativeQuery(sb.toString());
+        queryUpdate.setParameter("categorySchemeVersion", categorySchemeVersion.getId());
+        queryUpdate.executeUpdate();
     }
 
     @Override

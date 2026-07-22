@@ -98,7 +98,8 @@ public class SrmCoreServiceFacadeCategoriesTest extends SrmBaseTest {
         assertEquals(categorySchemeDto.getCode(), categorySchemeMetamacCreated.getCode());
         assertNotNull(categorySchemeMetamacCreated.getUrn());
         assertEquals(ProcStatusEnum.DRAFT, categorySchemeMetamacCreated.getLifeCycle().getProcStatus());
-        assertEquals(Long.valueOf(0), categorySchemeMetamacCreated.getVersionOptimisticLocking());
+        // Version is 1 (not 0) because createCategoryScheme performs two DB operations: initial persist + update to set defaultOrderVisualisation (ALPHABETICAL)
+        assertEquals(Long.valueOf(1), categorySchemeMetamacCreated.getVersionOptimisticLocking());
     }
 
     @Test

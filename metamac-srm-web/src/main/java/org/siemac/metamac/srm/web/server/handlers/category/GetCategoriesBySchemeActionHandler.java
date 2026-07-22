@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.category.domain.shared.CategoryMetamacVisualisationResult;
+import org.siemac.metamac.srm.core.category.dto.CategorySchemeVisualisationDto;
 import org.siemac.metamac.srm.core.facade.serviceapi.SrmCoreServiceFacade;
 import org.siemac.metamac.srm.web.shared.category.GetCategoriesBySchemeAction;
 import org.siemac.metamac.srm.web.shared.category.GetCategoriesBySchemeResult;
@@ -29,8 +30,15 @@ public class GetCategoriesBySchemeActionHandler extends SecurityActionHandler<Ge
     public GetCategoriesBySchemeResult executeSecurityAction(GetCategoriesBySchemeAction action) throws ActionException {
         try {
             List<CategoryMetamacVisualisationResult> categories = srmCoreServiceFacade.retrieveCategoriesByCategorySchemeUrn(ServiceContextHolder.getCurrentServiceContext(), action.getSchemeUrn(),
-                    action.getLocale());
-            return new GetCategoriesBySchemeResult(categories);
+                    action.getLocale(), action.getCategorySchemeOrderUrn());
+
+            CategorySchemeVisualisationDto categorySchemeOrderVisualisationDto = null;
+            if (action.getCategorySchemeOrderUrn() != null) {
+                categorySchemeOrderVisualisationDto = srmCoreServiceFacade.retrieveCategorySchemeOrderVisualisationByUrn(ServiceContextHolder.getCurrentServiceContext(),
+                        action.getCategorySchemeOrderUrn());
+            }
+
+            return new GetCategoriesBySchemeResult(categories, categorySchemeOrderVisualisationDto);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

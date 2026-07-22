@@ -11,4 +11,5 @@ public interface BaseCategoryUiHandlers extends CategorisationUiHandlers {
     void deleteCategory(ItemVisualisationResult ItemVisualisationResult);
     void goToCategoryScheme(String urn);
     void goToCategory(String urn);
+    void updateCategoryParent(String categoryUrn, String newCategoryParentUrn);
 }

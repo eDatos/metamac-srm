@@ -76,7 +76,7 @@ public class CategoriesJaxb2DoCallbackImpl extends ImportationMetamacCommonValid
      * EXTENSIONS
      **************************************************************************/
     @Override
-    public void categorySchemeJaxbToDoExtension(ServiceContext ctx, CategorySchemeType source, CategorySchemeVersion previous, CategorySchemeVersion target) throws MetamacException {
+    public void categorySchemeJaxbToDoExtensionPreCreate(ServiceContext ctx, CategorySchemeType source, CategorySchemeVersion previous, CategorySchemeVersion target) throws MetamacException {
         CategorySchemeVersionMetamac previousMetamac = (CategorySchemeVersionMetamac) previous;
         CategorySchemeVersionMetamac targetMetamac = (CategorySchemeVersionMetamac) target;
 
@@ -94,6 +94,20 @@ public class CategoriesJaxb2DoCallbackImpl extends ImportationMetamacCommonValid
 
         // Fill Metadata
         categoriesMetamacService.preCreateCategoryScheme(ctx, targetMetamac);
+    }
+
+    @Override
+    public void categorySchemeJaxbToDoExtensionPostCreate(ServiceContext ctx, CategorySchemeType source, CategorySchemeVersion previous, CategorySchemeVersion target) throws MetamacException {
+        CategorySchemeVersionMetamac previousMetamac = (CategorySchemeVersionMetamac) previous;
+        CategorySchemeVersionMetamac targetMetamac = (CategorySchemeVersionMetamac) target;
+
+        // Order visualisations
+        if (previousMetamac != null) {
+            targetMetamac = categoriesMetamacService.versioningCategorySchemeOrderVisualisations(ctx, previousMetamac, targetMetamac);
+            categoriesMetamacService.recalculateCategoriesVisualisations(ctx, targetMetamac.getItems(), targetMetamac.getOrderVisualisations(), true);
+        } else {
+            categoriesMetamacService.createCategorySchemeOrderVisualisationAlphabetical(ctx, targetMetamac);
+        }
     }
 
     @Override

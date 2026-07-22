@@ -898,7 +898,7 @@ public class ConceptSchemePresenter extends Presenter<ConceptSchemePresenter.Con
             }
             @Override
             public void onWaitSuccess(DeleteConceptSchemeOrdersResult result) {
-                fireSuccessMessage(getMessages().codelistOrderDeleted());
+                fireSuccessMessage(getMessages().conceptSchemeOrderDeleted());
                 retrieveConceptSchemeOrders(conceptSchemeDto.getUrn());
             }
         });

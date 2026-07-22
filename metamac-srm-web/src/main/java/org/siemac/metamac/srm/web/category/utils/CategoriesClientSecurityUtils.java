@@ -155,6 +155,43 @@ public class CategoriesClientSecurityUtils {
         return SharedCategoriesSecurityUtils.canCopyCategoryScheme(MetamacSrmWeb.getCurrentUser()) && CommonUtils.isDefaultMaintainer(maintainer);
     }
 
+    // CATEGORY SCHEME ORDERS
+
+    public static boolean canCreateCategorySchemeOrderVisualisation(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canUpdateCategorySchemeOrderVisualisation(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canDeleteCategorySchemeOrderVisualisation(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCategoriesSecurityUtils.canCrudCategorySchemeOrderVisualisation(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canImportCategorySchemeOrderVisualisations(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCategoriesSecurityUtils.canImportCategorySchemeOrderVisualisations(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus());
+    }
+
+    public static boolean canExportCategoriesOrder(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedCategoriesSecurityUtils.canExportCategoryOrdersTsv(MetamacSrmWeb.getCurrentUser());
+    }
+
     // CATEGORIES
 
     public static boolean canCreateCategory(CategorySchemeMetamacDto categorySchemeMetamacDto) {
@@ -165,6 +202,15 @@ public class CategoriesClientSecurityUtils {
 
     public static boolean canUpdateCategory(ProcStatusEnum procStatus) {
         return SharedCategoriesSecurityUtils.canModifyCategoryFromCategoryScheme(MetamacSrmWeb.getCurrentUser(), procStatus);
+    }
+
+    public static boolean canUpdateCategoryParent(CategorySchemeMetamacDto categorySchemeMetamacDto) {
+        if (isTaskInBackground(categorySchemeMetamacDto.getIsTaskInBackground())) {
+            return false;
+        }
+        // Maintainer and temporal version are checked because the structure of an imported resource can not be modified
+        return SharedCategoriesSecurityUtils.canModifyCategoryFromCategoryScheme(MetamacSrmWeb.getCurrentUser(), categorySchemeMetamacDto.getLifeCycle().getProcStatus())
+                && CommonUtils.canSdmxMetadataAndStructureBeModified(categorySchemeMetamacDto);
     }
 
     public static boolean canDeleteCategory(CategorySchemeMetamacDto categorySchemeMetamacDto) {

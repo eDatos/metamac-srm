@@ -9,8 +9,10 @@ public class CategoryMetamacResultExtensionPoint {
 
     private CategoryElementResult  categoryElement;
     private String                 categoryElementCode;
-    private List<EniSchemaCatalog> eniSchemas     = new ArrayList<EniSchemaCatalog>();
-    private List<String>           eniSchemaCodes = new ArrayList<String>();
+    private List<EniSchemaCatalog> eniSchemas                           = new ArrayList<EniSchemaCatalog>();
+    private List<String>           eniSchemaCodes                       = new ArrayList<String>();
+    private Integer                orderConfiguration;
+    private String                 orderConfigurationConcatenatedByLevel;
 
     public CategoryElementResult getCategoryElement() {
         return categoryElement;
@@ -50,5 +52,34 @@ public class CategoryMetamacResultExtensionPoint {
 
     public void addEniSchemaCodes(String eniSchemaCode) {
         getEniSchemaCodes().add(eniSchemaCode);
+    }
+
+    public Integer getOrderConfiguration() {
+        return orderConfiguration;
+    }
+
+    public void setOrderConfiguration(Integer orderConfiguration) {
+        this.orderConfiguration = orderConfiguration;
+    }
+
+    public String getOrderConfigurationConcatenatedByLevel() {
+        return orderConfigurationConcatenatedByLevel;
+    }
+
+    public void setOrderConfigurationConcatenatedByLevel(String orderConfigurationConcatenatedByLevel) {
+        this.orderConfigurationConcatenatedByLevel = orderConfigurationConcatenatedByLevel;
+    }
+
+    public int getLevel() {
+        if (orderConfigurationConcatenatedByLevel == null) {
+            return 1;
+        }
+        int count = 0;
+        for (int i = 0; i < orderConfigurationConcatenatedByLevel.length(); i++) {
+            if (orderConfigurationConcatenatedByLevel.charAt(i) == '/') {
+                count++;
+            }
+        }
+        return count;
     }
 }

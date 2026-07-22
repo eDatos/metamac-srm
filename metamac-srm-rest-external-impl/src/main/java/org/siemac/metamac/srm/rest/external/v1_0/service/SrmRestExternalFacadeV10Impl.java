@@ -36,6 +36,7 @@ import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
+import org.siemac.metamac.rest.utils.RestCommonUtil;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agencies;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.AgencyScheme;
@@ -119,6 +120,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.AccessTypeEnum;
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.core.code.serviceapi.CodesMetamacService;
 import org.siemac.metamac.srm.core.common.domain.ItemMetamacResultSelection;
+import org.siemac.metamac.srm.core.common.error.ServiceExceptionParameters;
 import org.siemac.metamac.srm.core.common.error.ServiceExceptionType;
 import org.siemac.metamac.srm.core.common.service.utils.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.concept.domain.ConceptMetamac;
@@ -415,37 +417,42 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
     }
 
     @Override
-    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
+    public Categories findCategories(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
         try {
             Set<String> fieldsToShow = getFieldsParameters(fields);
 
-            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+            return findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fieldsToShow, lang);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
     @Override
-    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "tsv");
+    public Response findCategoriesTSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "tsv", lang);
     }
 
     @Override
-    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "csv");
+    public Response findCategoriesCSV(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "csv", lang);
     }
 
     @Override
-    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields) {
-        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, fields, "xlsx");
+    public Response findCategoriesXLSX(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            List<String> lang) {
+        return findCategoriesPlainText(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fields, "xlsx", lang);
     }
 
-    private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String fields, String format) {
+    private Response findCategoriesPlainText(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration, String fields,
+            String format, List<String> lang) {
         try {
 
             Set<String> fieldsToShow = getFieldsParameters(fields);
 
-            Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, fieldsToShow);
+            Categories categories = findCategoriesCommon(agencyID, resourceID, version, query, orderBy, limit, offset, orderConfiguration, fieldsToShow, lang);
 
             // Transform
             List<PlainTextResource> flattenResource = categoriesDo2RestMapper.toPlainTextCategories(categories, configurationService.retrieveLanguages(), fieldsToShow, format);
@@ -458,14 +465,15 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         }
     }
 
-    public Categories findCategoriesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, Set<String> fieldsToShow)
-            throws MetamacException {
+    public Categories findCategoriesCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, String orderConfiguration,
+            Set<String> fieldsToShow, List<String> lang) throws MetamacException {
 
         if (mustFindItemsInsteadRetrieveAllItemsOfItemScheme(agencyID, resourceID, version, query, orderBy, limit, offset)) {
+            checkParameterEmpty(SrmRestConstants.PARAMETER_ORDER_CONFIGURATION_ID, orderConfiguration);
             // Find. Retrieve categories paginated
             SculptorCriteria sculptorCriteria = categoriesRest2DoMapper.getCategoryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
-            List<String> selectedLanguages = configurationService.retrieveLanguages();
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             sculptorCriteria.setOrderByCaseCondition(CategoryMetamac.class, CategoryMetamacProperties.nameableArtefact().name().texts().locale(), selectedLanguages, "=", orderBy);
 
             PagedResult<CategoryMetamac> entitiesPagedResult = findCategoriesCore(agencyID, resourceID, version, null, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -476,12 +484,14 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
             // Retrieve all categories of categoryScheme, without pagination
             CategorySchemeVersionMetamac categorySchemeVersion = retrieveCategorySchemePublished(agencyID, resourceID, version);
 
-            CategoryMetamacResultSelection categoryMetamacResultSelection = CategoryMetamacResultSelection.API;
+            String orderConfigurationToUse = getOrderConfigurationToUseToRetrieveCategoryScheme(agencyID, resourceID, version, orderConfiguration, categorySchemeVersion);
 
+            CategoryMetamacResultSelection categoryMetamacResultSelection = CategoryMetamacResultSelection.API;
             categoryMetamacResultSelection.setAnnotations(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS));
             categoryMetamacResultSelection.setCategoryElementFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT));
             categoryMetamacResultSelection.setEniSchemaFull(SrmRestInternalUtils.containsField(fieldsToShow, SrmRestConstants.FIELD_INCLUDE_ENI_SCHEME));
-            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnUnordered(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(), categoryMetamacResultSelection);
+            List<ItemResult> items = categoriesService.retrieveCategoriesByCategorySchemeUrnOrderedInDepth(ctx, categorySchemeVersion.getMaintainableArtefact().getUrn(),
+                    categoryMetamacResultSelection, orderConfigurationToUse);
 
             // Transform
             return categoriesDo2RestMapper.toCategories(items, categorySchemeVersion, fieldsToShow);
@@ -2417,6 +2427,7 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         validFields.add(SrmRestConstants.FIELD_INCLUDE_ANNOTATIONS);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
         validFields.add(SrmRestConstants.FIELD_INCLUDE_CATEGORY_ELEMENT);
+        validFields.add(SrmRestConstants.FIELD_INCLUDE_ORDER_CONFIGURATION);
         return SrmRestInternalUtils.parseFieldsParameter(fields, validFields);
     }
 
@@ -2440,6 +2451,36 @@ public class SrmRestExternalFacadeV10Impl implements SrmRestExternalFacadeV10 {
         } catch (MetamacException e) {
             if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CONCEPT_SCHEME_ORDER_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CONCEPT_SCHEME_ORDER_CONFIGURATION_NOT_FOUND,
+                        orderConfiguration, resourceID, version, agencyID);
+                throw new RestException(exception, Status.NOT_FOUND, e);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private String getOrderConfigurationToUseToRetrieveCategoryScheme(String agencyID, String resourceID, String version, String orderConfiguration, CategorySchemeVersionMetamac categorySchemeVersion)
+            throws MetamacException {
+        String orderConfigurationToUse = null;
+        if (orderConfiguration == null) {
+            if (categorySchemeVersion.getDefaultOrderVisualisation() == null) {
+                throw new MetamacException(ServiceExceptionType.METADATA_REQUIRED, ServiceExceptionParameters.CATEGORY_SCHEME_DEFAULT_ORDER_VISUALISATION);
+            }
+            orderConfigurationToUse = categorySchemeVersion.getDefaultOrderVisualisation().getNameableArtefact().getCode();
+        } else {
+            // check exist
+            retrieveCategorySchemeOrderVisualisationByCode(agencyID, resourceID, version, categorySchemeVersion.getMaintainableArtefact().getUrn(), orderConfiguration);
+            orderConfigurationToUse = orderConfiguration;
+        }
+        return orderConfigurationToUse;
+    }
+
+    private void retrieveCategorySchemeOrderVisualisationByCode(String agencyID, String resourceID, String version, String categorySchemeUrn, String orderConfiguration) throws MetamacException {
+        try {
+            categoriesService.retrieveCategorySchemeOrderVisualisationByCode(ctx, categorySchemeUrn, orderConfiguration);
+        } catch (MetamacException e) {
+            if (e.getExceptionItems().size() == 1 && ServiceExceptionType.CATEGORY_SCHEME_ORDER_VISUALISATION_NOT_FOUND.getCode().equals(e.getExceptionItems().get(0).getCode())) {
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.CATEGORY_SCHEME_ORDER_CONFIGURATION_NOT_FOUND,
                         orderConfiguration, resourceID, version, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND, e);
             } else {

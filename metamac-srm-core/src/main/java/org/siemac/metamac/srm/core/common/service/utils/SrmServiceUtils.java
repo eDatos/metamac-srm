@@ -20,7 +20,9 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItemBuilder;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.srm.core.category.domain.CategoryElementResult;
+import org.siemac.metamac.srm.core.category.domain.CategoryMetamac;
 import org.siemac.metamac.srm.core.category.domain.CategoryMetamacResultExtensionPoint;
+import org.siemac.metamac.srm.core.category.domain.CategorySchemeOrderVisualisation;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamac;
 import org.siemac.metamac.srm.core.code.domain.CodeMetamacResultExtensionPoint;
 import org.siemac.metamac.srm.core.code.domain.CodelistOpennessVisualisation;
@@ -946,6 +948,154 @@ public class SrmServiceUtils extends SdmxSrmUtils {
             return null;
         }
         ConceptMetamacResultExtensionPoint extensionPoint = (ConceptMetamacResultExtensionPoint) itemResult.getExtensionPoint();
+        return extensionPoint.getOrderConfiguration();
+    }
+
+    /**
+     * Set category scheme order.
+     * Note: can not use reflection because set to null is necessary
+     */
+    public static void setCategorySchemeOrder(CategoryMetamac category, int columnIndex, Integer orderValue) {
+        switch (columnIndex) {
+            case 1:
+                category.setOrder1(orderValue);
+                break;
+            case 2:
+                category.setOrder2(orderValue);
+                break;
+            case 3:
+                category.setOrder3(orderValue);
+                break;
+            case 4:
+                category.setOrder4(orderValue);
+                break;
+            case 5:
+                category.setOrder5(orderValue);
+                break;
+            case 6:
+                category.setOrder6(orderValue);
+                break;
+            case 7:
+                category.setOrder7(orderValue);
+                break;
+            case 8:
+                category.setOrder8(orderValue);
+                break;
+            case 9:
+                category.setOrder9(orderValue);
+                break;
+            case 10:
+                category.setOrder10(orderValue);
+                break;
+            case 11:
+                category.setOrder11(orderValue);
+                break;
+            case 12:
+                category.setOrder12(orderValue);
+                break;
+            case 13:
+                category.setOrder13(orderValue);
+                break;
+            case 14:
+                category.setOrder14(orderValue);
+                break;
+            case 15:
+                category.setOrder15(orderValue);
+                break;
+            case 16:
+                category.setOrder16(orderValue);
+                break;
+            case 17:
+                category.setOrder17(orderValue);
+                break;
+            case 18:
+                category.setOrder18(orderValue);
+                break;
+            case 19:
+                category.setOrder19(orderValue);
+                break;
+            case 20:
+                category.setOrder20(orderValue);
+                break;
+            default:
+                throw new IllegalArgumentException("Category scheme order not supported: " + columnIndex);
+        }
+    }
+
+    public static Integer getCategorySchemeOrder(CategoryMetamac category, int columnIndex) {
+        switch (columnIndex) {
+            case 1:
+                return category.getOrder1();
+            case 2:
+                return category.getOrder2();
+            case 3:
+                return category.getOrder3();
+            case 4:
+                return category.getOrder4();
+            case 5:
+                return category.getOrder5();
+            case 6:
+                return category.getOrder6();
+            case 7:
+                return category.getOrder7();
+            case 8:
+                return category.getOrder8();
+            case 9:
+                return category.getOrder9();
+            case 10:
+                return category.getOrder10();
+            case 11:
+                return category.getOrder11();
+            case 12:
+                return category.getOrder12();
+            case 13:
+                return category.getOrder13();
+            case 14:
+                return category.getOrder14();
+            case 15:
+                return category.getOrder15();
+            case 16:
+                return category.getOrder16();
+            case 17:
+                return category.getOrder17();
+            case 18:
+                return category.getOrder18();
+            case 19:
+                return category.getOrder19();
+            case 20:
+                return category.getOrder20();
+            default:
+                throw new IllegalArgumentException("Category scheme order not supported: " + columnIndex);
+        }
+    }
+
+    /**
+     * Clear all order columns for a category
+     */
+    public static void clearCategorySchemeOrders(CategoryMetamac category) {
+        for (int i = 0; i < SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_MAXIMUM_NUMBER; i++) {
+            setCategorySchemeOrder(category, i + 1, null);
+        }
+    }
+
+    public static Boolean isAlphabeticalOrderVisualisation(CategorySchemeOrderVisualisation orderVisualisation) {
+        return SrmConstants.CATEGORY_SCHEME_ORDER_VISUALISATION_ALPHABETICAL_CODE.equals(orderVisualisation.getNameableArtefact().getCode());
+    }
+
+    public static Map<String, CategorySchemeOrderVisualisation> createMapOfCategorySchemeOrderVisualisationByOriginalUrn(List<CategorySchemeOrderVisualisation> orders) {
+        Map<String, CategorySchemeOrderVisualisation> result = new HashMap<String, CategorySchemeOrderVisualisation>(orders.size());
+        for (CategorySchemeOrderVisualisation categorySchemeOrderVisualisation : orders) {
+            String originalUrn = GeneratorUrnUtils.makeUrnFromTemporal(categorySchemeOrderVisualisation.getNameableArtefact().getUrn());
+            result.put(originalUrn, categorySchemeOrderVisualisation);
+        }
+        return result;
+    }
+
+    public static Integer getCategoryItemResultOrder(ItemResult itemResult) {
+        if (itemResult.getExtensionPoint() == null) {
+            return null;
+        }
+        CategoryMetamacResultExtensionPoint extensionPoint = (CategoryMetamacResultExtensionPoint) itemResult.getExtensionPoint();
         return extensionPoint.getOrderConfiguration();
     }
 }

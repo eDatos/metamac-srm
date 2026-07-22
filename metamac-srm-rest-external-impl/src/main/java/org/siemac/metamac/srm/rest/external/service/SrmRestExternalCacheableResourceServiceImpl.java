@@ -96,7 +96,7 @@ public class SrmRestExternalCacheableResourceServiceImpl implements CacheableRes
     }
 
     private DateTime getLastModifiedDateForVariableElements(String variableID) {
-        if (variableID == null) {
+        if (variableID == null || SrmRestConstants.WILDCARD_ALL.equals(variableID)) {
             return null;
         }
         try {

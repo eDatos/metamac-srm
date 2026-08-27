@@ -8,20 +8,14 @@ import org.siemac.metamac.srm.web.client.model.ds.ItemDS;
 import org.siemac.metamac.srm.web.concept.model.ds.ConceptDS;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.srm.ItemSchemeDto;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.SortSpecifier;
 import com.smartgwt.client.types.DragDataAction;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.events.SortChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SortEvent;
-import com.smartgwt.client.widgets.tree.TreeGridField;
 
 public class ConceptsOrderTreeGrid extends BaseConceptsTreeGrid {
-
-    protected TreeGridField       orderField;
-
-    protected HandlerRegistration folderDropHandlerRegistration;
 
     public ConceptsOrderTreeGrid() {
         super(false, true);

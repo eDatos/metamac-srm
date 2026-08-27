@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.concept.view;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
@@ -129,7 +130,7 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
     private List<ConceptTypeDto>                    conceptTypeDtos;
 
     private ConceptSchemeMetamacDto                 conceptSchemeMetamacDto;
-    private List<ConceptMetamacVisualisationResult> itemVisualisationResults;
+    private List<ConceptMetamacVisualisationResult> itemVisualisationResults = new ArrayList<ConceptMetamacVisualisationResult>();
     private ConceptMetamacDto                       conceptDto;
 
     private SearchRelatedResourcePaginatedWindow    searchVariableWindow;
@@ -492,6 +493,8 @@ public class ConceptViewImpl extends ViewWithUiHandlers<ConceptUiHandlers> imple
 
     @Override
     public void setConceptList(ConceptSchemeMetamacDto conceptSchemeMetamacDto, List<ConceptMetamacVisualisationResult> itemVisualisationDtos) {
+        // Keep the concept list to feed the related concepts selection window (see createRelatedConceptsItem)
+        this.itemVisualisationResults = itemVisualisationDtos;
         conceptsTreeGrid.setItems(conceptSchemeMetamacDto, itemVisualisationDtos);
         conceptsTreeGrid.selectItem(conceptDto.getUrn());
     }

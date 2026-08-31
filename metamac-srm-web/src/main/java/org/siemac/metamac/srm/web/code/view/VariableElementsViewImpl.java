@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.siemac.metamac.srm.core.code.dto.VariableElementBasicDto;
 import org.siemac.metamac.srm.web.client.utils.ResourceFieldUtils;
+import org.siemac.metamac.srm.web.client.widgets.NavigablePaginatedListGrid;
 import org.siemac.metamac.srm.web.code.model.ds.VariableElementDS;
 import org.siemac.metamac.srm.web.code.model.record.VariableElementRecord;
 import org.siemac.metamac.srm.web.code.presenter.VariableElementsPresenter;
@@ -13,8 +14,8 @@ import org.siemac.metamac.srm.web.code.view.handlers.VariableElementsUiHandlers;
 import org.siemac.metamac.srm.web.code.widgets.VariableElementSearchSectionStack;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
+import org.siemac.metamac.web.common.client.widgets.CustomLinkListGridField;
 import org.siemac.metamac.web.common.client.widgets.CustomListGridField;
-import org.siemac.metamac.web.common.client.widgets.PaginatedListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -32,7 +33,7 @@ public class VariableElementsViewImpl extends ViewWithUiHandlers<VariableElement
 
     private final VariableElementSearchSectionStack searchSectionStack;
 
-    private final PaginatedListGrid                 variableElementsListGrid;
+    private final NavigablePaginatedListGrid        variableElementsListGrid;
 
     @Inject
     public VariableElementsViewImpl() {
@@ -43,7 +44,7 @@ public class VariableElementsViewImpl extends ViewWithUiHandlers<VariableElement
 
         // Variable elements
 
-        variableElementsListGrid = new PaginatedListGrid(VariableElementsPresenter.ELEMENT_LIST_MAX_RESULTS, new PaginatedAction() {
+        variableElementsListGrid = new NavigablePaginatedListGrid(VariableElementsPresenter.ELEMENT_LIST_MAX_RESULTS, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
@@ -68,8 +69,9 @@ public class VariableElementsViewImpl extends ViewWithUiHandlers<VariableElement
         ListGridField fieldShortName = new ListGridField(VariableElementDS.SHORT_NAME, getConstants().variableElementShortName());
         CustomListGridField hasShape = new CustomListGridField(VariableElementDS.SHAPE_WKT, getConstants().variableElementHasPolygonShape());
         ListGridField urn = new ListGridField(VariableElementDS.URN, getConstants().identifiableArtefactUrn());
+        CustomLinkListGridField variable = new CustomLinkListGridField(VariableElementDS.VARIABLE, getConstants().variable());
         CustomListGridField publicationStreamStatus = ResourceFieldUtils.getCustomIconListGridField(VariableElementDS.PUBLICATION_STREAM_STATUS, getConstants().codelistStreamMessageStatus());
-        variableElementsListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn, publicationStreamStatus);
+        variableElementsListGrid.getListGrid().setFields(fieldCode, fieldShortName, hasShape, urn, variable, publicationStreamStatus);
 
         variableElementsListGrid.setHeight100();
 
@@ -86,6 +88,7 @@ public class VariableElementsViewImpl extends ViewWithUiHandlers<VariableElement
     @Override
     public void setUiHandlers(VariableElementsUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
+        variableElementsListGrid.setUiHandlers(uiHandlers);
         searchSectionStack.setUiHandlers(uiHandlers);
     }
 

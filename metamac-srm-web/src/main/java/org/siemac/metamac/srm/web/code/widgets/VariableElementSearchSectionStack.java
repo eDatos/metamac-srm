@@ -2,6 +2,7 @@ package org.siemac.metamac.srm.web.code.widgets;
 
 import static org.siemac.metamac.srm.web.client.MetamacSrmWeb.getConstants;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,11 +11,15 @@ import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 import org.siemac.metamac.srm.web.client.constants.SrmWebConstants;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.srm.web.client.widgets.SearchRelatedResourcePaginatedWindow;
+import org.siemac.metamac.srm.web.client.widgets.search.SearchMultiRelatedResourceSimpleItem;
 import org.siemac.metamac.srm.web.code.model.ds.VariableElementDS;
 import org.siemac.metamac.srm.web.code.view.handlers.VariableElementsUiHandlers;
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
+import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
+import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
+import org.siemac.metamac.srm.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
@@ -25,6 +30,8 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
+import org.siemac.metamac.web.common.client.widgets.handlers.ListRecordNavigationClickHandler;
+import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
 import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 import com.arte.statistic.sdmx.v2_1.domain.enume.srm.domain.RelatedResourceTypeEnum;
@@ -41,6 +48,8 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
 
     private SearchRelatedResourcePaginatedWindow searchDimensionConceptWindow;
 
+    private SearchMultiRelatedResourceSimpleItem searchVariablesItem;
+
     public VariableElementSearchSectionStack() {
     }
 
@@ -49,6 +58,7 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
         super.clearAdvancedSearchSection();
         ((CustomCheckboxItem) advancedSearchForm.getItem(VariableElementDS.IS_GEOGRAPHICAL)).setValue(false);
         ((SearchRelatedResourceLinkItem) advancedSearchForm.getItem(VariableElementDS.GEOGRAPHICAL_GRANULARITY)).clearRelatedResource();
+        searchVariablesItem.clearRelatedResourceList();
     }
 
     @Override
@@ -66,6 +76,8 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
         CustomDateItem validFrom = new CustomDateItem(VariableElementDS.VALID_FROM, getConstants().variableElementValidFrom());
         CustomDateItem validTo = new CustomDateItem(VariableElementDS.VALID_TO, getConstants().variableElementValidTo());
 
+        searchVariablesItem = createVariablesItem();
+
         CustomButtonItem searchItem = new CustomButtonItem(ADVANCED_SEARCH_ITEM_NAME, MetamacWebCommon.getConstants().search());
         searchItem.setColSpan(4);
         searchItem.addClickHandler(new ClickHandler() {
@@ -76,7 +88,7 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
             }
         });
 
-        FormItem[] advancedSearchFormItems = new FormItem[]{isGeographical, hasShape, validFrom, validTo, geographicalGranularityItem, searchItem};
+        FormItem[] advancedSearchFormItems = new FormItem[]{isGeographical, hasShape, validFrom, validTo, geographicalGranularityItem, searchVariablesItem, searchItem};
         setFormItemsInAdvancedSearchForm(advancedSearchFormItems);
     }
 
@@ -100,6 +112,12 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
         variableElementWebCriteria.setValidFromDate(advancedSearchForm.getValue(VariableElementDS.VALID_FROM) != null ? (Date) advancedSearchForm.getValue(VariableElementDS.VALID_FROM) : null);
         variableElementWebCriteria.setValidToDate(advancedSearchForm.getValue(VariableElementDS.VALID_TO) != null ? (Date) advancedSearchForm.getValue(VariableElementDS.VALID_TO) : null);
 
+        List<String> variableUrns = new ArrayList<String>();
+        for (RelatedResourceDto relatedResource : searchVariablesItem.getRelatedResourceDtos()) {
+            variableUrns.add(relatedResource.getUrn());
+        }
+        variableElementWebCriteria.setVariableUrns(variableUrns);
+
         return variableElementWebCriteria;
     }
 
@@ -117,6 +135,27 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
             searchDimensionConceptWindow.setRelatedResources(relatedResourceDtos);
             searchDimensionConceptWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), relatedResourceDtos.size(), result.getTotalResults());
         }
+    }
+
+    public void setVariables(GetVariablesResult result) {
+        if (searchVariablesItem != null) {
+            List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getVariableBasicDtosAsRelatedResourceDtos(result.getVariables());
+            searchVariablesItem.setResources(relatedResourceDtos, result.getFirstResultOut(), result.getTotalResults());
+        }
+    }
+
+    private SearchMultiRelatedResourceSimpleItem createVariablesItem() {
+        final int MAX_RESULTS = 8;
+        SearchMultiRelatedResourceSimpleItem variablesItem = new SearchMultiRelatedResourceSimpleItem(VariableElementDS.VARIABLES, getConstants().variables(), MAX_RESULTS,
+                getListRecordNavigationClickHandler(), false) {
+
+            @Override
+            protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+                getUiHandlers().retrieveVariablesForSearch(firstResult, maxResults, new VariableWebCriteria(webCriteria != null ? webCriteria.getCriteria() : null));
+            }
+        };
+        variablesItem.setTitleStyle("staticFormItemTitle");
+        return variablesItem;
     }
 
     private SearchRelatedResourceLinkItem createDimensionConceptItem(String name, String title) {
@@ -169,6 +208,16 @@ public class VariableElementSearchSectionStack extends BaseAdvancedSearchSection
 
     private CustomLinkItemNavigationClickHandler getCustomLinkItemNavigationClickHandler() {
         return new CustomLinkItemNavigationClickHandler() {
+
+            @Override
+            public BaseUiHandlers getBaseUiHandlers() {
+                return getUiHandlers();
+            }
+        };
+    }
+
+    private ListRecordNavigationClickHandler getListRecordNavigationClickHandler() {
+        return new ListRecordNavigationClickHandler() {
 
             @Override
             public BaseUiHandlers getBaseUiHandlers() {

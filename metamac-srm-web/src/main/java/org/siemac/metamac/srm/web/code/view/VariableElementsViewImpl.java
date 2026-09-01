@@ -15,6 +15,7 @@ import org.siemac.metamac.srm.web.code.widgets.VariableElementSearchSectionStack
 import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
 import org.siemac.metamac.web.common.client.widgets.CustomLinkListGridField;
+import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
 import org.siemac.metamac.web.common.client.widgets.CustomListGridField;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
 
@@ -123,6 +124,11 @@ public class VariableElementsViewImpl extends ViewWithUiHandlers<VariableElement
     @Override
     public void setCodesForVariableElementGeographicalGranularity(GetRelatedResourcesResult result) {
         searchSectionStack.setGeographicalGranularityCodes(result);
+    }
+
+    @Override
+    public void setVariablesForSearch(GetVariablesResult result) {
+        searchSectionStack.setVariables(result);
     }
 
     @Override

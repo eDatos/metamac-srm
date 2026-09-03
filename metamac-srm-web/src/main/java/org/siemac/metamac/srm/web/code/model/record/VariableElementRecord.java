@@ -6,10 +6,11 @@ import org.siemac.metamac.srm.core.code.dto.VariableElementBasicDto;
 import org.siemac.metamac.srm.core.code.dto.VariableElementDto;
 import org.siemac.metamac.srm.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.srm.web.code.model.ds.VariableElementDS;
+import org.siemac.metamac.web.common.client.widgets.NavigableListGridRecord;
 
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.arte.statistic.sdmx.v2_1.domain.dto.common.RelatedResourceDto;
 
-public class VariableElementRecord extends ListGridRecord {
+public class VariableElementRecord extends NavigableListGridRecord {
 
     public VariableElementRecord() {
     }
@@ -42,6 +43,10 @@ public class VariableElementRecord extends ListGridRecord {
 
     public void setHasShape(String value) {
         setAttribute(VariableElementDS.SHAPE_WKT, value);
+    }
+
+    public void setVariable(RelatedResourceDto value) {
+        setRelatedResource(VariableElementDS.VARIABLE, value);
     }
 
     public void setStreamMessageStatus(StreamMessageStatusEnum value) {

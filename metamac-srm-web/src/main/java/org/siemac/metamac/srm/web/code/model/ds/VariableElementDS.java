@@ -12,6 +12,7 @@ public class VariableElementDS extends DataSource {
     public static final String PUBLICATION_STREAM_STATUS = "ele-stream-status";
     // Content descriptors
     public static final String VARIABLE                  = "ele-variable";
+    public static final String VARIABLES                 = "ele-variables";
 
     public static final String RENDERING_COLOR           = "ele-rendering-color";
     public static final String IS_GEOGRAPHICAL           = "ele-var-type";

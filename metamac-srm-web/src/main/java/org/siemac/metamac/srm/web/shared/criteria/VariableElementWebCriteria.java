@@ -1,6 +1,7 @@
 package org.siemac.metamac.srm.web.shared.criteria;
 
 import java.util.Date;
+import java.util.List;
 
 import org.siemac.metamac.srm.core.code.enume.domain.VariableTypeEnum;
 
@@ -9,6 +10,7 @@ public class VariableElementWebCriteria extends NameableArtefactWebCriteria {
     private static final long serialVersionUID = 1L;
 
     private String            variableUrn;
+    private List<String>      variableUrns;
     private String            codelistUrn;
     private VariableTypeEnum  variableType;
     private Boolean           isHasShape;
@@ -29,6 +31,14 @@ public class VariableElementWebCriteria extends NameableArtefactWebCriteria {
 
     public void setVariableUrn(String variableUrn) {
         this.variableUrn = variableUrn;
+    }
+
+    public List<String> getVariableUrns() {
+        return variableUrns;
+    }
+
+    public void setVariableUrns(List<String> variableUrns) {
+        this.variableUrns = variableUrns;
     }
 
     public String getCodelistUrn() {

@@ -20,8 +20,11 @@ import org.siemac.metamac.srm.web.shared.GetRelatedResourcesResult;
 import org.siemac.metamac.srm.web.shared.StructuralResourcesRelationEnum;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsAction;
 import org.siemac.metamac.srm.web.shared.code.GetVariableElementsResult;
+import org.siemac.metamac.srm.web.shared.code.GetVariablesAction;
+import org.siemac.metamac.srm.web.shared.code.GetVariablesResult;
 import org.siemac.metamac.srm.web.shared.criteria.CodeWebCriteria;
 import org.siemac.metamac.srm.web.shared.criteria.VariableElementWebCriteria;
+import org.siemac.metamac.srm.web.shared.criteria.VariableWebCriteria;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -76,6 +79,7 @@ public class VariableElementsPresenter extends Presenter<VariableElementsPresent
         void setVariableElements(GetVariableElementsResult result);
         void clearSearchSection();
         void setCodesForVariableElementGeographicalGranularity(GetRelatedResourcesResult result);
+        void setVariablesForSearch(GetVariablesResult result);
     }
 
     @Inject
@@ -133,6 +137,21 @@ public class VariableElementsPresenter extends Presenter<VariableElementsPresent
         if (!StringUtils.isBlank(variableCode) && !StringUtils.isBlank(variableElementCode)) {
             placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteVariableElementPlaceRequest(variableCode, variableElementCode));
         }
+    }
+
+    @Override
+    public void retrieveVariablesForSearch(int firstResult, int maxResults, VariableWebCriteria criteria) {
+        dispatcher.execute(new GetVariablesAction(firstResult, maxResults, criteria, null), new WaitingAsyncCallbackHandlingError<GetVariablesResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(VariableElementsPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(GetVariablesResult result) {
+                getView().setVariablesForSearch(result);
+            }
+        });
     }
 
     @Override

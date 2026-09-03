@@ -437,6 +437,16 @@ public class MetamacWebCriteriaUtils {
                         criteria.getVariableUrn(), OperationType.EQ);
                 conjunctionRestriction.getRestrictions().add(variableElementPropertyRestriction);
             }
+            if (criteria.getVariableUrns() != null && !criteria.getVariableUrns().isEmpty()) {
+                MetamacCriteriaDisjunctionRestriction variablesDisjunction = new MetamacCriteriaDisjunctionRestriction();
+                for (String variableUrn : criteria.getVariableUrns()) {
+                    if (StringUtils.isNotBlank(variableUrn)) {
+                        variablesDisjunction.getRestrictions()
+                                .add(new MetamacCriteriaPropertyRestriction(VariableElementCriteriaPropertyEnum.VARIABLE_URN.name(), variableUrn, OperationType.EQ));
+                    }
+                }
+                conjunctionRestriction.getRestrictions().add(variablesDisjunction);
+            }
             if (criteria.getVariableType() != null) {
                 conjunctionRestriction.getRestrictions()
                         .add(new MetamacCriteriaPropertyRestriction(VariableElementCriteriaPropertyEnum.IS_GEOGRAPHICAL_VARIABLE_ELEMENT.name(), criteria.getVariableType(), OperationType.EQ));

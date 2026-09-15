@@ -134,7 +134,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setReplaceTo(toCodelistReplaceTo(source));
         target.setOrderConfigurations(toOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
         target.setOpennessConfigurations(toOpennessConfigurations(source.getOpennessVisualisations(), source.getDefaultOpennessVisualisation()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, configurationService.retrieveSrmVisualizerUrl()));
 
         return target;
     }
@@ -183,7 +183,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -307,7 +307,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
             target.setVariableElement(toResource(source.getVariableElement()));
         }
         target.setExtended(source.getIsExtended());
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODE, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODE, configurationService.retrieveSrmVisualizerUrl()));
 
         return target;
     }
@@ -375,7 +375,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         toResource(source, SrmRestConstants.KIND_CODE, toCodeSelfLink(source, codelistVersion), target, codelistVersion.getMaintainableArtefact().getIsImported(), fields);
 
         setVisibleFields(source, target, variableID, fields);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(codelistVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CODE, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(codelistVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CODE, configurationService.retrieveSrmVisualizerUrl()));
 
         return target;
     }
@@ -625,7 +625,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setLastUpdatedDate(toDate(source.getLastUpdated()));
 
         target.setName(toInternationalString(source.getNameableArtefact().getName()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -786,7 +786,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         }
         Resource target = new Resource();
         toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_FAMILY, toCodelistFamilySelfLink(source), target, false, null);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 

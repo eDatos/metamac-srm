@@ -50,6 +50,6 @@ public class ConceptSchemeDo2AvroMapper implements Do2AvroMapper<ConceptSchemeVe
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
                 .setConceptSchemeType(conceptSchemeTypeEnumDo2AvroMapper.toAvro(source.getType())).setStatisticalOperation(externalItemDo2AvroMapper.do2Avro(source.getRelatedOperation()))
-                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, srmConfiguration)).build();
+                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, srmConfiguration.retrieveSrmVisualizerUrl())).build();
     }
 }

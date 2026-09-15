@@ -100,7 +100,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
 
         target.setType(toConceptSchemeTypeEnum(source.getType()));
         target.setStatisticalOperation(toResourceExternalItemStatisticalOperation(source.getRelatedOperation()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -111,7 +111,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CONCEPT_SCHEME, toConceptSchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -226,7 +226,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         target.setQuantity(toQuantity(source.getQuantity()));
         target.setVisualizerHtmlLink(
                 HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CONCEPT,
-                        configurationService));
+                        configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -350,7 +350,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         ConceptResource target = new ConceptResource();
         toResource(source, SrmRestConstants.KIND_CONCEPT, toConceptSelfLink(source, conceptSchemeVersion), target, conceptSchemeVersion.getMaintainableArtefact().getIsImported(), fields);
 
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(conceptSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CONCEPT, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(conceptSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CONCEPT, configurationService.retrieveSrmVisualizerUrl()));
 
         setVisibleFields(source, target, fields);
 

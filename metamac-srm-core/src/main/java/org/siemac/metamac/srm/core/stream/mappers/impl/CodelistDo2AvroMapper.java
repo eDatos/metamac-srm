@@ -52,6 +52,6 @@ public class CodelistDo2AvroMapper implements Do2AvroMapper<CodelistVersionMetam
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations())).setAccessType(accessTypeMapper.toAvro(source.getAccessType()))
                 .setIsRecommended(source.getIsRecommended()).setFamily(codelistFamilyMapper.toAvro(source.getFamily())).setVariable(variableMapper.toAvro(source.getVariable()))
-                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, srmConfiguration)).build();
+                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, srmConfiguration.retrieveSrmVisualizerUrl())).build();
     }
 }

@@ -1,17 +1,13 @@
 package org.siemac.metamac.srm.core.util;
 
-import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
-import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 
 import com.arte.statistic.sdmx.srm.core.base.domain.MaintainableArtefact;
 
 public class HtmlLinkUtil {
 
-    public static String getCodelistVisualizerHtmlLink(MaintainableArtefact maintainableArtefact, String code, RelatedResourceSrmTypeEnum resourceTypeEnum, SrmConfiguration configurationService)
-            throws MetamacException {
+    public static String getCodelistVisualizerHtmlLink(MaintainableArtefact maintainableArtefact, String code, RelatedResourceSrmTypeEnum resourceTypeEnum, String url) {
 
-        String url = configurationService.retrieveSrmVisualizerUrl();
         switch (resourceTypeEnum) {
             case CODELIST:
                 return SrmVisualizerWebUtils.buildCodelistUrl(maintainableArtefact, url);

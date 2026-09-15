@@ -41,6 +41,6 @@ public class CategorySchemeDo2AvroMapper implements Do2AvroMapper<CategoryScheme
                 .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
-                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, srmConfiguration)).build();
+                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, srmConfiguration.retrieveSrmVisualizerUrl())).build();
     }
 }

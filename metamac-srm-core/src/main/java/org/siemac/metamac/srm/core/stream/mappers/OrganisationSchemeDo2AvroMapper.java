@@ -49,6 +49,6 @@ public class OrganisationSchemeDo2AvroMapper implements Do2AvroMapper<Organisati
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
                 .setOrganisationSchemeType(organisationSchemeTypeEnumDo2AvroMapper.toAvro(source.getOrganisationSchemeType()))
-                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME, srmConfiguration)).build();
+                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME, srmConfiguration.retrieveSrmVisualizerUrl())).build();
     }
 }

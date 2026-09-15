@@ -84,7 +84,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setChildLinks(toCategorySchemeChildLinks(source));
 
         toItemScheme(source, source.getLifeCycleMetadata(), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, configurationService.retrieveSrmVisualizerUrl()));
         target.setOrderConfigurations(toCategorySchemeOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
 
         return target;
@@ -150,7 +150,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         if (source.getEniSchemas() != null && !source.getEniSchemas().isEmpty()) {
             target.setEniSchemaTypes(toEniSchemaTypes(new ArrayList<EniSchemaCatalog>(source.getEniSchemas())));
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -321,7 +321,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CATEGORY_SCHEME, toCategorySchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -334,7 +334,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setNestedId(source.getNameableArtefact().getCodeFull());
 
         setVisibleCategoryFields(source, target, fields);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -347,7 +347,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setNestedId(source.getCodeFull());
 
         setVisibleCategoryFields(source, target, fields);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(categorySchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(categorySchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 

@@ -20,14 +20,14 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 public interface CategoriesDo2RestMapperV10 {
 
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.CategorySchemes toCategorySchemes(PagedResult<CategorySchemeVersionMetamac> sources, String agencyID, String resourceID,
-            String query, String orderBy, Integer limit);
-    public org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source);
+            String query, String orderBy, Integer limit) throws MetamacException;
+    public org.siemac.metamac.rest.structural_resources.v1_0.domain.CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source) throws MetamacException;
 
     public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
-            Set<String> fields);
-    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields);
+            Set<String> fields) throws MetamacException;
+    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) throws MetamacException;
     List<PlainTextResource> toPlainTextCategories(Categories source, List<String> languages, Set<String> fields, String format) throws MetamacException;
-    public Category toCategory(CategoryMetamac source, Set<String> fields);
+    public Category toCategory(CategoryMetamac source, Set<String> fields) throws MetamacException;
 
     public org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations toCategorisations(PagedResult<Categorisation> sources, String agencyID, String resourceID, String query,
             String orderBy, Integer limit);

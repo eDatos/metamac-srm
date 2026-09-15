@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public interface Do2AvroMapper<D, A> {
-    A toAvro(D source);
+import org.siemac.metamac.core.common.exception.MetamacException;
 
-    default List<A> toAvros(Collection<D> source) {
+public interface Do2AvroMapper<D, A> {
+    A toAvro(D source) throws MetamacException;
+
+    default List<A> toAvros(Collection<D> source) throws MetamacException {
         if (source == null) {
             return new ArrayList<>();
         }

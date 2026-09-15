@@ -1,5 +1,8 @@
 package org.siemac.metamac.srm.core.stream.mappers;
 
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.core.stream.mappers.impl.CategorisationDo2AvroMapper;
 import org.siemac.metamac.srm.core.stream.mappers.impl.InternationalStringDo2AvroMapper;
@@ -7,6 +10,7 @@ import org.siemac.metamac.srm.core.stream.mappers.impl.OrganisationDo2AvroMapper
 import org.siemac.metamac.srm.core.stream.mappers.impl.OrganisationSchemeTypeEnumDo2AvroMapper;
 import org.siemac.metamac.srm.core.stream.mappers.impl.ProcStatusEnumDo2AvroMapper;
 import org.siemac.metamac.srm.core.stream.message.OrganisationSchemeAvro;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +32,11 @@ public class OrganisationSchemeDo2AvroMapper implements Do2AvroMapper<Organisati
     @Autowired
     private OrganisationSchemeTypeEnumDo2AvroMapper organisationSchemeTypeEnumDo2AvroMapper;
 
+    @Autowired
+    private SrmConfiguration                        srmConfiguration;
+
     @Override
-    public OrganisationSchemeAvro toAvro(OrganisationSchemeVersionMetamac source) {
+    public OrganisationSchemeAvro toAvro(OrganisationSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -41,6 +48,7 @@ public class OrganisationSchemeDo2AvroMapper implements Do2AvroMapper<Organisati
                 .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
-                .setOrganisationSchemeType(organisationSchemeTypeEnumDo2AvroMapper.toAvro(source.getOrganisationSchemeType())).build();
+                .setOrganisationSchemeType(organisationSchemeTypeEnumDo2AvroMapper.toAvro(source.getOrganisationSchemeType()))
+                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME, srmConfiguration)).build();
     }
 }

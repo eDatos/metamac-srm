@@ -47,7 +47,7 @@ import org.siemac.metamac.srm.core.dsd.domain.DimensionVisualisationInfo;
 import org.siemac.metamac.srm.core.dsd.domain.MeasureDimensionPrecision;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
-import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.StructureBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.concept.ConceptsDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
@@ -86,7 +86,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
     private SrmConfiguration                    configurationService;
 
     @Override
-    public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public DataStructures toDataStructures(PagedResult<DataStructureDefinitionVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         DataStructures targets = new DataStructures();
         targets.setKind(SrmRestConstants.KIND_DATA_STRUCTURES);
@@ -129,7 +129,7 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         target.setShowDecimals(source.getShowDecimals());
         target.setShowDecimalsPrecisions(toShowDecimalPrecisions(source.getShowDecimalsPrecisions()));
         target.setDimensionVisualisations(toDimensionVisualisations(source.getDimensionVisualisationInfos()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.DATA_STRUCTURE));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.DATA_STRUCTURE, configurationService));
 
         return target;
     }
@@ -412,13 +412,13 @@ public class DataStructuresDo2RestMapperV10Impl extends StructureBaseDo2RestMapp
         return null;
     }
 
-    private Resource toResource(DataStructureDefinitionVersionMetamac source) {
+    private Resource toResource(DataStructureDefinitionVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_DATA_STRUCTURE, toDataStructureSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.DATA_STRUCTURE));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.DATA_STRUCTURE, configurationService));
         return target;
     }
 

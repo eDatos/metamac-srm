@@ -36,7 +36,7 @@ import org.siemac.metamac.srm.core.common.service.utils.SrmServiceUtils;
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.master.domain.EniSchemaCatalog;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
 public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Impl implements CategoriesDo2RestMapperV10 {
 
     @Override
-    public CategorySchemes toCategorySchemes(PagedResult<CategorySchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public CategorySchemes toCategorySchemes(PagedResult<CategorySchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         CategorySchemes targets = new CategorySchemes();
         targets.setKind(SrmRestConstants.KIND_CATEGORY_SCHEMES);
@@ -71,7 +71,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source) {
+    public CategoryScheme toCategoryScheme(CategorySchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -84,7 +84,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setChildLinks(toCategorySchemeChildLinks(source));
 
         toItemScheme(source, source.getLifeCycleMetadata(), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, configurationService));
         target.setOrderConfigurations(toCategorySchemeOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
 
         return target;
@@ -92,7 +92,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
 
     @Override
     public Categories toCategories(PagedResult<CategoryMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit,
-            Set<String> fields) {
+            Set<String> fields) throws MetamacException {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -110,7 +110,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
+    public Categories toCategories(List<ItemResult> sources, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) throws MetamacException {
 
         Categories targets = new Categories();
         targets.setKind(SrmRestConstants.KIND_CATEGORIES);
@@ -128,7 +128,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
     }
 
     @Override
-    public Category toCategory(CategoryMetamac source, Set<String> fields) {
+    public Category toCategory(CategoryMetamac source, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -150,7 +150,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         if (source.getEniSchemas() != null && !source.getEniSchemas().isEmpty()) {
             target.setEniSchemaTypes(toEniSchemaTypes(new ArrayList<EniSchemaCatalog>(source.getEniSchemas())));
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService));
         return target;
     }
 
@@ -315,17 +315,17 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         return null;
     }
 
-    private Resource toResource(CategorySchemeVersionMetamac source) {
+    private Resource toResource(CategorySchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CATEGORY_SCHEME, toCategorySchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CATEGORY_SCHEME, configurationService));
         return target;
     }
 
-    private CategoryResource toResource(CategoryMetamac source, Set<String> fields) {
+    private CategoryResource toResource(CategoryMetamac source, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -334,11 +334,11 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setNestedId(source.getNameableArtefact().getCodeFull());
 
         setVisibleCategoryFields(source, target, fields);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService));
         return target;
     }
 
-    private CategoryResource toResource(ItemResult source, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) {
+    private CategoryResource toResource(ItemResult source, CategorySchemeVersionMetamac categorySchemeVersion, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -347,7 +347,7 @@ public class CategoriesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV
         target.setNestedId(source.getCodeFull());
 
         setVisibleCategoryFields(source, target, fields);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(categorySchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CATEGORY));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(categorySchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CATEGORY, configurationService));
         return target;
     }
 

@@ -50,7 +50,7 @@ import org.siemac.metamac.srm.core.concept.serviceimpl.utils.shared.QuantityUtil
 import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
-import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.code.CodesDo2RestMapperV10;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
@@ -68,7 +68,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     private CodesDo2RestMapperV10 codesDo2RestMapper;
 
     @Override
-    public ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public ConceptSchemes toConceptSchemes(PagedResult<ConceptSchemeVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         ConceptSchemes targets = new ConceptSchemes();
         targets.setKind(SrmRestConstants.KIND_CONCEPT_SCHEMES);
@@ -86,7 +86,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source) {
+    public ConceptScheme toConceptScheme(ConceptSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -100,18 +100,18 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
 
         target.setType(toConceptSchemeTypeEnum(source.getType()));
         target.setStatisticalOperation(toResourceExternalItemStatisticalOperation(source.getRelatedOperation()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, configurationService));
         return target;
     }
 
     @Override
-    public Resource toResource(ConceptSchemeVersion source) {
+    public Resource toResource(ConceptSchemeVersion source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CONCEPT_SCHEME, toConceptSchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, configurationService));
         return target;
     }
 
@@ -179,7 +179,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) {
+    public Concepts toConcepts(List<ItemResult> sources, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) throws MetamacException {
 
         Concepts targets = new Concepts();
         targets.setKind(SrmRestConstants.KIND_CONCEPTS);
@@ -197,7 +197,7 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
     }
 
     @Override
-    public Concept toConcept(ConceptMetamac source) {
+    public Concept toConcept(ConceptMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -225,7 +225,8 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         target.setVariable(codesDo2RestMapper.toResource(source.getVariable()));
         target.setQuantity(toQuantity(source.getQuantity()));
         target.setVisualizerHtmlLink(
-                HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CONCEPT));
+                HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CONCEPT,
+                        configurationService));
         return target;
     }
 
@@ -342,14 +343,14 @@ public class ConceptsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10
         return target;
     }
 
-    private ConceptResource toResource(ItemResult source, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) {
+    private ConceptResource toResource(ItemResult source, ConceptSchemeVersionMetamac conceptSchemeVersion, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
         ConceptResource target = new ConceptResource();
         toResource(source, SrmRestConstants.KIND_CONCEPT, toConceptSelfLink(source, conceptSchemeVersion), target, conceptSchemeVersion.getMaintainableArtefact().getIsImported(), fields);
 
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(conceptSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CONCEPT));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(conceptSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CONCEPT, configurationService));
 
         setVisibleFields(source, target, fields);
 

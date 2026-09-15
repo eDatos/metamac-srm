@@ -40,7 +40,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Organisations;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationMetamac;
 import org.siemac.metamac.srm.core.organisation.domain.OrganisationSchemeVersionMetamac;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
-import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -421,7 +421,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (source != null) {
             target.setNestedId(source.getIdAsMaintainer()); // Overrided nestedId to agencies
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.ORGANISATION_UNIT_SCHEME, configurationService));
         return (Agency) target;
     }
 
@@ -447,7 +447,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return true; // no additional conditions
     }
 
-    private OrganisationScheme toOrganisationSchemeCommon(OrganisationSchemeVersionMetamac source) {
+    private OrganisationScheme toOrganisationSchemeCommon(OrganisationSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -473,14 +473,14 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         target.setSelfLink(toOrganisationSchemeSelfLink(source));
         target.setParentLink(toOrganisationSchemeParentLink(source));
         target.setChildLinks(toOrganisationSchemeChildLinks(source));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME, configurationService));
 
         toItemScheme(source, source.getLifeCycleMetadata(), target);
 
         return target;
     }
 
-    private Organisation toOrganisationCommon(OrganisationMetamac source) {
+    private Organisation toOrganisationCommon(OrganisationMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -510,7 +510,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         toItem(source, target);
 
         target.setContacts(toContacts(source.getContacts(), source.getOrganisationType()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.ORGANISATION_UNIT_SCHEME, configurationService));
 
         return target;
     }
@@ -590,13 +590,13 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return null;
     }
 
-    private Resource toResource(OrganisationSchemeVersionMetamac source) {
+    private Resource toResource(OrganisationSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), toKindItemScheme(source.getOrganisationSchemeType()), toOrganisationSchemeSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.ORGANISATION_SCHEME, configurationService));
         return target;
     }
 
@@ -612,7 +612,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         return target;
     }
 
-    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) {
+    private ItemResource toResource(ItemResult source, OrganisationSchemeVersionMetamac organisationSchemeVersion, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -623,7 +623,7 @@ public class OrganisationsDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapp
         if (OrganisationTypeEnum.AGENCY.equals(organisationType)) {
             target.setNestedId(getIdAsMaintainer(source));
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.ORGANISATION_UNIT_SCHEME));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(organisationSchemeVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.ORGANISATION_UNIT_SCHEME, configurationService));
         return target;
     }
 

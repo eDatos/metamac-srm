@@ -1,9 +1,13 @@
 package org.siemac.metamac.srm.core.stream.mappers.impl;
 
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.code.enume.domain.RelatedResourceSrmTypeEnum;
 import org.siemac.metamac.srm.core.concept.domain.ConceptSchemeVersionMetamac;
+import org.siemac.metamac.srm.core.conf.SrmConfiguration;
 import org.siemac.metamac.srm.core.stream.mappers.Do2AvroMapper;
 import org.siemac.metamac.srm.core.stream.mappers.ExternalItemDo2AvroMapper;
 import org.siemac.metamac.srm.core.stream.message.ConceptSchemeAvro;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +32,11 @@ public class ConceptSchemeDo2AvroMapper implements Do2AvroMapper<ConceptSchemeVe
     @Autowired
     private ExternalItemDo2AvroMapper          externalItemDo2AvroMapper;
 
+    @Autowired
+    private SrmConfiguration                   srmConfiguration;
+
     @Override
-    public ConceptSchemeAvro toAvro(ConceptSchemeVersionMetamac source) {
+    public ConceptSchemeAvro toAvro(ConceptSchemeVersionMetamac source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -42,6 +49,7 @@ public class ConceptSchemeDo2AvroMapper implements Do2AvroMapper<ConceptSchemeVe
                 .setLatestVersionNumberPublic(source.getMaintainableArtefact().getLatestVersionNumberPublic()).setMaintainer(maintainerMapper.toAvro(source.getMaintainableArtefact().getMaintainer()))
                 .setProcStatus(procStatusMapper.toAvro(source.getLifeCycleMetadata().getProcStatus()))
                 .setCategorizations(categorisationMapper.toAvros(source.getMaintainableArtefact().getCategorisations()))
-                .setConceptSchemeType(conceptSchemeTypeEnumDo2AvroMapper.toAvro(source.getType())).setStatisticalOperation(externalItemDo2AvroMapper.do2Avro(source.getRelatedOperation())).build();
+                .setConceptSchemeType(conceptSchemeTypeEnumDo2AvroMapper.toAvro(source.getType())).setStatisticalOperation(externalItemDo2AvroMapper.do2Avro(source.getRelatedOperation()))
+                .setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CONCEPT_SCHEME, srmConfiguration)).build();
     }
 }

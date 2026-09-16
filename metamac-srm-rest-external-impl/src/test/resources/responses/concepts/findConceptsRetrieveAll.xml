@@ -12,7 +12,7 @@
             <cdomain:text xml:lang="en">description-concept1 in English</cdomain:text>
             <cdomain:text xml:lang="es">description-concept1 en Español</cdomain:text>
         </cdomain:description>
-        <cdomain:visualizerHtmlLink>nullconcepts/concepts/agency1/itemScheme1/concept1/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/concepts/concepts/agency1/itemScheme1/concept1/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:concept>
     <sr:concept kind="structuralResources#concept">
         <cdomain:id>concept2</cdomain:id>
@@ -26,7 +26,7 @@
             <cdomain:text xml:lang="en">description-concept2 in English</cdomain:text>
             <cdomain:text xml:lang="es">description-concept2 en Español</cdomain:text>
         </cdomain:description>
-        <cdomain:visualizerHtmlLink>nullconcepts/concepts/agency1/itemScheme1/concept2/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/concepts/concepts/agency1/itemScheme1/concept2/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:concept>
     <sr:concept kind="structuralResources#concept">
         <cdomain:id>concept2A</cdomain:id>
@@ -40,7 +40,7 @@
             <cdomain:text xml:lang="en">description-concept2A in English</cdomain:text>
             <cdomain:text xml:lang="es">description-concept2A en Español</cdomain:text>
         </cdomain:description>
-        <cdomain:visualizerHtmlLink>nullconcepts/concepts/agency1/itemScheme1/concept2A/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/concepts/concepts/agency1/itemScheme1/concept2A/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2</sr:parent>
     </sr:concept>
     <sr:concept kind="structuralResources#concept">
@@ -55,7 +55,7 @@
             <cdomain:text xml:lang="en">description-concept2B in English</cdomain:text>
             <cdomain:text xml:lang="es">description-concept2B en Español</cdomain:text>
         </cdomain:description>
-        <cdomain:visualizerHtmlLink>nullconcepts/concepts/agency1/itemScheme1/concept2B/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/concepts/concepts/agency1/itemScheme1/concept2B/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency1:itemScheme1(01.000).concept2</sr:parent>
     </sr:concept>
 </sr:concepts>

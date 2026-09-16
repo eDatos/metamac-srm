@@ -35,7 +35,7 @@
         <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-item1 in English</cdomain:text>
     </sr:description>
-    <sr:visualizerHtmlLink>nullcodelists/codes/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
+    <sr:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codes/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
     <sr:parent>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).item2</sr:parent>
     <sr:shortName>
         <cdomain:text xml:lang="en">shortName-item1 in English</cdomain:text>

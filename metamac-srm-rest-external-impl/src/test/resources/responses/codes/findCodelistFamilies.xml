@@ -8,7 +8,7 @@
             <cdomain:text xml:lang="en">name-artefact1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-artefact1 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/families/artefact1/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/families/artefact1/detail</cdomain:visualizerHtmlLink>
     </sr:codelistFamily>
     <sr:codelistFamily kind="structuralResources#codelistFamily">
         <cdomain:id>artefact2</cdomain:id>
@@ -18,7 +18,7 @@
             <cdomain:text xml:lang="en">name-artefact2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-artefact2 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/families/artefact2/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/families/artefact2/detail</cdomain:visualizerHtmlLink>
     </sr:codelistFamily>
     <sr:codelistFamily kind="structuralResources#codelistFamily">
         <cdomain:id>artefact3</cdomain:id>
@@ -28,7 +28,7 @@
             <cdomain:text xml:lang="es">name-artefact3 en Español</cdomain:text>
             <cdomain:text xml:lang="en">name-artefact3 in English</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/families/artefact3/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/families/artefact3/detail</cdomain:visualizerHtmlLink>
     </sr:codelistFamily>
     <sr:codelistFamily kind="structuralResources#codelistFamily">
         <cdomain:id>artefact4</cdomain:id>
@@ -38,6 +38,6 @@
             <cdomain:text xml:lang="en">name-artefact4 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-artefact4 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/families/artefact4/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/families/artefact4/detail</cdomain:visualizerHtmlLink>
     </sr:codelistFamily>
 </sr:codelistFamilies>

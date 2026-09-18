@@ -8,6 +8,15 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 8.x.0 a 8.x.1
+  * Para que CKAN disponga de `visualizerHtmlLink` también para los recursos ya publicados, hay  que relanzar el job `ResendPublishedResourcesKafkaMessageJob`, que reenvía el mensaje kafka de la última versión publicada de todos los recursos del SRM:
+    1. Actualizar la property `metamac.srm.resend_resources_kafka_message.cron_expression` (tabla `TB_DATA_CONFIGURATIONS`) con una expresión cron cuya próxima ejecución caiga poco después del reinicio previsto. Ej.:
+          ```sql
+          update tb_data_configurations set conf_value = '0 0 22 20 SEP ? 2026' --20 de septiembre de 2026 a las 22:00
+          where conf_key = 'metamac.srm.resend_resources_kafka_message.cron_expression';
+          ```
+    2. Reiniciar `metamac-srm-web` para que relea la property y programe el job (se reprograma en cada arranque de la aplicación).
+
 ## 8.17.0 a 8.18.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/8.17.0/db/common-metadata/postgresql/] 

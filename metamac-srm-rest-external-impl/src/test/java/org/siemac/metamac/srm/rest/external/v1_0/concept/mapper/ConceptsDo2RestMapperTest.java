@@ -35,6 +35,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptScheme;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptSchemeType;
@@ -60,7 +61,7 @@ public class ConceptsDo2RestMapperTest {
     private ConceptsDo2RestMapperV10 do2RestInternalMapper;
 
     @Test
-    public void testToConceptSchemes() {
+    public void testToConceptSchemes() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String resourceID = WILDCARD_ALL;
@@ -202,7 +203,7 @@ public class ConceptsDo2RestMapperTest {
     }
 
     @Test
-    public void testToConceptsItemResult() {
+    public void testToConceptsItemResult() throws MetamacException {
 
         String agencyID = AGENCY_1;
         String conceptSchemeID = ITEM_SCHEME_1_CODE;
@@ -237,7 +238,7 @@ public class ConceptsDo2RestMapperTest {
     }
 
     @Test
-    public void testToConcept() {
+    public void testToConcept() throws MetamacException {
         ConceptSchemeVersionMetamac conceptScheme = mockConceptScheme("agencyID1", "resourceID1", "01.123");
         ConceptMetamac parent = mockConcept("conceptParent1", conceptScheme, null);
         ConceptMetamac source = mockConceptWithConceptRelations("concept2", conceptScheme, parent);
@@ -299,7 +300,7 @@ public class ConceptsDo2RestMapperTest {
     }
 
     @Test
-    public void testToConceptImported() {
+    public void testToConceptImported() throws MetamacException {
         ConceptSchemeVersionMetamac conceptScheme = mockConceptScheme("agencyID1", "resourceID1", "01.123");
         conceptScheme.getMaintainableArtefact().setIsImported(Boolean.TRUE);
         ConceptMetamac source = mockConcept("concept2", conceptScheme, null);

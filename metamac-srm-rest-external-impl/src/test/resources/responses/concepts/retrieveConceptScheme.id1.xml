@@ -38,7 +38,7 @@
         <cdomain:text xml:lang="es">description-itemScheme1v01.000 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-itemScheme1v01.000 in English</cdomain:text>
     </sr:description>
-    <sr:visualizerHtmlLink>nullconcepts/schemes/agency1/itemScheme1/01.000/detail</sr:visualizerHtmlLink>
+    <sr:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/concepts/schemes/agency1/itemScheme1/01.000/detail</sr:visualizerHtmlLink>
     <sr:version>01.000</sr:version>
     <sr:validFrom>2012-11-05T10:12:13.014Z</sr:validFrom>
     <sr:validTo>2013-10-04T10:12:13.014+01:00</sr:validTo>

@@ -25,7 +25,7 @@
         <cdomain:text xml:lang="es">description-artefact1v01.000 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-artefact1v01.000 in English</cdomain:text>
     </sr:description>
-    <sr:visualizerHtmlLink>nulldsd/codes/agency1/artefact1/01.000/detail</sr:visualizerHtmlLink>
+    <sr:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/dsd/codes/agency1/artefact1/01.000/detail</sr:visualizerHtmlLink>
     <sr:version>01.000</sr:version>
     <sr:validFrom>2012-11-05T10:12:13.014Z</sr:validFrom>
     <sr:validTo>2013-10-04T10:12:13.014+01:00</sr:validTo>
@@ -108,7 +108,7 @@
                             <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                             <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
                         </cdomain:name>
-                        <cdomain:visualizerHtmlLink>nullcodelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
+                        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
                     </sr:enumerationCodelist>
                 </sr:localRepresentation>
                 <sr:roleConcepts kind="structuralResources#concepts" total="2">
@@ -177,7 +177,7 @@
                             <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                             <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
                         </cdomain:name>
-                        <cdomain:visualizerHtmlLink>nullcodelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
+                        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
                     </sr:enumerationCodelist>
                 </sr:localRepresentation>
                 <sr:type>SPATIAL</sr:type>
@@ -239,7 +239,7 @@
                             <cdomain:text xml:lang="en">name-codelist01v01.000 in English</cdomain:text>
                             <cdomain:text xml:lang="es">name-codelist01v01.000 en Español</cdomain:text>
                         </cdomain:name>
-                        <cdomain:visualizerHtmlLink>nullcodelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
+                        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codelists/agency01/codelist01/01.000/detail</cdomain:visualizerHtmlLink>
                     </sr:enumerationCodelist>
                 </sr:localRepresentation>
             </sr:primaryMeasure>

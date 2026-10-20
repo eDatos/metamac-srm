@@ -9,7 +9,7 @@
             <cdomain:text xml:lang="en">name-organisation1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation1 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation1/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/organisations/organisations/agency1/itemScheme1/organisation1/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation2</cdomain:id>
@@ -20,7 +20,7 @@
             <cdomain:text xml:lang="en">name-organisation2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation2 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation2/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/organisations/organisations/agency1/itemScheme1/organisation2/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation2A</cdomain:id>
@@ -31,7 +31,7 @@
             <cdomain:text xml:lang="en">name-organisation2A in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation2A en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation2A/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/organisations/organisations/agency1/itemScheme1/organisation2A/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
     <sr:agency kind="structuralResources#agency">
         <cdomain:id>organisation2B</cdomain:id>
@@ -42,6 +42,6 @@
             <cdomain:text xml:lang="en">name-organisation2B in English</cdomain:text>
             <cdomain:text xml:lang="es">name-organisation2B en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/organisation2B/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/organisations/organisations/agency1/itemScheme1/organisation2B/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:agency>
 </sr:agencies>

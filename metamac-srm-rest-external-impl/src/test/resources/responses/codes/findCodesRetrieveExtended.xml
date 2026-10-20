@@ -8,7 +8,7 @@
             <cdomain:text xml:lang="en">name-code1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-code1 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/codes/agency1/itemScheme1/code1/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codes/agency1/itemScheme1/code1/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:extended>true</sr:extended>
     </sr:code>
     <sr:code kind="structuralResources#code">
@@ -19,7 +19,7 @@
             <cdomain:text xml:lang="en">name-code2 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-code2 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/codes/agency1/itemScheme1/code2/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codes/agency1/itemScheme1/code2/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:extended>false</sr:extended>
     </sr:code>
     <sr:code kind="structuralResources#code">
@@ -30,7 +30,7 @@
             <cdomain:text xml:lang="en">name-code2A in English</cdomain:text>
             <cdomain:text xml:lang="es">name-code2A en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/codes/agency1/itemScheme1/code2A/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codes/agency1/itemScheme1/code2A/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2</sr:parent>
     </sr:code>
     <sr:code kind="structuralResources#code">
@@ -41,7 +41,7 @@
             <cdomain:text xml:lang="en">name-code2B in English</cdomain:text>
             <cdomain:text xml:lang="es">name-code2B en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcodelists/codes/agency1/itemScheme1/code2B/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/codes/agency1/itemScheme1/code2B/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency1:itemScheme1(01.000).code2</sr:parent>
         <sr:extended>true</sr:extended>
     </sr:code>

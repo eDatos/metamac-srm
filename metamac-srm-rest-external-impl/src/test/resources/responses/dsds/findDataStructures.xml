@@ -8,7 +8,7 @@
             <cdomain:text xml:lang="es">name-artefact1v01.000 en Español</cdomain:text>
             <cdomain:text xml:lang="en">name-artefact1v01.000 in English</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nulldsd/codes/agency1/artefact1/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/dsd/codes/agency1/artefact1/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:dataStructure>
     <sr:dataStructure kind="structuralResources#dataStructure">
         <cdomain:id>artefact2</cdomain:id>
@@ -18,7 +18,7 @@
             <cdomain:text xml:lang="en">name-artefact2v01.000 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-artefact2v01.000 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nulldsd/codes/agency1/artefact2/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/dsd/codes/agency1/artefact2/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:dataStructure>
     <sr:dataStructure kind="structuralResources#dataStructure">
         <cdomain:id>artefact2</cdomain:id>
@@ -28,7 +28,7 @@
             <cdomain:text xml:lang="en">name-artefact2v02.000 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-artefact2v02.000 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nulldsd/codes/agency1/artefact2/02.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/dsd/codes/agency1/artefact2/02.000/detail</cdomain:visualizerHtmlLink>
     </sr:dataStructure>
     <sr:dataStructure kind="structuralResources#dataStructure">
         <cdomain:id>artefact3</cdomain:id>
@@ -38,6 +38,6 @@
             <cdomain:text xml:lang="es">name-artefact3v01.000 en Español</cdomain:text>
             <cdomain:text xml:lang="en">name-artefact3v01.000 in English</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nulldsd/codes/agency2/artefact3/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/dsd/codes/agency2/artefact3/01.000/detail</cdomain:visualizerHtmlLink>
     </sr:dataStructure>
 </sr:dataStructures>

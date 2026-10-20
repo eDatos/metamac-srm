@@ -31,18 +31,18 @@ import com.arte.statistic.sdmx.srm.core.common.domain.ItemResult;
 public interface CodesDo2RestMapperV10 {
 
     org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelists toCodelists(PagedResult<CodelistVersionMetamac> sources, String agencyID, String resourceID, String query, String orderBy,
-            Integer limit);
+            Integer limit) throws MetamacException;
     org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist toCodelist(CodelistVersionMetamac source) throws MetamacException;
-    Resource toResource(CodelistVersion source);
+    Resource toResource(CodelistVersion source) throws MetamacException;
 
     CodelistRestrictions toCodeListRestrictions(List<CodelistRestrictionVisualisation> sources, CodelistVersionMetamac source, String agencyID, String resourceID, String version);
     Codes toCodes(PagedResult<CodeMetamac> sourcesPagedResult, String agencyID, String resourceID, String version, String query, String orderBy, Integer limit, Boolean extended, Set<String> fields);
     List<PlainTextResource> toPlainTextCodes(Codes source, List<String> languages, Set<String> fields, String format) throws MetamacException;
 
-    Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended);
+    Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) throws MetamacException;
     RecodedCodes toRecodedCodes(CodelistVersionMetamac sourceCodelistVersion, CodelistVersionMetamac codelistVersionToMatch, List<RelatedCode> sources);
 
-    Code toCode(CodeMetamac source, Set<String> fields);
+    Code toCode(CodeMetamac source, Set<String> fields) throws MetamacException;
     ItemResource toResource(CodeMetamac source);
 
     org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableFamilies toVariableFamilies(PagedResult<VariableFamily> sources, String query, String orderBy, Integer limit);
@@ -63,7 +63,7 @@ public interface CodesDo2RestMapperV10 {
             DateTime globalLastUpdatedDate);
     org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElement toVariableElement(org.siemac.metamac.srm.core.code.domain.VariableElement source);
 
-    org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamilies toCodelistFamilies(PagedResult<CodelistFamily> sources, String query, String orderBy, Integer limit);
+    org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamilies toCodelistFamilies(PagedResult<CodelistFamily> sources, String query, String orderBy, Integer limit) throws MetamacException;
     org.siemac.metamac.rest.structural_resources.v1_0.domain.CodelistFamily toCodelistFamily(CodelistFamily source) throws MetamacException;
 
 }

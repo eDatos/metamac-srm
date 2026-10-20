@@ -63,6 +63,11 @@
         "type": "array",
         "items": "RelatedResourceAvro"
       }
+    },
+    {
+      "name": "visualizerHtmlLink",
+      "type": ["null", "string"],
+      "default": null
     }
   ]
 }

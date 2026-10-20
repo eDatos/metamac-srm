@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 8.x.0 a 8.x.1
+## 8.19.0 a 8.19.1-SNAPSHOT
   * Para que CKAN disponga de `visualizerHtmlLink` también para los recursos ya publicados, hay  que relanzar el job `ResendPublishedResourcesKafkaMessageJob`, que reenvía el mensaje kafka de la última versión publicada de todos los recursos del SRM:
     1. Actualizar la property `metamac.srm.resend_resources_kafka_message.cron_expression` (tabla `TB_DATA_CONFIGURATIONS`) con una expresión cron cuya próxima ejecución caiga poco después del reinicio previsto. Ej.:
           ```sql

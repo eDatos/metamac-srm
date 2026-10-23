@@ -85,7 +85,7 @@ public class CodesDo2RestMapperTest {
     private CodesDo2RestMapperV10 do2RestInternalMapper;
 
     @Test
-    public void testToCodelists() {
+    public void testToCodelists() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String resourceID = WILDCARD_ALL;
@@ -269,7 +269,7 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCodes() {
+    public void testToCodes() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String codeSchemeID = WILDCARD_ALL;
@@ -316,7 +316,7 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCodesItemResult() {
+    public void testToCodesItemResult() throws MetamacException {
 
         String agencyID = AGENCY_1;
         String codelistID = ITEM_SCHEME_1_CODE;
@@ -351,7 +351,7 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCode() {
+    public void testToCode() throws MetamacException {
         CodelistVersionMetamac codeScheme = mockCodelist("agencyID1", "resourceID1", "01.123");
         CodeMetamac parent = mockCode("codeParent1", codeScheme, null);
         CodeMetamac source = mockCode("code2", codeScheme, parent);
@@ -381,7 +381,7 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCodeImported() {
+    public void testToCodeImported() throws MetamacException {
         CodelistVersionMetamac codeScheme = mockCodelist("agencyID1", "resourceID1", "01.123");
         codeScheme.getMaintainableArtefact().setIsImported(Boolean.TRUE);
         CodeMetamac source = mockCode("code2", codeScheme, null);
@@ -398,7 +398,7 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCodeWithoutVariableElement() {
+    public void testToCodeWithoutVariableElement() throws MetamacException {
         CodelistVersionMetamac codeScheme = mockCodelist("agencyID1", "resourceID1", "01.123");
         codeScheme.getMaintainableArtefact().setIsImported(Boolean.TRUE);
         CodeMetamac source = mockCode("code2", codeScheme, null);
@@ -752,7 +752,7 @@ public class CodesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCodelistFamilies() {
+    public void testToCodelistFamilies() throws MetamacException {
 
         String query = QUERY_ID_LIKE_1_NAME_LIKE_2;
         String orderBy = ORDER_BY_ID_DESC;

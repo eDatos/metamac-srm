@@ -98,7 +98,7 @@ public class DataStructuresDo2RestMapperTest {
     }
 
     @Test
-    public void testToDataStructures() {
+    public void testToDataStructures() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String resourceID = WILDCARD_ALL;

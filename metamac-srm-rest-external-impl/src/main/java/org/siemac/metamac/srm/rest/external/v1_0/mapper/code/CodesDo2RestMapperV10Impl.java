@@ -77,7 +77,7 @@ import org.siemac.metamac.srm.core.constants.SrmConstants;
 import org.siemac.metamac.srm.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.srm.rest.external.exception.RestServiceExceptionType;
-import org.siemac.metamac.srm.rest.external.service.HtmlLinkUtil;
+import org.siemac.metamac.srm.core.util.HtmlLinkUtil;
 import org.siemac.metamac.srm.rest.external.v1_0.mapper.base.ItemSchemeBaseDo2RestMapperV10Impl;
 import org.siemac.metamac.srm.rest.external.v1_0.service.utils.SrmRestInternalUtils;
 import org.slf4j.Logger;
@@ -97,7 +97,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     private final Logger logger = LoggerFactory.getLogger(CodesDo2RestMapperV10Impl.class);
 
     @Override
-    public Codelists toCodelists(PagedResult<CodelistVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) {
+    public Codelists toCodelists(PagedResult<CodelistVersionMetamac> sourcesPagedResult, String agencyID, String resourceID, String query, String orderBy, Integer limit) throws MetamacException {
 
         Codelists targets = new Codelists();
         targets.setKind(SrmRestConstants.KIND_CODELISTS);
@@ -134,7 +134,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setReplaceTo(toCodelistReplaceTo(source));
         target.setOrderConfigurations(toOrderConfigurations(source.getOrderVisualisations(), source.getDefaultOrderVisualisation()));
         target.setOpennessConfigurations(toOpennessConfigurations(source.getOpennessVisualisations(), source.getDefaultOpennessVisualisation()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, configurationService.retrieveSrmVisualizerUrl()));
 
         return target;
     }
@@ -177,13 +177,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Resource toResource(CodelistVersion source) {
+    public Resource toResource(CodelistVersion source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getMaintainableArtefact(), SrmRestConstants.KIND_CODELIST, toCodelistSelfLink(source), target);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getMaintainableArtefact(), null, RelatedResourceSrmTypeEnum.CODELIST, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -213,7 +213,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) {
+    public Codes toCodes(List<ItemResult> sources, CodelistVersionMetamac codelistVersion, Set<String> fields, String restriction, Boolean extended) throws MetamacException {
 
         Codes targets = new Codes();
         targets.setKind(SrmRestConstants.KIND_CODES);
@@ -290,7 +290,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public Code toCode(CodeMetamac source, Set<String> fields) {
+    public Code toCode(CodeMetamac source, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -307,7 +307,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
             target.setVariableElement(toResource(source.getVariableElement()));
         }
         target.setExtended(source.getIsExtended());
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODE));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(source.getItemSchemeVersion().getMaintainableArtefact(), source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODE, configurationService.retrieveSrmVisualizerUrl()));
 
         return target;
     }
@@ -367,7 +367,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setOrder(null);
     }
 
-    private CodeResource toCodeResource(ItemResult source, CodelistVersionMetamac codelistVersion, String variableID, Set<String> fields) {
+    private CodeResource toCodeResource(ItemResult source, CodelistVersionMetamac codelistVersion, String variableID, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -375,7 +375,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         toResource(source, SrmRestConstants.KIND_CODE, toCodeSelfLink(source, codelistVersion), target, codelistVersion.getMaintainableArtefact().getIsImported(), fields);
 
         setVisibleFields(source, target, variableID, fields);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(codelistVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CODE));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(codelistVersion.getMaintainableArtefact(), source.getCode(), RelatedResourceSrmTypeEnum.CODE, configurationService.retrieveSrmVisualizerUrl()));
 
         return target;
     }
@@ -593,7 +593,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
     }
 
     @Override
-    public CodelistFamilies toCodelistFamilies(PagedResult<org.siemac.metamac.srm.core.code.domain.CodelistFamily> sourcesPagedResult, String query, String orderBy, Integer limit) {
+    public CodelistFamilies toCodelistFamilies(PagedResult<org.siemac.metamac.srm.core.code.domain.CodelistFamily> sourcesPagedResult, String query, String orderBy, Integer limit) throws MetamacException {
 
         CodelistFamilies targets = new CodelistFamilies();
         targets.setKind(SrmRestConstants.KIND_CODELIST_FAMILIES);
@@ -625,7 +625,7 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         target.setLastUpdatedDate(toDate(source.getLastUpdated()));
 
         target.setName(toInternationalString(source.getNameableArtefact().getName()));
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 
@@ -780,13 +780,13 @@ public class CodesDo2RestMapperV10Impl extends ItemSchemeBaseDo2RestMapperV10Imp
         return target;
     }
 
-    private Resource toResource(org.siemac.metamac.srm.core.code.domain.CodelistFamily source) {
+    private Resource toResource(org.siemac.metamac.srm.core.code.domain.CodelistFamily source) throws MetamacException {
         if (source == null) {
             return null;
         }
         Resource target = new Resource();
         toResource(source.getNameableArtefact(), SrmRestConstants.KIND_CODELIST_FAMILY, toCodelistFamilySelfLink(source), target, false, null);
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getCodelistVisualizerHtmlLink(null, source.getNameableArtefact().getCode(), RelatedResourceSrmTypeEnum.CODELIST_FAMILIES, configurationService.retrieveSrmVisualizerUrl()));
         return target;
     }
 

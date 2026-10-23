@@ -34,6 +34,6 @@
         <cdomain:text xml:lang="es">description-artefact1 en Español</cdomain:text>
         <cdomain:text xml:lang="en">description-artefact1 in English</cdomain:text>
     </sr:description>
-    <sr:visualizerHtmlLink>nullcodelists/families/artefact1/detail</sr:visualizerHtmlLink>
+    <sr:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/codelists/families/artefact1/detail</sr:visualizerHtmlLink>
     <sr:lastUpdatedDate>2012-11-05T10:12:13.014Z</sr:lastUpdatedDate>
 </sr:codelistFamily>

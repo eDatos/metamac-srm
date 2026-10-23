@@ -9,7 +9,7 @@
             <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category1/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/categories/categories/agency1/itemScheme1/category1/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category1</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category1</cdomain:urn>
@@ -32,7 +32,7 @@
             <cdomain:text xml:lang="es">name-category2 en Español</cdomain:text>
             <cdomain:text xml:lang="en">name-category2 in English</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/categories/categories/agency1/itemScheme1/category2/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category2</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category2</cdomain:urn>
@@ -55,7 +55,7 @@
             <cdomain:text xml:lang="es">name-category2A en Español</cdomain:text>
             <cdomain:text xml:lang="en">name-category2A in English</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme1/category2A/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/categories/categories/agency1/itemScheme1/category2A/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:parent>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=agency1:itemScheme1(01.000).category2</sr:parent>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category2A</cdomain:id>
@@ -79,7 +79,7 @@
             <cdomain:text xml:lang="en">name-category1 in English</cdomain:text>
             <cdomain:text xml:lang="es">name-category1 en Español</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>nullcategories/categories/agency1/itemScheme2/category1/01.000/detail</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/categories/categories/agency1/itemScheme2/category1/01.000/detail</cdomain:visualizerHtmlLink>
         <sr:categoryElement kind="structuralResources#categoryElement">
             <cdomain:id>categoryElement-category1</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.xxx=categoryElement-category1</cdomain:urn>

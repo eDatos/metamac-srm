@@ -116,6 +116,11 @@
       {
         "name": "variable",
         "type": "RelatedResourceAvro"
+      },
+      {
+        "name": "visualizerHtmlLink",
+        "type": ["null", "string"],
+        "default": null
       }
     ]
   }

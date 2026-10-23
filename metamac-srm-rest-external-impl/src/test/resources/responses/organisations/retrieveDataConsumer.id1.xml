@@ -35,6 +35,6 @@
         <cdomain:text xml:lang="en">description-item1 in English</cdomain:text>
         <cdomain:text xml:lang="es">description-item1 en Español</cdomain:text>
     </sr:description>
-    <sr:visualizerHtmlLink>nullorganisations/organisations/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
+    <sr:visualizerHtmlLink>http://localhost:8080/metamac-srm-visualizer/organisations/organisations/agency1/itemScheme1/item1/01.000/detail</sr:visualizerHtmlLink>
     <sr:contacts total="0"/>
 </sr:dataConsumer>

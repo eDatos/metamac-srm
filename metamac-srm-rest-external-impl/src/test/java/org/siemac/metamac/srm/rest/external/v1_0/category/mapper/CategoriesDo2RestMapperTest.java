@@ -40,6 +40,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Categorisations;
@@ -67,7 +68,7 @@ public class CategoriesDo2RestMapperTest {
     private CategoriesDo2RestMapperV10 do2RestInternalMapper;
 
     @Test
-    public void testToCategorySchemes() {
+    public void testToCategorySchemes() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String resourceID = WILDCARD_ALL;
@@ -110,7 +111,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategoryScheme() {
+    public void testToCategoryScheme() throws MetamacException {
 
         CategorySchemeVersionMetamac source = mockCategorySchemeWithCategories("agencyID1", "resourceID1", "01.123");
 
@@ -160,7 +161,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategorySchemeImported() {
+    public void testToCategorySchemeImported() throws MetamacException {
 
         CategorySchemeVersionMetamac source = mockCategorySchemeWithCategories("agencyID1", "resourceID1", "01.123");
         source.getMaintainableArtefact().setIsImported(Boolean.TRUE);
@@ -177,7 +178,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategories() {
+    public void testToCategories() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String categorySchemeID = WILDCARD_ALL;
@@ -227,7 +228,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategoriesWithFields() {
+    public void testToCategoriesWithFields() throws MetamacException {
 
         String agencyID = WILDCARD_ALL;
         String categorySchemeID = WILDCARD_ALL;
@@ -275,7 +276,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategoriesItemResult() {
+    public void testToCategoriesItemResult() throws MetamacException {
 
         String agencyID = AGENCY_1;
         String categorySchemeID = ITEM_SCHEME_1_CODE;
@@ -311,7 +312,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategoriesItemResultWithOrderConfigurationField() {
+    public void testToCategoriesItemResultWithOrderConfigurationField() throws MetamacException {
 
         String agencyID = AGENCY_1;
         String categorySchemeID = ITEM_SCHEME_1_CODE;
@@ -346,7 +347,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategoriesItemResultWithFields() {
+    public void testToCategoriesItemResultWithFields() throws MetamacException {
 
         String agencyID = AGENCY_1;
         String categorySchemeID = ITEM_SCHEME_1_CODE;
@@ -383,13 +384,13 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategory() {
+    public void testToCategory() throws MetamacException {
         Category target = testToCategoryCommon(null);
         assertEquals(null, target.getCategoryElement());
     }
 
     @Test
-    public void testToCategoryWithCategoryElement() {
+    public void testToCategoryWithCategoryElement() throws MetamacException {
         String codeCategory = "category2";
         Set<String> fields = new HashSet<>(Arrays.asList("+categoryElement"));
 
@@ -401,7 +402,7 @@ public class CategoriesDo2RestMapperTest {
 
     }
 
-    private Category testToCategoryCommon(Set<String> fields) {
+    private Category testToCategoryCommon(Set<String> fields) throws MetamacException {
         String codeCategory = "category2";
         CategorySchemeVersionMetamac categoryScheme = mockCategoryScheme("agencyID1", "resourceID1", "01.123");
         CategoryMetamac parent = mockCategory("categoryParent1", categoryScheme, null);
@@ -432,7 +433,7 @@ public class CategoriesDo2RestMapperTest {
     }
 
     @Test
-    public void testToCategoryImported() {
+    public void testToCategoryImported() throws MetamacException {
         CategorySchemeVersionMetamac categoryScheme = mockCategoryScheme("agencyID1", "resourceID1", "01.123");
         categoryScheme.getMaintainableArtefact().setIsImported(Boolean.TRUE);
         CategoryMetamac source = mockCategory("category2", categoryScheme, null);
